@@ -12,12 +12,18 @@ from app.api.schemas import (
     CompanyCreate,
     CompanyRead,
     CompanyUpdate,
+    DailyBriefRead,
     EventCreate,
+    EventExtractionRead,
     EventRead,
     EventUpdate,
     RawDocumentCreate,
     RawDocumentRead,
     RawDocumentUpdate,
+    RssIngestionCreate,
+    RssIngestionRead,
+    SecFilingIngestionCreate,
+    SecFilingIngestionRead,
     SourceCreate,
     SourceRead,
     SourceUpdate,
@@ -26,8 +32,11 @@ from app.api.schemas import (
     ThesisNoteUpdate,
 )
 from app.db.session import get_db
-from app.models import Alert, Company, Event, RawDocument, Source, ThesisNote
-from app.services.daily_brief import generate_daily_brief
+from app.models import Alert, Company, DailyBrief, Event, RawDocument, Source, ThesisNote
+from app.services.daily_brief import generate_daily_brief, save_daily_brief
+from app.services.event_extraction import extract_events_from_raw_documents
+from app.services.rss_ingestion import ingest_rss_xml
+from app.services.sec_ingestion import SecFilingMetadata, ingest_sec_filing_metadata
 
 
 router = APIRouter()
@@ -263,3 +272,51 @@ def delete_thesis_note(thesis_note_id: int, db: Session = Depends(get_db)) -> No
 @router.get("/daily-brief")
 def get_daily_brief(db: Session = Depends(get_db)) -> dict:
     return generate_daily_brief(db)
+
+
+@router.post("/daily-brief", response_model=DailyBriefRead, status_code=status.HTTP_201_CREATED)
+def create_daily_brief(db: Session = Depends(get_db)) -> DailyBrief:
+    return save_daily_brief(db)
+
+
+@router.get("/daily-brief-history", response_model=list[DailyBriefRead])
+def list_daily_brief_history(db: Session = Depends(get_db)) -> list[DailyBrief]:
+    return list(db.scalars(select(DailyBrief).order_by(DailyBrief.created_at.desc(), DailyBrief.id.desc()).limit(30)))
+
+
+@router.post("/ingest/rss", response_model=RssIngestionRead, status_code=status.HTTP_201_CREATED)
+def ingest_rss(payload: RssIngestionCreate, db: Session = Depends(get_db)) -> dict[str, int]:
+    require_reference(db, Source, payload.source_id, "Source")
+    require_reference(db, Company, payload.company_id, "Company")
+    result = ingest_rss_xml(db, source_id=payload.source_id, rss_xml=payload.rss_xml, company_id=payload.company_id)
+    return {"created": result.created, "skipped_duplicates": result.skipped_duplicates}
+
+
+@router.post("/ingest/sec-filings", response_model=SecFilingIngestionRead, status_code=status.HTTP_201_CREATED)
+def ingest_sec_filings(payload: SecFilingIngestionCreate, db: Session = Depends(get_db)) -> dict[str, int]:
+    require_reference(db, Source, payload.source_id, "Source")
+    require_reference(db, Company, payload.company_id, "Company")
+    filings = [
+        SecFilingMetadata(
+            accession_number=filing.accession_number,
+            form_type=filing.form_type,
+            filing_date=filing.filing_date,
+            report_date=filing.report_date,
+            primary_document=filing.primary_document,
+            filing_url=filing.filing_url,
+        )
+        for filing in payload.filings
+    ]
+    result = ingest_sec_filing_metadata(
+        db,
+        source_id=payload.source_id,
+        company_id=payload.company_id,
+        filings=filings,
+    )
+    return {"created": result.created, "skipped_duplicates": result.skipped_duplicates}
+
+
+@router.post("/extract/events", response_model=EventExtractionRead, status_code=status.HTTP_201_CREATED)
+def extract_events(db: Session = Depends(get_db)) -> dict[str, int]:
+    result = extract_events_from_raw_documents(db)
+    return {"created": result.created, "skipped_existing": result.skipped_existing}

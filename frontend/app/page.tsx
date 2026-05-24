@@ -1,10 +1,11 @@
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { fetchApi } from "@/lib/api";
-import type { AlertRecord, Company, DailyBrief, EventRecord, RawDocument, ThesisNote } from "@/lib/api";
+import type { AlertRecord, Company, DailyBrief, EventRecord, RawDocument, Source, ThesisNote } from "@/lib/api";
 
 async function loadOverview() {
-  const [companies, documents, events, alerts, thesisNotes, dailyBrief] = await Promise.all([
+  const [companies, sources, documents, events, alerts, thesisNotes, dailyBrief] = await Promise.all([
     fetchApi<Company[]>("/companies"),
+    fetchApi<Source[]>("/sources"),
     fetchApi<RawDocument[]>("/raw-documents"),
     fetchApi<EventRecord[]>("/events"),
     fetchApi<AlertRecord[]>("/alerts"),
@@ -12,18 +13,19 @@ async function loadOverview() {
     fetchApi<DailyBrief>("/daily-brief")
   ]);
 
-  return { companies, documents, events, alerts, thesisNotes, dailyBrief };
+  return { companies, sources, documents, events, alerts, thesisNotes, dailyBrief };
 }
 
 export default async function HomePage() {
   try {
-    const { companies, documents, events, alerts, thesisNotes, dailyBrief } = await loadOverview();
+    const { companies, sources, documents, events, alerts, thesisNotes, dailyBrief } = await loadOverview();
 
     return (
       <>
         <PageHeader eyebrow="Local dashboard" title="Overview" status={dailyBrief.date} />
         <section className="metric-grid">
           <Metric label="Companies" value={companies.length} />
+          <Metric label="Sources" value={sources.length} />
           <Metric label="Documents" value={documents.length} />
           <Metric label="Events" value={events.length} />
           <Metric label="Alerts" value={alerts.length} />

@@ -100,7 +100,7 @@ a {
 .metric-grid {
   display: grid;
   gap: 12px;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   margin-bottom: 22px;
 }
 
@@ -146,6 +146,132 @@ a {
 
 .table-wrap {
   overflow-x: auto;
+}
+
+.form-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  padding: 16px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+}
+
+.field-wide {
+  grid-column: span 2;
+}
+
+.field-full {
+  grid-column: 1 / -1;
+}
+
+label {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+input,
+select,
+textarea {
+  background: #fffdfa;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--text);
+  font: inherit;
+  min-height: 38px;
+  padding: 8px 10px;
+  width: 100%;
+}
+
+textarea {
+  min-height: 82px;
+  resize: vertical;
+}
+
+.checkbox-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  min-height: 38px;
+}
+
+.checkbox-row input {
+  min-height: auto;
+  width: auto;
+}
+
+.button-row {
+  align-items: end;
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  background: var(--accent);
+  border: 1px solid var(--accent-strong);
+  border-radius: 6px;
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+  min-height: 38px;
+  padding: 8px 12px;
+}
+
+.danger-button {
+  background: #fff3ed;
+  border-color: #e5b08c;
+  color: var(--danger);
+}
+
+.row-action {
+  margin: 0;
+}
+
+.action-stack {
+  display: grid;
+  gap: 8px;
+  min-width: 96px;
+}
+
+.edit-panel {
+  min-width: 280px;
+}
+
+.edit-panel summary {
+  color: var(--accent-strong);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.inline-form {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 10px;
+}
+
+.inline-form .field-full {
+  grid-column: 1 / -1;
+}
+
+.secondary-button {
+  background: #eef3ef;
+  border-color: #cbd8d2;
+  color: var(--accent-strong);
+}
+
+button:disabled {
+  background: var(--surface-muted);
+  border-color: var(--line);
+  color: var(--muted);
+  cursor: not-allowed;
 }
 
 table {
@@ -255,5 +381,14 @@ tr:last-child td {
 
   .metric-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-wide,
+  .field-full {
+    grid-column: auto;
   }
 }

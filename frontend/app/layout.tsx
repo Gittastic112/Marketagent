@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { BrowserDebugLogger } from "@/components/browser-debug-logger";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 const navItems = [
   { href: "/", label: "Overview" },
   { href: "/companies", label: "Companies" },
+  { href: "/sources", label: "Sources" },
   { href: "/documents", label: "Documents" },
   { href: "/events", label: "Events" },
   { href: "/alerts", label: "Alerts" },
@@ -22,6 +24,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        <BrowserDebugLogger />
         <div className="app-shell">
           <aside className="sidebar">
             <div className="brand">Market Intelligence Engine</div>

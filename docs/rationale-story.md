@@ -559,6 +559,438 @@ Environment issue found:
 
 This is a machine setup issue, not proof that the frontend code is wrong.
 
+### 18. Made the app runnable through Docker Compose
+
+Files added:
+
+- `.dockerignore`
+- `backend/Dockerfile`
+- `frontend/Dockerfile`
+- `frontend/.dockerignore`
+
+Files changed:
+
+- `docker-compose.yml`
+- `.gitignore`
+- `README.md`
+- `frontend/README.md`
+
+Why:
+
+- The host shell did not expose `npm`, `pnpm`, `yarn`, or `corepack`.
+- A later check showed `frontend/node_modules` did exist, so we could run the local TypeScript compiler directly.
+- The local Next.js build still failed because macOS rejected the native SWC compiler binary signature.
+- Next then tried to download a fallback compiler into `~/Library/Caches/next-swc`, but the sandbox blocked that write.
+
+Root cause:
+
+- The project code was not the source of that build failure.
+- The failure came from local environment restrictions around the native Next.js compiler and sandboxed filesystem access.
+
+Fix chosen:
+
+- Added a backend Docker image.
+- Added a frontend Docker image.
+- Added backend and frontend services to Docker Compose.
+- Set the backend container to use `postgres` as the database host.
+- Set the frontend container to call `http://backend:8000`.
+- Added generated frontend folders to `.gitignore`.
+
+Why Docker is the right fix here:
+
+- The project docs already describe a Docker-based local build.
+- Docker gives the frontend a Linux Node environment instead of relying on the host shell.
+- Docker avoids the missing host package manager problem.
+- Docker avoids the broken macOS SWC binary path.
+
+Verification:
+
+- Docker Compose config parses successfully.
+- Backend test suite passes: 26 passed.
+- Frontend TypeScript check passes.
+
+What could not be verified inside this sandbox:
+
+- `docker compose build backend frontend`
+- `docker compose up --build`
+
+Reason:
+
+- The sandbox blocks connecting to Docker Desktop's socket even after file permissions are granted.
+- That means the Docker files can be checked for structure here, but the actual container build has to be run in a less restricted terminal.
+
+### 19. Added manual create forms to the frontend
+
+Files added:
+
+- `frontend/app/actions.ts`
+- `frontend/app/sources/page.tsx`
+- `frontend/lib/form-payloads.ts`
+- `frontend/lib/form-payloads.test.ts`
+
+Files changed:
+
+- frontend pages under `frontend/app/`
+- `frontend/app/globals.css`
+- `frontend/lib/api.ts`
+- `frontend/package.json`
+- `frontend/tsconfig.json`
+
+Why:
+
+- The backend already supports manual create endpoints.
+- The frontend could read records, but it could not create records.
+- A beginner-friendly market intelligence tool needs manual entry before ingestion.
+
+What changed:
+
+- Added create forms for companies.
+- Added a sources page and create form.
+- Added create forms for raw documents, events, alerts, and thesis notes.
+- Added server actions so form submissions happen from the Next.js server.
+- Added a small payload conversion helper to trim strings, convert blank fields to `null`, and convert IDs/scores to numbers.
+
+Why server actions:
+
+- The browser should not call Docker service names like `backend`.
+- The Next.js server can call the backend through `NEXT_PUBLIC_API_BASE_URL`.
+- This avoids CORS work for now.
+- It keeps the first manual workflow simpler.
+
+Why a form payload test:
+
+- Form data arrives as strings.
+- The backend expects numbers, booleans, and `null` for blank optional values.
+- A small Node test proves the conversion layer does that consistently.
+
+Verification:
+
+- Frontend form payload tests pass: 5 passed.
+- Frontend TypeScript check passes.
+- Backend test suite passes: 26 passed.
+- Docker Compose config still parses successfully.
+
+### 20. Added frontend delete controls
+
+Files changed:
+
+- `frontend/app/actions.ts`
+- `frontend/lib/api.ts`
+- `frontend/lib/form-payloads.ts`
+- `frontend/lib/form-payloads.test.ts`
+- frontend table pages under `frontend/app/`
+- `frontend/app/globals.css`
+
+Why:
+
+- The backend already had DELETE endpoints.
+- The frontend could create records, but a beginner manually entering data needs a way to remove mistakes.
+- Delete is simpler than edit because it only needs a record ID.
+
+How it was done:
+
+- Added a tested helper that reads a hidden `id` field from form data and converts it to a number.
+- Added a `deleteApi` helper that sends `DELETE` requests to the backend.
+- Added server actions for deleting companies, sources, raw documents, events, alerts, and thesis notes.
+- Added delete buttons to each record table.
+- Added small button styling so destructive actions are visually separate from create actions.
+
+Verification:
+
+- Frontend form payload tests pass: 6 passed.
+- Frontend TypeScript check passes.
+- Backend test suite passes: 26 passed.
+- Docker Compose config still parses successfully.
+
+### 21. Added debug console logs
+
+Files added:
+
+- `frontend/components/browser-debug-logger.tsx`
+
+Files changed:
+
+- `frontend/lib/api.ts`
+- `frontend/app/actions.ts`
+- `frontend/app/layout.tsx`
+- `frontend/.env.local.example`
+- `docker-compose.yml`
+- `frontend/README.md`
+
+Why:
+
+- The frontend runtime still needs browser/Docker verification outside this sandbox.
+- Console logs make that verification easier once the app is started in a normal terminal.
+
+What logs were added:
+
+- Browser mount log in DevTools.
+- Frontend API request start, success, and failure logs.
+- Create action logs.
+- Delete action logs.
+
+What is intentionally not logged:
+
+- Full request payloads.
+- Thesis text.
+- Raw document text.
+- API keys or secrets.
+
+Reason:
+
+- Logs should help trace flow without leaking research content.
+
+How to disable logs:
+
+- Set `NEXT_PUBLIC_DEBUG_LOGS=false`.
+
+### 22. Added frontend edit controls
+
+Files added:
+
+- `frontend/lib/api.test.ts`
+
+Files changed:
+
+- `frontend/lib/api.ts`
+- `frontend/app/actions.ts`
+- frontend table pages under `frontend/app/`
+- `frontend/app/globals.css`
+- `frontend/README.md`
+
+Why:
+
+- Create and delete were working, but manual research entry still needed correction without deleting and re-creating records.
+- The backend already had PATCH endpoints for every MVP model.
+- Edit controls are the natural next layer before ingestion.
+
+How it was done:
+
+- Added a failing test for `patchApi`.
+- Added `patchApi` after the test failed for the expected reason.
+- Added update server actions for companies, sources, raw documents, events, alerts, and thesis notes.
+- Added collapsible inline edit forms in each table row.
+
+Why collapsible edit forms:
+
+- Always-visible edit fields would make the dashboard noisy.
+- A collapsible row keeps the table scannable while still making edits available.
+
+Verification:
+
+- Frontend tests pass: 7 passed.
+- Frontend TypeScript check passes.
+- Backend test suite passes: 26 passed.
+- Docker Compose config still parses successfully.
+
+### 23. Added persisted daily brief records
+
+Files added:
+
+- `backend/app/models/daily_brief.py`
+- `backend/alembic/versions/20260524_0002_create_daily_briefs.py`
+- `backend/tests/test_persisted_daily_brief.py`
+
+Files changed:
+
+- `backend/app/models/__init__.py`
+- `backend/app/services/daily_brief.py`
+- `backend/app/api/schemas.py`
+- `backend/app/api/routes.py`
+- `backend/tests/test_api_daily_brief.py`
+- `frontend/app/actions.ts`
+- `frontend/app/daily-brief/page.tsx`
+- `frontend/lib/api.ts`
+
+Why:
+
+- The daily brief was only computed live.
+- A useful research system needs a record of what the brief said on a given day.
+- Persisting snapshots creates history without introducing AI or ingestion complexity.
+
+What changed:
+
+- Added a `daily_briefs` table.
+- Added a `DailyBrief` SQLAlchemy model.
+- Added a migration for the new table.
+- Added `save_daily_brief`.
+- Added `POST /daily-brief` to save the current generated brief.
+- Added `GET /daily-brief-history` to list recent saved briefs.
+- Added a frontend `Save brief` button.
+- Added a saved briefs table on the Daily Brief page.
+
+Why snapshot JSON:
+
+- A saved brief should not change later just because events or alerts are edited.
+- The system stores the generated payload exactly as it existed at save time.
+
+Verification:
+
+- Backend test suite passes: 29 passed.
+- Frontend tests pass: 7 passed.
+- Frontend TypeScript check passes.
+- Docker Compose config still parses successfully.
+
+Runtime note:
+
+- This adds a new database table.
+- The backend Docker command runs Alembic migrations at startup.
+- If the app is already running, restart the backend or rerun `docker compose up --build` so the `daily_briefs` table is created.
+
+### 24. Added pasted RSS XML ingestion
+
+Files added:
+
+- `backend/app/services/rss_ingestion.py`
+- `backend/tests/test_rss_ingestion.py`
+- `backend/tests/test_api_rss_ingestion.py`
+
+Files changed:
+
+- `backend/app/api/schemas.py`
+- `backend/app/api/routes.py`
+- `frontend/app/actions.ts`
+- `frontend/app/documents/page.tsx`
+- `frontend/lib/api.ts`
+- `frontend/lib/form-payloads.ts`
+- `frontend/lib/form-payloads.test.ts`
+
+Why:
+
+- The roadmap calls for RSS ingestion after the manual dashboard.
+- We need source ingestion before scoring and AI.
+- Live fetching external feeds adds network, uptime, feed format, and legal questions.
+- A pasted XML import proves the ingestion path without those problems.
+
+What changed:
+
+- Added an RSS parser using Python standard library XML parsing.
+- Added duplicate detection using a stable SHA-256 content hash.
+- Stores each RSS item as a `RawDocument` with `document_type="rss_item"`.
+- Stores title, source URL, published timestamp, raw description, raw payload JSON, and content hash.
+- Added `POST /ingest/rss`.
+- Added a frontend RSS XML import form on the Documents page.
+
+What this does not do yet:
+
+- It does not fetch live RSS feed URLs.
+- It does not classify RSS items into events automatically.
+- It does not call AI.
+
+Reason:
+
+- This keeps the first ingestion step deterministic, testable, and beginner-friendly.
+
+Verification:
+
+- Backend test suite passes: 32 passed.
+- Frontend tests pass: 8 passed.
+- Frontend TypeScript check passes.
+- Docker Compose config still parses successfully.
+
+### 25. Added pasted SEC filing metadata ingestion
+
+Files added:
+
+- `backend/app/services/sec_ingestion.py`
+- `backend/tests/test_sec_ingestion.py`
+- `backend/tests/test_api_sec_ingestion.py`
+
+Files changed:
+
+- `backend/app/api/schemas.py`
+- `backend/app/api/routes.py`
+- `frontend/app/actions.ts`
+- `frontend/app/documents/page.tsx`
+- `frontend/lib/api.ts`
+- `frontend/lib/form-payloads.ts`
+- `frontend/lib/form-payloads.test.ts`
+
+Why:
+
+- SEC EDGAR is a Tier 1 source in the docs.
+- The roadmap calls for SEC filing metadata before full filing text ingestion.
+- Metadata ingestion gives the system source-backed filing records without handling live SEC network calls yet.
+
+What changed:
+
+- Added a service that accepts supplied SEC filing metadata.
+- Stores each filing as a `RawDocument` with `document_type="sec_filing_metadata"`.
+- Stores accession number, form type, filing date, report date, primary document, filing URL, and content hash.
+- Skips duplicate filings using a stable hash based on accession number, form type, and filing date.
+- Added `POST /ingest/sec-filings`.
+- Added a frontend SEC filing metadata import form on the Documents page.
+
+What this does not do yet:
+
+- It does not call SEC EDGAR live.
+- It does not download filing text.
+- It does not detect filing text changes.
+- It does not auto-create events from filings.
+
+Reason:
+
+- This keeps ingestion deterministic and testable.
+- It also keeps us inside the docs' principle: stable, legal, source-backed inputs first.
+
+Verification:
+
+- Backend test suite passes: 35 passed.
+- Frontend tests pass: 9 passed.
+- Frontend TypeScript check passes.
+- Docker Compose config still parses successfully.
+
+### 26. Added rule-based event extraction
+
+Files added:
+
+- `backend/app/services/event_extraction.py`
+- `backend/tests/test_event_extraction.py`
+- `backend/tests/test_api_event_extraction.py`
+
+Files changed:
+
+- `backend/app/api/schemas.py`
+- `backend/app/api/routes.py`
+- `frontend/app/actions.ts`
+- `frontend/app/events/page.tsx`
+- `frontend/lib/api.ts`
+- `frontend/README.md`
+
+Why:
+
+- Ingestion creates raw documents, but the daily brief is driven by events.
+- A market intelligence system needs a normalized layer between source material and alerts/briefs.
+- Rule-based extraction gives us that layer before AI.
+
+What changed:
+
+- Added a service that creates one event per raw document that does not already have an event.
+- SEC filing metadata becomes `event_type="sec_filing"` with slow information speed and high credibility.
+- RSS items become `event_type="rss_news"` with fast information speed and source-based credibility.
+- Manual/raw documents fall back to a generic `raw_document` event type.
+- Added `POST /extract/events`.
+- Added an Extract Events button on the Events page.
+
+What this does not do yet:
+
+- It does not use AI to summarize documents.
+- It does not detect exact filing language changes.
+- It does not create alerts automatically.
+- The scoring is simple fixed-rule scoring, not a mature ranking model.
+
+Reason:
+
+- This is the correct bridge from source-backed storage to daily briefs.
+- It keeps behavior auditable and testable.
+
+Verification:
+
+- Backend test suite passes: 37 passed.
+- Frontend tests pass: 9 passed.
+- Frontend TypeScript check passes.
+- Docker Compose config still parses successfully.
+
 ## Current project state
 
 Working:
@@ -578,15 +1010,21 @@ Working:
 - `GET /daily-brief` endpoint.
 - Read-only Next.js frontend scaffold.
 - Frontend pages for overview, companies, documents, events, alerts, thesis notes, and daily brief.
+- Docker Compose services for PostgreSQL, backend, frontend, and pgAdmin.
+- Manual frontend create forms for companies, sources, documents, events, alerts, and thesis notes.
+- Manual frontend edit controls for companies, sources, documents, events, alerts, and thesis notes.
+- Manual frontend delete controls for companies, sources, documents, events, alerts, and thesis notes.
+- Persisted daily brief snapshots and daily brief history.
+- Pasted RSS XML ingestion with duplicate detection.
+- Pasted SEC filing metadata ingestion with duplicate detection.
+- Rule-based event extraction from raw documents.
 - Tests for app health, settings, models, Alembic migration, and CRUD.
 
 Not built yet:
 
-- Frontend create/edit/delete forms.
-- Frontend package installation and browser verification in this shell.
-- Persisted daily brief records.
-- SEC ingestion.
-- RSS/news ingestion.
+- Docker build/run verification in this sandbox.
+- Live SEC EDGAR fetching.
+- Live RSS/news fetching.
 - Scoring logic implementation.
 - AI usage.
 
@@ -675,6 +1113,15 @@ Why:
 - Frontend package versions change over time.
 - Guessing framework versions is a bad habit.
 
+### Dockerfiles
+
+Used to make backend and frontend runnable without depending on host Python or host Node package managers.
+
+Why:
+
+- The local shell had missing or blocked frontend tooling.
+- A Docker-based path is more consistent for beginners once Compose is set up.
+
 ## Why the order matters
 
 The build order so far has been:
@@ -689,6 +1136,15 @@ The build order so far has been:
 8. Verify CRUD.
 9. Add the daily brief.
 10. Add a read-only frontend scaffold.
+11. Add Docker services for backend and frontend.
+12. Add manual create forms in the frontend.
+13. Add manual delete controls in the frontend.
+14. Add debug console logs.
+15. Add manual edit controls in the frontend.
+16. Add persisted daily brief snapshots.
+17. Add pasted RSS XML ingestion.
+18. Add pasted SEC filing metadata ingestion.
+19. Add rule-based event extraction from raw documents.
 
 This order prevents a common failure:
 
@@ -702,9 +1158,9 @@ We are building the foundation first because this product depends on trustworthy
 
 Recommended next steps:
 
-1. Make a JavaScript package manager available, then install and run the frontend.
-2. Add basic frontend forms for manual companies, documents, events, alerts, and thesis notes.
-3. Add persisted daily brief records if the frontend needs brief history.
-4. Add SEC/RSS ingestion only after the manual dashboard works.
+1. Restart Docker Compose so the new `daily_briefs` migration runs if it has not already run.
+2. Test pasted RSS XML and SEC metadata import from the Documents page.
+3. Test event extraction from the Events page.
+4. Add automatic alert creation from high-priority events.
 
 I would not start SEC ingestion yet. The manual workflow should be solid first.

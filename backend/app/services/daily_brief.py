@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import Alert, Event, ThesisNote
+from app.models import Alert, DailyBrief, Event, ThesisNote
 
 
 def generate_daily_brief(db: Session, brief_date: date | None = None, limit: int = 10) -> dict[str, Any]:
@@ -43,6 +43,20 @@ def generate_daily_brief(db: Session, brief_date: date | None = None, limit: int
             "Is this new information or repeated noise?",
         ],
     }
+
+
+def save_daily_brief(db: Session, brief_date: date | None = None, limit: int = 10) -> DailyBrief:
+    payload = generate_daily_brief(db, brief_date=brief_date, limit=limit)
+    record = DailyBrief(
+        brief_date=date.fromisoformat(payload["date"]),
+        title=payload["title"],
+        summary=payload["summary"],
+        payload_json=payload,
+    )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+    return record
 
 
 def _event_to_brief_item(event: Event) -> dict[str, Any]:

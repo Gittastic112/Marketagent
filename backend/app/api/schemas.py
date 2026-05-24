@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import date, datetime
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
@@ -180,3 +180,50 @@ class ThesisNoteRead(ThesisNoteCreate):
     id: int
     created_at: datetime
     updated_at: datetime
+
+
+class DailyBriefRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    brief_date: date
+    title: str
+    summary: str
+    payload_json: dict[str, Any]
+    created_at: datetime
+
+
+class RssIngestionCreate(BaseModel):
+    source_id: int
+    company_id: int | None = None
+    rss_xml: str
+
+
+class RssIngestionRead(BaseModel):
+    created: int
+    skipped_duplicates: int
+
+
+class SecFilingMetadataCreate(BaseModel):
+    accession_number: str
+    form_type: str
+    filing_date: date
+    report_date: date | None = None
+    primary_document: str | None = None
+    filing_url: str | None = None
+
+
+class SecFilingIngestionCreate(BaseModel):
+    source_id: int
+    company_id: int
+    filings: list[SecFilingMetadataCreate]
+
+
+class SecFilingIngestionRead(BaseModel):
+    created: int
+    skipped_duplicates: int
+
+
+class EventExtractionRead(BaseModel):
+    created: int
+    skipped_existing: int

@@ -1,10 +1,14 @@
+import { saveDailyBrief } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { fetchApi } from "@/lib/api";
-import type { DailyBrief } from "@/lib/api";
+import type { DailyBrief, SavedDailyBrief } from "@/lib/api";
 
 export default async function DailyBriefPage() {
   try {
-    const brief = await fetchApi<DailyBrief>("/daily-brief");
+    const [brief, savedBriefs] = await Promise.all([
+      fetchApi<DailyBrief>("/daily-brief"),
+      fetchApi<SavedDailyBrief[]>("/daily-brief-history")
+    ]);
 
     return (
       <>
@@ -13,8 +17,37 @@ export default async function DailyBriefPage() {
           <div className="brief-list">
             <div className="brief-item">
               <p>{brief.summary}</p>
+              <form action={saveDailyBrief} className="button-row">
+                <button type="submit">Save brief</button>
+              </form>
             </div>
           </div>
+        </Panel>
+        <Panel title="Saved Briefs">
+          {savedBriefs.length === 0 ? (
+            <EmptyState label="No saved briefs yet." />
+          ) : (
+            <div className="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Summary</th>
+                    <th>Saved</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {savedBriefs.map((savedBrief) => (
+                    <tr key={savedBrief.id}>
+                      <td>{savedBrief.brief_date}</td>
+                      <td>{savedBrief.summary}</td>
+                      <td>{new Date(savedBrief.created_at).toLocaleString()}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </Panel>
         <Panel title="Top Events">
           {brief.top_events.length === 0 ? (

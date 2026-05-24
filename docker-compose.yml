@@ -11,6 +11,41 @@ services:
       - "5432:5432"
     volumes:
       - marketintel_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketintel -d marketintel"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: market_intel_backend
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      APP_ENV: local
+      APP_NAME: Market Intelligence Engine
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: market_intel_frontend
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: http://backend:8000
+      NEXT_PUBLIC_DEBUG_LOGS: "true"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
 
   pgadmin:
     image: dpage/pgadmin4:8

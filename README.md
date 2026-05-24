@@ -71,6 +71,31 @@ Do not build:
 
 ---
 
+## Local Docker run
+
+The simplest local path is Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Services:
+
+| Service | URL |
+|---|---|
+| Frontend | `http://localhost:3000` |
+| Backend API | `http://localhost:8000` |
+| Backend health check | `http://localhost:8000/health` |
+| pgAdmin | `http://localhost:5050` |
+| PostgreSQL | `localhost:5432` |
+
+The backend container uses PostgreSQL through the Docker service name `postgres`.
+The frontend container talks to the backend through the Docker service name `backend`.
+
+When running the backend directly on the laptop instead of inside Docker, use `localhost` in `DATABASE_URL`.
+
+---
+
 ## Folder structure
 
 ```text

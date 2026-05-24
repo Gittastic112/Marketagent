@@ -58,3 +58,25 @@ def test_get_daily_brief_returns_rule_based_brief(client: TestClient) -> None:
     assert body["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
     assert body["top_events"][0]["title"] == "Manual event for brief"
     assert body["top_events"][0]["company"] == "AAPL"
+
+
+def test_post_daily_brief_persists_brief(client: TestClient) -> None:
+    response = client.post("/daily-brief")
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["title"] == "Daily Intelligence Brief"
+    assert body["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
+    assert body["payload_json"]["top_events"][0]["title"] == "Manual event for brief"
+
+
+def test_list_saved_daily_briefs_returns_recent_saved_briefs(client: TestClient) -> None:
+    client.post("/daily-brief")
+
+    response = client.get("/daily-brief-history")
+
+    assert response.status_code == 200
+    body = response.json()
+    assert len(body) == 1
+    assert body[0]["title"] == "Daily Intelligence Brief"
+    assert body[0]["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
