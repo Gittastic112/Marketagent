@@ -27,6 +27,8 @@ services:
       DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
       APP_ENV: local
       APP_NAME: Market Intelligence Engine
+      ALERT_PRIORITY_THRESHOLD: ${ALERT_PRIORITY_THRESHOLD:-70}
+      SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
     ports:
       - "8000:8000"
     depends_on:
@@ -40,8 +42,9 @@ services:
     container_name: market_intel_frontend
     restart: unless-stopped
     environment:
-      NEXT_PUBLIC_API_BASE_URL: http://backend:8000
-      NEXT_PUBLIC_DEBUG_LOGS: "true"
+      API_BASE_URL: http://backend:8000
+      NEXT_PUBLIC_BROWSER_API_BASE_URL: /api/backend
+      NEXT_PUBLIC_DEBUG_LOGS: ${NEXT_PUBLIC_DEBUG_LOGS:-false}
     ports:
       - "3000:3000"
     depends_on:

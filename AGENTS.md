@@ -2,7 +2,7 @@
 
 ## Project
 
-This repo is for a local-first Market Intelligence Engine for public equity research.
+This repo is for a local-first Market Intelligence Engine and portfolio tracker for public equity research.
 
 The user is non-technical and learning from the beginning. Prefer clear, simple, incremental implementation over advanced engineering.
 
@@ -10,11 +10,13 @@ The user is non-technical and learning from the beginning. Prefer clear, simple,
 
 ## Core product idea
 
-The system ingests source material, stores it with provenance, detects changes, scores credibility, and generates useful research outputs.
+The system ingests source material, stores it with provenance, detects changes,
+scores credibility, tracks portfolio exposure, and generates useful research
+outputs.
 
 Core question:
 
-> What changed, why does it matter, how credible is it, and does it affect my thesis?
+> What changed, why does it matter, how credible is it, does it affect my thesis, and how exposed am I through my portfolio?
 
 ---
 
@@ -34,6 +36,9 @@ Initial features:
 8. Change detection
 9. Daily intelligence brief
 10. Simple dashboard
+11. Portfolio holdings and transactions
+12. Manual market prices and portfolio valuation
+13. Exposure and concentration analytics
 
 ---
 
@@ -45,6 +50,8 @@ Do not build:
 - buy/sell recommendations
 - Twitter/X scraping
 - Reddit scraping
+- broker credential storage
+- broker account syncing until OAuth/token security is designed
 - options flow engine
 - real-time market alerts
 - multi-user authentication
@@ -67,7 +74,7 @@ Use:
 - ORM: SQLAlchemy or SQLModel
 - Migrations: Alembic
 - Tests: pytest
-- Formatting/linting: ruff
+- Formatting/linting: ruff planned, not configured yet
 - Environment variables: `.env`
 
 ---
@@ -84,6 +91,23 @@ Use:
 8. Do not add unnecessary dependencies.
 9. Update documentation when architecture changes.
 10. Ask for clarification only if a decision would materially change the project.
+
+---
+
+## Security rules
+
+1. Treat RSS, SEC filing text, CSV imports, markdown, social posts, and AI output as untrusted input.
+2. Do not hardcode secrets, API keys, bearer tokens, broker tokens, or model keys.
+3. Never commit `.env`.
+4. Keep `.env.example` placeholder-only.
+5. Do not store broker passwords directly. Future broker integrations must use official OAuth or token flows.
+6. Do not scrape sources that prohibit scraping or unauthorized automated access.
+7. Use official APIs, licensed data, approved exports, or manual imports.
+8. Do not call live external APIs in tests.
+9. Do not render imported text, markdown, RSS content, social posts, or AI output as trusted HTML.
+10. Do not expose this app beyond localhost until authentication, authorization, CSRF/CORS, rate limiting, HTTPS, and secret handling are deliberately designed.
+11. For CSV import/export, guard against malformed rows and CSV formula injection.
+12. Read `docs/security-threat-model.md` before adding broker, AI, social, file import, or external API features.
 
 ---
 

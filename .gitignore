@@ -1,9 +1,16 @@
 .DS_Store
 .env
 .venv/
+node_modules/
+.next/
 __pycache__/
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
 *.pyc
+*.tsbuildinfo
+dist/
+build/
 frontend/node_modules/
 frontend/.next/
 frontend/.DS_Store

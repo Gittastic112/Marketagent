@@ -9,6 +9,6 @@ app = FastAPI(title=settings.app_name)
 app.include_router(router)
 
 
-@app.get("/health")
+@app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "app": settings.app_name}

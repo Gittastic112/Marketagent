@@ -42,7 +42,7 @@ def test_duplicate_company_ticker_returns_conflict(client: TestClient) -> None:
     response = client.post("/companies", json={"ticker": "AAPL", "name": "Apple Duplicate"})
 
     assert response.status_code == 409
-    assert response.json()["detail"] == "Record already exists"
+    assert response.json()["detail"] == "Company ticker AAPL already exists"
 
 
 def test_duplicate_source_name_returns_conflict(client: TestClient) -> None:
@@ -118,3 +118,95 @@ def test_thesis_note_requires_existing_company(client: TestClient) -> None:
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Company not found"
+
+
+def test_delete_company_with_linked_records_returns_clear_conflict(client: TestClient) -> None:
+    company = client.post("/companies", json={"ticker": "AAPL", "name": "Apple Inc."}).json()
+    source = client.post("/sources", json={"name": "SEC EDGAR", "source_type": "sec"}).json()
+    client.post(
+        "/raw-documents",
+        json={
+            "company_id": company["id"],
+            "source_id": source["id"],
+            "document_type": "sec_filing_metadata",
+            "title": "Apple 10-K",
+            "content_hash": "delete-company-linked-document",
+        },
+    )
+
+    response = client.delete(f"/companies/{company['id']}")
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == (
+        "Company cannot be deleted while it has linked records. "
+        "Delete linked documents, events, alerts, and thesis notes first, or mark the company inactive."
+    )
+
+
+def test_delete_source_with_linked_documents_returns_clear_conflict(client: TestClient) -> None:
+    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    client.post(
+        "/raw-documents",
+        json={
+            "source_id": source["id"],
+            "document_type": "manual_note",
+            "title": "Manual note",
+            "content_hash": "delete-source-linked-document",
+        },
+    )
+
+    response = client.delete(f"/sources/{source['id']}")
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Source cannot be deleted while it has linked raw documents. Delete linked documents first or mark the source inactive."
+
+
+def test_delete_raw_document_with_linked_events_returns_clear_conflict(client: TestClient) -> None:
+    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    document = client.post(
+        "/raw-documents",
+        json={
+            "source_id": source["id"],
+            "document_type": "manual_note",
+            "title": "Manual note",
+            "content_hash": "delete-document-linked-event",
+        },
+    ).json()
+    client.post(
+        "/events",
+        json={
+            "raw_document_id": document["id"],
+            "event_type": "manual_event",
+            "information_speed": "medium",
+            "title": "Linked event",
+        },
+    )
+
+    response = client.delete(f"/raw-documents/{document['id']}")
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Raw document cannot be deleted while it has linked events. Delete linked events first."
+
+
+def test_delete_event_with_linked_alerts_returns_clear_conflict(client: TestClient) -> None:
+    event = client.post(
+        "/events",
+        json={
+            "event_type": "manual_event",
+            "information_speed": "medium",
+            "title": "Linked event",
+        },
+    ).json()
+    client.post(
+        "/alerts",
+        json={
+            "event_id": event["id"],
+            "alert_type": "manual_alert",
+            "title": "Linked alert",
+        },
+    )
+
+    response = client.delete(f"/events/{event['id']}")
+
+    assert response.status_code == 409
+    assert response.json()["detail"] == "Event cannot be deleted while it has linked alerts. Delete linked alerts first."

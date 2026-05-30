@@ -1,9 +1,14 @@
 .DS_Store
+.git
 .env
 .venv
+backend/.venv
 __pycache__
 .pytest_cache
+.ruff_cache
+.mypy_cache
 *.pyc
+*.tsbuildinfo
 frontend/.next
 frontend/node_modules
 frontend/tsconfig.tsbuildinfo

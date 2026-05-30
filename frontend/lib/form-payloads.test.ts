@@ -3,13 +3,18 @@ import { test } from "node:test";
 
 import {
   buildAlertPayload,
+  buildAlertReviewPayload,
   buildCompanyPayload,
   buildEventPayload,
+  buildPortfolioHoldingPayload,
+  buildPortfolioPayload,
+  buildPortfolioTransactionPayload,
   buildRawDocumentPayload,
   buildRssIngestionPayload,
   buildSecFilingIngestionPayload,
   buildSourcePayload,
   buildThesisNotePayload,
+  buildMarketPricePayload,
   getRequiredFormId
 } from "./form-payloads.ts";
 
@@ -19,6 +24,13 @@ test("company form payload trims text and treats blank optional fields as null",
   formData.set("name", " NVIDIA ");
   formData.set("sector", " ");
   formData.set("exchange", "NASDAQ");
+  formData.set("aliases", " Nvidia, GeForce ");
+  formData.set("country", " United States ");
+  formData.set("region", " North America ");
+  formData.set("currency", " usd ");
+  formData.set("asset_type", " equity ");
+  formData.set("security_type", " common_stock ");
+  formData.set("market_cap_category", " mega_cap ");
   formData.set("active", "on");
 
   assert.deepEqual(buildCompanyPayload(formData), {
@@ -28,6 +40,15 @@ test("company form payload trims text and treats blank optional fields as null",
     industry: null,
     exchange: "NASDAQ",
     cik: null,
+    aliases_json: ["Nvidia", "GeForce"],
+    country: "United States",
+    region: "North America",
+    currency: "USD",
+    asset_type: "equity",
+    security_type: "common_stock",
+    market_cap_category: "mega_cap",
+    is_etf: false,
+    etf_provider: null,
     active: true
   });
 });
@@ -37,12 +58,14 @@ test("source form payload converts reliability score to a number", () => {
   formData.set("name", "Manual Research");
   formData.set("source_type", "manual");
   formData.set("reliability_score", "80");
+  formData.set("active", "on");
 
   assert.deepEqual(buildSourcePayload(formData), {
     name: "Manual Research",
     source_type: "manual",
     base_url: null,
-    reliability_score: 80
+    reliability_score: 80,
+    active: true
   });
 });
 
@@ -74,7 +97,8 @@ test("rss ingestion form payload keeps XML text and required source id", () => {
   assert.deepEqual(buildRssIngestionPayload(formData), {
     source_id: 3,
     company_id: null,
-    rss_xml: "<rss><channel /></rss>"
+    rss_xml: "<rss><channel /></rss>",
+    feed_url: null
   });
 });
 
@@ -82,6 +106,7 @@ test("sec filing ingestion form payload parses filing metadata JSON", () => {
   const formData = new FormData();
   formData.set("source_id", "4");
   formData.set("company_id", "2");
+  formData.set("download_text", "on");
   formData.set(
     "filings_json",
     JSON.stringify([
@@ -102,7 +127,30 @@ test("sec filing ingestion form payload parses filing metadata JSON", () => {
         form_type: "10-Q",
         filing_date: "2026-05-24"
       }
-    ]
+    ],
+    form_types: ["10-K", "10-Q", "8-K"],
+    filing_year: null,
+    limit: 40,
+    download_text: true
+  });
+});
+
+test("sec filing ingestion form payload honors selected form and filing year", () => {
+  const formData = new FormData();
+  formData.set("source_id", "4");
+  formData.set("company_id", "2");
+  formData.set("form_type", "10-K");
+  formData.set("filing_year", "2026");
+  formData.set("limit", "10");
+
+  assert.deepEqual(buildSecFilingIngestionPayload(formData), {
+    source_id: 4,
+    company_id: 2,
+    filings: [],
+    form_types: ["10-K"],
+    filing_year: 2026,
+    limit: 10,
+    download_text: false
   });
 });
 
@@ -138,8 +186,13 @@ test("alert and thesis note form payloads keep required ids numeric", () => {
   alertForm.set("title", "Margin risk");
   alertForm.set("confidence_bucket", "medium");
   alertForm.set("review_status", "unreviewed");
+  alertForm.set("review_notes", "Needs a second source.");
 
   assert.equal(buildAlertPayload(alertForm).company_id, 1);
+  assert.deepEqual(buildAlertReviewPayload(alertForm), {
+    review_status: "unreviewed",
+    review_notes: "Needs a second source."
+  });
 
   const thesisForm = new FormData();
   thesisForm.set("company_id", "1");
@@ -155,9 +208,88 @@ test("alert and thesis note form payloads keep required ids numeric", () => {
   });
 });
 
+test("portfolio form payload trims text and keeps base currency uppercase", () => {
+  const formData = new FormData();
+  formData.set("name", " Core Portfolio ");
+  formData.set("base_currency", " usd ");
+  formData.set("description", " Long-term holdings ");
+
+  assert.deepEqual(buildPortfolioPayload(formData), {
+    name: "Core Portfolio",
+    base_currency: "USD",
+    description: "Long-term holdings"
+  });
+});
+
+test("portfolio holding payload converts ids and numeric fields", () => {
+  const formData = new FormData();
+  formData.set("portfolio_id", "1");
+  formData.set("company_id", "");
+  formData.set("ticker", " aapl ");
+  formData.set("quantity", "12.5");
+  formData.set("average_cost", "145.25");
+  formData.set("currency", " usd ");
+  formData.set("as_of_date", "2026-05-26");
+
+  assert.deepEqual(buildPortfolioHoldingPayload(formData), {
+    portfolio_id: 1,
+    company_id: null,
+    ticker: "AAPL",
+    quantity: 12.5,
+    average_cost: 145.25,
+    currency: "USD",
+    as_of_date: "2026-05-26"
+  });
+});
+
+test("portfolio transaction payload converts ids, numeric fields, and notes", () => {
+  const formData = new FormData();
+  formData.set("portfolio_id", "1");
+  formData.set("company_id", "2");
+  formData.set("ticker", " aapl ");
+  formData.set("transaction_type", "buy");
+  formData.set("quantity", "10");
+  formData.set("price", "180.5");
+  formData.set("fees", "1.25");
+  formData.set("currency", " usd ");
+  formData.set("transaction_date", "2026-05-26");
+  formData.set("notes", " Initial entry ");
+
+  assert.deepEqual(buildPortfolioTransactionPayload(formData), {
+    portfolio_id: 1,
+    company_id: 2,
+    ticker: "AAPL",
+    transaction_type: "buy",
+    quantity: 10,
+    price: 180.5,
+    fees: 1.25,
+    currency: "USD",
+    transaction_date: "2026-05-26",
+    notes: "Initial entry"
+  });
+});
+
 test("required form id trims and converts the id field to a number", () => {
   const formData = new FormData();
   formData.set("id", " 42 ");
 
   assert.equal(getRequiredFormId(formData), 42);
 });
+
+test("market price payload converts numeric fields and uppercase strings", () => {
+  const formData = new FormData();
+  formData.set("company_id", "5");
+  formData.set("ticker", " aapl ");
+  formData.set("price", " 150.5 ");
+  formData.set("currency", " usd ");
+  formData.set("as_of_date", " 2026-05-28 ");
+
+  assert.deepEqual(buildMarketPricePayload(formData), {
+    company_id: 5,
+    ticker: "AAPL",
+    price: 150.5,
+    currency: "USD",
+    as_of_date: "2026-05-28"
+  });
+});
+

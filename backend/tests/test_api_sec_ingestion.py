@@ -9,7 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-from app.models import Company, Source
+from app.models import Company, ProcessingRun, Source, ThesisNote
 
 
 @pytest.fixture
@@ -23,9 +23,11 @@ def client() -> Generator[TestClient]:
     Base.metadata.create_all(engine)
 
     with TestingSessionLocal() as db:
+        company = Company(ticker="MSFT", name="Microsoft", cik="0000789019")
         db.add_all([
-            Company(ticker="MSFT", name="Microsoft", cik="0000789019"),
-            Source(name="SEC EDGAR", source_type="sec"),
+            company,
+            Source(name="SEC EDGAR", source_type="sec", reliability_score=95),
+            ThesisNote(company=company, title="Cloud thesis", thesis_text="Cloud demand remains important."),
         ])
         db.commit()
 
@@ -65,8 +67,102 @@ def test_post_sec_ingestion_imports_supplied_metadata(client: TestClient) -> Non
 
     assert response.status_code == 201
     body = response.json()
+    assert body["fetched_count"] == 1
+    assert body["created_count"] == 1
+    assert body["skipped_duplicate_count"] == 0
+    assert body["error_count"] == 0
     assert body["created"] == 1
     assert body["skipped_duplicates"] == 0
+    assert body["events_created"] == 1
+    assert body["events_skipped_existing"] == 0
+    assert body["alerts_created"] == 1
+    assert body["alerts_skipped_existing"] == 0
+
+    documents = client.get("/raw-documents").json()
+    events = client.get("/events").json()
+    alerts = client.get("/alerts").json()
+
+    assert documents[0]["document_type"] == "sec_filing_metadata"
+    assert documents[0]["raw_payload_json"]["accession_number"] == "0000789019-26-000123"
+    assert events[0]["event_type"] == "sec_filing"
+    assert events[0]["priority_score"] >= 70
+    assert alerts[0]["title"] == "Review: MSFT 10-Q filed 2026-05-24"
+
+
+def test_post_sec_ingestion_can_download_filing_text(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeResponse:
+        text = "<html><body>Downloaded SEC filing text</body></html>"
+
+        def raise_for_status(self) -> None:
+            return None
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        assert url == "https://www.sec.gov/example/msft-20260331.htm"
+        return FakeResponse()
+
+    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+
+    response = client.post(
+        "/ingest/sec-filings",
+        json={
+            "source_id": 1,
+            "company_id": 1,
+            "download_text": True,
+            "filings": [
+                {
+                    "accession_number": "0000789019-26-000123",
+                    "form_type": "10-Q",
+                    "filing_date": "2026-05-24",
+                    "report_date": "2026-03-31",
+                    "primary_document": "msft-20260331.htm",
+                    "filing_url": "https://www.sec.gov/example/msft-20260331.htm",
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 201
+    assert response.json()["created_count"] == 1
+
+    documents = client.get("/raw-documents").json()
+    assert documents[0]["raw_text"] == "<html><body>Downloaded SEC filing text</body></html>"
+    assert documents[0]["raw_payload_json"]["text_downloaded"] is True
+
+
+def test_post_sec_ingestion_persists_processing_run(client: TestClient) -> None:
+    response = client.post(
+        "/ingest/sec-filings",
+        json={
+            "source_id": 1,
+            "company_id": 1,
+            "filings": [
+                {
+                    "accession_number": "0000789019-26-000123",
+                    "form_type": "10-Q",
+                    "filing_date": "2026-05-24",
+                    "report_date": "2026-03-31",
+                    "primary_document": "msft-20260331.htm",
+                    "filing_url": "https://www.sec.gov/example/msft-20260331.htm",
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 201
+
+    with next(app.dependency_overrides[get_db]()) as db:
+        run = db.query(ProcessingRun).one()
+
+    assert run.run_type == "sec_ingestion"
+    assert run.source_type == "sec"
+    assert run.source_id == 1
+    assert run.company_id == 1
+    assert run.status == "success"
+    assert run.fetched_count == 1
+    assert run.created_count == 1
+    assert run.skipped_duplicate_count == 0
+    assert run.error_count == 0
+    assert run.finished_at is not None
 
 
 def test_post_sec_ingestion_rejects_missing_company(client: TestClient) -> None:
@@ -81,3 +177,118 @@ def test_post_sec_ingestion_rejects_missing_company(client: TestClient) -> None:
 
     assert response.status_code == 404
     assert response.json()["detail"] == "Company not found"
+
+
+def test_post_recent_sec_ingestion_fetches_by_company_cik(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict:
+            return {
+                "filings": {
+                    "recent": {
+                        "accessionNumber": ["0000789019-26-000123"],
+                        "form": ["10-Q"],
+                        "filingDate": ["2026-05-24"],
+                        "reportDate": ["2026-03-31"],
+                        "primaryDocument": ["msft-20260331.htm"],
+                    }
+                }
+            }
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        assert url == "https://data.sec.gov/submissions/CIK0000789019.json"
+        return FakeResponse()
+
+    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+
+    response = client.post("/ingest/sec-filings/recent", json={"source_id": 1, "company_id": 1})
+
+    assert response.status_code == 201
+    body = response.json()
+    assert body["fetched_count"] == 1
+    assert body["created_count"] == 1
+    assert body["error_count"] == 0
+    assert body["events_created"] == 1
+    assert body["alerts_created"] == 1
+
+
+def test_get_company_sec_filings_preview_filters_form_and_year(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict:
+            return {
+                "filings": {
+                    "recent": {
+                        "accessionNumber": ["0000789019-26-000123", "0000789019-25-000123"],
+                        "form": ["10-K", "10-K"],
+                        "filingDate": ["2026-05-24", "2025-05-24"],
+                        "reportDate": ["2026-03-31", "2025-03-31"],
+                        "primaryDocument": ["msft-2026.htm", "msft-2025.htm"],
+                    }
+                }
+            }
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        assert url == "https://data.sec.gov/submissions/CIK0000789019.json"
+        return FakeResponse()
+
+    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+
+    response = client.get("/companies/1/sec-filings/preview?form_type=10-K&filing_year=2026")
+
+    assert response.status_code == 200
+    assert response.json() == [
+        {
+            "accession_number": "0000789019-26-000123",
+            "form_type": "10-K",
+            "filing_date": "2026-05-24",
+            "report_date": "2026-03-31",
+            "primary_document": "msft-2026.htm",
+            "filing_url": "https://www.sec.gov/Archives/edgar/data/789019/000078901926000123/msft-2026.htm",
+        }
+    ]
+
+
+def test_post_company_lookup_cik_updates_company(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict:
+            return {"0": {"cik_str": 789019, "ticker": "MSFT", "title": "Microsoft Corp."}}
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        assert url == "https://www.sec.gov/files/company_tickers.json"
+        return FakeResponse()
+
+    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    client.patch("/companies/1", json={"cik": None})
+
+    response = client.post("/companies/1/lookup-cik")
+
+    assert response.status_code == 200
+    assert response.json()["cik"] == "0000789019"
+
+
+def test_get_company_lookup_returns_sec_title_and_cik(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            return None
+
+        def json(self) -> dict:
+            return {"0": {"cik_str": 320193, "ticker": "AAPL", "title": "Apple Inc."}}
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        assert url == "https://www.sec.gov/files/company_tickers.json"
+        return FakeResponse()
+
+    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+
+    response = client.get("/companies/lookup?ticker=AAPL")
+
+    assert response.status_code == 200
+    assert response.json() == {"ticker": "AAPL", "name": "Apple Inc.", "cik": "0000320193"}

@@ -39,19 +39,39 @@ def client() -> Generator[TestClient]:
 def test_create_list_and_get_company(client: TestClient) -> None:
     response = client.post(
         "/companies",
-        json={"ticker": "AAPL", "name": "Apple Inc.", "sector": "Technology"},
+        json={
+            "ticker": "AAPL",
+            "name": "Apple Inc.",
+            "sector": "Technology",
+            "aliases_json": ["Apple"],
+            "country": "United States",
+            "region": "North America",
+            "currency": "USD",
+            "asset_type": "equity",
+            "security_type": "common_stock",
+            "market_cap_category": "mega_cap",
+            "is_etf": False,
+            "etf_provider": None,
+        },
     )
 
     assert response.status_code == 201
     created = response.json()
     assert created["ticker"] == "AAPL"
     assert created["active"] is True
+    assert created["aliases_json"] == ["Apple"]
+    assert created["country"] == "United States"
+    assert created["currency"] == "USD"
+    assert created["asset_type"] == "equity"
+    assert created["is_etf"] is False
 
     list_response = client.get("/companies")
     get_response = client.get(f"/companies/{created['id']}")
 
     assert list_response.json()[0]["ticker"] == "AAPL"
     assert get_response.json()["name"] == "Apple Inc."
+    assert get_response.json()["aliases_json"] == ["Apple"]
+    assert get_response.json()["market_cap_category"] == "mega_cap"
 
 
 def test_create_list_and_get_source(client: TestClient) -> None:
@@ -63,9 +83,14 @@ def test_create_list_and_get_source(client: TestClient) -> None:
     assert response.status_code == 201
     created = response.json()
     assert created["name"] == "SEC EDGAR"
+    assert created["active"] is True
 
     assert client.get("/sources").json()[0]["source_type"] == "filing"
     assert client.get(f"/sources/{created['id']}").json()["reliability_score"] == 95
+
+    update_response = client.patch(f"/sources/{created['id']}", json={"active": False})
+    assert update_response.status_code == 200
+    assert update_response.json()["active"] is False
 
 
 def test_create_list_and_get_raw_document(client: TestClient) -> None:

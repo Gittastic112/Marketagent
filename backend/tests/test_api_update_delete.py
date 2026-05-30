@@ -41,13 +41,25 @@ def test_update_and_delete_company(client: TestClient) -> None:
 
     update_response = client.patch(
         f"/companies/{created['id']}",
-        json={"name": "Meta Platforms", "sector": "Communication Services"},
+        json={
+            "name": "Meta Platforms",
+            "sector": "Communication Services",
+            "country": "United States",
+            "region": "North America",
+            "currency": "USD",
+            "asset_type": "equity",
+            "security_type": "common_stock",
+            "market_cap_category": "mega_cap",
+            "is_etf": False,
+        },
     )
     delete_response = client.delete(f"/companies/{created['id']}")
     get_response = client.get(f"/companies/{created['id']}")
 
     assert update_response.status_code == 200
     assert update_response.json()["name"] == "Meta Platforms"
+    assert update_response.json()["country"] == "United States"
+    assert update_response.json()["security_type"] == "common_stock"
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
