@@ -11,8 +11,8 @@ from app.services.daily_brief import generate_daily_brief, save_daily_brief
 router = APIRouter()
 
 
-@router.get("/daily-brief")
-def get_daily_brief(db: Session = Depends(get_db)) -> dict:
+@router.get("/daily-brief", response_model=ApiResponse[dict])
+def get_daily_brief(db: Session = Depends(get_db)):
     return ApiResponse(data=generate_daily_brief(db))
 
 

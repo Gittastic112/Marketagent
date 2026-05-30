@@ -40,6 +40,7 @@ class Company(Base):
     portfolio_holdings = relationship("PortfolioHolding", back_populates="company", lazy="selectin")
     portfolio_transactions = relationship("PortfolioTransaction", back_populates="company", lazy="selectin")
     market_prices = relationship("MarketPrice", back_populates="company", lazy="selectin")
+    market_data = relationship("CompanyMarketData", back_populates="company", lazy="selectin", uselist=False)
     exposure_tags = relationship("ExposureTag", secondary="company_exposure_tags", back_populates="companies", lazy="selectin")
 
 class ExposureTag(Base):

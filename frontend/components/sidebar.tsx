@@ -7,7 +7,10 @@ const navItems = [
   { href: "/narratives", label: "Narratives" },
   { href: "/research", label: "Research" },
   { href: "/valuation", label: "Valuation" },
+  { href: "/alerts", label: "Alerts" },
+  { href: "/events", label: "Events" },
   { href: "/data", label: "Data / Ingestion" },
+  { href: "/data-health", label: "Data Health" },
   { href: "/settings", label: "Settings" }
 ];
 

@@ -48,35 +48,41 @@ This checklist supersedes older development plans and outlines the strict order 
 - [x] Add basic Next.js routing for the new folder structure.
 
 ## Phase 6: Dashboard
-- [ ] Build the Daily Intelligence Brief UI.
-- [ ] Connect dashboard to backend events/alerts.
+- [x] Build the Daily Intelligence Brief UI.
+- [x] Connect dashboard to backend events/alerts.
+- [x] Add ingestion health summary.
+- [x] Add portfolio concentration warnings.
 
 ## Phase 7: Portfolio Page
-- [ ] Build Holdings table and Portfolio summary cards.
-- [ ] Connect to existing portfolio backend routes.
+- [x] Build Holdings table and Portfolio summary cards.
+- [x] Connect to existing portfolio backend routes.
 
 ## Phase 8: Company Intelligence Page
-- [ ] Build the individual `companies/[ticker]` view.
-- [ ] Add Ticker Header, Metric Cards, and SEC filings timeline.
+- [x] Build the individual `companies/[ticker]` view.
+- [x] Add Ticker Header, Metric Cards, and SEC filings timeline.
+- [x] Add Market Data header and Financial Trends.
 
 ## Phase 9: Narrative Page
-- [ ] Create backend models and endpoints for Narratives.
-- [ ] Build Narrative tracking UI and evidence timelines.
+- [x] Create backend models and endpoints for Narratives.
+- [x] Build Narrative tracking UI and evidence timelines.
 
 ## Phase 10: Scoring Breakdown
-- [ ] Create backend models and endpoints for expanded Score types.
-- [ ] Build the `ScoreBreakdown` UI component to explain score formulas.
+- [x] Create backend models and endpoints for expanded Score types.
+- [x] Build the `ScoreBreakdown` UI component to explain score formulas.
+- [x] Integrate visual weighted bar chart into Events page.
 
 ## Phase 11: Valuation Tool
-- [ ] Create backend models and endpoints for Valuation Cases.
-- [ ] Build the frontend DCF UI (Assumptions, Scenarios, Sensitivity tables).
+- [x] Create backend models and endpoints for Valuation Cases.
+- [x] Build the frontend DCF UI (Assumptions, Scenarios, Sensitivity tables).
 
 ## Phase 12: Research Workspace
 - [ ] Create backend models for Research Sessions and Messages.
 - [ ] Build the source-backed AI workspace UI.
 
 ## Phase 13: Data Health Page
-- [ ] Build the Data Health page UI showing API connections and ingestion statuses.
+- [x] Build the Data Health page UI showing API connections and ingestion statuses.
+- [x] Show recent processing runs with success/failure counts.
+- [x] Show ingestion freshness per source type.
 
 ## Phase 14: Polish & Finalize
 - [ ] Add Error, Empty, Stale, and Loading states globally.

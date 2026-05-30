@@ -562,6 +562,26 @@ export type ValuationModel = {
   assumption_sets: DcfAssumptionSet[];
 };
 
+export type ValuationModelCreate = {
+  company_id: number;
+  name: string;
+  description?: string;
+};
+
+export type DcfAssumptionSetCreate = {
+  scenario: string;
+  discount_rate: number;
+  terminal_growth_rate: number;
+  projection_years: number;
+  assumptions_json: {
+    current_fcf: number;
+    shares_outstanding: number;
+    net_debt: number;
+    fcf_growth_rate: number;
+    [key: string]: unknown;
+  };
+};
+
 export async function fetchApi<T>(path: string): Promise<T> {
   logApiStart("GET", path);
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
@@ -575,6 +595,14 @@ export async function fetchApi<T>(path: string): Promise<T> {
 
   logApiSuccess("GET", path, response.status);
   return parseApiResponse<T>(response);
+}
+
+export async function createValuationModel(companyId: number, data: ValuationModelCreate): Promise<ValuationModel> {
+  return postApi<ValuationModel>(`/companies/${companyId}/valuation-models`, data);
+}
+
+export async function createDcfAssumptionSet(modelId: number, data: DcfAssumptionSetCreate): Promise<DcfAssumptionSet> {
+  return postApi<DcfAssumptionSet>(`/valuation-models/${modelId}/assumptions`, data);
 }
 
 export async function lookupCompanyByTicker(ticker: string): Promise<CompanyLookup> {
@@ -685,6 +713,92 @@ export async function deleteApi(path: string): Promise<void> {
   logApiSuccess("DELETE", path, response.status);
 }
 
+export async function deleteScoringConfig(id: number): Promise<void> {
+  const method = "DELETE";
+  const path = `/scoring-configs/${id}`;
+  logApiStart(method, path);
+
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    method,
+  });
+
+  if (!response.ok) {
+    logApiFailure(method, path, response.status);
+    throw await apiError(response);
+  }
+
+  logApiSuccess(method, path, response.status);
+}
+
+// -- Market Data --
+export type CompanyMarketData = {
+  current_price: number | null;
+  change_percent: number | null;
+  volume: number | null;
+  market_cap: number | null;
+  pe_ratio: number | null;
+  fifty_two_week_high: number | null;
+  fifty_two_week_low: number | null;
+  last_updated: string;
+};
+
+export async function fetchMarketQuote(ticker: string): Promise<CompanyMarketData | null> {
+  const method = "GET";
+  const path = `/market/quote/${ticker}`;
+  logApiStart(method, path);
+
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    method,
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) return null;
+    logApiFailure(method, path, response.status);
+    throw await apiError(response);
+  }
+
+  logApiSuccess(method, path, response.status);
+  return parseApiResponse<CompanyMarketData>(response);
+}
+
+// -- Financial Trends --
+export type FinancialMetric = {
+  metric_name: string;
+  value: number;
+  unit: string | null;
+};
+
+export type FinancialPeriod = {
+  period_type: string;
+  year: number;
+  quarter: number | null;
+  report_date: string;
+  metrics: FinancialMetric[];
+};
+
+export async function fetchFinancialTrends(ticker: string): Promise<FinancialPeriod[]> {
+  const method = "GET";
+  const path = `/fundamentals/${ticker}/trends`;
+  logApiStart(method, path);
+
+  const response = await fetch(`${getApiBaseUrl()}${path}`, {
+    method,
+    headers: { Accept: "application/json" },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    if (response.status === 404) return [];
+    logApiFailure(method, path, response.status);
+    throw await apiError(response);
+  }
+
+  logApiSuccess(method, path, response.status);
+  return parseApiResponse<FinancialPeriod[]>(response);
+}
+
 export type ScoringConfig = {
   id: number;
   weight_credibility: number;
@@ -718,3 +832,21 @@ export type TokenStatusResponse = {
 export async function fetchOAuthStatus(): Promise<TokenStatusResponse[]> {
   return fetchApi<TokenStatusResponse[]>("/oauth/status");
 }
+
+export type ProcessingRun = {
+  id: number;
+  run_type: string;
+  source_type: string | null;
+  source_id: number | null;
+  company_id: number | null;
+  started_at: string;
+  finished_at: string | null;
+  status: string;
+  fetched_count: number;
+  created_count: number;
+  skipped_duplicate_count: number;
+  error_count: number;
+  error_details_json: Record<string, unknown> | null;
+  metadata_json: Record<string, unknown> | null;
+  created_at: string;
+};

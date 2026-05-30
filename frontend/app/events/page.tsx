@@ -3,15 +3,17 @@ import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
+import { ScoreBreakdown } from "@/components/score-breakdown";
 import { fetchApi } from "@/lib/api";
-import type { Company, EventRecord, RawDocument } from "@/lib/api";
+import type { Company, EventRecord, RawDocument, ScoringConfig } from "@/lib/api";
 
 export default async function EventsPage() {
   try {
-    const [events, companies, documents] = await Promise.all([
+    const [events, companies, documents, scoringConfig] = await Promise.all([
       fetchApi<EventRecord[]>("/events"),
       fetchApi<Company[]>("/companies"),
-      fetchApi<RawDocument[]>("/raw-documents")
+      fetchApi<RawDocument[]>("/raw-documents"),
+      fetchApi<ScoringConfig>("/scoring-config").catch(() => ({ id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 }))
     ]);
 
     return (
@@ -88,8 +90,11 @@ export default async function EventsPage() {
                       <td>
                         <div className="action-stack">
                           <details className="edit-panel">
-                            <summary>Why this score?</summary>
-                            <ScoreExplanationView explanation={event.score_explanation_json} />
+                            <summary>Score Breakdown</summary>
+                            <ScoreBreakdown event={event} config={scoringConfig} />
+                            <div style={{ marginTop: "0.75rem" }}>
+                              <ScoreExplanationView explanation={event.score_explanation_json} />
+                            </div>
                           </details>
                           <details className="edit-panel">
                             <summary>Edit</summary>

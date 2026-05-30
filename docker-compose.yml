@@ -31,6 +31,9 @@ services:
       SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
     ports:
       - "8000:8000"
+    volumes:
+      - ./backend:/workspace/backend
+      - ./scripts:/workspace/scripts
     depends_on:
       postgres:
         condition: service_healthy
@@ -47,6 +50,8 @@ services:
       NEXT_PUBLIC_DEBUG_LOGS: ${NEXT_PUBLIC_DEBUG_LOGS:-false}
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend:/app
     depends_on:
       - backend
 

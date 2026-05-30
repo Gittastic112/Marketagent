@@ -61,8 +61,12 @@ export function buildCompanyPayload(formData: FormData): JsonPayload {
   };
 }
 
-export function getRequiredFormId(formData: FormData): number {
-  return requiredNumber(formData, "id");
+export function getRequiredFormId(formData: FormData, fieldName: string = "id"): string {
+  const value = formData.get(fieldName);
+  if (!value || typeof value !== "string" || !value.trim()) {
+    throw new Error(`Missing required form field: ${fieldName}`);
+  }
+  return value.trim();
 }
 
 export function buildSourcePayload(formData: FormData): JsonPayload {

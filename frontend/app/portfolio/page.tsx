@@ -1,88 +1,11 @@
-import {
-  createPortfolio,
-  createPortfolioHolding,
-  createPortfolioTransaction,
-  deletePortfolioHoldingWithState,
-  deletePortfolioTransactionWithState,
-  deletePortfolioWithState,
-  updatePortfolio,
-  updatePortfolioHolding,
-  updatePortfolioTransaction
-} from "@/app/actions";
 import Link from "next/link";
-import { DeleteRecordForm } from "@/components/delete-record-form";
-import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { fetchApi } from "@/lib/api";
 import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction, PortfolioValuation, PortfolioAnalytics } from "@/lib/api";
 import { PortfolioAnalyticsDashboard } from "@/components/portfolio-analytics";
 import { CsvImporter } from "@/components/csv-importer";
 
-const transactionTypes = [
-  "buy",
-  "sell",
-  "dividend",
-  "split",
-  "bonus",
-  "deposit",
-  "withdrawal",
-  "fee",
-  "tax",
-  "manual_adjustment"
-];
 
-function numberText(value: number): string {
-  return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
-}
-
-function companyLabel(companyId: number | null, companiesById: Map<number, Company>): string {
-  if (companyId === null) {
-    return "-";
-  }
-  return companiesById.get(companyId)?.ticker ?? `#${companyId}`;
-}
-
-function PortfolioSelect({
-  portfolios,
-  defaultValue,
-  id
-}: {
-  portfolios: Portfolio[];
-  defaultValue?: number;
-  id: string;
-}) {
-  return (
-    <SelectField defaultValue={defaultValue ?? ""} disabled={portfolios.length === 0} id={id} label="Portfolio" name="portfolio_id" required>
-      <option value="">Select portfolio</option>
-      {portfolios.map((portfolio) => (
-        <option key={portfolio.id} value={portfolio.id}>
-          {portfolio.name}
-        </option>
-      ))}
-    </SelectField>
-  );
-}
-
-function CompanySelect({
-  companies,
-  defaultValue,
-  id
-}: {
-  companies: Company[];
-  defaultValue?: number | null;
-  id: string;
-}) {
-  return (
-    <SelectField defaultValue={defaultValue ?? ""} id={id} label="Company" name="company_id">
-      <option value="">Unlinked</option>
-      {companies.map((company) => (
-        <option key={company.id} value={company.id}>
-          {company.ticker}
-        </option>
-      ))}
-    </SelectField>
-  );
-}
 
 export default async function PortfolioPage() {
   try {
@@ -120,119 +43,25 @@ export default async function PortfolioPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Portfolio" title="Portfolio" status={`${portfolios.length} portfolios`} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+          <PageHeader eyebrow="Portfolio Intelligence" title="Overview" status={`${portfolios.length} portfolios`} />
+          <div style={{ marginBottom: "2rem" }}>
+            <Link href="/portfolio/manage" className="btn btn-outline">
+              Manage Data
+            </Link>
+          </div>
+        </div>
 
-        <Panel title="Add Portfolio">
-          <form action={createPortfolio} className="form-grid">
-            <TextField className="field field-wide" id="name" label="Name" name="name" required />
-            <TextField defaultValue="USD" id="base_currency" label="Base Currency" name="base_currency" required />
-            <TextAreaField className="field field-full" id="description" label="Description" name="description" />
-            <div className="button-row">
-              <button type="submit">Add portfolio</button>
+        {portfolios.length === 0 && (
+          <Panel title="Welcome to Portfolio Intelligence">
+            <EmptyState label="No portfolios exist yet." />
+            <div style={{ textAlign: "center", marginTop: "1rem" }}>
+              <Link href="/portfolio/manage" className="btn btn-primary">
+                Create your first portfolio
+              </Link>
             </div>
-          </form>
-        </Panel>
-
-        <Panel title="Add Holding">
-          <form action={createPortfolioHolding} className="form-grid">
-            <PortfolioSelect id="holding-portfolio-id" portfolios={portfolios} />
-            <CompanySelect companies={companies} id="holding-company-id" />
-            <TextField id="holding-ticker" label="Ticker" name="ticker" required />
-            <TextField defaultValue="USD" id="holding-currency" label="Currency" name="currency" required />
-            <TextField id="holding-quantity" label="Quantity" min="0" name="quantity" required step="0.000001" type="number" />
-            <TextField id="holding-average-cost" label="Average Cost" min="0" name="average_cost" required step="0.000001" type="number" />
-            <TextField defaultValue={today} id="holding-as-of-date" label="As Of Date" name="as_of_date" required type="date" />
-            <div className="button-row">
-              <button disabled={portfolios.length === 0} type="submit">Add holding</button>
-            </div>
-          </form>
-        </Panel>
-
-        <Panel title="Add Transaction">
-          <form action={createPortfolioTransaction} className="form-grid">
-            <PortfolioSelect id="transaction-portfolio-id" portfolios={portfolios} />
-            <CompanySelect companies={companies} id="transaction-company-id" />
-            <TextField id="transaction-ticker" label="Ticker" name="ticker" required />
-            <SelectField defaultValue="buy" id="transaction-type" label="Type" name="transaction_type" required>
-              {transactionTypes.map((transactionType) => (
-                <option key={transactionType} value={transactionType}>
-                  {transactionType}
-                </option>
-              ))}
-            </SelectField>
-            <TextField id="transaction-quantity" label="Quantity" min="0" name="quantity" required step="0.000001" type="number" />
-            <TextField id="transaction-price" label="Price" min="0" name="price" required step="0.000001" type="number" />
-            <TextField defaultValue="0" id="transaction-fees" label="Fees" min="0" name="fees" required step="0.000001" type="number" />
-            <TextField defaultValue="USD" id="transaction-currency" label="Currency" name="currency" required />
-            <TextField defaultValue={today} id="transaction-date" label="Date" name="transaction_date" required type="date" />
-            <TextAreaField className="field field-wide" id="transaction-notes" label="Notes" name="notes" />
-            <div className="button-row">
-              <button disabled={portfolios.length === 0} type="submit">Add transaction</button>
-            </div>
-          </form>
-        </Panel>
-
-        <Panel title="Portfolios">
-          {portfolios.length === 0 ? (
-            <EmptyState label="No portfolios yet." />
-          ) : (
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Currency</th>
-                    <th>Description</th>
-                    <th>Total Value</th>
-                    <th>Unrealized P&L</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {portfolios.map((portfolio) => (
-                    <tr key={portfolio.id}>
-                      <td>{portfolio.name}</td>
-                      <td>{portfolio.base_currency}</td>
-                      <td>{portfolio.description ?? "-"}</td>
-                      <td>
-                        {valuationsById.get(portfolio.id)?.total_portfolio_value != null
-                          ? `${portfolio.base_currency} ${numberText(valuationsById.get(portfolio.id)!.total_portfolio_value!)}`
-                          : valuationsById.get(portfolio.id)?.total_market_value != null
-                          ? `${portfolio.base_currency} ${numberText(valuationsById.get(portfolio.id)!.total_market_value!)}`
-                          : "-"}
-                      </td>
-                      <td>
-                        {valuationsById.get(portfolio.id)?.total_unrealized_pnl != null
-                          ? `${portfolio.base_currency} ${numberText(valuationsById.get(portfolio.id)!.total_unrealized_pnl!)}`
-                          : "-"}
-                      </td>
-                      <td>
-                        <div className="action-stack">
-                          <Link className="button secondary-button" href={`/portfolio/${portfolio.id}`} style={{ padding: "0.25rem 0.5rem", fontSize: "0.875rem", textDecoration: "none", display: "inline-block", background: "var(--background-alt)", border: "1px solid var(--border-color)", borderRadius: "var(--radius-sm)" }}>
-                            View Details
-                          </Link>
-                          <details className="edit-panel">
-                            <summary>Edit</summary>
-                            <form action={updatePortfolio} className="inline-form">
-                              <input name="id" type="hidden" value={portfolio.id} />
-                              <TextField defaultValue={portfolio.name} id={`portfolio-name-${portfolio.id}`} label="Name" name="name" required />
-                              <TextField defaultValue={portfolio.base_currency} id={`portfolio-currency-${portfolio.id}`} label="Base Currency" name="base_currency" required />
-                              <TextAreaField className="field field-full" defaultValue={portfolio.description ?? ""} id={`portfolio-description-${portfolio.id}`} label="Description" name="description" />
-                              <div className="button-row">
-                                <button className="secondary-button" type="submit">Save</button>
-                              </div>
-                            </form>
-                          </details>
-                          <DeleteRecordForm action={deletePortfolioWithState} recordId={portfolio.id} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Panel>
+          </Panel>
+        )}
 
         {validAnalytics.map(analytics => {
           const portfolioName = portfoliosById.get(analytics.portfolio_id)?.name ?? `#${analytics.portfolio_id}`;
@@ -334,7 +163,6 @@ export default async function PortfolioPage() {
                     <th>Unrealized P&L</th>
                     <th>Weight</th>
                     <th>As Of</th>
-                    <th>Action</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -374,28 +202,7 @@ export default async function PortfolioPage() {
                         {val?.weight_percent != null ? `${numberText(val.weight_percent)}%` : "-"}
                       </td>
                       <td>{holding.as_of_date}</td>
-                      <td>
-                        <div className="action-stack">
-                          <details className="edit-panel">
-                            <summary>Edit</summary>
-                            <form action={updatePortfolioHolding} className="inline-form">
-                              <input name="id" type="hidden" value={holding.id} />
-                              <PortfolioSelect defaultValue={holding.portfolio_id} id={`holding-portfolio-${holding.id}`} portfolios={portfolios} />
-                              <CompanySelect companies={companies} defaultValue={holding.company_id} id={`holding-company-${holding.id}`} />
-                              <TextField defaultValue={holding.ticker} id={`holding-ticker-${holding.id}`} label="Ticker" name="ticker" required />
-                              <TextField defaultValue={holding.currency} id={`holding-currency-${holding.id}`} label="Currency" name="currency" required />
-                              <TextField defaultValue={holding.quantity} id={`holding-quantity-${holding.id}`} label="Quantity" min="0" name="quantity" required step="0.000001" type="number" />
-                              <TextField defaultValue={holding.average_cost} id={`holding-average-cost-${holding.id}`} label="Average Cost" min="0" name="average_cost" required step="0.000001" type="number" />
-                              <TextField defaultValue={holding.as_of_date} id={`holding-date-${holding.id}`} label="As Of Date" name="as_of_date" required type="date" />
-                              <div className="button-row">
-                                <button className="secondary-button" type="submit">Save</button>
-                              </div>
-                            </form>
-                          </details>
-                          <DeleteRecordForm action={deletePortfolioHoldingWithState} recordId={holding.id} />
-                        </div>
-                      </td>
-                    </tr>
+                      </tr>
                     );
                   })}
                 </tbody>
@@ -403,84 +210,6 @@ export default async function PortfolioPage() {
             </div>
           )}
         </Panel>
-
-        <Panel title="Transactions">
-          {transactions.length === 0 ? (
-            <EmptyState label="No transactions yet." />
-          ) : (
-            <div className="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Portfolio</th>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Ticker</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                    <th>Fees</th>
-                    <th>Notes</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {transactions.map((transaction) => (
-                    <tr key={transaction.id}>
-                      <td>{portfoliosById.get(transaction.portfolio_id)?.name ?? `#${transaction.portfolio_id}`}</td>
-                      <td>{transaction.transaction_date}</td>
-                      <td><span className="badge">{transaction.transaction_type}</span></td>
-                      <td>{transaction.ticker}</td>
-                      <td>{numberText(transaction.quantity)}</td>
-                      <td>
-                        {transaction.currency} {numberText(transaction.price)}
-                      </td>
-                      <td>{numberText(transaction.fees)}</td>
-                      <td>{transaction.notes ?? "-"}</td>
-                      <td>
-                        <div className="action-stack">
-                          <details className="edit-panel">
-                            <summary>Edit</summary>
-                            <form action={updatePortfolioTransaction} className="inline-form">
-                              <input name="id" type="hidden" value={transaction.id} />
-                              <PortfolioSelect defaultValue={transaction.portfolio_id} id={`transaction-portfolio-${transaction.id}`} portfolios={portfolios} />
-                              <CompanySelect companies={companies} defaultValue={transaction.company_id} id={`transaction-company-${transaction.id}`} />
-                              <TextField defaultValue={transaction.ticker} id={`transaction-ticker-${transaction.id}`} label="Ticker" name="ticker" required />
-                              <SelectField defaultValue={transaction.transaction_type} id={`transaction-type-${transaction.id}`} label="Type" name="transaction_type" required>
-                                {transactionTypes.map((transactionType) => (
-                                  <option key={transactionType} value={transactionType}>
-                                    {transactionType}
-                                  </option>
-                                ))}
-                              </SelectField>
-                              <TextField defaultValue={transaction.quantity} id={`transaction-quantity-${transaction.id}`} label="Quantity" min="0" name="quantity" required step="0.000001" type="number" />
-                              <TextField defaultValue={transaction.price} id={`transaction-price-${transaction.id}`} label="Price" min="0" name="price" required step="0.000001" type="number" />
-                              <TextField defaultValue={transaction.fees} id={`transaction-fees-${transaction.id}`} label="Fees" min="0" name="fees" required step="0.000001" type="number" />
-                              <TextField defaultValue={transaction.currency} id={`transaction-currency-${transaction.id}`} label="Currency" name="currency" required />
-                              <TextField defaultValue={transaction.transaction_date} id={`transaction-date-${transaction.id}`} label="Date" name="transaction_date" required type="date" />
-                              <TextAreaField className="field field-full" defaultValue={transaction.notes ?? ""} id={`transaction-notes-${transaction.id}`} label="Notes" name="notes" />
-                              <div className="button-row">
-                                <button className="secondary-button" type="submit">Save</button>
-                              </div>
-                            </form>
-                          </details>
-                          <DeleteRecordForm action={deletePortfolioTransactionWithState} recordId={transaction.id} />
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </Panel>
-
-        <div style={{ marginTop: "2rem" }}>
-          <h3 style={{ marginBottom: "1rem" }}>CSV Imports</h3>
-          <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
-            <CsvImporter title="Import Portfolio Holdings" endpoint="/import/portfolio-holdings" />
-            <CsvImporter title="Import Portfolio Transactions" endpoint="/import/portfolio-transactions" />
-          </div>
-        </div>
       </>
     );
   } catch {

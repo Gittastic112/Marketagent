@@ -95,3 +95,7 @@ Every source record must store:
 - Treat imported CSV, markdown, RSS, social posts, and AI output as untrusted inputs.
 - Do not store broker passwords.
 - Do not sync brokers until OAuth is fully implemented.
+
+## Market Data & Financials
+
+Market Data is ingested via the MarketDataProvider interface (AlphaVantage, FMP). Financial trends are ingested from SEC Company Facts API using the SEC_USER_AGENT.

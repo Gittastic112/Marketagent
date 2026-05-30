@@ -13,7 +13,7 @@ def generate_daily_brief(db: Session, brief_date: date | None = None, limit: int
             select(Event)
             .options(
                 selectinload(Event.company),
-                selectinload(Event.raw_document).selectinload("*"),
+                selectinload(Event.raw_document),
             )
             .order_by(Event.priority_score.desc().nullslast(), Event.created_at.desc())
             .limit(limit)

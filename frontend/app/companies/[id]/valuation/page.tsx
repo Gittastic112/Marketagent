@@ -2,6 +2,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { fetchApi, Company, listValuationModels } from "@/lib/api";
 import { deleteValuationModel } from "@/app/actions";
+import { TextField, TextAreaField } from "@/components/form-fields";
+import { EmptyState, PageHeader, Panel } from "@/components/page";
+import { DeleteRecordForm } from "@/components/delete-record-form";
+
+export const dynamic = "force-dynamic";
 
 export default async function ValuationPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -20,69 +25,71 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
   const models = await listValuationModels(companyId);
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Valuations: {company.ticker}</h1>
-          <p className="text-muted-foreground">{company.name}</p>
+    <>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+        <PageHeader eyebrow={company.ticker} title="Valuation Models" status={`${models.length} model${models.length !== 1 ? "s" : ""}`} />
+        <div style={{ marginBottom: "2rem" }}>
+          <Link href={`/companies/${company.id}`} className="secondary-button">&larr; Back to Company</Link>
         </div>
-        <Link
-          href={`/companies/${company.id}`}
-          className="text-sm font-medium text-blue-600 hover:text-blue-500"
-        >
-          &larr; Back to Dashboard
-        </Link>
       </div>
 
-      <div className="bg-white shadow sm:rounded-lg overflow-hidden">
-        <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-base font-semibold leading-6 text-gray-900">Valuation Models</h3>
-          <div className="mt-4 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-              <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {models.length === 0 ? (
-                  <p className="text-sm text-gray-500">No valuation models found.</p>
-                ) : (
-                  <table className="min-w-full divide-y divide-gray-300">
-                    <thead>
-                      <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Name</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Description</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Assumption Sets</th>
-                        <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-0">
-                          <span className="sr-only">Delete</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {models.map((model) => (
-                        <tr key={model.id}>
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{model.name}</td>
-                          <td className="px-3 py-4 text-sm text-gray-500">{model.description ?? "-"}</td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                            {model.assumption_sets?.length ?? 0} sets
-                          </td>
-                          <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                            <form action={async (data) => {
-                              "use server";
-                              await deleteValuationModel(data, companyId.toString());
-                            }}>
-                              <input type="hidden" name="id" value={model.id} />
-                              <button type="submit" className="text-red-600 hover:text-red-900">
-                                Delete
-                              </button>
-                            </form>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                )}
-              </div>
-            </div>
+      <Panel title="Create New Model">
+        <form action={async (data) => {
+          "use server";
+          const { createValuationModel } = await import("@/app/actions");
+          await createValuationModel(data, companyId.toString());
+        }} className="form-grid">
+          <input type="hidden" name="company_id" value={companyId} />
+          <TextField id="model-name" label="Model Name" name="name" placeholder="e.g. Base DCF 2026" required />
+          <TextField id="model-desc" label="Description" name="description" placeholder="Optional description" />
+          <div className="button-row">
+            <button type="submit">Create Model</button>
           </div>
-        </div>
-      </div>
-    </div>
+        </form>
+      </Panel>
+
+      <Panel title="Valuation Models">
+        {models.length === 0 ? (
+          <EmptyState label="No valuation models created yet." />
+        ) : (
+          <div className="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>Scenarios</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {models.map((model) => (
+                  <tr key={model.id}>
+                    <td>
+                      <Link href={`/companies/${companyId}/valuation/${model.id}`} style={{ color: "var(--accent)", fontWeight: 600 }}>
+                        {model.name}
+                      </Link>
+                    </td>
+                    <td>{model.description ?? "—"}</td>
+                    <td>{model.assumption_sets?.length ?? 0} sets</td>
+                    <td>
+                      <form action={async (data) => {
+                        "use server";
+                        await deleteValuationModel(data, companyId.toString());
+                      }}>
+                        <input type="hidden" name="id" value={model.id} />
+                        <button type="submit" className="secondary-button" style={{ color: "var(--error)", fontSize: "0.8rem" }}>
+                          Delete
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Panel>
+    </>
   );
 }

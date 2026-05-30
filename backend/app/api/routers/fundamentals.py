@@ -1,4 +1,5 @@
 from typing import Sequence
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
@@ -8,7 +9,9 @@ from app.api import schemas
 from app.db.session import get_db
 from app.models.financial import FinancialStatementPeriod, FinancialMetric
 from app.models.company import Company
-from app.api.schemas import ApiResponse
+from app.models.processing_run import ProcessingRun
+from app.api.schemas import ApiResponse, ApiErrorDetail, FinancialPeriodRead
+from app.services.fundamentals import fetch_sec_company_facts, process_sec_facts
 
 router = APIRouter(tags=["fundamentals"])
 
@@ -63,3 +66,55 @@ def delete_financial_period(period_id: int, db: Session = Depends(get_db)) -> No
     
     db.delete(period)
     db.commit()
+
+
+@router.get("/{ticker}/trends", response_model=ApiResponse[list[FinancialPeriodRead]])
+def get_financial_trends(ticker: str, db: Session = Depends(get_db)):
+    company = db.execute(select(Company).where(Company.ticker == ticker)).scalar_one_or_none()
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    periods = db.execute(
+        select(FinancialStatementPeriod)
+        .where(FinancialStatementPeriod.company_id == company.id)
+        .order_by(FinancialStatementPeriod.year.desc(), FinancialStatementPeriod.quarter.desc())
+    ).scalars().all()
+    
+    return ApiResponse(data=[FinancialPeriodRead.model_validate(p) for p in periods])
+
+
+@router.post("/ingest/{ticker}", response_model=ApiResponse[dict])
+async def ingest_fundamentals(ticker: str, db: Session = Depends(get_db)):
+    company = db.execute(select(Company).where(Company.ticker == ticker)).scalar_one_or_none()
+    if not company:
+        raise HTTPException(status_code=404, detail="Company not found")
+
+    if not company.cik:
+        return ApiResponse(data=None, errors=[ApiErrorDetail(code="missing_cik", message="Company does not have a CIK configured.")])
+
+    run = ProcessingRun(
+        run_type="fundamentals_ingestion",
+        company_id=company.id,
+        started_at=datetime.now(timezone.utc),
+        status="running"
+    )
+    db.add(run)
+    db.commit()
+
+    try:
+        facts_data = await fetch_sec_company_facts(company.cik)
+        if facts_data:
+            periods_created, metrics_created = process_sec_facts(db, company.id, facts_data)
+            run.created_count = periods_created + metrics_created
+        
+        run.status = "completed"
+        run.finished_at = datetime.now(timezone.utc)
+        db.commit()
+        return ApiResponse(data={"status": "success", "periods_updated": run.created_count})
+    except Exception as e:
+        run.status = "failed"
+        run.error_count += 1
+        run.error_details_json = {"error": str(e)}
+        run.finished_at = datetime.now(timezone.utc)
+        db.commit()
+        return ApiResponse(data=None, errors=[ApiErrorDetail(code="ingest_failed", message=str(e))])

@@ -638,7 +638,7 @@ export async function updateScoringConfig(formData: FormData) {
 
 export async function createMacroSeries(formData: FormData) {
   const payload = {
-    name: getRequiredFormString(formData, "name"),
+    name: getRequiredFormId(formData, "name"),
     description: formData.get("description") as string | null,
     units: formData.get("units") as string | null,
     frequency: formData.get("frequency") as string | null,
@@ -652,8 +652,8 @@ export async function createMacroSeries(formData: FormData) {
 export async function createMacroObservation(formData: FormData) {
   const seriesId = getRequiredFormId(formData, "series_id");
   const payload = {
-    date_recorded: getRequiredFormString(formData, "date_recorded"),
-    value: parseFloat(getRequiredFormString(formData, "value")),
+    date_recorded: getRequiredFormId(formData, "date_recorded"),
+    value: parseFloat(getRequiredFormId(formData, "value")),
   };
   logAction(`creating macro observation for series ${seriesId}`);
   await postApi(`/macro/${seriesId}/observations`, payload);
@@ -661,7 +661,7 @@ export async function createMacroObservation(formData: FormData) {
   logAction(`created macro observation for series ${seriesId}; revalidated /macro`);
 }
 
-export async function deleteMacroSeriesWithState(state: ActionState, formData: FormData) {
+export async function deleteMacroSeriesWithState(state: FormActionState, formData: FormData) {
   const id = getRequiredFormId(formData, "id");
   try {
     logAction(`deleting macro series ${id}`);
@@ -676,7 +676,7 @@ export async function deleteMacroSeriesWithState(state: ActionState, formData: F
 
 export async function createExposureTag(formData: FormData) {
   const payload = {
-    name: getRequiredFormString(formData, "name"),
+    name: getRequiredFormId(formData, "name"),
     description: formData.get("description") as string | null,
   };
   logAction(`creating exposure tag`);

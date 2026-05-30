@@ -917,3 +917,33 @@ class AiOutputRead(BaseModel):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+class CompanyMarketDataRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    current_price: float | None = None
+    change_percent: float | None = None
+    volume: int | None = None
+    market_cap: float | None = None
+    pe_ratio: float | None = None
+    fifty_two_week_high: float | None = None
+    fifty_two_week_low: float | None = None
+    last_updated: datetime
+
+class MarketPriceRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    date: date = Field(alias="as_of_date")
+    price: float
+
+class FinancialMetricRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    metric_name: str
+    value: float
+    unit: str | None = None
+
+class FinancialPeriodRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    period_type: str
+    year: int
+    quarter: int | None = None
+    report_date: date
+    metrics: list[FinancialMetricRead] = Field(default_factory=list)

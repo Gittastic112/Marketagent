@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     alert_priority_threshold: int = 60
     fred_api_key: str | None = None
     encryption_key: str | None = None
+    market_data_provider: str = "alphavantage"
+    alpha_vantage_api_key: str | None = None
+    fmp_api_key: str | None = None
 
     model_config = SettingsConfigDict(
         env_file=DEFAULT_ENV_FILE,
