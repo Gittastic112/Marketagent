@@ -17,6 +17,19 @@ class MockAIProvider(BaseAIProvider):
             confidence_label="High (Deterministic)"
         )
 
+    def generate_chat_response(self, messages: list[dict], context: str = "") -> AIProviderResult:
+        return AIProviderResult(
+            model_name="mock-model",
+            output_text=(
+                "**Claim:**\nThis is a mocked AI response.\n\n"
+                "**Reasoning:**\nNo API key was provided or tests are running.\n\n"
+                "**Evidence:**\nThe backend is currently using the MockAIProvider.\n\n"
+                "**Confidence:**\nHigh"
+            ),
+            limitations="This is a mocked response.",
+            confidence_label="High (Deterministic)"
+        )
+
     @property
     def provider_name(self) -> str:
         return "mock"

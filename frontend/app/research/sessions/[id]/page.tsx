@@ -50,14 +50,10 @@ export default function SessionDetailPage() {
     setSession((prev: any) => ({ ...prev, messages: [...(prev.messages || []), tempMsg] }));
 
     try {
-      // Send user message
+      // Send user message - the backend will now synchronously generate the AI response
       await api.post(`/research/sessions/${sessionId}/messages`, { role: "user", content });
       
-      // Send mock AI response (since we don't have a real AI integration yet)
-      const aiResponse = "I am an AI assistant analyzing the market data based on your request. (Mock Response)";
-      await api.post(`/research/sessions/${sessionId}/messages`, { role: "assistant", content: aiResponse });
-      
-      // Refresh to get actual messages
+      // Refresh to get both the user message and the AI's actual response
       await fetchSession();
     } catch (err: any) {
       alert("Failed to send message: " + err.message);

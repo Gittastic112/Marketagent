@@ -17,6 +17,11 @@ class BaseAIProvider(ABC):
         """Generates a summary for the given text."""
         pass
         
+    @abstractmethod
+    def generate_chat_response(self, messages: list[dict], context: str = "") -> AIProviderResult:
+        """Generates a chat response given a list of messages {"role": "user"|"assistant", "content": "..."}"""
+        pass
+        
     @property
     @abstractmethod
     def provider_name(self) -> str:
