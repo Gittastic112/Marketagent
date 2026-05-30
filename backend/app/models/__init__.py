@@ -58,3 +58,4 @@ __all__ = [
     "MacroObservation",
     "OAuthToken",
 ]
+from app.models.research import ResearchSession, ResearchMessage

@@ -947,3 +947,34 @@ class FinancialPeriodRead(BaseModel):
     quarter: int | None = None
     report_date: date
     metrics: list[FinancialMetricRead] = Field(default_factory=list)
+
+# --- Research Workspace ---
+
+class ResearchMessageCreate(BaseModel):
+    role: str
+    content: str
+
+class ResearchMessageRead(BaseModel):
+    id: int
+    session_id: int
+    role: str
+    content: str
+    created_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class ResearchSessionCreate(BaseModel):
+    title: str
+
+class ResearchSessionRead(BaseModel):
+    id: int
+    title: str
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        from_attributes = True
+
+class ResearchSessionDetail(ResearchSessionRead):
+    messages: list[ResearchMessageRead] = []

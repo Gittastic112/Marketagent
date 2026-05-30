@@ -24,6 +24,7 @@ export default async function ResearchPage() {
         <PageHeader eyebrow="Source-backed evidence" title="Research Hub" />
         
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
+          <Link href="/research/sessions" className="secondary-button" style={{ backgroundColor: "var(--accent-color)", color: "white" }}>AI Sessions</Link>
           <Link href="/documents" className="secondary-button">All Documents</Link>
           <Link href="/events" className="secondary-button">All Events</Link>
           <Link href="/thesis-notes" className="secondary-button">All Thesis Notes</Link>

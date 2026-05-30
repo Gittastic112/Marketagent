@@ -76,8 +76,8 @@ This checklist supersedes older development plans and outlines the strict order 
 - [x] Build the frontend DCF UI (Assumptions, Scenarios, Sensitivity tables).
 
 ## Phase 12: Research Workspace
-- [ ] Create backend models for Research Sessions and Messages.
-- [ ] Build the source-backed AI workspace UI.
+- [x] Create backend models for Research Sessions and Messages.
+- [x] Build the source-backed AI workspace UI.
 
 ## Phase 13: Data Health Page
 - [x] Build the Data Health page UI showing API connections and ingestion statuses.
@@ -85,9 +85,9 @@ This checklist supersedes older development plans and outlines the strict order 
 - [x] Show ingestion freshness per source type.
 
 ## Phase 14: Polish & Finalize
-- [ ] Add Error, Empty, Stale, and Loading states globally.
-- [ ] Perform final security checks (prevent secret leakage).
-- [ ] Clean up any remaining known issues.
+- [x] Add Error, Empty, Stale, and Loading states globally.
+- [x] Perform final security checks (prevent secret leakage).
+- [x] Clean up any remaining known issues.
 - **Validation:** Run automated security checks (SSRF prevention, CSV escaping, no secrets logged). Ensure all known issues in `docs/known-issues.md` have been addressed.
 - **Checkpoint Command:** `git add . && git commit -m "chore: final polish and security hardening"`
 

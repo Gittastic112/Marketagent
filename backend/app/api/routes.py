@@ -22,6 +22,7 @@ from app.api.routers import (
     exposure_tags,
     data_transfer,
     oauth,
+    research,
 )
 
 
@@ -49,5 +50,6 @@ for route_group in (
     exposure_tags.router,
     data_transfer.router,
     oauth.router,
+    research.router,
 ):
     router.include_router(route_group)
