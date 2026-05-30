@@ -38,6 +38,7 @@ body {
   color: var(--text);
   font-family: 'Inter', sans-serif;
   letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }

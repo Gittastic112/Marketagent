@@ -1,4 +1,15 @@
 import { PortfolioAnalytics } from "@/lib/api";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  BarChart,
+  Bar
+} from "recharts";
 
 function formatMoney(value: number | null, currency: string) {
   if (value === null) return "-";
@@ -10,12 +21,22 @@ function formatPercent(value: number | null) {
   return new Intl.NumberFormat('en-US', { style: 'percent', maximumFractionDigits: 2 }).format(value / 100);
 }
 
-export function PortfolioAnalyticsDashboard({ analytics }: { analytics: PortfolioAnalytics }) {
+export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { analytics: PortfolioAnalytics, snapshots?: any[] }) {
+  const chartData = snapshots.map(s => ({
+    date: s.snapshot_date,
+    value: s.total_market_value != null ? Number(s.total_market_value) : 0
+  })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  
+  const sectorData = Object.entries(analytics.sector_exposure).map(([sector, weight]) => ({
+    name: sector,
+    weight: weight
+  })).sort((a, b) => b.weight - a.weight);
+
   return (
     <div className="analytics-dashboard" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '2rem' }}>
       
       {analytics.diversification_warnings.length > 0 && (
-        <div style={{ backgroundColor: 'var(--color-red-50)', color: 'var(--color-red-900)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--color-red-200)' }}>
+        <div style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--danger)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--danger)' }}>
           <h4 style={{ margin: '0 0 0.5rem 0' }}>⚠️ Diversification Warnings</h4>
           <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
             {analytics.diversification_warnings.map((w, i) => <li key={i}>{w}</li>)}
@@ -23,22 +44,45 @@ export function PortfolioAnalyticsDashboard({ analytics }: { analytics: Portfoli
         </div>
       )}
 
+      {chartData.length > 1 && (
+        <div style={{ height: 300, padding: '1.5rem', borderRadius: '0.5rem', backgroundColor: 'var(--surface)', border: '1px solid var(--line)' }}>
+          <h3 style={{ marginTop: 0, marginBottom: '1rem', fontSize: '1rem', color: 'var(--text)' }}>Historical Performance</h3>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
+              <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--muted)' }} tickLine={false} axisLine={false} />
+              <YAxis 
+                tickFormatter={(val) => new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(val)}
+                tick={{ fontSize: 12, fill: 'var(--muted)' }} 
+                tickLine={false} 
+                axisLine={false} 
+              />
+              <Tooltip 
+                formatter={(value: number) => formatMoney(value, analytics.base_currency)}
+                contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', backgroundColor: 'var(--surface)' }}
+              />
+              <Line type="monotone" dataKey="value" stroke="var(--accent)" strokeWidth={2} dot={false} activeDot={{ r: 6 }} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
+      )}
+
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
-        <div style={{ padding: '1.5rem', border: '1px solid var(--color-gray-200)', borderRadius: '0.5rem', backgroundColor: 'var(--color-white)' }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--color-gray-500)', marginBottom: '0.5rem' }}>Total Portfolio Value</div>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>Total Portfolio Value</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>{formatMoney(analytics.total_portfolio_value, analytics.base_currency)}</div>
         </div>
-        <div style={{ padding: '1.5rem', border: '1px solid var(--color-gray-200)', borderRadius: '0.5rem', backgroundColor: 'var(--color-white)' }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--color-gray-500)', marginBottom: '0.5rem' }}>Total Invested</div>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>Total Invested</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>{formatMoney(analytics.total_invested_value, analytics.base_currency)}</div>
         </div>
-        <div style={{ padding: '1.5rem', border: '1px solid var(--color-gray-200)', borderRadius: '0.5rem', backgroundColor: 'var(--color-white)' }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--color-gray-500)', marginBottom: '0.5rem' }}>Total Cash</div>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>Total Cash</div>
           <div style={{ fontSize: '1.5rem', fontWeight: 600 }}>{formatMoney(analytics.total_cash_value, analytics.base_currency)}</div>
         </div>
-        <div style={{ padding: '1.5rem', border: '1px solid var(--color-gray-200)', borderRadius: '0.5rem', backgroundColor: 'var(--color-white)' }}>
-          <div style={{ fontSize: '0.875rem', color: 'var(--color-gray-500)', marginBottom: '0.5rem' }}>Unrealized P&L</div>
-          <div style={{ fontSize: '1.5rem', fontWeight: 600, color: (analytics.total_unrealized_pnl || 0) >= 0 ? 'var(--color-green-700)' : 'var(--color-red-700)' }}>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>Unrealized P&L</div>
+          <div style={{ fontSize: '1.5rem', fontWeight: 600, color: (analytics.total_unrealized_pnl || 0) >= 0 ? 'var(--success)' : 'var(--danger)' }}>
             {formatMoney(analytics.total_unrealized_pnl, analytics.base_currency)}
             {analytics.total_unrealized_pnl_percent != null && <div style={{ fontSize: '1rem', marginTop: '0.25rem' }}>{formatPercent(analytics.total_unrealized_pnl_percent)}</div>}
           </div>
@@ -73,24 +117,23 @@ export function PortfolioAnalyticsDashboard({ analytics }: { analytics: Portfoli
 
         <div>
           <h3>Sector Exposure</h3>
-          <div className="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Sector</th>
-                  <th>Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(analytics.sector_exposure).sort((a,b) => b[1] - a[1]).map(([sector, weight]) => (
-                  <tr key={sector}>
-                    <td>{sector}</td>
-                    <td>{formatPercent(weight)}</td>
-                  </tr>
-                ))}
-                {Object.keys(analytics.sector_exposure).length === 0 && <tr><td colSpan={2}>No sectors found.</td></tr>}
-              </tbody>
-            </table>
+          <div style={{ height: 250, padding: '1rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+            {sectorData.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={sectorData} layout="vertical" margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--line)" />
+                  <XAxis type="number" tickFormatter={(val) => formatPercent(val)} tick={{ fontSize: 12, fill: 'var(--muted)' }} />
+                  <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
+                  <Tooltip 
+                    formatter={(value: number) => formatPercent(value)} 
+                    contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', backgroundColor: 'var(--surface)' }}
+                  />
+                  <Bar dataKey="weight" fill="var(--accent)" radius={[0, 4, 4, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ color: 'var(--muted)', textAlign: 'center', marginTop: '2rem' }}>No sector data found.</div>
+            )}
           </div>
         </div>
       </div>
@@ -110,7 +153,7 @@ export function PortfolioAnalyticsDashboard({ analytics }: { analytics: Portfoli
                 {analytics.top_gainers.map((p) => (
                   <tr key={p.holding_id}>
                     <td><strong>{p.ticker}</strong></td>
-                    <td style={{ color: 'var(--color-green-700)' }}>
+                    <td style={{ color: 'var(--success)' }}>
                       {formatMoney(p.unrealized_pnl, p.currency)}
                       {p.unrealized_pnl_percent != null && ` (${formatPercent(p.unrealized_pnl_percent)})`}
                     </td>
@@ -136,7 +179,7 @@ export function PortfolioAnalyticsDashboard({ analytics }: { analytics: Portfoli
                 {analytics.top_losers.map((p) => (
                   <tr key={p.holding_id}>
                     <td><strong>{p.ticker}</strong></td>
-                    <td style={{ color: 'var(--color-red-700)' }}>
+                    <td style={{ color: 'var(--danger)' }}>
                       {formatMoney(p.unrealized_pnl, p.currency)}
                       {p.unrealized_pnl_percent != null && ` (${formatPercent(p.unrealized_pnl_percent)})`}
                     </td>

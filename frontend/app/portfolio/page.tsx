@@ -41,6 +41,13 @@ export default async function PortfolioPage() {
     );
     const validAnalytics = analyticsResults.filter((a): a is PortfolioAnalytics => a !== null);
 
+    const snapshotsResults = await Promise.all(
+      portfolios.map((portfolio) =>
+        fetchApi<any[]>(`/portfolio-snapshots?portfolio_id=${portfolio.id}`).catch(() => [])
+      )
+    );
+    const snapshotsById = new Map(portfolios.map((p, i) => [p.id, snapshotsResults[i]]));
+
     return (
       <>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
@@ -65,9 +72,10 @@ export default async function PortfolioPage() {
 
         {validAnalytics.map(analytics => {
           const portfolioName = portfoliosById.get(analytics.portfolio_id)?.name ?? `#${analytics.portfolio_id}`;
+          const snaps = snapshotsById.get(analytics.portfolio_id) || [];
           return (
             <Panel key={analytics.portfolio_id} title={`Analytics: ${portfolioName}`}>
-              <PortfolioAnalyticsDashboard analytics={analytics} />
+              <PortfolioAnalyticsDashboard analytics={analytics} snapshots={snaps} />
             </Panel>
           );
         })}
