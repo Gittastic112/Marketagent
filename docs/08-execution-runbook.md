@@ -43,9 +43,9 @@ This checklist supersedes older development plans and outlines the strict order 
 - **Checkpoint Command:** `git add . && git commit -m "feat: sec user agent and cik lookup"`
 
 ## Phase 5: Frontend App Shell
-- [ ] Build the new global `Sidebar` and `TopBar`.
-- [ ] Implement global page layout components.
-- [ ] Add basic Next.js routing for the new folder structure.
+- [x] Build the new global `Sidebar` and `TopBar`.
+- [x] Implement global page layout components.
+- [x] Add basic Next.js routing for the new folder structure.
 
 ## Phase 6: Dashboard
 - [ ] Build the Daily Intelligence Brief UI.

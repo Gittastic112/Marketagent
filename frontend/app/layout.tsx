@@ -8,33 +8,19 @@ export const metadata: Metadata = {
   description: "Local source-backed market intelligence dashboard"
 };
 
-const navItems = [
-  { href: "/", label: "Overview" },
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/companies", label: "Companies" },
-  { href: "/research", label: "Research" },
-  { href: "/valuation", label: "Valuation" },
-  { href: "/alerts", label: "Alerts" },
-  { href: "/data", label: "Data" },
-  { href: "/settings", label: "Settings" }
-];
+import { Sidebar } from "@/components/sidebar";
+import { TopBar } from "@/components/topbar";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
         <div className="app-shell">
-          <aside className="sidebar">
-            <div className="brand">Market Intelligence Engine</div>
-            <nav className="nav" aria-label="Primary navigation">
-              {navItems.map((item) => (
-                <Link href={item.href} key={item.href}>
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-          </aside>
-          <main className="main">{children}</main>
+          <Sidebar />
+          <div className="main-content-wrapper">
+            <TopBar />
+            <main className="main">{children}</main>
+          </div>
         </div>
       </body>
     </html>
