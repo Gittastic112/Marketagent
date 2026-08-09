@@ -1251,6 +1251,17 @@ class PortfolioValuationHoldingRead(BaseModel):
     total_cost: float
     unrealized_pnl: float | None
     unrealized_pnl_percent: float | None
+    market_value_base: float | None = None
+    total_cost_base: float | None = None
+    unrealized_pnl_base: float | None = None
+    market_fx_rate_to_base: float | None = None
+    market_fx_rate_as_of: date | None = None
+    market_fx_observation_id: int | None = None
+    market_fx_is_stale: bool = False
+    cost_fx_rate_to_base: float | None = None
+    cost_fx_rate_as_of: date | None = None
+    cost_fx_observation_id: int | None = None
+    cost_fx_is_stale: bool = False
     weight_percent: float | None
     is_stale_price: bool
     is_valuation_stale: bool | None = None
@@ -1274,6 +1285,7 @@ class PortfolioValuationRead(BaseModel):
     total_cost_basis: float
     total_unrealized_pnl: float | None
     total_unrealized_pnl_percent: float | None
+    missing_fx_pairs: list[str] = Field(default_factory=list)
     holdings: list[PortfolioValuationHoldingRead]
 class PortfolioAttributionComponent(BaseModel):
     price_movement: float | None

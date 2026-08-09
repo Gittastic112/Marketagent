@@ -5,10 +5,19 @@ from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
 from app.models import MarketPrice, Portfolio, PortfolioHolding, ValuationModel, DcfAssumptionSet, ThesisNote, Alert
+from app.services.fx_rates import FxRateUnavailable, convert_amount
 
 
-def get_latest_price(db: Session, ticker: str, as_of_date: date | None = None) -> MarketPrice | None:
+def get_latest_price(
+    db: Session,
+    ticker: str,
+    as_of_date: date | None = None,
+    *,
+    company_id: int | None = None,
+) -> MarketPrice | None:
     query = select(MarketPrice).where(MarketPrice.ticker == ticker.upper())
+    if company_id is not None:
+        query = query.where(MarketPrice.company_id == company_id)
     if as_of_date:
         query = query.where(MarketPrice.as_of_date <= as_of_date)
     query = query.order_by(MarketPrice.as_of_date.desc(), MarketPrice.id.desc()).limit(1)
@@ -36,6 +45,7 @@ def calculate_portfolio_valuation(
 
     total_market_value = 0.0
     total_cost_basis = 0.0
+    missing_fx_pairs: set[str] = set()
     stale_threshold = timedelta(days=5)
 
     holdings_valuation = []
@@ -46,14 +56,36 @@ def calculate_portfolio_valuation(
         avg_cost = float(holding.average_cost)
         total_cost = qty * avg_cost
 
-        latest_price = get_latest_price(db, holding.ticker, target_date)
+        latest_price = get_latest_price(
+            db,
+            holding.ticker,
+            target_date,
+            company_id=holding.company_id,
+        )
 
         market_price = None
         market_price_as_of = None
         market_value = None
         unrealized_pnl = None
         unrealized_pnl_percent = None
+        market_value_base = None
+        total_cost_base = None
+        unrealized_pnl_base = None
+        market_fx = None
+        cost_fx = None
         is_stale = True
+
+        try:
+            converted_cost, cost_fx = convert_amount(
+                db,
+                total_cost,
+                holding.currency,
+                portfolio.base_currency,
+                holding.as_of_date,
+            )
+            total_cost_base = float(converted_cost)
+        except FxRateUnavailable:
+            missing_fx_pairs.add(f"{holding.currency.upper()}/{portfolio.base_currency.upper()}")
 
         if latest_price:
             market_price = float(latest_price.price)
@@ -64,7 +96,22 @@ def calculate_portfolio_valuation(
                 unrealized_pnl_percent = (unrealized_pnl / total_cost) * 100
 
             is_stale = (target_date - market_price_as_of) > stale_threshold
-            total_market_value += market_value
+            try:
+                converted_market_value, market_fx = convert_amount(
+                    db,
+                    market_value,
+                    latest_price.currency or holding.currency,
+                    portfolio.base_currency,
+                    target_date,
+                )
+                market_value_base = float(converted_market_value)
+            except FxRateUnavailable:
+                missing_fx_pairs.add(
+                    f"{(latest_price.currency or holding.currency).upper()}/{portfolio.base_currency.upper()}"
+                )
+
+            if market_value_base is not None:
+                total_market_value += market_value_base
 
             # Phase 18: Trigger divergence alert check for the company if a new price is pulled
             from app.services.valuation_alert_service import check_price_valuation_divergence
@@ -101,7 +148,10 @@ def calculate_portfolio_valuation(
             active_alerts_query = active_alerts_query.where(Alert.user_id == user_id)
         active_alerts_count = db.scalar(active_alerts_query)
 
-        total_cost_basis += total_cost
+        if total_cost_base is not None:
+            total_cost_basis += total_cost_base
+        if market_value_base is not None and total_cost_base is not None:
+            unrealized_pnl_base = market_value_base - total_cost_base
 
         expected_return = None
         if intrinsic_value is not None and market_price is not None and market_price > 0:
@@ -120,6 +170,17 @@ def calculate_portfolio_valuation(
             "total_cost": total_cost,
             "unrealized_pnl": unrealized_pnl,
             "unrealized_pnl_percent": unrealized_pnl_percent,
+            "market_value_base": market_value_base,
+            "total_cost_base": total_cost_base,
+            "unrealized_pnl_base": unrealized_pnl_base,
+            "market_fx_rate_to_base": float(market_fx.rate) if market_fx else None,
+            "market_fx_rate_as_of": market_fx.as_of_date if market_fx else None,
+            "market_fx_observation_id": market_fx.observation_id if market_fx else None,
+            "market_fx_is_stale": market_fx.is_stale if market_fx else False,
+            "cost_fx_rate_to_base": float(cost_fx.rate) if cost_fx else None,
+            "cost_fx_rate_as_of": cost_fx.as_of_date if cost_fx else None,
+            "cost_fx_observation_id": cost_fx.observation_id if cost_fx else None,
+            "cost_fx_is_stale": cost_fx.is_stale if cost_fx else False,
             "weight_percent": None,  # Will calculate after total_market_value is known
             "is_stale_price": is_stale,
             "is_valuation_stale": is_valuation_stale,
@@ -137,14 +198,17 @@ def calculate_portfolio_valuation(
 
     has_holdings = bool(holdings_valuation)
     has_missing_prices = any(
-        holding["market_value"] is None
+        holding["market_value_base"] is None
         for holding in holdings_valuation
     )
     has_complete_market_value = has_holdings and not has_missing_prices
+    has_complete_cost_basis = has_holdings and all(
+        holding["total_cost_base"] is not None for holding in holdings_valuation
+    )
 
     total_unrealized_pnl = None
     total_unrealized_pnl_percent = None
-    if has_complete_market_value:
+    if has_complete_market_value and has_complete_cost_basis:
         total_unrealized_pnl = total_market_value - total_cost_basis
         if total_cost_basis > 0:
             total_unrealized_pnl_percent = (total_unrealized_pnl / total_cost_basis) * 100
@@ -152,7 +216,7 @@ def calculate_portfolio_valuation(
     # Second pass for weights
     for hv in holdings_valuation:
         if has_complete_market_value and total_market_value > 0:
-            hv["weight_percent"] = (hv["market_value"] / total_market_value) * 100
+            hv["weight_percent"] = (hv["market_value_base"] / total_market_value) * 100
         else:
             hv["weight_percent"] = None
 
@@ -186,5 +250,6 @@ def calculate_portfolio_valuation(
         "total_cost_basis": total_cost_basis,
         "total_unrealized_pnl": total_unrealized_pnl,
         "total_unrealized_pnl_percent": total_unrealized_pnl_percent,
+        "missing_fx_pairs": sorted(missing_fx_pairs),
         "holdings": holdings_valuation,
     }
