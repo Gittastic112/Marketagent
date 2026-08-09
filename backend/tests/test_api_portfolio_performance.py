@@ -1,6 +1,6 @@
 from datetime import date
 
-from app.models import MarketPrice, Portfolio, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
+from app.models import MarketPrice, Portfolio, PortfolioBenchmarkConfig, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
 
 
 def _snapshot(portfolio_id: int, day: date, value: float) -> PortfolioSnapshot:
@@ -86,3 +86,35 @@ def test_snapshot_capture_endpoint_is_idempotent_and_source_labeled(client, db):
     assert first.json()["data"]["id"] == second.json()["data"]["id"]
     assert second.json()["data"]["calculation_status"] == "complete"
     assert second.json()["meta"]["source"] == "point_in_time_portfolio_capture"
+
+
+def test_opportunity_cost_endpoint_uses_configured_benchmark(client, db):
+    portfolio = Portfolio(name="Benchmark API", base_currency="USD")
+    db.add(portfolio)
+    db.flush()
+    start = _snapshot(portfolio.id, date(2026, 8, 1), 100)
+    end = _snapshot(portfolio.id, date(2026, 8, 2), 110)
+    db.add_all(
+        [
+            PortfolioBenchmarkConfig(
+                portfolio_id=portfolio.id,
+                ticker="SPY",
+                currency="USD",
+                provider_name="manual",
+                effective_from=date(2026, 1, 1),
+            ),
+            start,
+            end,
+            MarketPrice(ticker="SPY", price=100, currency="USD", as_of_date=start.snapshot_date),
+            MarketPrice(ticker="SPY", price=120, currency="USD", as_of_date=end.snapshot_date),
+        ]
+    )
+    db.commit()
+
+    response = client.get(
+        f"/portfolios/{portfolio.id}/opportunity-cost?start_date=2026-08-01&end_date=2026-08-02"
+    )
+
+    assert response.status_code == 200, response.text
+    assert response.json()["data"]["opportunity_cost"] == 10
+    assert response.json()["meta"]["source"] == "configured_portfolio_benchmark"

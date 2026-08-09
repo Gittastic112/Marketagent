@@ -42,6 +42,7 @@ from app.api.schemas import (
     PortfolioBenchmarkConfigUpdate,
     PortfolioPerformanceRead,
     PortfolioPeriodAttributionRead,
+    PortfolioOpportunityCostRead,
 )
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
@@ -60,6 +61,7 @@ from app.services.portfolio_analytics import calculate_portfolio_analytics, reco
 from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
 from app.services.portfolio_performance import calculate_money_weighted_return, calculate_time_weighted_return
 from app.services.portfolio_period_attribution import calculate_period_attribution
+from app.services.portfolio_benchmark import calculate_benchmark_opportunity_cost
 
 
 router = APIRouter()
@@ -688,3 +690,29 @@ def get_portfolio_period_attribution(
     if end_date <= start_date:
         raise HTTPException(status_code=422, detail="end_date must be after start_date")
     return ApiResponse(data=calculate_period_attribution(db, portfolio_id, start_date, end_date))
+
+
+@router.get(
+    "/portfolios/{portfolio_id}/opportunity-cost",
+    response_model=ApiResponse[PortfolioOpportunityCostRead],
+)
+def get_portfolio_opportunity_cost(
+    portfolio_id: int,
+    start_date: date,
+    end_date: date,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    if end_date <= start_date:
+        raise HTTPException(status_code=422, detail="end_date must be after start_date")
+    result = calculate_benchmark_opportunity_cost(db, portfolio_id, start_date, end_date)
+    return ApiResponse(
+        data=result,
+        meta={
+            "source": "configured_portfolio_benchmark",
+            "is_stale": result["calculation_status"] != "complete",
+            "warnings": result["warnings"],
+            "confidence": "high" if result["calculation_status"] == "complete" else "low",
+        },
+    )

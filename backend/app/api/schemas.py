@@ -1389,6 +1389,25 @@ class PortfolioPeriodAttributionRead(BaseModel):
     source_transaction_ids: list[int] = Field(default_factory=list)
 
 
+class PortfolioOpportunityCostRead(BaseModel):
+    calculation_status: Literal["complete", "not_available", "not_configured"]
+    portfolio_id: int
+    start_date: date
+    end_date: date
+    benchmark_ticker: str | None
+    benchmark_return: float | None
+    portfolio_return: float | None
+    return_spread: float | None
+    benchmark_ending_value: float | None
+    actual_ending_value: float | None
+    opportunity_cost: float | None
+    opportunity_cost_percent: float | None
+    warnings: list[str] = Field(default_factory=list)
+    source_snapshot_ids: list[int] = Field(default_factory=list)
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    source_transaction_ids: list[int] = Field(default_factory=list)
+
+
 class PortfolioAnalyticsRead(BaseModel):
     portfolio_id: int
     as_of_date: date
