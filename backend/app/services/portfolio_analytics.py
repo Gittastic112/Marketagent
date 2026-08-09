@@ -8,6 +8,10 @@ from app.models import Company, PortfolioSnapshot
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 
 
+def _snapshot_json_value(value: Any) -> Any:
+    return value.isoformat() if isinstance(value, date) else value
+
+
 def record_daily_snapshot(db: Session, portfolio_id: int, as_of_date: date | None = None) -> PortfolioSnapshot:
     target_date = as_of_date or date.today()
     existing_snapshot = db.scalar(
@@ -42,7 +46,40 @@ def record_daily_snapshot(db: Session, portfolio_id: int, as_of_date: date | Non
             "total_market_value": valuation["total_market_value"],
             "total_cash_value": valuation["total_cash_value"],
             "total_cost_basis": valuation["total_cost_basis"],
-        }
+        },
+        "holdings": [
+            {
+                key: _snapshot_json_value(holding.get(key))
+                for key in (
+                    "holding_id",
+                    "company_id",
+                    "ticker",
+                    "quantity",
+                    "currency",
+                    "market_price",
+                    "market_price_id",
+                    "market_price_provider",
+                    "market_price_as_of",
+                    "market_value",
+                    "market_value_base",
+                    "total_cost",
+                    "total_cost_base",
+                    "unrealized_pnl_base",
+                    "weight_percent",
+                    "market_fx_rate_to_base",
+                    "market_fx_rate_as_of",
+                    "market_fx_observation_id",
+                    "cost_fx_rate_to_base",
+                    "cost_fx_rate_as_of",
+                    "cost_fx_observation_id",
+                )
+            }
+            for holding in holdings
+        ],
+        "cash_balances": [
+            {key: _snapshot_json_value(value) for key, value in cash.items()}
+            for cash in valuation.get("cash_balances", [])
+        ],
     }
 
     if existing_snapshot:

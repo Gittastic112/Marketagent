@@ -165,6 +165,8 @@ def calculate_portfolio_valuation(
             "average_cost": avg_cost,
             "currency": holding.currency,
             "market_price": market_price,
+            "market_price_id": latest_price.id if latest_price else None,
+            "market_price_provider": latest_price.provider_name if latest_price else None,
             "market_price_as_of": market_price_as_of,
             "market_value": market_value,
             "total_cost": total_cost,

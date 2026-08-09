@@ -35,6 +35,11 @@ def test_snapshot_capture_is_idempotent_and_records_completeness(db):
     assert second.holdings_count == 1
     assert second.priced_holdings_count == 1
     assert second.total_portfolio_value == 24
+    holding_payload = second.payload_json["holdings"][0]
+    assert holding_payload["ticker"] == "READY"
+    assert holding_payload["market_price_id"] is not None
+    assert holding_payload["market_price_provider"] == "manual"
+    assert holding_payload["market_price_as_of"] == "2026-08-09"
     assert db.query(PortfolioSnapshot).count() == 1
 
 

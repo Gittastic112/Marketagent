@@ -1246,6 +1246,8 @@ class PortfolioValuationHoldingRead(BaseModel):
     average_cost: float
     currency: str
     market_price: float | None
+    market_price_id: int | None = None
+    market_price_provider: str | None = None
     market_price_as_of: date | None
     market_value: float | None
     total_cost: float
