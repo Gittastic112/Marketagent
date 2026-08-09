@@ -1275,17 +1275,30 @@ class PortfolioValuationHoldingRead(BaseModel):
     active_alerts_count: int | None = 0
 
 
+class PortfolioCashValuationRead(BaseModel):
+    cash_balance_id: int
+    currency: str
+    amount: float
+    as_of_date: date
+    value_base: float | None
+    fx_rate_to_base: float | None
+    fx_rate_as_of: date | None
+    fx_observation_id: int | None
+    fx_is_stale: bool = False
+
+
 class PortfolioValuationRead(BaseModel):
     portfolio_id: int
     as_of_date: date
     base_currency: str
     total_market_value: float | None
     total_portfolio_value: float | None
-    total_cash_value: float
+    total_cash_value: float | None
     total_cost_basis: float
     total_unrealized_pnl: float | None
     total_unrealized_pnl_percent: float | None
     missing_fx_pairs: list[str] = Field(default_factory=list)
+    cash_balances: list[PortfolioCashValuationRead] = Field(default_factory=list)
     holdings: list[PortfolioValuationHoldingRead]
 class PortfolioAttributionComponent(BaseModel):
     price_movement: float | None
@@ -1323,7 +1336,7 @@ class PortfolioAnalyticsRead(BaseModel):
     as_of_date: date
     base_currency: str
     total_portfolio_value: float | None
-    total_cash_value: float
+    total_cash_value: float | None
     total_invested_value: float | None
     total_unrealized_pnl: float | None
     total_unrealized_pnl_percent: float | None
@@ -1340,6 +1353,7 @@ class PortfolioAnalyticsRead(BaseModel):
     fx_impact: float | None = None
     opportunity_cost: float | None = None
     opportunity_cost_percent: float | None = None
+    missing_fx_pairs: list[str] = Field(default_factory=list)
 
 
 class DashboardOverviewRead(BaseModel):

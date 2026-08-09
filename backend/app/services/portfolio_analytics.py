@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import Company, PortfolioCashBalance, PortfolioSnapshot
+from app.models import Company, PortfolioSnapshot
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
 
@@ -66,20 +66,13 @@ def calculate_portfolio_analytics(
         user_id=user_id,
     )
 
-    # 2. Get Cash Balance
-    cash_record = db.scalar(
-        select(PortfolioCashBalance)
-        .where(PortfolioCashBalance.portfolio_id == portfolio_id)
-        .where(PortfolioCashBalance.as_of_date <= target_date)
-        .order_by(PortfolioCashBalance.as_of_date.desc(), PortfolioCashBalance.id.desc())
-        .limit(1)
-    )
-    total_cash_value = float(cash_record.amount) if cash_record else 0.0
+    # 2. Cash is already converted and completeness-checked by valuation.
+    total_cash_value = valuation["total_cash_value"]
 
     # 3. Calculate Totals
     total_invested_value = valuation["total_market_value"]
     total_portfolio_value = None
-    if total_invested_value is not None:
+    if total_invested_value is not None and total_cash_value is not None:
         total_portfolio_value = total_invested_value + total_cash_value
 
     # 4. Fetch Company classifications for exposures
@@ -167,4 +160,5 @@ def calculate_portfolio_analytics(
         "fx_impact": None,
         "opportunity_cost": None,
         "opportunity_cost_percent": None,
+        "missing_fx_pairs": valuation.get("missing_fx_pairs", []),
     }

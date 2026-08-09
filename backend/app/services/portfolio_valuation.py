@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import select, func
 from sqlalchemy.orm import Session
 
-from app.models import MarketPrice, Portfolio, PortfolioHolding, ValuationModel, DcfAssumptionSet, ThesisNote, Alert
+from app.models import Alert, DcfAssumptionSet, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding, ThesisNote, ValuationModel
 from app.services.fx_rates import FxRateUnavailable, convert_amount
 
 
@@ -223,21 +223,55 @@ def calculate_portfolio_valuation(
     # Sort holdings by weight descending
     holdings_valuation.sort(key=lambda x: x["weight_percent"] or 0, reverse=True)
 
-    # Fetch Cash Balance
-    from app.models import PortfolioCashBalance
-    cash_record = db.scalar(
+    cash_records = list(db.scalars(
         select(PortfolioCashBalance)
         .where(PortfolioCashBalance.portfolio_id == portfolio_id)
         .where(PortfolioCashBalance.as_of_date <= target_date)
         .order_by(PortfolioCashBalance.as_of_date.desc(), PortfolioCashBalance.id.desc())
-        .limit(1)
-    )
-    total_cash_value = float(cash_record.amount) if cash_record else 0.0
+    ))
+    latest_cash_by_currency: dict[str, PortfolioCashBalance] = {}
+    for cash_record in cash_records:
+        latest_cash_by_currency.setdefault(cash_record.currency.upper(), cash_record)
+
+    cash_valuations = []
+    total_cash_value = 0.0
+    cash_complete = True
+    for currency, cash_record in sorted(latest_cash_by_currency.items()):
+        value_base = None
+        cash_fx = None
+        try:
+            converted_cash, cash_fx = convert_amount(
+                db,
+                cash_record.amount,
+                currency,
+                portfolio.base_currency,
+                target_date,
+            )
+            value_base = float(converted_cash)
+            total_cash_value += value_base
+        except FxRateUnavailable:
+            cash_complete = False
+            missing_fx_pairs.add(f"{currency}/{portfolio.base_currency.upper()}")
+        cash_valuations.append(
+            {
+                "cash_balance_id": cash_record.id,
+                "currency": currency,
+                "amount": float(cash_record.amount),
+                "as_of_date": cash_record.as_of_date,
+                "value_base": value_base,
+                "fx_rate_to_base": float(cash_fx.rate) if cash_fx else None,
+                "fx_rate_as_of": cash_fx.as_of_date if cash_fx else None,
+                "fx_observation_id": cash_fx.observation_id if cash_fx else None,
+                "fx_is_stale": cash_fx.is_stale if cash_fx else False,
+            }
+        )
+    if not cash_complete:
+        total_cash_value = None
 
     total_portfolio_value = None
-    if has_complete_market_value:
+    if has_complete_market_value and cash_complete:
         total_portfolio_value = total_market_value + total_cash_value
-    elif not has_holdings and cash_record is not None:
+    elif not has_holdings and latest_cash_by_currency and cash_complete:
         total_portfolio_value = total_cash_value
 
     return {
@@ -251,5 +285,6 @@ def calculate_portfolio_valuation(
         "total_unrealized_pnl": total_unrealized_pnl,
         "total_unrealized_pnl_percent": total_unrealized_pnl_percent,
         "missing_fx_pairs": sorted(missing_fx_pairs),
+        "cash_balances": cash_valuations,
         "holdings": holdings_valuation,
     }
