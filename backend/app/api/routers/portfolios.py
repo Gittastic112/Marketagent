@@ -37,10 +37,21 @@ from app.api.schemas import (
     PortfolioValuationRead,
     PortfolioAnalyticsRead,
     PortfolioAttributionRead,
+    PortfolioBenchmarkConfigCreate,
+    PortfolioBenchmarkConfigRead,
+    PortfolioBenchmarkConfigUpdate,
 )
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
-from app.models import Portfolio, PortfolioCashBalance, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
+from app.models import (
+    Company,
+    Portfolio,
+    PortfolioBenchmarkConfig,
+    PortfolioCashBalance,
+    PortfolioHolding,
+    PortfolioSnapshot,
+    PortfolioTransaction,
+)
 from app.services.portfolio_holdings import apply_transaction_to_holding, apply_transaction_to_cash
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 from app.services.portfolio_analytics import calculate_portfolio_analytics
@@ -104,6 +115,11 @@ def require_owned_payload_portfolio(
         get_owned_portfolio(db, portfolio_id, user_id)
 
 
+def validate_benchmark_company(db: Session, company_id: int | None) -> None:
+    if company_id is not None and db.get(Company, company_id) is None:
+        raise HTTPException(status_code=422, detail="Benchmark company not found")
+
+
 @router.post("/portfolios", response_model=ApiResponse[PortfolioRead], status_code=status.HTTP_201_CREATED)
 def create_portfolio(payload: PortfolioCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Portfolio:
     normalize_portfolio_symbol_fields(payload)
@@ -138,6 +154,97 @@ def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db), current_u
             ),
         )
     delete_record(db, portfolio)
+
+
+@router.post(
+    "/portfolio-benchmarks",
+    response_model=ApiResponse[PortfolioBenchmarkConfigRead],
+    status_code=status.HTTP_201_CREATED,
+)
+def create_portfolio_benchmark(
+    payload: PortfolioBenchmarkConfigCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[PortfolioBenchmarkConfig]:
+    get_owned_portfolio(db, payload.portfolio_id, current_user["id"])
+    validate_benchmark_company(db, payload.benchmark_company_id)
+    return ApiResponse(data=create_record(db, PortfolioBenchmarkConfig, payload))
+
+
+@router.get(
+    "/portfolio-benchmarks",
+    response_model=ApiResponse[list[PortfolioBenchmarkConfigRead]],
+)
+def list_portfolio_benchmarks(
+    portfolio_id: int | None = None,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[list[PortfolioBenchmarkConfig]]:
+    query = (
+        select(PortfolioBenchmarkConfig)
+        .join(Portfolio, PortfolioBenchmarkConfig.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioBenchmarkConfig.id)
+    )
+    if portfolio_id is not None:
+        query = query.where(PortfolioBenchmarkConfig.portfolio_id == portfolio_id)
+    return ApiResponse(data=list(db.scalars(query)))
+
+
+@router.get(
+    "/portfolio-benchmarks/{benchmark_id}",
+    response_model=ApiResponse[PortfolioBenchmarkConfigRead],
+)
+def get_portfolio_benchmark(
+    benchmark_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[PortfolioBenchmarkConfig]:
+    return ApiResponse(
+        data=get_owned_portfolio_child(
+            db,
+            PortfolioBenchmarkConfig,
+            benchmark_id,
+            current_user["id"],
+        )
+    )
+
+
+@router.patch(
+    "/portfolio-benchmarks/{benchmark_id}",
+    response_model=ApiResponse[PortfolioBenchmarkConfigRead],
+)
+def update_portfolio_benchmark(
+    benchmark_id: int,
+    payload: PortfolioBenchmarkConfigUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[PortfolioBenchmarkConfig]:
+    benchmark = get_owned_portfolio_child(
+        db,
+        PortfolioBenchmarkConfig,
+        benchmark_id,
+        current_user["id"],
+    )
+    validate_benchmark_company(db, payload.benchmark_company_id)
+    return ApiResponse(data=update_record(db, benchmark, payload))
+
+
+@router.delete("/portfolio-benchmarks/{benchmark_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_portfolio_benchmark(
+    benchmark_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> None:
+    delete_record(
+        db,
+        get_owned_portfolio_child(
+            db,
+            PortfolioBenchmarkConfig,
+            benchmark_id,
+            current_user["id"],
+        ),
+    )
 
 
 @router.post("/portfolio-holdings", response_model=ApiResponse[PortfolioHoldingRead], status_code=status.HTTP_201_CREATED)
