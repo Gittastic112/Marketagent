@@ -40,6 +40,8 @@ from app.api.schemas import (
     PortfolioBenchmarkConfigCreate,
     PortfolioBenchmarkConfigRead,
     PortfolioBenchmarkConfigUpdate,
+    PortfolioPerformanceRead,
+    PortfolioPeriodAttributionRead,
 )
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
@@ -56,6 +58,8 @@ from app.services.portfolio_holdings import apply_transaction_to_holding, apply_
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 from app.services.portfolio_analytics import calculate_portfolio_analytics
 from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
+from app.services.portfolio_performance import calculate_money_weighted_return, calculate_time_weighted_return
+from app.services.portfolio_period_attribution import calculate_period_attribution
 
 
 router = APIRouter()
@@ -611,3 +615,47 @@ def get_portfolio_attribution(
             code="PORTFOLIO_ATTRIBUTION_DATA_NOT_FOUND",
             message="Portfolio attribution data was not found for the requested date.",
         ) from exc
+
+
+@router.get(
+    "/portfolios/{portfolio_id}/performance",
+    response_model=ApiResponse[PortfolioPerformanceRead],
+)
+def get_portfolio_performance(
+    portfolio_id: int,
+    start_date: date,
+    end_date: date,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    if end_date <= start_date:
+        raise HTTPException(status_code=422, detail="end_date must be after start_date")
+    twr = calculate_time_weighted_return(db, portfolio_id, start_date, end_date)
+    mwr = calculate_money_weighted_return(db, portfolio_id, end_date)
+    return ApiResponse(
+        data={
+            "portfolio_id": portfolio_id,
+            "requested_start_date": start_date,
+            "requested_end_date": end_date,
+            "time_weighted_return": twr,
+            "money_weighted_return": mwr,
+        }
+    )
+
+
+@router.get(
+    "/portfolios/{portfolio_id}/period-attribution",
+    response_model=ApiResponse[PortfolioPeriodAttributionRead],
+)
+def get_portfolio_period_attribution(
+    portfolio_id: int,
+    start_date: date,
+    end_date: date,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    if end_date <= start_date:
+        raise HTTPException(status_code=422, detail="end_date must be after start_date")
+    return ApiResponse(data=calculate_period_attribution(db, portfolio_id, start_date, end_date))

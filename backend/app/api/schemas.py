@@ -1333,6 +1333,62 @@ class PortfolioAttributionRead(BaseModel):
     warnings: list[str]
 
 
+class PortfolioReturnMetricRead(BaseModel):
+    calculation_status: Literal["complete", "partial", "not_available"]
+    return_decimal: float | None
+    start_date: date | None
+    end_date: date
+    warnings: list[str] = Field(default_factory=list)
+    source_snapshot_ids: list[int] = Field(default_factory=list)
+    source_transaction_ids: list[int] = Field(default_factory=list)
+
+
+class PortfolioPerformanceRead(BaseModel):
+    portfolio_id: int
+    requested_start_date: date
+    requested_end_date: date
+    time_weighted_return: PortfolioReturnMetricRead
+    money_weighted_return: PortfolioReturnMetricRead
+
+
+class PortfolioPeriodHoldingAttributionRead(BaseModel):
+    key: str
+    company_id: int | None = None
+    ticker: str | None = None
+    price_movement: float | None = None
+    fx_impact: float | None = None
+    position_change: float | None = None
+    total_contribution: float | None = None
+    calculation_status: Literal["complete", "partial", "not_available"]
+
+
+class PortfolioPeriodAttributionRead(BaseModel):
+    portfolio_id: int
+    start_date: date
+    end_date: date
+    base_currency: str | None
+    calculation_status: Literal["complete", "partial", "not_available"]
+    confidence: Literal["high", "medium", "low", "invalid"]
+    formula: str
+    total_change: float | None
+    price_movement: float | None
+    fx_impact: float | None
+    position_change: float | None
+    cash_change: float | None
+    external_cash_flow: float | None
+    internal_cash_change: float | None
+    unexplained_change: float | None
+    holdings: list[PortfolioPeriodHoldingAttributionRead] = Field(default_factory=list)
+    attribution_by_sector: dict[str, float] = Field(default_factory=dict)
+    attribution_by_geography: dict[str, float] = Field(default_factory=dict)
+    attribution_by_asset_type: dict[str, float] = Field(default_factory=dict)
+    attribution_by_tag: dict[str, float] = Field(default_factory=dict)
+    warnings: list[str] = Field(default_factory=list)
+    blockers: list[str] = Field(default_factory=list)
+    source_snapshot_ids: list[int] = Field(default_factory=list)
+    source_transaction_ids: list[int] = Field(default_factory=list)
+
+
 class PortfolioAnalyticsRead(BaseModel):
     portfolio_id: int
     as_of_date: date
