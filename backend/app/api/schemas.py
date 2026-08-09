@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any, Literal, Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
 T = TypeVar("T")
 
@@ -2842,10 +2842,26 @@ class FinancialStatementIdentityReportRead(BaseModel):
     periods: list[FinancialStatementIdentityPeriodRead] = Field(default_factory=list)
 
 class MarketRegimeInputCreate(BaseModel):
-    metric_name: str
-    value: float
+    metric_name: Literal["options", "liquidity", "volume", "breadth", "macro"]
+    value: float = Field(ge=-100, le=100)
     as_of_date: date
-    source_url: str | None = None
+    source_url: HttpUrl | None = None
+    source_name: str = Field(min_length=2, max_length=200)
+    input_type: Literal["manual", "provider"] = "manual"
+    methodology: str = Field(min_length=10, max_length=1000)
+
+    @field_validator("as_of_date")
+    @classmethod
+    def reject_future_observations(cls, value: date) -> date:
+        if value > date.today():
+            raise ValueError("as_of_date cannot be in the future")
+        return value
+
+    @model_validator(mode="after")
+    def require_provider_source_url(self):
+        if self.input_type == "provider" and self.source_url is None:
+            raise ValueError("provider inputs require source_url")
+        return self
 
 class MarketRegimeInputRead(MarketRegimeInputCreate):
     id: int

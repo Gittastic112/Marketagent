@@ -43,7 +43,10 @@ def submit_market_regime_input(
         metric_name=payload.metric_name,
         value=payload.value,
         as_of_date=payload.as_of_date,
-        source_url=payload.source_url
+        source_url=str(payload.source_url) if payload.source_url is not None else None,
+        source_name=payload.source_name,
+        input_type=payload.input_type,
+        methodology=payload.methodology,
     )
     db.add(db_input)
     db.commit()
