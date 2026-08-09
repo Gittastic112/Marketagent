@@ -91,7 +91,9 @@ def calculate_period_attribution(
     end_holdings = _holdings(end)
     holding_results: list[dict] = []
     total_price_movement = 0.0
+    total_fx_impact = 0.0
     price_complete = True
+    fx_complete = True
     for key in sorted(set(start_holdings).intersection(end_holdings)):
         beginning = start_holdings[key]
         ending = end_holdings[key]
@@ -100,9 +102,11 @@ def calculate_period_attribution(
             beginning.get("market_price"),
             ending.get("market_price"),
             beginning.get("market_fx_rate_to_base"),
+            ending.get("market_fx_rate_to_base"),
         )
         if any(value is None for value in required) or beginning.get("currency") != ending.get("currency"):
             price_complete = False
+            fx_complete = False
             holding_results.append(
                 {
                     "key": key,
@@ -120,12 +124,21 @@ def calculate_period_attribution(
             * float(beginning["market_fx_rate_to_base"])
         )
         total_price_movement += price_movement
+        fx_impact = (
+            float(beginning["quantity"])
+            * float(ending["market_price"])
+            * (
+                float(ending["market_fx_rate_to_base"])
+                - float(beginning["market_fx_rate_to_base"])
+            )
+        )
+        total_fx_impact += fx_impact
         holding_results.append(
             {
                 "key": key,
                 "ticker": ending.get("ticker") or beginning.get("ticker"),
                 "price_movement": price_movement,
-                "fx_impact": None,
+                "fx_impact": fx_impact,
                 "position_change": None,
                 "calculation_status": "partial",
             }
@@ -135,7 +148,7 @@ def calculate_period_attribution(
         warnings.append("Holdings entered or exited during the period; position-change attribution is pending.")
     if not price_complete:
         warnings.append("One or more continuing holdings lack comparable price or FX inputs.")
-    warnings.append("FX, position-change, and external-flow components are not included in this phase.")
+    warnings.append("Position-change and external-flow components are not included in this phase.")
     return {
         "portfolio_id": portfolio_id,
         "start_date": start_date,
@@ -144,7 +157,7 @@ def calculate_period_attribution(
         "calculation_status": "partial",
         "total_change": float(end.total_portfolio_value - start.total_portfolio_value),
         "price_movement": total_price_movement if price_complete else None,
-        "fx_impact": None,
+        "fx_impact": total_fx_impact if fx_complete else None,
         "position_change": None,
         "external_cash_flow": None,
         "unexplained_change": None,
