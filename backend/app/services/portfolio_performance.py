@@ -122,3 +122,108 @@ def calculate_money_weighted_return(
         source_snapshot_ids=[snapshot.id],
         source_transaction_ids=[flow.transaction_id for flow in report.flows],
     )
+
+
+def calculate_time_weighted_return(
+    db: Session,
+    portfolio_id: int,
+    start_date: date,
+    end_date: date,
+) -> ReturnMetric:
+    if end_date <= start_date:
+        return ReturnMetric(
+            calculation_status="not_available",
+            return_decimal=None,
+            start_date=start_date,
+            end_date=end_date,
+            warnings=["Performance end date must be after the start date."],
+        )
+    snapshots = list(
+        db.scalars(
+            select(PortfolioSnapshot)
+            .where(
+                PortfolioSnapshot.portfolio_id == portfolio_id,
+                PortfolioSnapshot.snapshot_date >= start_date,
+                PortfolioSnapshot.snapshot_date <= end_date,
+                PortfolioSnapshot.calculation_status == "complete",
+                PortfolioSnapshot.total_portfolio_value.is_not(None),
+            )
+            .order_by(PortfolioSnapshot.snapshot_date, PortfolioSnapshot.id)
+        )
+    )
+    if len(snapshots) < 2 or snapshots[0].snapshot_date != start_date or snapshots[-1].snapshot_date != end_date:
+        return ReturnMetric(
+            calculation_status="not_available",
+            return_decimal=None,
+            start_date=start_date,
+            end_date=end_date,
+            warnings=["Complete point-in-time snapshots are required on both period boundaries."],
+            source_snapshot_ids=[snapshot.id for snapshot in snapshots],
+        )
+
+    compounded = 1.0
+    source_transactions: list[int] = []
+    warnings: list[str] = []
+    timing_is_partial = False
+    for previous, current in zip(snapshots, snapshots[1:]):
+        starting_value = float(previous.total_portfolio_value)
+        if starting_value <= 0:
+            return ReturnMetric(
+                calculation_status="not_available",
+                return_decimal=None,
+                start_date=start_date,
+                end_date=end_date,
+                warnings=["Time-weighted return requires positive starting value for every subperiod."],
+                source_snapshot_ids=[snapshot.id for snapshot in snapshots],
+            )
+        report = normalize_external_cash_flows(
+            db,
+            portfolio_id,
+            start_date=previous.snapshot_date,
+            end_date=current.snapshot_date,
+        )
+        if not report.complete:
+            return ReturnMetric(
+                calculation_status="not_available",
+                return_decimal=None,
+                start_date=start_date,
+                end_date=end_date,
+                warnings=[
+                    "Time-weighted return is blocked because an external cash flow lacks historical FX.",
+                    *[f"Missing FX pair: {pair}" for pair in report.missing_fx_pairs],
+                ],
+                source_snapshot_ids=[snapshot.id for snapshot in snapshots],
+                source_transaction_ids=report.missing_transaction_ids,
+            )
+        net_flow = float(report.net_external_cash_flow or Decimal("0"))
+        ending_value = float(current.total_portfolio_value)
+        subperiod_growth = (ending_value - net_flow) / starting_value
+        if subperiod_growth < 0:
+            return ReturnMetric(
+                calculation_status="not_available",
+                return_decimal=None,
+                start_date=start_date,
+                end_date=end_date,
+                warnings=["A cash-flow-adjusted subperiod value was negative; return is not meaningful."],
+                source_snapshot_ids=[snapshot.id for snapshot in snapshots],
+            )
+        compounded *= subperiod_growth
+        source_transactions.extend(flow.transaction_id for flow in report.flows)
+        if report.flows:
+            timing_is_partial = True
+        if any(flow.fx_is_stale for flow in report.flows):
+            warnings.append("One or more cash-flow FX observations were stale on the transaction date.")
+
+    if timing_is_partial:
+        warnings.append(
+            "External cash flows use an end-of-subperiod adjustment because intraday pre-flow valuations are unavailable."
+        )
+    return ReturnMetric(
+        calculation_status="partial" if timing_is_partial else "complete",
+        return_decimal=compounded - 1.0,
+        start_date=start_date,
+        end_date=end_date,
+        warnings=warnings,
+        source_snapshot_ids=[snapshot.id for snapshot in snapshots],
+        source_transaction_ids=source_transactions,
+    )
