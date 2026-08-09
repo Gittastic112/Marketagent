@@ -12,38 +12,45 @@ import {
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
 import type {
   Portfolio,
   PortfolioCashBalance,
   PortfolioHolding,
   PortfolioSnapshot,
-  PortfolioTransaction
+  PortfolioTransaction,
+  PortfolioAnalytics,
+  PortfolioAttributionRead
 } from "@/lib/api";
+import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import { DataFreshnessIndicator } from "@/components/ui/data-states";
 
 function numberText(value: number): string {
   return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
 }
 
-export default async function PortfolioDetailPage({ params }: { params: { id: string } }) {
-  const portfolioId = parseInt(params.id, 10);
+export default async function PortfolioDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const portfolioId = parseInt(id, 10);
   if (isNaN(portfolioId)) {
     notFound();
   }
 
   let portfolio: Portfolio;
   try {
-    portfolio = await fetchApi<Portfolio>(`/portfolios/${portfolioId}`);
+    portfolio = await serverFetchApi<Portfolio>(`/portfolios/${portfolioId}`);
   } catch {
     notFound();
   }
 
-  const [holdings, transactions, cashBalances, snapshots] = await Promise.all([
-    fetchApi<PortfolioHolding[]>(`/portfolio-holdings?portfolio_id=${portfolioId}`),
-    fetchApi<PortfolioTransaction[]>(`/portfolio-transactions?portfolio_id=${portfolioId}`),
-    fetchApi<PortfolioCashBalance[]>(`/portfolio-cash-balances?portfolio_id=${portfolioId}`),
-    fetchApi<PortfolioSnapshot[]>(`/portfolio-snapshots?portfolio_id=${portfolioId}`)
+  const [holdingsRes, transactions, cashBalances, snapshots, analytics, attribution] = await Promise.all([
+    serverFetchApiResponse<PortfolioHolding[]>(`/portfolio-holdings?portfolio_id=${portfolioId}`).catch(() => ({ data: [], meta: null })),
+    serverFetchApi<PortfolioTransaction[]>(`/portfolio-transactions?portfolio_id=${portfolioId}`).catch(() => []),
+    serverFetchApi<PortfolioCashBalance[]>(`/portfolio-cash-balances?portfolio_id=${portfolioId}`).catch(() => []),
+    serverFetchApi<PortfolioSnapshot[]>(`/portfolio-snapshots?portfolio_id=${portfolioId}`).catch(() => []),
+    serverFetchApi<PortfolioAnalytics>(`/portfolios/${portfolioId}/analytics`).catch(() => null),
+    serverFetchApi<PortfolioAttributionRead>(`/portfolios/${portfolioId}/attribution`).catch(() => null)
   ]);
+  const holdings = holdingsRes.data || [];
 
   const today = new Date().toISOString().slice(0, 10);
 
@@ -63,6 +70,124 @@ export default async function PortfolioDetailPage({ params }: { params: { id: st
         <div className="portfolio-description" style={{ marginBottom: "2rem" }}>
           <p>{portfolio.description}</p>
         </div>
+      )}
+
+      {analytics && (
+        <section id="analytics" style={{ marginBottom: "2rem" }}>
+          <Panel title="Advanced Attribution & Risk Analytics">
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
+              {/* High-level stats */}
+              <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Risk & Concentration</h4>
+                <div style={{ fontSize: "1.5rem", fontWeight: 600 }}>
+                  {analytics.concentration_score !== null
+                    ? analytics.concentration_score.toFixed(3)
+                    : "N/A"}
+                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", fontWeight: "normal", marginLeft: "0.5rem" }}>HHI Score</span>
+                </div>
+                {analytics.diversification_warnings?.length > 0 && (
+                  <div style={{ marginTop: "0.5rem" }}>
+                    {analytics.diversification_warnings.map((w, i) => (
+                      <div key={i} style={{ color: "var(--warning)", fontSize: "0.8rem", marginTop: "0.2rem" }}>⚠️ {w}</div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Opportunity Cost & FX</h4>
+                <div style={{ marginBottom: "0.5rem" }}>
+                  <span style={{ fontSize: "1.2rem", fontWeight: 600 }}>
+                    {analytics.opportunity_cost !== null
+                      ? numberText(analytics.opportunity_cost)
+                      : "N/A"}
+                  </span>
+                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginLeft: "0.5rem" }}>Opp Cost</span>
+                </div>
+                <div>
+                  <span style={{ fontSize: "1.2rem", fontWeight: 600 }}>
+                    {analytics.fx_impact !== null && analytics.fx_impact !== undefined
+                      ? numberText(analytics.fx_impact)
+                      : "N/A"}
+                  </span>
+                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginLeft: "0.5rem" }}>FX Impact</span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem", marginTop: "1rem" }}>
+              <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Sector Exposure</h4>
+                {Object.entries(analytics.sector_exposure || {}).map(([sector, weight]) => (
+                  <div key={sector} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.2rem" }}>
+                    <span>{sector}</span>
+                    <strong style={{ marginLeft: "1rem" }}>{weight.toFixed(1)}%</strong>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Asset Type Exposure</h4>
+                {Object.entries(analytics.asset_type_exposure || {}).map(([asset, weight]) => (
+                  <div key={asset} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.2rem" }}>
+                    <span>{asset}</span>
+                    <strong style={{ marginLeft: "1rem" }}>{weight.toFixed(1)}%</strong>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Currency Exposure</h4>
+                {Object.entries(analytics.currency_exposure || {}).map(([currency, weight]) => (
+                  <div key={currency} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.2rem" }}>
+                    <span>{currency}</span>
+                    <strong style={{ marginLeft: "1rem" }}>{weight.toFixed(1)}%</strong>
+                  </div>
+                ))}
+              </div>
+
+              {attribution && attribution.attribution_by_geography && (
+                <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                  <h4 style={{ margin: "0 0 0.5rem 0", fontSize: "0.9rem", color: "var(--text-secondary)" }}>Geography Exposure</h4>
+                  {Object.entries(attribution.attribution_by_geography).map(([geo, weight]) => (
+                    <div key={geo} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.2rem" }}>
+                      <span>{geo}</span>
+                      <strong style={{ marginLeft: "1rem" }}>{weight.toFixed(1)}%</strong>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {attribution && (
+              <div style={{ marginTop: "2rem" }}>
+                <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Performance Attribution</h3>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem" }}>
+                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Price Movement</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.price_movement)}</div>
+                  </div>
+                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>FX Impact</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.fx_impact)}</div>
+                  </div>
+                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Dividends</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.dividends)}</div>
+                  </div>
+                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Fees</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.fees)}</div>
+                  </div>
+                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", borderLeft: "4px solid var(--primary)" }}>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Total PnL</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.total_unrealized_pnl)}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </Panel>
+        </section>
       )}
 
       <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
@@ -196,6 +321,9 @@ export default async function PortfolioDetailPage({ params }: { params: { id: st
 
         <section id="holdings">
           <Panel title="Holdings">
+            <div style={{ marginBottom: "1rem" }}>
+              <DataFreshnessIndicator meta={holdingsRes.meta ?? undefined} source="Portfolio API" />
+            </div>
             {holdings.length === 0 ? (
               <EmptyState label="No holdings found for this portfolio." />
             ) : (
@@ -217,7 +345,12 @@ export default async function PortfolioDetailPage({ params }: { params: { id: st
                         <td>{numberText(holding.quantity)}</td>
                         <td>{numberText(holding.average_cost)}</td>
                         <td>{holding.currency}</td>
-                        <td>{holding.as_of_date}</td>
+                        <td>
+                          {holding.as_of_date}
+                          {holding.as_of_date !== today && (
+                            <span style={{ color: "var(--warning)", marginLeft: "0.5rem", fontSize: "0.8rem", padding: "0.1rem 0.4rem", border: "1px solid var(--warning)", borderRadius: "4px" }}>Stale Price</span>
+                          )}
+                        </td>
                       </tr>
                     ))}
                   </tbody>
