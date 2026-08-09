@@ -25,7 +25,8 @@ Status meanings:
 | Stored evidence search | Partial | Not unified across every research object |
 | Portfolios, holdings, cash, transactions | Built | No broker sync |
 | Manual and provider-backed prices | Partial | Provider breadth/freshness incomplete |
-| Portfolio valuation and exposure | Built | Exposure and recorded activity by currency are real; period attribution, historical FX impact, and benchmark opportunity cost remain incomplete and explicitly unavailable |
+| Portfolio valuation and exposure | Built | Current value, cash, exposures, and concentration are source-aware |
+| Portfolio performance and attribution | Built | Requires complete dated snapshots, historical FX for cross-currency assets, and benchmark prices; incomplete inputs block or label calculations |
 | FCFF DCF and scenarios | Built | Assumption review remains mandatory |
 | Reverse DCF and diagnostics | Built | Depends on reviewed market and financial inputs |
 | FCFE/DDM | Built | Model suitability must be reviewed |
@@ -36,10 +37,10 @@ Status meanings:
 | Macro sensitivity | Partial | Provider and company exposure coverage uneven |
 | Weighted industry mapping | Built | User confirmation required |
 | Damodaran source versioning | Built | 14 of 35 mirrors have typed rows |
-| Data Health | Partial | Active provider checks need expansion |
-| AI memo and narrative assistance | Partial | Review-only; citation generation incomplete |
+| Data Health | Built | Run outcome, attempt history, failures, freshness thresholds, and configured RSS coverage are exposed; providers without ingestion remain configuration-only |
+| AI memo and narrative assistance | Partial | Exact-source validation and approval gates are built; automatic exact-passage generation remains incomplete |
 | Research sessions | Built | Not yet a unified research workflow |
-| Market regime | Prototype | Mock/simulated values are not trusted |
+| Market regime | Built | Manual and provider inputs are bounded and source-traced; no automatic options/breadth provider is configured |
 | Broker sync | Not built | Security design required first |
 | Public deployment | Not built | Security and operations gates unmet |
 | Documentation architecture | Built | One current source per concern, categorized archive, automated link/path gate |
@@ -48,8 +49,8 @@ Status meanings:
 
 1. India provider and issuer coverage expands beyond the certified APSEZ case.
 2. Daily brief moves from a module to an integrated daily workflow.
-3. Portfolio analytics gains attribution.
-4. Market regime is either hidden or rebuilt as source-backed behavior.
+3. Portfolio analytics gains marginal-risk and expected-return comparisons.
+4. Market-regime modules gain compliant automated providers where practical.
 
 Update this file when code changes a status. Put implementation proof in tests
 and a dated archived checkpoint, not in additional columns here.

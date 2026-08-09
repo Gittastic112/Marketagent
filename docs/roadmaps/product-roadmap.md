@@ -2,7 +2,8 @@
 
 **Prioritized:** 2026-08-08
 
-**Current estimate:** 75% local-first, 64% world-class
+**Current estimate:** not recalculated for this release; rely on capability
+status and acceptance gates instead of the prior subjective percentages.
 
 ## Planning Rule
 
@@ -53,7 +54,7 @@ Acceptance gates:
 - The daily brief distinguishes new, unresolved, stale, and reviewed items.
 - Processing failures are visible in Data Health.
 
-## Priority 4: Portfolio Attribution and Opportunity Cost (Advanced)
+## Priority 4: Portfolio Attribution and Opportunity Cost (CORE PERFORMANCE SLICE COMPLETED)
 
 Move beyond current value and exposure totals to advanced portfolio tracking.
 
@@ -65,9 +66,14 @@ Acceptance gates:
 - Stale or missing prices block false precision.
 - No feature emits a buy/sell instruction.
 
-## Priority 5: Provider Health and Market Regime
+Delivered: dated generated snapshots, historical FX, explicit benchmark
+configuration, TWR/MWR, price/FX/position/flow attribution, dimension
+attribution, residual diagnostics, and benchmark opportunity cost. Still open:
+marginal-risk and expected-return comparisons across holdings.
 
-Strengthen provider status first, then replace the market-regime prototype.
+## Priority 5: Provider Health and Market Regime (COMPLETED FOUNDATION)
+
+Keep provider state observable and regime calculations source-backed.
 
 Acceptance gates:
 
@@ -77,7 +83,12 @@ Acceptance gates:
 - The score exposes formula, drivers, blockers, warnings, and confidence.
 - Mock regime values are removed or remain unmistakably labeled.
 
-## Priority 6: Source-Backed AI Research
+Delivered: persisted run classifications and freshness/coverage diagnostics;
+bounded regime inputs with manual/provider provenance; source-aware confidence,
+formula, blockers, warnings, and input evidence. Automated provider coverage for
+every regime module is not implied.
+
+## Priority 6: Source-Backed AI Research (REVIEW GATE COMPLETED)
 
 Raise AI trust only after deterministic evidence and review paths are complete.
 
@@ -88,6 +99,10 @@ Acceptance gates:
 - Unsupported claims are blocked or visibly flagged.
 - Prompt/model/version/privacy metadata is stored.
 - Output remains analysis, not investment advice.
+
+Delivered: source-marker coverage, exact stored-text validation, persistent
+blocked/evaluation state, owner-scoped review, and approval gating. Automatic
+selection of exact supporting passages remains partial.
 
 ## Deferred
 

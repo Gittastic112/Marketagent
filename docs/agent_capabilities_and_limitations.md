@@ -20,7 +20,7 @@ summarizes capabilities instead of duplicating route-by-route implementation.
 | Track portfolios, transactions, cash, and prices | Built | No broker sync; provider freshness varies |
 | Run multi-stage valuation workflows | Built | Output quality depends on reviewed assumptions and source definitions |
 | Use Damodaran benchmark priors | Built for 14 typed sources | 21 mirrored sources remain partial or unsupported |
-| Run research sessions and AI assistance | Partial | Review/provenance exist; generated claims are not automatically factual |
+| Run research sessions and AI assistance | Partial | Exact-source review and approval gates exist; generated claims are not automatically factual |
 | Search stored evidence | Partial | Coverage is strongest for documents and events, not every domain |
 | Generate a daily brief | Built but not autonomous | Continuous scheduling and complete provider coverage are absent |
 
@@ -43,11 +43,11 @@ summarizes capabilities instead of duplicating route-by-route implementation.
 | Production India provider coverage | India workflows remain manual/partial |
 | Broker integration | Portfolio activity must be entered/imported manually |
 | Real-time data | Do not infer trading-grade freshness |
-| Market-regime backend | Current prototype/mock output is not a signal |
+| Automated market-regime feeds | Manual/provider input workflow exists, but automated module coverage is not configured |
 | Fully automatic statements | Review and normalization are still required |
 | Fully cited AI research | AI remains assistive and review-only |
 | Complete frontend parity | Some pages still need source/data-state auditing |
-| Portfolio attribution | Exposure exists, but decision-grade attribution is incomplete |
+| Portfolio comparison | Performance attribution exists; marginal-risk and expected-return comparisons remain incomplete |
 
 ## Reliability Baseline
 
@@ -95,9 +95,9 @@ audit logging.
 1. Finish frontend/backend data-state parity.
 2. Expand real-issuer coverage beyond AAPL/APSEZ and improve official India providers.
 3. Turn separate modules into one daily evidence-to-decision workflow.
-4. Add portfolio attribution and opportunity-cost analysis.
-5. Replace the market-regime prototype with source-backed calculations or hide it.
-6. Expand AI citation generation and evaluation before raising trust labels.
+4. Add marginal-risk and expected-return portfolio comparisons.
+5. Add compliant automated market-regime sources without hiding provenance.
+6. Improve automatic exact-passage selection while retaining review gates.
 
 The former 2,450-line audit is preserved at
 [`archive/assessments/agent_capabilities_and_limitations.md`](archive/assessments/agent_capabilities_and_limitations.md).

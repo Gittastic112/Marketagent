@@ -8,21 +8,22 @@
 
 ## Product Position
 
-The repository is a broad, functional research and valuation platform, not a
-finished daily-driver product. The quality-adjusted estimate remains about
-**75% of the declared local-first scope** and **64% of the world-class target**.
-The valuation and evidence foundations are stronger than provider coverage,
-daily workflow integration, portfolio analytics, and frontend consistency.
+The repository is a broad, functional research, valuation, and portfolio
+performance platform, not a finished daily-driver product. No new completion
+percentage was calculated for this release. Valuation, evidence, portfolio
+performance, provider diagnostics, and local authentication are stronger than
+official India coverage, autonomous daily workflows, and public-deployment
+security.
 
 ## Last Recorded Full Baseline
 
 | Check | Current result |
 |---|---|
-| Backend tests | 492 passed; four upstream `openpyxl` deprecation warnings |
-| Frontend tests | 91 passed |
+| Backend tests | 534 passed; four upstream `openpyxl` deprecation warnings |
+| Frontend tests | 95 passed |
 | TypeScript | Passes |
 | Production build | Next.js 16.2.11 passes |
-| Database migration | `z1z1z1z1z1z1` (cross-holdings and operating leases) |
+| Database migration | `cc4cc4cc4cc4` (market-regime score evidence) |
 | Knowledge-base tests | 4 passed |
 | Knowledge-base audit | 61 canonical files, 61 catalog rows, 38 ledger rows, 0 pending |
 | Damodaran application coverage | 9 supported, 13 partial, 13 unsupported |
@@ -39,7 +40,7 @@ with the deleted `20260524_*` or `20260530_*` revisions must be recreated.
 
 ## Documentation State
 
-The active documentation checker covers 62 Markdown files and 273 local links,
+The active documentation checker covers 62 Markdown files and 270 local links,
 including the project skill library. One roadmap and one feature register drive future work.
 Dated checkpoints, prior handoffs, old assessments, and superseded plans are
 categorized under `archive/`. `scripts/check_docs.py` validates active Markdown
@@ -64,7 +65,8 @@ See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canon
 
 ## Do Not Trust Without Review
 
-- Market-regime values or any panel labeled `Mock Data`.
+- Stale, incomplete, or manual market-regime values without reviewing their
+  normalization methodology and source.
 - AI memos, narrative-to-numbers suggestions, or generated conclusions.
 - Industry mapping or industry averages as company-specific facts.
 - Autofilled valuation assumptions without checking source, age, method, and warnings.
@@ -79,10 +81,10 @@ See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canon
 2. Expand beyond the certified APSEZ India case and strengthen official India providers.
 3. Build a coherent daily research loop from ingestion to evidence, alerts,
    thesis impact, portfolio impact, and next action.
-4. Complete point-in-time portfolio attribution and opportunity cost. Recorded
-   activity by currency and exposure drill-down are present, but historical FX
-   and a benchmark series are not configured.
-5. Replace or hide the market-regime prototype until source-backed inputs exist.
+4. Browser-test portfolio performance with real dated prices, FX, flows, and a
+   benchmark, then add marginal-risk and expected-return comparisons.
+5. Add automated, compliant inputs for regime modules where a provider is
+   available; keep manual/provider provenance visible.
 
 Acceptance criteria and sequencing live in
 [`roadmaps/product-roadmap.md`](roadmaps/product-roadmap.md). Feature status

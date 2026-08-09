@@ -60,7 +60,9 @@ def test_thesis_evidence_detection_is_owner_scoped_labeled_and_idempotent(
     )
 
     assert first_response.status_code == 200
-    assert first_response.json()["meta"]["is_mock"] is True
-    assert response_data(first_response)["claim_type"] == "Mock Data"
+    assert first_response.json()["meta"]["is_mock"] is False
+    assert response_data(first_response)["claim_type"] == "Calculation"
+    assert response_data(first_response)["confirmations"] == []
+    assert response_data(first_response)["contradictions"] == []
     assert response_data(second_response)["confirmations"] == response_data(first_response)["confirmations"]
-    assert db_session.query(EventThesisImpact).count() == 1
+    assert db_session.query(EventThesisImpact).count() == 0

@@ -34,7 +34,12 @@ AI is not the primary ingestion layer. Current ingestion and scoring should rema
   - Scores those events deterministically.
   - Generates alerts for events whose priority passes the alert threshold.
 - **Processing Runs:** SEC/RSS ingestion, PDF/Screener upload, filing text extraction, SEC XBRL extraction, and normalized backfill preview/apply attempts create `ProcessingRun` records with standardized `running`, `success`, `partial_success`, or `failed` states, counts, timestamps, safe errors, metadata, and source/company links. These operations remain synchronous; background workers, retry, and cancellation semantics are not implemented.
-- **Provider Health:** `GET /api/providers/health` reports configured, missing, failing, manual-only, and not-configured states for SEC EDGAR, RSS, FRED, market data, AI, OpenFIGI, Damodaran benchmarks, and India manual filing support.
+- **Provider Health:** `GET /api/providers/health` reports configuration plus
+  never-run, running, partial, successful, stale, and failing evidence for SEC
+  EDGAR, RSS, FRED, market data, AI, OpenFIGI, Damodaran benchmarks, and India
+  manual filing support. Run-backed providers expose attempts, recent run count,
+  consecutive failures, age thresholds, and required action. RSS coverage is
+  the count of active owned sources.
 - **Source Capability Matrix:** `GET /api/source-capabilities?market=US|IN` reports whether each source class is available, manual-only, not configured, or unsupported for the selected market.
 - **Daily Brief:** Automatically pulls the highest-priority scored events and latest alerts when requested.
 
