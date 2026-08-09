@@ -21,7 +21,7 @@ Do not read archived checkpoints unless the task needs historical evidence.
   user confirmed every database created from the prior chain was disposable.
   Recreate, rather than upgrade, any database still stamped with the deleted
   `20260524_*` or `20260530_*` revisions.
-- Fresh 2026-08-09 worktree baseline: 534 backend tests and 95 frontend tests
+- Fresh 2026-08-09 worktree baseline: 538 backend tests and 98 frontend tests
   pass; TypeScript and the Next.js production build pass. Local API health and
   authentication readiness also pass. Four upstream `openpyxl` deprecation
   warnings remain.
@@ -58,6 +58,13 @@ is archived at
 [`archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md`](archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md).
 
 Recent feature milestones completed include:
+- **Valuation workflow repair:** The frontend proxy now forwards industry-mix
+  `PUT` requests. DCF drafts offer one explicit bulk acknowledgement for valid
+  defaults, collapse warning and assumption detail, and derive positive
+  invested-capital fallbacks from revenue when reported capital is zero. New
+  writes reject invalid percentage-point rates and capital weights. Historical
+  invalid models remain readable but show blocked output, disabled reruns,
+  diagnostic-derived quality, and no sensitivity tables until corrected.
 - **Portfolio Performance and Attribution:** Portfolios can persist one explicit
   benchmark, historical FX observations, and idempotent dated snapshots. Complete
   periods calculate TWR, MWR, price movement, FX impact, position change,

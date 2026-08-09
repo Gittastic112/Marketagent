@@ -3,16 +3,16 @@
 import { DcfSensitivityTable } from "@/lib/api";
 import { formatCurrency, formatPercent } from "@/lib/formatting";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface SensitivityTablesPanelProps {
   tables: DcfSensitivityTable[];
   currentMarketPrice?: number | null;
+  currency?: string;
 }
 
-export function SensitivityTablesPanel({ tables, currentMarketPrice }: SensitivityTablesPanelProps) {
+export function SensitivityTablesPanel({ tables, currentMarketPrice, currency = "USD" }: SensitivityTablesPanelProps) {
   if (!tables || tables.length === 0) {
     return (
       <Alert>
@@ -51,7 +51,7 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice }: Sensitivi
     };
 
     return (
-      <Card key={table.table_type} className="overflow-hidden border border-gray-200 dark:border-gray-800">
+      <Card key={table.table_type} className="sensitivity-card overflow-hidden border border-gray-200 dark:border-gray-800">
         <CardHeader className="bg-gray-50 dark:bg-gray-900 py-3 border-b border-gray-200 dark:border-gray-800">
           <CardTitle className="text-sm font-semibold text-gray-900 dark:text-gray-100">
             {yName} vs {xName}
@@ -59,8 +59,8 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice }: Sensitivi
           <CardDescription className="text-xs">Intrinsic Value Per Share</CardDescription>
         </CardHeader>
         <CardContent className="p-0">
-          <div className="overflow-x-auto">
-            <table className="w-full text-xs text-right border-collapse">
+          <div className="sensitivity-table-wrap">
+            <table className="sensitivity-matrix w-full text-xs text-right border-collapse">
               <thead>
                 <tr>
                   <th className="p-2 border-r border-b border-gray-200 dark:border-gray-800 bg-gray-100 dark:bg-gray-950 font-medium text-gray-500 text-center align-middle whitespace-nowrap">
@@ -84,7 +84,7 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice }: Sensitivi
                       {xValues.map((x: number) => {
                         const xStr = x.toFixed(4).replace(/\.?0+$/, "");
                         // The values dictionary from backend might have slight floating point key differences, try direct match first
-                        let val = 0;
+                        let val: number | null = null;
                         if (values[yStr] && values[yStr][xStr] !== undefined) {
                           val = values[yStr][xStr];
                         } else {
@@ -97,8 +97,8 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice }: Sensitivi
                         }
 
                         return (
-                          <td key={x} className={`p-2 border-t border-gray-100 dark:border-gray-800/50 tabular-nums ${getCellClass(val)}`}>
-                            {formatCurrency(val, "INR", 0)}
+                          <td key={x} className={`p-2 border-t border-gray-100 dark:border-gray-800/50 tabular-nums ${val === null ? "sensitivity-missing" : getCellClass(val)}`}>
+                            {val === null ? "—" : formatCurrency(val, currency, 0)}
                           </td>
                         );
                       })}
@@ -125,7 +125,7 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice }: Sensitivi
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+      <div className="sensitivity-grid">
         {tables.map((table) => renderTable(table))}
       </div>
     </div>

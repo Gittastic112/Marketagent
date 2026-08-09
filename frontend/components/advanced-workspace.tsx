@@ -15,6 +15,7 @@ import { RealOptionsPanel } from "@/components/valuation/real-options-panel";
 import { ValuationChangeLogPanel } from "@/components/valuation/valuation-change-log-panel";
 import { DiagnosticPanel, DiagnosticWarning } from "@/components/valuation/diagnostic-panel";
 import { NotConfiguredState, DataFreshnessIndicator } from "@/components/ui/data-states";
+import { formatCurrency } from "@/lib/formatting";
 
 type Section =
   | "setup"
@@ -36,6 +37,82 @@ type Section =
   | "valuation_memo"
   | "market_intelligence"
   | "reverse_dcf";
+
+const SECTION_GROUPS: Array<{ label: string; sections: Array<{ id: Section; label: string }> }> = [
+  {
+    label: "Model",
+    sections: [
+      { id: "setup", label: "Setup & Scenario" },
+      { id: "story", label: "Thesis & Story" },
+      { id: "lifecycle", label: "Lifecycle & Special" },
+    ],
+  },
+  {
+    label: "Core assumptions",
+    sections: [
+      { id: "revenue", label: "Revenue & Growth" },
+      { id: "margins", label: "Operating Margins" },
+      { id: "reinvestment", label: "Reinvestment & Taxes" },
+      { id: "cost_of_capital", label: "Cost of Capital" },
+      { id: "terminal_value", label: "Terminal Value" },
+      { id: "equity_bridge", label: "Equity Bridge" },
+      { id: "payouts", label: "Payouts & Cash Return" },
+    ],
+  },
+  {
+    label: "Analysis",
+    sections: [
+      { id: "sensitivity_tables", label: "Sensitivity Tables" },
+      { id: "scenario_range", label: "Scenario Range" },
+      { id: "relative_valuation", label: "Relative Valuation" },
+      { id: "reverse_dcf", label: "Reverse DCF" },
+      { id: "macro_sensitivity", label: "Macro Sensitivity" },
+      { id: "real_options", label: "Real Options" },
+    ],
+  },
+  {
+    label: "Research outputs",
+    sections: [
+      { id: "narrative_to_numbers", label: "Narrative to Numbers" },
+      { id: "market_intelligence", label: "Assumption Ledger" },
+      { id: "valuation_memo", label: "Valuation Memo" },
+    ],
+  },
+];
+
+const SECTIONS = SECTION_GROUPS.flatMap((group) => group.sections);
+
+function invalidDcfAssumptions(assumptions?: DcfAssumptionSet): string[] {
+  if (!assumptions) return [];
+  const invalid: string[] = [];
+  const bounded: Array<[keyof DcfAssumptionSet, number, number]> = [
+    ["current_operating_margin", -1, 1],
+    ["target_operating_margin", -1, 1],
+    ["tax_rate", 0, 1],
+    ["risk_free_rate", 0, 1],
+    ["equity_risk_premium", 0, 1],
+    ["cost_of_equity", 0, 1],
+    ["pre_tax_cost_of_debt", 0, 1],
+    ["debt_to_capital", 0, 1],
+    ["equity_to_capital", 0, 1],
+    ["wacc_start", 0, 1],
+    ["wacc_terminal", 0, 1],
+    ["terminal_growth_rate", -0.2, 0.2],
+    ["terminal_roic", 0, 1],
+  ];
+  for (const [field, lower, upper] of bounded) {
+    const value = assumptions[field];
+    if (typeof value === "number" && (value < lower || value > upper)) invalid.push(String(field));
+  }
+  if (
+    typeof assumptions.debt_to_capital === "number"
+    && typeof assumptions.equity_to_capital === "number"
+    && Math.abs(assumptions.debt_to_capital + assumptions.equity_to_capital - 1) > 0.001
+  ) {
+    invalid.push("capital structure weights");
+  }
+  return [...new Set(invalid)];
+}
 
 export function AdvancedWorkspace({
   model,
@@ -67,28 +144,6 @@ export function AdvancedWorkspace({
     discountRateCurrency,
     overrideNote
   });
-
-  const sections: { id: Section; label: string }[] = [
-    { id: "setup", label: "Setup & Scenario" },
-    { id: "lifecycle", label: "Lifecycle & Special" },
-    { id: "story", label: "Thesis & Story" },
-    { id: "revenue", label: "Revenue & Growth" },
-    { id: "margins", label: "Operating Margins" },
-    { id: "reinvestment", label: "Reinvestment & Taxes" },
-    { id: "cost_of_capital", label: "Cost of Capital" },
-    { id: "terminal_value", label: "Terminal Value" },
-    { id: "payouts", label: "Payouts & Cash Return" },
-    { id: "equity_bridge", label: "Equity Bridge" },
-    { id: "macro_sensitivity", label: "Macro Sensitivity" },
-    { id: "sensitivity_tables", label: "Sensitivity Tables" },
-    { id: "relative_valuation", label: "Relative Valuation" },
-    { id: "scenario_range", label: "Scenario Range" },
-    { id: "real_options", label: "Real Options" },
-    { id: "narrative_to_numbers", label: "Narrative to Numbers" },
-    { id: "valuation_memo", label: "Valuation Memo" },
-    { id: "market_intelligence", label: "Assumption Ledger" },
-    { id: "reverse_dcf", label: "Reverse DCF" },
-  ];
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -134,16 +189,30 @@ export function AdvancedWorkspace({
 
   const out = latestAssumptionSet?.outputs;
   const warnings = out?.warnings_json || [];
-  const score = out?.model_quality_score ?? 100;
-
-  const fmtLarge = (n: number | null | undefined) => {
-    if (n == null) return "—";
-    const abs = Math.abs(n);
-    if (abs >= 1e12) return `$${(n / 1e12).toFixed(2)}T`;
-    if (abs >= 1e9) return `$${(n / 1e9).toFixed(2)}B`;
-    if (abs >= 1e6) return `$${(n / 1e6).toFixed(2)}M`;
-    return `$${n.toFixed(2)}`;
-  };
+  const diagnosticWarnings: DiagnosticWarning[] = warnings
+    .filter((warning) => typeof warning === "object" && warning !== null)
+    .map((warning) => ({
+      severity: warning.severity,
+      module: warning.module,
+      message: warning.message,
+      affectedAssumptions: warning.affectedAssumptions,
+      suggestedFix: warning.suggestedFix ?? undefined,
+      formula: warning.formula ?? undefined,
+    }));
+  const invalidAssumptions = invalidDcfAssumptions(latestAssumptionSet);
+  const outputTrustBlocked = invalidAssumptions.length > 0 || diagnosticWarnings.some(
+    (warning) => warning.severity === "blocking" || warning.severity === "critical",
+  );
+  const fallbackScore = Math.max(0, 100 - diagnosticWarnings.reduce((total, warning) => {
+    if (warning.severity === "blocking") return total + 35;
+    if (warning.severity === "critical") return total + 25;
+    if (warning.severity === "warning") return total + 10;
+    return total + 5;
+  }, 0) - invalidAssumptions.length * 20);
+  const score = out?.model_quality_score ?? fallbackScore;
+  const outputCurrency = valuationContext?.default_currency || cashFlowCurrency || "USD";
+  const hasMarketPrice = typeof out?.current_market_price === "number" && out.current_market_price > 0;
+  const hasUpsideComparison = hasMarketPrice && typeof out?.upside_downside_pct === "number";
   const fmt = (n: number | null | undefined, decimals=2) => n != null ? n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : "—";
   const fmtPct = (n: number | null | undefined) => n != null ? `${(n * 100).toFixed(1)}%` : "—";
 
@@ -160,44 +229,56 @@ export function AdvancedWorkspace({
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "240px 1fr 300px", gap: "2rem", alignItems: "start" }}>
+    <div className="valuation-workspace-grid">
 
       {/* LEFT SIDEBAR (Navigation) */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", position: "sticky", top: "2rem" }}>
-        <h3 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.5rem", paddingLeft: "1rem" }}>Workspace</h3>
-        {sections.map(s => (
-          <button
-            key={s.id}
-            type="button"
-            onClick={() => setActiveSection(s.id)}
-            style={{
-              textAlign: "left",
-              padding: "0.5rem 1rem",
-              background: activeSection === s.id ? "var(--accent-light)" : "transparent",
-              color: activeSection === s.id ? "var(--accent)" : "var(--text-secondary)",
-              border: "none",
-              borderLeft: activeSection === s.id ? "3px solid var(--accent)" : "3px solid transparent",
-              borderRadius: "0 4px 4px 0",
-              cursor: "pointer",
-              fontWeight: activeSection === s.id ? 600 : 400,
-              fontSize: "0.95rem"
-            }}
-          >
-            {s.label}
-          </button>
-        ))}
-      </div>
+      <nav className="valuation-workspace-nav" aria-label="Valuation model sections">
+        <label className="valuation-section-select">
+          Section
+          <select value={activeSection} onChange={(event) => setActiveSection(event.target.value as Section)}>
+            {SECTION_GROUPS.map((group) => (
+              <optgroup label={group.label} key={group.label}>
+                {group.sections.map((section) => <option value={section.id} key={section.id}>{section.label}</option>)}
+              </optgroup>
+            ))}
+          </select>
+        </label>
+        <div className="valuation-section-groups">
+          {SECTION_GROUPS.map((group) => (
+            <div className="valuation-section-group" key={group.label}>
+              <h3>{group.label}</h3>
+              {group.sections.map((section) => (
+                <button
+                  className={activeSection === section.id ? "is-active" : ""}
+                  key={section.id}
+                  type="button"
+                  onClick={() => setActiveSection(section.id)}
+                >
+                  {section.label}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </nav>
 
       {/* MAIN CONTENT AREA */}
-      <form id="advanced-dcf-form" onSubmit={handleSubmit} style={{ background: "var(--panel-bg)", padding: "2rem", borderRadius: "8px", border: "1px solid var(--border-color)", minHeight: "600px" }}>
+      <form id="advanced-dcf-form" className="valuation-workspace-main" onSubmit={handleSubmit}>
         <input type="hidden" name="valuation_model_id" value={modelId} />
 
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid var(--line)", paddingBottom: "1rem", marginBottom: "2rem" }}>
-          <h2 style={{ margin: 0 }}>{sections.find(s => s.id === activeSection)?.label}</h2>
-          <button type="submit" disabled={isPending || !currencyCheck.canSave} style={{ padding: "0.5rem 1.5rem" }}>
+        <div className="valuation-workspace-main-header">
+          <h2>{SECTIONS.find(s => s.id === activeSection)?.label}</h2>
+          <button type="submit" disabled={isPending || !currencyCheck.canSave || invalidAssumptions.length > 0} style={{ padding: "0.5rem 1.5rem" }}>
             {isPending ? "Saving..." : "Save & Run Valuation"}
           </button>
         </div>
+
+        {invalidAssumptions.length > 0 ? (
+          <div className="valuation-output-blocker" role="alert">
+            <strong>Valuation output is blocked by invalid assumption units.</strong>
+            <span>Fix: {invalidAssumptions.join(", ")}. Percentages must be stored as decimals.</span>
+          </div>
+        ) : null}
 
         {latestAssumptionSet?.is_stale && (
           <div style={{ background: "var(--warning-bg, #fff3cd)", color: "var(--warning-text, #856404)", padding: "1rem", borderRadius: "4px", marginBottom: "2rem", border: "1px solid var(--warning-border, #ffeeba)" }}>
@@ -386,12 +467,18 @@ export function AdvancedWorkspace({
         </div>
 
         <div style={{ display: activeSection === "sensitivity_tables" ? "block" : "none", paddingBottom: "2rem" }}>
-          {latestAssumptionSet && (
+          {outputTrustBlocked ? (
+            <div className="valuation-output-blocker" role="alert">
+              <strong>Sensitivity tables are unavailable for this model.</strong>
+              <span>Correct the invalid assumptions and rerun the valuation before using scenario comparisons.</span>
+            </div>
+          ) : latestAssumptionSet ? (
             <SensitivityTablesPanel
               tables={latestAssumptionSet.sensitivity_tables || []}
               currentMarketPrice={latestAssumptionSet.current_market_price}
+              currency={valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD"}
             />
-          )}
+          ) : null}
         </div>
 
         <div style={{ display: activeSection === "scenario_range" ? "block" : "none", paddingBottom: "2rem" }}>
@@ -453,7 +540,7 @@ export function AdvancedWorkspace({
       </form>
 
       {/* REVERSE DCF FORM (Overlays Main Area When Active) */}
-      <div style={{ display: activeSection === "reverse_dcf" ? "block" : "none", background: "var(--panel-bg)", padding: "2rem", borderRadius: "8px", border: "1px solid var(--border-color)", minHeight: "600px", gridColumn: "2 / 3", gridRow: "1 / 2" }}>
+      <div className="valuation-workspace-main valuation-reverse-dcf" style={{ display: activeSection === "reverse_dcf" ? "block" : "none" }}>
         <h2 style={{ borderBottom: "1px solid var(--line)", paddingBottom: "1rem", marginBottom: "2rem", marginTop: 0 }}>Reverse DCF Engine</h2>
         <p style={{ color: "var(--text-secondary)", marginBottom: "2rem", lineHeight: 1.5 }}>
           Solve for what the market is currently pricing in. Select a parameter and provide the current market price, and the engine will iteratively find the assumption value that justifies the price.
@@ -500,44 +587,51 @@ export function AdvancedWorkspace({
       </div>
 
       {/* RIGHT SIDEBAR (Diagnostics & Output Context) */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", position: "sticky", top: "2rem" }}>
+      <aside className="valuation-workspace-output">
 
         {/* Output KPI Card */}
-        <div style={{ background: "var(--panel-bg)", padding: "1.5rem", borderRadius: "8px", border: "1px solid var(--border-color)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
+        <div className={`valuation-output-card ${outputTrustBlocked ? "is-blocked" : ""}`}>
           <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Valuation Output</div>
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               Intrinsic Value
               <span className="badge" style={{ backgroundColor: "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", color: "var(--text-muted)" }}>Estimate</span>
             </div>
-            <div style={{ fontSize: "2rem", fontWeight: 700, color: "var(--accent)" }}>${fmt(out?.intrinsic_value_per_share)}</div>
+            <div className="valuation-output-value">
+              {outputTrustBlocked ? "Not reliable" : formatCurrency(out?.intrinsic_value_per_share, outputCurrency)}
+            </div>
+            {outputTrustBlocked && out?.intrinsic_value_per_share != null ? (
+              <div className="valuation-stored-result">Stored calculation: {formatCurrency(out.intrinsic_value_per_share, outputCurrency)}</div>
+            ) : null}
             {out?.base_dcf_value != null && (
               <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.5rem" }}>
-                Base DCF Value: ${fmt(out.base_dcf_value)}
+                Base DCF Value: {formatCurrency(out.base_dcf_value, outputCurrency)}
               </div>
             )}
             {out?.pv_of_excess_returns != null && (
               <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.5rem" }}>
-                PV of Excess Returns: ${fmt(out.pv_of_excess_returns)}
+                PV of Excess Returns: {formatCurrency(out.pv_of_excess_returns, outputCurrency)}
               </div>
             )}
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid var(--line)", marginBottom: "0.75rem", alignItems: "center" }}>
             <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               Current Price
-              <span className="badge" style={{ backgroundColor: "var(--accent-light)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", color: "var(--accent)" }}>Market Fact</span>
+              <span className="badge" style={{ backgroundColor: hasMarketPrice ? "var(--accent-light)" : "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", color: hasMarketPrice ? "var(--accent)" : "var(--text-muted)" }}>
+                {hasMarketPrice ? "Market Fact" : "Missing data"}
+              </span>
             </span>
-            <span style={{ fontWeight: 600 }}>${fmt(out?.current_market_price)}</span>
+            <span style={{ fontWeight: 600 }}>{hasMarketPrice ? formatCurrency(out?.current_market_price, outputCurrency) : "Not available"}</span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid var(--line)", marginBottom: "0.75rem" }}>
             <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Upside</span>
-            <span style={{ fontWeight: 600, color: out?.upside_downside_pct && out.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
-              {fmtPct(out?.upside_downside_pct)}
+            <span style={{ fontWeight: 600, color: outputTrustBlocked ? "var(--danger)" : out?.upside_downside_pct && out.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
+              {outputTrustBlocked ? "Not shown" : hasUpsideComparison ? fmtPct(out?.upside_downside_pct) : "Not available"}
             </span>
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Model Quality</span>
-            <span style={{ fontWeight: 600, color: score >= 80 ? "var(--success)" : "var(--warning)" }}>{score}/100</span>
+            <span style={{ fontWeight: 600, color: outputTrustBlocked ? "var(--danger)" : score >= 80 ? "var(--success)" : "var(--warning)" }}>{score}/100</span>
           </div>
         </div>
 
@@ -589,10 +683,10 @@ export function AdvancedWorkspace({
         {/* Diagnostics Card */}
         <div style={{ background: "var(--panel-bg)", padding: "1.5rem", borderRadius: "8px", border: "1px solid var(--border-color)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
           <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Diagnostics & Warnings</div>
-          <DiagnosticPanel warnings={warnings as DiagnosticWarning[]} />
+          <DiagnosticPanel warnings={diagnosticWarnings} />
         </div>
 
-      </div>
+      </aside>
 
     </div>
   );

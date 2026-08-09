@@ -327,10 +327,39 @@ test("valuation industry mapping supports persisted revenue-weighted segments", 
   assert.match(card, /Save mix/);
   assert.match(card, /Saved as User Assumption/);
   assert.match(card, /benchmarkAvailability/);
+  assert.match(card, /industry-mix-editor/);
+  assert.doesNotMatch(card, /min-w-\[800px\]/);
   assert.match(card, /source_document_id/);
   assert.match(api, /fetchIndustryMix/);
   assert.match(api, /saveIndustryMix/);
   assert.match(api, /industry-allocations/);
+});
+
+test("valuation drafts allow one explicit confirmation for valid current defaults", () => {
+  const review = readFrontendFile("components/valuation/autofill-draft-review.tsx");
+
+  assert.match(review, /Use all current defaults/);
+  assert.match(review, /acceptCurrentDefaults/);
+  assert.match(review, /I understand these values are estimates/);
+  assert.match(review, /valuation-draft-group/);
+  assert.match(review, /valuation-draft-warnings/);
+});
+
+test("advanced valuation workspace is responsive and blocks misleading outputs", () => {
+  const workspace = readFrontendFile("components/advanced-workspace.tsx");
+  const sensitivity = readFrontendFile("components/valuation/sensitivity-tables-panel.tsx");
+  const styles = readFrontendFile("app/globals.css");
+
+  assert.match(workspace, /valuation-workspace-grid/);
+  assert.match(workspace, /outputTrustBlocked/);
+  assert.match(workspace, /Sensitivity tables are unavailable for this model/);
+  assert.match(workspace, /invalidAssumptions\.length > 0/);
+  assert.match(workspace, /formatCurrency\(out\?\.intrinsic_value_per_share, outputCurrency\)/);
+  assert.match(workspace, /valuation-section-groups/);
+  assert.match(sensitivity, /currency/);
+  assert.doesNotMatch(sensitivity, /formatCurrency\(val, "INR"/);
+  assert.match(styles, /\.valuation-workspace-grid/);
+  assert.match(styles, /\.topbar \{[\s\S]*?background: var\(--color-surface\)/);
 });
 
 

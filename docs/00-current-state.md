@@ -19,8 +19,8 @@ security.
 
 | Check | Current result |
 |---|---|
-| Backend tests | 534 passed; four upstream `openpyxl` deprecation warnings |
-| Frontend tests | 95 passed |
+| Backend tests | 538 passed; four upstream `openpyxl` deprecation warnings |
+| Frontend tests | 98 passed |
 | TypeScript | Passes |
 | Production build | Next.js 16.2.11 passes |
 | Database migration | `cc4cc4cc4cc4` (market-regime score evidence) |
@@ -48,6 +48,13 @@ links and rejects retired active-plan paths.
 
 Docker runtime checks, the full backend suite, frontend tests, TypeScript, and
 the production build were all available and green during reconciliation.
+
+The valuation UI now persists industry mixes through the authenticated proxy,
+supports one explicit acknowledgement for all valid autofill defaults, and
+collapses detailed warnings and assumption groups. Invalid percentage-point
+DCF assumptions are rejected on new writes; historical invalid models remain
+readable but their output, rerun action, and sensitivity tables are blocked as
+unreliable until corrected.
 
 ## Capability Map
 
