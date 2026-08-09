@@ -1,6 +1,6 @@
 from datetime import date
 
-from app.models import Portfolio, PortfolioSnapshot, PortfolioTransaction
+from app.models import Company, ExposureTag, Portfolio, PortfolioSnapshot, PortfolioTransaction
 from app.services.portfolio_period_attribution import calculate_period_attribution
 
 
@@ -158,3 +158,31 @@ def test_period_attribution_separates_external_cash_flow(db):
     assert result["internal_cash_change"] == 0
     assert result["source_transaction_ids"] == [flow.id]
     assert result["unexplained_change"] == 0
+
+
+def test_period_attribution_rolls_contributions_into_company_dimensions(db):
+    tag = ExposureTag(name="Cloud")
+    company = Company(
+        ticker="TEST",
+        name="Dimension Test",
+        sector="Technology",
+        country="US",
+        asset_type="Equity",
+        exposure_tags=[tag],
+    )
+    portfolio = Portfolio(name="Dimensions", base_currency="USD")
+    db.add_all([tag, company, portfolio])
+    db.flush()
+    start = _snapshot(portfolio.id, date(2026, 8, 1), 10, 100)
+    end = _snapshot(portfolio.id, date(2026, 8, 2), 12, 120)
+    start.payload_json["holdings"][0]["company_id"] = company.id
+    end.payload_json["holdings"][0]["company_id"] = company.id
+    db.add_all([start, end])
+    db.commit()
+
+    result = calculate_period_attribution(db, portfolio.id, start.snapshot_date, end.snapshot_date)
+
+    assert result["attribution_by_sector"] == {"Technology": 20}
+    assert result["attribution_by_geography"] == {"US": 20}
+    assert result["attribution_by_asset_type"] == {"Equity": 20}
+    assert result["attribution_by_tag"] == {"Cloud": 20}

@@ -3,7 +3,7 @@ from datetime import date
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import PortfolioSnapshot
+from app.models import Company, PortfolioSnapshot
 from app.services.portfolio_cash_flows import normalize_external_cash_flows
 
 
@@ -108,6 +108,7 @@ def calculate_period_attribution(
                 holding_results.append(
                     {
                         "key": key,
+                        "company_id": boundary.get("company_id") if boundary else None,
                         "ticker": boundary.get("ticker") if boundary else None,
                         "price_movement": None,
                         "fx_impact": None,
@@ -121,10 +122,12 @@ def calculate_period_attribution(
             holding_results.append(
                 {
                     "key": key,
+                    "company_id": boundary.get("company_id"),
                     "ticker": boundary.get("ticker"),
                     "price_movement": 0.0,
                     "fx_impact": 0.0,
                     "position_change": position_change,
+                    "total_contribution": position_change,
                     "calculation_status": "complete",
                 }
             )
@@ -143,6 +146,7 @@ def calculate_period_attribution(
             holding_results.append(
                 {
                     "key": key,
+                    "company_id": ending.get("company_id") or beginning.get("company_id"),
                     "ticker": ending.get("ticker") or beginning.get("ticker"),
                     "price_movement": None,
                     "fx_impact": None,
@@ -180,10 +184,16 @@ def calculate_period_attribution(
         holding_results.append(
             {
                 "key": key,
+                "company_id": ending.get("company_id") or beginning.get("company_id"),
                 "ticker": ending.get("ticker") or beginning.get("ticker"),
                 "price_movement": price_movement,
                 "fx_impact": fx_impact,
                 "position_change": position_change,
+                "total_contribution": (
+                    price_movement + fx_impact + position_change
+                    if position_change is not None
+                    else None
+                ),
                 "calculation_status": "complete" if position_change is not None else "not_available",
             }
         )
@@ -234,6 +244,34 @@ def calculate_period_attribution(
                 "Attribution does not reconcile within 0.01 base-currency units; inspect snapshot provenance."
             )
             component_complete = False
+
+    company_ids = {
+        holding["company_id"]
+        for holding in holding_results
+        if holding.get("company_id") is not None
+    }
+    companies = {
+        company.id: company
+        for company in db.scalars(select(Company).where(Company.id.in_(company_ids))).all()
+    } if company_ids else {}
+    sector_attribution: dict[str, float] = {}
+    geography_attribution: dict[str, float] = {}
+    asset_type_attribution: dict[str, float] = {}
+    tag_attribution: dict[str, float] = {}
+    for holding in holding_results:
+        contribution = holding.get("total_contribution")
+        if contribution is None:
+            continue
+        company = companies.get(holding.get("company_id"))
+        sector = company.sector if company and company.sector else "Unknown"
+        geography = company.country if company and company.country else "Unknown"
+        asset_type = company.asset_type if company and company.asset_type else "Unknown"
+        sector_attribution[sector] = sector_attribution.get(sector, 0.0) + contribution
+        geography_attribution[geography] = geography_attribution.get(geography, 0.0) + contribution
+        asset_type_attribution[asset_type] = asset_type_attribution.get(asset_type, 0.0) + contribution
+        tags = company.exposure_tags if company else []
+        for tag in tags:
+            tag_attribution[tag.name] = tag_attribution.get(tag.name, 0.0) + contribution
     return {
         "portfolio_id": portfolio_id,
         "start_date": start_date,
@@ -249,6 +287,10 @@ def calculate_period_attribution(
         "internal_cash_change": internal_cash_change,
         "unexplained_change": unexplained_change,
         "holdings": holding_results,
+        "attribution_by_sector": sector_attribution,
+        "attribution_by_geography": geography_attribution,
+        "attribution_by_asset_type": asset_type_attribution,
+        "attribution_by_tag": tag_attribution,
         "warnings": warnings,
         "source_snapshot_ids": [start.id, end.id],
         "source_transaction_ids": [flow.transaction_id for flow in flow_report.flows],
