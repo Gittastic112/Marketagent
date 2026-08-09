@@ -9,7 +9,14 @@ from app.models.event import Event, EventCorroboration, EventContradiction
 from app.models.event_evidence_reference import EventEvidenceReference
 from app.models.market_price import MarketPrice
 from app.models.market_source import MarketSourceCapability
-from app.models.portfolio import Portfolio, PortfolioCashBalance, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
+from app.models.portfolio import (
+    Portfolio,
+    PortfolioBenchmarkConfig,
+    PortfolioCashBalance,
+    PortfolioHolding,
+    PortfolioSnapshot,
+    PortfolioTransaction,
+)
 from app.models.processing_run import ProcessingRun
 from app.models.raw_document import RawDocument
 from app.models.source import Source
@@ -99,6 +106,7 @@ __all__ = [
     "MarketPrice",
     "MarketSourceCapability",
     "Portfolio",
+    "PortfolioBenchmarkConfig",
     "PortfolioCashBalance",
     "PortfolioHolding",
     "PortfolioSnapshot",

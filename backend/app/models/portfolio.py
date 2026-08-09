@@ -2,7 +2,7 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
-from sqlalchemy import Date, DateTime, ForeignKey, JSON, Numeric, String, Text, func
+from sqlalchemy import Boolean, Date, DateTime, ForeignKey, JSON, Numeric, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -27,6 +27,47 @@ class Portfolio(Base):
     transactions = relationship("PortfolioTransaction", back_populates="portfolio", lazy="selectin")
     cash_balances = relationship("PortfolioCashBalance", back_populates="portfolio", lazy="selectin")
     snapshots = relationship("PortfolioSnapshot", back_populates="portfolio", lazy="selectin")
+    benchmark_config = relationship(
+        "PortfolioBenchmarkConfig",
+        back_populates="portfolio",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+        uselist=False,
+    )
+
+
+class PortfolioBenchmarkConfig(Base):
+    __tablename__ = "portfolio_benchmark_configs"
+    __table_args__ = (
+        UniqueConstraint("portfolio_id", name="uq_portfolio_benchmark_configs_portfolio"),
+    )
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    portfolio_id: Mapped[int] = mapped_column(
+        ForeignKey("portfolios.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
+    )
+    benchmark_company_id: Mapped[int | None] = mapped_column(
+        ForeignKey("companies.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
+    )
+    ticker: Mapped[str] = mapped_column(String(40), index=True)
+    currency: Mapped[str] = mapped_column(String(10))
+    provider_name: Mapped[str] = mapped_column(String(80), default="manual")
+    provider_symbol: Mapped[str | None] = mapped_column(String(80), nullable=True)
+    effective_from: Mapped[date] = mapped_column(Date)
+    active: Mapped[bool] = mapped_column(Boolean, default=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
+
+    portfolio = relationship("Portfolio", back_populates="benchmark_config", lazy="selectin")
 
 
 class PortfolioHolding(Base):
