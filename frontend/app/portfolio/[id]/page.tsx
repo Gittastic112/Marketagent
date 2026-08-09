@@ -2,16 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import {
+  capturePortfolioSnapshot,
   createPortfolioCashBalance,
-  createPortfolioSnapshot,
   deletePortfolioCashBalanceWithState,
   deletePortfolioSnapshotWithState,
-  updatePortfolioCashBalance,
-  updatePortfolioSnapshot
+  updatePortfolioCashBalance
 } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
-import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
-import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { TextField } from "@/components/form-fields";
+import { EmptyState, PageHeader, Panel } from "@/components/page";
 import { PortfolioPerformanceSetup } from "@/components/portfolio-performance-setup";
 import type {
   FxRateObservation,
@@ -321,61 +320,49 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
 
         {/* Snapshots Section */}
         <section id="snapshots">
-          <Panel title="Snapshots">
-            <details style={{ marginBottom: "1rem" }}>
-              <summary>Add Snapshot</summary>
-              <form action={createPortfolioSnapshot} className="form-grid">
-                <input name="portfolio_id" type="hidden" value={portfolio.id} />
-                <TextField defaultValue={today} id="snapshot-date" label="Snapshot Date" name="snapshot_date" required type="date" />
-                <TextField id="snapshot-market-value" label="Total Market Value" min="0" name="total_market_value" step="0.000001" type="number" />
-                <TextField id="snapshot-cost-basis" label="Total Cost Basis" min="0" name="total_cost_basis" step="0.000001" type="number" />
-                <TextField id="snapshot-cash" label="Total Cash" name="total_cash" step="0.000001" type="number" />
-                <TextAreaField className="field field-wide" id="snapshot-payload" label="Payload (JSON)" name="payload_json" />
-                <div className="button-row">
-                  <button type="submit">Add Snapshot</button>
-                </div>
-              </form>
-            </details>
+          <Panel title="Point-in-Time Snapshots">
+            <p style={{ color: "var(--text-secondary)", marginTop: 0 }}>
+              Capture derives totals from stored holdings, prices, cash, and historical FX. Incomplete captures remain visible but are blocked from precise performance calculations.
+            </p>
+            <form action={capturePortfolioSnapshot} className="form-grid" style={{ marginBottom: "1rem" }}>
+              <input name="portfolio_id" type="hidden" value={portfolio.id} />
+              <TextField defaultValue={today} id="snapshot-capture-date" label="Capture Date" name="as_of_date" required type="date" />
+              <div className="button-row"><button type="submit">Capture Snapshot</button></div>
+            </form>
 
             {snapshots.length === 0 ? (
-              <EmptyState label="No snapshots yet." />
+              <EmptyState label="No point-in-time snapshots yet. Capture at least two dates to calculate period performance." />
             ) : (
               <div className="table-wrap">
                 <table>
                   <thead>
                     <tr>
                       <th>Date</th>
+                      <th>Status</th>
+                      <th>Total Value</th>
                       <th>Market Value</th>
                       <th>Cost Basis</th>
                       <th>Cash</th>
+                      <th>Coverage</th>
+                      <th>Blockers</th>
                       <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {snapshots.map((snap) => (
+                    {[...snapshots].sort((a, b) => b.snapshot_date.localeCompare(a.snapshot_date)).map((snap) => (
                       <tr key={snap.id}>
                         <td>{snap.snapshot_date}</td>
+                        <td><strong>{snap.calculation_status.replaceAll("_", " ")}</strong></td>
+                        <td>{snap.total_portfolio_value != null ? `${snap.base_currency || portfolio.base_currency} ${numberText(snap.total_portfolio_value)}` : "Not available"}</td>
                         <td>{snap.total_market_value != null ? numberText(snap.total_market_value) : "-"}</td>
                         <td>{snap.total_cost_basis != null ? numberText(snap.total_cost_basis) : "-"}</td>
                         <td>{snap.total_cash != null ? numberText(snap.total_cash) : "-"}</td>
+                        <td>{snap.priced_holdings_count}/{snap.holdings_count} holdings priced</td>
                         <td>
-                          <div className="action-stack">
-                            <details className="edit-panel">
-                              <summary>Edit</summary>
-                              <form action={updatePortfolioSnapshot} className="inline-form">
-                                <input name="id" type="hidden" value={snap.id} />
-                                <TextField defaultValue={snap.snapshot_date} id={`snap-date-${snap.id}`} label="Date" name="snapshot_date" required type="date" />
-                                <TextField defaultValue={snap.total_market_value?.toString() ?? ""} id={`snap-mv-${snap.id}`} label="Market Value" min="0" name="total_market_value" step="0.000001" type="number" />
-                                <TextField defaultValue={snap.total_cost_basis?.toString() ?? ""} id={`snap-cb-${snap.id}`} label="Cost Basis" min="0" name="total_cost_basis" step="0.000001" type="number" />
-                                <TextField defaultValue={snap.total_cash?.toString() ?? ""} id={`snap-cash-${snap.id}`} label="Cash" name="total_cash" step="0.000001" type="number" />
-                                <TextAreaField className="field field-full" defaultValue={snap.payload_json ? JSON.stringify(snap.payload_json) : ""} id={`snap-payload-${snap.id}`} label="Payload JSON" name="payload_json" />
-                                <div className="button-row">
-                                  <button className="secondary-button" type="submit">Save</button>
-                                </div>
-                              </form>
-                            </details>
-                            <DeleteRecordForm action={deletePortfolioSnapshotWithState} recordId={snap.id} />
-                          </div>
+                          {[...snap.missing_price_tickers_json.map((ticker) => `Price: ${ticker}`), ...snap.missing_fx_pairs_json.map((pair) => `FX: ${pair}`)].join(", ") || "None"}
+                        </td>
+                        <td>
+                          <DeleteRecordForm action={deletePortfolioSnapshotWithState} recordId={snap.id} />
                         </td>
                       </tr>
                     ))}
