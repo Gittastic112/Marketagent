@@ -959,6 +959,7 @@ class ProviderHealthRead(BaseModel):
         "manual_only",
         "not_configured",
         "unsupported_market",
+        "mock",
         "unknown",
     ]
     configured: bool

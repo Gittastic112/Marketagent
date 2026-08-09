@@ -26,6 +26,7 @@ TEST_SEC_USER_AGENT = "Market Intelligence Test Suite sec-tests@marketintelligen
 @pytest.fixture(autouse=True)
 def configured_test_sec_identity(monkeypatch: pytest.MonkeyPatch) -> Generator[None]:
     monkeypatch.setenv("SEC_USER_AGENT", TEST_SEC_USER_AGENT)
+    monkeypatch.setenv("AI_DEMO_MODE", "false")
     get_settings.cache_clear()
     try:
         yield
