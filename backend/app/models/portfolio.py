@@ -12,6 +12,7 @@ class Portfolio(Base):
     __tablename__ = "portfolios"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
     name: Mapped[str] = mapped_column(String(255), index=True)
     base_currency: Mapped[str] = mapped_column(String(10), default="USD")
     description: Mapped[str | None] = mapped_column(Text)

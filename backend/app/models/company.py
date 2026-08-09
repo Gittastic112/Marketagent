@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import JSON, DateTime, String, func, ForeignKey
+from sqlalchemy import JSON, DateTime, ForeignKey, String, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -8,13 +8,24 @@ from app.db.base import Base
 
 class Company(Base):
     __tablename__ = "companies"
+    __table_args__ = (
+        UniqueConstraint("market", "primary_exchange", "local_symbol", name="uq_companies_market_exchange_symbol"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    ticker: Mapped[str] = mapped_column(String(20), unique=True, index=True)
+    ticker: Mapped[str] = mapped_column(String(20), index=True)
     name: Mapped[str] = mapped_column(String(255))
     sector: Mapped[str | None] = mapped_column(String(120))
     industry: Mapped[str | None] = mapped_column(String(120))
+    damodaran_industry: Mapped[str | None] = mapped_column(String(120))
     exchange: Mapped[str | None] = mapped_column(String(80))
+    market: Mapped[str] = mapped_column(String(10), default="US", index=True)
+    primary_exchange: Mapped[str | None] = mapped_column(String(20), index=True)
+    local_symbol: Mapped[str | None] = mapped_column(String(40), index=True)
+    isin: Mapped[str | None] = mapped_column(String(20), index=True)
+    figi: Mapped[str | None] = mapped_column(String(32), index=True)
+    regulatory_id: Mapped[str | None] = mapped_column(String(40), index=True)
+    regulatory_id_type: Mapped[str | None] = mapped_column(String(40))
     cik: Mapped[str | None] = mapped_column(String(20), unique=True)
     aliases_json: Mapped[list[str] | None] = mapped_column(JSON)
     country: Mapped[str | None] = mapped_column(String(120))
@@ -42,6 +53,10 @@ class Company(Base):
     market_prices = relationship("MarketPrice", back_populates="company", lazy="selectin")
     market_data = relationship("CompanyMarketData", back_populates="company", lazy="selectin", uselist=False)
     exposure_tags = relationship("ExposureTag", secondary="company_exposure_tags", back_populates="companies", lazy="selectin")
+
+    macro_inputs = relationship("CompanyMacroInput", back_populates="company", lazy="selectin")
+    macro_results = relationship("CompanyMacroSensitivityResult", back_populates="company", lazy="selectin")
+    macro_segments = relationship("CompanyMacroSegmentExposure", back_populates="company", lazy="selectin")
 
 class ExposureTag(Base):
     __tablename__ = "exposure_tags"

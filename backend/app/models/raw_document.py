@@ -26,3 +26,10 @@ class RawDocument(Base):
     company = relationship("Company", back_populates="raw_documents", lazy="selectin")
     source = relationship("Source", back_populates="raw_documents", lazy="selectin")
     events = relationship("Event", back_populates="raw_document", lazy="selectin")
+    asset = relationship(
+        "DocumentAsset",
+        back_populates="raw_document",
+        cascade="all, delete-orphan",
+        single_parent=True,
+        uselist=False,
+    )

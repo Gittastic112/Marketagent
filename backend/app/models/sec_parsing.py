@@ -31,12 +31,12 @@ class FilingSectionDiff(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     current_section_id: Mapped[int] = mapped_column(ForeignKey("filing_sections.id", ondelete="CASCADE"), index=True)
     prior_section_id: Mapped[int | None] = mapped_column(ForeignKey("filing_sections.id", ondelete="SET NULL"), index=True)
-    
+
     added_words: Mapped[int] = mapped_column(Integer, default=0)
     removed_words: Mapped[int] = mapped_column(Integer, default=0)
     diff_html: Mapped[str | None] = mapped_column(Text)
-    
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
-    
+
     current_section = relationship("FilingSection", foreign_keys=[current_section_id], back_populates="diffs_as_current")
     prior_section = relationship("FilingSection", foreign_keys=[prior_section_id], back_populates="diffs_as_prior")

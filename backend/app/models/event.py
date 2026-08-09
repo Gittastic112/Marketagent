@@ -22,12 +22,19 @@ class Event(Base):
     novelty_score: Mapped[int | None] = mapped_column()
     impact_score: Mapped[int | None] = mapped_column()
     priority_score: Mapped[int | None] = mapped_column()
+    data_confidence_score: Mapped[int | None] = mapped_column()
     score_explanation_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     company = relationship("Company", back_populates="events", lazy="selectin")
     raw_document = relationship("RawDocument", back_populates="events", lazy="selectin")
     alerts = relationship("Alert", back_populates="event", lazy="selectin")
+    evidence_references = relationship(
+        "EventEvidenceReference",
+        back_populates="event",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
 
     corroborates = relationship(
         "Event",
@@ -45,11 +52,14 @@ class Event(Base):
         lazy="selectin",
         viewonly=True
     )
+    narrative_mentions = relationship("NarrativeMention", back_populates="event", cascade="all, delete-orphan", lazy="selectin")
+    thesis_impacts = relationship("EventThesisImpact", back_populates="event", cascade="all, delete-orphan", lazy="selectin")
+
 
 
 class EventCorroboration(Base):
     __tablename__ = "event_corroborations"
-    
+
     source_event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), primary_key=True)
     target_event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
@@ -57,7 +67,7 @@ class EventCorroboration(Base):
 
 class EventContradiction(Base):
     __tablename__ = "event_contradictions"
-    
+
     source_event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), primary_key=True)
     target_event_id: Mapped[int] = mapped_column(ForeignKey("events.id"), primary_key=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
