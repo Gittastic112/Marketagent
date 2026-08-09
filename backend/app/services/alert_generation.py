@@ -15,7 +15,13 @@ class AlertGenerationResult:
     skipped_below_threshold: int
 
 
-def generate_alerts_from_events(db: Session, priority_threshold: int | None = None, limit: int | None = 100) -> AlertGenerationResult:
+def generate_alerts_from_events(
+    db: Session,
+    *,
+    user_id: str,
+    priority_threshold: int | None = None,
+    limit: int | None = 100,
+) -> AlertGenerationResult:
     threshold = priority_threshold if priority_threshold is not None else get_settings().alert_priority_threshold
     query = (
         select(Event)
@@ -34,11 +40,11 @@ def generate_alerts_from_events(db: Session, priority_threshold: int | None = No
         if (event.priority_score or 0) < threshold:
             skipped_below_threshold += 1
             continue
-        if event.alerts:
+        if any(alert.user_id == user_id for alert in event.alerts):
             skipped_existing += 1
             continue
 
-        db.add(_alert_from_event(event))
+        db.add(_alert_from_event(event, user_id=user_id))
         created += 1
 
     db.commit()
@@ -49,8 +55,9 @@ def generate_alerts_from_events(db: Session, priority_threshold: int | None = No
     )
 
 
-def _alert_from_event(event: Event) -> Alert:
+def _alert_from_event(event: Event, *, user_id: str) -> Alert:
     alert = Alert(
+        user_id=user_id,
         event=event,
         company=event.company,
         event_id=event.id,

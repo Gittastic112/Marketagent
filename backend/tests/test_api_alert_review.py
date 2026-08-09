@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from helpers import response_data
 
 
 @pytest.fixture
@@ -39,7 +40,7 @@ def client() -> Generator[TestClient]:
 def create_alert(client: TestClient) -> dict:
     response = client.post("/alerts", json={"alert_type": "manual_alert", "title": "Review margin change"})
     assert response.status_code == 201
-    return response.json()
+    return response_data(response)
 
 
 def test_update_alert_review_status_sets_reviewed_at(client: TestClient) -> None:
@@ -48,7 +49,7 @@ def test_update_alert_review_status_sets_reviewed_at(client: TestClient) -> None
     response = client.patch(f"/alerts/{alert['id']}", json={"review_status": "useful"})
 
     assert response.status_code == 200
-    body = response.json()
+    body = response_data(response)
     assert body["review_status"] == "useful"
     assert body["reviewed_at"] is not None
 
@@ -59,7 +60,7 @@ def test_update_alert_review_notes_sets_reviewed_at(client: TestClient) -> None:
     response = client.patch(f"/alerts/{alert['id']}", json={"review_notes": "Check next filing."})
 
     assert response.status_code == 200
-    body = response.json()
+    body = response_data(response)
     assert body["review_status"] == "unreviewed"
     assert body["review_notes"] == "Check next filing."
     assert body["reviewed_at"] is not None

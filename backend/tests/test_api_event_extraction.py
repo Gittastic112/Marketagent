@@ -10,6 +10,7 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.models import Company, RawDocument, Source
+from helpers import response_data
 
 
 @pytest.fixture
@@ -55,9 +56,9 @@ def test_post_extract_events_creates_events_from_raw_documents(client: TestClien
     response = client.post("/extract/events")
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["created"] == 1
     assert body["skipped_existing"] == 0
 
     events_response = client.get("/events")
-    assert events_response.json()[0]["title"] == "Apple services headline"
+    assert response_data(events_response)[0]["title"] == "Apple services headline"

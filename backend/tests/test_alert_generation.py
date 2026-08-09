@@ -33,8 +33,9 @@ def test_generate_alerts_from_events_creates_alerts_for_high_priority_events_onl
         session.add_all([company, high_priority, low_priority])
         session.commit()
 
-        first_result = generate_alerts_from_events(session)
-        second_result = generate_alerts_from_events(session)
+        first_result = generate_alerts_from_events(session, user_id="researcher-1")
+        second_result = generate_alerts_from_events(session, user_id="researcher-1")
+        other_user_result = generate_alerts_from_events(session, user_id="researcher-2")
         alerts = list(session.scalars(select(Alert).order_by(Alert.id)))
 
     assert first_result.created == 1
@@ -43,7 +44,9 @@ def test_generate_alerts_from_events_creates_alerts_for_high_priority_events_onl
     assert second_result.created == 0
     assert second_result.skipped_existing == 1
     assert second_result.skipped_below_threshold == 1
-    assert len(alerts) == 1
+    assert other_user_result.created == 1
+    assert len(alerts) == 2
+    assert {alert.user_id for alert in alerts} == {"researcher-1", "researcher-2"}
     assert alerts[0].event_id == high_priority.id
     assert alerts[0].company_id == company.id
     assert alerts[0].alert_type == "priority_event"
@@ -74,7 +77,7 @@ def test_generate_alerts_from_events_uses_configured_default_threshold(monkeypat
         session.add_all([company, event])
         session.commit()
 
-        result = generate_alerts_from_events(session)
+        result = generate_alerts_from_events(session, user_id="researcher-1")
         alerts = list(session.scalars(select(Alert)))
 
     assert result.created == 0

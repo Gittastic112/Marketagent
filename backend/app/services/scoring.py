@@ -173,19 +173,19 @@ def calculate_impact_score(db: Session | None, event: Event, credibility_score: 
 
 
 def calculate_priority_score(
-    db: Session | None,
-    credibility_score: int | None,
-    novelty_score: int | None,
-    impact_score: int | None,
-    information_speed: str | None,
+    db: Session | None = None,
+    credibility_score: int | None = None,
+    novelty_score: int | None = None,
+    impact_score: int | None = None,
+    information_speed: str | None = None,
 ) -> int:
     speed_bonus = {"slow": 60, "medium": 75, "fast": 80}.get(information_speed or "medium", 75)
-    
+
     w_credibility = 0.35
     w_novelty = 0.25
     w_impact = 0.35
     w_speed = 0.05
-    
+
     if db is not None:
         from app.models.scoring_config import ScoringConfig
         config = db.scalar(select(ScoringConfig).order_by(ScoringConfig.id).limit(1))
@@ -256,7 +256,7 @@ def explain_event_score(
     w_novelty = 0.25
     w_impact = 0.35
     w_speed = 0.05
-    
+
     if db is not None:
         from app.models.scoring_config import ScoringConfig
         config = db.scalar(select(ScoringConfig).order_by(ScoringConfig.id).limit(1))

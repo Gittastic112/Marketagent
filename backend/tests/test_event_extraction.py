@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
 
 from app.db.base import Base
-from app.models import Company, Event, RawDocument, Source
+from app.models import Company, Event, EventEvidenceReference, RawDocument, Source
 from app.services.event_extraction import extract_events_from_raw_documents
 
 
@@ -38,6 +38,7 @@ def test_extract_events_from_raw_documents_creates_rule_based_events_and_skips_e
         first_result = extract_events_from_raw_documents(session)
         second_result = extract_events_from_raw_documents(session)
         events = list(session.scalars(select(Event).order_by(Event.id)))
+        references = list(session.scalars(select(EventEvidenceReference).order_by(EventEvidenceReference.id)))
 
     assert first_result.created == 2
     assert first_result.skipped_existing == 0
@@ -54,6 +55,43 @@ def test_extract_events_from_raw_documents_creates_rule_based_events_and_skips_e
     assert events[1].information_speed == "fast"
     assert events[1].credibility_score == 30
     assert events[1].priority_score == 42
+    assert len(references) == 1
+    assert references[0].event_id == events[1].id
+    assert references[0].quote == "Supply update from a news source."
+    assert references[0].origin == "deterministic_extraction"
+
+
+def test_sec_event_description_keeps_raw_filing_text_out_of_event_and_alert_surfaces() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        company = Company(ticker="AAPL", name="Apple")
+        source = Source(name="SEC EDGAR", source_type="sec", reliability_score=95)
+        document = RawDocument(
+            company=company,
+            source=source,
+            document_type="sec_filing_metadata",
+            title="AAPL 10-K filed 2025-10-31",
+            url="https://www.sec.gov/example",
+            raw_text="<html><body>FULL RAW FILING CONTENT</body></html>",
+            raw_payload_json={"form_type": "10-K", "report_date": "2025-09-27"},
+            content_hash="event-extract-sec-raw-text",
+        )
+        session.add_all([company, source, document])
+        session.commit()
+
+        extract_events_from_raw_documents(session)
+        event = session.scalar(select(Event))
+
+    assert event is not None
+    assert event.description == (
+        "10-K filing imported from SEC EDGAR. "
+        "Report date: 2025-09-27. "
+        "Filing text downloaded and stored with the source document. "
+        "Source URL: https://www.sec.gov/example"
+    )
+    assert "FULL RAW FILING CONTENT" not in event.description
 
 
 def test_extract_events_from_raw_documents_creates_filing_change_event_for_comparable_sec_text() -> None:
@@ -90,6 +128,7 @@ def test_extract_events_from_raw_documents_creates_filing_change_event_for_compa
 
         result = extract_events_from_raw_documents(session)
         events = list(session.scalars(select(Event).order_by(Event.id)))
+        references = list(session.scalars(select(EventEvidenceReference).order_by(EventEvidenceReference.id)))
 
     assert result.created == 2
     assert events[0].event_type == "sec_filing"
@@ -103,6 +142,8 @@ def test_extract_events_from_raw_documents_creates_filing_change_event_for_compa
     assert f"#{current_document.id}" in events[1].description
     assert "-Supply chain conditions are stable." in events[1].description
     assert "+Supply chain conditions have worsened." in events[1].description
+    assert references[0].event_id == events[1].id
+    assert references[0].quote == "Supply chain conditions have worsened."
 
 
 def test_extract_events_from_raw_documents_does_not_flag_unchanged_comparable_sec_text() -> None:

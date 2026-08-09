@@ -1,11 +1,17 @@
 from dataclasses import dataclass
 from difflib import unified_diff
+import re
 
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, selectinload
 
-from app.models import Event, RawDocument
+from app.models import Event, EventEvidenceReference, RawDocument
 from app.services.scoring import score_event
+from app.services.sec_parsing import strip_html
+
+
+MAX_EVENT_DESCRIPTION_CHARS = 1_200
+MAX_DIFF_LINE_CHARS = 500
 
 
 @dataclass(frozen=True)
@@ -26,17 +32,82 @@ def extract_events_from_raw_documents(db: Session, limit: int | None = 100) -> E
 
     created = 0
     skipped_existing = 0
+    events_to_evaluate = []
 
     for document in documents:
         if document.events:
             skipped_existing += 1
             continue
 
-        db.add(_event_from_document(db, document))
+        event = _event_from_document(db, document)
+        reference = _exact_reference_from_document(event, document)
+        if reference is not None:
+            event.evidence_references.append(reference)
+        db.add(event)
+        events_to_evaluate.append(event)
         created += 1
 
     db.commit()
+
+    # Trigger Phase 18 Event Impact Agent for newly created events
+    from app.services.market_intelligence_agent import evaluate_event_impact_on_valuation
+    from app.models.dcf import DcfAssumptionSet, ValuationModel
+    from app.services.valuation_alert_service import generate_valuation_alert
+
+    for event in events_to_evaluate:
+        # Check if the event is material/important enough to bother the AI
+        if (event.priority_score and event.priority_score > 5) or "earnings" in (event.title or "").lower():
+            # Find active assumption set for the company
+            latest_assumption_set = db.scalar(
+                select(DcfAssumptionSet)
+                .join(ValuationModel, ValuationModel.id == DcfAssumptionSet.valuation_model_id)
+                .where(ValuationModel.company_id == event.company_id)
+                .where(DcfAssumptionSet.scenario == "Base")
+                .order_by(DcfAssumptionSet.id.desc())
+                .limit(1)
+            )
+
+            if latest_assumption_set:
+                result = evaluate_event_impact_on_valuation(db, event.id, latest_assumption_set.id)
+                if result.get("is_stale"):
+                    # Phase 18: Generate a valuation alert if AI decides assumptions are broken
+                    generate_valuation_alert(db, event.id, latest_assumption_set.id)
+
     return EventExtractionResult(created=created, skipped_existing=skipped_existing)
+
+
+def _exact_reference_from_document(
+    event: Event,
+    document: RawDocument,
+) -> EventEvidenceReference | None:
+    if not document.raw_text:
+        return None
+
+    quote = event.description or ""
+    if event.event_type == "filing_text_change":
+        quote = next(
+            (
+                line[1:]
+                for line in quote.splitlines()
+                if line.startswith("+") and not line.startswith("+++") and line[1:] in document.raw_text
+            ),
+            "",
+        )
+    if not quote:
+        return None
+
+    start_char = document.raw_text.find(quote)
+    if start_char < 0:
+        return None
+    return EventEvidenceReference(
+        raw_document=document,
+        locator_type="text_span",
+        start_char=start_char,
+        end_char=start_char + len(quote),
+        quote=quote,
+        confidence_label="high",
+        origin="deterministic_extraction",
+    )
 
 
 def _event_from_document(db: Session, document: RawDocument) -> Event:
@@ -55,7 +126,8 @@ def _event_from_document(db: Session, document: RawDocument) -> Event:
         description=_description_for_document(document),
         event_time=document.published_at,
     )
-    score_event(db, event)
+    with db.no_autoflush:
+        score_event(db, event)
     return event
 
 
@@ -77,7 +149,8 @@ def _filing_change_event_from_document(db: Session, document: RawDocument) -> Ev
         description=_filing_change_description(prior_document, document),
         event_time=document.published_at,
     )
-    score_event(db, event)
+    with db.no_autoflush:
+        score_event(db, event)
     return event
 
 
@@ -130,7 +203,16 @@ def _filing_change_description(prior_document: RawDocument, current_document: Ra
 def _normalized_lines(raw_text: str | None) -> list[str]:
     if not raw_text:
         return []
-    return [line.strip() for line in raw_text.splitlines() if line.strip()]
+    if "<" in raw_text and ">" in raw_text:
+        cleaned_text = strip_html(raw_text)
+        lines = re.split(r"(?<=[.!?])\s+", cleaned_text)
+    else:
+        lines = raw_text.splitlines()
+    return [
+        line.strip()[:MAX_DIFF_LINE_CHARS]
+        for line in lines
+        if line.strip()
+    ]
 
 
 def _event_type_for_document(document: RawDocument) -> str:
@@ -152,8 +234,23 @@ def _payload_value(document: RawDocument, key: str) -> object | None:
 
 
 def _description_for_document(document: RawDocument) -> str | None:
+    if document.document_type == "sec_filing_metadata":
+        form_type = _payload_value(document, "form_type") or "SEC"
+        report_date = _payload_value(document, "report_date")
+        details = [f"{form_type} filing imported from SEC EDGAR."]
+        if report_date:
+            details.append(f"Report date: {report_date}.")
+        if document.raw_text:
+            details.append("Filing text downloaded and stored with the source document.")
+        if document.url:
+            details.append(f"Source URL: {document.url}")
+        return " ".join(details)
+
     if document.raw_text:
-        return document.raw_text
+        cleaned_text = strip_html(document.raw_text)
+        if len(cleaned_text) > MAX_EVENT_DESCRIPTION_CHARS:
+            return f"{cleaned_text[:MAX_EVENT_DESCRIPTION_CHARS].rstrip()}..."
+        return cleaned_text
     if document.url:
         return f"Source URL: {document.url}"
     return None

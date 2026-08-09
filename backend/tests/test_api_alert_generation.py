@@ -9,7 +9,8 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-from app.models import Company, Event
+from app.models import Alert, Company, Event
+from helpers import response_data
 
 
 @pytest.fixture
@@ -53,10 +54,13 @@ def test_post_generate_alerts_creates_alerts_from_high_priority_events(client: T
     response = client.post("/generate/alerts")
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["created"] == 1
     assert body["skipped_existing"] == 0
     assert body["skipped_below_threshold"] == 0
 
     alerts_response = client.get("/alerts")
-    assert alerts_response.json()[0]["title"] == "Review: Microsoft 10-Q filed"
+    assert response_data(alerts_response)[0]["title"] == "Review: Microsoft 10-Q filed"
+    with next(app.dependency_overrides[get_db]()) as db:
+        alert = db.query(Alert).one()
+    assert alert.user_id == "admin_user_id_fallback"
