@@ -1,0 +1,212 @@
+{
+  "fixture_metadata": {
+    "is_mock": true,
+    "claim_type": "Mock Data",
+    "intended_use": "Automated integration tests only",
+    "notes": "Synthetic multi-year histories for normalization, reconciliation, and valuation-autofill coverage. Never load as production research data."
+  },
+  "histories": [
+    {
+      "fixture_id": "mock_us_industrial_history",
+      "company": {
+        "ticker": "USFIXTURE",
+        "name": "Mock US Industrial Fixture",
+        "market": "US",
+        "primary_exchange": "NASDAQ",
+        "local_symbol": "USFIXTURE",
+        "country": "United States",
+        "currency": "USD"
+      },
+      "periods": [
+        {
+          "year": 2023,
+          "report_date": "2023-12-31",
+          "metrics": {
+            "revenue": 1000,
+            "ebit": 180,
+            "ebitda": 230,
+            "net_income": 130,
+            "cash": 200,
+            "debt": 300,
+            "diluted_shares": 100,
+            "basic_shares": 98,
+            "capex": 80,
+            "depreciation": 50,
+            "change_in_working_capital": 10,
+            "acquisitions": 5,
+            "lease_liabilities": 40,
+            "minority_interests": 5,
+            "preferred_stock": 0,
+            "employee_options_value": 3,
+            "current_assets": 500,
+            "current_liabilities": 300,
+            "tax_expense": 45,
+            "pre_tax_income": 175,
+            "book_equity": 700,
+            "total_assets": 1400,
+            "invested_capital": 800
+          }
+        },
+        {
+          "year": 2024,
+          "report_date": "2024-12-31",
+          "metrics": {
+            "revenue": 1120,
+            "ebit": 210,
+            "ebitda": 265,
+            "net_income": 150,
+            "cash": 230,
+            "debt": 290,
+            "diluted_shares": 101,
+            "basic_shares": 99,
+            "capex": 88,
+            "depreciation": 55,
+            "change_in_working_capital": 12,
+            "acquisitions": 4,
+            "lease_liabilities": 38,
+            "minority_interests": 5,
+            "preferred_stock": 0,
+            "employee_options_value": 3,
+            "current_assets": 550,
+            "current_liabilities": 315,
+            "tax_expense": 52,
+            "pre_tax_income": 202,
+            "book_equity": 780,
+            "total_assets": 1510,
+            "invested_capital": 850
+          }
+        },
+        {
+          "year": 2025,
+          "report_date": "2025-12-31",
+          "metrics": {
+            "revenue": 1250,
+            "ebit": 250,
+            "ebitda": 310,
+            "net_income": 180,
+            "cash": 260,
+            "debt": 280,
+            "diluted_shares": 102,
+            "basic_shares": 100,
+            "capex": 95,
+            "depreciation": 60,
+            "change_in_working_capital": 14,
+            "acquisitions": 6,
+            "lease_liabilities": 36,
+            "minority_interests": 4,
+            "preferred_stock": 0,
+            "employee_options_value": 4,
+            "current_assets": 610,
+            "current_liabilities": 340,
+            "tax_expense": 60,
+            "pre_tax_income": 240,
+            "book_equity": 870,
+            "total_assets": 1640,
+            "invested_capital": 910
+          }
+        }
+      ]
+    },
+    {
+      "fixture_id": "mock_india_infrastructure_history",
+      "company": {
+        "ticker": "INFIXTURE",
+        "name": "Mock India Infrastructure Fixture",
+        "market": "IN",
+        "primary_exchange": "NSE",
+        "local_symbol": "INFIXTURE",
+        "country": "India",
+        "currency": "INR"
+      },
+      "periods": [
+        {
+          "year": 2024,
+          "report_date": "2024-03-31",
+          "metrics": {
+            "revenue": 8000,
+            "ebit": 1280,
+            "ebitda": 1700,
+            "net_income": 850,
+            "cash": 1200,
+            "debt": 3600,
+            "diluted_shares": 500,
+            "basic_shares": 495,
+            "capex": 900,
+            "depreciation": 420,
+            "change_in_working_capital": 160,
+            "acquisitions": 100,
+            "lease_liabilities": 300,
+            "minority_interests": 80,
+            "preferred_stock": 0,
+            "employee_options_value": 20,
+            "current_assets": 3200,
+            "current_liabilities": 1900,
+            "tax_expense": 270,
+            "pre_tax_income": 1120,
+            "book_equity": 5200,
+            "total_assets": 12000,
+            "invested_capital": 7600
+          }
+        },
+        {
+          "year": 2025,
+          "report_date": "2025-03-31",
+          "metrics": {
+            "revenue": 9200,
+            "ebit": 1518,
+            "ebitda": 1980,
+            "net_income": 1010,
+            "cash": 1350,
+            "debt": 3500,
+            "diluted_shares": 502,
+            "basic_shares": 497,
+            "capex": 980,
+            "depreciation": 462,
+            "change_in_working_capital": 175,
+            "acquisitions": 120,
+            "lease_liabilities": 285,
+            "minority_interests": 75,
+            "preferred_stock": 0,
+            "employee_options_value": 22,
+            "current_assets": 3600,
+            "current_liabilities": 2100,
+            "tax_expense": 315,
+            "pre_tax_income": 1325,
+            "book_equity": 5900,
+            "total_assets": 13200,
+            "invested_capital": 8200
+          }
+        },
+        {
+          "year": 2026,
+          "report_date": "2026-03-31",
+          "metrics": {
+            "revenue": 10800,
+            "ebit": 1836,
+            "ebitda": 2340,
+            "net_income": 1240,
+            "cash": 1500,
+            "debt": 3400,
+            "diluted_shares": 505,
+            "basic_shares": 500,
+            "capex": 1080,
+            "depreciation": 504,
+            "change_in_working_capital": 190,
+            "acquisitions": 140,
+            "lease_liabilities": 270,
+            "minority_interests": 70,
+            "preferred_stock": 0,
+            "employee_options_value": 24,
+            "current_assets": 4150,
+            "current_liabilities": 2380,
+            "tax_expense": 380,
+            "pre_tax_income": 1600,
+            "book_equity": 6800,
+            "total_assets": 14800,
+            "invested_capital": 9000
+          }
+        }
+      ]
+    }
+  ]
+}

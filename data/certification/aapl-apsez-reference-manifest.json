@@ -1,0 +1,56 @@
+{
+  "manifest_version": "financial-history-reference-v1",
+  "candidates": [
+    {
+      "label": "AAPL FY2022-FY2025",
+      "company_selector": {
+        "market": "US",
+        "local_symbol": "AAPL",
+        "regulatory_id": "0000320193"
+      },
+      "source_selectors": [
+        {
+          "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
+          "payload_sha256": "2d1974cf68b105aa4ae1a9da58bc95488993216dde40f8470bcf17eef4c8a472"
+        }
+      ],
+      "is_mock": false,
+      "source_assertion": "real_primary_source"
+    },
+    {
+      "label": "APSEZ FY2023-FY2025",
+      "company_selector": {
+        "market": "IN",
+        "primary_exchange": "NSE",
+        "local_symbol": "ADANIPORTS",
+        "regulatory_id": "INE742F01042"
+      },
+      "source_selectors": [
+        {
+          "asset_sha256": "2ec4e75290acf3845677ab4a2efd64869d5c9ea5c472a3f0421d9d1611527262"
+        },
+        {
+          "asset_sha256": "7f4ff812ea46d1d1c091e58f2161719285fee9ad39ea5e29c3b4beca13aea03f"
+        }
+      ],
+      "is_mock": false,
+      "source_assertion": "real_primary_source"
+    },
+    {
+      "label": "RELIANCE FY2023-FY2025",
+      "company_selector": {
+        "market": "IN",
+        "primary_exchange": "NSE",
+        "local_symbol": "RELIANCE",
+        "regulatory_id": "INE002A01018"
+      },
+      "source_selectors": [
+        {
+          "asset_sha256": "mock_reliance_asset_sha256_1"
+        }
+      ],
+      "is_mock": true,
+      "source_assertion": "mock_primary_source"
+    }
+  ]
+}
