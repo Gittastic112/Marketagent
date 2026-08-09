@@ -16,6 +16,36 @@ from app.models import (
 from helpers import response_data
 
 
+def _valid_review_value(field: str):
+    if field == "revenue_growth_years_json":
+        return {str(year): 0.05 for year in range(1, 11)}
+    if field in {"starting_revenue", "starting_invested_capital", "diluted_shares", "current_market_price"}:
+        return 100
+    if field == "beta":
+        return 1
+    if field == "debt_to_capital":
+        return 0.2
+    if field == "equity_to_capital":
+        return 0.8
+    if field in {
+        "current_operating_margin",
+        "target_operating_margin",
+        "tax_rate",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+    }:
+        return 0.1
+    if field == "sales_to_capital_ratio":
+        return 2
+    return 0
+
+
 def _company_with_actuals(db) -> tuple[Company, NormalizedFinancialSnapshot]:
     company = Company(
         ticker="DRAFT",
@@ -217,24 +247,9 @@ def test_reviewed_draft_promotes_atomically_to_valuation_model(client, db) -> No
     company, _ = _company_with_actuals(db)
     draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
     assumptions_patch = {
-        field: (
-            100
-            if field in {
-                "starting_revenue",
-                "starting_invested_capital",
-                "diluted_shares",
-                "current_market_price",
-                "cost_of_equity",
-                "wacc_start",
-                "wacc_terminal",
-            }
-            else 0
-        )
+        field: _valid_review_value(field)
         for field in draft["source_metadata_json"]["review_fields"]
-        if field != "revenue_growth_years_json"
     }
-    if "revenue_growth_years_json" in draft["source_metadata_json"]["review_fields"]:
-        assumptions_patch["revenue_growth_years_json"] = [0.05] * 10
     saved = response_data(
         client.patch(
             f"/valuation-drafts/{draft['id']}",
@@ -271,13 +286,9 @@ def test_failed_promotion_rolls_back_model_and_assumption_set(client, db, monkey
     company, _ = _company_with_actuals(db)
     draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
     assumptions_patch = {
-        field: 100
+        field: _valid_review_value(field)
         for field in draft["source_metadata_json"]["review_fields"]
     }
-    if "revenue_growth_years_json" in assumptions_patch:
-        assumptions_patch["revenue_growth_years_json"] = {
-            str(year): 0.05 for year in range(1, 11)
-        }
     response_data(
         client.patch(
             f"/valuation-drafts/{draft['id']}",

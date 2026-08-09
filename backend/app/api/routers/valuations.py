@@ -155,7 +155,7 @@ def list_valuation_models(company_id: int, db: Session = Depends(get_db), curren
 
 
 @router.post("/valuation-models/{model_id}/assumptions", response_model=ApiResponse[schemas.DcfAssumptionSetRead], status_code=status.HTTP_201_CREATED)
-def create_dcf_assumption_set(model_id: int, assumption_in: schemas.DcfAssumptionSetCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Any:
+def create_dcf_assumption_set(model_id: int, assumption_in: schemas.DcfAssumptionSetWrite, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Any:
     vmodel = get_owned_valuation_model(db, model_id, current_user["id"])
 
     aset = DcfAssumptionSet(**assumption_in.model_dump())

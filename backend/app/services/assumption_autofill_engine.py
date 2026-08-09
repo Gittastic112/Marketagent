@@ -517,7 +517,7 @@ class AssumptionAutofillEngine:
         set_val("starting_revenue", "revenue", None, default_val=0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
 
         if "starting_invested_capital" not in draft:
-            if "invested_capital" in actuals:
+            if "invested_capital" in actuals and actuals["invested_capital"][0] > 0:
                 draft["starting_invested_capital"] = actuals["invested_capital"][0]
                 provenance["starting_invested_capital"] = actuals["invested_capital"][1]
             elif draft.get("sales_to_capital_ratio") and draft["sales_to_capital_ratio"] > 0:

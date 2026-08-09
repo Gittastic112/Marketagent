@@ -1,3 +1,7 @@
+import pytest
+from pydantic import ValidationError
+
+from app.api.schemas import DcfAssumptionSetWrite
 from app.models.dcf import DcfAssumptionSet
 from app.services.dcf import calculate_dcf
 
@@ -78,3 +82,55 @@ def test_dcf_sensitivity():
     assert len(sensitivity_table.values_json) == 5
     for w_key, row in sensitivity_table.values_json.items():
         assert len(row) == 5
+
+
+def test_persisted_dcf_contract_rejects_percentage_points_and_invalid_capital_weights():
+    with pytest.raises(ValidationError):
+        DcfAssumptionSetWrite(
+            starting_revenue=1000,
+            target_operating_margin=31.3,
+            wacc_start=1.08,
+            wacc_terminal=1.08,
+            debt_to_capital=1.2,
+            equity_to_capital=1.8,
+            diluted_shares=100,
+            current_market_price=10,
+        )
+
+
+def test_persisted_dcf_contract_allows_missing_market_price_comparison():
+    assumptions = DcfAssumptionSetWrite(
+        starting_revenue=1000,
+        starting_invested_capital=500,
+        sales_to_capital_ratio=2,
+        diluted_shares=100,
+        current_market_price=0,
+    )
+
+    assert assumptions.current_market_price == 0
+
+
+def test_dcf_quality_score_penalizes_blocking_unit_errors():
+    assumption_set = DcfAssumptionSet(
+        id=4,
+        valuation_model_id=1,
+        projection_years_count=1,
+        starting_revenue=1000,
+        revenue_growth_years_json={"1": 0.05},
+        current_operating_margin=0.20,
+        target_operating_margin=31.3,
+        tax_rate=0.25,
+        sales_to_capital_ratio=2.0,
+        wacc_start=1.08,
+        wacc_terminal=1.08,
+        terminal_growth_rate=0.03,
+        terminal_roic=1.08,
+        diluted_shares=100,
+        current_market_price=10,
+    )
+
+    output, _, _ = calculate_dcf(assumption_set)
+
+    assert output.model_quality_score is not None
+    assert output.model_quality_score < 50
+    assert any(warning["severity"] == "blocking" for warning in output.warnings_json)

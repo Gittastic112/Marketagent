@@ -190,6 +190,37 @@ def test_autofill_uses_normalized_capital_and_revenue_history(db_session: Sessio
     assert growth_source["claim_type"] == "Calculation"
 
 
+def test_autofill_derives_invested_capital_when_reported_value_is_zero(db_session: Session):
+    company = Company(name="Zero Capital Co", ticker="ZERO", market="US")
+    db_session.add(company)
+    db_session.flush()
+    period = FinancialStatementPeriod(
+        company_id=company.id,
+        year=2026,
+        period_type="annual",
+        report_date=date(2026, 12, 31),
+        currency="USD",
+    )
+    db_session.add(period)
+    db_session.flush()
+    snapshot = NormalizedFinancialSnapshot(company_id=company.id, period_id=period.id)
+    db_session.add(snapshot)
+    db_session.flush()
+    db_session.add_all([
+        NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="revenue", value=1500, unit="USD"),
+        NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="invested_capital", value=0, unit="USD"),
+    ])
+    db_session.commit()
+
+    result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
+
+    assumptions = result["assumptions"]
+    assert assumptions["starting_invested_capital"] == pytest.approx(
+        assumptions["starting_revenue"] / assumptions["sales_to_capital_ratio"]
+    )
+    assert result["provenance"]["starting_invested_capital"]["source_type"] == "formula"
+
+
 def test_autofill_marks_warning_bearing_normalized_metric_for_review(db_session: Session):
     company = Company(name="Warnings Co", ticker="WARN", market="India", country="India")
     db_session.add(company)

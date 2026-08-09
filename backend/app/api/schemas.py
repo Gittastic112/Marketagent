@@ -1898,6 +1898,40 @@ class DcfAssumptionSetCreate(BaseModel):
     book_value_of_equity: float | None = None
     target_roe: float | None = None
 
+class DcfAssumptionSetWrite(DcfAssumptionSetCreate):
+    @model_validator(mode="after")
+    def validate_dcf_input_units(self):
+        bounded = {
+            "current_operating_margin": (-1.0, 1.0),
+            "target_operating_margin": (-1.0, 1.0),
+            "tax_rate": (0.0, 1.0),
+            "risk_free_rate": (0.0, 1.0),
+            "equity_risk_premium": (0.0, 1.0),
+            "cost_of_equity": (0.0, 1.0),
+            "pre_tax_cost_of_debt": (0.0, 1.0),
+            "debt_to_capital": (0.0, 1.0),
+            "equity_to_capital": (0.0, 1.0),
+            "wacc_start": (0.0, 1.0),
+            "wacc_terminal": (0.0, 1.0),
+            "terminal_growth_rate": (-0.2, 0.2),
+            "terminal_roic": (0.0, 1.0),
+            "beta": (0.0, 5.0),
+        }
+        for field, (lower, upper) in bounded.items():
+            value = getattr(self, field)
+            if value is not None and not lower <= value <= upper:
+                raise ValueError(f"{field} must be between {lower} and {upper} using decimal units")
+        for field in ("starting_revenue", "sales_to_capital_ratio", "starting_invested_capital", "diluted_shares"):
+            value = getattr(self, field)
+            if value is not None and value <= 0:
+                raise ValueError(f"{field} must be greater than zero")
+        if self.projection_years_count < 1 or self.projection_years_count > 30:
+            raise ValueError("projection_years_count must be between 1 and 30")
+        if self.debt_to_capital is not None and self.equity_to_capital is not None:
+            if abs((self.debt_to_capital + self.equity_to_capital) - 1.0) > 0.001:
+                raise ValueError("Debt-to-capital and equity-to-capital must sum to 1.0")
+        return self
+
 class DcfAssumptionSetUpdate(DcfAssumptionSetCreate):
     pass
 

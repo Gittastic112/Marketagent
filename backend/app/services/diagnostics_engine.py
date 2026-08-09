@@ -51,6 +51,8 @@ class DiagnosticsEngine:
     ) -> list[dict[str, Any]]:
         warnings: list[DiagnosticWarning] = []
 
+        warnings.extend(cls.check_assumption_units(assumption_set))
+
         # --- Original V1 checks ---
         warnings.extend(cls.check_terminal_value_discipline(assumption_set, terminal_fcff))
         warnings.extend(cls.check_reinvestment_consistency(assumption_set))
@@ -72,6 +74,62 @@ class DiagnosticsEngine:
         warnings.extend(cls.check_sales_to_capital_vs_industry(assumption_set, industry_operating_margin)) # Using industry margin as a proxy or just hardcode checking for now, but we don't have industry sales-to-capital passed in. Let's pass industry_sales_to_capital as well, or just add it to the signature later. Wait, we can just do a basic check.
 
         return [w.model_dump() for w in warnings]
+
+    @staticmethod
+    def quality_score(warnings: list[dict[str, Any]]) -> float:
+        """Return an explainable diagnostic score instead of an unearned default."""
+        penalties = {"blocking": 35, "critical": 25, "warning": 10, "watch": 5}
+        score = 100 - sum(penalties.get(str(item.get("severity", "")).lower(), 5) for item in warnings)
+        return float(max(0, score))
+
+    @staticmethod
+    def check_assumption_units(assumption_set: DcfAssumptionSet) -> list[DiagnosticWarning]:
+        """Catch percentage-point inputs such as 31.3 for a 31.3% margin."""
+        warnings: list[DiagnosticWarning] = []
+        bounded_fields = {
+            "current_operating_margin": (-1.0, 1.0),
+            "target_operating_margin": (-1.0, 1.0),
+            "tax_rate": (0.0, 1.0),
+            "risk_free_rate": (0.0, 1.0),
+            "equity_risk_premium": (0.0, 1.0),
+            "cost_of_equity": (0.0, 1.0),
+            "pre_tax_cost_of_debt": (0.0, 1.0),
+            "debt_to_capital": (0.0, 1.0),
+            "equity_to_capital": (0.0, 1.0),
+            "wacc_start": (0.0, 1.0),
+            "wacc_terminal": (0.0, 1.0),
+            "terminal_roic": (0.0, 1.0),
+            "terminal_growth_rate": (-0.2, 0.2),
+        }
+        invalid = [
+            field
+            for field, (lower, upper) in bounded_fields.items()
+            if (value := getattr(assumption_set, field, None)) is not None
+            and not lower <= float(value) <= upper
+        ]
+        if invalid:
+            warnings.append(DiagnosticWarning(
+                severity="blocking",
+                module="input_units",
+                message=(
+                    "Rate or margin assumptions are outside decimal-unit bounds. "
+                    "Enter 31.3% as 0.313, not 31.3."
+                ),
+                affectedAssumptions=invalid,
+                suggestedFix="Convert percentage-point inputs to decimals before rerunning the valuation.",
+            ))
+
+        debt_weight = assumption_set.debt_to_capital
+        equity_weight = assumption_set.equity_to_capital
+        if debt_weight is not None and equity_weight is not None and abs(debt_weight + equity_weight - 1.0) > 0.001:
+            warnings.append(DiagnosticWarning(
+                severity="blocking",
+                module="capital_structure",
+                message="Debt-to-capital and equity-to-capital must sum to 100%.",
+                affectedAssumptions=["debt_to_capital", "equity_to_capital"],
+                suggestedFix="Use decimal capital weights that sum to 1.0.",
+            ))
+        return warnings
 
     # =========================================================================
     # V1 CHECKS (preserved from original)

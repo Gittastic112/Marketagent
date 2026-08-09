@@ -339,6 +339,7 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
     warnings.extend([w.model_dump() for w in payout_warnings])
 
     output.warnings_json = warnings
+    output.model_quality_score = DiagnosticsEngine.quality_score(warnings)
 
     sensitivity_tables = generate_sensitivity_tables(assumption_set)
 

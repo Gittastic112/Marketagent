@@ -2,11 +2,13 @@ from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import HTTPException
+from pydantic import ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.company import Company
 from app.models.dcf import DcfAssumptionSet, ValuationModel, ValuationSetupDraft
+from app.api.schemas import DcfAssumptionSetWrite
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
 from app.services.dcf import calculate_dcf
 from app.services.industry_mapping import IndustryMappingService
@@ -18,7 +20,6 @@ class ValuationSetupDraftService:
         "sales_to_capital_ratio",
         "starting_invested_capital",
         "diluted_shares",
-        "current_market_price",
         "cost_of_equity",
         "wacc_start",
         "wacc_terminal",
@@ -337,6 +338,18 @@ class ValuationSetupDraftService:
                 for key, value in cls._normalize_assumptions(draft.assumptions_json).items()
                 if key in cls.ASSUMPTION_FIELDS
             }
+            try:
+                validated = DcfAssumptionSetWrite.model_validate(payload)
+            except ValidationError as exc:
+                problems = "; ".join(
+                    f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
+                    for error in exc.errors()[:6]
+                )
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Invalid DCF assumptions: {problems}",
+                ) from exc
+            payload = validated.model_dump(exclude={"valuation_model_id"})
             assumption_set = DcfAssumptionSet(valuation_model_id=model.id, **payload)
             db.add(assumption_set)
             db.flush()
