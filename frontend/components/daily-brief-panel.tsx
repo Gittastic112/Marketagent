@@ -1,10 +1,10 @@
 import React from "react";
 import { Panel } from "@/components/page";
-import type { DailyBrief } from "@/lib/api";
+import type { DailyBriefPayload } from "@/lib/api";
 import Link from "next/link";
 
 interface DailyBriefPanelProps {
-  dailyBrief: DailyBrief | null;
+  dailyBrief: DailyBriefPayload | null;
 }
 
 export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
@@ -17,28 +17,47 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
   }
 
   return (
-    <Panel title={dailyBrief.title || "Daily Intelligence Brief"}>
+    <Panel title="Daily Intelligence Brief">
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
-          {dailyBrief.summary}
+          {dailyBrief.high_materiality_events.length} high-materiality events and {dailyBrief.thesis_contradictions.length} thesis contradictions require review.
         </p>
 
-        {dailyBrief.follow_up_questions && dailyBrief.follow_up_questions.length > 0 && (
+        {dailyBrief.high_materiality_events.length > 0 && (
           <div>
             <h4 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
-              Suggested Investigation
+              High-Materiality Events
             </h4>
-            <ul style={{ paddingLeft: "1.2rem", fontSize: "0.9rem", color: "var(--accent)" }}>
-              {dailyBrief.follow_up_questions.map((question, idx) => (
-                <li key={idx} style={{ marginBottom: "0.25rem" }}>{question}</li>
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+              {dailyBrief.high_materiality_events.slice(0, 3).map((event) => (
+                <Link
+                  href={`/events/${event.event_id}`}
+                  key={event.event_id}
+                  className="btn btn-outline"
+                  style={{
+                    textAlign: "left",
+                    padding: "0.75rem 1rem",
+                    fontSize: "0.9rem",
+                    justifyContent: "flex-start",
+                    background: "var(--surface-hover)",
+                    borderColor: "var(--line)",
+                    color: "var(--text)",
+                    textDecoration: "none",
+                    display: "flex",
+                    alignItems: "center"
+                  }}
+                >
+                  <span style={{ color: "var(--accent)", marginRight: "0.5rem" }}>→</span>
+                  {event.headline}
+                </Link>
               ))}
-            </ul>
+            </div>
           </div>
         )}
 
         <div style={{ marginTop: "0.5rem" }}>
-          <Link href="/research" className="btn btn-outline" style={{ fontSize: "0.85rem" }}>
-            Investigate Events →
+          <Link href="/daily-brief" className="btn btn-outline" style={{ fontSize: "0.85rem" }}>
+            Open Daily Brief →
           </Link>
         </div>
       </div>

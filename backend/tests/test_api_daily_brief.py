@@ -10,6 +10,7 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.models import Company, Event
+from helpers import response_data
 
 
 @pytest.fixture
@@ -53,21 +54,24 @@ def test_get_daily_brief_returns_rule_based_brief(client: TestClient) -> None:
     response = client.get("/daily-brief")
 
     assert response.status_code == 200
-    body = response.json()
+    body = response_data(response)
     assert body["title"] == "Daily Intelligence Brief"
-    assert body["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
-    assert body["top_events"][0]["title"] == "Manual event for brief"
-    assert body["top_events"][0]["company"] == "AAPL"
+    assert body["review_status"] == "new"
+    assert body["payload_json"]["new_since_last_review"] is not None
+    assert body["payload_json"]["thesis_contradictions"] == []
+
+    repeated = response_data(client.get("/daily-brief"))
+    assert repeated["id"] == body["id"]
 
 
 def test_post_daily_brief_persists_brief(client: TestClient) -> None:
     response = client.post("/daily-brief")
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["title"] == "Daily Intelligence Brief"
-    assert body["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
-    assert body["payload_json"]["top_events"][0]["title"] == "Manual event for brief"
+    assert body["review_status"] == "new"
+    assert body["payload_json"]["thesis_contradictions"] == []
 
 
 def test_list_saved_daily_briefs_returns_recent_saved_briefs(client: TestClient) -> None:
@@ -76,7 +80,16 @@ def test_list_saved_daily_briefs_returns_recent_saved_briefs(client: TestClient)
     response = client.get("/daily-brief-history")
 
     assert response.status_code == 200
-    body = response.json()
+    body = response_data(response)
     assert len(body) == 1
     assert body[0]["title"] == "Daily Intelligence Brief"
-    assert body[0]["summary"] == "1 events, 0 alerts, 0 active thesis notes reviewed."
+
+
+def test_review_daily_brief_updates_status(client: TestClient) -> None:
+    post_res = client.post("/daily-brief")
+    brief_id = response_data(post_res)["id"]
+    assert response_data(post_res)["review_status"] == "new"
+
+    patch_res = client.patch(f"/daily-brief/{brief_id}/review")
+    assert patch_res.status_code == 200
+    assert response_data(patch_res)["review_status"] == "reviewed"

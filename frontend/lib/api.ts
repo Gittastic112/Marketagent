@@ -314,7 +314,7 @@ export type DashboardOverview = {
   events: EventRecord[];
   alerts: AlertRecord[];
   thesis_notes: ThesisNote[];
-  daily_brief: DailyBrief;
+  daily_brief: DailyBriefPayload;
   processing_runs: ProcessingRun[];
   default_portfolio: Portfolio | null;
   portfolio_analytics: PortfolioAnalytics | null;
@@ -962,44 +962,52 @@ export type PortfolioTransaction = {
   notes: string | null;
 };
 
-export type DailyBrief = {
-  title: string;
-  date: string;
-  summary: string;
-  top_events: Array<{
-    id: number;
-    company: string | null;
-    title: string;
-    event_type: string;
-    information_speed: string;
-    description: string | null;
-    credibility_score: number | null;
-    novelty_score: number | null;
-    impact_score: number | null;
-    priority_score: number | null;
-    source: string | null;
-    source_url: string | null;
+export type DailyBriefPayload = {
+  new_since_last_review: {
+    filings: Array<{
+      ticker: string;
+      form_type: string;
+      headline: string;
+      event_id: number;
+    }>;
+    portfolio_moves: Array<{
+      ticker: string;
+      event_headline: string;
+      event_id: number;
+      move_percent: number;
+    }>;
+  };
+  high_materiality_events: Array<{
+    headline: string;
+    priority: string;
+    event_id: number;
   }>;
-  alerts: Array<{
-    id: number;
-    company: string | null;
-    title: string;
-    severity: string;
-    confidence_bucket: string;
-    review_status: string;
-    summary: string | null;
+  thesis_contradictions: Array<{
+    assumption: string;
+    evidence: string | null;
+    alert_id: number;
   }>;
-  follow_up_questions: string[];
+  thesis_confirmations: unknown[];
+  valuation_relevance: Array<{
+    event_id: number;
+    headline: string;
+    variable: string;
+    direction: string;
+    reasoning: string;
+  }>;
 };
 
-export type SavedDailyBrief = {
+export type DailyBrief = {
   id: number;
   brief_date: string;
   title: string;
   summary: string;
-  payload_json: DailyBrief;
+  payload_json: DailyBriefPayload;
+  review_status: string;
   created_at: string;
 };
+
+export type SavedDailyBrief = DailyBrief;
 
 export type RssIngestionResult = {
   fetched_count: number;

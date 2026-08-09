@@ -1,57 +1,97 @@
 import Link from "next/link";
-import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
 import { DailyBriefPanel } from "@/components/daily-brief-panel";
 import { EventsTimeline } from "@/components/events-timeline";
 import { AlertsPanel } from "@/components/alerts-panel";
-import { fetchApi } from "@/lib/api";
-import type { AlertRecord, Company, DailyBrief, EventRecord, Portfolio, PortfolioAnalytics, ProcessingRun, ThesisNote } from "@/lib/api";
+import { serverFetchApiResponse } from "@/lib/server-api";
+import { StaleDataBanner, PartialDataNotice } from "@/components/page";
+import { summarizeApiMetas } from "@/lib/data-state-meta";
+import type { DashboardOverview } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 async function loadOverview() {
-  const [companies, events, alerts, thesisNotes, dailyBrief, portfolios, processingRuns] = await Promise.all([
-    fetchApi<Company[]>("/companies"),
-    fetchApi<EventRecord[]>("/events"),
-    fetchApi<AlertRecord[]>("/alerts"),
-    fetchApi<ThesisNote[]>("/thesis-notes"),
-    fetchApi<DailyBrief>("/daily-brief"),
-    fetchApi<Portfolio[]>("/portfolios"),
-    fetchApi<ProcessingRun[]>("/processing-runs").catch(() => [])
-  ]);
-
-  let analytics = null;
-  if (portfolios && portfolios.length > 0) {
-    const defaultPortfolio = portfolios[0];
-    try {
-      analytics = await fetchApi<PortfolioAnalytics>(`/portfolios/${defaultPortfolio.id}/analytics`);
-    } catch {
-      // Ignored if analytics fail
-    }
-  }
-
-  return { companies, events, alerts, thesisNotes, dailyBrief, analytics, processingRuns };
+  return serverFetchApiResponse<DashboardOverview>("/dashboard/overview");
 }
 
 export default async function HomePage() {
   try {
-    const { companies, events, alerts, thesisNotes, dailyBrief, analytics, processingRuns } = await loadOverview();
+    const overviewRes = await loadOverview();
+
+    const dataState = summarizeApiMetas([
+      overviewRes.meta,
+    ]);
+
+    const companies = overviewRes.data?.companies || [];
+    const events = overviewRes.data?.events || [];
+    const alerts = overviewRes.data?.alerts || [];
+    const thesisNotes = overviewRes.data?.thesis_notes || [];
+    const dailyBrief = overviewRes.data?.daily_brief || null;
+    const analytics = overviewRes.data?.portfolio_analytics;
+    const defaultPortfolio = overviewRes.data?.default_portfolio;
+    const processingRuns = overviewRes.data?.processing_runs || [];
+    const overviewWarnings = overviewRes.meta?.warnings || [];
+
     const companiesById = new Map(companies.map((c) => [c.id, c]));
-    
+
     // Sort alerts by priority (assuming higher priority is better, or just use active count)
     const activeAlerts = alerts.filter(a => a.review_status === "unreviewed" || a.review_status === "needs_follow_up");
 
     return (
       <>
-        <PageHeader eyebrow="Command Center" title="Overview" status={dailyBrief?.date} />
-        
+        <PageHeader eyebrow="Command Center" title="Overview" />
+
+        {dataState.allStale && <StaleDataBanner />}
+        {!dataState.allStale && dataState.someStale && <PartialDataNotice message="Some dashboard panels are showing cached data because the backend is partially reachable." />}
+        {dataState.hasMock && <MockDataState message="One or more dashboard panels are using mock data. Treat affected intelligence as a placeholder, not source-backed research." />}
+        {overviewWarnings.length > 0 && (
+          <PartialDataNotice message={overviewWarnings.join(" ")} />
+        )}
+
         <section className="metric-grid" style={{ marginBottom: "2rem" }}>
-          <Metric 
-            label="Total Portfolio Value" 
-            value={analytics?.total_portfolio_value ? `$${analytics.total_portfolio_value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}` : "—"} 
-          />
-          <Metric label="Active Alerts" value={activeAlerts.length} />
-          <Metric label="Tracked Companies" value={companies.length} />
-          <Metric label="Thesis Notes" value={thesisNotes.length} />
+          <div className="metric">
+            <div className="metric-label">Total Portfolio Value</div>
+            {analytics?.total_portfolio_value !== null && analytics?.total_portfolio_value !== undefined ? (
+              <div className="metric-value">${analytics.total_portfolio_value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+            ) : (
+              <div className="metric-value">
+                <Link href={defaultPortfolio ? "/market-prices" : "/portfolio/manage"} style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--accent)", display: "inline-flex", alignItems: "center", height: "100%" }}>
+                  {defaultPortfolio ? "Add Prices" : "+ Connect Portfolio"}
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="metric">
+            <div className="metric-label">Active Alerts</div>
+            {activeAlerts.length > 0 ? (
+              <div className="metric-value">{activeAlerts.length}</div>
+            ) : (
+              <div style={{ marginTop: "auto", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <Link href="/sources" className="btn btn-outline" style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>Configure Sources</Link>
+                <Link href="/data" className="btn btn-primary" style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>Run Ingestion</Link>
+              </div>
+            )}
+          </div>
+          <div className="metric">
+            <div className="metric-label">Tracked Companies</div>
+            {companies.length > 0 ? (
+              <div className="metric-value">{companies.length}</div>
+            ) : (
+              <div style={{ marginTop: "auto", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <Link href="/companies/new" className="btn btn-outline" style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>Add Company</Link>
+              </div>
+            )}
+          </div>
+          <div className="metric">
+            <div className="metric-label">Thesis Notes</div>
+            {thesisNotes.length > 0 ? (
+              <div className="metric-value">{thesisNotes.length}</div>
+            ) : (
+              <div style={{ marginTop: "auto", display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                <Link href="/thesis-notes/new" className="btn btn-outline" style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>Write Thesis</Link>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Ingestion Health Summary */}
@@ -91,9 +131,9 @@ export default async function HomePage() {
             </div>
           );
         })()}
-        
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 350px", gap: "2rem", alignItems: "start" }}>
-          
+
+        <div className="dashboard-content-grid">
+
           {/* Main Content Column */}
           <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
             <DailyBriefPanel dailyBrief={dailyBrief} />
@@ -179,11 +219,12 @@ export default async function HomePage() {
         </div>
       </>
     );
-  } catch (error) {
+  } catch (error: any) {
+    console.error("Dashboard load error:", error);
     return (
       <>
         <PageHeader eyebrow="Command Center" title="Overview" />
-        <ErrorState message="The frontend could not reach the backend API." />
+        <ErrorState message={error?.message || "The frontend could not reach the backend API."} />
       </>
     );
   }
