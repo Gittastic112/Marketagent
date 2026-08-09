@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from app.models.damodaran import DamodaranDatasetFile
 from app.models.processing_run import ProcessingRun
+from app.models.source import Source
 
 
 def _provider_by_name(items: list[dict], provider_name: str) -> dict:
@@ -56,7 +57,9 @@ def test_provider_health_reports_configuration_and_processing_run_history(client
     assert sec["status"] == "working"
     assert sec["configured"] is True
     assert sec["last_success_at"] == "2026-06-19T10:01:00"
-    assert sec["freshness_label"] == "fresh"
+    assert sec["freshness_label"] == "stale"
+    assert sec["data_age_hours"] > 72
+    assert "Refresh" in sec["action_required"]
 
     fred = _provider_by_name(providers, "FRED")
     assert fred["status"] == "failing"
@@ -159,3 +162,20 @@ def test_provider_health_classifies_latest_running_and_partial_attempts(client, 
     assert fred["status"] == "partial"
     assert fred["latest_run_status"] == "partial"
     assert fred["failure_reason"] == "one series rejected"
+
+
+def test_provider_health_reports_owned_rss_source_coverage(client, db) -> None:
+    db.add_all(
+        [
+            Source(name="Feed One", source_type="rss", base_url="https://one.example/feed", active=True),
+            Source(name="Feed Two", source_type="rss", base_url="https://two.example/feed", active=True),
+            Source(name="Disabled Feed", source_type="rss", base_url="https://off.example/feed", active=False),
+        ]
+    )
+    db.commit()
+
+    rss = _provider_by_name(client.get("/api/providers/health").json()["data"], "RSS Feeds")
+    assert rss["configured_source_count"] == 2
+    assert rss["coverage_state"] == "2 active RSS sources"
+    assert rss["freshness_label"] == "never_run"
+    assert "Run RSS Feeds ingestion" in rss["action_required"]

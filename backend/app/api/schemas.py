@@ -1062,6 +1062,9 @@ class ProviderHealthRead(BaseModel):
     latest_run_status: str | None = None
     recent_run_count: int = 0
     consecutive_failures: int = 0
+    data_age_hours: float | None = None
+    freshness_threshold_hours: int | None = None
+    configured_source_count: int | None = None
     last_success_at: datetime | None = None
     last_failure_at: datetime | None = None
     failure_reason: str | None = None

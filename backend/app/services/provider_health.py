@@ -1,8 +1,8 @@
 import os
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.schemas import ProviderHealthRead
@@ -43,6 +43,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             missing_action="Set SEC_USER_AGENT with a real contact email before SEC ingestion.",
             rate_limit_status="10 requests/second",
             coverage_state="US Public Companies",
+            freshness_threshold_hours=72,
         ),
         _configured_provider(
             provider_name="FRED",
@@ -53,6 +54,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             missing_action="Set FRED_API_KEY to enable FRED macro ingestion.",
             rate_limit_status="120 requests/minute",
             coverage_state="US Macro Indicators",
+            freshness_threshold_hours=168,
         ),
         _configured_provider(
             provider_name=market_provider,
@@ -64,6 +66,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             configured_notes=_market_data_provider_notes(market_provider),
             rate_limit_status="5 requests/minute (Free)" if market_provider == "Alpha Vantage" else "Unknown",
             coverage_state="US & Select Global Equities",
+            freshness_threshold_hours=24,
         ),
         _configured_provider(
             provider_name="AI Provider",
@@ -194,9 +197,19 @@ def _configured_provider(
     unconfigured_status: str = "missing_key",
     rate_limit_status: str | None = None,
     coverage_state: str | None = None,
+    freshness_threshold_hours: int | None = None,
+    configured_source_count: int | None = None,
 ) -> ProviderHealthRead:
     summary = run_summary or RunSummary()
     status = _status_for_configured_provider(configured=configured, summary=summary, unconfigured_status=unconfigured_status)
+    data_age_hours = _data_age_hours(summary.last_success_at)
+    freshness_label = _freshness_for_provider(
+        status=status,
+        configured=configured,
+        has_run=summary.last_attempt_at is not None,
+        data_age_hours=data_age_hours,
+        threshold_hours=freshness_threshold_hours,
+    )
     return ProviderHealthRead(
         provider_name=provider_name,
         capability=capability,
@@ -207,12 +220,21 @@ def _configured_provider(
         latest_run_status=summary.latest_run_status,
         recent_run_count=summary.recent_run_count,
         consecutive_failures=summary.consecutive_failures,
+        data_age_hours=data_age_hours,
+        freshness_threshold_hours=freshness_threshold_hours,
+        configured_source_count=configured_source_count,
         last_success_at=summary.last_success_at,
         last_failure_at=summary.last_failure_at,
         failure_reason=summary.failure_reason,
-        freshness_label=_freshness_for_status(status),
+        freshness_label=freshness_label,
         notes=configured_notes,
-        action_required=None if configured else missing_action,
+        action_required=_action_for_provider(
+            configured=configured,
+            status=status,
+            freshness_label=freshness_label,
+            missing_action=missing_action,
+            provider_name=provider_name,
+        ),
         rate_limit_status=rate_limit_status,
         coverage_state=coverage_state,
     )
@@ -248,6 +270,51 @@ def _freshness_for_status(status: str) -> str:
     if status == "mock":
         return "simulated"
     return "unknown"
+
+
+def _as_utc(value: datetime) -> datetime:
+    return value.replace(tzinfo=timezone.utc) if value.tzinfo is None else value.astimezone(timezone.utc)
+
+
+def _data_age_hours(last_success_at: datetime | None) -> float | None:
+    if last_success_at is None:
+        return None
+    age = datetime.now(timezone.utc) - _as_utc(last_success_at)
+    return round(max(age.total_seconds(), 0) / 3600, 1)
+
+
+def _freshness_for_provider(
+    *,
+    status: str,
+    configured: bool,
+    has_run: bool,
+    data_age_hours: float | None,
+    threshold_hours: int | None,
+) -> str:
+    base = _freshness_for_status(status)
+    if not configured or status in {"running", "partial", "failing", "manual_only", "mock"}:
+        return base
+    if not has_run:
+        return "never_run"
+    if data_age_hours is not None and threshold_hours is not None and data_age_hours > threshold_hours:
+        return "stale"
+    return base
+
+
+def _action_for_provider(
+    *, configured: bool, status: str, freshness_label: str, missing_action: str, provider_name: str
+) -> str | None:
+    if not configured:
+        return missing_action
+    if status == "failing":
+        return f"Inspect the latest {provider_name} error and retry ingestion."
+    if status == "partial":
+        return f"Review rejected records from the latest {provider_name} run."
+    if freshness_label == "never_run":
+        return f"Run {provider_name} ingestion to establish freshness."
+    if freshness_label == "stale":
+        return f"Refresh {provider_name}; the latest successful data is outside its freshness threshold."
+    return None
 
 
 def _latest_run_summaries(db: Session) -> dict[str, RunSummary]:
@@ -309,6 +376,9 @@ def _failure_reason(run: ProcessingRun) -> str | None:
 def _damodaran_health(db: Session) -> ProviderHealthRead:
     latest_file = db.scalar(select(DamodaranDatasetFile).order_by(DamodaranDatasetFile.imported_at.desc()))
     configured = latest_file is not None
+    age_hours = _data_age_hours(latest_file.imported_at) if latest_file is not None else None
+    threshold_hours = 24 * 400
+    stale = age_hours is not None and age_hours > threshold_hours
     return ProviderHealthRead(
         provider_name="Damodaran Benchmarks",
         capability="benchmarks",
@@ -316,16 +386,26 @@ def _damodaran_health(db: Session) -> ProviderHealthRead:
         status="working" if configured else "not_configured",
         configured=configured,
         last_success_at=latest_file.imported_at if latest_file is not None else None,
-        freshness_label="fresh" if configured else "missing",
+        data_age_hours=age_hours,
+        freshness_threshold_hours=threshold_hours,
+        configured_source_count=1 if configured else 0,
+        freshness_label="stale" if stale else ("fresh" if configured else "missing"),
         notes=f"Latest dataset: {latest_file.dataset_code}" if latest_file is not None else None,
-        action_required=None if configured else "Import Damodaran benchmark files before benchmark-derived autofill.",
+        action_required=(
+            "Import a newer Damodaran benchmark dataset."
+            if stale
+            else (None if configured else "Import Damodaran benchmark files before benchmark-derived autofill.")
+        ),
         rate_limit_status="N/A (Static File)",
         coverage_state="Global Baselines",
     )
 
 
 def _rss_health(db: Session, run_summary: RunSummary | None) -> ProviderHealthRead:
-    has_active_source = db.scalar(select(Source.id).where(Source.source_type == "rss", Source.active.is_(True))) is not None
+    active_source_count = int(
+        db.scalar(select(func.count(Source.id)).where(Source.source_type == "rss", Source.active.is_(True))) or 0
+    )
+    has_active_source = active_source_count > 0
     return _configured_provider(
         provider_name="RSS Feeds",
         capability="news",
@@ -335,5 +415,7 @@ def _rss_health(db: Session, run_summary: RunSummary | None) -> ProviderHealthRe
         missing_action="Add at least one active RSS source before RSS ingestion.",
         configured_notes="At least one active RSS source configured",
         rate_limit_status="Depends on Feed",
-        coverage_state="News/Blogs",
+        coverage_state=f"{active_source_count} active RSS sources",
+        freshness_threshold_hours=24,
+        configured_source_count=active_source_count,
     )
