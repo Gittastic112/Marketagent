@@ -24,7 +24,7 @@ class ThesisEvidenceDetectRead(BaseModel):
     thesis_id: int
     contradictions: list[int]
     confirmations: list[int]
-    claim_type: Literal["Mock Data"] = "Mock Data"
+    claim_type: Literal["Calculation"] = "Calculation"
 
 
 @router.post(
@@ -49,8 +49,11 @@ def detect_evidence(
     )
     if thesis is None:
         raise HTTPException(status_code=404, detail="Thesis note not found")
-    if db.get(Event, payload.event_id) is None:
+    event = db.get(Event, payload.event_id)
+    if event is None:
         raise HTTPException(status_code=404, detail="Event not found")
+    if event.company_id != thesis.company_id:
+        raise HTTPException(status_code=422, detail="Event and thesis must belong to the same company")
 
     contradictions = ThesisEvidenceEngine.detect_contradictions(
         db,
@@ -71,8 +74,11 @@ def detect_evidence(
             confirmations=[impact.id for impact in confirmations],
         ),
         meta={
-            "is_mock": True,
-            "warnings": ["Mock Data: keyword-based thesis evidence detection."],
+            "is_mock": False,
+            "warnings": [
+                "Deterministic candidates use user-authored falsification triggers and require review. "
+                "No confirmation is inferred automatically."
+            ],
             "confidence": "low",
         },
     )
