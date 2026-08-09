@@ -12,14 +12,17 @@ import {
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { PortfolioPerformanceSetup } from "@/components/portfolio-performance-setup";
 import type {
+  FxRateObservation,
   Portfolio,
+  PortfolioAnalytics,
+  PortfolioAttributionRead,
+  PortfolioBenchmarkConfig,
   PortfolioCashBalance,
   PortfolioHolding,
   PortfolioSnapshot,
-  PortfolioTransaction,
-  PortfolioAnalytics,
-  PortfolioAttributionRead
+  PortfolioTransaction
 } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { DataFreshnessIndicator } from "@/components/ui/data-states";
@@ -42,17 +45,23 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
     notFound();
   }
 
-  const [holdingsRes, transactions, cashBalances, snapshots, analytics, attribution] = await Promise.all([
+  const [holdingsRes, transactions, cashBalances, snapshots, analytics, attribution, benchmarkConfigs, directFx, inverseFx] = await Promise.all([
     serverFetchApiResponse<PortfolioHolding[]>(`/portfolio-holdings?portfolio_id=${portfolioId}`).catch(() => ({ data: [], meta: null })),
     serverFetchApi<PortfolioTransaction[]>(`/portfolio-transactions?portfolio_id=${portfolioId}`).catch(() => []),
     serverFetchApi<PortfolioCashBalance[]>(`/portfolio-cash-balances?portfolio_id=${portfolioId}`).catch(() => []),
     serverFetchApi<PortfolioSnapshot[]>(`/portfolio-snapshots?portfolio_id=${portfolioId}`).catch(() => []),
     serverFetchApi<PortfolioAnalytics>(`/portfolios/${portfolioId}/analytics`).catch(() => null),
-    serverFetchApi<PortfolioAttributionRead>(`/portfolios/${portfolioId}/attribution`).catch(() => null)
+    serverFetchApi<PortfolioAttributionRead>(`/portfolios/${portfolioId}/attribution`).catch(() => null),
+    serverFetchApi<PortfolioBenchmarkConfig[]>(`/portfolio-benchmarks?portfolio_id=${portfolioId}`).catch(() => []),
+    serverFetchApi<FxRateObservation[]>(`/fx-rates?quote_currency=${encodeURIComponent(portfolio.base_currency)}`).catch(() => []),
+    serverFetchApi<FxRateObservation[]>(`/fx-rates?base_currency=${encodeURIComponent(portfolio.base_currency)}`).catch(() => [])
   ]);
   const holdings = holdingsRes.data || [];
 
   const today = new Date().toISOString().slice(0, 10);
+  const fxRates = [...directFx, ...inverseFx]
+    .filter((rate, index, rows) => rows.findIndex((candidate) => candidate.id === rate.id) === index)
+    .sort((a, b) => b.as_of_date.localeCompare(a.as_of_date));
 
   return (
     <>
@@ -71,6 +80,15 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
           <p>{portfolio.description}</p>
         </div>
       )}
+
+      <section style={{ marginBottom: "2rem" }}>
+        <PortfolioPerformanceSetup
+          benchmark={benchmarkConfigs[0] || null}
+          fxRates={fxRates}
+          portfolio={portfolio}
+          today={today}
+        />
+      </section>
 
       {analytics && (
         <section id="analytics" style={{ marginBottom: "2rem" }}>
