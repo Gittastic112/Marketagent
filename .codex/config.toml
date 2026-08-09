@@ -1,0 +1,16 @@
+default_permissions = "market-intelligence-edit"
+
+[permissions.market-intelligence-edit]
+description = "Edit this workspace while denying access to local environment files."
+extends = ":workspace"
+
+[permissions.market-intelligence-edit.filesystem]
+glob_scan_max_depth = 8
+
+[permissions.market-intelligence-edit.filesystem.":workspace_roots"]
+".env" = "deny"
+".env.*" = "deny"
+"**/.env" = "deny"
+"**/.env.*" = "deny"
+"**/*.env" = "deny"
+"**/*.env.*" = "deny"
