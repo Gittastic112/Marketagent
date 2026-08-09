@@ -1048,6 +1048,8 @@ class ProviderHealthRead(BaseModel):
         "configured",
         "missing_key",
         "working",
+        "running",
+        "partial",
         "failing",
         "manual_only",
         "not_configured",
@@ -1056,6 +1058,10 @@ class ProviderHealthRead(BaseModel):
         "unknown",
     ]
     configured: bool
+    last_attempt_at: datetime | None = None
+    latest_run_status: str | None = None
+    recent_run_count: int = 0
+    consecutive_failures: int = 0
     last_success_at: datetime | None = None
     last_failure_at: datetime | None = None
     failure_reason: str | None = None

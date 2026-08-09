@@ -13,11 +13,17 @@ from app.models.source import Source
 
 COMPLETED_STATUSES = {"completed", "success"}
 FAILED_STATUSES = {"failed", "error"}
+RUNNING_STATUSES = {"running", "in_progress", "queued"}
+PARTIAL_STATUSES = {"partial", "completed_with_errors"}
 DEFAULT_SEC_USER_AGENT = "Market Intelligence Engine local research app"
 
 
 @dataclass(frozen=True)
 class RunSummary:
+    last_attempt_at: datetime | None = None
+    latest_run_status: str | None = None
+    recent_run_count: int = 0
+    consecutive_failures: int = 0
     last_success_at: datetime | None = None
     last_failure_at: datetime | None = None
     failure_reason: str | None = None
@@ -197,6 +203,10 @@ def _configured_provider(
         market=market,
         status=status,
         configured=configured,
+        last_attempt_at=summary.last_attempt_at,
+        latest_run_status=summary.latest_run_status,
+        recent_run_count=summary.recent_run_count,
+        consecutive_failures=summary.consecutive_failures,
         last_success_at=summary.last_success_at,
         last_failure_at=summary.last_failure_at,
         failure_reason=summary.failure_reason,
@@ -211,9 +221,11 @@ def _configured_provider(
 def _status_for_configured_provider(*, configured: bool, summary: RunSummary, unconfigured_status: str = "missing_key") -> str:
     if not configured:
         return unconfigured_status
-    if summary.last_failure_at and (
-        summary.last_success_at is None or summary.last_failure_at >= summary.last_success_at
-    ):
+    if summary.latest_run_status == "running":
+        return "running"
+    if summary.latest_run_status == "partial":
+        return "partial"
+    if summary.latest_run_status == "failed":
         return "failing"
     if summary.last_success_at:
         return "working"
@@ -223,6 +235,10 @@ def _status_for_configured_provider(*, configured: bool, summary: RunSummary, un
 def _freshness_for_status(status: str) -> str:
     if status == "working":
         return "fresh"
+    if status == "running":
+        return "updating"
+    if status == "partial":
+        return "partial"
     if status == "failing":
         return "error"
     if status == "manual_only":
@@ -236,27 +252,50 @@ def _freshness_for_status(status: str) -> str:
 
 def _latest_run_summaries(db: Session) -> dict[str, RunSummary]:
     runs = list(db.scalars(select(ProcessingRun).order_by(ProcessingRun.started_at.desc(), ProcessingRun.id.desc())))
-    summaries: dict[str, RunSummary] = {}
+    runs_by_type: dict[str, list[ProcessingRun]] = {}
     for run in runs:
-        current = summaries.get(run.run_type, RunSummary())
-        finished_or_started = run.finished_at or run.started_at
-        last_success_at = current.last_success_at
-        last_failure_at = current.last_failure_at
-        failure_reason = current.failure_reason
-        status = run.status.lower()
+        runs_by_type.setdefault(run.run_type, []).append(run)
+    return {run_type: _summarize_runs(items) for run_type, items in runs_by_type.items()}
 
-        if status in COMPLETED_STATUSES and last_success_at is None:
-            last_success_at = finished_or_started
-        if status in FAILED_STATUSES and last_failure_at is None:
-            last_failure_at = finished_or_started
-            failure_reason = _failure_reason(run)
 
-        summaries[run.run_type] = RunSummary(
-            last_success_at=last_success_at,
-            last_failure_at=last_failure_at,
-            failure_reason=failure_reason,
-        )
-    return summaries
+def _normalized_run_status(run: ProcessingRun) -> str:
+    status = run.status.lower()
+    if status in RUNNING_STATUSES:
+        return "running"
+    if status in FAILED_STATUSES:
+        return "failed"
+    if status in PARTIAL_STATUSES or (status in COMPLETED_STATUSES and run.error_count > 0):
+        return "partial"
+    if status in COMPLETED_STATUSES:
+        return "completed"
+    return "unknown"
+
+
+def _summarize_runs(runs: list[ProcessingRun]) -> RunSummary:
+    latest = runs[0]
+    latest_status = _normalized_run_status(latest)
+    last_success = next(
+        ((run.finished_at or run.started_at) for run in runs if _normalized_run_status(run) == "completed"),
+        None,
+    )
+    last_failure_run = next(
+        (run for run in runs if _normalized_run_status(run) in {"failed", "partial"}),
+        None,
+    )
+    consecutive_failures = 0
+    for run in runs:
+        if _normalized_run_status(run) != "failed":
+            break
+        consecutive_failures += 1
+    return RunSummary(
+        last_attempt_at=latest.started_at,
+        latest_run_status=latest_status,
+        recent_run_count=len(runs),
+        consecutive_failures=consecutive_failures,
+        last_success_at=last_success,
+        last_failure_at=(last_failure_run.finished_at or last_failure_run.started_at) if last_failure_run else None,
+        failure_reason=_failure_reason(last_failure_run) if last_failure_run else None,
+    )
 
 
 def _failure_reason(run: ProcessingRun) -> str | None:

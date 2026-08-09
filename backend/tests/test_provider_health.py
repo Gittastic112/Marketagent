@@ -113,3 +113,49 @@ def test_provider_health_labels_explicit_yfinance_personal_mode(client, monkeypa
     assert provider["configured"] is True
     assert provider["status"] == "configured"
     assert "unofficial" in provider["notes"].lower()
+
+
+def test_provider_health_classifies_latest_running_and_partial_attempts(client, db, monkeypatch) -> None:
+    monkeypatch.setenv("SEC_USER_AGENT", "Market Intelligence Engine test@example.com")
+    monkeypatch.setenv("FRED_API_KEY", "fred-key")
+    db.add_all(
+        [
+            ProcessingRun(
+                run_type="sec_ingestion",
+                source_type="sec",
+                started_at=datetime(2026, 6, 19, 9, 0, tzinfo=timezone.utc),
+                finished_at=datetime(2026, 6, 19, 9, 1, tzinfo=timezone.utc),
+                status="completed",
+            ),
+            ProcessingRun(
+                run_type="sec_ingestion",
+                source_type="sec",
+                started_at=datetime(2026, 6, 19, 12, 0, tzinfo=timezone.utc),
+                status="running",
+            ),
+            ProcessingRun(
+                run_type="fred_ingestion",
+                source_type="macro",
+                started_at=datetime(2026, 6, 19, 11, 0, tzinfo=timezone.utc),
+                finished_at=datetime(2026, 6, 19, 11, 2, tzinfo=timezone.utc),
+                status="completed",
+                fetched_count=4,
+                created_count=3,
+                error_count=1,
+                error_details_json={"error": "one series rejected"},
+            ),
+        ]
+    )
+    db.commit()
+
+    providers = client.get("/api/providers/health").json()["data"]
+    sec = _provider_by_name(providers, "SEC EDGAR")
+    assert sec["status"] == "running"
+    assert sec["latest_run_status"] == "running"
+    assert sec["last_attempt_at"] == "2026-06-19T12:00:00"
+    assert sec["recent_run_count"] == 2
+
+    fred = _provider_by_name(providers, "FRED")
+    assert fred["status"] == "partial"
+    assert fred["latest_run_status"] == "partial"
+    assert fred["failure_reason"] == "one series rejected"
