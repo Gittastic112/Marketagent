@@ -8,18 +8,33 @@
     "build": "next build",
     "start": "next start",
     "test": "node --experimental-strip-types --test lib/*.test.ts",
+    "test:e2e": "../scripts/run_browser_workflows.sh",
+    "test:e2e:evidence": "../scripts/run_browser_workflows.sh alert-evidence.spec.ts",
+    "test:e2e:valuation": "../scripts/run_browser_workflows.sh valuation-draft.spec.ts",
+    "test:e2e:pdf": "../scripts/run_browser_workflows.sh pdf-review-promotion.spec.ts",
+    "test:e2e:integrity": "../scripts/run_browser_workflows.sh product-integrity.spec.ts",
+    "test:e2e:accessibility": "../scripts/run_browser_workflows.sh accessibility-responsive.spec.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "next": "16.2.2",
+    "lucide-react": "^1.20.0",
+    "next": "^16.2.11",
+    "next-auth": "^4.24.15",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "recharts": "^2.15.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "24.10.2",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "tailwindcss": "^4.3.3",
     "typescript": "5.9.3"
+  },
+  "overrides": {
+    "postcss": "8.5.23",
+    "sharp": "0.35.3"
   }
 }

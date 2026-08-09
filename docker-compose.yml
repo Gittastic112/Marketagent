@@ -29,11 +29,24 @@ services:
       APP_NAME: Market Intelligence Engine
       ALERT_PRIORITY_THRESHOLD: ${ALERT_PRIORITY_THRESHOLD:-70}
       SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
+      FRED_API_KEY: ${FRED_API_KEY:-}
+      MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-alphavantage}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      FMP_API_KEY: ${FMP_API_KEY:-}
+      OPENFIGI_API_KEY: ${OPENFIGI_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:-}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/workspace/backend
       - ./scripts:/workspace/scripts
+      - ./data:/workspace/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -48,10 +61,17 @@ services:
       API_BASE_URL: http://backend:8000
       NEXT_PUBLIC_BROWSER_API_BASE_URL: /api/backend
       NEXT_PUBLIC_DEBUG_LOGS: ${NEXT_PUBLIC_DEBUG_LOGS:-false}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      LOCAL_AUTH_USERNAME: ${LOCAL_AUTH_USERNAME:-}
+      LOCAL_AUTH_PASSWORD: ${LOCAL_AUTH_PASSWORD:-}
     ports:
       - "3000:3000"
+    command: sh -c "npm ci --prefer-offline --no-audit && npm run dev -- --hostname 0.0.0.0"
     volumes:
       - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
     depends_on:
       - backend
 

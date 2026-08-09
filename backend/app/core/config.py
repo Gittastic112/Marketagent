@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import field_validator
+from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -11,6 +11,9 @@ DEFAULT_ENV_FILE = PROJECT_ROOT / ".env"
 
 class Settings(BaseSettings):
     database_url: str
+    database_pool_size: int = Field(default=10, gt=0)
+    database_max_overflow: int = Field(default=20, ge=0)
+    database_pool_timeout_seconds: int = Field(default=10, gt=0)
     app_env: str = "local"
     app_name: str = "Market Intelligence Engine"
     sec_user_agent: str = "Market Intelligence Engine local research app"
@@ -20,6 +23,12 @@ class Settings(BaseSettings):
     market_data_provider: str = "alphavantage"
     alpha_vantage_api_key: str | None = None
     fmp_api_key: str | None = None
+    cors_origins: list[str] = ["http://localhost:3000"]
+    nextauth_secret: str | None = None
+    log_level: str = "INFO"
+    gemini_api_key: str | None = None
+    ai_demo_mode: bool = False
+    ai_privacy_disclosure_version: str = "v1"
 
     model_config = SettingsConfigDict(
         env_file=DEFAULT_ENV_FILE,

@@ -3,6 +3,8 @@ import socket
 from urllib.parse import urlparse
 from fastapi import HTTPException
 
+from app.core.config import get_settings
+
 def is_internal_ip(ip_str: str) -> bool:
     try:
         ip = ipaddress.ip_address(ip_str)
@@ -18,19 +20,19 @@ def validate_safe_url(url: str) -> str:
     """
     if not url:
         raise ValueError("URL cannot be empty")
-        
+
     parsed = urlparse(url)
-    
+
     if parsed.scheme not in ("http", "https"):
         raise ValueError(f"Invalid URL scheme: {parsed.scheme}. Only http and https are allowed.")
-        
+
     hostname = parsed.hostname
     if not hostname:
         raise ValueError("URL must contain a hostname")
-        
+
     if hostname.lower() in ("localhost", "docker.internal"):
         raise ValueError("Localhost URLs are not allowed")
-        
+
     # Check if the hostname is an IP address or resolves to an internal IP
     try:
         # socket.gethostbyname will resolve the hostname to an IP address
@@ -43,7 +45,7 @@ def validate_safe_url(url: str) -> str:
     except socket.gaierror:
         # If we can't resolve the host, we let it pass here and fail at fetch time
         pass
-        
+
     return url
 
 def escape_csv_formula(value: str | None) -> str:
@@ -53,20 +55,19 @@ def escape_csv_formula(value: str | None) -> str:
     """
     if value is None:
         return ""
-        
+
     value_str = str(value)
     if not value_str:
         return value_str
-        
+
     if value_str.startswith(("=", "+", "-", "@", "\t", "\r")):
         return f"'{value_str}"
-        
+
     return value_str
 
 def get_fernet() -> "Fernet":
     from cryptography.fernet import Fernet
-    from app.core.config import get_settings
-    
+
     settings = get_settings()
     if not settings.encryption_key:
         raise ValueError("ENCRYPTION_KEY is not set in the environment")

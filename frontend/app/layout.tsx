@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import Link from "next/link";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -8,20 +7,16 @@ export const metadata: Metadata = {
   description: "Local source-backed market intelligence dashboard"
 };
 
-import { Sidebar } from "@/components/sidebar";
-import { TopBar } from "@/components/topbar";
+import { AppShell } from "@/components/app-shell";
+import { AuthProvider } from "@/components/auth-provider";
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <div className="app-shell">
-          <Sidebar />
-          <div className="main-content-wrapper">
-            <TopBar />
-            <main className="main">{children}</main>
-          </div>
-        </div>
+        <AuthProvider>
+          <AppShell>{children}</AppShell>
+        </AuthProvider>
       </body>
     </html>
   );
