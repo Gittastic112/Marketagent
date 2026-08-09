@@ -141,6 +141,23 @@ test("data health exposes the authenticated evidence integrity report", () => {
   assert.match(page, /statement_identity_status/);
 });
 
+test("provider health exposes run classification, freshness, and owned coverage", () => {
+  const page = readFrontendFile("app/data-health/page.tsx");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(page, /Latest Attempt/);
+  assert.match(page, /provider\.latest_run_status/);
+  assert.match(page, /provider\.recent_run_count/);
+  assert.match(page, /provider\.consecutive_failures/);
+  assert.match(page, /provider\.freshness_label/);
+  assert.match(page, /provider\.coverage_state/);
+  assert.match(api, /last_attempt_at: string \| null/);
+  assert.match(api, /data_age_hours: number \| null/);
+  assert.match(api, /configured_source_count: number \| null/);
+  assert.match(api, /\| "running"/);
+  assert.match(api, /\| "partial"/);
+});
+
 
 test("data health exposes deterministic historical event evidence backfill", () => {
   const page = readFrontendFile("app/data-health/page.tsx");

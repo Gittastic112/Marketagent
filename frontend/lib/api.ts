@@ -2420,12 +2420,22 @@ export type ProviderHealth = {
     | "configured"
     | "missing_key"
     | "working"
+    | "running"
+    | "partial"
     | "failing"
     | "manual_only"
     | "not_configured"
     | "unsupported_market"
+    | "mock"
     | "unknown";
   configured: boolean;
+  last_attempt_at: string | null;
+  latest_run_status: string | null;
+  recent_run_count: number;
+  consecutive_failures: number;
+  data_age_hours: number | null;
+  freshness_threshold_hours: number | null;
+  configured_source_count: number | null;
   last_success_at: string | null;
   last_failure_at: string | null;
   failure_reason: string | null;

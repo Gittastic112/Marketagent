@@ -546,6 +546,7 @@ export default async function DataHealthPage() {
                     <th>Status</th>
                     <th>Freshness</th>
                     <th>Rate Limit</th>
+                    <th>Latest Attempt</th>
                     <th>Last Success</th>
                     <th>Last Failure</th>
                     <th>Action</th>
@@ -568,6 +569,17 @@ export default async function DataHealthPage() {
                       <td>{statusBadge(provider.status)}</td>
                       <td>{provider.freshness_label}</td>
                       <td style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{provider.rate_limit_status ?? "Unknown"}</td>
+                      <td style={{ fontSize: "0.85rem" }}>
+                        {provider.last_attempt_at ? formatDate(provider.last_attempt_at) : "Never run"}
+                        <div style={{ color: "var(--text-secondary)", fontSize: "0.8rem", marginTop: "0.2rem" }}>
+                          {provider.latest_run_status ?? "No run evidence"} | {provider.recent_run_count} recorded run{provider.recent_run_count === 1 ? "" : "s"}
+                        </div>
+                        {provider.consecutive_failures > 0 && (
+                          <div style={{ color: "var(--error)", fontSize: "0.8rem", marginTop: "0.2rem" }}>
+                            {provider.consecutive_failures} consecutive failure{provider.consecutive_failures === 1 ? "" : "s"}
+                          </div>
+                        )}
+                      </td>
                       <td style={{ fontSize: "0.85rem" }}>{provider.last_success_at ? formatDate(provider.last_success_at) : "—"}</td>
                       <td style={{ fontSize: "0.85rem" }}>
                         {provider.last_failure_at ? (
