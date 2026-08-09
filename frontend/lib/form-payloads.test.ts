@@ -9,6 +9,7 @@ import {
   buildPortfolioHoldingPayload,
   buildPortfolioPayload,
   buildPortfolioTransactionPayload,
+  buildRawDocumentMetadataPayload,
   buildRawDocumentPayload,
   buildRssIngestionPayload,
   buildSecFilingIngestionPayload,
@@ -34,12 +35,19 @@ test("company form payload trims text and treats blank optional fields as null",
   formData.set("active", "on");
 
   assert.deepEqual(buildCompanyPayload(formData), {
+    market: null,
+    primary_exchange: null,
+    local_symbol: null,
     ticker: "NVDA",
     name: "NVIDIA",
     sector: null,
     industry: null,
+    damodaran_industry: null,
     exchange: "NASDAQ",
     cik: null,
+    isin: null,
+    regulatory_id: null,
+    regulatory_id_type: null,
     aliases_json: ["Nvidia", "GeForce"],
     country: "United States",
     region: "North America",
@@ -47,6 +55,46 @@ test("company form payload trims text and treats blank optional fields as null",
     asset_type: "equity",
     security_type: "common_stock",
     market_cap_category: "mega_cap",
+    is_etf: false,
+    etf_provider: null,
+    active: true
+  });
+});
+
+test("company form payload includes market identity fields", () => {
+  const formData = new FormData();
+  formData.set("market", " in ");
+  formData.set("primary_exchange", " nse ");
+  formData.set("local_symbol", " reliance ");
+  formData.set("ticker", " reliance ");
+  formData.set("name", " Reliance Industries ");
+  formData.set("isin", " ine002a01018 ");
+  formData.set("regulatory_id", " INE002A01018 ");
+  formData.set("regulatory_id_type", " isin ");
+  formData.set("currency", " inr ");
+  formData.set("active", "on");
+
+  assert.deepEqual(buildCompanyPayload(formData), {
+    market: "IN",
+    primary_exchange: "NSE",
+    local_symbol: "RELIANCE",
+    ticker: "RELIANCE",
+    name: "Reliance Industries",
+    sector: null,
+    industry: null,
+    damodaran_industry: null,
+    exchange: null,
+    cik: null,
+    isin: "INE002A01018",
+    regulatory_id: "INE002A01018",
+    regulatory_id_type: "ISIN",
+    aliases_json: null,
+    country: null,
+    region: null,
+    currency: "INR",
+    asset_type: null,
+    security_type: null,
+    market_cap_category: null,
     is_etf: false,
     etf_provider: null,
     active: true
@@ -84,6 +132,25 @@ test("raw document form payload converts optional ids and text fields", () => {
     title: "10-K",
     url: null,
     raw_text: null,
+    content_hash: "hash-1"
+  });
+});
+
+test("raw document metadata update does not erase stored source text", () => {
+  const formData = new FormData();
+  formData.set("company_id", "1");
+  formData.set("source_id", "2");
+  formData.set("document_type", "filing");
+  formData.set("title", "10-K");
+  formData.set("url", "https://example.com/10-k");
+  formData.set("content_hash", "hash-1");
+
+  assert.deepEqual(buildRawDocumentMetadataPayload(formData), {
+    company_id: 1,
+    source_id: 2,
+    document_type: "filing",
+    title: "10-K",
+    url: "https://example.com/10-k",
     content_hash: "hash-1"
   });
 });
@@ -150,6 +217,37 @@ test("sec filing ingestion form payload honors selected form and filing year", (
     form_types: ["10-K"],
     filing_year: 2026,
     limit: 10,
+    download_text: false
+  });
+});
+
+test("sec filing ingestion allows the backend to resolve the SEC source", () => {
+  const formData = new FormData();
+  formData.set("company_id", "2");
+  formData.set(
+    "filings_json",
+    JSON.stringify([
+      {
+        accession_number: "0000789019-26-000124",
+        form_type: "10-Q",
+        filing_date: "2026-05-25"
+      }
+    ])
+  );
+
+  assert.deepEqual(buildSecFilingIngestionPayload(formData), {
+    source_id: null,
+    company_id: 2,
+    filings: [
+      {
+        accession_number: "0000789019-26-000124",
+        form_type: "10-Q",
+        filing_date: "2026-05-25"
+      }
+    ],
+    form_types: ["10-K", "10-Q", "8-K"],
+    filing_year: null,
+    limit: 40,
     download_text: false
   });
 });
@@ -292,4 +390,3 @@ test("market price payload converts numeric fields and uppercase strings", () =>
     as_of_date: "2026-05-28"
   });
 });
-

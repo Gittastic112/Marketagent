@@ -1,8 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
-import { ApiError, deleteApi, patchApi, postApi } from "@/lib/api";
+import { ApiError } from "@/lib/api";
+import type { AutofillAssumptionDraft } from "@/lib/api";
+import { serverDeleteApi, serverPatchApi, serverPostApi } from "@/lib/server-api";
+import { unresolvedReviewFields } from "@/lib/autofill-review";
 import {
   buildAlertPayload,
   buildAlertReviewPayload,
@@ -14,6 +18,7 @@ import {
   buildPortfolioCashBalancePayload,
   buildPortfolioSnapshotPayload,
   buildRawDocumentPayload,
+  buildRawDocumentMetadataPayload,
   buildRssIngestionPayload,
   buildSecFilingIngestionPayload,
   buildSourcePayload,
@@ -45,9 +50,14 @@ function logAction(message: string) {
   }
 }
 
+function actionFormString(formData: FormData, key: string): string {
+  const value = formData.get(key);
+  return typeof value === "string" ? value.trim() : "";
+}
+
 async function createRecord(path: string, payload: unknown, pages: string[]) {
   logAction(`creating ${path}`);
-  await postApi(path, payload);
+  await serverPostApi(path, payload);
   for (const page of pages) {
     revalidatePath(page);
   }
@@ -57,7 +67,7 @@ async function createRecord(path: string, payload: unknown, pages: string[]) {
 async function deleteRecord(path: string, formData: FormData, pages: string[]) {
   const id = getRequiredFormId(formData);
   logAction(`deleting ${path}/${id}`);
-  await deleteApi(`${path}/${id}`);
+  await serverDeleteApi(`${path}/${id}`);
   for (const page of pages) {
     revalidatePath(page);
   }
@@ -67,7 +77,7 @@ async function deleteRecord(path: string, formData: FormData, pages: string[]) {
 async function updateRecord(path: string, formData: FormData, payload: unknown, pages: string[]) {
   const id = getRequiredFormId(formData);
   logAction(`updating ${path}/${id}`);
-  await patchApi(`${path}/${id}`, payload);
+  await serverPatchApi(`${path}/${id}`, payload);
   for (const page of pages) {
     revalidatePath(page);
   }
@@ -82,16 +92,21 @@ function formActionError(error: unknown): FormActionState {
 }
 
 export async function createCompany(formData: FormData) {
-  await createRecord("/companies", buildCompanyPayload(formData), ["/", "/companies"]);
+  const company = await serverPostApi<{ id: number }>("/companies", buildCompanyPayload(formData));
+  revalidatePath("/");
+  revalidatePath("/companies");
+  return company;
 }
 
 export async function createCompanyWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
+  let createdId: number;
   try {
-    await createCompany(formData);
-    return { error: null };
+    const company = await createCompany(formData);
+    createdId = company.id;
   } catch (error) {
     return formActionError(error);
   }
+  redirect(`/companies/${createdId}`);
 }
 
 export async function updateCompany(formData: FormData) {
@@ -106,7 +121,7 @@ export async function importFredSeries(formData: FormData) {
   }
 
   try {
-    await postApi("/ingest/fred-series", { series_id });
+    await serverPostApi("/ingest/fred-series", { series_id });
     revalidatePath("/macro");
   } catch (error) {
     if (error instanceof ApiError) {
@@ -128,6 +143,53 @@ export async function createRawDocument(formData: FormData) {
   await createRecord("/raw-documents", buildRawDocumentPayload(formData), ["/", "/documents", "/daily-brief"]);
 }
 
+export async function applyEventEvidenceBackfill() {
+  await serverPostApi("/data-health/event-evidence-backfill", {
+    dry_run: false,
+    limit: 100,
+  });
+  revalidatePath("/data-health");
+  revalidatePath("/events");
+  revalidatePath("/alerts");
+}
+
+export async function resolveEventEvidenceWithState(
+  _state: FormActionState,
+  formData: FormData,
+): Promise<FormActionState> {
+  let eventId: number;
+  try {
+    eventId = getRequiredFormId(formData, "event_id");
+    const exactString = (key: string) => {
+      const value = formData.get(key);
+      return typeof value === "string" ? value : "";
+    };
+    const nonNegativeInteger = (key: string) => {
+      const value = Number(exactString(key));
+      if (!Number.isInteger(value) || value < 0) {
+        throw new Error(`Invalid form field: ${key}`);
+      }
+      return value;
+    };
+    await serverPostApi(`/events/${eventId}/evidence-resolution`, {
+      raw_document_id: getRequiredFormId(formData, "raw_document_id"),
+      start_char: nonNegativeInteger("start_char"),
+      end_char: getRequiredFormId(formData, "end_char"),
+      quote: exactString("quote"),
+      search_query: exactString("search_query"),
+      occurrence_index: getRequiredFormId(formData, "occurrence_index"),
+      document_content_hash: exactString("document_content_hash"),
+    });
+    revalidatePath("/data-health");
+    revalidatePath(`/events/${eventId}/evidence-resolution`);
+    revalidatePath("/events");
+    revalidatePath("/alerts");
+  } catch (error) {
+    return formActionError(error);
+  }
+  redirect(`/events/${eventId}/evidence-resolution?saved=1`);
+}
+
 export async function importRssXml(formData: FormData) {
   await createRecord("/ingest/rss", buildRssIngestionPayload(formData), ["/", "/documents", "/events", "/alerts", "/daily-brief"]);
 }
@@ -141,7 +203,11 @@ export async function fetchActiveRssFeeds() {
 }
 
 export async function importSecFilings(formData: FormData) {
+  const companyId = getRequiredFormId(formData, "company_id");
   await createRecord("/ingest/sec-filings", buildSecFilingIngestionPayload(formData), ["/", "/documents", "/events", "/alerts", "/daily-brief"]);
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath(`/companies/${companyId}/filings`);
+  revalidatePath(`/companies/${companyId}/fundamentals`);
 }
 
 export async function fetchRecentSecFilings(formData: FormData) {
@@ -150,13 +216,82 @@ export async function fetchRecentSecFilings(formData: FormData) {
 
 export async function lookupCompanyCik(formData: FormData) {
   const id = getRequiredFormId(formData);
-  await postApi(`/companies/${id}/lookup-cik`, {});
+  await serverPostApi(`/companies/${id}/lookup-cik`, {});
   revalidatePath("/companies");
   revalidatePath(`/companies/${id}`);
 }
 
+export async function startCompanySetup(formData: FormData) {
+  const id = getRequiredFormId(formData);
+  await serverPostApi("/api/company-setup/start", { company_id: Number(id) });
+  revalidatePath(`/companies/${id}`);
+  revalidatePath(`/companies/${id}/setup`);
+}
+
+export async function confirmCompanySetupIdentity(formData: FormData) {
+  const id = getRequiredFormId(formData);
+  await serverPostApi(`/api/company-setup/${id}/confirm-identity`, {});
+  revalidatePath(`/companies/${id}`);
+  revalidatePath(`/companies/${id}/setup`);
+}
+
+export async function updateCompanySetupStep(formData: FormData) {
+  const id = getRequiredFormId(formData);
+  const current_step = actionFormString(formData, "current_step");
+  const filing_status = actionFormString(formData, "filing_status");
+  const financial_extraction_status = actionFormString(formData, "financial_extraction_status");
+  const industry_mapping_status = actionFormString(formData, "industry_mapping_status");
+  const valuation_readiness_status = actionFormString(formData, "valuation_readiness_status");
+
+  await serverPatchApi(`/api/company-setup/${id}/step`, {
+    ...(current_step ? { current_step } : {}),
+    ...(filing_status ? { filing_status } : {}),
+    ...(financial_extraction_status ? { financial_extraction_status } : {}),
+    ...(industry_mapping_status ? { industry_mapping_status } : {}),
+    ...(valuation_readiness_status ? { valuation_readiness_status } : {}),
+  });
+  revalidatePath(`/companies/${id}`);
+  revalidatePath(`/companies/${id}/setup`);
+}
+
+export async function createManualCompanyFilingLink(formData: FormData) {
+  const id = getRequiredFormId(formData);
+  const publishedAt = actionFormString(formData, "published_at");
+
+  await serverPostApi(`/api/companies/${id}/filings/manual-link`, {
+    document_type: actionFormString(formData, "document_type"),
+    title: actionFormString(formData, "title"),
+    url: actionFormString(formData, "url") || null,
+    published_at: publishedAt ? `${publishedAt}T00:00:00Z` : null,
+    raw_text: actionFormString(formData, "raw_text") || null,
+  });
+  revalidatePath(`/companies/${id}`);
+  revalidatePath(`/companies/${id}/setup`);
+  revalidatePath(`/companies/${id}/filings`);
+  revalidatePath("/documents");
+}
+
+export async function extractFinancialCandidatesFromFiling(formData: FormData) {
+  const companyId = getRequiredFormId(formData, "company_id");
+  const filingId = getRequiredFormId(formData, "filing_id");
+  logAction(`extracting financial candidates from filing ${filingId}`);
+  await serverPostApi(`/api/filings/${filingId}/extract-financials`, {});
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath(`/companies/${companyId}/filings`);
+  revalidatePath(`/companies/${companyId}/fundamentals`);
+}
+
+export async function extractXbrlFromCompany(formData: FormData) {
+  const companyId = getRequiredFormId(formData, "company_id");
+  logAction(`extracting XBRL financial candidates for company ${companyId}`);
+  await serverPostApi(`/api/companies/${companyId}/extract-xbrl`, {});
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath(`/companies/${companyId}/filings`);
+  revalidatePath(`/companies/${companyId}/fundamentals`);
+}
+
 export async function updateRawDocument(formData: FormData) {
-  await updateRecord("/raw-documents", formData, buildRawDocumentPayload(formData), ["/", "/documents", "/daily-brief"]);
+  await updateRecord("/raw-documents", formData, buildRawDocumentMetadataPayload(formData), ["/", "/documents", "/daily-brief"]);
 }
 
 export async function createEvent(formData: FormData) {
@@ -412,6 +547,14 @@ export async function saveDailyBrief() {
   await createRecord("/daily-brief", {}, ["/daily-brief"]);
 }
 
+export async function markDailyBriefReviewed(formData: FormData) {
+  const id = getRequiredFormId(formData);
+  logAction(`marking /daily-brief/${id} as reviewed`);
+  await serverPatchApi(`/daily-brief/${id}/review`, {});
+  revalidatePath("/daily-brief");
+  logAction(`marked /daily-brief/${id} as reviewed; revalidated /daily-brief`);
+}
+
 export async function createFinancialStatementPeriod(formData: FormData, companyId: string) {
   await createRecord(`/companies/${companyId}/financial-periods`, buildFinancialStatementPeriodPayload(formData), [`/companies/${companyId}`]);
 }
@@ -423,7 +566,7 @@ export async function createFinancialMetric(formData: FormData, periodId: string
 export async function deleteFinancialStatementPeriod(formData: FormData, companyId: string) {
   const periodId = getRequiredFormId(formData);
   logAction(`deleting /financial-periods/${periodId}`);
-  await deleteApi(`/financial-periods/${periodId}`);
+  await serverDeleteApi(`/financial-periods/${periodId}`);
   revalidatePath(`/companies/${companyId}`);
   logAction(`deleted /financial-periods/${periodId}; revalidated /companies/${companyId}`);
 }
@@ -439,21 +582,26 @@ export async function createDcfAssumptionSet(formData: FormData, modelId: string
 export async function deleteValuationModel(formData: FormData, companyId: string) {
   const modelId = getRequiredFormId(formData);
   logAction(`deleting /valuation-models/${modelId}`);
-  await deleteApi(`/valuation-models/${modelId}`);
+  await serverDeleteApi(`/valuation-models/${modelId}`);
   revalidatePath(`/companies/${companyId}`);
   logAction(`deleted /valuation-models/${modelId}; revalidated /companies/${companyId}`);
 }
 
 export async function triggerParseFilingSections(rawDocumentId: number) {
   logAction(`triggering parse for /raw-documents/${rawDocumentId}`);
-  await postApi(`/raw-documents/${rawDocumentId}/parse`, {});
+  await serverPostApi(`/raw-documents/${rawDocumentId}/parse`, {});
   revalidatePath(`/documents/${rawDocumentId}/sections`);
   logAction(`triggered parse for /raw-documents/${rawDocumentId}; revalidated /documents/${rawDocumentId}/sections`);
 }
 
-export async function triggerGenerateAiSummary(rawDocumentId: number) {
+export async function triggerGenerateAiSummary(rawDocumentId: number, formData: FormData) {
+  if (formData.get("privacy_disclosure_version") !== "v1") {
+    throw new Error("Review and acknowledge the AI data disclosure before continuing.");
+  }
   logAction(`triggering AI summary for /raw-documents/${rawDocumentId}`);
-  await postApi(`/raw-documents/${rawDocumentId}/ai-summary`, {});
+  await serverPostApi(`/raw-documents/${rawDocumentId}/ai-summary`, {
+    privacy_disclosure_version: "v1",
+  });
   revalidatePath(`/documents/${rawDocumentId}/ai`);
   logAction(`triggered AI summary for /raw-documents/${rawDocumentId}; revalidated /documents/${rawDocumentId}/ai`);
 }
@@ -501,15 +649,15 @@ export async function deleteSentimentScoreWithState(_state: FormActionState, for
 }
 
 export async function createNarrativeCluster(formData: FormData) {
-  await createRecord("/narrative-clusters", buildNarrativeClusterPayload(formData), ["/social"]);
+  await createRecord("/narrative-clusters", buildNarrativeClusterPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function updateNarrativeCluster(formData: FormData) {
-  await updateRecord("/narrative-clusters", formData, buildNarrativeClusterPayload(formData), ["/social"]);
+  await updateRecord("/narrative-clusters", formData, buildNarrativeClusterPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeCluster(formData: FormData) {
-  await deleteRecord("/narrative-clusters", formData, ["/social"]);
+  await deleteRecord("/narrative-clusters", formData, ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeClusterWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
@@ -522,15 +670,15 @@ export async function deleteNarrativeClusterWithState(_state: FormActionState, f
 }
 
 export async function createNarrativeClaim(formData: FormData) {
-  await createRecord("/narrative-claims", buildNarrativeClaimPayload(formData), ["/social"]);
+  await createRecord("/narrative-claims", buildNarrativeClaimPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function updateNarrativeClaim(formData: FormData) {
-  await updateRecord("/narrative-claims", formData, buildNarrativeClaimPayload(formData), ["/social"]);
+  await updateRecord("/narrative-claims", formData, buildNarrativeClaimPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeClaim(formData: FormData) {
-  await deleteRecord("/narrative-claims", formData, ["/social"]);
+  await deleteRecord("/narrative-claims", formData, ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeClaimWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
@@ -543,15 +691,15 @@ export async function deleteNarrativeClaimWithState(_state: FormActionState, for
 }
 
 export async function createNarrativeMention(formData: FormData) {
-  await createRecord("/narrative-mentions", buildNarrativeMentionPayload(formData), ["/social"]);
+  await createRecord("/narrative-mentions", buildNarrativeMentionPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function updateNarrativeMention(formData: FormData) {
-  await updateRecord("/narrative-mentions", formData, buildNarrativeMentionPayload(formData), ["/social"]);
+  await updateRecord("/narrative-mentions", formData, buildNarrativeMentionPayload(formData), ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeMention(formData: FormData) {
-  await deleteRecord("/narrative-mentions", formData, ["/social"]);
+  await deleteRecord("/narrative-mentions", formData, ["/social", "/narratives"]);
 }
 
 export async function deleteNarrativeMentionWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
@@ -563,6 +711,17 @@ export async function deleteNarrativeMentionWithState(_state: FormActionState, f
   }
 }
 
+export async function extractNarratives(formData: FormData) {
+  if (formData.get("privacy_disclosure_version") !== "v1") {
+    throw new Error("Review and acknowledge the AI data disclosure before continuing.");
+  }
+  await createRecord(
+    "/extract",
+    { privacy_disclosure_version: "v1" },
+    ["/narratives", "/social"],
+  );
+}
+
 export async function createThesisAssumption(formData: FormData, thesisNoteId: string) {
   await createRecord(`/thesis-notes/${thesisNoteId}/assumptions`, buildThesisAssumptionPayload(formData), [`/thesis-notes/${thesisNoteId}`]);
 }
@@ -570,7 +729,7 @@ export async function createThesisAssumption(formData: FormData, thesisNoteId: s
 export async function updateThesisAssumption(formData: FormData, thesisNoteId: string) {
   const id = getRequiredFormId(formData);
   logAction(`updating /thesis-assumptions/${id}`);
-  await patchApi(`/thesis-assumptions/${id}`, buildThesisAssumptionPayload(formData));
+  await serverPatchApi(`/thesis-assumptions/${id}`, buildThesisAssumptionPayload(formData));
   revalidatePath(`/thesis-notes/${thesisNoteId}`);
   logAction(`updated /thesis-assumptions/${id}; revalidated /thesis-notes/${thesisNoteId}`);
 }
@@ -578,7 +737,7 @@ export async function updateThesisAssumption(formData: FormData, thesisNoteId: s
 export async function deleteThesisAssumption(formData: FormData, thesisNoteId: string) {
   const id = getRequiredFormId(formData);
   logAction(`deleting /thesis-assumptions/${id}`);
-  await deleteApi(`/thesis-assumptions/${id}`);
+  await serverDeleteApi(`/thesis-assumptions/${id}`);
   revalidatePath(`/thesis-notes/${thesisNoteId}`);
   logAction(`deleted /thesis-assumptions/${id}; revalidated /thesis-notes/${thesisNoteId}`);
 }
@@ -589,9 +748,9 @@ export async function createThesisChange(formData: FormData, thesisNoteId: strin
 
 export async function addEventCorroboration(formData: FormData) {
   const eventId = getRequiredFormId(formData, "event_id");
-  const payload = { target_event_id: parseInt(getRequiredFormId(formData, "target_event_id"), 10) };
+  const payload = { target_event_id: getRequiredFormId(formData, "target_event_id") };
   logAction(`adding corroboration to /events/${eventId}`);
-  await postApi(`/events/${eventId}/corroborations`, payload);
+  await serverPostApi(`/events/${eventId}/corroborations`, payload);
   revalidatePath("/events");
   logAction(`added corroboration to /events/${eventId}; revalidated /events`);
 }
@@ -600,16 +759,16 @@ export async function removeEventCorroboration(formData: FormData) {
   const eventId = getRequiredFormId(formData, "event_id");
   const targetId = getRequiredFormId(formData, "target_event_id");
   logAction(`removing corroboration from /events/${eventId}`);
-  await deleteApi(`/events/${eventId}/corroborations/${targetId}`);
+  await serverDeleteApi(`/events/${eventId}/corroborations/${targetId}`);
   revalidatePath("/events");
   logAction(`removed corroboration from /events/${eventId}; revalidated /events`);
 }
 
 export async function addEventContradiction(formData: FormData) {
   const eventId = getRequiredFormId(formData, "event_id");
-  const payload = { target_event_id: parseInt(getRequiredFormId(formData, "target_event_id"), 10) };
+  const payload = { target_event_id: getRequiredFormId(formData, "target_event_id") };
   logAction(`adding contradiction to /events/${eventId}`);
-  await postApi(`/events/${eventId}/contradictions`, payload);
+  await serverPostApi(`/events/${eventId}/contradictions`, payload);
   revalidatePath("/events");
   logAction(`added contradiction to /events/${eventId}; revalidated /events`);
 }
@@ -618,7 +777,7 @@ export async function removeEventContradiction(formData: FormData) {
   const eventId = getRequiredFormId(formData, "event_id");
   const targetId = getRequiredFormId(formData, "target_event_id");
   logAction(`removing contradiction from /events/${eventId}`);
-  await deleteApi(`/events/${eventId}/contradictions/${targetId}`);
+  await serverDeleteApi(`/events/${eventId}/contradictions/${targetId}`);
   revalidatePath("/events");
   logAction(`removed contradiction from /events/${eventId}; revalidated /events`);
 }
@@ -631,20 +790,20 @@ export async function updateScoringConfig(formData: FormData) {
     weight_speed: parseFloat(formData.get("weight_speed") as string),
   };
   logAction(`updating scoring config`);
-  await patchApi(`/scoring-config`, payload);
+  await serverPatchApi(`/scoring-config`, payload);
   revalidatePath("/settings");
   logAction(`updated scoring config; revalidated /settings`);
 }
 
 export async function createMacroSeries(formData: FormData) {
   const payload = {
-    name: getRequiredFormId(formData, "name"),
-    description: formData.get("description") as string | null,
-    units: formData.get("units") as string | null,
-    frequency: formData.get("frequency") as string | null,
+    name: actionFormString(formData, "name"),
+    description: actionFormString(formData, "description") || null,
+    units: actionFormString(formData, "units") || null,
+    frequency: actionFormString(formData, "frequency") || null,
   };
   logAction(`creating macro series`);
-  await postApi(`/macro`, payload);
+  await serverPostApi(`/macro`, payload);
   revalidatePath("/macro");
   logAction(`created macro series; revalidated /macro`);
 }
@@ -652,57 +811,65 @@ export async function createMacroSeries(formData: FormData) {
 export async function createMacroObservation(formData: FormData) {
   const seriesId = getRequiredFormId(formData, "series_id");
   const payload = {
-    date_recorded: getRequiredFormId(formData, "date_recorded"),
-    value: parseFloat(getRequiredFormId(formData, "value")),
+    date_recorded: actionFormString(formData, "date_recorded"),
+    value: Number(actionFormString(formData, "value")),
   };
   logAction(`creating macro observation for series ${seriesId}`);
-  await postApi(`/macro/${seriesId}/observations`, payload);
+  await serverPostApi(`/macro/${seriesId}/observations`, payload);
   revalidatePath("/macro");
   logAction(`created macro observation for series ${seriesId}; revalidated /macro`);
 }
 
-export async function deleteMacroSeriesWithState(state: FormActionState, formData: FormData) {
+export async function deleteMacroSeriesWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
   const id = getRequiredFormId(formData, "id");
   try {
     logAction(`deleting macro series ${id}`);
-    await deleteApi(`/macro/${id}`);
+    await serverDeleteApi(`/macro/${id}`);
     revalidatePath("/macro");
     logAction(`deleted macro series ${id}; revalidated /macro`);
-    return { success: true };
+    return { error: null };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    return formActionError(error);
   }
 }
 
 export async function createExposureTag(formData: FormData) {
   const payload = {
-    name: getRequiredFormId(formData, "name"),
-    description: formData.get("description") as string | null,
+    name: actionFormString(formData, "name"),
+    description: actionFormString(formData, "description") || null,
   };
   logAction(`creating exposure tag`);
-  await postApi(`/exposure-tags`, payload);
+  await serverPostApi(`/exposure-tags`, payload);
   revalidatePath("/companies");
   logAction(`created exposure tag; revalidated /companies`);
 }
 
-export async function deleteExposureTagWithState(state: ActionState, formData: FormData) {
+export async function deleteExposureTag(formData: FormData) {
+  const id = getRequiredFormId(formData, "id");
+  logAction(`deleting exposure tag ${id}`);
+  await serverDeleteApi(`/exposure-tags/${id}`);
+  revalidatePath("/companies");
+  logAction(`deleted exposure tag ${id}; revalidated /companies`);
+}
+
+export async function deleteExposureTagWithState(_state: FormActionState, formData: FormData): Promise<FormActionState> {
   const id = getRequiredFormId(formData, "id");
   try {
     logAction(`deleting exposure tag ${id}`);
-    await deleteApi(`/exposure-tags/${id}`);
+    await serverDeleteApi(`/exposure-tags/${id}`);
     revalidatePath("/companies");
     logAction(`deleted exposure tag ${id}; revalidated /companies`);
-    return { success: true };
+    return { error: null };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    return formActionError(error);
   }
 }
 
 export async function addCompanyExposureTag(formData: FormData) {
   const companyId = getRequiredFormId(formData, "company_id");
-  const payload = { tag_id: parseInt(getRequiredFormId(formData, "tag_id"), 10) };
+  const payload = { tag_id: getRequiredFormId(formData, "tag_id") };
   logAction(`adding exposure tag to /companies/${companyId}`);
-  await postApi(`/companies/${companyId}/exposure-tags`, payload);
+  await serverPostApi(`/companies/${companyId}/exposure-tags`, payload);
   revalidatePath(`/companies`);
   logAction(`added exposure tag to /companies/${companyId}; revalidated /companies`);
 }
@@ -711,7 +878,159 @@ export async function removeCompanyExposureTag(formData: FormData) {
   const companyId = getRequiredFormId(formData, "company_id");
   const tagId = getRequiredFormId(formData, "tag_id");
   logAction(`removing exposure tag from /companies/${companyId}`);
-  await deleteApi(`/companies/${companyId}/exposure-tags/${tagId}`);
+  await serverDeleteApi(`/companies/${companyId}/exposure-tags/${tagId}`);
   revalidatePath(`/companies`);
   logAction(`removed exposure tag from /companies/${companyId}; revalidated /companies`);
+}
+
+export async function createVariantPerception(formData: FormData, companyId: string) {
+  const payload = {
+    company_id: parseInt(companyId, 10),
+    market_belief: getRequiredFormId(formData, "market_belief"),
+    my_belief: getRequiredFormId(formData, "my_belief"),
+    what_would_close_the_gap: formData.get("what_would_close_the_gap") as string | null,
+    confidence: formData.get("confidence") as string || "Medium"
+  };
+  await serverPostApi("/variant-perceptions", payload);
+  revalidatePath(`/companies/${companyId}/decisions`);
+}
+
+export async function createEvidenceLedgerItem(formData: FormData, companyId: string) {
+  const payload = {
+    company_id: parseInt(companyId, 10),
+    evidence_text: getRequiredFormId(formData, "evidence_text"),
+    effect: formData.get("effect") as string || "Supports",
+    confidence: "Medium",
+    date_discovered: getRequiredFormId(formData, "date_discovered")
+  };
+  await serverPostApi("/evidence", payload);
+  revalidatePath(`/companies/${companyId}/decisions`);
+}
+
+export async function createDecisionLogItem(formData: FormData, companyId: string) {
+  const price = formData.get("price_at_time");
+  const payload = {
+    company_id: parseInt(companyId, 10),
+    decision_type: formData.get("decision_type") as string || "Hold",
+    rationale: getRequiredFormId(formData, "rationale"),
+    price_at_time: price ? parseFloat(price as string) : null,
+    emotional_state: formData.get("emotional_state") as string || null,
+    alternatives_considered: formData.get("alternatives_considered") as string || null,
+  };
+  await serverPostApi("/decisions", payload);
+  revalidatePath(`/companies/${companyId}/decisions`);
+}
+
+export async function createOutcomeReview(formData: FormData, decisionId: string, companyId: string) {
+  const payload = {
+    what_happened: getRequiredFormId(formData, "what_happened"),
+    wrong_assumption: formData.get("wrong_assumption") as string || null,
+    information_unavailable_or_misinterpreted: formData.get("information_unavailable_or_misinterpreted") === "on",
+    valuation_wrong: formData.get("valuation_wrong") === "on",
+    thesis_wrong: formData.get("thesis_wrong") === "on",
+    timing_wrong: formData.get("timing_wrong") === "on",
+    sizing_wrong: formData.get("sizing_wrong") === "on",
+  };
+  await serverPostApi(`/decisions/${decisionId}/review`, payload);
+  revalidatePath(`/companies/${companyId}/decisions`);
+}
+
+export async function normalizeFinancialPeriodAction(formData: FormData) {
+  const companyId = getRequiredFormId(formData, "company_id");
+  const periodId = getRequiredFormId(formData, "period_id");
+  logAction(`normalizing /companies/${companyId}/financial-statements/${periodId}`);
+  await serverPostApi(`/api/companies/${companyId}/financial-statements/${periodId}/normalize`, {});
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath(`/companies/${companyId}/fundamentals`);
+  revalidatePath(`/companies/${companyId}/setup`);
+  logAction(`normalized /companies/${companyId}/financial-statements/${periodId}`);
+}
+
+export async function backfillNormalizedFinancialsAction(formData: FormData) {
+  const companyId = getRequiredFormId(formData, "company_id");
+  await serverPostApi(`/api/companies/${companyId}/financial-statements/normalized/backfill`, { dry_run: false });
+  revalidatePath(`/companies/${companyId}/fundamentals`);
+  revalidatePath(`/companies/${companyId}/valuation`);
+}
+
+export async function triggerEventClassification(formData: FormData) {
+  const eventId = getRequiredFormId(formData, "event_id");
+  const companyId = getRequiredFormId(formData, "company_id");
+  logAction(`classifying event ${eventId} for thesis impacts`);
+  if (formData.get("privacy_disclosure_version") !== "v1") {
+    throw new Error("Review and acknowledge the AI data disclosure before continuing.");
+  }
+  await serverPostApi(`/events/${eventId}/classify-impact`, {
+    privacy_disclosure_version: "v1",
+  });
+  revalidatePath(`/companies/${companyId}`);
+  revalidatePath(`/companies/${companyId}/thesis`);
+  logAction(`classified event ${eventId}`);
+}
+
+export async function createValuationModelWithAssumptions(formData: FormData, companyId: string) {
+  logAction(`creating valuation model with assumptions for company ${companyId}`);
+
+  const payload = buildDcfAssumptionSetPayload(formData);
+  const draftResponse = await serverPostApi<AutofillAssumptionDraft>(
+    `/companies/${companyId}/valuation-models/autofill`,
+    { base_assumptions: {} },
+  );
+  const draft = ((draftResponse as { data?: AutofillAssumptionDraft }).data || draftResponse) as AutofillAssumptionDraft;
+  const reviewedFields = new Set(
+    formData.getAll("reviewed_field").filter((value): value is string => typeof value === "string"),
+  );
+  const unresolved = unresolvedReviewFields(
+    draft.source_metadata,
+    reviewedFields,
+    payload,
+  );
+  if (unresolved.length > 0) {
+    throw new Error(`Assumption review is incomplete: ${unresolved.join(", ")}`);
+  }
+
+  // 1. Create model
+  const name = actionFormString(formData, "name");
+  const description = actionFormString(formData, "description");
+  const model_type = actionFormString(formData, "model_type");
+
+  const modelRes = await serverPostApi(`/companies/${companyId}/valuation-models`, { name, description, model_type });
+  const model = (modelRes as any).data || modelRes;
+
+  // 2. Create assumption set using the draft values provided
+  await serverPostApi(`/valuation-models/${model.id}/assumptions`, payload);
+
+  revalidatePath(`/companies/${companyId}`);
+  logAction(`created valuation model ${model.id} with assumptions`);
+
+  // Return the created model ID so the client can redirect
+  return model.id;
+}
+
+export async function promoteValuationSetupDraft(formData: FormData, draftId: number, companyId: string) {
+  logAction(`promoting valuation setup draft ${draftId} for company ${companyId}`);
+  const payload = buildDcfAssumptionSetPayload(formData);
+  const editedFields = new Set(
+    formData.getAll("edited_field").filter((value): value is string => typeof value === "string"),
+  );
+  const assumptionsPatch = Object.fromEntries(
+    Object.entries(payload).filter(([key]) => editedFields.has(key)),
+  );
+  const reviewedFields = formData
+    .getAll("reviewed_field")
+    .filter((value): value is string => typeof value === "string");
+  const savedDraft = await serverPatchApi<{ updated_at: string }>(`/valuation-drafts/${draftId}`, {
+    assumptions_patch: assumptionsPatch,
+    reviewed_fields: reviewedFields,
+    expected_updated_at: actionFormString(formData, "draft_updated_at") || null,
+  });
+  const modelResponse = await serverPostApi<{ id: number }>(`/valuation-drafts/${draftId}/promote`, {
+    name: actionFormString(formData, "name"),
+    description: actionFormString(formData, "description") || null,
+    model_type: actionFormString(formData, "model_type") || "fcff_dcf",
+    expected_updated_at: savedDraft.updated_at,
+  });
+  const model = ((modelResponse as { data?: { id: number } }).data || modelResponse) as { id: number };
+  revalidatePath(`/companies/${companyId}/valuation`);
+  return model.id;
 }

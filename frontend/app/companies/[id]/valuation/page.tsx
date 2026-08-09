@@ -1,10 +1,13 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { fetchApi, Company, listValuationModels } from "@/lib/api";
+import type { Company, ValuationCompanyContext, ValuationModel } from "@/lib/api";
+import { serverFetchApi } from "@/lib/server-api";
 import { deleteValuationModel } from "@/app/actions";
 import { TextField, TextAreaField } from "@/components/form-fields";
 import { EmptyState, PageHeader, Panel } from "@/components/page";
+import { MarketContextPanel } from "@/components/valuation/market-context-panel";
 import { DeleteRecordForm } from "@/components/delete-record-form";
+import { IndustryMappingSection } from "./industry-mapping-section";
 
 export const dynamic = "force-dynamic";
 
@@ -16,13 +19,19 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
   }
 
   let company: Company;
+  let context: ValuationCompanyContext | null = null;
   try {
-    company = await fetchApi<Company>(`/companies/${companyId}`);
+    company = await serverFetchApi<Company>(`/companies/${companyId}`);
+    try {
+      context = await serverFetchApi<ValuationCompanyContext>(`/api/valuation/context/company/${companyId}`);
+    } catch {
+      // Ignored if missing
+    }
   } catch {
     notFound();
   }
 
-  const models = await listValuationModels(companyId);
+  const models = await serverFetchApi<ValuationModel[]>(`/companies/${companyId}/valuation-models`);
 
   return (
     <>
@@ -33,19 +42,21 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
         </div>
       </div>
 
+      <IndustryMappingSection company={company} />
+
+      {context && <MarketContextPanel context={context} />}
+
       <Panel title="Create New Model">
-        <form action={async (data) => {
-          "use server";
-          const { createValuationModel } = await import("@/app/actions");
-          await createValuationModel(data, companyId.toString());
-        }} className="form-grid">
-          <input type="hidden" name="company_id" value={companyId} />
-          <TextField id="model-name" label="Model Name" name="name" placeholder="e.g. Base DCF 2026" required />
-          <TextField id="model-desc" label="Description" name="description" placeholder="Optional description" />
-          <div className="button-row">
-            <button type="submit">Create Model</button>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <p style={{ color: "var(--text-secondary)", margin: 0 }}>
+            Generate a safe, source-grounded autofill draft. You will review the assumptions, their provenance, and any warnings before the valuation model is created.
+          </p>
+          <div>
+            <Link href={`/companies/${companyId}/valuation/draft`} className="primary-button" style={{ display: "inline-block", textDecoration: "none", padding: "0.75rem 1.5rem", background: "var(--accent)", color: "white", borderRadius: "4px", fontWeight: 600 }}>
+              Draft New Valuation Model
+            </Link>
           </div>
-        </form>
+        </div>
       </Panel>
 
       <Panel title="Valuation Models">

@@ -41,13 +41,23 @@ function optionalStringList(formData: FormData, key: string): string[] | null {
 }
 
 export function buildCompanyPayload(formData: FormData): JsonPayload {
+  const market = optionalString(formData, "market")?.toUpperCase() ?? null;
+  const primaryExchange = optionalString(formData, "primary_exchange")?.toUpperCase() ?? null;
+  const localSymbol = optionalString(formData, "local_symbol")?.toUpperCase() ?? null;
   return {
+    market,
+    primary_exchange: primaryExchange,
+    local_symbol: localSymbol,
     ticker: requiredString(formData, "ticker").toUpperCase(),
     name: requiredString(formData, "name"),
     sector: optionalString(formData, "sector"),
     industry: optionalString(formData, "industry"),
+    damodaran_industry: optionalString(formData, "damodaran_industry"),
     exchange: optionalString(formData, "exchange"),
     cik: optionalString(formData, "cik"),
+    isin: optionalString(formData, "isin")?.toUpperCase() ?? null,
+    regulatory_id: optionalString(formData, "regulatory_id")?.toUpperCase() ?? null,
+    regulatory_id_type: optionalString(formData, "regulatory_id_type")?.toUpperCase() ?? null,
     aliases_json: optionalStringList(formData, "aliases"),
     country: optionalString(formData, "country"),
     region: optionalString(formData, "region"),
@@ -61,12 +71,16 @@ export function buildCompanyPayload(formData: FormData): JsonPayload {
   };
 }
 
-export function getRequiredFormId(formData: FormData, fieldName: string = "id"): string {
+export function getRequiredFormId(formData: FormData, fieldName: string = "id"): number {
   const value = formData.get(fieldName);
   if (!value || typeof value !== "string" || !value.trim()) {
     throw new Error(`Missing required form field: ${fieldName}`);
   }
-  return value.trim();
+  const id = Number(value.trim());
+  if (!Number.isInteger(id) || id <= 0) {
+    throw new Error(`Invalid form field: ${fieldName}`);
+  }
+  return id;
 }
 
 export function buildSourcePayload(formData: FormData): JsonPayload {
@@ -91,6 +105,17 @@ export function buildRawDocumentPayload(formData: FormData): JsonPayload {
   };
 }
 
+export function buildRawDocumentMetadataPayload(formData: FormData): JsonPayload {
+  return {
+    company_id: optionalNumber(formData, "company_id"),
+    source_id: requiredNumber(formData, "source_id"),
+    document_type: requiredString(formData, "document_type"),
+    title: requiredString(formData, "title"),
+    url: optionalString(formData, "url"),
+    content_hash: requiredString(formData, "content_hash")
+  };
+}
+
 export function buildRssIngestionPayload(formData: FormData): JsonPayload {
   return {
     source_id: requiredNumber(formData, "source_id"),
@@ -105,7 +130,7 @@ export function buildSecFilingIngestionPayload(formData: FormData): JsonPayload 
   const formType = optionalString(formData, "form_type");
   const filingYear = optionalNumber(formData, "filing_year");
   return {
-    source_id: requiredNumber(formData, "source_id"),
+    source_id: optionalNumber(formData, "source_id"),
     company_id: requiredNumber(formData, "company_id"),
     filings: filingsJson ? JSON.parse(filingsJson) : [],
     form_types: formType ? [formType] : ["10-K", "10-Q", "8-K"],
@@ -262,19 +287,60 @@ export function buildValuationModelPayload(formData: FormData): JsonPayload {
   return {
     company_id: optionalNumber(formData, "company_id"),
     name: requiredString(formData, "name"),
-    description: optionalString(formData, "description")
+    description: optionalString(formData, "description"),
+    model_type: optionalString(formData, "model_type")
   };
 }
 
 export function buildDcfAssumptionSetPayload(formData: FormData): JsonPayload {
-  const assumptionsJson = optionalString(formData, "assumptions_json");
+  const revenueGrowthYearsStr = optionalString(formData, "revenue_growth_years_json");
+
   return {
     valuation_model_id: optionalNumber(formData, "valuation_model_id"),
     scenario: requiredString(formData, "scenario"),
-    discount_rate: requiredNumber(formData, "discount_rate"),
-    terminal_growth_rate: requiredNumber(formData, "terminal_growth_rate"),
-    projection_years: requiredNumber(formData, "projection_years"),
-    assumptions_json: assumptionsJson ? JSON.parse(assumptionsJson) : {}
+
+    story_text: optionalString(formData, "story_text"),
+    growth_story: optionalString(formData, "growth_story"),
+    margin_story: optionalString(formData, "margin_story"),
+    reinvestment_story: optionalString(formData, "reinvestment_story"),
+    risk_story: optionalString(formData, "risk_story"),
+
+    starting_revenue: optionalNumber(formData, "starting_revenue"),
+    revenue_growth_years_json: revenueGrowthYearsStr ? JSON.parse(revenueGrowthYearsStr) : {},
+    target_operating_margin: optionalNumber(formData, "target_operating_margin"),
+    current_operating_margin: optionalNumber(formData, "current_operating_margin"),
+    tax_rate: optionalNumber(formData, "tax_rate"),
+    sales_to_capital_ratio: optionalNumber(formData, "sales_to_capital_ratio"),
+    reinvestment_method: formData.get("reinvestment_method") as string || "sales_to_capital",
+    starting_invested_capital: optionalNumber(formData, "starting_invested_capital"),
+
+    risk_free_rate: optionalNumber(formData, "risk_free_rate"),
+    equity_risk_premium: optionalNumber(formData, "equity_risk_premium"),
+    beta: optionalNumber(formData, "beta"),
+    cost_of_equity: optionalNumber(formData, "cost_of_equity"),
+    pre_tax_cost_of_debt: optionalNumber(formData, "pre_tax_cost_of_debt"),
+    debt_to_capital: optionalNumber(formData, "debt_to_capital"),
+    equity_to_capital: optionalNumber(formData, "equity_to_capital"),
+    wacc_start: optionalNumber(formData, "wacc_start"),
+    wacc_terminal: optionalNumber(formData, "wacc_terminal"),
+
+    terminal_growth_rate: optionalNumber(formData, "terminal_growth_rate"),
+    terminal_roic: optionalNumber(formData, "terminal_roic"),
+
+    cash: optionalNumber(formData, "cash"),
+    minority_interests: optionalNumber(formData, "minority_interests"),
+    preferred_stock: optionalNumber(formData, "preferred_stock"),
+    debt: optionalNumber(formData, "debt"),
+    employee_options_value: optionalNumber(formData, "employee_options_value"),
+    diluted_shares: optionalNumber(formData, "diluted_shares"),
+    current_market_price: optionalNumber(formData, "current_market_price"),
+    projection_years_count: optionalNumber(formData, "projection_years") || 10,
+
+    probability_of_failure: optionalNumber(formData, "probability_of_failure"),
+    distress_sale_proceeds: optionalNumber(formData, "distress_sale_proceeds"),
+    book_value_of_equity: optionalNumber(formData, "book_value_of_equity"),
+    target_roe: optionalNumber(formData, "target_roe"),
+    net_income: optionalNumber(formData, "net_income"),
   };
 }
 
@@ -314,7 +380,7 @@ export function buildNarrativeClaimPayload(formData: FormData): JsonPayload {
 export function buildNarrativeMentionPayload(formData: FormData): JsonPayload {
   return {
     cluster_id: requiredNumber(formData, "cluster_id"),
-    post_id: requiredNumber(formData, "post_id"),
+    event_id: requiredNumber(formData, "event_id"),
     context_text: optionalString(formData, "context_text")
   };
 }

@@ -6,6 +6,13 @@ import type { AlertRecord, Company, EventRecord, RawDocument, ThesisNote } from 
 
 const company: Company = {
   id: 1,
+  market: "US",
+  primary_exchange: "NASDAQ",
+  local_symbol: "AAPL",
+  isin: null,
+  figi: null,
+  regulatory_id: "0000320193",
+  regulatory_id_type: "CIK",
   ticker: "AAPL",
   name: "Apple Inc.",
   sector: "Technology",
@@ -21,7 +28,8 @@ const company: Company = {
   market_cap_category: "mega_cap",
   is_etf: false,
   etf_provider: null,
-  active: true
+  active: true,
+  exposure_tags: []
 };
 
 test("buildCompanyDetail returns only records linked to the selected company", () => {
@@ -42,6 +50,7 @@ test("buildCompanyDetail returns only records linked to the selected company", (
       novelty_score: 70,
       impact_score: 65,
       priority_score: 75,
+      data_confidence_score: null,
       score_explanation_json: null
     },
     {
@@ -56,6 +65,7 @@ test("buildCompanyDetail returns only records linked to the selected company", (
       novelty_score: null,
       impact_score: null,
       priority_score: null,
+      data_confidence_score: null,
       score_explanation_json: null
     }
   ];
@@ -69,11 +79,19 @@ test("buildCompanyDetail returns only records linked to the selected company", (
       title: "Apple alert",
       summary: null,
       why_it_matters: null,
+      what_changed: null,
+      evidence: null,
       confidence_bucket: "high",
       review_status: "unreviewed",
       review_notes: null,
       reviewed_at: null,
+      created_at: "2026-07-25T00:00:00Z",
       portfolio_priority_score: 0,
+      thesis_relevance_score: 0,
+      ownership_weight_score: 0,
+      valuation_gap_score: 0,
+      narrative_velocity_score: 0,
+      score_explanation_json: null,
       portfolio_impacts: []
     },
     {
@@ -85,11 +103,19 @@ test("buildCompanyDetail returns only records linked to the selected company", (
       title: "Other alert",
       summary: null,
       why_it_matters: null,
+      what_changed: null,
+      evidence: null,
       confidence_bucket: "low",
       review_status: "unreviewed",
       review_notes: null,
       reviewed_at: null,
+      created_at: "2026-07-25T00:00:00Z",
       portfolio_priority_score: 0,
+      thesis_relevance_score: 0,
+      ownership_weight_score: 0,
+      valuation_gap_score: 0,
+      narrative_velocity_score: 0,
+      score_explanation_json: null,
       portfolio_impacts: []
     }
   ];

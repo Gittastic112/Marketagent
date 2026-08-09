@@ -1,24 +1,33 @@
-import { deleteCompanyWithState, updateCompany, createExposureTag, deleteExposureTagWithState, addCompanyExposureTag, removeCompanyExposureTag } from "@/app/actions";
-import { AddCompanyForm } from "@/components/add-company-form";
+import { deleteCompanyWithState, updateCompany, createExposureTag, deleteExposureTag, addCompanyExposureTag, removeCompanyExposureTag } from "@/app/actions";
+import { CompanySetupWizard } from "@/components/company-setup-wizard";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { CheckboxField, SelectField, TextField, TextAreaField } from "@/components/form-fields";
-import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { EmptyState, ErrorState, MockDataState, PageHeader, Panel, StaleDataBanner } from "@/components/page";
+import { serverFetchApiResponse } from "@/lib/server-api";
+import { summarizeApiMetas } from "@/lib/data-state-meta";
 import type { Company, ExposureTag } from "@/lib/api";
 import Link from "next/link";
 
 export default async function CompaniesPage() {
   try {
-    const [companies, exposureTags] = await Promise.all([
-      fetchApi<Company[]>("/companies"),
-      fetchApi<ExposureTag[]>("/exposure-tags")
+    const [companiesRes, exposureTagsRes] = await Promise.all([
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<ExposureTag[]>("/exposure-tags")
     ]);
+
+    const companies = companiesRes.data || [];
+    const exposureTags = exposureTagsRes.data || [];
+    const dataState = summarizeApiMetas([companiesRes.meta, exposureTagsRes.meta]);
 
     return (
       <>
         <PageHeader eyebrow="Watchlist" title="Companies" status={`${companies.length} tracked`} />
+
+        {dataState.someStale && <StaleDataBanner message="Showing cached data because backend is unreachable." />}
+        {dataState.hasMock && <MockDataState message="Company or exposure tag data is mocked. Do not treat it as live watchlist coverage." />}
+
         <Panel title="Add Company">
-          <AddCompanyForm />
+          <CompanySetupWizard />
         </Panel>
         <Panel title="Add Exposure Tag">
           <form action={createExposureTag} className="form-grid">
@@ -35,7 +44,7 @@ export default async function CompaniesPage() {
                 {exposureTags.map(tag => (
                   <span key={tag.id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs">
                     <span title={tag.description || ''}>{tag.name}</span>
-                    <form action={deleteExposureTagWithState} className="inline" style={{display: 'inline'}}>
+                    <form action={deleteExposureTag} className="inline" style={{display: 'inline'}}>
                       <input type="hidden" name="id" value={tag.id} />
                       <button type="submit" className="text-red-500 hover:text-red-700 ml-1" title="Delete tag">×</button>
                     </form>
@@ -53,7 +62,8 @@ export default async function CompaniesPage() {
               <table>
                 <thead>
                   <tr>
-                    <th>Ticker</th>
+                    <th>Market</th>
+                    <th>Symbol</th>
                     <th>Name</th>
                     <th>Sector</th>
                     <th>Country</th>
@@ -69,15 +79,17 @@ export default async function CompaniesPage() {
                 <tbody>
                   {companies.map((company) => (
                     <tr key={company.id}>
+                      <td>{company.market ?? "-"}</td>
                       <td>
                         <Link href={`/companies/${company.id}`}>{company.ticker}</Link>
+                        {company.local_symbol && company.local_symbol !== company.ticker ? <div className="muted">{company.local_symbol}</div> : null}
                       </td>
                       <td>{company.name}</td>
                       <td>{company.sector ?? "-"}</td>
                       <td>{company.country ?? "-"}</td>
                       <td>{company.currency ?? "-"}</td>
                       <td>{company.asset_type ?? "-"}</td>
-                      <td>{company.exchange ?? "-"}</td>
+                      <td>{company.primary_exchange ?? company.exchange ?? "-"}</td>
                       <td>{company.aliases_json?.join(", ") || "-"}</td>
                       <td>
                         <div className="flex flex-wrap gap-1 max-w-[150px]">
@@ -91,10 +103,19 @@ export default async function CompaniesPage() {
                       </td>
                       <td>
                         <div className="action-stack">
+                          <Link className="secondary-button" href={`/companies/${company.id}/setup`}>
+                            Setup
+                          </Link>
                           <details className="edit-panel">
                             <summary>Edit</summary>
                             <form action={updateCompany} className="inline-form">
                               <input name="id" type="hidden" value={company.id} />
+                              <SelectField defaultValue={company.market ?? "US"} id={`market-${company.id}`} label="Market" name="market">
+                                <option value="US">United States</option>
+                                <option value="IN">India</option>
+                              </SelectField>
+                              <TextField defaultValue={company.primary_exchange ?? company.exchange ?? ""} id={`primary-exchange-${company.id}`} label="Primary Exchange" name="primary_exchange" />
+                              <TextField defaultValue={company.local_symbol ?? company.ticker} id={`local-symbol-${company.id}`} label="Local Symbol" name="local_symbol" />
                               <TextField defaultValue={company.ticker} id={`ticker-${company.id}`} label="Ticker" name="ticker" required />
                               <TextField defaultValue={company.name} id={`name-${company.id}`} label="Name" name="name" required />
                               <TextField defaultValue={company.sector ?? ""} id={`sector-${company.id}`} label="Sector" name="sector" />
@@ -131,6 +152,9 @@ export default async function CompaniesPage() {
                                 <option value="unknown">unknown</option>
                               </SelectField>
                               <TextField defaultValue={company.cik ?? ""} id={`cik-${company.id}`} label="CIK" name="cik" />
+                              <TextField defaultValue={company.isin ?? ""} id={`isin-${company.id}`} label="ISIN" name="isin" />
+                              <TextField defaultValue={company.regulatory_id ?? ""} id={`regulatory-id-${company.id}`} label="Regulatory ID" name="regulatory_id" />
+                              <TextField defaultValue={company.regulatory_id_type ?? ""} id={`regulatory-id-type-${company.id}`} label="Regulatory ID Type" name="regulatory_id_type" />
                               <TextField defaultValue={company.aliases_json?.join(", ") ?? ""} id={`aliases-${company.id}`} label="Aliases" name="aliases" />
                               <TextField defaultValue={company.etf_provider ?? ""} id={`etf-provider-${company.id}`} label="ETF Provider" name="etf_provider" />
                               <CheckboxField checkboxLabel="ETF" defaultChecked={company.is_etf} id={`is-etf-${company.id}`} label="ETF" name="is_etf" />

@@ -1,12 +1,19 @@
 import Link from "next/link";
 import { importSecFilings, lookupCompanyCik, addCompanyExposureTag, removeCompanyExposureTag, createExposureTag } from "@/app/actions";
-import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
+import { triggerEventClassification } from "@/app/actions";
 import { CompanyMarketHeader } from "@/components/company-market-header";
+import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
-import { fetchApi, fetchMarketQuote, fetchFinancialTrends } from "@/lib/api";
+import { CheckboxField } from "@/components/form-fields";
+import { StaleDataBanner, PartialDataNotice, ManualDataBadge } from "@/components/ui/data-states";
+import { summarizeApiMetas } from "@/lib/data-state-meta";
 import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialPeriod } from "@/lib/api";
+import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { buildCompanyDetail } from "@/lib/company-detail";
+import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
+import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 
 type CompanyDetailPageProps = {
   params: Promise<{
@@ -27,6 +34,14 @@ function scoreText(value: number | null) {
 
 function metadataValue(value: string | null | undefined) {
   return value && value.trim() ? value : "-";
+}
+
+function boundedSummary(value: string | null | undefined) {
+  if (!value) {
+    return null;
+  }
+  const normalized = value.replace(/\s+/g, " ").trim();
+  return normalized.length > 500 ? `${normalized.slice(0, 500).trimEnd()}...` : normalized;
 }
 
 function firstParam(value: string | string[] | undefined) {
@@ -75,15 +90,34 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
   }
 
   try {
-    const [companies, documents, events, alerts, thesisNotes, sources, allExposureTags] = await Promise.all([
-      fetchApi<Company[]>("/companies"),
-      fetchApi<RawDocument[]>("/raw-documents"),
-      fetchApi<EventRecord[]>("/events"),
-      fetchApi<AlertRecord[]>("/alerts"),
-      fetchApi<ThesisNote[]>("/thesis-notes"),
-      fetchApi<Source[]>("/sources"),
-      fetchApi<ExposureTag[]>("/exposure-tags")
+    const [companiesRes, documentsRes, eventsRes, alertsRes, thesisNotesRes, sourcesRes, allExposureTagsRes] = await Promise.all([
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries"),
+      serverFetchApiResponse<EventRecord[]>("/events"),
+      serverFetchApiResponse<AlertRecord[]>("/alerts"),
+      serverFetchApiResponse<ThesisNote[]>("/thesis-notes"),
+      serverFetchApiResponse<Source[]>("/sources"),
+      serverFetchApiResponse<ExposureTag[]>("/exposure-tags")
     ]);
+
+    const companies = companiesRes.data || [];
+    const documents = documentsRes.data || [];
+    const events = eventsRes.data || [];
+    const alerts = alertsRes.data || [];
+    const thesisNotes = thesisNotesRes.data || [];
+    const sources = sourcesRes.data || [];
+    const allExposureTags = allExposureTagsRes.data || [];
+
+    const dataState = summarizeApiMetas([
+      companiesRes.meta,
+      documentsRes.meta,
+      eventsRes.meta,
+      alertsRes.meta,
+      thesisNotesRes.meta,
+      sourcesRes.meta,
+      allExposureTagsRes.meta
+    ]);
+
     const company = companies.find((item) => item.id === companyId);
 
     if (!company) {
@@ -95,21 +129,36 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
       );
     }
 
+    const quoteParams = new URLSearchParams({ ticker: company.local_symbol ?? company.ticker });
+    if (company.market) quoteParams.set("market", company.market);
+    if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
+    if (company.currency) quoteParams.set("currency", company.currency);
     const [marketQuote, financialTrends] = await Promise.all([
-      fetchMarketQuote(company.ticker).catch(() => null),
-      fetchFinancialTrends(company.ticker).catch(() => [])
+      serverFetchApi<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`).catch(() => null),
+      serverFetchApi<FinancialPeriod[]>(`/fundamentals/${encodeURIComponent(company.ticker)}/trends`).catch(() => [])
     ]);
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
-    const secSources = sources.filter((source) => source.source_type === "sec" || source.source_type === "filing" || source.name.toLowerCase().includes("sec"));
+    const secSources = sources.filter(
+      (source) => source.active && (
+        source.source_type === "sec"
+        || source.source_type === "filing"
+        || source.name.toLowerCase().includes("sec")
+      )
+    );
+    const preferredSecSource = secSources[0] ?? null;
     let secFilings: SecFilingMetadata[] = [];
     let secPreviewError: string | null = null;
 
     if (shouldPreviewSecFilings && company.cik) {
       try {
-        secFilings = await fetchApi<SecFilingMetadata[]>(
+        const previewRes = await serverFetchApiResponse<SecFilingMetadata[]>(
           `/companies/${company.id}/sec-filings/preview?form_type=${encodeURIComponent(formType)}&filing_year=${filingYear}&limit=20`
         );
+        secFilings = previewRes.data || [];
+        if (previewRes.errors?.length > 0) {
+          secPreviewError = previewRes.errors[0].message;
+        }
       } catch (error) {
         secPreviewError = error instanceof Error ? error.message : "Could not preview SEC filings.";
       }
@@ -117,15 +166,26 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
 
     return (
       <>
+        <DataHealthUpdater segment="" isStale={dataState.someStale || dataState.allStale} />
+        {dataState.someStale && <PartialDataNotice message="Some company panels are showing cached data because the backend is partially reachable." />}
+        {dataState.hasMock && <MockDataState message="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders." />}
         {/* Header */}
         <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid var(--border-color)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
             <div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 500, color: "var(--text-secondary)", marginBottom: "0.25rem" }}>{company.exchange ?? "Unknown Exchange"}</div>
+              <div style={{ fontSize: "0.85rem", fontWeight: 500, color: "var(--text-secondary)", marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                <span>{company.market ?? "Unknown Market"} / {company.primary_exchange ?? company.exchange ?? "Unknown Exchange"}</span>
+                {company.local_symbol && <span>• Local: {company.local_symbol}</span>}
+                {company.regulatory_id && <span>• {company.regulatory_id_type || "Reg ID"}: {company.regulatory_id}</span>}
+                {company.market && company.market !== "US" && <ManualDataBadge />}
+              </div>
               <h1 style={{ fontSize: "1.75rem", fontWeight: 600, margin: 0 }}>
                 {company.ticker} <span style={{ color: "var(--text-secondary)", fontWeight: 400, fontSize: "1.5rem", margin: "0 0.5rem" }}>|</span> {company.name}
               </h1>
-              <CompanyMarketHeader data={marketQuote} />
+              <div style={{ display: "flex", alignItems: "flex-end", gap: "1rem" }}>
+                <CompanyMarketHeader data={marketQuote} />
+                <SyncPriceButton companyId={company.id} market={company.market} />
+              </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.75rem" }}>
                 <span className="badge">{metadataValue(company.sector)}</span>
                 <span className="badge">{metadataValue(company.market_cap_category)}</span>
@@ -135,7 +195,11 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 ))}
               </div>
             </div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
+            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+              <Link className="btn btn-outline" href={`/companies/${company.id}/setup`}>Setup</Link>
+              <Link className="btn btn-outline" href={`/companies/${company.id}/filings`}>Filings</Link>
+              <Link className="btn btn-outline" href={`/companies/${company.id}/thesis`}>Thesis</Link>
+              <Link className="btn btn-outline" href={`/companies/${company.id}/decisions`}>Decision Intelligence</Link>
               <Link className="btn btn-outline" href={`/companies/${company.id}/fundamentals`}>Fundamentals</Link>
               <Link className="btn btn-outline" href={`/companies/${company.id}/valuation`}>Valuation</Link>
               <a className="btn btn-primary" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download Memo</a>
@@ -218,9 +282,11 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
 
             <FinancialTrends trends={financialTrends} />
 
-            <Panel title="SEC Filing Picker">
+            <Panel title={company.market === "IN" ? "Filing Source" : "SEC Filing Picker"}>
               <div className="brief-list">
-                {!company.cik ? (
+                {company.market === "IN" ? (
+                  <EmptyState label="India automated filing provider not configured. Add exchange filing links manually from the Documents page." />
+                ) : !company.cik ? (
                   <form action={lookupCompanyCik} className="inline-form">
                     <input name="id" type="hidden" value={company.id} />
                     <div>
@@ -262,14 +328,14 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <input name="company_id" type="hidden" value={company.id} />
                           <input name="form_type" type="hidden" value={formType} />
                           <input name="filing_year" type="hidden" value={filingYear} />
-                          <div className="field">
-                            <label htmlFor="source_id">SEC Source</label>
-                            <select disabled={secSources.length === 0} id="source_id" name="source_id" required>
-                              <option value="">Select SEC source</option>
-                              {secSources.map((source) => (
-                                <option key={source.id} value={source.id}>{source.name}</option>
-                              ))}
-                            </select>
+                          {preferredSecSource ? (
+                            <input name="source_id" type="hidden" value={preferredSecSource.id} />
+                          ) : null}
+                          <div className="field field-wide">
+                            <label>SEC Source</label>
+                            <div className="data-line">
+                              <strong>{preferredSecSource?.name ?? "SEC EDGAR (automatic)"}</strong>
+                            </div>
                           </div>
                           <div className="field field-wide">
                             <label htmlFor="filings_json">Filing</label>
@@ -281,14 +347,15 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                               ))}
                             </select>
                           </div>
-                          <div className="field field-wide checkbox-field">
-                            <label htmlFor="download_text">
-                              <input id="download_text" name="download_text" type="checkbox" />
-                              Download filing text
-                            </label>
-                          </div>
+                          <CheckboxField
+                            checkboxLabel="Download filing text"
+                            className="field field-wide"
+                            id="download_text"
+                            label="Filing Content"
+                            name="download_text"
+                          />
                           <div className="button-row">
-                            <button disabled={secSources.length === 0} type="submit">Import selected filing</button>
+                            <button type="submit">Import selected filing</button>
                           </div>
                         </form>
                       )
@@ -342,6 +409,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <th>Type</th>
                         <th>Priority</th>
                         <th>Score</th>
+                        <th>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -349,7 +417,9 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <tr key={event.id}>
                           <td>
                             <strong>{event.title}</strong>
-                            {event.description ? <p className="muted">{event.description}</p> : null}
+                            {boundedSummary(event.description) ? (
+                              <p className="muted">{boundedSummary(event.description)}</p>
+                            ) : null}
                           </td>
                           <td>{event.event_type}</td>
                           <td>{scoreText(event.priority_score)}</td>
@@ -358,6 +428,24 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                               <summary>Details</summary>
                               <ScoreExplanationView explanation={event.score_explanation_json} />
                             </details>
+                          </td>
+                          <td>
+                            <form action={triggerEventClassification} style={{ display: "inline" }}>
+                              <input type="hidden" name="event_id" value={event.id} />
+                              <input type="hidden" name="company_id" value={company.id} />
+                              <label style={{ display: "flex", gap: "0.35rem", alignItems: "flex-start", maxWidth: "18rem", marginBottom: "0.4rem", fontSize: "0.7rem" }}>
+                                <input
+                                  type="checkbox"
+                                  name="privacy_disclosure_version"
+                                  value={AI_PRIVACY_DISCLOSURE_VERSION}
+                                  required
+                                />
+                                <span>{AI_DISCLOSURES.thesisImpact}</span>
+                              </label>
+                              <button type="submit" className="secondary-button" style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}>
+                                Propose Impact
+                              </button>
+                            </form>
                           </td>
                         </tr>
                       ))}
@@ -385,7 +473,9 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <tr key={alert.id}>
                           <td>
                             <strong>{alert.title}</strong>
-                            {alert.summary ? <p className="muted">{alert.summary}</p> : null}
+                            {boundedSummary(alert.summary) ? (
+                              <p className="muted">{boundedSummary(alert.summary)}</p>
+                            ) : null}
                           </td>
                           <td>
                             <span className={`badge ${alert.severity === 'high' ? 'badge-danger' : alert.severity === 'medium' ? 'badge-warning' : ''}`}>
