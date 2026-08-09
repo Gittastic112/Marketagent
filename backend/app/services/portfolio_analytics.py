@@ -69,9 +69,12 @@ def record_daily_snapshot(db: Session, portfolio_id: int, as_of_date: date | Non
                     "market_fx_rate_to_base",
                     "market_fx_rate_as_of",
                     "market_fx_observation_id",
+                    "market_fx_is_stale",
+                    "is_stale_price",
                     "cost_fx_rate_to_base",
                     "cost_fx_rate_as_of",
                     "cost_fx_observation_id",
+                    "cost_fx_is_stale",
                 )
             }
             for holding in holdings

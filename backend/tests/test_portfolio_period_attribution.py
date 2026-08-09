@@ -57,6 +57,9 @@ def test_period_price_attribution_uses_beginning_quantity_and_fx(db):
     assert result["position_change"] == 0
     assert result["cash_change"] == 0
     assert result["unexplained_change"] == 0
+    assert result["blockers"] == []
+    assert result["confidence"] == "high"
+    assert "Total change" in result["formula"]
     assert result["source_snapshot_ids"] == [start.id, end.id]
 
 
@@ -69,6 +72,8 @@ def test_period_attribution_requires_complete_boundary_snapshots(db):
 
     assert result["calculation_status"] == "not_available"
     assert result["price_movement"] is None
+    assert result["blockers"] == ["missing_complete_boundary_snapshot"]
+    assert result["confidence"] == "invalid"
 
 
 def test_period_fx_attribution_separates_security_and_currency_effects(db):

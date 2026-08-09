@@ -40,6 +40,10 @@ def calculate_period_attribution(
     start_date: date,
     end_date: date,
 ) -> dict:
+    formula = (
+        "Total change = price movement + FX impact + position change + cash change + unexplained change; "
+        "cash change = external cash flow + internal cash change."
+    )
     start = _snapshot(db, portfolio_id, start_date)
     end = _snapshot(db, portfolio_id, end_date)
     warnings: list[str] = []
@@ -61,10 +65,19 @@ def calculate_period_attribution(
             "price_movement": None,
             "fx_impact": None,
             "position_change": None,
+            "cash_change": None,
             "external_cash_flow": None,
+            "internal_cash_change": None,
             "unexplained_change": None,
             "holdings": [],
+            "attribution_by_sector": {},
+            "attribution_by_geography": {},
+            "attribution_by_asset_type": {},
+            "attribution_by_tag": {},
             "warnings": ["Complete source-provenance snapshots are required on both period boundaries."],
+            "blockers": ["missing_complete_boundary_snapshot"],
+            "confidence": "invalid",
+            "formula": formula,
             "source_snapshot_ids": [snapshot.id for snapshot in (start, end) if snapshot],
             "source_transaction_ids": [],
         }
@@ -80,10 +93,19 @@ def calculate_period_attribution(
             "price_movement": None,
             "fx_impact": None,
             "position_change": None,
+            "cash_change": None,
             "external_cash_flow": None,
+            "internal_cash_change": None,
             "unexplained_change": None,
             "holdings": [],
+            "attribution_by_sector": {},
+            "attribution_by_geography": {},
+            "attribution_by_asset_type": {},
+            "attribution_by_tag": {},
             "warnings": warnings,
+            "blockers": ["base_currency_changed"],
+            "confidence": "invalid",
+            "formula": formula,
             "source_snapshot_ids": [start.id, end.id],
             "source_transaction_ids": [],
         }
@@ -97,6 +119,7 @@ def calculate_period_attribution(
     fx_complete = True
     total_position_change = 0.0
     component_complete = True
+    blockers: list[str] = []
     for key in sorted(set(start_holdings).union(end_holdings)):
         beginning = start_holdings.get(key)
         ending = end_holdings.get(key)
@@ -105,6 +128,7 @@ def calculate_period_attribution(
             market_value_base = boundary.get("market_value_base") if boundary else None
             if market_value_base is None:
                 component_complete = False
+                blockers.append(f"missing_boundary_value:{key}")
                 holding_results.append(
                     {
                         "key": key,
@@ -143,6 +167,7 @@ def calculate_period_attribution(
             price_complete = False
             fx_complete = False
             component_complete = False
+            blockers.append(f"missing_comparable_holding_inputs:{key}")
             holding_results.append(
                 {
                     "key": key,
@@ -172,6 +197,7 @@ def calculate_period_attribution(
         total_fx_impact += fx_impact
         if beginning.get("market_value_base") is None or ending.get("market_value_base") is None:
             component_complete = False
+            blockers.append(f"missing_position_value:{key}")
             position_change = None
         else:
             position_change = (
@@ -213,6 +239,7 @@ def calculate_period_attribution(
     )
     if not flow_report.complete:
         component_complete = False
+        blockers.append("missing_external_flow_fx")
         warnings.append("External cash-flow attribution is blocked by missing historical FX.")
     cash_change = None
     internal_cash_change = None
@@ -222,6 +249,7 @@ def calculate_period_attribution(
             internal_cash_change = cash_change - external_cash_flow
     else:
         component_complete = False
+        blockers.append("missing_snapshot_cash_total")
         warnings.append("Snapshot cash totals are required for internal position-flow reconciliation.")
 
     total_change = float(end.total_portfolio_value - start.total_portfolio_value)
@@ -244,6 +272,16 @@ def calculate_period_attribution(
                 "Attribution does not reconcile within 0.01 base-currency units; inspect snapshot provenance."
             )
             component_complete = False
+            blockers.append("reconciliation_out_of_tolerance")
+
+    stale_inputs = any(
+        holding.get("is_stale_price")
+        or holding.get("market_fx_is_stale")
+        or holding.get("cost_fx_is_stale")
+        for holding in [*start_holdings.values(), *end_holdings.values()]
+    )
+    if stale_inputs:
+        warnings.append("One or more boundary price or FX inputs were stale at snapshot capture time.")
 
     company_ids = {
         holding["company_id"]
@@ -272,12 +310,16 @@ def calculate_period_attribution(
         tags = company.exposure_tags if company else []
         for tag in tags:
             tag_attribution[tag.name] = tag_attribution.get(tag.name, 0.0) + contribution
+    calculation_status = "complete" if component_complete and price_complete and fx_complete else "partial"
+    confidence = "high" if calculation_status == "complete" and not stale_inputs else "medium"
+    if calculation_status == "partial":
+        confidence = "low"
     return {
         "portfolio_id": portfolio_id,
         "start_date": start_date,
         "end_date": end_date,
         "base_currency": end.base_currency,
-        "calculation_status": "complete" if component_complete and price_complete and fx_complete else "partial",
+        "calculation_status": calculation_status,
         "total_change": total_change,
         "price_movement": total_price_movement if price_complete else None,
         "fx_impact": total_fx_impact if fx_complete else None,
@@ -292,6 +334,9 @@ def calculate_period_attribution(
         "attribution_by_asset_type": asset_type_attribution,
         "attribution_by_tag": tag_attribution,
         "warnings": warnings,
+        "blockers": sorted(set(blockers)),
+        "confidence": confidence,
+        "formula": formula,
         "source_snapshot_ids": [start.id, end.id],
         "source_transaction_ids": [flow.transaction_id for flow in flow_report.flows],
     }
