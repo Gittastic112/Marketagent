@@ -1,6 +1,6 @@
 from datetime import date
 
-from app.models import Portfolio, PortfolioSnapshot, PortfolioTransaction
+from app.models import MarketPrice, Portfolio, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
 
 
 def _snapshot(portfolio_id: int, day: date, value: float) -> PortfolioSnapshot:
@@ -56,3 +56,33 @@ def test_performance_endpoint_validates_period(client):
         f"/portfolios/{portfolio['id']}/performance?start_date=2026-08-09&end_date=2026-08-09"
     )
     assert response.status_code == 422
+
+
+def test_snapshot_capture_endpoint_is_idempotent_and_source_labeled(client, db):
+    portfolio = Portfolio(name="Capture API", base_currency="USD")
+    holding = PortfolioHolding(
+        portfolio=portfolio,
+        ticker="CAP",
+        quantity=2,
+        average_cost=10,
+        currency="USD",
+        as_of_date=date(2026, 8, 1),
+    )
+    db.add_all(
+        [
+            portfolio,
+            holding,
+            MarketPrice(ticker="CAP", price=12, currency="USD", as_of_date=date(2026, 8, 9)),
+        ]
+    )
+    db.commit()
+
+    url = f"/portfolios/{portfolio.id}/snapshots/capture?as_of_date=2026-08-09"
+    first = client.post(url)
+    second = client.post(url)
+
+    assert first.status_code == 200, first.text
+    assert second.status_code == 200, second.text
+    assert first.json()["data"]["id"] == second.json()["data"]["id"]
+    assert second.json()["data"]["calculation_status"] == "complete"
+    assert second.json()["meta"]["source"] == "point_in_time_portfolio_capture"

@@ -56,7 +56,7 @@ from app.models import (
 )
 from app.services.portfolio_holdings import apply_transaction_to_holding, apply_transaction_to_cash
 from app.services.portfolio_valuation import calculate_portfolio_valuation
-from app.services.portfolio_analytics import calculate_portfolio_analytics
+from app.services.portfolio_analytics import calculate_portfolio_analytics, record_daily_snapshot
 from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
 from app.services.portfolio_performance import calculate_money_weighted_return, calculate_time_weighted_return
 from app.services.portfolio_period_attribution import calculate_period_attribution
@@ -544,6 +544,35 @@ def delete_portfolio_snapshot(snapshot_id: int, db: Session = Depends(get_db), c
             snapshot_id,
             current_user["id"],
         ),
+    )
+
+
+@router.post(
+    "/portfolios/{portfolio_id}/snapshots/capture",
+    response_model=ApiResponse[PortfolioSnapshotRead],
+)
+def capture_portfolio_snapshot(
+    portfolio_id: int,
+    as_of_date: date | None = None,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[PortfolioSnapshot]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    snapshot = record_daily_snapshot(db, portfolio_id, as_of_date)
+    warnings = []
+    if snapshot.calculation_status != "complete":
+        warnings.append(
+            "Snapshot is incomplete and cannot be used for precise performance calculations."
+        )
+    return ApiResponse(
+        data=snapshot,
+        meta={
+            "source": "point_in_time_portfolio_capture",
+            "last_updated": snapshot.created_at,
+            "is_stale": snapshot.calculation_status != "complete",
+            "warnings": warnings,
+            "confidence": "high" if snapshot.calculation_status == "complete" else "low",
+        },
     )
 
 
