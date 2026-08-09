@@ -82,6 +82,7 @@ test("backend requests use signed internal identity instead of recursive session
   assert.match(backendProxySource, /headers\.delete\(INTERNAL_SIGNATURE_HEADER\)/);
   assert.match(backendProxySource, /createBackendAuthHeaders/);
   assert.match(backendProxySource, /AbortSignal\.timeout/);
+  assert.match(backendProxySource, /export async function PUT/);
 
   assert.match(internalAuthSource, /createHmac\("sha256"/);
   assert.match(internalAuthSource, /NEXTAUTH_SECRET/);
