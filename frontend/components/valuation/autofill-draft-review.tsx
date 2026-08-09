@@ -112,6 +112,8 @@ export function AutofillDraftReview({
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveMessage, setSaveMessage] = useState("");
   const [archiveConfirmationOpen, setArchiveConfirmationOpen] = useState(false);
+  const [defaultsAccepted, setDefaultsAccepted] = useState(false);
+  const [bulkAcceptedFields, setBulkAcceptedFields] = useState<Set<string>>(new Set());
   const [updatedAt, setUpdatedAt] = useState(initialUpdatedAt);
   const [growthText, setGrowthText] = useState(
     JSON.stringify(draft.assumptions.revenue_growth_years_json ?? {}, null, 2),
@@ -126,18 +128,41 @@ export function AutofillDraftReview({
     reviewedFields,
     values,
   );
+  const invalidDefaultFields = [...reviewFields].filter(
+    (field) => !reviewFieldValueIsValid(field, values[field]),
+  );
   const promotionReady = unresolvedFields.length === 0;
 
   function updateValue(key: string, nextValue: unknown) {
     setValues((current) => ({ ...current, [key]: nextValue }));
     setSaveState("idle");
     setSaveMessage("");
+    setDefaultsAccepted(false);
+    setBulkAcceptedFields(new Set());
     setEditedFields((current) => new Set(current).add(key));
     setReviewedFields((current) => {
       const next = new Set(current);
       next.delete(key);
       return next;
     });
+  }
+
+  function acceptCurrentDefaults(checked: boolean) {
+    setDefaultsAccepted(checked);
+    if (checked) {
+      const newlyAccepted = [...reviewFields].filter(
+        (field) => reviewFieldValueIsValid(field, values[field]) && !reviewedFields.has(field),
+      );
+      setBulkAcceptedFields(new Set(newlyAccepted));
+      setReviewedFields((current) => new Set([...current, ...newlyAccepted]));
+      return;
+    }
+    setReviewedFields((current) => {
+      const next = new Set(current);
+      bulkAcceptedFields.forEach((field) => next.delete(field));
+      return next;
+    });
+    setBulkAcceptedFields(new Set());
   }
 
   function toggleReviewed(key: string, checked: boolean) {
@@ -290,15 +315,15 @@ export function AutofillDraftReview({
   return (
     <form action={action} style={{ display: "grid", gap: "20px" }}>
       {warnings.length > 0 ? (
-        <section className="panel" style={{ borderLeft: "4px solid var(--warning)", padding: "20px" }}>
-          <div style={{ alignItems: "center", display: "flex", gap: "8px" }}>
+        <details className="panel valuation-draft-warnings">
+          <summary>
             <AlertTriangle size={18} color="var(--warning)" />
-            <h2 style={{ fontSize: "18px", margin: 0 }}>Draft Warnings</h2>
-          </div>
-          <ul style={{ marginBottom: 0 }}>
+            <span><strong>{warnings.length} draft warnings</strong> <small>Review details</small></span>
+          </summary>
+          <ul>
             {warnings.map((warning) => <li key={warning}>{warning}</li>)}
           </ul>
-        </section>
+        </details>
       ) : null}
 
       {sourceMetadata.reporting_currency ? (
@@ -328,6 +353,35 @@ export function AutofillDraftReview({
           ) : null}
         </section>
       ) : null}
+
+      <section className="panel valuation-default-confirmation">
+        <div>
+          <h2>Use all current defaults</h2>
+          <p>
+            Create the model from the values already shown below. You can still edit and rerun it later.
+          </p>
+        </div>
+        <label className="valuation-default-checkbox">
+          <input
+            type="checkbox"
+            checked={defaultsAccepted}
+            disabled={reviewFields.size === 0 || invalidDefaultFields.length > 0}
+            onChange={(event) => acceptCurrentDefaults(event.target.checked)}
+          />
+          <span>I understand these values are estimates and accept all current valid defaults.</span>
+        </label>
+        {reviewFields.size === 0 ? (
+          <p className="valuation-default-note">No additional default confirmation is required for this draft.</p>
+        ) : invalidDefaultFields.length > 0 ? (
+          <p className="inline-error">
+            Defaults cannot be accepted yet. Fix invalid values for: {invalidDefaultFields.join(", ")}.
+          </p>
+        ) : (
+          <p className="valuation-default-note">
+            One check confirms {reviewFields.size} default assumption{reviewFields.size === 1 ? "" : "s"}.
+          </p>
+        )}
+      </section>
 
       <section className="panel" style={{ padding: "20px" }}>
         <h2 style={{ fontSize: "18px", marginTop: 0 }}>Model Settings</h2>
@@ -360,9 +414,12 @@ export function AutofillDraftReview({
       <input type="hidden" name="reinvestment_method" value="sales_to_capital" />
       <input type="hidden" name="draft_updated_at" value={updatedAt} />
 
-      <section className="panel" style={{ padding: "20px" }}>
-        <h2 style={{ fontSize: "18px", marginTop: 0 }}>Revenue Growth Path</h2>
-        <div className="field">
+      <details className="panel valuation-draft-group">
+        <summary>
+          <span>Revenue Growth Path</span>
+          <small>Year-by-year growth assumptions</small>
+        </summary>
+        <div className="field valuation-draft-group-content">
           <label htmlFor="revenue-growth">Year-by-Year Growth (JSON)</label>
           <textarea
             id="revenue-growth"
@@ -383,12 +440,15 @@ export function AutofillDraftReview({
           {renderProvenance("revenue_growth_years_json")}
           {renderReviewControl("revenue_growth_years_json")}
         </div>
-      </section>
+      </details>
 
       {FIELD_GROUPS.map((group) => (
-        <section className="panel" style={{ padding: "20px" }} key={group.title}>
-          <h2 style={{ fontSize: "18px", marginTop: 0 }}>{group.title}</h2>
-          <div className="form-grid" style={{ padding: 0 }}>
+        <details className="panel valuation-draft-group" key={group.title}>
+          <summary>
+            <span>{group.title}</span>
+            <small>{group.fields.length} assumptions</small>
+          </summary>
+          <div className="form-grid valuation-draft-group-content">
             {group.fields.map((field) => (
               <div className="field" key={field.key} style={{ alignContent: "start" }}>
                 <label htmlFor={field.key}>{field.label}</label>
@@ -409,7 +469,7 @@ export function AutofillDraftReview({
               </div>
             ))}
           </div>
-        </section>
+        </details>
       ))}
 
       {Object.entries(draft.assumptions).map(([key, value]) => {
@@ -421,19 +481,7 @@ export function AutofillDraftReview({
         <input key={field} type="hidden" name="edited_field" value={field} />
       ))}
 
-      <section
-        className="panel"
-        style={{
-          alignItems: "center",
-          display: "flex",
-          justifyContent: "space-between",
-          gap: "16px",
-          padding: "20px",
-          position: "sticky",
-          bottom: "16px",
-          zIndex: 5,
-        }}
-      >
+      <section className="panel valuation-draft-actions">
         <div style={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: "10px" }}>
           {promotionReady ? (
             <CheckCircle2 size={20} color="var(--success)" />
@@ -449,7 +497,7 @@ export function AutofillDraftReview({
             </div>
           </div>
         </div>
-        <div style={{ alignItems: "center", display: "flex", gap: "10px" }}>
+        <div className="valuation-draft-action-buttons">
           <span style={{ color: saveState === "error" ? "var(--danger)" : "var(--muted)", fontSize: "12px" }}>
             {saveState === "saving" ? "Saving..." : saveMessage}
           </span>

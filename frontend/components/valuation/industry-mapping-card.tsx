@@ -186,7 +186,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
   }
 
   return (
-    <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+    <section className="industry-mix-card">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h3 className="text-lg font-medium text-slate-900">Revenue-Weighted Industry Mix</h3>
@@ -223,9 +223,8 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <div className="min-w-[800px]">
-          <div className="grid grid-cols-[1fr_1.4fr_120px_90px_40px] gap-2 border-b border-slate-200 pb-2 text-xs font-medium uppercase text-slate-500">
+      <div className="industry-mix-editor">
+          <div className="industry-mix-header">
             <span>Segment</span>
             <span>Damodaran industry</span>
             <span>Revenue weight</span>
@@ -233,7 +232,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
             <span className="sr-only">Remove</span>
           </div>
           {rows.map((row) => (
-            <div key={row.key} className="grid grid-cols-[1fr_1.4fr_120px_90px_40px] gap-2 border-b border-slate-100 py-2">
+            <div key={row.key} className="industry-mix-row">
               <input
                 className="h-10 min-w-0 rounded-md border border-slate-300 px-3 text-sm"
                 aria-label="Segment name"
@@ -290,7 +289,6 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
               </Button>
             </div>
           ))}
-        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
@@ -370,6 +368,6 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
           Draft assumptions
         </Button>
       </div>
-    </div>
+    </section>
   );
 }

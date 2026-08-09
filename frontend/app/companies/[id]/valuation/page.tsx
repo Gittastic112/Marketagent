@@ -3,10 +3,8 @@ import Link from "next/link";
 import type { Company, ValuationCompanyContext, ValuationModel } from "@/lib/api";
 import { serverFetchApi } from "@/lib/server-api";
 import { deleteValuationModel } from "@/app/actions";
-import { TextField, TextAreaField } from "@/components/form-fields";
 import { EmptyState, PageHeader, Panel } from "@/components/page";
 import { MarketContextPanel } from "@/components/valuation/market-context-panel";
-import { DeleteRecordForm } from "@/components/delete-record-form";
 import { IndustryMappingSection } from "./industry-mapping-section";
 
 export const dynamic = "force-dynamic";
@@ -35,11 +33,9 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+      <div className="valuation-page-titlebar">
         <PageHeader eyebrow={company.ticker} title="Valuation Models" status={`${models.length} model${models.length !== 1 ? "s" : ""}`} />
-        <div style={{ marginBottom: "2rem" }}>
-          <Link href={`/companies/${company.id}`} className="secondary-button">&larr; Back to Company</Link>
-        </div>
+        <Link href={`/companies/${company.id}`} className="secondary-button">&larr; Back to Company</Link>
       </div>
 
       <IndustryMappingSection company={company} />
@@ -49,11 +45,11 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
       <Panel title="Create New Model">
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <p style={{ color: "var(--text-secondary)", margin: 0 }}>
-            Generate a safe, source-grounded autofill draft. You will review the assumptions, their provenance, and any warnings before the valuation model is created.
+            Start with source-backed defaults, confirm them once, and edit only the assumptions you want to change.
           </p>
           <div>
             <Link href={`/companies/${companyId}/valuation/draft`} className="primary-button" style={{ display: "inline-block", textDecoration: "none", padding: "0.75rem 1.5rem", background: "var(--accent)", color: "white", borderRadius: "4px", fontWeight: 600 }}>
-              Draft New Valuation Model
+              Create Valuation Model
             </Link>
           </div>
         </div>

@@ -5,7 +5,6 @@ const POSITIVE_FIELDS = new Set([
   "sales_to_capital_ratio",
   "starting_invested_capital",
   "diluted_shares",
-  "current_market_price",
   "cost_of_equity",
   "wacc_start",
   "wacc_terminal",
@@ -17,6 +16,19 @@ const NONNEGATIVE_FIELDS = new Set([
   "preferred_stock",
   "employee_options_value",
 ]);
+const UNIT_INTERVAL_FIELDS = new Set([
+  "tax_rate",
+  "risk_free_rate",
+  "equity_risk_premium",
+  "cost_of_equity",
+  "pre_tax_cost_of_debt",
+  "debt_to_capital",
+  "equity_to_capital",
+  "wacc_start",
+  "wacc_terminal",
+  "terminal_roic",
+]);
+const MARGIN_FIELDS = new Set(["current_operating_margin", "target_operating_margin"]);
 
 export function reviewFieldValueIsValid(field: string, value: unknown): boolean {
   if (Array.isArray(value)) {
@@ -30,6 +42,12 @@ export function reviewFieldValueIsValid(field: string, value: unknown): boolean 
   if (!Number.isFinite(numberValue)) {
     return false;
   }
+  if (UNIT_INTERVAL_FIELDS.has(field)) {
+    return (POSITIVE_FIELDS.has(field) ? numberValue > 0 : numberValue >= 0) && numberValue <= 1;
+  }
+  if (MARGIN_FIELDS.has(field)) return numberValue >= -1 && numberValue <= 1;
+  if (field === "terminal_growth_rate") return numberValue >= -0.2 && numberValue <= 0.2;
+  if (field === "beta") return numberValue >= 0 && numberValue <= 5;
   if (POSITIVE_FIELDS.has(field)) return numberValue > 0;
   if (NONNEGATIVE_FIELDS.has(field)) return numberValue >= 0;
   return true;

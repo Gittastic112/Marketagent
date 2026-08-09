@@ -12,8 +12,13 @@ test("review validation requires positive values for critical valuation inputs",
   assert.equal(reviewFieldValueIsValid("wacc_start", 0), false);
   assert.equal(reviewFieldValueIsValid("diluted_shares", "12"), true);
   assert.equal(reviewFieldValueIsValid("cash", 0), true);
+  assert.equal(reviewFieldValueIsValid("current_market_price", 0), true);
   assert.equal(reviewFieldValueIsValid("cash", -1), false);
   assert.equal(reviewFieldValueIsValid("current_operating_margin", -0.1), true);
+  assert.equal(reviewFieldValueIsValid("target_operating_margin", 31.3), false);
+  assert.equal(reviewFieldValueIsValid("wacc_terminal", 1.08), false);
+  assert.equal(reviewFieldValueIsValid("debt_to_capital", 1.2), false);
+  assert.equal(reviewFieldValueIsValid("beta", 2), true);
 });
 
 test("unresolved review fields require both a valid value and explicit review", () => {
