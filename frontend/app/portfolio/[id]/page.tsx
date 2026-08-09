@@ -12,6 +12,7 @@ import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextField } from "@/components/form-fields";
 import { EmptyState, PageHeader, Panel } from "@/components/page";
 import { PortfolioPerformanceSetup } from "@/components/portfolio-performance-setup";
+import { PortfolioPerformancePanel } from "@/components/portfolio-performance-panel";
 import type {
   FxRateObservation,
   Portfolio,
@@ -20,6 +21,9 @@ import type {
   PortfolioBenchmarkConfig,
   PortfolioCashBalance,
   PortfolioHolding,
+  PortfolioOpportunityCost,
+  PortfolioPerformance,
+  PortfolioPeriodAttribution,
   PortfolioSnapshot,
   PortfolioTransaction
 } from "@/lib/api";
@@ -30,8 +34,15 @@ function numberText(value: number): string {
   return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
 }
 
-export default async function PortfolioDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PortfolioDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { id } = await params;
+  const query = await searchParams;
   const portfolioId = parseInt(id, 10);
   if (isNaN(portfolioId)) {
     notFound();
@@ -61,6 +72,22 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
   const fxRates = [...directFx, ...inverseFx]
     .filter((rate, index, rows) => rows.findIndex((candidate) => candidate.id === rate.id) === index)
     .sort((a, b) => b.as_of_date.localeCompare(a.as_of_date));
+  const completeDates = snapshots
+    .filter((snapshot) => snapshot.calculation_status === "complete")
+    .map((snapshot) => snapshot.snapshot_date)
+    .sort();
+  const requestedStart = typeof query.start_date === "string" ? query.start_date : null;
+  const requestedEnd = typeof query.end_date === "string" ? query.end_date : null;
+  const startDate = requestedStart || completeDates[0] || null;
+  const endDate = requestedEnd || completeDates.at(-1) || null;
+  const hasValidPeriod = Boolean(startDate && endDate && startDate < endDate);
+  const [performance, periodAttribution, opportunityCost] = hasValidPeriod
+    ? await Promise.all([
+        serverFetchApi<PortfolioPerformance>(`/portfolios/${portfolioId}/performance?start_date=${startDate}&end_date=${endDate}`).catch(() => null),
+        serverFetchApi<PortfolioPeriodAttribution>(`/portfolios/${portfolioId}/period-attribution?start_date=${startDate}&end_date=${endDate}`).catch(() => null),
+        serverFetchApi<PortfolioOpportunityCost>(`/portfolios/${portfolioId}/opportunity-cost?start_date=${startDate}&end_date=${endDate}`).catch(() => null),
+      ])
+    : [null, null, null];
 
   return (
     <>
@@ -86,6 +113,17 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
           fxRates={fxRates}
           portfolio={portfolio}
           today={today}
+        />
+      </section>
+
+      <section style={{ marginBottom: "2rem" }}>
+        <PortfolioPerformancePanel
+          attribution={periodAttribution}
+          endDate={endDate}
+          opportunityCost={opportunityCost}
+          performance={performance}
+          snapshots={snapshots}
+          startDate={startDate}
         />
       </section>
 
