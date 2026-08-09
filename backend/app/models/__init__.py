@@ -7,6 +7,7 @@ from app.models.daily_brief import DailyBrief
 from app.models.document_asset import DocumentAsset
 from app.models.event import Event, EventCorroboration, EventContradiction
 from app.models.event_evidence_reference import EventEvidenceReference
+from app.models.fx_rate import FxRateObservation
 from app.models.market_price import MarketPrice
 from app.models.market_source import MarketSourceCapability
 from app.models.portfolio import (
@@ -103,6 +104,7 @@ __all__ = [
     "EventCorroboration",
     "EventContradiction",
     "EventEvidenceReference",
+    "FxRateObservation",
     "MarketPrice",
     "MarketSourceCapability",
     "Portfolio",
