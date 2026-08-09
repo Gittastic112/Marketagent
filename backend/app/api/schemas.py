@@ -2882,6 +2882,10 @@ class MarketRegimeScoreRead(BaseModel):
     breadth_score: float | None = None
     macro_score: float | None = None
     confidence: str
+    calculation_status: Literal["complete", "stale", "blocked"]
+    formula: str
+    blockers: list[str] = Field(default_factory=list)
+    input_sources: list[dict[str, Any]] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
     mode: str
     live_modules: list[str] = Field(default_factory=list)

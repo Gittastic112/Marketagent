@@ -15,6 +15,14 @@ class MarketRegimeEngine:
         "breadth": 0.15,
         "macro": 0.15
     }
+    FRESHNESS_DAYS = {
+        "options": 2,
+        "liquidity": 2,
+        "volume": 2,
+        "breadth": 2,
+        "macro": 31,
+    }
+    FORMULA = "overall = options×0.30 + liquidity×0.25 + volume×0.15 + breadth×0.15 + macro×0.15"
 
     def __init__(self, db: Session):
         self.db = db
@@ -54,12 +62,36 @@ class MarketRegimeEngine:
         scores = {}
         missing_modules = []
         live_modules = []
+        manual_modules = []
+        stale_modules = []
+        input_sources = []
 
         for metric in metrics:
             latest = self._get_latest_input(metric, target_date)
             if latest:
                 scores[metric] = latest.value
-                live_modules.append(metric.capitalize())
+                module_name = metric.capitalize()
+                if latest.input_type == "provider":
+                    live_modules.append(module_name)
+                else:
+                    manual_modules.append(module_name)
+                age_days = (target_date - latest.as_of_date).days
+                if age_days > self.FRESHNESS_DAYS[metric]:
+                    stale_modules.append(module_name)
+                input_sources.append(
+                    {
+                        "input_id": latest.id,
+                        "metric_name": metric,
+                        "value": latest.value,
+                        "as_of_date": latest.as_of_date.isoformat(),
+                        "age_days": age_days,
+                        "freshness_threshold_days": self.FRESHNESS_DAYS[metric],
+                        "input_type": latest.input_type,
+                        "source_name": latest.source_name,
+                        "source_url": latest.source_url,
+                        "methodology": latest.methodology,
+                    }
+                )
             else:
                 scores[metric] = None
                 missing_modules.append(metric.capitalize())
@@ -74,11 +106,15 @@ class MarketRegimeEngine:
         confidence = "high"
         mode = "Live"
         warnings = []
+        blockers = []
+        calculation_status = "complete"
 
         if len(missing_modules) > 0:
             confidence = "invalid"
             mode = "Incomplete"
-            warnings.append(f"Missing data for modules: {', '.join(missing_modules)}. Cannot calculate overall score.")
+            calculation_status = "blocked"
+            blockers.append(f"Missing inputs for: {', '.join(missing_modules)}.")
+            warnings.append("Overall score is unavailable until every weighted module has an input.")
             overall = 0.0
         else:
             overall = (
@@ -88,7 +124,20 @@ class MarketRegimeEngine:
                 breadth * self.WEIGHTS["breadth"] +
                 macro * self.WEIGHTS["macro"]
             )
-            warnings.append(f"Formula: Sum of (Module Score × Weight). Weights: {self.WEIGHTS}")
+            if stale_modules:
+                calculation_status = "stale"
+                confidence = "low"
+                mode = "Stale"
+                warnings.append(f"Stale inputs: {', '.join(stale_modules)}. Refresh before using the score for timing decisions.")
+            elif manual_modules and live_modules:
+                confidence = "medium"
+                mode = "Mixed"
+            elif manual_modules:
+                confidence = "medium"
+                mode = "Manual"
+            else:
+                confidence = "high"
+                mode = "Live"
 
         score = MarketRegimeScore(
             score_date=target_date,
@@ -99,10 +148,14 @@ class MarketRegimeEngine:
             macro_score=macro,
             overall_score=overall,
             confidence=confidence,
+            calculation_status=calculation_status,
+            formula=self.FORMULA,
+            blockers=blockers,
+            input_sources=input_sources,
             warnings=warnings,
             mode=mode,
             live_modules=live_modules,
-            manual_modules=[],
+            manual_modules=manual_modules,
             simulated_modules=[]
         )
 

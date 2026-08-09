@@ -15,6 +15,8 @@ def test_current_market_regime_is_enveloped_and_idempotent(client: TestClient) -
     second = response_data(second_response)
     assert first["id"] == second["id"]
     assert first["mode"] == "Incomplete"
+    assert first["calculation_status"] == "blocked"
+    assert first["blockers"] == ["Missing inputs for: Options, Liquidity, Volume, Breadth, Macro."]
     assert first["overall_score"] == 0
     assert first["warnings"]
 
@@ -44,10 +46,14 @@ def test_manual_inputs_recalculate_current_market_regime(client: TestClient) -> 
         assert response.json()["meta"]["source"] == "manual"
 
     current = response_data(client.get("/market-regime/current"))
-    assert current["mode"] == "Live"
-    assert current["confidence"] == "high"
+    assert current["mode"] == "Manual"
+    assert current["confidence"] == "medium"
+    assert current["calculation_status"] == "complete"
     assert current["overall_score"] == 54.0
-    assert current["live_modules"] == ["Options", "Liquidity", "Volume", "Breadth", "Macro"]
+    assert current["live_modules"] == []
+    assert current["manual_modules"] == ["Options", "Liquidity", "Volume", "Breadth", "Macro"]
+    assert len(current["input_sources"]) == 5
+    assert current["formula"].startswith("overall =")
 
 
 def test_market_regime_input_rejects_unbounded_or_untraceable_values(client: TestClient) -> None:
@@ -76,3 +82,26 @@ def test_market_regime_input_rejects_unbounded_or_untraceable_values(client: Tes
         },
     )
     assert provider_without_source.status_code == 422
+
+
+def test_market_regime_marks_old_complete_inputs_stale(client: TestClient) -> None:
+    stale_date = date(2025, 1, 1).isoformat()
+    for metric_name in ("options", "liquidity", "volume", "breadth", "macro"):
+        response = client.post(
+            "/market-regime/inputs",
+            json={
+                "metric_name": metric_name,
+                "value": 20,
+                "as_of_date": stale_date,
+                "source_name": "Historical research worksheet",
+                "input_type": "manual",
+                "methodology": "Historical value normalized to the documented regime scale.",
+            },
+        )
+        assert response.status_code == 200
+
+    current = response_data(client.get("/market-regime/current"))
+    assert current["calculation_status"] == "stale"
+    assert current["mode"] == "Stale"
+    assert current["confidence"] == "low"
+    assert "Stale inputs" in current["warnings"][0]

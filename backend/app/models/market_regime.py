@@ -25,6 +25,10 @@ class MarketRegimeScore(Base):
     # Context
     confidence: Mapped[str] = mapped_column(String(50), default="low")
     warnings: Mapped[list[str]] = mapped_column(JSON, default=list)
+    calculation_status: Mapped[str] = mapped_column(String(30), default="blocked")
+    formula: Mapped[str] = mapped_column(Text, default="")
+    blockers: Mapped[list[str]] = mapped_column(JSON, default=list)
+    input_sources: Mapped[list[dict[str, Any]]] = mapped_column(JSON, default=list)
 
     # Prototype Mode Tracking
     mode: Mapped[str] = mapped_column(String(50), default="Prototype")
