@@ -1,0 +1,104 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+
+import { buildDataStateBadges, summarizeApiMetas } from "./data-state-meta.ts";
+
+test("buildDataStateBadges labels live non-mock data", () => {
+  const badges = buildDataStateBadges({
+    status: "success",
+    source: "internal",
+    last_updated: "2026-06-18T10:00:00Z",
+    is_stale: false,
+    is_mock: false,
+    warnings: [],
+    confidence: "high",
+    processing_time_ms: 24
+  });
+
+  assert.deepEqual(badges, [
+    { label: "Live", tone: "success" },
+    { label: "24ms", tone: "muted" }
+  ]);
+});
+
+test("buildDataStateBadges labels stale mock data and lower confidence", () => {
+  const badges = buildDataStateBadges({
+    status: "success",
+    source: "internal",
+    last_updated: "2026-06-18T10:00:00Z",
+    is_stale: true,
+    is_mock: true,
+    warnings: [],
+    confidence: "medium",
+    processing_time_ms: null
+  });
+
+  assert.deepEqual(badges, [
+    { label: "Stale", tone: "warning" },
+    { label: "Mock Data", tone: "warning" },
+    { label: "Medium confidence", tone: "muted" }
+  ]);
+});
+
+test("buildDataStateBadges treats source mock as mock data for legacy envelopes", () => {
+  const badges = buildDataStateBadges({
+    status: "error",
+    source: "mock",
+    last_updated: null,
+    is_stale: false,
+    warnings: [],
+    confidence: "low",
+    processing_time_ms: null
+  });
+
+  assert.deepEqual(badges, [
+    { label: "Error", tone: "danger" },
+    { label: "Mock Data", tone: "warning" },
+    { label: "Low confidence", tone: "muted" }
+  ]);
+});
+
+test("summarizeApiMetas reports stale and mock aggregate states", () => {
+  const summary = summarizeApiMetas([
+    {
+      status: "success",
+      source: "internal",
+      last_updated: "2026-06-18T10:00:00Z",
+      is_stale: true,
+      is_mock: false,
+      warnings: [],
+      confidence: "high",
+      processing_time_ms: null
+    },
+    {
+      status: "success",
+      source: "mock",
+      last_updated: null,
+      is_stale: false,
+      warnings: [],
+      confidence: "medium",
+      processing_time_ms: null
+    },
+    null
+  ]);
+
+  assert.deepEqual(summary, {
+    allStale: false,
+    someStale: true,
+    hasMock: true,
+    hasManual: false,
+    warnings: []
+  });
+});
+
+test("summarizeApiMetas treats only real metadata entries as candidates", () => {
+  const summary = summarizeApiMetas([null, undefined]);
+
+  assert.deepEqual(summary, {
+    allStale: false,
+    someStale: false,
+    hasMock: false,
+    hasManual: false,
+    warnings: []
+  });
+});
