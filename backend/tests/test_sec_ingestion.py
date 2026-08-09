@@ -15,6 +15,8 @@ from app.services.sec_ingestion import (
     lookup_company_profile_for_ticker,
 )
 
+TEST_SEC_USER_AGENT = "Market Intelligence Test Suite sec-tests@marketintelligence.test"
+
 
 def test_ingest_sec_filing_metadata_stores_raw_documents_and_skips_duplicates() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
@@ -97,7 +99,7 @@ def test_ingest_sec_filing_metadata_downloads_filing_text_when_requested() -> No
             filings=[filing],
             download_text=True,
             http_get=fake_get,
-            user_agent="Test App contact@example.com",
+            user_agent=TEST_SEC_USER_AGENT,
         )
         document = session.scalar(select(RawDocument))
 
@@ -110,7 +112,7 @@ def test_ingest_sec_filing_metadata_downloads_filing_text_when_requested() -> No
     assert calls == [
         (
             filing.filing_url,
-            {"User-Agent": "Test App contact@example.com", "Accept": "text/html, text/plain, application/xhtml+xml, */*"},
+            {"User-Agent": TEST_SEC_USER_AGENT, "Accept": "text/html, text/plain, application/xhtml+xml, */*"},
         )
     ]
 
@@ -222,9 +224,9 @@ def test_fetch_recent_sec_filing_metadata_uses_configured_user_agent() -> None:
         seen_headers.append(kwargs.get("headers", {}))
         return FakeResponse()
 
-    fetch_recent_sec_filing_metadata("0000320193", http_get=fake_get, user_agent="Test App contact@example.com")
+    fetch_recent_sec_filing_metadata("0000320193", http_get=fake_get, user_agent=TEST_SEC_USER_AGENT)
 
-    assert seen_headers[0]["User-Agent"] == "Test App contact@example.com"
+    assert seen_headers[0]["User-Agent"] == TEST_SEC_USER_AGENT
 
 
 def test_lookup_cik_for_ticker_uses_company_tickers_endpoint_and_user_agent() -> None:
@@ -244,10 +246,10 @@ def test_lookup_cik_for_ticker_uses_company_tickers_endpoint_and_user_agent() ->
         calls.append((url, kwargs.get("headers", {})))
         return FakeResponse()
 
-    cik = lookup_cik_for_ticker("msft", http_get=fake_get, user_agent="Test App contact@example.com")
+    cik = lookup_cik_for_ticker("msft", http_get=fake_get, user_agent=TEST_SEC_USER_AGENT)
 
     assert cik == "0000789019"
-    assert calls == [("https://www.sec.gov/files/company_tickers.json", {"User-Agent": "Test App contact@example.com", "Accept": "application/json"})]
+    assert calls == [("https://www.sec.gov/files/company_tickers.json", {"User-Agent": TEST_SEC_USER_AGENT, "Accept": "application/json"})]
 
 
 def test_lookup_company_profile_for_ticker_returns_sec_title_and_cik() -> None:
@@ -264,7 +266,7 @@ def test_lookup_company_profile_for_ticker_returns_sec_title_and_cik() -> None:
     profile = lookup_company_profile_for_ticker(
         "aapl",
         http_get=lambda *_args, **_kwargs: FakeResponse(),
-        user_agent="Test App contact@example.com",
+        user_agent=TEST_SEC_USER_AGENT,
     )
 
     assert profile is not None

@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
@@ -10,6 +11,7 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.models import ProcessingRun, Source
+from helpers import response_data
 
 
 RSS_XML = """<rss version="2.0">
@@ -57,7 +59,7 @@ def test_post_rss_ingestion_imports_supplied_xml(client: TestClient) -> None:
     response = client.post("/ingest/rss", json={"source_id": 1, "rss_xml": RSS_XML})
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["fetched_count"] == 1
     assert body["created_count"] == 1
     assert body["skipped_duplicate_count"] == 0
@@ -68,8 +70,8 @@ def test_post_rss_ingestion_imports_supplied_xml(client: TestClient) -> None:
     assert body["events_skipped_existing"] == 0
     assert body["alerts_created"] == 0
 
-    documents = client.get("/raw-documents").json()
-    events = client.get("/events").json()
+    documents = response_data(client.get("/raw-documents"))
+    events = response_data(client.get("/events"))
 
     assert documents[0]["title"] == "Nvidia supply update"
     assert documents[0]["document_type"] == "rss_item"
@@ -79,7 +81,12 @@ def test_post_rss_ingestion_imports_supplied_xml(client: TestClient) -> None:
 
 
 def test_post_rss_ingestion_persists_processing_run(client: TestClient) -> None:
-    response = client.post("/ingest/rss", json={"source_id": 1, "rss_xml": RSS_XML})
+    request_id = str(uuid4())
+    response = client.post(
+        "/ingest/rss",
+        json={"source_id": 1, "rss_xml": RSS_XML},
+        headers={"X-Request-ID": request_id},
+    )
 
     assert response.status_code == 201
 
@@ -87,6 +94,7 @@ def test_post_rss_ingestion_persists_processing_run(client: TestClient) -> None:
         run = db.query(ProcessingRun).one()
 
     assert run.run_type == "rss_ingestion"
+    assert run.request_id == request_id
     assert run.source_type == "rss"
     assert run.source_id == 1
     assert run.status == "success"
@@ -98,7 +106,8 @@ def test_post_rss_ingestion_persists_processing_run(client: TestClient) -> None:
 
     runs_response = client.get("/processing-runs")
     assert runs_response.status_code == 200
-    assert runs_response.json()[0]["run_type"] == "rss_ingestion"
+    assert response_data(runs_response)[0]["run_type"] == "rss_ingestion"
+    assert response_data(runs_response)[0]["request_id"] == request_id
 
 
 def test_post_rss_ingestion_rejects_missing_source(client: TestClient) -> None:
@@ -112,7 +121,7 @@ def test_post_rss_ingestion_persists_failed_processing_run(client: TestClient) -
     response = client.post("/ingest/rss", json={"source_id": 1, "rss_xml": "<rss><broken>"})
 
     assert response.status_code == 201
-    assert response.json()["error_count"] == 1
+    assert response_data(response)["error_count"] == 1
 
     with next(app.dependency_overrides[get_db]()) as db:
         run = db.query(ProcessingRun).one()
@@ -142,7 +151,7 @@ def test_post_rss_feed_ingestion_fetches_source_base_url(client: TestClient, mon
     response = client.post("/ingest/rss-feed", json={"source_id": 1})
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["fetched_count"] == 1
     assert body["created_count"] == 1
     assert body["error_count"] == 0
@@ -172,7 +181,7 @@ def test_post_active_rss_feed_ingestion_runs_only_active_rss_sources(client: Tes
     response = client.post("/ingest/rss-feeds/active")
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["source_count"] == 1
     assert body["fetched_count"] == 1
     assert body["created_count"] == 1

@@ -4,20 +4,65 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from app.db.base import Base
-from app.models import Company, RawDocument
+from app.models import Company, FilingSection, RawDocument
 from app.services.sec_parsing import parse_sec_filing
-from app.services.sec_diff import generate_section_diffs
+from app.services.sec_diff import _generate_html_diff, generate_section_diffs
+
+
+def test_html_diff_escapes_untrusted_filing_text() -> None:
+    diff_html, added_words, removed_words = _generate_html_diff(
+        "Revenue was 100 <script>alert('old')</script>",
+        'Revenue was 120 <img src=x onerror="alert(1)">',
+    )
+
+    assert added_words > 0
+    assert removed_words > 0
+    assert "<script>" not in diff_html
+    assert "<img " not in diff_html
+    assert "&lt;script&gt;" in diff_html
+    assert "&lt;img " in diff_html
+
+
+def test_new_section_diff_escapes_untrusted_filing_text(db_session) -> None:
+    company = Company(ticker="SAFE", name="Safe Diff Co")
+    db_session.add(company)
+    db_session.flush()
+    document = RawDocument(
+        company_id=company.id,
+        source_id=1,
+        document_type="sec_filing",
+        title="Current 10-K",
+        raw_text="Item 1. Business",
+        content_hash="safe-diff-current",
+    )
+    db_session.add(document)
+    db_session.flush()
+    db_session.add(
+        FilingSection(
+            raw_document_id=document.id,
+            item_name="Item 1",
+            title="Business",
+            text_content='<svg onload="alert(1)">',
+            word_count=2,
+        )
+    )
+    db_session.commit()
+
+    [diff] = generate_section_diffs(db_session, document, None)
+
+    assert "<svg " not in diff.diff_html
+    assert "&lt;svg " in diff.diff_html
 
 def test_parse_sec_filing_and_diff():
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
     TestingSessionLocal = sessionmaker(bind=engine)
     db = TestingSessionLocal()
-    
+
     company = Company(ticker="TEST", name="Test Co")
     db.add(company)
     db.commit()
-    
+
     prior_text = """
     <html>
         <body>
@@ -31,7 +76,7 @@ def test_parse_sec_filing_and_diff():
         </body>
     </html>
     """
-    
+
     current_text = """
     <html>
         <body>
@@ -45,7 +90,7 @@ def test_parse_sec_filing_and_diff():
         </body>
     </html>
     """
-    
+
     prior_doc = RawDocument(
         company_id=company.id,
         source_id=1,
@@ -68,31 +113,31 @@ def test_parse_sec_filing_and_diff():
     )
     db.add_all([prior_doc, current_doc])
     db.commit()
-    
+
     # Test Parsing
     prior_sections = parse_sec_filing(db, prior_doc)
     db.commit()
-    
+
     assert len(prior_sections) == 3
     assert prior_sections[0].item_name == "Item 1"
     assert "We are a test company" in prior_sections[0].text_content
-    
+
     current_sections = parse_sec_filing(db, current_doc)
     db.commit()
-    
+
     assert len(current_sections) == 3
     assert current_sections[1].item_name == "Item 1A"
     assert "Testing is very risky" in current_sections[1].text_content
-    
+
     # Test Diffing
     diffs = generate_section_diffs(db, current_doc, prior_doc)
     db.commit()
-    
+
     assert len(diffs) == 3
     assert diffs[0].added_words > 0
     assert diffs[1].added_words > 0
     assert diffs[2].added_words > 0
-    
+
     # Check HTML diff output for Item 1A
     item_1a_diff = next(d for d in diffs if d.current_section.item_name == "Item 1A")
     assert "<ins class=\"diff-add\">very </ins>" in item_1a_diff.diff_html

@@ -1,19 +1,31 @@
 from dataclasses import dataclass
 from datetime import date, datetime, time, timezone
 from hashlib import sha256
+import logging
 from typing import Any, Callable
 
 import httpx
 from sqlalchemy import or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
-from app.models import Company, RawDocument
+from app.models import Company, RawDocument, Source
 
 SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
 SEC_COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
 SEC_ARCHIVES_URL = "https://www.sec.gov/Archives/edgar/data/{cik}/{accession}/{document}"
 DEFAULT_SEC_FORMS = ("10-K", "10-Q", "8-K")
+logger = logging.getLogger(__name__)
+DEFAULT_SEC_SOURCE_NAME = "SEC EDGAR"
+SEC_SOURCE_TYPES = {"sec", "filing"}
+
+def get_valid_sec_user_agent(user_agent: str | None = None) -> str:
+    ua = user_agent or get_settings().sec_user_agent
+    if not ua or ua.lower() == "placeholder" or "contact@example.com" in ua or "your.email@example.com" in ua:
+        raise ValueError("SEC_USER_AGENT is not configured. The SEC requires a real application name and contact email in the User-Agent header. Please configure this in your environment.")
+    return ua
+
 
 
 @dataclass(frozen=True)
@@ -50,6 +62,56 @@ class SecCompanyProfile:
     cik: str
 
 
+def resolve_sec_source(db: Session, source_id: int | None = None) -> Source:
+    if source_id is not None:
+        source = db.get(Source, source_id)
+        if source is None:
+            raise ValueError("Source not found")
+        if source.source_type not in SEC_SOURCE_TYPES:
+            raise ValueError("Selected source is not an SEC filing source")
+        if not source.active:
+            raise ValueError("Selected SEC filing source is inactive")
+        return source
+
+    source = db.scalar(
+        select(Source)
+        .where(
+            Source.active.is_(True),
+            or_(
+                Source.name == DEFAULT_SEC_SOURCE_NAME,
+                Source.source_type.in_(SEC_SOURCE_TYPES),
+            ),
+        )
+        .order_by(
+            (Source.name == DEFAULT_SEC_SOURCE_NAME).desc(),
+            Source.id,
+        )
+    )
+    if source is not None:
+        return source
+
+    source = Source(
+        name=DEFAULT_SEC_SOURCE_NAME,
+        source_type="sec",
+        base_url="https://www.sec.gov",
+        reliability_score=95,
+        active=True,
+    )
+    db.add(source)
+    try:
+        db.commit()
+    except IntegrityError:
+        db.rollback()
+        source = db.scalar(
+            select(Source).where(Source.name == DEFAULT_SEC_SOURCE_NAME)
+        )
+        if source is None:
+            raise
+    else:
+        db.refresh(source)
+    return source
+
+
 def ingest_sec_filing_metadata(
     db: Session,
     source_id: int,
@@ -81,8 +143,12 @@ def ingest_sec_filing_metadata(
                     raw_text = fetch_sec_filing_text(filing.filing_url, http_get=http_get, user_agent=user_agent)
                     text_downloaded = True
                 except Exception as exc:
+                    logger.error(
+                        "SEC filing text download failed",
+                        extra={"provider": "SEC EDGAR", "exception_type": type(exc).__name__},
+                    )
                     error_count += 1
-                    errors.append(f"{filing.accession_number}: {exc}")
+                    errors.append(f"{filing.accession_number}: filing text download failed")
             else:
                 error_count += 1
                 errors.append(f"{filing.accession_number}: filing_url is required to download filing text")
@@ -149,12 +215,16 @@ def ingest_recent_sec_filings_for_company(
             db.commit()
         except Exception as exc:
             db.rollback()
+            logger.error(
+                "SEC CIK lookup failed during ingestion",
+                extra={"provider": "SEC EDGAR", "exception_type": type(exc).__name__},
+            )
             return SecIngestionResult(
                 fetched_count=0,
                 created_count=0,
                 skipped_duplicate_count=0,
                 error_count=1,
-                errors=(str(exc),),
+                errors=("SEC CIK lookup failed.",),
             )
 
     try:
@@ -166,13 +236,19 @@ def ingest_recent_sec_filings_for_company(
             limit=limit,
             http_get=http_get,
         )
+    except ValueError:
+        raise
     except Exception as exc:
+        logger.error(
+            "SEC filing metadata fetch failed",
+            extra={"provider": "SEC EDGAR", "exception_type": type(exc).__name__},
+        )
         return SecIngestionResult(
             fetched_count=0,
             created_count=0,
             skipped_duplicate_count=0,
             error_count=1,
-            errors=(str(exc),),
+            errors=("SEC filing metadata fetch failed.",),
         )
 
     return ingest_sec_filing_metadata(
@@ -263,10 +339,19 @@ def lookup_cik_for_ticker(ticker: str, http_get: Callable[..., Any] | None = Non
 
 
 def fetch_sec_filing_text(filing_url: str, http_get: Callable[..., Any] | None = None, user_agent: str | None = None) -> str:
+    ua = get_valid_sec_user_agent(user_agent)
+    if http_get is not None:
+        response = http_get(
+            filing_url,
+            headers=_sec_filing_text_headers(ua),
+            timeout=20,
+        )
+        response.raise_for_status()
+        return response.text
+
     from app.providers.sec_provider import SECProvider
-    
-    # We still accept user_agent but ignore http_get as we are migrating to providers
-    provider = SECProvider(user_agent=user_agent or "Market Intelligence App (contact@example.com)")
+
+    provider = SECProvider(user_agent=ua)
     return provider.fetch_filing_text(filing_url)
 
 
@@ -310,8 +395,8 @@ def _parse_date(value: Any) -> date | None:
 
 
 def _sec_headers(user_agent: str | None = None) -> dict[str, str]:
-    return {"User-Agent": user_agent or get_settings().sec_user_agent, "Accept": "application/json"}
+    return {"User-Agent": get_valid_sec_user_agent(user_agent), "Accept": "application/json"}
 
 
 def _sec_filing_text_headers(user_agent: str | None = None) -> dict[str, str]:
-    return {"User-Agent": user_agent or get_settings().sec_user_agent, "Accept": "text/html, text/plain, application/xhtml+xml, */*"}
+    return {"User-Agent": get_valid_sec_user_agent(user_agent), "Accept": "text/html, text/plain, application/xhtml+xml, */*"}

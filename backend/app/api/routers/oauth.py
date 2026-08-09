@@ -8,6 +8,7 @@ from app.models.oauth_token import OAuthToken
 from app.core.security import encrypt_token
 from pydantic import BaseModel
 from app.api.schemas import ApiResponse
+from app.api.errors import PublicApiError
 
 router = APIRouter()
 
@@ -23,21 +24,28 @@ class TokenStatusResponse(BaseModel):
     is_connected: bool
     expires_at: datetime | None = None
 
-@router.post("/oauth/store-token", status_code=200)
+@router.post(
+    "/oauth/store-token",
+    response_model=ApiResponse[dict[str, str]],
+    status_code=200,
+)
 def store_token(payload: TokenStoreRequest, db: Session = Depends(get_db)):
     """Stores an encrypted OAuth token in the database."""
     # Try to find existing token for provider
     existing_token = db.scalar(
         select(OAuthToken).where(OAuthToken.provider_name == payload.provider_name)
     )
-    
+
     try:
         enc_access = encrypt_token(payload.access_token)
         enc_refresh = encrypt_token(payload.refresh_token) if payload.refresh_token else None
-    except ValueError as e:
-        # Happens if ENCRYPTION_KEY is missing
-        raise HTTPException(status_code=500, detail=str(e))
-        
+    except ValueError as exc:
+        raise PublicApiError(
+            status_code=503,
+            code="TOKEN_ENCRYPTION_NOT_CONFIGURED",
+            message="OAuth token encryption is not configured.",
+        ) from exc
+
     if existing_token:
         existing_token.encrypted_access_token = enc_access
         existing_token.encrypted_refresh_token = enc_refresh
@@ -52,7 +60,7 @@ def store_token(payload: TokenStoreRequest, db: Session = Depends(get_db)):
             expires_at=payload.expires_at
         )
         db.add(new_token)
-        
+
     db.commit()
     return ApiResponse(data={"status": "success", "message": f"Token securely stored for {payload.provider_name}"})
 

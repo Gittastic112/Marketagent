@@ -1,427 +1,350 @@
 import csv
+import logging
 from io import StringIO
-from fastapi import APIRouter, Depends, HTTPException, Response, UploadFile, File
-from sqlalchemy import select
-from sqlalchemy.orm import Session
-from app.api.schemas import ApiResponse
+from typing import Any, Iterable
 
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
+from sqlalchemy import select
+from sqlalchemy.orm import Session, selectinload
+
+from app.api.dependencies import get_current_user
+from app.api.schemas import ApiResponse
+from app.core.security import escape_csv_formula
 from app.db.session import get_db
-from app.models.portfolio import PortfolioHolding, PortfolioTransaction
-from app.models.market_price import MarketPrice
-from datetime import datetime, date
+from app.models import (
+    Event,
+    MarketPrice,
+    Portfolio,
+    PortfolioHolding,
+    PortfolioTransaction,
+    RawDocument,
+)
+from app.services.data_transfer import (
+    parse_market_price_rows,
+    parse_portfolio_holding_rows,
+    parse_portfolio_transaction_rows,
+    preview_payload,
+    read_csv,
+    reject_invalid_rows,
+)
+from app.services.portfolio_holdings import (
+    apply_transaction_to_cash,
+    apply_transaction_to_holding,
+)
+
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
-from app.core.security import escape_csv_formula
+
+def _csv_response(
+    filename: str,
+    headers: list[str],
+    rows: Iterable[Iterable[Any]],
+) -> Response:
+    output = StringIO()
+    writer = csv.writer(output)
+    writer.writerow(headers)
+    writer.writerows(rows)
+    return Response(
+        content=output.getvalue(),
+        media_type="text/csv",
+        headers={
+            "Content-Disposition": f"attachment; filename={filename}",
+            "Cache-Control": "no-store",
+        },
+    )
+
 
 @router.get("/export/portfolio-holdings")
-def export_portfolio_holdings(db: Session = Depends(get_db)):
-    holdings = db.scalars(select(PortfolioHolding)).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["portfolio_id", "company_id", "ticker", "quantity", "average_cost", "currency", "as_of_date"])
-    
-    for holding in holdings:
-        writer.writerow([
-            holding.portfolio_id,
-            holding.company_id or "",
-            escape_csv_formula(holding.ticker),
-            holding.quantity,
-            holding.average_cost,
-            escape_csv_formula(holding.currency),
-            holding.as_of_date.isoformat()
-        ])
-        
-    response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = "attachment; filename=portfolio_holdings.csv"
-    return ApiResponse(data=response)
+def export_portfolio_holdings(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> Response:
+    holdings = db.scalars(
+        select(PortfolioHolding)
+        .join(Portfolio, PortfolioHolding.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioHolding.id)
+    ).all()
+    return _csv_response(
+        "portfolio_holdings.csv",
+        [
+            "portfolio_id",
+            "company_id",
+            "ticker",
+            "quantity",
+            "average_cost",
+            "currency",
+            "as_of_date",
+        ],
+        (
+            (
+                holding.portfolio_id,
+                holding.company_id or "",
+                escape_csv_formula(holding.ticker),
+                holding.quantity,
+                holding.average_cost,
+                escape_csv_formula(holding.currency),
+                holding.as_of_date.isoformat(),
+            )
+            for holding in holdings
+        ),
+    )
+
 
 @router.get("/export/portfolio-transactions")
-def export_portfolio_transactions(db: Session = Depends(get_db)):
-    transactions = db.scalars(select(PortfolioTransaction)).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["portfolio_id", "company_id", "ticker", "transaction_type", "quantity", "price", "fees", "currency", "transaction_date", "notes"])
-    
-    for tx in transactions:
-        writer.writerow([
-            tx.portfolio_id,
-            tx.company_id or "",
-            escape_csv_formula(tx.ticker),
-            escape_csv_formula(tx.transaction_type),
-            tx.quantity,
-            tx.price,
-            tx.fees,
-            escape_csv_formula(tx.currency),
-            tx.transaction_date.isoformat(),
-            escape_csv_formula(tx.notes) if tx.notes else ""
-        ])
-        
-    response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = "attachment; filename=portfolio_transactions.csv"
-    return ApiResponse(data=response)
+def export_portfolio_transactions(
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> Response:
+    transactions = db.scalars(
+        select(PortfolioTransaction)
+        .join(Portfolio, PortfolioTransaction.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioTransaction.id)
+    ).all()
+    return _csv_response(
+        "portfolio_transactions.csv",
+        [
+            "portfolio_id",
+            "company_id",
+            "ticker",
+            "transaction_type",
+            "quantity",
+            "price",
+            "fees",
+            "currency",
+            "transaction_date",
+            "notes",
+        ],
+        (
+            (
+                transaction.portfolio_id,
+                transaction.company_id or "",
+                escape_csv_formula(transaction.ticker),
+                escape_csv_formula(transaction.transaction_type),
+                transaction.quantity,
+                transaction.price,
+                transaction.fees,
+                escape_csv_formula(transaction.currency),
+                transaction.transaction_date.isoformat(),
+                escape_csv_formula(transaction.notes),
+            )
+            for transaction in transactions
+        ),
+    )
+
 
 @router.get("/export/market-prices")
-def export_market_prices(db: Session = Depends(get_db)):
-    prices = db.scalars(select(MarketPrice)).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["company_id", "ticker", "price", "currency", "as_of_date", "source_name"])
-    
-    for p in prices:
-        writer.writerow([
-            p.company_id or "",
-            escape_csv_formula(p.ticker),
-            p.price,
-            escape_csv_formula(p.currency),
-            p.as_of_date.isoformat(),
-            escape_csv_formula(p.source_name) if p.source_name else ""
-        ])
-        
-    response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = "attachment; filename=market_prices.csv"
-    return ApiResponse(data=response)
+def export_market_prices(db: Session = Depends(get_db)) -> Response:
+    prices = db.scalars(select(MarketPrice).order_by(MarketPrice.id)).all()
+    return _csv_response(
+        "market_prices.csv",
+        [
+            "company_id",
+            "ticker",
+            "price",
+            "currency",
+            "as_of_date",
+            "source_name",
+        ],
+        (
+            (
+                price.company_id or "",
+                escape_csv_formula(price.ticker),
+                price.price,
+                escape_csv_formula(price.currency),
+                price.as_of_date.isoformat(),
+                "manual",
+            )
+            for price in prices
+        ),
+    )
 
-from app.models.raw_document import RawDocument
-from app.models.event import Event
 
 @router.get("/export/raw-documents")
-def export_raw_documents(db: Session = Depends(get_db)):
-    docs = db.scalars(select(RawDocument)).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["id", "company_id", "source_name", "source_type", "url", "published_at", "ingested_at", "content_hash"])
-    
-    for d in docs:
-        writer.writerow([
-            d.id,
-            d.company_id or "",
-            escape_csv_formula(d.source_name),
-            escape_csv_formula(d.source_type),
-            escape_csv_formula(d.url) if d.url else "",
-            d.published_at.isoformat() if d.published_at else "",
-            d.ingested_at.isoformat() if d.ingested_at else "",
-            escape_csv_formula(d.content_hash)
-        ])
-        
-    response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = "attachment; filename=raw_documents.csv"
-    return ApiResponse(data=response)
+def export_raw_documents(db: Session = Depends(get_db)) -> Response:
+    documents = db.scalars(
+        select(RawDocument)
+        .options(selectinload(RawDocument.source))
+        .order_by(RawDocument.id)
+    ).all()
+    return _csv_response(
+        "raw_documents.csv",
+        [
+            "id",
+            "company_id",
+            "source_name",
+            "source_type",
+            "url",
+            "published_at",
+            "ingested_at",
+            "content_hash",
+        ],
+        (
+            (
+                document.id,
+                document.company_id or "",
+                escape_csv_formula(document.source.name if document.source else ""),
+                escape_csv_formula(
+                    document.source.source_type if document.source else ""
+                ),
+                escape_csv_formula(document.url),
+                document.published_at.isoformat() if document.published_at else "",
+                document.ingested_at.isoformat() if document.ingested_at else "",
+                escape_csv_formula(document.content_hash),
+            )
+            for document in documents
+        ),
+    )
+
 
 @router.get("/export/events")
-def export_events(db: Session = Depends(get_db)):
-    events = db.scalars(select(Event)).all()
-    
-    output = StringIO()
-    writer = csv.writer(output)
-    writer.writerow(["id", "company_id", "raw_document_id", "headline", "summary", "event_date", "classification", "credibility_score", "importance_score"])
-    
-    for e in events:
-        writer.writerow([
-            e.id,
-            e.company_id or "",
-            e.raw_document_id or "",
-            escape_csv_formula(e.headline),
-            escape_csv_formula(e.summary) if e.summary else "",
-            e.event_date.isoformat() if e.event_date else "",
-            escape_csv_formula(e.classification) if e.classification else "",
-            e.credibility_score,
-            e.importance_score
-        ])
-        
-    response = Response(content=output.getvalue(), media_type="text/csv")
-    response.headers["Content-Disposition"] = "attachment; filename=events.csv"
-    return ApiResponse(data=response)
+def export_events(db: Session = Depends(get_db)) -> Response:
+    events = db.scalars(select(Event).order_by(Event.id)).all()
+    return _csv_response(
+        "events.csv",
+        [
+            "id",
+            "company_id",
+            "raw_document_id",
+            "event_type",
+            "title",
+            "description",
+            "event_time",
+            "credibility_score",
+            "novelty_score",
+            "impact_score",
+            "priority_score",
+        ],
+        (
+            (
+                event.id,
+                event.company_id or "",
+                event.raw_document_id or "",
+                escape_csv_formula(event.event_type),
+                escape_csv_formula(event.title),
+                escape_csv_formula(event.description),
+                event.event_time.isoformat() if event.event_time else "",
+                event.credibility_score if event.credibility_score is not None else "",
+                event.novelty_score if event.novelty_score is not None else "",
+                event.impact_score if event.impact_score is not None else "",
+                event.priority_score if event.priority_score is not None else "",
+            )
+            for event in events
+        ),
+    )
+
 
 @router.post("/import/market-prices")
-def import_market_prices(preview: bool = False, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Must be a CSV file")
-    
-    content = file.file.read().decode('utf-8')
-    reader = csv.DictReader(StringIO(content))
-    
-    valid_rows = []
-    error_rows = []
-    records_to_add = []
-    
-    for row_idx, row in enumerate(reader, start=2):
-        errors = []
-        ticker = row.get("ticker", "").strip("'")
-        price_str = row.get("price", "0")
-        currency = row.get("currency", "USD").strip("'")
-        as_of_date_str = row.get("as_of_date", "")
-        source_name = row.get("source_name", "").strip("'")
-
-        price = 0.0
-        try:
-            price = float(price_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "price", "message": "Invalid price format"})
-            
-        as_of_date = None
-        try:
-            if as_of_date_str:
-                as_of_date = date.fromisoformat(as_of_date_str)
-            else:
-                errors.append({"row_index": row_idx, "field": "as_of_date", "message": "Required field missing"})
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "as_of_date", "message": "Invalid date format, expected YYYY-MM-DD"})
-
-        if not ticker:
-            errors.append({"row_index": row_idx, "field": "ticker", "message": "Required field missing"})
-
-        if not errors:
-            duplicate = db.scalars(select(MarketPrice).where(
-                MarketPrice.ticker == ticker,
-                MarketPrice.as_of_date == as_of_date,
-                MarketPrice.source_name == source_name
-            )).first()
-            if duplicate:
-                errors.append({"row_index": row_idx, "field": "duplicate", "message": "Record already exists in database"})
-
-        if not errors:
-            valid_rows.append({"row_index": row_idx, "data": row, "is_valid": True, "errors": []})
-            records_to_add.append(
-                MarketPrice(
-                    ticker=ticker,
-                    price=price,
-                    currency=currency,
-                    as_of_date=as_of_date,
-                    source_name=source_name
-                )
-            )
-        else:
-            error_rows.append({"row_index": row_idx, "data": row, "is_valid": False, "errors": errors})
-
+def import_market_prices(
+    preview: bool = False,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+) -> ApiResponse[dict[str, Any]]:
+    rows = read_csv(
+        file,
+        required_fields={"ticker", "price", "currency", "as_of_date"},
+    )
+    row_results, records = parse_market_price_rows(db, rows)
     if preview:
-        return ApiResponse(data={
-            "is_preview": True,
-            "total_rows": len(valid_rows) + len(error_rows),
-            "valid_count": len(valid_rows),
-            "error_count": len(error_rows),
-            "rows": valid_rows + error_rows
-        })
-
-    if error_rows:
-        raise HTTPException(status_code=400, detail={"message": "CSV contains errors", "errors": error_rows})
-
+        return ApiResponse(data=preview_payload(row_results, len(records)))
+    reject_invalid_rows(row_results)
     try:
-        db.add_all(records_to_add)
+        db.add_all(records)
         db.commit()
-    except Exception as e:
+    except Exception:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Database error during import: {str(e)}")
+        logger.exception("Market price CSV import failed")
+        raise HTTPException(
+            status_code=400,
+            detail="Market price import could not be applied",
+        ) from None
+    return ApiResponse(data={"status": "ok", "imported_count": len(records)})
 
-    return ApiResponse(data={"status": "ok", "imported_count": len(records_to_add)})
 
 @router.post("/import/portfolio-transactions")
-def import_portfolio_transactions(preview: bool = False, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Must be a CSV file")
-        
-    content = file.file.read().decode('utf-8')
-    reader = csv.DictReader(StringIO(content))
-    
-    valid_rows = []
-    error_rows = []
-    records_to_add = []
-    
-    for row_idx, row in enumerate(reader, start=2):
-        errors = []
-        portfolio_id_str = row.get("portfolio_id", "0")
-        ticker = row.get("ticker", "").strip("'")
-        tx_type = row.get("transaction_type", "").strip("'")
-        qty_str = row.get("quantity", "0")
-        price_str = row.get("price", "0")
-        currency = row.get("currency", "USD").strip("'")
-        tx_date_str = row.get("transaction_date", "")
-        notes = row.get("notes", "").strip("'")
-
-        portfolio_id = 0
-        try:
-            portfolio_id = int(portfolio_id_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "portfolio_id", "message": "Invalid integer"})
-            
-        qty = 0.0
-        try:
-            qty = float(qty_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "quantity", "message": "Invalid number format"})
-            
-        price = 0.0
-        try:
-            price = float(price_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "price", "message": "Invalid number format"})
-            
-        tx_date = None
-        try:
-            if tx_date_str:
-                tx_date = date.fromisoformat(tx_date_str)
-            else:
-                errors.append({"row_index": row_idx, "field": "transaction_date", "message": "Required field missing"})
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "transaction_date", "message": "Invalid date format, expected YYYY-MM-DD"})
-
-        if not ticker:
-            errors.append({"row_index": row_idx, "field": "ticker", "message": "Required field missing"})
-            
-        if not tx_type:
-            errors.append({"row_index": row_idx, "field": "transaction_type", "message": "Required field missing"})
-
-        if not errors:
-            duplicate = db.scalars(select(PortfolioTransaction).where(
-                PortfolioTransaction.portfolio_id == portfolio_id,
-                PortfolioTransaction.ticker == ticker,
-                PortfolioTransaction.transaction_type == tx_type,
-                PortfolioTransaction.transaction_date == tx_date,
-                PortfolioTransaction.quantity == qty,
-                PortfolioTransaction.price == price
-            )).first()
-            if duplicate:
-                errors.append({"row_index": row_idx, "field": "duplicate", "message": "Record already exists in database"})
-
-        if not errors:
-            valid_rows.append({"row_index": row_idx, "data": row, "is_valid": True, "errors": []})
-            records_to_add.append(
-                PortfolioTransaction(
-                    portfolio_id=portfolio_id,
-                    ticker=ticker,
-                    transaction_type=tx_type,
-                    quantity=qty,
-                    price=price,
-                    currency=currency,
-                    transaction_date=tx_date,
-                    notes=notes
-                )
-            )
-        else:
-            error_rows.append({"row_index": row_idx, "data": row, "is_valid": False, "errors": errors})
-
+def import_portfolio_transactions(
+    preview: bool = False,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict[str, Any]]:
+    rows = read_csv(
+        file,
+        required_fields={
+            "portfolio_id",
+            "ticker",
+            "transaction_type",
+            "quantity",
+            "price",
+            "currency",
+            "transaction_date",
+        },
+    )
+    row_results, records = parse_portfolio_transaction_rows(
+        db,
+        rows,
+        user_id=current_user["id"],
+    )
     if preview:
-        return ApiResponse(data={
-            "is_preview": True,
-            "total_rows": len(valid_rows) + len(error_rows),
-            "valid_count": len(valid_rows),
-            "error_count": len(error_rows),
-            "rows": valid_rows + error_rows
-        })
-
-    if error_rows:
-        raise HTTPException(status_code=400, detail={"message": "CSV contains errors", "errors": error_rows})
-
+        return ApiResponse(data=preview_payload(row_results, len(records)))
+    reject_invalid_rows(row_results)
     try:
-        from app.services.portfolio_holdings import apply_transaction_to_holding, apply_transaction_to_cash
-        for tx in records_to_add:
-            db.add(tx)
-            db.flush() # get ID
-            apply_transaction_to_holding(db, tx)
-            apply_transaction_to_cash(db, tx)
+        for transaction in records:
+            db.add(transaction)
+            db.flush()
+            apply_transaction_to_holding(db, transaction)
+            apply_transaction_to_cash(db, transaction)
         db.commit()
-    except Exception as e:
+    except HTTPException:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Database error during import: {str(e)}")
+        raise
+    except Exception:
+        db.rollback()
+        logger.exception("Portfolio transaction CSV import failed")
+        raise HTTPException(
+            status_code=400,
+            detail="Portfolio transaction import could not be applied",
+        ) from None
+    return ApiResponse(data={"status": "ok", "imported_count": len(records)})
 
-    return ApiResponse(data={"status": "ok", "imported_count": len(records_to_add)})
 
 @router.post("/import/portfolio-holdings")
-def import_portfolio_holdings(preview: bool = False, file: UploadFile = File(...), db: Session = Depends(get_db)):
-    if not file.filename.endswith('.csv'):
-        raise HTTPException(status_code=400, detail="Must be a CSV file")
-        
-    content = file.file.read().decode('utf-8')
-    reader = csv.DictReader(StringIO(content))
-    
-    valid_rows = []
-    error_rows = []
-    records_to_add = []
-    
-    for row_idx, row in enumerate(reader, start=2):
-        errors = []
-        portfolio_id_str = row.get("portfolio_id", "0")
-        ticker = row.get("ticker", "").strip("'")
-        qty_str = row.get("quantity", "0")
-        cost_str = row.get("average_cost", "0")
-        currency = row.get("currency", "USD").strip("'")
-        as_of_date_str = row.get("as_of_date", "")
-
-        portfolio_id = 0
-        try:
-            portfolio_id = int(portfolio_id_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "portfolio_id", "message": "Invalid integer"})
-
-        qty = 0.0
-        try:
-            qty = float(qty_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "quantity", "message": "Invalid number format"})
-            
-        cost = 0.0
-        try:
-            cost = float(cost_str)
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "average_cost", "message": "Invalid number format"})
-            
-        as_of_date = None
-        try:
-            if as_of_date_str:
-                as_of_date = date.fromisoformat(as_of_date_str)
-            else:
-                errors.append({"row_index": row_idx, "field": "as_of_date", "message": "Required field missing"})
-        except ValueError:
-            errors.append({"row_index": row_idx, "field": "as_of_date", "message": "Invalid date format, expected YYYY-MM-DD"})
-
-        if not ticker:
-            errors.append({"row_index": row_idx, "field": "ticker", "message": "Required field missing"})
-
-        if not errors:
-            duplicate = db.scalars(select(PortfolioHolding).where(
-                PortfolioHolding.portfolio_id == portfolio_id,
-                PortfolioHolding.ticker == ticker,
-                PortfolioHolding.as_of_date == as_of_date
-            )).first()
-            if duplicate:
-                errors.append({"row_index": row_idx, "field": "duplicate", "message": "Record already exists in database"})
-
-        if not errors:
-            valid_rows.append({"row_index": row_idx, "data": row, "is_valid": True, "errors": []})
-            records_to_add.append(
-                PortfolioHolding(
-                    portfolio_id=portfolio_id,
-                    ticker=ticker,
-                    quantity=qty,
-                    average_cost=cost,
-                    currency=currency,
-                    as_of_date=as_of_date
-                )
-            )
-        else:
-            error_rows.append({"row_index": row_idx, "data": row, "is_valid": False, "errors": errors})
-
+def import_portfolio_holdings(
+    preview: bool = False,
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict[str, Any]]:
+    rows = read_csv(
+        file,
+        required_fields={
+            "portfolio_id",
+            "ticker",
+            "quantity",
+            "average_cost",
+            "currency",
+            "as_of_date",
+        },
+    )
+    row_results, records = parse_portfolio_holding_rows(
+        db,
+        rows,
+        user_id=current_user["id"],
+    )
     if preview:
-        return ApiResponse(data={
-            "is_preview": True,
-            "total_rows": len(valid_rows) + len(error_rows),
-            "valid_count": len(valid_rows),
-            "error_count": len(error_rows),
-            "rows": valid_rows + error_rows
-        })
-
-    if error_rows:
-        raise HTTPException(status_code=400, detail={"message": "CSV contains errors", "errors": error_rows})
-
+        return ApiResponse(data=preview_payload(row_results, len(records)))
+    reject_invalid_rows(row_results)
     try:
-        db.add_all(records_to_add)
+        db.add_all(records)
         db.commit()
-    except Exception as e:
+    except Exception:
         db.rollback()
-        raise HTTPException(status_code=400, detail=f"Database error during import: {str(e)}")
-
-    return ApiResponse(data={"status": "ok", "imported_count": len(records_to_add)})
+        logger.exception("Portfolio holding CSV import failed")
+        raise HTTPException(
+            status_code=400,
+            detail="Portfolio holding import could not be applied",
+        ) from None
+    return ApiResponse(data={"status": "ok", "imported_count": len(records)})

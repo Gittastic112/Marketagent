@@ -11,6 +11,7 @@ from app.db.session import get_db
 from app.main import app
 from app.models.company import Company
 from app.models.dcf import ValuationModel, DcfAssumptionSet
+from helpers import response_data
 
 @pytest.fixture
 def db() -> Generator[Session]:
@@ -49,7 +50,7 @@ def test_create_valuation_model(client: TestClient, db: Session):
         "description": "Initial setup"
     })
     assert response.status_code == 201
-    assert response.json()["name"] == "Base Model"
+    assert response_data(response)["name"] == "Base Model"
 
 
 def test_create_dcf_assumption_set(client: TestClient, db: Session):
@@ -63,22 +64,35 @@ def test_create_dcf_assumption_set(client: TestClient, db: Session):
 
     response = client.post(f"/valuation-models/{vmodel.id}/assumptions", json={
         "scenario": "Bull",
-        "discount_rate": 0.10,
+        "projection_years_count": 5,
+        "starting_revenue": 1000.0,
+        "revenue_growth_years_json": {
+            "1": 0.08,
+            "2": 0.07,
+            "3": 0.06,
+            "4": 0.05,
+            "5": 0.04,
+        },
+        "current_operating_margin": 0.18,
+        "target_operating_margin": 0.22,
+        "tax_rate": 0.25,
+        "sales_to_capital_ratio": 2.5,
+        "starting_invested_capital": 600.0,
+        "wacc_start": 0.10,
+        "wacc_terminal": 0.09,
         "terminal_growth_rate": 0.02,
-        "projection_years": 5,
-        "assumptions_json": {
-            "current_fcf": 1000.0,
-            "shares_outstanding": 10.0,
-            "net_debt": 0.0,
-            "fcf_growth_rate": 0.05
-        }
+        "terminal_roic": 0.12,
+        "cash": 100.0,
+        "debt": 50.0,
+        "diluted_shares": 10.0,
+        "current_market_price": 100.0,
     })
     assert response.status_code == 201
-    data = response.json()
+    data = response_data(response)
     assert data["scenario"] == "Bull"
     # Outputs should be generated automatically
-    assert len(data["outputs"]) == 1
-    assert data["outputs"][0]["enterprise_value"] > 0
+    assert data["outputs"] is not None
+    assert data["outputs"]["enterprise_value"] > 0
 
 
 def test_create_financial_period(client: TestClient, db: Session):
@@ -94,8 +108,11 @@ def test_create_financial_period(client: TestClient, db: Session):
         "currency": "USD"
     })
     assert response.status_code == 201
-    assert response.json()["year"] == 2026
-    period_id = response.json()["id"]
+    data = response_data(response)
+    assert data["year"] == 2026
+    assert data["currency_source"] == "manual_entry"
+    assert data["currency_confidence"] == "medium"
+    period_id = data["id"]
 
     response = client.post(f"/financial-periods/{period_id}/metrics", json={
         "metric_name": "Revenue",
@@ -103,4 +120,4 @@ def test_create_financial_period(client: TestClient, db: Session):
         "unit": "Millions"
     })
     assert response.status_code == 201
-    assert response.json()["metric_name"] == "Revenue"
+    assert response_data(response)["metric_name"] == "Revenue"

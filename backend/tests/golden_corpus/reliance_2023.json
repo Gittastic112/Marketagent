@@ -1,0 +1,11 @@
+{
+    "ticker": "RELIANCE",
+    "year": 2023,
+    "metrics": {
+        "total_revenue": 8778360000000,
+        "net_income": 736700000000,
+        "total_assets": 17053220000000,
+        "total_liabilities": 8835820000000,
+        "total_equity": 8217400000000
+    }
+}

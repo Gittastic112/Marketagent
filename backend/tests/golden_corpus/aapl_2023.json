@@ -1,0 +1,11 @@
+{
+    "ticker": "AAPL",
+    "year": 2023,
+    "metrics": {
+        "total_revenue": 383285000000,
+        "net_income": 96995000000,
+        "total_assets": 352583000000,
+        "total_liabilities": 290437000000,
+        "total_equity": 62146000000
+    }
+}

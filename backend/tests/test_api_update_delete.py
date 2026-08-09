@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from helpers import response_data
 
 
 @pytest.fixture
@@ -37,7 +38,9 @@ def client() -> Generator[TestClient]:
 
 
 def test_update_and_delete_company(client: TestClient) -> None:
-    created = client.post("/companies", json={"ticker": "META", "name": "Meta"}).json()
+    created_response = client.post("/companies", json={"ticker": "META", "name": "Meta"})
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/companies/{created['id']}",
@@ -57,15 +60,18 @@ def test_update_and_delete_company(client: TestClient) -> None:
     get_response = client.get(f"/companies/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["name"] == "Meta Platforms"
-    assert update_response.json()["country"] == "United States"
-    assert update_response.json()["security_type"] == "common_stock"
+    updated = response_data(update_response)
+    assert updated["name"] == "Meta Platforms"
+    assert updated["country"] == "United States"
+    assert updated["security_type"] == "common_stock"
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
 
 def test_update_and_delete_source(client: TestClient) -> None:
-    created = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    created_response = client.post("/sources", json={"name": "Manual", "source_type": "manual"})
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/sources/{created['id']}",
@@ -75,14 +81,16 @@ def test_update_and_delete_source(client: TestClient) -> None:
     get_response = client.get(f"/sources/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["reliability_score"] == 80
+    assert response_data(update_response)["reliability_score"] == 80
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
 
 def test_update_and_delete_raw_document(client: TestClient) -> None:
-    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
-    created = client.post(
+    source_response = client.post("/sources", json={"name": "Manual", "source_type": "manual"})
+    assert source_response.status_code == 201
+    source = response_data(source_response)
+    created_response = client.post(
         "/raw-documents",
         json={
             "source_id": source["id"],
@@ -90,7 +98,9 @@ def test_update_and_delete_raw_document(client: TestClient) -> None:
             "title": "Initial title",
             "content_hash": "document-hash-1",
         },
-    ).json()
+    )
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/raw-documents/{created['id']}",
@@ -100,16 +110,18 @@ def test_update_and_delete_raw_document(client: TestClient) -> None:
     get_response = client.get(f"/raw-documents/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["title"] == "Updated title"
+    assert response_data(update_response)["title"] == "Updated title"
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
 
 def test_update_and_delete_event(client: TestClient) -> None:
-    created = client.post(
+    created_response = client.post(
         "/events",
         json={"event_type": "manual_event", "information_speed": "medium", "title": "Initial event"},
-    ).json()
+    )
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/events/{created['id']}",
@@ -119,16 +131,18 @@ def test_update_and_delete_event(client: TestClient) -> None:
     get_response = client.get(f"/events/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["impact_score"] == 75
+    assert response_data(update_response)["impact_score"] == 75
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
 
 def test_update_and_delete_alert(client: TestClient) -> None:
-    created = client.post(
+    created_response = client.post(
         "/alerts",
         json={"alert_type": "manual_alert", "title": "Initial alert"},
-    ).json()
+    )
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/alerts/{created['id']}",
@@ -138,21 +152,25 @@ def test_update_and_delete_alert(client: TestClient) -> None:
     get_response = client.get(f"/alerts/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["review_status"] == "needs_follow_up"
+    assert response_data(update_response)["review_status"] == "needs_follow_up"
     assert delete_response.status_code == 204
     assert get_response.status_code == 404
 
 
 def test_update_and_delete_thesis_note(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "NFLX", "name": "Netflix"}).json()
-    created = client.post(
+    company_response = client.post("/companies", json={"ticker": "NFLX", "name": "Netflix"})
+    assert company_response.status_code == 201
+    company = response_data(company_response)
+    created_response = client.post(
         "/thesis-notes",
         json={
             "company_id": company["id"],
             "title": "Initial thesis",
             "thesis_text": "Initial thesis text.",
         },
-    ).json()
+    )
+    assert created_response.status_code == 201
+    created = response_data(created_response)
 
     update_response = client.patch(
         f"/thesis-notes/{created['id']}",
@@ -162,6 +180,6 @@ def test_update_and_delete_thesis_note(client: TestClient) -> None:
     get_response = client.get(f"/thesis-notes/{created['id']}")
 
     assert update_response.status_code == 200
-    assert update_response.json()["status"] == "revised"
+    assert response_data(update_response)["status"] == "revised"
     assert delete_response.status_code == 204
     assert get_response.status_code == 404

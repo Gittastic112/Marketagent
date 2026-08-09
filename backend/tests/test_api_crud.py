@@ -11,6 +11,11 @@ from app.db.session import get_db
 from app.main import app
 
 
+def unwrap(response: object):
+    payload = response.json()
+    return payload.get("data", payload)
+
+
 @pytest.fixture
 def client() -> Generator[TestClient]:
     engine = create_engine(
@@ -56,7 +61,7 @@ def test_create_list_and_get_company(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["ticker"] == "AAPL"
     assert created["active"] is True
     assert created["aliases_json"] == ["Apple"]
@@ -68,10 +73,10 @@ def test_create_list_and_get_company(client: TestClient) -> None:
     list_response = client.get("/companies")
     get_response = client.get(f"/companies/{created['id']}")
 
-    assert list_response.json()[0]["ticker"] == "AAPL"
-    assert get_response.json()["name"] == "Apple Inc."
-    assert get_response.json()["aliases_json"] == ["Apple"]
-    assert get_response.json()["market_cap_category"] == "mega_cap"
+    assert unwrap(list_response)[0]["ticker"] == "AAPL"
+    assert unwrap(get_response)["name"] == "Apple Inc."
+    assert unwrap(get_response)["aliases_json"] == ["Apple"]
+    assert unwrap(get_response)["market_cap_category"] == "mega_cap"
 
 
 def test_create_list_and_get_source(client: TestClient) -> None:
@@ -81,21 +86,21 @@ def test_create_list_and_get_source(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["name"] == "SEC EDGAR"
     assert created["active"] is True
 
-    assert client.get("/sources").json()[0]["source_type"] == "filing"
-    assert client.get(f"/sources/{created['id']}").json()["reliability_score"] == 95
+    assert unwrap(client.get("/sources"))[0]["source_type"] == "filing"
+    assert unwrap(client.get(f"/sources/{created['id']}"))["reliability_score"] == 95
 
     update_response = client.patch(f"/sources/{created['id']}", json={"active": False})
     assert update_response.status_code == 200
-    assert update_response.json()["active"] is False
+    assert unwrap(update_response)["active"] is False
 
 
 def test_create_list_and_get_raw_document(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "MSFT", "name": "Microsoft"}).json()
-    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    company = unwrap(client.post("/companies", json={"ticker": "MSFT", "name": "Microsoft"}))
+    source = unwrap(client.post("/sources", json={"name": "Manual", "source_type": "manual"}))
 
     response = client.post(
         "/raw-documents",
@@ -111,15 +116,21 @@ def test_create_list_and_get_raw_document(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["title"] == "Manual research note"
 
-    assert client.get("/raw-documents").json()[0]["content_hash"] == "manual-hash-1"
-    assert client.get(f"/raw-documents/{created['id']}").json()["source_id"] == source["id"]
+    assert unwrap(client.get("/raw-documents"))[0]["content_hash"] == "manual-hash-1"
+    assert unwrap(client.get(f"/raw-documents/{created['id']}"))["source_id"] == source["id"]
+    summary = unwrap(client.get(f"/raw-documents/{created['id']}/summary"))
+    summaries = unwrap(client.get("/raw-documents/summaries"))
+    assert summary["has_raw_text"] is True
+    assert summaries[0]["has_raw_text"] is True
+    assert "raw_text" not in summary
+    assert "raw_text" not in summaries[0]
 
 
 def test_create_list_and_get_event(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "NVDA", "name": "NVIDIA"}).json()
+    company = unwrap(client.post("/companies", json={"ticker": "NVDA", "name": "NVIDIA"}))
 
     response = client.post(
         "/events",
@@ -137,24 +148,26 @@ def test_create_list_and_get_event(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["information_speed"] == "medium"
 
-    assert client.get("/events").json()[0]["title"] == "Manual event"
-    assert client.get(f"/events/{created['id']}").json()["company_id"] == company["id"]
+    assert unwrap(client.get("/events"))[0]["title"] == "Manual event"
+    assert unwrap(client.get(f"/events/{created['id']}"))["company_id"] == company["id"]
 
 
 def test_create_list_and_get_alert(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "TSLA", "name": "Tesla"}).json()
-    event = client.post(
-        "/events",
-        json={
-            "company_id": company["id"],
-            "event_type": "manual_event",
-            "information_speed": "medium",
-            "title": "Guidance changed",
-        },
-    ).json()
+    company = unwrap(client.post("/companies", json={"ticker": "TSLA", "name": "Tesla"}))
+    event = unwrap(
+        client.post(
+            "/events",
+            json={
+                "company_id": company["id"],
+                "event_type": "manual_event",
+                "information_speed": "medium",
+                "title": "Guidance changed",
+            },
+        )
+    )
 
     response = client.post(
         "/alerts",
@@ -170,15 +183,15 @@ def test_create_list_and_get_alert(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["review_status"] == "unreviewed"
 
-    assert client.get("/alerts").json()[0]["title"] == "Review guidance"
-    assert client.get(f"/alerts/{created['id']}").json()["event_id"] == event["id"]
+    assert unwrap(client.get("/alerts"))[0]["title"] == "Review guidance"
+    assert unwrap(client.get(f"/alerts/{created['id']}"))["event_id"] == event["id"]
 
 
 def test_create_list_and_get_thesis_note(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "AMZN", "name": "Amazon"}).json()
+    company = unwrap(client.post("/companies", json={"ticker": "AMZN", "name": "Amazon"}))
 
     response = client.post(
         "/thesis-notes",
@@ -191,8 +204,8 @@ def test_create_list_and_get_thesis_note(client: TestClient) -> None:
     )
 
     assert response.status_code == 201
-    created = response.json()
+    created = unwrap(response)
     assert created["status"] == "active"
 
-    assert client.get("/thesis-notes").json()[0]["title"] == "AWS thesis"
-    assert client.get(f"/thesis-notes/{created['id']}").json()["company_id"] == company["id"]
+    assert unwrap(client.get("/thesis-notes"))[0]["title"] == "AWS thesis"
+    assert unwrap(client.get(f"/thesis-notes/{created['id']}"))["company_id"] == company["id"]

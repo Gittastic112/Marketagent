@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from email.utils import parsedate_to_datetime
 from hashlib import sha256
+import logging
 from re import escape, search, sub
 from typing import Any, Callable
 from xml.etree import ElementTree
@@ -10,6 +11,7 @@ import httpx
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
+from app.core.security import validate_safe_url
 from app.models import Company, RawDocument, Source
 
 COMMON_COMPANY_MATCH_TERMS = {
@@ -24,6 +26,7 @@ COMMON_COMPANY_MATCH_TERMS = {
     "systems",
     "technology",
 }
+logger = logging.getLogger(__name__)
 LEGAL_SUFFIXES = {
     "co",
     "company",
@@ -71,12 +74,16 @@ def ingest_rss_xml(db: Session, source_id: int, rss_xml: str, company_id: int | 
     try:
         items = parse_rss_items(rss_xml)
     except ElementTree.ParseError as exc:
+        logger.error(
+            "RSS payload parsing failed",
+            extra={"provider": "rss", "exception_type": type(exc).__name__},
+        )
         return RssIngestionResult(
             fetched_count=0,
             created_count=0,
             skipped_duplicate_count=0,
             error_count=1,
-            errors=(str(exc),),
+            errors=("RSS payload is not valid XML.",),
         )
 
     for item in items:
@@ -138,16 +145,26 @@ def ingest_rss_feed_url(
         )
 
     try:
-        from app.providers.rss_provider import RSSProvider
-        provider = RSSProvider()
-        xml_text = provider.fetch_feed_xml(url)
+        if http_get is not None:
+            validate_safe_url(url)
+            response = http_get(url, timeout=20)
+            response.raise_for_status()
+            xml_text = response.text
+        else:
+            from app.providers.rss_provider import RSSProvider
+            provider = RSSProvider()
+            xml_text = provider.fetch_feed_xml(url)
     except Exception as exc:
+        logger.error(
+            "RSS feed fetch failed",
+            extra={"provider": "rss", "exception_type": type(exc).__name__},
+        )
         return RssIngestionResult(
             fetched_count=0,
             created_count=0,
             skipped_duplicate_count=0,
             error_count=1,
-            errors=(str(exc),),
+            errors=("RSS provider could not fetch the feed.",),
         )
 
     return ingest_rss_xml(db, source_id=source_id, rss_xml=xml_text, company_id=company_id)

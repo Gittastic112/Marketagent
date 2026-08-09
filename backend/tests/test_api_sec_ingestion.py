@@ -9,7 +9,12 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
-from app.models import Company, ProcessingRun, Source, ThesisNote
+from app.models import Alert, Company, ProcessingRun, Source, ThesisNote
+from helpers import response_data
+
+
+def unwrap(response):
+    return response_data(response)
 
 
 @pytest.fixture
@@ -66,7 +71,7 @@ def test_post_sec_ingestion_imports_supplied_metadata(client: TestClient) -> Non
     )
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["fetched_count"] == 1
     assert body["created_count"] == 1
     assert body["skipped_duplicate_count"] == 0
@@ -78,15 +83,49 @@ def test_post_sec_ingestion_imports_supplied_metadata(client: TestClient) -> Non
     assert body["alerts_created"] == 1
     assert body["alerts_skipped_existing"] == 0
 
-    documents = client.get("/raw-documents").json()
-    events = client.get("/events").json()
-    alerts = client.get("/alerts").json()
+    documents = response_data(client.get("/raw-documents"))
+    events = response_data(client.get("/events"))
+    alerts = response_data(client.get("/alerts"))
 
     assert documents[0]["document_type"] == "sec_filing_metadata"
     assert documents[0]["raw_payload_json"]["accession_number"] == "0000789019-26-000123"
     assert events[0]["event_type"] == "sec_filing"
     assert events[0]["priority_score"] >= 70
     assert alerts[0]["title"] == "Review: MSFT 10-Q filed 2026-05-24"
+    with next(app.dependency_overrides[get_db]()) as db:
+        alert = db.query(Alert).one()
+    assert alert.user_id == "admin_user_id_fallback"
+
+
+def test_post_sec_ingestion_resolves_or_creates_default_source(client: TestClient) -> None:
+    with next(app.dependency_overrides[get_db]()) as db:
+        source = db.query(Source).filter(Source.name == "SEC EDGAR").one()
+        db.delete(source)
+        db.commit()
+
+    response = client.post(
+        "/ingest/sec-filings",
+        json={
+            "company_id": 1,
+            "filings": [
+                {
+                    "accession_number": "0000789019-26-000124",
+                    "form_type": "10-Q",
+                    "filing_date": "2026-05-25",
+                    "filing_url": "https://www.sec.gov/example/msft-20260525.htm",
+                }
+            ],
+        },
+    )
+
+    assert response.status_code == 201
+    assert response_data(response)["created_count"] == 1
+    sources = response_data(client.get("/sources"))
+    assert len(sources) == 1
+    assert sources[0]["name"] == "SEC EDGAR"
+    assert sources[0]["source_type"] == "sec"
+    documents = response_data(client.get("/raw-documents"))
+    assert documents[0]["source_id"] == sources[0]["id"]
 
 
 def test_post_sec_ingestion_can_download_filing_text(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -122,9 +161,9 @@ def test_post_sec_ingestion_can_download_filing_text(client: TestClient, monkeyp
     )
 
     assert response.status_code == 201
-    assert response.json()["created_count"] == 1
+    assert response_data(response)["created_count"] == 1
 
-    documents = client.get("/raw-documents").json()
+    documents = response_data(client.get("/raw-documents"))
     assert documents[0]["raw_text"] == "<html><body>Downloaded SEC filing text</body></html>"
     assert documents[0]["raw_payload_json"]["text_downloaded"] is True
 
@@ -206,7 +245,7 @@ def test_post_recent_sec_ingestion_fetches_by_company_cik(client: TestClient, mo
     response = client.post("/ingest/sec-filings/recent", json={"source_id": 1, "company_id": 1})
 
     assert response.status_code == 201
-    body = response.json()
+    body = response_data(response)
     assert body["fetched_count"] == 1
     assert body["created_count"] == 1
     assert body["error_count"] == 0
@@ -241,7 +280,7 @@ def test_get_company_sec_filings_preview_filters_form_and_year(client: TestClien
     response = client.get("/companies/1/sec-filings/preview?form_type=10-K&filing_year=2026")
 
     assert response.status_code == 200
-    assert response.json() == [
+    assert response_data(response) == [
         {
             "accession_number": "0000789019-26-000123",
             "form_type": "10-K",
@@ -271,7 +310,7 @@ def test_post_company_lookup_cik_updates_company(client: TestClient, monkeypatch
     response = client.post("/companies/1/lookup-cik")
 
     assert response.status_code == 200
-    assert response.json()["cik"] == "0000789019"
+    assert unwrap(response)["cik"] == "0000789019"
 
 
 def test_get_company_lookup_returns_sec_title_and_cik(client: TestClient, monkeypatch: pytest.MonkeyPatch) -> None:
@@ -291,4 +330,9 @@ def test_get_company_lookup_returns_sec_title_and_cik(client: TestClient, monkey
     response = client.get("/companies/lookup?ticker=AAPL")
 
     assert response.status_code == 200
-    assert response.json() == {"ticker": "AAPL", "name": "Apple Inc.", "cik": "0000320193"}
+    data = unwrap(response)
+    assert data["ticker"] == "AAPL"
+    assert data["name"] == "Apple Inc."
+    assert data["cik"] == "0000320193"
+    assert data["market"] == "US"
+    assert data["regulatory_id_type"] == "CIK"
