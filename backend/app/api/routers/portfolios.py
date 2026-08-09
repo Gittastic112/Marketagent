@@ -1,3 +1,5 @@
+from datetime import date
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -14,6 +16,7 @@ from app.api.helpers import (
     validate_portfolio_snapshot_refs,
     validate_portfolio_transaction_refs,
 )
+from app.api.errors import PublicApiError
 from app.api.schemas import (
     ApiResponse,
     PortfolioCashBalanceCreate,
@@ -31,16 +34,23 @@ from app.api.schemas import (
     PortfolioTransactionRead,
     PortfolioTransactionUpdate,
     PortfolioUpdate,
+    PortfolioValuationRead,
+    PortfolioAnalyticsRead,
+    PortfolioAttributionRead,
 )
+from app.api.dependencies import get_current_user
 from app.db.session import get_db
 from app.models import Portfolio, PortfolioCashBalance, PortfolioHolding, PortfolioSnapshot, PortfolioTransaction
 from app.services.portfolio_holdings import apply_transaction_to_holding, apply_transaction_to_cash
+from app.services.portfolio_valuation import calculate_portfolio_valuation
+from app.services.portfolio_analytics import calculate_portfolio_analytics
+from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
 
 
 router = APIRouter()
 
 
-def normalize_portfolio_symbol_fields(payload: object) -> ApiResponse[None]:
+def normalize_portfolio_symbol_fields(payload: object) -> None:
     if hasattr(payload, "ticker") and getattr(payload, "ticker") is not None:
         setattr(payload, "ticker", getattr(payload, "ticker").upper())
     if hasattr(payload, "currency") and getattr(payload, "currency") is not None:
@@ -49,31 +59,76 @@ def normalize_portfolio_symbol_fields(payload: object) -> ApiResponse[None]:
         setattr(payload, "base_currency", getattr(payload, "base_currency").upper())
 
 
+def get_owned_portfolio(
+    db: Session,
+    portfolio_id: int,
+    user_id: str,
+) -> Portfolio:
+    portfolio = db.scalar(
+        select(Portfolio).where(
+            Portfolio.id == portfolio_id,
+            Portfolio.user_id == user_id,
+        )
+    )
+    if portfolio is None:
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+    return portfolio
+
+
+def get_owned_portfolio_child(
+    db: Session,
+    model: type,
+    record_id: int,
+    user_id: str,
+):
+    record = db.scalar(
+        select(model)
+        .join(Portfolio, model.portfolio_id == Portfolio.id)
+        .where(
+            model.id == record_id,
+            Portfolio.user_id == user_id,
+        )
+    )
+    if record is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    return record
+
+
+def require_owned_payload_portfolio(
+    db: Session,
+    payload: object,
+    user_id: str,
+) -> None:
+    portfolio_id = getattr(payload, "portfolio_id", None)
+    if portfolio_id is not None:
+        get_owned_portfolio(db, portfolio_id, user_id)
+
+
 @router.post("/portfolios", response_model=ApiResponse[PortfolioRead], status_code=status.HTTP_201_CREATED)
-def create_portfolio(payload: PortfolioCreate, db: Session = Depends(get_db)) -> Portfolio:
+def create_portfolio(payload: PortfolioCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Portfolio:
     normalize_portfolio_symbol_fields(payload)
-    return ApiResponse(data=create_record(db, Portfolio, payload))
+    return ApiResponse(data=create_record(db, Portfolio, payload, user_id=current_user["id"]))
 
 
 @router.get("/portfolios", response_model=ApiResponse[list[PortfolioRead]])
-def list_portfolios(db: Session = Depends(get_db)) -> list[Portfolio]:
-    return ApiResponse(data=list(db.scalars(select(Portfolio).order_by(Portfolio.id))))
+def list_portfolios(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> list[Portfolio]:
+    return ApiResponse(data=list(db.scalars(select(Portfolio).where(Portfolio.user_id == current_user["id"]).order_by(Portfolio.id))))
 
 
 @router.get("/portfolios/{portfolio_id}", response_model=ApiResponse[PortfolioRead])
-def get_portfolio(portfolio_id: int, db: Session = Depends(get_db)) -> Portfolio:
-    return ApiResponse(data=get_or_404(db, Portfolio, portfolio_id))
+def get_portfolio(portfolio_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Portfolio:
+    return ApiResponse(data=get_or_404(db, Portfolio, portfolio_id, user_id=current_user["id"]))
 
 
 @router.patch("/portfolios/{portfolio_id}", response_model=ApiResponse[PortfolioRead])
-def update_portfolio(portfolio_id: int, payload: PortfolioUpdate, db: Session = Depends(get_db)) -> Portfolio:
+def update_portfolio(portfolio_id: int, payload: PortfolioUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Portfolio:
     normalize_portfolio_symbol_fields(payload)
-    return ApiResponse(data=update_record(db, get_or_404(db, Portfolio, portfolio_id), payload))
+    return ApiResponse(data=update_record(db, get_or_404(db, Portfolio, portfolio_id, user_id=current_user["id"]), payload))
 
 
 @router.delete("/portfolios/{portfolio_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)) -> None:
-    portfolio = get_or_404(db, Portfolio, portfolio_id)
+def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
+    portfolio = get_or_404(db, Portfolio, portfolio_id, user_id=current_user["id"])
     if portfolio_has_linked_records(db, portfolio_id):
         raise HTTPException(
             status_code=409,
@@ -86,47 +141,76 @@ def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)) -> None:
 
 
 @router.post("/portfolio-holdings", response_model=ApiResponse[PortfolioHoldingRead], status_code=status.HTTP_201_CREATED)
-def create_portfolio_holding(payload: PortfolioHoldingCreate, db: Session = Depends(get_db)) -> PortfolioHolding:
+def create_portfolio_holding(payload: PortfolioHoldingCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioHolding:
     normalize_portfolio_symbol_fields(payload)
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_holding_refs(db, payload)
     return ApiResponse(data=create_record(db, PortfolioHolding, payload))
 
 
 @router.get("/portfolio-holdings", response_model=ApiResponse[list[PortfolioHoldingRead]])
-def list_portfolio_holdings(portfolio_id: int | None = None, db: Session = Depends(get_db)) -> list[PortfolioHolding]:
-    query = select(PortfolioHolding).order_by(PortfolioHolding.id)
+def list_portfolio_holdings(portfolio_id: int | None = None, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> list[PortfolioHolding]:
+    query = (
+        select(PortfolioHolding)
+        .join(Portfolio, PortfolioHolding.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioHolding.id)
+    )
     if portfolio_id is not None:
         query = query.where(PortfolioHolding.portfolio_id == portfolio_id)
     return ApiResponse(data=list(db.scalars(query)))
 
 
 @router.get("/portfolio-holdings/{holding_id}", response_model=ApiResponse[PortfolioHoldingRead])
-def get_portfolio_holding(holding_id: int, db: Session = Depends(get_db)) -> PortfolioHolding:
-    return ApiResponse(data=get_or_404(db, PortfolioHolding, holding_id))
+def get_portfolio_holding(holding_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioHolding:
+    return ApiResponse(
+        data=get_owned_portfolio_child(
+            db,
+            PortfolioHolding,
+            holding_id,
+            current_user["id"],
+        )
+    )
 
 
 @router.patch("/portfolio-holdings/{holding_id}", response_model=ApiResponse[PortfolioHoldingRead])
 def update_portfolio_holding(
     holding_id: int,
     payload: PortfolioHoldingUpdate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioHolding:
     normalize_portfolio_symbol_fields(payload)
+    holding = get_owned_portfolio_child(
+        db,
+        PortfolioHolding,
+        holding_id,
+        current_user["id"],
+    )
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_holding_refs(db, payload)
-    return ApiResponse(data=update_record(db, get_or_404(db, PortfolioHolding, holding_id), payload))
+    return ApiResponse(data=update_record(db, holding, payload))
 
 
 @router.delete("/portfolio-holdings/{holding_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_portfolio_holding(holding_id: int, db: Session = Depends(get_db)) -> None:
-    delete_record(db, get_or_404(db, PortfolioHolding, holding_id))
+def delete_portfolio_holding(holding_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
+    delete_record(
+        db,
+        get_owned_portfolio_child(
+            db,
+            PortfolioHolding,
+            holding_id,
+            current_user["id"],
+        ),
+    )
 
 
 @router.post("/portfolio-transactions", response_model=ApiResponse[PortfolioTransactionRead], status_code=status.HTTP_201_CREATED)
 def create_portfolio_transaction(
     payload: PortfolioTransactionCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioTransaction:
     normalize_portfolio_symbol_fields(payload)
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_transaction_refs(db, payload)
     transaction = PortfolioTransaction(**payload.model_dump())
     db.add(transaction)
@@ -144,28 +228,46 @@ def create_portfolio_transaction(
 @router.get("/portfolio-transactions", response_model=ApiResponse[list[PortfolioTransactionRead]])
 def list_portfolio_transactions(
     portfolio_id: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> list[PortfolioTransaction]:
-    query = select(PortfolioTransaction).order_by(PortfolioTransaction.id)
+    query = (
+        select(PortfolioTransaction)
+        .join(Portfolio, PortfolioTransaction.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioTransaction.id)
+    )
     if portfolio_id is not None:
         query = query.where(PortfolioTransaction.portfolio_id == portfolio_id)
     return ApiResponse(data=list(db.scalars(query)))
 
 
 @router.get("/portfolio-transactions/{transaction_id}", response_model=ApiResponse[PortfolioTransactionRead])
-def get_portfolio_transaction(transaction_id: int, db: Session = Depends(get_db)) -> PortfolioTransaction:
-    return ApiResponse(data=get_or_404(db, PortfolioTransaction, transaction_id))
+def get_portfolio_transaction(transaction_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioTransaction:
+    return ApiResponse(
+        data=get_owned_portfolio_child(
+            db,
+            PortfolioTransaction,
+            transaction_id,
+            current_user["id"],
+        )
+    )
 
 
 @router.patch("/portfolio-transactions/{transaction_id}", response_model=ApiResponse[PortfolioTransactionRead])
 def update_portfolio_transaction(
     transaction_id: int,
     payload: PortfolioTransactionUpdate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioTransaction:
     normalize_portfolio_symbol_fields(payload)
+    transaction = get_owned_portfolio_child(
+        db,
+        PortfolioTransaction,
+        transaction_id,
+        current_user["id"],
+    )
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_transaction_refs(db, payload)
-    transaction = get_or_404(db, PortfolioTransaction, transaction_id)
     try:
         apply_transaction_to_holding(db, transaction, direction=-1)
         apply_transaction_to_cash(db, transaction, direction=-1)
@@ -182,8 +284,13 @@ def update_portfolio_transaction(
 
 
 @router.delete("/portfolio-transactions/{transaction_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_portfolio_transaction(transaction_id: int, db: Session = Depends(get_db)) -> None:
-    transaction = get_or_404(db, PortfolioTransaction, transaction_id)
+def delete_portfolio_transaction(transaction_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
+    transaction = get_owned_portfolio_child(
+        db,
+        PortfolioTransaction,
+        transaction_id,
+        current_user["id"],
+    )
     try:
         apply_transaction_to_holding(db, transaction, direction=-1)
         apply_transaction_to_cash(db, transaction, direction=-1)
@@ -197,9 +304,10 @@ def delete_portfolio_transaction(transaction_id: int, db: Session = Depends(get_
 @router.post("/portfolio-cash-balances", response_model=ApiResponse[PortfolioCashBalanceRead], status_code=status.HTTP_201_CREATED)
 def create_portfolio_cash_balance(
     payload: PortfolioCashBalanceCreate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioCashBalance:
     normalize_portfolio_symbol_fields(payload)
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_cash_balance_refs(db, payload)
     return ApiResponse(data=create_record(db, PortfolioCashBalance, payload))
 
@@ -207,37 +315,65 @@ def create_portfolio_cash_balance(
 @router.get("/portfolio-cash-balances", response_model=ApiResponse[list[PortfolioCashBalanceRead]])
 def list_portfolio_cash_balances(
     portfolio_id: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> list[PortfolioCashBalance]:
-    query = select(PortfolioCashBalance).order_by(PortfolioCashBalance.id)
+    query = (
+        select(PortfolioCashBalance)
+        .join(Portfolio, PortfolioCashBalance.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioCashBalance.id)
+    )
     if portfolio_id is not None:
         query = query.where(PortfolioCashBalance.portfolio_id == portfolio_id)
     return ApiResponse(data=list(db.scalars(query)))
 
 
 @router.get("/portfolio-cash-balances/{cash_balance_id}", response_model=ApiResponse[PortfolioCashBalanceRead])
-def get_portfolio_cash_balance(cash_balance_id: int, db: Session = Depends(get_db)) -> PortfolioCashBalance:
-    return ApiResponse(data=get_or_404(db, PortfolioCashBalance, cash_balance_id))
+def get_portfolio_cash_balance(cash_balance_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioCashBalance:
+    return ApiResponse(
+        data=get_owned_portfolio_child(
+            db,
+            PortfolioCashBalance,
+            cash_balance_id,
+            current_user["id"],
+        )
+    )
 
 
 @router.patch("/portfolio-cash-balances/{cash_balance_id}", response_model=ApiResponse[PortfolioCashBalanceRead])
 def update_portfolio_cash_balance(
     cash_balance_id: int,
     payload: PortfolioCashBalanceUpdate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioCashBalance:
     normalize_portfolio_symbol_fields(payload)
+    cash_balance = get_owned_portfolio_child(
+        db,
+        PortfolioCashBalance,
+        cash_balance_id,
+        current_user["id"],
+    )
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_cash_balance_refs(db, payload)
-    return ApiResponse(data=update_record(db, get_or_404(db, PortfolioCashBalance, cash_balance_id), payload))
+    return ApiResponse(data=update_record(db, cash_balance, payload))
 
 
 @router.delete("/portfolio-cash-balances/{cash_balance_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_portfolio_cash_balance(cash_balance_id: int, db: Session = Depends(get_db)) -> None:
-    delete_record(db, get_or_404(db, PortfolioCashBalance, cash_balance_id))
+def delete_portfolio_cash_balance(cash_balance_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
+    delete_record(
+        db,
+        get_owned_portfolio_child(
+            db,
+            PortfolioCashBalance,
+            cash_balance_id,
+            current_user["id"],
+        ),
+    )
 
 
 @router.post("/portfolio-snapshots", response_model=ApiResponse[PortfolioSnapshotRead], status_code=status.HTTP_201_CREATED)
-def create_portfolio_snapshot(payload: PortfolioSnapshotCreate, db: Session = Depends(get_db)) -> PortfolioSnapshot:
+def create_portfolio_snapshot(payload: PortfolioSnapshotCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioSnapshot:
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_snapshot_refs(db, payload)
     return ApiResponse(data=create_record(db, PortfolioSnapshot, payload))
 
@@ -245,59 +381,126 @@ def create_portfolio_snapshot(payload: PortfolioSnapshotCreate, db: Session = De
 @router.get("/portfolio-snapshots", response_model=ApiResponse[list[PortfolioSnapshotRead]])
 def list_portfolio_snapshots(
     portfolio_id: int | None = None,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> list[PortfolioSnapshot]:
-    query = select(PortfolioSnapshot).order_by(PortfolioSnapshot.id)
+    query = (
+        select(PortfolioSnapshot)
+        .join(Portfolio, PortfolioSnapshot.portfolio_id == Portfolio.id)
+        .where(Portfolio.user_id == current_user["id"])
+        .order_by(PortfolioSnapshot.id)
+    )
     if portfolio_id is not None:
         query = query.where(PortfolioSnapshot.portfolio_id == portfolio_id)
     return ApiResponse(data=list(db.scalars(query)))
 
 
 @router.get("/portfolio-snapshots/{snapshot_id}", response_model=ApiResponse[PortfolioSnapshotRead])
-def get_portfolio_snapshot(snapshot_id: int, db: Session = Depends(get_db)) -> PortfolioSnapshot:
-    return ApiResponse(data=get_or_404(db, PortfolioSnapshot, snapshot_id))
+def get_portfolio_snapshot(snapshot_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioSnapshot:
+    return ApiResponse(
+        data=get_owned_portfolio_child(
+            db,
+            PortfolioSnapshot,
+            snapshot_id,
+            current_user["id"],
+        )
+    )
 
 
 @router.patch("/portfolio-snapshots/{snapshot_id}", response_model=ApiResponse[PortfolioSnapshotRead])
 def update_portfolio_snapshot(
     snapshot_id: int,
     payload: PortfolioSnapshotUpdate,
-    db: Session = Depends(get_db),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
 ) -> PortfolioSnapshot:
+    snapshot = get_owned_portfolio_child(
+        db,
+        PortfolioSnapshot,
+        snapshot_id,
+        current_user["id"],
+    )
+    require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_snapshot_refs(db, payload)
-    return ApiResponse(data=update_record(db, get_or_404(db, PortfolioSnapshot, snapshot_id), payload))
+    return ApiResponse(data=update_record(db, snapshot, payload))
 
 
 @router.delete("/portfolio-snapshots/{snapshot_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_portfolio_snapshot(snapshot_id: int, db: Session = Depends(get_db)) -> None:
-    delete_record(db, get_or_404(db, PortfolioSnapshot, snapshot_id))
+def delete_portfolio_snapshot(snapshot_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
+    delete_record(
+        db,
+        get_owned_portfolio_child(
+            db,
+            PortfolioSnapshot,
+            snapshot_id,
+            current_user["id"],
+        ),
+    )
 
-
-from datetime import date
-from app.api.schemas import PortfolioValuationRead, PortfolioAnalyticsRead
-from app.services.portfolio_valuation import calculate_portfolio_valuation
-from app.services.portfolio_analytics import calculate_portfolio_analytics
 
 @router.get("/portfolios/{portfolio_id}/valuation", response_model=ApiResponse[PortfolioValuationRead])
 def get_portfolio_valuation(
     portfolio_id: int,
     as_of_date: date | None = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
 ) -> dict:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
     try:
-        return ApiResponse(data=calculate_portfolio_valuation(db, portfolio_id, as_of_date))
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return ApiResponse(
+            data=calculate_portfolio_valuation(
+                db,
+                portfolio_id,
+                as_of_date,
+                user_id=current_user["id"],
+            )
+        )
+    except ValueError as exc:
+        raise PublicApiError(
+            status_code=404,
+            code="PORTFOLIO_VALUATION_DATA_NOT_FOUND",
+            message="Portfolio valuation data was not found for the requested date.",
+        ) from exc
 
 
 @router.get("/portfolios/{portfolio_id}/analytics", response_model=ApiResponse[PortfolioAnalyticsRead])
 def get_portfolio_analytics(
     portfolio_id: int,
     as_of_date: date | None = None,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
 ) -> dict:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
     try:
-        return ApiResponse(data=calculate_portfolio_analytics(db, portfolio_id, as_of_date))
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        return ApiResponse(
+            data=calculate_portfolio_analytics(
+                db,
+                portfolio_id,
+                as_of_date,
+                user_id=current_user["id"],
+            )
+        )
+    except ValueError as exc:
+        raise PublicApiError(
+            status_code=404,
+            code="PORTFOLIO_ANALYTICS_DATA_NOT_FOUND",
+            message="Portfolio analytics data was not found for the requested date.",
+        ) from exc
 
+
+@router.get("/portfolios/{portfolio_id}/attribution", response_model=ApiResponse[PortfolioAttributionRead])
+def get_portfolio_attribution(
+    portfolio_id: int,
+    as_of_date: date | None = None,
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)
+) -> dict:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    try:
+        attribution_data = PortfolioAttributionEngine.decompose_performance(
+            db,
+            portfolio_id,
+            as_of_date
+        )
+        return ApiResponse(data=attribution_data)
+    except ValueError as exc:
+        raise PublicApiError(
+            status_code=404,
+            code="PORTFOLIO_ATTRIBUTION_DATA_NOT_FOUND",
+            message="Portfolio attribution data was not found for the requested date.",
+        ) from exc

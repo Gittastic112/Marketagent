@@ -12,6 +12,7 @@ from app.db.session import get_db
 from app.main import app
 from app.models import Company, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding
 from app.services.portfolio_analytics import calculate_portfolio_analytics
+from helpers import response_data
 
 @pytest.fixture
 def engine() -> Generator[Engine]:
@@ -94,7 +95,7 @@ def test_calculate_portfolio_analytics(db: Session, client: TestClient):
     # BHP weight: 800/4800 = 16.666%
     assert round(analytics["sector_exposure"]["Technology"], 2) == 83.33
     assert round(analytics["sector_exposure"]["Materials"], 2) == 16.67
-    
+
     assert round(analytics["country_exposure"]["USA"], 2) == 83.33
     assert round(analytics["country_exposure"]["Australia"], 2) == 16.67
 
@@ -104,6 +105,8 @@ def test_calculate_portfolio_analytics(db: Session, client: TestClient):
     # BHP PNL = 800 - 1000 = -200
     assert analytics["top_gainers"][0]["ticker"] in ["AAPL", "MSFT"]
     assert analytics["top_losers"][0]["ticker"] == "BHP"
+    assert all(item["unrealized_pnl"] > 0 for item in analytics["top_gainers"])
+    assert all(item["unrealized_pnl"] < 0 for item in analytics["top_losers"])
 
     # Concentration
     # HHI = (0.4166)^2 + (0.4166)^2 + (0.1666)^2 = 0.1736 + 0.1736 + 0.0277 = 0.375
@@ -118,6 +121,6 @@ def test_calculate_portfolio_analytics(db: Session, client: TestClient):
     # API Endpoint Test
     response = client.get(f"/portfolios/{portfolio.id}/analytics?as_of_date=2026-05-24")
     assert response.status_code == 200
-    data = response.json()
+    data = response_data(response)
     assert data["total_portfolio_value"] == 9800.0
     assert data["concentration_score"] is not None

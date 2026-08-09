@@ -13,6 +13,7 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.models import PortfolioCashBalance
+from helpers import response_data
 
 @pytest.fixture
 def client() -> Generator[TestClient]:
@@ -42,7 +43,7 @@ def test_portfolio_cash_balance_sync_on_buy(client: TestClient):
     # Create portfolio
     response = client.post("/portfolios", json={"name": "Cash Sync Portfolio"})
     assert response.status_code == 201
-    portfolio_id = response.json()["id"]
+    portfolio_id = response_data(response)["id"]
 
     # Post a buy transaction
     buy_payload = {
@@ -61,7 +62,7 @@ def test_portfolio_cash_balance_sync_on_buy(client: TestClient):
     # Check cash balance
     response = client.get(f"/portfolio-cash-balances?portfolio_id={portfolio_id}")
     assert response.status_code == 200
-    balances = response.json()
+    balances = response_data(response)
     assert len(balances) == 1
     assert balances[0]["currency"] == "USD"
     # Buy 10 @ 150 + 5 fees = -1505
@@ -72,7 +73,7 @@ def test_portfolio_cash_balance_sync_on_deposit_and_sell(client: TestClient):
     # Create portfolio
     response = client.post("/portfolios", json={"name": "Cash Sync Portfolio 2"})
     assert response.status_code == 201
-    portfolio_id = response.json()["id"]
+    portfolio_id = response_data(response)["id"]
 
     # Deposit
     deposit_payload = {
@@ -90,7 +91,7 @@ def test_portfolio_cash_balance_sync_on_deposit_and_sell(client: TestClient):
 
     # Check cash balance
     response = client.get(f"/portfolio-cash-balances?portfolio_id={portfolio_id}")
-    balances = response.json()
+    balances = response_data(response)
     assert Decimal(balances[0]["amount"]) == Decimal("10000.0")
 
     # Sell
@@ -109,7 +110,7 @@ def test_portfolio_cash_balance_sync_on_deposit_and_sell(client: TestClient):
 
     # Cash should be 10000 - 1505 = 8495
     response = client.get(f"/portfolio-cash-balances?portfolio_id={portfolio_id}")
-    assert Decimal(response.json()[0]["amount"]) == Decimal("8495.0")
+    assert Decimal(response_data(response)[0]["amount"]) == Decimal("8495.0")
 
     # Now sell 5 shares @ 160, 5 fees => proceeds = 800 - 5 = 795
     sell_payload = {
@@ -127,4 +128,4 @@ def test_portfolio_cash_balance_sync_on_deposit_and_sell(client: TestClient):
 
     # Cash should be 8495 + 795 = 9290
     response = client.get(f"/portfolio-cash-balances?portfolio_id={portfolio_id}")
-    assert Decimal(response.json()[0]["amount"]) == Decimal("9290.0")
+    assert Decimal(response_data(response)[0]["amount"]) == Decimal("9290.0")

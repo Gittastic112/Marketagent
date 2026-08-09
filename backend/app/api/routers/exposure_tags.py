@@ -20,7 +20,7 @@ def create_exposure_tag(payload: ExposureTagCreate, db: Session = Depends(get_db
     db.refresh(tag)
     return ApiResponse(data=tag)
 
-@router.delete("/exposure-tags/{tag_id}")
+@router.delete("/exposure-tags/{tag_id}", response_model=ApiResponse[dict[str, str]])
 def delete_exposure_tag(tag_id: int, db: Session = Depends(get_db)):
     tag = db.get(ExposureTag, tag_id)
     if tag:
