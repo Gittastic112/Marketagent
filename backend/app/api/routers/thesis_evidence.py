@@ -1,0 +1,78 @@
+from typing import Literal
+
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from app.api.dependencies import get_current_user
+from app.api.schemas import ApiResponse
+from app.db.session import get_db
+from app.models import Event
+from app.models.thesis_note import ThesisNote
+from app.services.thesis_evidence_engine import ThesisEvidenceEngine
+
+router = APIRouter(prefix="/thesis", tags=["thesis-evidence"])
+
+
+class ThesisEvidenceDetectRequest(BaseModel):
+    event_id: int = Field(gt=0)
+
+
+class ThesisEvidenceDetectRead(BaseModel):
+    event_id: int
+    thesis_id: int
+    contradictions: list[int]
+    confirmations: list[int]
+    claim_type: Literal["Mock Data"] = "Mock Data"
+
+
+@router.post(
+    "/{thesis_id}/evidence/detect",
+    response_model=ApiResponse[ThesisEvidenceDetectRead],
+)
+def detect_evidence(
+    thesis_id: int,
+    payload: ThesisEvidenceDetectRequest,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """
+    Runs the ThesisEvidenceEngine to detect contradictions and confirmations
+    for the given thesis based on recent events.
+    """
+    thesis = db.scalar(
+        select(ThesisNote).where(
+            ThesisNote.id == thesis_id,
+            ThesisNote.user_id == current_user["id"],
+        )
+    )
+    if thesis is None:
+        raise HTTPException(status_code=404, detail="Thesis note not found")
+    if db.get(Event, payload.event_id) is None:
+        raise HTTPException(status_code=404, detail="Event not found")
+
+    contradictions = ThesisEvidenceEngine.detect_contradictions(
+        db,
+        payload.event_id,
+        thesis_id,
+    )
+    confirmations = ThesisEvidenceEngine.detect_confirmations(
+        db,
+        payload.event_id,
+        thesis_id,
+    )
+
+    return ApiResponse(
+        data=ThesisEvidenceDetectRead(
+            event_id=payload.event_id,
+            thesis_id=thesis_id,
+            contradictions=[impact.id for impact in contradictions],
+            confirmations=[impact.id for impact in confirmations],
+        ),
+        meta={
+            "is_mock": True,
+            "warnings": ["Mock Data: keyword-based thesis evidence detection."],
+            "confidence": "low",
+        },
+    )

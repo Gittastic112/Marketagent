@@ -2301,18 +2301,12 @@ export interface DcfVariableImpact {
   reasoning: string;
 }
 
-export interface DcfMappingResponse {
-  status: string;
-  data: {
-    impacted_variables: DcfVariableImpact[];
-    error?: string;
-  };
-  ai_metadata: {
-    model_name: string;
-    is_mock: boolean;
-    confidence: string;
-  };
-}
+export type DcfMappingResponse = ApiResponse<{
+  impacted_variables: DcfVariableImpact[];
+  ai_output_id: number;
+  model_name: string;
+  error?: string;
+}>;
 
 export type CompanySetupSourceReadiness = {
   provider_name: string;
