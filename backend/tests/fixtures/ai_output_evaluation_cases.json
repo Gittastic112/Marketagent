@@ -1,0 +1,26 @@
+[
+  {
+    "name": "valid exact citation",
+    "source_text": "Revenue increased 12% year over year while gross margin reached 41%.",
+    "output_text": "Revenue increased 12% year over year.",
+    "quote": "Revenue increased 12% year over year",
+    "expected_status": "valid",
+    "expected_passed": true
+  },
+  {
+    "name": "citation text mismatch",
+    "source_text": "Revenue increased 12% year over year.",
+    "output_text": "Revenue increased.",
+    "quote": "Revenue increased 20% year over year",
+    "expected_status": "invalid",
+    "expected_passed": false
+  },
+  {
+    "name": "prohibited recommendation language",
+    "source_text": "Revenue increased 12% year over year.",
+    "output_text": "You should buy the stock.",
+    "quote": "Revenue increased 12% year over year",
+    "expected_status": "valid",
+    "expected_passed": false
+  }
+]

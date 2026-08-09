@@ -1,0 +1,119 @@
+import re
+from typing import Any
+
+from sqlalchemy.orm import Session
+
+from app.models.ai import AiOutput
+from app.models.raw_document import RawDocument
+
+
+PROHIBITED_RECOMMENDATION_PATTERNS = (
+    re.compile(r"\b(?:buy|sell)\s+(?:this|the|shares?|stock)\b", re.IGNORECASE),
+    re.compile(r"\byou should (?:buy|sell)\b", re.IGNORECASE),
+    re.compile(r"\bguaranteed (?:upside|return|profit)\b", re.IGNORECASE),
+)
+
+def extract_source_ids(text: str) -> list[str]:
+    """Extracts all unique source IDs from [source_id:X] patterns in the text."""
+    pattern = re.compile(r"\[source_id:([^\]]+)\]")
+    return list(set(pattern.findall(text or "")))
+
+
+
+def _validate_document_citation(
+    db: Session,
+    citation: dict[str, Any],
+) -> dict[str, Any]:
+    source_id = str(citation.get("source_id") or "")
+    try:
+        document_id = int(source_id.split(":", 1)[1])
+    except (IndexError, ValueError):
+        return {**citation, "status": "invalid", "reason": "Unsupported source identifier"}
+    document = db.get(RawDocument, document_id)
+    if document is None or not document.raw_text:
+        return {**citation, "status": "invalid", "reason": "Stored source text is unavailable"}
+
+    quote = str(citation.get("quote") or "")
+    start_char = citation.get("start_char")
+    end_char = citation.get("end_char")
+    if start_char is None and end_char is None:
+        first = document.raw_text.find(quote)
+        if first < 0:
+            return {**citation, "status": "invalid", "reason": "Quote was not found in stored source text"}
+        if document.raw_text.find(quote, first + 1) >= 0:
+            return {**citation, "status": "invalid", "reason": "Quote is not unique; provide exact character offsets"}
+        start_char = first
+        end_char = first + len(quote)
+    if not isinstance(start_char, int) or not isinstance(end_char, int):
+        return {**citation, "status": "invalid", "reason": "Character offsets are invalid"}
+    if start_char < 0 or end_char <= start_char or end_char > len(document.raw_text):
+        return {**citation, "status": "invalid", "reason": "Character offsets exceed stored source text"}
+    if document.raw_text[start_char:end_char] != quote:
+        return {**citation, "status": "invalid", "reason": "Quote does not match the exact source span"}
+    return {
+        **citation,
+        "start_char": start_char,
+        "end_char": end_char,
+        "status": "valid",
+        "reason": None,
+        "internal_href": f"/documents/{document.id}/sections",
+    }
+
+
+def validate_ai_citations(
+    db: Session,
+    output: AiOutput,
+    citations: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], str]:
+    declared_sources = set(output.source_ids_json or [])
+    results: list[dict[str, Any]] = []
+    for citation in citations:
+        source_id = str(citation.get("source_id") or "")
+        if source_id not in declared_sources:
+            results.append({**citation, "status": "invalid", "reason": "Source was not declared for this AI output"})
+            continue
+        if source_id.startswith("raw_document:"):
+            results.append(_validate_document_citation(db, citation))
+            continue
+        results.append({**citation, "status": "invalid", "reason": "This source type has no exact-text validator"})
+
+    valid_count = sum(result["status"] == "valid" for result in results)
+    if valid_count == len(results) and results:
+        status = "valid"
+    elif valid_count:
+        status = "partial"
+    else:
+        status = "invalid"
+    output.citations_json = results
+    output.citation_validation_status = status
+    output.evaluation_json = evaluate_ai_output(output)
+    db.commit()
+    db.refresh(output)
+    return results, status
+
+
+def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
+    recommendation_matches = [
+        pattern.pattern
+        for pattern in PROHIBITED_RECOMMENDATION_PATTERNS
+        if pattern.search(output.output_text or "")
+    ]
+    citations_required = bool(output.source_ids_json) and output.execution_status == "success"
+    checks = {
+        "execution_succeeded": output.execution_status == "success",
+        "output_nonempty": bool((output.output_text or "").strip()),
+        "no_recommendation_language": not recommendation_matches,
+        "citations_required": citations_required,
+        "citations_valid": not citations_required or output.citation_validation_status == "valid",
+    }
+    passed = all(
+        value
+        for key, value in checks.items()
+        if key != "citations_required"
+    )
+    return {
+        "version": "ai-output-eval-v1",
+        "passed": passed,
+        "checks": checks,
+        "recommendation_pattern_matches": recommendation_matches,
+    }
