@@ -129,6 +129,29 @@ test("portfolio performance uses owned setup, generated snapshots, and dated cal
   assert.match(api, /export type PortfolioOpportunityCost/);
 });
 
+test("market regime exposes bounded inputs and calculation provenance", () => {
+  const page = readFrontendFile("app/portfolio/regime/page.tsx");
+  const form = readFrontendFile("components/portfolio/RegimeInputForm.tsx");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(page, /score\.calculation_status === "blocked"/);
+  assert.match(page, /Provider-backed modules/);
+  assert.match(page, /score\.manual_modules/);
+  assert.match(page, /Input Evidence & Freshness/);
+  assert.match(page, /score\.input_sources/);
+  assert.match(page, /score\.formula/);
+  assert.match(page, /score\.blockers/);
+  assert.doesNotMatch(page, /PrototypeBadge/);
+  assert.match(form, /Normalized Score \(-100 to 100\)/);
+  assert.match(form, /min="-100"/);
+  assert.match(form, /max="100"/);
+  assert.match(form, /Provider-backed observation/);
+  assert.match(form, /Normalization Methodology/);
+  assert.match(form, /required=\{inputType === "provider"\}/);
+  assert.match(api, /calculation_status: "complete" \| "stale" \| "blocked"/);
+  assert.match(api, /input_type: "manual" \| "provider"/);
+});
+
 test("data health exposes the authenticated evidence integrity report", () => {
   const page = readFrontendFile("app/data-health/page.tsx");
   assert.match(page, /serverFetchApiResponse<EvidenceIntegrityReport>\("\/data-health\/evidence-integrity"\)/);

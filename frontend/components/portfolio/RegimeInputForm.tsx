@@ -5,9 +5,13 @@ import { submitMarketRegimeInput, MarketRegimeInputCreate } from "@/lib/api";
 import { useRouter } from "next/navigation";
 
 export function RegimeInputForm() {
-  const [metricName, setMetricName] = useState("options");
+  const [metricName, setMetricName] = useState<MarketRegimeInputCreate["metric_name"]>("options");
   const [value, setValue] = useState("");
   const [asOfDate, setAsOfDate] = useState(new Date().toISOString().split("T")[0]);
+  const [inputType, setInputType] = useState<MarketRegimeInputCreate["input_type"]>("manual");
+  const [sourceName, setSourceName] = useState("");
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [methodology, setMethodology] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const router = useRouter();
@@ -21,7 +25,10 @@ export function RegimeInputForm() {
         metric_name: metricName,
         value: parseFloat(value),
         as_of_date: asOfDate,
-        source_url: null,
+        source_url: sourceUrl.trim() || null,
+        source_name: sourceName.trim(),
+        input_type: inputType,
+        methodology: methodology.trim(),
       });
       setValue("");
       router.refresh();
@@ -39,7 +46,7 @@ export function RegimeInputForm() {
         <label style={{ display: "block", marginBottom: "0.5rem" }}>Metric Name</label>
         <select
           value={metricName}
-          onChange={(e) => setMetricName(e.target.value)}
+          onChange={(e) => setMetricName(e.target.value as MarketRegimeInputCreate["metric_name"])}
           style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
         >
           <option value="options">Options (Weight 30%)</option>
@@ -50,14 +57,57 @@ export function RegimeInputForm() {
         </select>
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Value</label>
+        <label style={{ display: "block", marginBottom: "0.5rem" }}>Normalized Score (-100 to 100)</label>
         <input
+          max="100"
+          min="-100"
           type="number"
           step="any"
           required
           value={value}
           onChange={(e) => setValue(e.target.value)}
           style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
+        />
+      </div>
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem" }}>Input Type</label>
+        <select
+          value={inputType}
+          onChange={(e) => setInputType(e.target.value as MarketRegimeInputCreate["input_type"])}
+          style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
+        >
+          <option value="manual">Manual user assumption</option>
+          <option value="provider">Provider-backed observation</option>
+        </select>
+      </div>
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem" }}>Source Name</label>
+        <input
+          minLength={2}
+          required
+          value={sourceName}
+          onChange={(e) => setSourceName(e.target.value)}
+          style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
+        />
+      </div>
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem" }}>Source URL {inputType === "provider" ? "(required)" : "(optional)"}</label>
+        <input
+          required={inputType === "provider"}
+          type="url"
+          value={sourceUrl}
+          onChange={(e) => setSourceUrl(e.target.value)}
+          style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
+        />
+      </div>
+      <div>
+        <label style={{ display: "block", marginBottom: "0.5rem" }}>Normalization Methodology</label>
+        <textarea
+          minLength={10}
+          required
+          value={methodology}
+          onChange={(e) => setMethodology(e.target.value)}
+          style={{ minHeight: "90px", padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
         />
       </div>
       <div>

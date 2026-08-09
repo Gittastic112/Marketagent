@@ -1,4 +1,4 @@
-import { ErrorState, PageHeader, Panel, PrototypeBadge } from "@/components/page";
+import { ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { RegimeInputForm } from "@/components/portfolio/RegimeInputForm";
@@ -17,7 +17,7 @@ export default async function MarketRegimePage() {
           eyebrow="Portfolio"
           title="Market Regime"
           status="Macro & Liquidity conditions"
-          badge={score.mode === "Live" ? undefined : <PrototypeBadge />}
+          badge={<span className="badge badge-outline">{score.mode}</span>}
         />
 
         <DataStateNotices
@@ -43,7 +43,7 @@ export default async function MarketRegimePage() {
                   fontWeight: 700,
                   color: "var(--text-primary)"
                 }}>
-                  {score.mode === "Incomplete" ? "N/A" : Math.round(score.overall_score)}
+                  {score.calculation_status === "blocked" ? "N/A" : Math.round(score.overall_score)}
                 </div>
                 <div style={{ marginTop: "1rem", fontWeight: 600, color: "var(--warning)", fontSize: "1.2rem" }}>
                   {score.mode}
@@ -63,7 +63,10 @@ export default async function MarketRegimePage() {
                  <strong>Confidence:</strong> <span>{score.confidence}</span>
                </div>
                <div className="brief-item">
-                 <strong>Available modules:</strong> <span>{score.live_modules.length > 0 ? score.live_modules.join(", ") : "None"}</span>
+                 <strong>Provider-backed modules:</strong> <span>{score.live_modules.length > 0 ? score.live_modules.join(", ") : "None"}</span>
+               </div>
+               <div className="brief-item">
+                 <strong>Manual modules:</strong> <span>{score.manual_modules.length > 0 ? score.manual_modules.join(", ") : "None"}</span>
                </div>
              </div>
           </Panel>
@@ -116,6 +119,36 @@ export default async function MarketRegimePage() {
                  ⚠️ {w}
                </div>
              ))}
+             <div style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "1rem" }}>
+               Calculation: {score.formula}
+             </div>
+             {score.blockers.map((blocker) => (
+               <div key={blocker} style={{ color: "var(--danger)", fontSize: "0.85rem", marginTop: "0.5rem" }}>Blocked: {blocker}</div>
+             ))}
+          </Panel>
+
+          <Panel title="Input Evidence & Freshness">
+            {score.input_sources.length === 0 ? (
+              <p style={{ color: "var(--text-secondary)" }}>No regime inputs are recorded.</p>
+            ) : (
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Module</th><th>Type</th><th>Source</th><th>As Of</th><th>Freshness</th><th>Method</th></tr></thead>
+                  <tbody>
+                    {score.input_sources.map((source) => (
+                      <tr key={source.input_id}>
+                        <td>{source.metric_name}</td>
+                        <td>{source.input_type === "manual" ? "User Assumption" : "Fact"}</td>
+                        <td>{source.source_url ? <a href={source.source_url} rel="noreferrer" target="_blank">{source.source_name}</a> : source.source_name}</td>
+                        <td>{source.as_of_date}</td>
+                        <td>{source.age_days} days old, limit {source.freshness_threshold_days}</td>
+                        <td>{source.methodology}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </Panel>
 
           <Panel title="Submit Metric Data">

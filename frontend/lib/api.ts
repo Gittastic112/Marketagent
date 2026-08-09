@@ -3011,6 +3011,21 @@ export type MarketRegimeScoreRead = {
   breadth_score: number | null;
   macro_score: number | null;
   confidence: string;
+  calculation_status: "complete" | "stale" | "blocked";
+  formula: string;
+  blockers: string[];
+  input_sources: Array<{
+    input_id: number;
+    metric_name: string;
+    value: number;
+    as_of_date: string;
+    age_days: number;
+    freshness_threshold_days: number;
+    input_type: "manual" | "provider";
+    source_name: string;
+    source_url: string | null;
+    methodology: string;
+  }>;
   warnings: string[];
   mode: string;
   live_modules: string[];
@@ -3020,10 +3035,13 @@ export type MarketRegimeScoreRead = {
 };
 
 export type MarketRegimeInputCreate = {
-  metric_name: string;
+  metric_name: "options" | "liquidity" | "volume" | "breadth" | "macro";
   value: number;
   as_of_date: string;
   source_url: string | null;
+  source_name: string;
+  input_type: "manual" | "provider";
+  methodology: string;
 };
 
 export type MarketRegimeInputRead = MarketRegimeInputCreate & {
