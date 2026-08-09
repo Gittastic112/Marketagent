@@ -281,7 +281,7 @@ def calculate_portfolio_valuation(
         "total_market_value": total_market_value if has_complete_market_value else None,
         "total_portfolio_value": total_portfolio_value,
         "total_cash_value": total_cash_value,
-        "total_cost_basis": total_cost_basis,
+        "total_cost_basis": total_cost_basis if has_complete_cost_basis else None,
         "total_unrealized_pnl": total_unrealized_pnl,
         "total_unrealized_pnl_percent": total_unrealized_pnl_percent,
         "missing_fx_pairs": sorted(missing_fx_pairs),

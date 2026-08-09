@@ -1294,7 +1294,7 @@ class PortfolioValuationRead(BaseModel):
     total_market_value: float | None
     total_portfolio_value: float | None
     total_cash_value: float | None
-    total_cost_basis: float
+    total_cost_basis: float | None
     total_unrealized_pnl: float | None
     total_unrealized_pnl_percent: float | None
     missing_fx_pairs: list[str] = Field(default_factory=list)
