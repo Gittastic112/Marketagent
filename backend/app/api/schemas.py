@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from typing import Any, Literal, Generic, TypeVar
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 T = TypeVar("T")
 
@@ -750,6 +750,92 @@ class PortfolioRead(PortfolioCreate):
     updated_at: datetime
 
 
+class PortfolioBenchmarkConfigCreate(BaseModel):
+    portfolio_id: int = Field(gt=0)
+    benchmark_company_id: int | None = Field(default=None, gt=0)
+    ticker: str = Field(min_length=1, max_length=40)
+    currency: str = Field(min_length=3, max_length=10)
+    provider_name: str = Field(default="manual", min_length=1, max_length=80)
+    provider_symbol: str | None = Field(default=None, max_length=80)
+    effective_from: date
+    active: bool = True
+    notes: str | None = Field(default=None, max_length=2000)
+
+    @field_validator("ticker", "currency")
+    @classmethod
+    def normalize_symbols(cls, value: str) -> str:
+        return value.strip().upper()
+
+    @field_validator("provider_name")
+    @classmethod
+    def normalize_provider(cls, value: str) -> str:
+        return value.strip()
+
+
+class PortfolioBenchmarkConfigUpdate(BaseModel):
+    benchmark_company_id: int | None = Field(default=None, gt=0)
+    ticker: str | None = Field(default=None, min_length=1, max_length=40)
+    currency: str | None = Field(default=None, min_length=3, max_length=10)
+    provider_name: str | None = Field(default=None, min_length=1, max_length=80)
+    provider_symbol: str | None = Field(default=None, max_length=80)
+    effective_from: date | None = None
+    active: bool | None = None
+    notes: str | None = Field(default=None, max_length=2000)
+
+    @field_validator("ticker", "currency")
+    @classmethod
+    def normalize_optional_symbols(cls, value: str | None) -> str | None:
+        return value.strip().upper() if value is not None else None
+
+    @field_validator("provider_name")
+    @classmethod
+    def normalize_optional_provider(cls, value: str | None) -> str | None:
+        return value.strip() if value is not None else None
+
+
+class PortfolioBenchmarkConfigRead(PortfolioBenchmarkConfigCreate):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class FxRateObservationCreate(BaseModel):
+    base_currency: str = Field(min_length=3, max_length=10)
+    quote_currency: str = Field(min_length=3, max_length=10)
+    rate: float = Field(gt=0)
+    as_of_date: date
+    provider_name: str = Field(default="manual", min_length=1, max_length=80)
+    provider_symbol: str | None = Field(default=None, max_length=80)
+    source_url: str | None = Field(default=None, max_length=1000)
+    source_timestamp: datetime | None = None
+
+    @field_validator("base_currency", "quote_currency")
+    @classmethod
+    def normalize_currency(cls, value: str) -> str:
+        return value.strip().upper()
+
+    @field_validator("provider_name")
+    @classmethod
+    def normalize_fx_provider(cls, value: str) -> str:
+        return value.strip()
+
+    @model_validator(mode="after")
+    def validate_pair(self):
+        if self.base_currency == self.quote_currency:
+            raise ValueError("FX base and quote currencies must differ")
+        return self
+
+
+class FxRateObservationRead(FxRateObservationCreate):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    observed_at: datetime
+    created_at: datetime
+
+
 class PortfolioHoldingCreate(BaseModel):
     portfolio_id: int
     company_id: int | None = None
@@ -870,6 +956,13 @@ class PortfolioSnapshotRead(PortfolioSnapshotCreate):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    total_portfolio_value: float | None = None
+    base_currency: str | None = None
+    calculation_status: Literal["complete", "partial", "not_available"] = "not_available"
+    holdings_count: int = 0
+    priced_holdings_count: int = 0
+    missing_price_tickers_json: list[str] = Field(default_factory=list)
+    missing_fx_pairs_json: list[str] = Field(default_factory=list)
     created_at: datetime
 
 
