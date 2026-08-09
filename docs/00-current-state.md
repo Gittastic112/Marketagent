@@ -1,119 +1,92 @@
-# Current State & Known Issues
+# Current State
 
-This is the source of truth for the current state of the application following the recent UI and Backend architectural pivot towards a unified intelligence cockpit, along with the prioritized backlog of known issues.
+**Audited:** 2026-08-09
 
-## 1. What Currently Works
-- **Local Infrastructure:** Docker setup for PostgreSQL, FastAPI backend, Next.js frontend, and pgAdmin spins up successfully.
-- **Database Models:** SQLAlchemy models and Alembic migrations exist for all MVP tables and recent intelligence tracking tables (e.g. `thesis_drift_score`, `event_corroborations`, `portfolio_priority_score`).
-- **Core Entity Creation:** The backend correctly handles CRUD operations for Companies, Sources, Raw Documents, Events, Alerts, Thesis Notes, Portfolios, and Transactions.
-- **Data Pipelines:**
-  - RSS ingestion fetches feeds and stores XML items.
-  - SEC ingestion fetches filing metadata and text (10-K, 10-Q, 8-K) via SEC EDGAR.
-  - Event extraction parses raw documents into rule-based events.
-  - Deterministic event scoring assigns `credibility_score`, `novelty_score`, and `impact_score`.
-  - Alert generation runs when priority thresholds are met.
+**Scope:** local-first, single-user investment research
 
-## 2. What is Mocked (or Hardcoded)
-- **Frontend Views:** Many current frontend pages (`/events`, `/alerts`, `/thesis-notes`) simply render raw database tables rather than the new dashboard-driven layout.
-- **Score Explanations:** While the backend calculates scores, the frontend does not yet have the `ScoreBreakdown` UI to explain them cleanly.
-- **Data Freshness Indicators:** The frontend assumes all data is fresh because the backend does not yet return the standard `is_stale` wrapper.
+**Code wins:** verify routes, models, migrations, and tests before relying on this summary.
 
-## 3. What is Missing
-- **API Response Envelope:** The critical `{"data", "meta", "errors"}` wrapper is not yet implemented across the FastAPI routes.
-- **Processing Runs Tracking:** The backend does not yet log ingestion health to the `processing_runs` table robustly.
-- **SEC User-Agent Validation:** The backend does not explicitly enforce or document the `SEC_USER_AGENT` environment variable requirement.
-- **Advanced Intelligence Modules:**
-  - Narrative Tracking (Models exist, but UI and logic do not).
-  - Research Workspace (AI chat sessions linking to sources).
-  - Valuation Tool (DCF builder).
-- **New Frontend Architecture:** The new 8-tab layout (Dashboard, Portfolio, Companies, Research, Valuation, Alerts, Data, Settings) is not fully built out.
+## Product Position
 
-## 4. Existing Backend Endpoints
-Currently, the backend has active routers for:
-- `/api/companies`
-- `/api/sources`
-- `/api/raw-documents`
-- `/api/events`
-- `/api/alerts`
-- `/api/thesis-notes`
-- `/api/daily-briefs`
-- `/api/portfolios`
-- `/api/portfolio-holdings`
-- `/api/portfolio-transactions`
-- `/api/ingestion/rss`
-- `/api/ingestion/sec`
-- `/api/processing/extract-events`
-*(Note: These will all be refactored to use the new API Response Envelope in Phase 2).*
+The repository is a broad, functional research and valuation platform, not a
+finished daily-driver product. The quality-adjusted estimate remains about
+**75% of the declared local-first scope** and **64% of the world-class target**.
+The valuation and evidence foundations are stronger than provider coverage,
+daily workflow integration, portfolio analytics, and frontend consistency.
 
-## 5. Existing Frontend Pages
-- `/companies`
-- `/sources`
-- `/documents`
-- `/events`
-- `/alerts`
-- `/thesis-notes`
-- `/daily-brief`
-- `/portfolio`
-- `/settings`
-*(Note: These will be reorganized during the Phase 5-8 UI overhaul).*
+## Last Recorded Full Baseline
 
-## 6. Current Blockers to Progress
-- **The API Response Envelope (Phase 2) must be implemented first.** Building any new frontend UI before the backend data structure is standardized will result in duplicate work and broken pages. This is the immediate next step.
+| Check | Current result |
+|---|---|
+| Backend tests | 492 passed; four upstream `openpyxl` deprecation warnings |
+| Frontend tests | 91 passed |
+| TypeScript | Passes |
+| Production build | Next.js 16.2.11 passes |
+| Database migration | `z1z1z1z1z1z1` (cross-holdings and operating leases) |
+| Knowledge-base tests | 4 passed |
+| Knowledge-base audit | 61 canonical files, 61 catalog rows, 38 ledger rows, 0 pending |
+| Damodaran application coverage | 9 supported, 13 partial, 13 unsupported |
+| Damodaran typed data | 14 sources, 3,290 rows, 12 complete active provenance records |
 
-## 7. Explicit Non-Goals (Do Not Build)
-- Trading recommendations.
-- Twitter, Reddit, or social scraping.
-- Auth, billing, production cloud deployment, or team accounts.
-- Vector databases, LangChain, Kafka, Kubernetes, or other heavy infrastructure.
-- Broker integrations or broker credential storage.
+This table reflects the current 2026-08-09 dirty worktree. Local API health,
+authentication readiness, documentation links, and secret scanning also pass.
+The worktree still contains substantial uncommitted prior-agent changes, so
+future phases must continue to stage only their reviewed files.
 
----
+## Documentation State
 
-## 8. Prioritized Backlog of Known Issues
+The active `/docs` layer is now 31 Markdown files and 3,489 lines, including the
+project skill library. One roadmap and one feature register drive future work.
+Dated checkpoints, prior handoffs, old assessments, and superseded plans are
+categorized under `archive/`. `scripts/check_docs.py` validates active Markdown
+links and rejects retired active-plan paths.
 
-### Priority 1: Missing Stale Data and Mock Data States
-- **Issue:** The frontend currently lacks robust states for handling missing, partial, or stale data. There is a risk of "Mock Data" being presented as real if an API fails silently.
-- **Fix:** The backend must be updated to return standard API response envelopes containing `is_stale` flags. The frontend must globally handle this state to clearly indicate when intelligence is outdated or mocked.
-- **Risk:** High. If the user trusts stale data, the core product promise fails.
+The Docker daemon was unavailable during the documentation cleanup. The table
+above records the immediately preceding verified baseline; documentation checks
+for this cleanup are reported separately in `HANDOFF.md`.
 
-### Priority 2: Missing API Error Handling Gaps
-- **Issue:** Frontend fetching utility does not gracefully handle `500 Internal Server Errors` from missing database columns (as seen recently with `portfolio_priority_score`) without causing a cascading white screen.
-- **Fix:** Refactor `fetchApi` to parse the new `errors` array in the standard envelope and render explicit `<ErrorState />` components.
+## Capability Map
 
-### Priority 3: Missing Score Explainability
-- **Issue:** The backend calculates event-level scores, but does not provide API endpoints that explain the math (inputs, weighting, direction) for the new Company/Narrative level scores.
-- **Fix:** Implement Score breakdown API endpoints that expose the exact factors.
+See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canonical list of capabilities and their current implementation statuses.
 
-### Priority 4: Missing Source Evidence Trails
-- **Issue:** While raw documents are stored, the UI does not seamlessly expose the "Evidence" trail in a way that allows a user to trace an Alert directly to the highlighted text in an SEC filing.
-- **Fix:** The Intelligence UI components must strictly adhere to the 4-layer hierarchy, requiring an Evidence layer.
+## Certified Data State
 
-### Priority 5: SEC Ingestion Not Fully Configured
-- **Issue:** The backend needs a dedicated, enforced `SEC_USER_AGENT` environment variable to prevent IP blocking by the SEC.
-- **Fix:** Add this variable and document it in the local setup guide. SEC ingestion will fail gracefully if it is missing.
+- AAPL FY2022-FY2025 core facts are reviewed, promoted, and reconciled.
+- AAPL FY2021 is intentionally not promoted.
+- Adani Ports FY2023-FY2025 is promoted, normalized, reconciled, and certified.
+  The representative US/India two-market certification gate passes.
+- `countrystats.xls` active version `#50` is dated `2026-01-05`, contains 127
+  rows, and has SHA-256
+  `900b6594f808461f9ce5194abf1a50e66f22854bc998473ad8282037d464829b`.
 
-### Priority 6: Alembic Missing Revision Risk
-- **Issue:** Users have previously encountered: `Can't locate revision identified by 'a2afaa43a162'`. This breaks local database setup.
-- **Fix:** Do not tell users to run destructive commands. Explain how to inspect migration history and either stamp head or restore the missing file safely. (This issue was mostly mitigated in recent commits, but remains a risk as the schema expands for Phase 2).
+## Do Not Trust Without Review
 
-### Priority 7: Docker Socket Permission
-- **Issue:** Users may see `permission denied while trying to connect to the docker API at unix:///var/run/docker.sock`.
-- **Fix:** Explain that Docker Desktop must be running. On macOS, restarting Docker Desktop usually helps. Do not recommend `sudo chmod 666 /var/run/docker.sock`.
+- Market-regime values or any panel labeled `Mock Data`.
+- AI memos, narrative-to-numbers suggestions, or generated conclusions.
+- Industry mapping or industry averages as company-specific facts.
+- Autofilled valuation assumptions without checking source, age, method, and warnings.
+- Financial metrics from unreviewed extraction candidates.
+- Prices without provider, timestamp, freshness, and currency context.
+- India automated filing/provider coverage.
+- Any output phrased as a buy or sell recommendation.
 
-### Priority 8: Frontend/Backend Connectivity
-- **Issue:** The frontend may show "backend not reachable" even when containers are running.
-- **Fix Checklist:**
-  - Are both containers running?
-  - Is `NEXT_PUBLIC_API_BASE_URL` properly passed into the frontend container?
-  - Is CORS configured on the backend?
+## Current Priorities
 
----
+1. Complete route-by-route frontend/backend truth and data-state parity. (DONE - Phase 16)
+2. Expand beyond the certified APSEZ India case and strengthen official India providers.
+3. Build a coherent daily research loop from ingestion to evidence, alerts,
+   thesis impact, portfolio impact, and next action.
+4. Complete point-in-time portfolio attribution and opportunity cost. Recorded
+   activity by currency and exposure drill-down are present, but historical FX
+   and a benchmark series are not configured.
+5. Replace or hide the market-regime prototype until source-backed inputs exist.
 
-## Later, Not Now
-- AI summaries or extraction
-- Narrative clustering
-- Extra data sources beyond SEC/RSS
-- Auth, billing, production deployment, or team accounts
-- Trading recommendations
-- Social scraping
-- Live market data, macro APIs, options flow, broker sync, or real-time alerts
+Acceptance criteria and sequencing live in
+[`roadmaps/product-roadmap.md`](roadmaps/product-roadmap.md). Feature status
+lives in [`roadmaps/feature-register.md`](roadmaps/feature-register.md).
+
+## Historical Evidence
+
+Dated checkpoints, previous audits, accumulated handoffs, and superseded plans
+are preserved under [`archive/`](archive/). They are evidence of prior work, not
+current instructions.

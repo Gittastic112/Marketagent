@@ -779,18 +779,34 @@ export type Portfolio = {
 };
 
 export interface PortfolioAttributionComponent {
-  price_movement: number;
-  fx_impact: number;
+  price_movement: number | null;
+  fx_impact: number | null;
+}
+
+export interface PortfolioTransactionActivity {
+  purchases: number;
+  sales: number;
   dividends: number;
+  deposits: number;
+  withdrawals: number;
   fees: number;
+  taxes: number;
+  net_position_cash_flow: number;
+  net_external_cash_flow: number;
 }
 
 export interface PortfolioAttributionRead {
-  total_unrealized_pnl: number;
+  as_of_date: string;
+  base_currency: string;
+  calculation_status: "partial" | "not_available";
+  total_unrealized_pnl: number | null;
   components: PortfolioAttributionComponent;
+  opportunity_cost: number | null;
+  activity_by_currency: Record<string, PortfolioTransactionActivity>;
   attribution_by_sector: Record<string, number>;
   attribution_by_geography: Record<string, number>;
   attribution_by_asset_type: Record<string, number>;
+  warnings: string[];
 }
 
 export interface PortfolioSnapshot {

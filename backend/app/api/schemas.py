@@ -1183,18 +1183,34 @@ class PortfolioValuationRead(BaseModel):
     total_unrealized_pnl_percent: float | None
     holdings: list[PortfolioValuationHoldingRead]
 class PortfolioAttributionComponent(BaseModel):
-    price_movement: float
-    fx_impact: float
+    price_movement: float | None
+    fx_impact: float | None
+
+
+class PortfolioTransactionActivityRead(BaseModel):
+    purchases: float
+    sales: float
     dividends: float
+    deposits: float
+    withdrawals: float
     fees: float
+    taxes: float
+    net_position_cash_flow: float
+    net_external_cash_flow: float
 
 
 class PortfolioAttributionRead(BaseModel):
-    total_unrealized_pnl: float
+    as_of_date: date
+    base_currency: str
+    calculation_status: Literal["partial", "not_available"]
+    total_unrealized_pnl: float | None
     components: PortfolioAttributionComponent
+    opportunity_cost: float | None
+    activity_by_currency: dict[str, PortfolioTransactionActivityRead]
     attribution_by_sector: dict[str, float]
     attribution_by_geography: dict[str, float]
     attribution_by_asset_type: dict[str, float]
+    warnings: list[str]
 
 
 class PortfolioAnalyticsRead(BaseModel):

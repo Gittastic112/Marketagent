@@ -74,7 +74,7 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
 
       {analytics && (
         <section id="analytics" style={{ marginBottom: "2rem" }}>
-          <Panel title="Advanced Attribution & Risk Analytics">
+          <Panel title="Portfolio Risk, Activity & Attribution">
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem" }}>
               {/* High-level stats */}
               <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
@@ -100,17 +100,17 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
                   <span style={{ fontSize: "1.2rem", fontWeight: 600 }}>
                     {analytics.opportunity_cost !== null
                       ? numberText(analytics.opportunity_cost)
-                      : "N/A"}
+                      : "Not configured"}
                   </span>
-                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginLeft: "0.5rem" }}>Opp Cost</span>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>Requires a selected benchmark series.</div>
                 </div>
                 <div>
                   <span style={{ fontSize: "1.2rem", fontWeight: 600 }}>
                     {analytics.fx_impact !== null && analytics.fx_impact !== undefined
                       ? numberText(analytics.fx_impact)
-                      : "N/A"}
+                      : "Not configured"}
                   </span>
-                  <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginLeft: "0.5rem" }}>FX Impact</span>
+                  <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>Requires historical FX rates.</div>
                 </div>
               </div>
             </div>
@@ -161,29 +161,78 @@ export default async function PortfolioDetailPage({ params }: { params: Promise<
 
             {attribution && (
               <div style={{ marginTop: "2rem" }}>
-                <h3 style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Performance Attribution</h3>
+                <h3 style={{ fontSize: "1.1rem", marginBottom: "0.5rem" }}>Recorded Activity & Unrealized Change</h3>
+                <p style={{ color: "var(--text-secondary)", marginTop: 0 }}>
+                  Partial calculation as of {attribution.as_of_date}. Transaction activity remains separated by currency.
+                </p>
+                {attribution.warnings.length > 0 && (
+                  <div style={{ marginBottom: "1rem" }}>
+                    {attribution.warnings.map((warning) => (
+                      <div key={warning} style={{ color: "var(--warning)", fontSize: "0.85rem", marginTop: "0.25rem" }}>⚠️ {warning}</div>
+                    ))}
+                  </div>
+                )}
                 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: "1rem" }}>
                   <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Price Movement</div>
-                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.price_movement)}</div>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Unrealized Change Since Average Cost</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>
+                      {attribution.components.price_movement !== null
+                        ? `${attribution.base_currency} ${numberText(attribution.components.price_movement)}`
+                        : "Not available"}
+                    </div>
                   </div>
                   <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
                     <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>FX Impact</div>
-                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.fx_impact)}</div>
-                  </div>
-                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Dividends</div>
-                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.dividends)}</div>
-                  </div>
-                  <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px" }}>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Fees</div>
-                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.components.fees)}</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>
+                      {attribution.components.fx_impact !== null
+                        ? `${attribution.base_currency} ${numberText(attribution.components.fx_impact)}`
+                        : "Not configured"}
+                    </div>
                   </div>
                   <div style={{ padding: "1rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "8px", borderLeft: "4px solid var(--primary)" }}>
-                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Total PnL</div>
-                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>{numberText(attribution.total_unrealized_pnl)}</div>
+                    <div style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginBottom: "0.2rem" }}>Total Unrealized P&amp;L</div>
+                    <div style={{ fontSize: "1.2rem", fontWeight: 600 }}>
+                      {attribution.total_unrealized_pnl !== null
+                        ? `${attribution.base_currency} ${numberText(attribution.total_unrealized_pnl)}`
+                        : "Not available"}
+                    </div>
                   </div>
                 </div>
+
+                {Object.entries(attribution.activity_by_currency).length > 0 ? (
+                  <div className="table-wrap" style={{ marginTop: "1rem" }}>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Currency</th>
+                          <th>Purchases</th>
+                          <th>Sales</th>
+                          <th>Dividends</th>
+                          <th>Deposits</th>
+                          <th>Withdrawals</th>
+                          <th>Fees</th>
+                          <th>Taxes</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {Object.entries(attribution.activity_by_currency).map(([currency, activity]) => (
+                          <tr key={currency}>
+                            <td><strong>{currency}</strong></td>
+                            <td>{numberText(activity.purchases)}</td>
+                            <td>{numberText(activity.sales)}</td>
+                            <td>{numberText(activity.dividends)}</td>
+                            <td>{numberText(activity.deposits)}</td>
+                            <td>{numberText(activity.withdrawals)}</td>
+                            <td>{numberText(activity.fees)}</td>
+                            <td>{numberText(activity.taxes)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <EmptyState label="No recorded transactions are available for this attribution date." />
+                )}
               </div>
             )}
           </Panel>
