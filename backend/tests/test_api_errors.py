@@ -9,6 +9,7 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from helpers import response_data
 
 
 @pytest.fixture
@@ -42,7 +43,7 @@ def test_duplicate_company_ticker_returns_conflict(client: TestClient) -> None:
     response = client.post("/companies", json={"ticker": "AAPL", "name": "Apple Duplicate"})
 
     assert response.status_code == 409
-    assert response.json()["detail"] == "Company ticker AAPL already exists"
+    assert response.json()["detail"] == "Company identity US/-/AAPL already exists"
 
 
 def test_duplicate_source_name_returns_conflict(client: TestClient) -> None:
@@ -55,7 +56,9 @@ def test_duplicate_source_name_returns_conflict(client: TestClient) -> None:
 
 
 def test_duplicate_raw_document_hash_returns_conflict(client: TestClient) -> None:
-    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    source_response = client.post("/sources", json={"name": "Manual", "source_type": "manual"})
+    assert source_response.status_code == 201
+    source = response_data(source_response)
     payload = {
         "source_id": source["id"],
         "document_type": "manual_note",
@@ -121,8 +124,12 @@ def test_thesis_note_requires_existing_company(client: TestClient) -> None:
 
 
 def test_delete_company_with_linked_records_returns_clear_conflict(client: TestClient) -> None:
-    company = client.post("/companies", json={"ticker": "AAPL", "name": "Apple Inc."}).json()
-    source = client.post("/sources", json={"name": "SEC EDGAR", "source_type": "sec"}).json()
+    company_response = client.post("/companies", json={"ticker": "AAPL", "name": "Apple Inc."})
+    source_response = client.post("/sources", json={"name": "SEC EDGAR", "source_type": "sec"})
+    assert company_response.status_code == 201
+    assert source_response.status_code == 201
+    company = response_data(company_response)
+    source = response_data(source_response)
     client.post(
         "/raw-documents",
         json={
@@ -144,7 +151,9 @@ def test_delete_company_with_linked_records_returns_clear_conflict(client: TestC
 
 
 def test_delete_source_with_linked_documents_returns_clear_conflict(client: TestClient) -> None:
-    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
+    source_response = client.post("/sources", json={"name": "Manual", "source_type": "manual"})
+    assert source_response.status_code == 201
+    source = response_data(source_response)
     client.post(
         "/raw-documents",
         json={
@@ -162,8 +171,10 @@ def test_delete_source_with_linked_documents_returns_clear_conflict(client: Test
 
 
 def test_delete_raw_document_with_linked_events_returns_clear_conflict(client: TestClient) -> None:
-    source = client.post("/sources", json={"name": "Manual", "source_type": "manual"}).json()
-    document = client.post(
+    source_response = client.post("/sources", json={"name": "Manual", "source_type": "manual"})
+    assert source_response.status_code == 201
+    source = response_data(source_response)
+    document_response = client.post(
         "/raw-documents",
         json={
             "source_id": source["id"],
@@ -171,7 +182,9 @@ def test_delete_raw_document_with_linked_events_returns_clear_conflict(client: T
             "title": "Manual note",
             "content_hash": "delete-document-linked-event",
         },
-    ).json()
+    )
+    assert document_response.status_code == 201
+    document = response_data(document_response)
     client.post(
         "/events",
         json={
@@ -189,14 +202,16 @@ def test_delete_raw_document_with_linked_events_returns_clear_conflict(client: T
 
 
 def test_delete_event_with_linked_alerts_returns_clear_conflict(client: TestClient) -> None:
-    event = client.post(
+    event_response = client.post(
         "/events",
         json={
             "event_type": "manual_event",
             "information_speed": "medium",
             "title": "Linked event",
         },
-    ).json()
+    )
+    assert event_response.status_code == 201
+    event = response_data(event_response)
     client.post(
         "/alerts",
         json={

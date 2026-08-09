@@ -42,15 +42,25 @@ from app.models import (
 ModelT = TypeVar("ModelT")
 
 
-def get_or_404(db: Session, model: type[ModelT], item_id: int) -> ModelT:
-    item = db.get(model, item_id)
+def get_or_404(db: Session, model: type[ModelT], item_id: int, **kwargs) -> ModelT:
+    if kwargs:
+        from sqlalchemy import select
+        query = select(model).where(model.id == item_id)
+        for k, v in kwargs.items():
+            query = query.where(getattr(model, k) == v)
+        item = db.scalar(query)
+    else:
+        item = db.get(model, item_id)
+
     if item is None:
         raise HTTPException(status_code=404, detail="Record not found")
     return item
 
 
-def create_record(db: Session, model: type[ModelT], payload: object) -> ModelT:
-    record = model(**payload.model_dump())
+def create_record(db: Session, model: type[ModelT], payload: object, **kwargs) -> ModelT:
+    data = payload.model_dump()
+    data.update(kwargs)
+    record = model(**data)
     db.add(record)
     commit_or_conflict(db)
     db.refresh(record)
