@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
-import type { NarrativeCluster, NarrativeClaim, NarrativeMention, SocialPost } from "@/lib/api";
-import { createNarrativeCluster, createNarrativeClaim, deleteNarrativeClusterWithState } from "@/app/actions";
+import { DataStateNotices, PrototypeBadge } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
+import type { NarrativeCluster, NarrativeClaim, NarrativeMention, EventRecord } from "@/lib/api";
+import { createNarrativeCluster, createNarrativeClaim, deleteNarrativeClusterWithState, extractNarratives } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextField, TextAreaField } from "@/components/form-fields";
+import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 
 export const dynamic = "force-dynamic";
 
@@ -14,27 +16,61 @@ function formatDate(iso: string) {
 
 export default async function NarrativesPage() {
   try {
-    const [clusters, posts] = await Promise.all([
-      fetchApi<NarrativeCluster[]>("/narrative-clusters"),
-      fetchApi<SocialPost[]>("/social-posts").catch(() => []),
+    const [clustersRes, eventsRes] = await Promise.all([
+      serverFetchApiResponse<NarrativeCluster[]>("/narrative-clusters"),
+      serverFetchApiResponse<EventRecord[]>("/events").catch(() => ({ data: [], meta: null })),
     ]);
+    const clusters = clustersRes.data || [];
+    const events = eventsRes.data || [];
+    const narrativeMetas = [clustersRes.meta, eventsRes.meta];
 
     // Fetch claims and mentions for each cluster
     const clusterDetails = await Promise.all(
       clusters.map(async (cluster) => {
-        const [claims, mentions] = await Promise.all([
-          fetchApi<NarrativeClaim[]>(`/narrative-claims?cluster_id=${cluster.id}`).catch(() => []),
-          fetchApi<NarrativeMention[]>(`/narrative-mentions?cluster_id=${cluster.id}`).catch(() => []),
+        const [claimsRes, mentionsRes] = await Promise.all([
+          serverFetchApiResponse<NarrativeClaim[]>(`/narrative-claims?cluster_id=${cluster.id}`).catch(() => ({ data: [], meta: null })),
+          serverFetchApiResponse<NarrativeMention[]>(`/narrative-mentions?cluster_id=${cluster.id}`).catch(() => ({ data: [], meta: null })),
         ]);
+        const claims = claimsRes.data || [];
+        const mentions = mentionsRes.data || [];
+        narrativeMetas.push(claimsRes.meta, mentionsRes.meta);
         return { cluster, claims, mentions };
       })
     );
 
-    const postsById = new Map(posts.map((p) => [p.id, p]));
+    const eventsById = new Map(events.map((e) => [e.id, e]));
 
     return (
       <>
-        <PageHeader eyebrow="Market Stories" title="Narrative Intelligence" status={`${clusters.length} active narratives`} />
+        <PageHeader eyebrow="Market Stories" title="Narrative Intelligence" badge={<PrototypeBadge />} status={`${clusters.length} active narratives`} />
+        <DataStateNotices
+          metas={narrativeMetas}
+          mockMessage="One or more narrative panels are using mock data. Treat affected narrative claims as placeholders."
+        />
+
+        {/* Action Panel */}
+        <Panel title="Automated Extraction">
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <h3 style={{ margin: "0 0 0.5rem 0" }}>Automated Extraction</h3>
+              <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+                Extract narratives from recent events using AI.
+              </p>
+            </div>
+            <form action={extractNarratives}>
+              <label style={{ display: "flex", gap: "0.5rem", maxWidth: "28rem", marginBottom: "0.75rem", fontSize: "0.85rem" }}>
+                <input
+                  type="checkbox"
+                  name="privacy_disclosure_version"
+                  value={AI_PRIVACY_DISCLOSURE_VERSION}
+                  required
+                />
+                <span>{AI_DISCLOSURES.narrativeExtraction}</span>
+              </label>
+              <button type="submit" className="button">Run Narrative Extraction</button>
+            </form>
+          </div>
+        </Panel>
 
         {/* Create New Narrative Cluster */}
         <Panel title="Track a New Narrative">
@@ -66,7 +102,7 @@ export default async function NarrativesPage() {
                       <span>{mentions.length} mention{mentions.length !== 1 ? "s" : ""}</span>
                     </div>
                   </div>
-                  <DeleteRecordForm action={deleteNarrativeClusterWithState} id={cluster.id} />
+                  <DeleteRecordForm action={deleteNarrativeClusterWithState} recordId={cluster.id} />
                 </div>
 
                 {/* Claims Section */}
@@ -113,23 +149,23 @@ export default async function NarrativesPage() {
                     Linked Mentions
                   </h4>
                   {mentions.length === 0 ? (
-                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontStyle: "italic" }}>No mentions linked yet. Import social posts and link them to this narrative.</p>
+                    <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontStyle: "italic" }}>No mentions linked yet. Import events and link them to this narrative.</p>
                   ) : (
                     <div className="brief-list">
                       {mentions.map((mention) => {
-                        const post = postsById.get(mention.post_id);
+                        const event = eventsById.get(mention.event_id);
                         return (
                           <div key={mention.id} className="brief-item" style={{ padding: "0.5rem 0", borderBottom: "1px solid var(--border-color)" }}>
-                            {post ? (
+                            {event ? (
                               <>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                  <strong style={{ fontSize: "0.85rem" }}>{post.platform} - {post.author || "Unknown"}</strong>
-                                  <span className="badge">{post.platform}</span>
+                                  <strong style={{ fontSize: "0.85rem" }}>{event.event_type} - {event.title}</strong>
+                                  <span className="badge">{event.impact_score}/10</span>
                                 </div>
                                 {mention.context_text && <p style={{ fontSize: "0.85rem", margin: "0.25rem 0 0 0" }}>{mention.context_text}</p>}
                               </>
                             ) : (
-                              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Post #{mention.post_id} (context: {mention.context_text || "none"})</p>
+                              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Event #{mention.event_id} (context: {mention.context_text || "none"})</p>
                             )}
                             <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>Added {formatDate(mention.created_at)}</span>
                           </div>

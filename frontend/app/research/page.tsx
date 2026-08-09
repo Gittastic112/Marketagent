@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { PageHeader, Panel, ErrorState, EmptyState } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { RawDocument, EventRecord, ThesisNote } from "@/lib/api";
 
 function formatDate(isoString: string) {
@@ -9,11 +10,14 @@ function formatDate(isoString: string) {
 
 export default async function ResearchPage() {
   try {
-    const [documents, events, thesisNotes] = await Promise.all([
-      fetchApi<RawDocument[]>("/raw-documents").catch(() => []),
-      fetchApi<EventRecord[]>("/events").catch(() => []),
-      fetchApi<ThesisNote[]>("/thesis-notes").catch(() => [])
+    const [documentsRes, eventsRes, thesisNotesRes] = await Promise.all([
+      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<EventRecord[]>("/events").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<ThesisNote[]>("/thesis-notes").catch(() => ({ data: [], meta: null }))
     ]);
+    const documents = documentsRes.data || [];
+    const events = eventsRes.data || [];
+    const thesisNotes = thesisNotesRes.data || [];
 
     const recentDocuments = documents.slice(0, 5);
     const recentEvents = events.slice(0, 5);
@@ -22,7 +26,11 @@ export default async function ResearchPage() {
     return (
       <>
         <PageHeader eyebrow="Source-backed evidence" title="Research Hub" />
-        
+        <DataStateNotices
+          metas={[documentsRes.meta, eventsRes.meta, thesisNotesRes.meta]}
+          mockMessage="One or more research panels are using mock data. Treat affected evidence as placeholder material."
+        />
+
         <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
           <Link href="/research/sessions" className="secondary-button" style={{ backgroundColor: "var(--accent-color)", color: "white" }}>AI Sessions</Link>
           <Link href="/documents" className="secondary-button">All Documents</Link>
@@ -32,7 +40,7 @@ export default async function ResearchPage() {
         </div>
 
         <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "1.5rem" }}>
-          
+
           <Panel title="Recent Source Documents">
             {recentDocuments.length === 0 ? (
               <EmptyState label="No documents ingested yet." />
@@ -44,7 +52,7 @@ export default async function ResearchPage() {
                       <strong>{doc.url ? <a href={doc.url} target="_blank" rel="noopener noreferrer">{doc.title}</a> : doc.title}</strong>
                       <span className="badge">{doc.document_type}</span>
                     </div>
-                    {doc.published_at && <p className="muted" style={{ margin: "0.25rem 0 0 0", fontSize: "0.8rem" }}>Published: {formatDate(doc.published_at)}</p>}
+
                     <div style={{ marginTop: "0.5rem" }}>
                       <Link href={`/documents/${doc.id}/sections`} style={{ fontSize: "0.85rem", marginRight: "0.75rem" }}>View Sections</Link>
                       <Link href={`/documents/${doc.id}/ai`} style={{ fontSize: "0.85rem" }}>AI Summaries</Link>
@@ -69,7 +77,7 @@ export default async function ResearchPage() {
                       </span>
                     </div>
                     {evt.description && <p style={{ fontSize: "0.9rem", margin: "0.5rem 0 0 0" }}>{evt.description}</p>}
-                    {evt.event_date && <p className="muted" style={{ margin: "0.25rem 0 0 0", fontSize: "0.8rem" }}>Date: {formatDate(evt.event_date)}</p>}
+
                   </div>
                 ))}
               </div>

@@ -4,21 +4,31 @@ import { SelectField, TextAreaField, TextField } from "@/components/form-fields"
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
 import { ScoreBreakdown } from "@/components/score-breakdown";
-import { fetchApi } from "@/lib/api";
+import { DcfImpactPredictor } from "@/components/dcf-impact-predictor";
+import { DataStateNotices, ConfidenceIndicator, SourceBadge } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, EventRecord, RawDocument, ScoringConfig } from "@/lib/api";
 
 export default async function EventsPage() {
   try {
-    const [events, companies, documents, scoringConfig] = await Promise.all([
-      fetchApi<EventRecord[]>("/events"),
-      fetchApi<Company[]>("/companies"),
-      fetchApi<RawDocument[]>("/raw-documents"),
-      fetchApi<ScoringConfig>("/scoring-config").catch(() => ({ id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 }))
+    const [eventsRes, companiesRes, documentsRes, scoringConfigRes] = await Promise.all([
+      serverFetchApiResponse<EventRecord[]>("/events"),
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries"),
+      serverFetchApiResponse<ScoringConfig>("/scoring-config").catch(() => ({ data: { id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 }, meta: null }))
     ]);
+    const events = eventsRes.data || [];
+    const companies = companiesRes.data || [];
+    const documents = documentsRes.data || [];
+    const scoringConfig = scoringConfigRes.data || { id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 };
 
     return (
       <>
         <PageHeader eyebrow="Normalized signal" title="Events" status={`${events.length} events`} />
+        <DataStateNotices
+          metas={[eventsRes.meta, companiesRes.meta, documentsRes.meta, scoringConfigRes.meta]}
+          mockMessage="One or more event inputs are using mock data. Treat affected scores and signals as placeholders."
+        />
         <Panel title="Extract Events">
           <form action={extractEvents} className="brief-list">
             <div className="brief-item">
@@ -70,6 +80,7 @@ export default async function EventsPage() {
                     <th>Title</th>
                     <th>Type</th>
                     <th>Speed</th>
+                    <th>Source</th>
                     <th>Credibility</th>
                     <th>Novelty</th>
                     <th>Impact</th>
@@ -83,7 +94,21 @@ export default async function EventsPage() {
                       <td>{event.title}</td>
                       <td>{event.event_type}</td>
                       <td>{event.information_speed}</td>
-                      <td>{event.credibility_score ?? "-"}</td>
+                      <td>
+                        <SourceBadge source={
+                          documents.find(d => d.id === event.raw_document_id)?.document_type?.replace("_", " ") || "manual"
+                        } />
+                      </td>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                          <span>{event.credibility_score ?? "-"}</span>
+                          <ConfidenceIndicator level={
+                            event.credibility_score === null ? "none" :
+                            event.credibility_score >= 70 ? "high" :
+                            event.credibility_score >= 40 ? "medium" : "low"
+                          } />
+                        </div>
+                      </td>
                       <td>{event.novelty_score ?? "-"}</td>
                       <td>{event.impact_score ?? "-"}</td>
                       <td>{event.priority_score ?? "-"}</td>
@@ -91,7 +116,7 @@ export default async function EventsPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Score Breakdown</summary>
-                            <ScoreBreakdown event={event} config={scoringConfig} />
+                            <ScoreBreakdown score={event.priority_score ?? 0} explanation={event.score_explanation_json} />
                             <div style={{ marginTop: "0.75rem" }}>
                               <ScoreExplanationView explanation={event.score_explanation_json} />
                             </div>
@@ -130,6 +155,10 @@ export default async function EventsPage() {
                             </form>
                           </details>
                           <details className="edit-panel">
+                            <summary>DCF Impact Prediction</summary>
+                            <DcfImpactPredictor eventId={event.id} eventText={`${event.title}\n${event.description || ""}`} />
+                          </details>
+                          <details className="edit-panel">
                             <summary>Corroboration & Contradiction</summary>
                             <div className="section-block">
                               <h4>Corroborating Events</h4>
@@ -160,7 +189,7 @@ export default async function EventsPage() {
                                 <button type="submit" className="secondary-button text-sm">Add Corroboration</button>
                               </form>
                             </div>
-                            
+
                             <div className="section-block mt-4">
                               <h4>Contradicting Events</h4>
                               {event.contradicts && event.contradicts.length > 0 ? (

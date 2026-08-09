@@ -1,9 +1,12 @@
 import Link from "next/link";
-import { PageHeader, Panel } from "@/components/page";
+import { MockDataState, PageHeader, Panel } from "@/components/page";
 import { fetchRssFeed, fetchRecentSecFilings } from "@/app/actions";
 import { SelectField, TextField, CheckboxField } from "@/components/form-fields";
-import { fetchApi } from "@/lib/api";
-import type { Company, Source } from "@/lib/api";
+import { SourceCapabilityMatrix } from "@/components/source-capability-matrix";
+import { StaleDataBanner } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
+import { summarizeApiMetas } from "@/lib/data-state-meta";
+import type { Company, Source, SourceCapability } from "@/lib/api";
 
 function sourceOptions(sources: Source[]) {
   return sources.map((source) => (
@@ -22,15 +25,42 @@ function companyOptions(companies: Company[]) {
 }
 
 export default async function DataPage() {
-  const [companies, sources] = await Promise.all([
-    fetchApi<Company[]>("/companies").catch(() => []),
-    fetchApi<Source[]>("/sources").catch(() => [])
+  const [companiesRes, sourcesRes] = await Promise.all([
+    serverFetchApiResponse<Company[]>("/companies").catch(() => ({ data: [], meta: null })),
+    serverFetchApiResponse<Source[]>("/sources").catch(() => ({ data: [], meta: null }))
+  ]);
+  const [usCapabilitiesRes, indiaCapabilitiesRes] = await Promise.all([
+    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=US").catch(() => ({ data: [], meta: null })),
+    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=IN").catch(() => ({ data: [], meta: null }))
+  ]);
+  const companies = companiesRes.data || [];
+  const sources = sourcesRes.data || [];
+  const activeRssSources = sources.filter((source) => source.active && source.source_type === "rss");
+  const preferredSecSource = sources.find(
+    (source) => source.active && (source.source_type === "sec" || source.source_type === "filing")
+  );
+  const secCompanies = companies.filter(
+    (company) => company.active && company.market !== "IN" && Boolean(company.cik)
+  );
+  const usCapabilities = usCapabilitiesRes.data || [];
+  const indiaCapabilities = indiaCapabilitiesRes.data || [];
+  const dataState = summarizeApiMetas([
+    companiesRes.meta,
+    sourcesRes.meta,
+    usCapabilitiesRes.meta,
+    indiaCapabilitiesRes.meta
   ]);
 
   return (
     <>
       <PageHeader eyebrow="Data & APIs" title="Data Management" />
-      
+      {dataState.someStale && <StaleDataBanner />}
+      {dataState.hasMock && <MockDataState message="One or more data management panels are using mock data. Configure real sources before relying on those workflows." />}
+
+      <Panel title="US / India Source Capability Matrix">
+        <SourceCapabilityMatrix usCapabilities={usCapabilities} indiaCapabilities={indiaCapabilities} />
+      </Panel>
+
       <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
         <Panel title="Sources">
           <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
@@ -42,7 +72,7 @@ export default async function DataPage() {
             </Link>
           </div>
         </Panel>
-        
+
         <Panel title="Market Prices">
           <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
             View and manage manual or imported market prices.
@@ -69,9 +99,9 @@ export default async function DataPage() {
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <Panel title="Fetch RSS Feed">
           <form action={fetchRssFeed} className="form-grid">
-            <SelectField disabled={sources.length === 0} id="rss-feed-source-id" label="Source" name="source_id" required>
+            <SelectField disabled={activeRssSources.length === 0} id="rss-feed-source-id" label="Source" name="source_id" required>
               <option value="">Select RSS source</option>
-              {sourceOptions(sources)}
+              {sourceOptions(activeRssSources)}
             </SelectField>
             <SelectField id="rss-feed-company-id" label="Company" name="company_id">
               <option value="">Infer from title</option>
@@ -79,20 +109,21 @@ export default async function DataPage() {
             </SelectField>
             <TextField className="field field-wide" id="feed-url" label="Feed URL" name="feed_url" placeholder="Uses source Base URL if blank" type="url" />
             <div className="button-row">
-              <button disabled={sources.length === 0} type="submit">Fetch RSS feed</button>
+              <button disabled={activeRssSources.length === 0} type="submit">Fetch RSS feed</button>
             </div>
           </form>
         </Panel>
 
         <Panel title="Fetch Recent SEC Filings">
           <form action={fetchRecentSecFilings} className="form-grid">
-            <SelectField disabled={sources.length === 0} id="sec-fetch-source-id" label="Source" name="source_id" required>
-              <option value="">Select SEC source</option>
-              {sourceOptions(sources)}
-            </SelectField>
-            <SelectField disabled={companies.length === 0} id="sec-fetch-company-id" label="Company" name="company_id" required>
+            {preferredSecSource && <input name="source_id" type="hidden" value={preferredSecSource.id} />}
+            <div className="field">
+              <span className="field-label">SEC Source</span>
+              <strong>{preferredSecSource?.name ?? "SEC EDGAR (automatic)"}</strong>
+            </div>
+            <SelectField disabled={secCompanies.length === 0} id="sec-fetch-company-id" label="Company" name="company_id" required>
               <option value="">Select company with CIK</option>
-              {companyOptions(companies)}
+              {companyOptions(secCompanies)}
             </SelectField>
             <TextField defaultValue="40" id="sec-fetch-limit" label="Limit" min="1" name="limit" type="number" />
             <SelectField defaultValue="" id="sec-fetch-form-type" label="Form" name="form_type">
@@ -104,7 +135,7 @@ export default async function DataPage() {
             <TextField id="sec-fetch-filing-year" label="Filing Year" min="1994" name="filing_year" placeholder="Optional" type="number" />
             <CheckboxField checkboxLabel="Download filing text" className="field field-wide" id="sec-fetch-download-text" label="Filing Text" name="download_text" />
             <div className="button-row">
-              <button disabled={sources.length === 0 || companies.length === 0} type="submit">Fetch recent SEC filings</button>
+              <button disabled={secCompanies.length === 0} type="submit">Fetch recent SEC filings</button>
             </div>
           </form>
         </Panel>

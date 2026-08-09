@@ -3,20 +3,28 @@ import { createThesisNote, deleteThesisNoteWithState, updateThesisNote } from "@
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices, ReviewStateBadge } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, ThesisNote } from "@/lib/api";
 
 export default async function ThesisNotesPage() {
   try {
-    const [thesisNotes, companies] = await Promise.all([
-      fetchApi<ThesisNote[]>("/thesis-notes"),
-      fetchApi<Company[]>("/companies")
+    const [notesRes, companiesRes] = await Promise.all([
+      serverFetchApiResponse<ThesisNote[]>("/thesis-notes"),
+      serverFetchApiResponse<Company[]>("/companies")
     ]);
+    const thesisNotes = notesRes.data || [];
+    const companies = companiesRes.data || [];
     const companiesById = new Map(companies.map((c) => [c.id, c]));
 
     return (
       <>
         <PageHeader eyebrow="Research memory" title="Thesis Notes" status={`${thesisNotes.length} notes`} />
+        <DataStateNotices
+          metas={[notesRes.meta, companiesRes.meta]}
+          partialMessage="Company linkages failed to load. Thesis notes may display missing company names."
+          mockMessage="Thesis note data is mocked. Treat affected thesis state as placeholder material."
+        />
         <Panel title="Add Thesis Note">
           <form action={createThesisNote} className="form-grid">
             <SelectField disabled={companies.length === 0} id="company_id" label="Company" name="company_id" required>
@@ -51,6 +59,7 @@ export default async function ThesisNotesPage() {
                     <th>Company</th>
                     <th>Status</th>
                     <th>Drift</th>
+                    <th>Review</th>
                     <th>Text</th>
                     <th>Action</th>
                   </tr>
@@ -72,6 +81,9 @@ export default async function ThesisNotesPage() {
                         </td>
                         <td>
                           <span className={driftBadge}>{note.thesis_drift_score.toFixed(2)}</span>
+                        </td>
+                        <td>
+                          <ReviewStateBadge state={note.thesis_drift_score > 0.5 ? "needs_review" : "reviewed"} />
                         </td>
                         <td style={{ maxWidth: "260px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {note.thesis_text}

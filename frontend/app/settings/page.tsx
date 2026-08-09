@@ -1,18 +1,20 @@
 import { updateScoringConfig } from "@/app/actions";
 import { TextField } from "@/components/form-fields";
-import { PageHeader, Panel } from "@/components/page";
+import { ErrorState, PageHeader, Panel } from "@/components/page";
 import { CsvUploadForm } from "@/components/csv-upload-form";
-import { fetchApi, fetchOAuthStatus } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
 import type { ScoringConfig, TokenStatusResponse } from "@/lib/api";
+import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 
 export default async function SettingsPage() {
-  const config = await fetchApi<ScoringConfig>("/scoring-config");
-  
+  const configRes = await serverFetchApiResponse<ScoringConfig>("/scoring-config");
+  const config = configRes.data;
+
   // Fetch OAuth status, handle potential 500 if ENCRYPTION_KEY is missing
   let oauthStatus: TokenStatusResponse[] = [];
   let encryptionError = false;
   try {
-    oauthStatus = await fetchOAuthStatus();
+    oauthStatus = await serverFetchApi<TokenStatusResponse[]>("/oauth/status");
   } catch (e) {
     encryptionError = true;
   }
@@ -20,17 +22,21 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeader eyebrow="System configuration" title="Settings" />
+      <DataStateNotices
+        metas={[configRes.meta]}
+        mockMessage="Scoring configuration is mocked. Do not rely on it for production scoring behavior."
+      />
 
       <Panel title="Integrations & Security">
         <p className="text-sm text-gray-500 mb-4">
-          Manage secure connections to external providers. 
+          Manage secure connections to external providers.
           Broker sync is planned for a future phase once this foundation is fully verified.
         </p>
-        
+
         {encryptionError ? (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
             <p className="text-sm text-red-700">
-              <strong>Encryption Key Missing:</strong> The <code>ENCRYPTION_KEY</code> environment variable is not set. 
+              <strong>Encryption Key Missing:</strong> The <code>ENCRYPTION_KEY</code> environment variable is not set.
               Tokens cannot be securely encrypted. Please generate a key and add it to your <code>.env</code> file.
             </p>
           </div>
@@ -67,47 +73,51 @@ export default async function SettingsPage() {
         <p className="text-sm text-gray-500 mb-4">
           Adjust the relative weights used to calculate the Priority Score of an event. These weights must be decimals (e.g., 0.35).
         </p>
-        <form action={updateScoringConfig} className="form-grid">
-          <TextField
-            id="weight_credibility"
-            label="Credibility Weight"
-            name="weight_credibility"
-            type="number"
-            step="0.01"
-            defaultValue={config.weight_credibility.toString()}
-            required
-          />
-          <TextField
-            id="weight_novelty"
-            label="Novelty Weight"
-            name="weight_novelty"
-            type="number"
-            step="0.01"
-            defaultValue={config.weight_novelty.toString()}
-            required
-          />
-          <TextField
-            id="weight_impact"
-            label="Impact Weight"
-            name="weight_impact"
-            type="number"
-            step="0.01"
-            defaultValue={config.weight_impact.toString()}
-            required
-          />
-          <TextField
-            id="weight_speed"
-            label="Speed Bonus Weight"
-            name="weight_speed"
-            type="number"
-            step="0.01"
-            defaultValue={config.weight_speed.toString()}
-            required
-          />
-          <div className="button-row">
-            <button type="submit">Save Settings</button>
-          </div>
-        </form>
+        {config ? (
+          <form action={updateScoringConfig} className="form-grid">
+            <TextField
+              id="weight_credibility"
+              label="Credibility Weight"
+              name="weight_credibility"
+              type="number"
+              step="0.01"
+              defaultValue={config.weight_credibility.toString()}
+              required
+            />
+            <TextField
+              id="weight_novelty"
+              label="Novelty Weight"
+              name="weight_novelty"
+              type="number"
+              step="0.01"
+              defaultValue={config.weight_novelty.toString()}
+              required
+            />
+            <TextField
+              id="weight_impact"
+              label="Impact Weight"
+              name="weight_impact"
+              type="number"
+              step="0.01"
+              defaultValue={config.weight_impact.toString()}
+              required
+            />
+            <TextField
+              id="weight_speed"
+              label="Speed Bonus Weight"
+              name="weight_speed"
+              type="number"
+              step="0.01"
+              defaultValue={config.weight_speed.toString()}
+              required
+            />
+            <div className="button-row">
+              <button type="submit">Save Settings</button>
+            </div>
+          </form>
+        ) : (
+          <ErrorState message="Scoring configuration is not available yet." errors={configRes.errors} />
+        )}
       </Panel>
 
       <Panel title="Data Export">

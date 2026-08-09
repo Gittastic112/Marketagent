@@ -1,9 +1,13 @@
+import Link from "next/link";
+
 import { createAlert, deleteAlertWithState, generateAlerts, reviewAlert, updateAlert } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
+import { EvidenceTrailDrawerWrapper } from "@/components/intelligence/EvidenceTrailDrawerWrapper";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices, SourceBadge } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { AlertRecord, Company, EventRecord } from "@/lib/api";
 
 const REVIEW_STATUSES = ["unreviewed", "useful", "not_useful", "false_positive", "needs_follow_up"] as const;
@@ -58,11 +62,15 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
     const rawOwned = Array.isArray(params?.owned_only) ? params.owned_only[0] : params?.owned_only;
     const ownedOnly = rawOwned === "true";
     const alertsPath = ownedOnly ? "/alerts?owned_only=true" : "/alerts";
-    const [alerts, companies, events] = await Promise.all([
-      fetchApi<AlertRecord[]>(alertsPath),
-      fetchApi<Company[]>("/companies"),
-      fetchApi<EventRecord[]>("/events")
+    const [alertsRes, companiesRes, eventsRes] = await Promise.all([
+      serverFetchApiResponse<AlertRecord[]>(alertsPath),
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<EventRecord[]>("/events")
     ]);
+    const alerts = alertsRes.data || [];
+    const companies = companiesRes.data || [];
+    const events = eventsRes.data || [];
+
     const filteredAlerts =
       selectedReviewStatus === "all" ? alerts : alerts.filter((alert) => alert.review_status === selectedReviewStatus);
     const eventsById = new Map(events.map((event) => [event.id, event]));
@@ -71,6 +79,10 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
     return (
       <>
         <PageHeader eyebrow="Review queue" title="Alerts" status={`${filteredAlerts.length} of ${alerts.length} alerts`} />
+        <DataStateNotices
+          metas={[alertsRes.meta, companiesRes.meta, eventsRes.meta]}
+          mockMessage="One or more alert inputs are using mock data. Review those alerts as placeholders, not source-backed intelligence."
+        />
         <Panel title="Generate Alerts">
           <form action={generateAlerts} className="brief-list">
             <div className="brief-item">
@@ -169,7 +181,12 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                         {alert.review_notes ? <p className="muted">{alert.review_notes}</p> : null}
                       </td>
                       <td>{alert.company_id ? (companiesById.get(alert.company_id)?.ticker ?? `#${alert.company_id}`) : "—"}</td>
-                      <td>{alert.alert_type}</td>
+                      <td>
+                        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "flex-start" }}>
+                          {alert.alert_type === "priority_event" ? <SourceBadge source="System" /> : <SourceBadge source="Manual" />}
+                          <span>{alert.alert_type}</span>
+                        </div>
+                      </td>
                       <td>{alert.severity}</td>
                       <td>{alert.confidence_bucket}</td>
                       <td>{alert.portfolio_priority_score > 0 ? alert.portfolio_priority_score.toFixed(1) : "—"}</td>
@@ -186,6 +203,8 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                       <td>{formatReviewedAt(alert.reviewed_at)}</td>
                       <td>
                         <div className="action-stack">
+                          <Link className="secondary-button" href={`/alerts/${alert.id}`}>Review alert</Link>
+                          <EvidenceTrailDrawerWrapper alertId={alert.id} />
                           <details className="edit-panel">
                             <summary>Why this score?</summary>
                             <ScoreExplanationView explanation={alert.event_id ? eventsById.get(alert.event_id)?.score_explanation_json ?? null : null} />

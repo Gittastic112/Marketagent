@@ -1,79 +1,125 @@
-import type { EventRecord, ScoringConfig } from "@/lib/api";
+"use client";
+
+import React, { useState } from "react";
+import { ScoreExplanation } from "@/lib/api";
 
 interface ScoreBreakdownProps {
-  event: EventRecord;
-  config: ScoringConfig;
+  score: number;
+  explanation: ScoreExplanation | null;
 }
 
-function ScoreBar({ label, score, weight, color }: { label: string; score: number | null; weight: number; color: string }) {
-  const value = score ?? 0;
-  const weighted = value * weight;
-  const pct = Math.min(value * 10, 100); // scores are 0-10
+export function ScoreBreakdown({ score, explanation }: ScoreBreakdownProps) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // If there's no explanation JSON, just show the score.
+  if (!explanation || !explanation.inputs) {
+    return (
+      <span className="badge" style={{ backgroundColor: "var(--surface-muted)", color: "var(--text)" }}>
+        Score: {score}
+      </span>
+    );
+  }
+
+  // Determine color based on score magnitude
+  let colorVar = "var(--text)";
+  let bgVar = "var(--surface-muted)";
+  if (score >= 80) {
+    colorVar = "var(--error)";
+    bgVar = "var(--error-bg)";
+  } else if (score >= 50) {
+    colorVar = "var(--warning)";
+    bgVar = "var(--warning-bg)";
+  } else if (score > 0) {
+    colorVar = "var(--success)";
+    bgVar = "var(--success-bg)";
+  }
 
   return (
-    <div style={{ marginBottom: "0.75rem" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.8rem", marginBottom: "0.25rem" }}>
-        <span style={{ fontWeight: 600 }}>{label}</span>
-        <span style={{ color: "var(--text-secondary)" }}>
-          {value.toFixed(1)} × {(weight * 100).toFixed(0)}% = <strong>{weighted.toFixed(2)}</strong>
-        </span>
-      </div>
-      <div style={{ height: "6px", borderRadius: "3px", backgroundColor: "var(--bg-secondary)", overflow: "hidden" }}>
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            backgroundColor: color,
-            borderRadius: "3px",
-            transition: "width 0.3s ease",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <button
+        className="badge"
+        style={{
+          backgroundColor: bgVar,
+          color: colorVar,
+          cursor: "pointer",
+          border: "1px solid currentColor",
+          padding: "0.2rem 0.5rem",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: "0.25rem"
+        }}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
+        title="View Score Details"
+      >
+        <span>{score.toFixed(1)}</span>
+        <span style={{ opacity: 0.7, fontSize: "0.8em" }}>ⓘ</span>
+      </button>
 
-export function ScoreBreakdown({ event, config }: ScoreBreakdownProps) {
-  const credibility = event.credibility_score ?? 0;
-  const novelty = event.novelty_score ?? 0;
-  const impact = event.impact_score ?? 0;
-  const speedValue = event.information_speed === "breaking" ? 10 : event.information_speed === "developing" ? 7 : event.information_speed === "stale" ? 3 : 5;
+      {isOpen && (
+        <div style={{
+          position: "absolute",
+          top: "100%",
+          left: 0,
+          marginTop: "0.5rem",
+          zIndex: 50,
+          width: "350px",
+          backgroundColor: "var(--surface)",
+          border: "1px solid var(--border)",
+          borderRadius: "0.5rem",
+          padding: "1rem",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+          fontSize: "0.85rem",
+          color: "var(--text)"
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+            <strong style={{ textTransform: "capitalize" }}>{explanation.score_name.replace(/_/g, " ")}</strong>
+            <span style={{ fontWeight: 600 }}>{explanation.value.toFixed(1)}</span>
+          </div>
 
-  const computed =
-    credibility * config.weight_credibility +
-    novelty * config.weight_novelty +
-    impact * config.weight_impact +
-    speedValue * config.weight_speed;
+          <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem", fontSize: "0.75rem" }}>
+            <span className="badge" style={{ backgroundColor: "var(--surface-muted)" }}>{explanation.label}</span>
+            <span className="badge" style={{ backgroundColor: "var(--surface-muted)" }}>{explanation.direction}</span>
+          </div>
 
-  const actual = event.priority_score;
+          <p style={{ margin: "0 0 1rem 0", color: "var(--muted)", lineHeight: 1.4 }}>
+            {explanation.summary}
+          </p>
 
-  return (
-    <div style={{ padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)", backgroundColor: "var(--bg-primary)" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "1rem" }}>
-        <h4 style={{ margin: 0, fontSize: "0.9rem", fontWeight: 600 }}>Score Breakdown</h4>
-        <div style={{ textAlign: "right" }}>
-          <span style={{ fontSize: "0.8rem", color: "var(--text-secondary)" }}>Computed: {computed.toFixed(2)}</span>
-          {actual != null && (
-            <span style={{ marginLeft: "0.75rem", fontSize: "0.8rem", color: actual !== Math.round(computed * 100) / 100 ? "var(--warning)" : "var(--success)" }}>
-              Stored: {actual}
-            </span>
-          )}
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem", textAlign: "left" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                <th style={{ padding: "0.25rem 0", fontWeight: 500, color: "var(--muted)" }}>Input</th>
+                <th style={{ padding: "0.25rem 0", fontWeight: 500, color: "var(--muted)" }}>Val</th>
+                <th style={{ padding: "0.25rem 0", fontWeight: 500, color: "var(--muted)" }}>Wgt</th>
+                <th style={{ padding: "0.25rem 0", fontWeight: 500, color: "var(--muted)" }}>Contrib</th>
+              </tr>
+            </thead>
+            <tbody>
+              {explanation.inputs.map((inp, idx) => (
+                <tr key={idx} style={{ borderBottom: "1px solid var(--border-light)" }} title={inp.explanation}>
+                  <td style={{ padding: "0.4rem 0" }}>{inp.name.replace(/_score/g, "").replace(/_/g, " ")}</td>
+                  <td style={{ padding: "0.4rem 0" }}>{inp.value.toFixed(1)}</td>
+                  <td style={{ padding: "0.4rem 0" }}>{(inp.weight * 100).toFixed(0)}%</td>
+                  <td style={{ padding: "0.4rem 0", fontWeight: 500 }}>{inp.contribution.toFixed(1)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div style={{ marginTop: "1rem", textAlign: "right" }}>
+            <button
+              className="btn btn-outline"
+              style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}
+              onClick={() => setIsOpen(false)}
+            >
+              Close
+            </button>
+          </div>
         </div>
-      </div>
-
-      <ScoreBar label="Credibility" score={event.credibility_score} weight={config.weight_credibility} color="#3b82f6" />
-      <ScoreBar label="Novelty" score={event.novelty_score} weight={config.weight_novelty} color="#8b5cf6" />
-      <ScoreBar label="Impact" score={event.impact_score} weight={config.weight_impact} color="#f59e0b" />
-      <ScoreBar label="Speed" score={speedValue} weight={config.weight_speed} color="#10b981" />
-
-      <div style={{ marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid var(--border-color)" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem" }}>
-          <span style={{ fontWeight: 600 }}>Formula</span>
-          <span style={{ color: "var(--text-secondary)", fontFamily: "monospace", fontSize: "0.75rem" }}>
-            ({credibility.toFixed(1)} × {config.weight_credibility}) + ({novelty.toFixed(1)} × {config.weight_novelty}) + ({impact.toFixed(1)} × {config.weight_impact}) + ({speedValue} × {config.weight_speed})
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }

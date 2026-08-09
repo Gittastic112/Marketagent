@@ -13,23 +13,30 @@ import Link from "next/link";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices, DataFreshnessIndicator } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction, PortfolioValuation, PortfolioAnalytics } from "@/lib/api";
 import { PortfolioAnalyticsDashboard } from "@/components/portfolio-analytics";
 import { CsvImporter } from "@/components/csv-importer";
 
-const transactionTypes = [
+const securityTransactionTypes = [
   "buy",
   "sell",
   "dividend",
   "split",
   "bonus",
-  "deposit",
-  "withdrawal",
-  "fee",
-  "tax",
   "manual_adjustment"
 ];
+
+const cashTransactionTypes = ["deposit", "withdrawal", "fee", "tax"];
+const transactionTypes = [...securityTransactionTypes, ...cashTransactionTypes];
+
+function transactionTypeLabel(transactionType: string): string {
+  return transactionType
+    .split("_")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
 function numberText(value: number): string {
   return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
@@ -86,21 +93,27 @@ function CompanySelect({
 
 export default async function PortfolioPage() {
   try {
-    const [portfolios, holdings, transactions, companies] = await Promise.all([
-      fetchApi<Portfolio[]>("/portfolios"),
-      fetchApi<PortfolioHolding[]>("/portfolio-holdings"),
-      fetchApi<PortfolioTransaction[]>("/portfolio-transactions"),
-      fetchApi<Company[]>("/companies")
+    const [portfoliosRes, holdingsRes, transactionsRes, companiesRes] = await Promise.all([
+      serverFetchApiResponse<Portfolio[]>("/portfolios"),
+      serverFetchApiResponse<PortfolioHolding[]>("/portfolio-holdings"),
+      serverFetchApiResponse<PortfolioTransaction[]>("/portfolio-transactions"),
+      serverFetchApiResponse<Company[]>("/companies")
     ]);
+    const portfolios = portfoliosRes.data || [];
+    const holdings = holdingsRes.data || [];
+    const transactions = transactionsRes.data || [];
+    const companies = companiesRes.data || [];
+
     const today = new Date().toISOString().slice(0, 10);
     const portfoliosById = new Map(portfolios.map((portfolio) => [portfolio.id, portfolio]));
     const companiesById = new Map(companies.map((company) => [company.id, company]));
 
-    const valuations = await Promise.all(
+    const valuationsRes = await Promise.all(
       portfolios.map((portfolio) =>
-        fetchApi<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => null)
+        serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => ({ data: null, meta: null }))
       )
     );
+    const valuations = valuationsRes.map(res => res.data);
     const valuationsById = new Map(
       valuations.filter(Boolean).map((v) => [v!.portfolio_id, v!])
     );
@@ -111,12 +124,21 @@ export default async function PortfolioPage() {
       return val.holdings.find(h => h.holding_id === holdingId) || null;
     };
 
-    const analyticsResults = await Promise.all(
+    const analyticsRes = await Promise.all(
       portfolios.map((portfolio) =>
-        fetchApi<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => null)
+        serverFetchApiResponse<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => ({ data: null, meta: null }))
       )
     );
+    const analyticsResults = analyticsRes.map(res => res.data);
     const validAnalytics = analyticsResults.filter((a): a is PortfolioAnalytics => a !== null);
+    const dataStateMetas = [
+      portfoliosRes.meta,
+      holdingsRes.meta,
+      transactionsRes.meta,
+      companiesRes.meta,
+      ...valuationsRes.map((res) => res.meta),
+      ...analyticsRes.map((res) => res.meta)
+    ];
 
     return (
       <>
@@ -124,6 +146,10 @@ export default async function PortfolioPage() {
           <Link href="/portfolio">← Back to Portfolio Monitoring</Link>
         </div>
         <PageHeader eyebrow="Portfolio Management" title="Manage Data" status={`${portfolios.length} portfolios`} />
+        <DataStateNotices
+          metas={dataStateMetas}
+          mockMessage="One or more portfolio management panels are using mock data. Do not treat affected values as live holdings or transactions."
+        />
 
         <Panel title="Add Portfolio">
           <form action={createPortfolio} className="form-grid">
@@ -136,7 +162,7 @@ export default async function PortfolioPage() {
           </form>
         </Panel>
 
-        <Panel title="Add Holding">
+        <Panel title="Set Opening Holding">
           <form action={createPortfolioHolding} className="form-grid">
             <PortfolioSelect id="holding-portfolio-id" portfolios={portfolios} />
             <CompanySelect companies={companies} id="holding-company-id" />
@@ -146,20 +172,20 @@ export default async function PortfolioPage() {
             <TextField id="holding-average-cost" label="Average Cost" min="0" name="average_cost" required step="0.000001" type="number" />
             <TextField defaultValue={today} id="holding-as-of-date" label="As Of Date" name="as_of_date" required type="date" />
             <div className="button-row">
-              <button disabled={portfolios.length === 0} type="submit">Add holding</button>
+              <button disabled={portfolios.length === 0} type="submit">Set opening holding</button>
             </div>
           </form>
         </Panel>
 
-        <Panel title="Add Transaction">
+        <Panel title="Record Security Activity">
           <form action={createPortfolioTransaction} className="form-grid">
             <PortfolioSelect id="transaction-portfolio-id" portfolios={portfolios} />
             <CompanySelect companies={companies} id="transaction-company-id" />
             <TextField id="transaction-ticker" label="Ticker" name="ticker" required />
             <SelectField defaultValue="buy" id="transaction-type" label="Type" name="transaction_type" required>
-              {transactionTypes.map((transactionType) => (
+              {securityTransactionTypes.map((transactionType) => (
                 <option key={transactionType} value={transactionType}>
-                  {transactionType}
+                  {transactionTypeLabel(transactionType)}
                 </option>
               ))}
             </SelectField>
@@ -170,7 +196,31 @@ export default async function PortfolioPage() {
             <TextField defaultValue={today} id="transaction-date" label="Date" name="transaction_date" required type="date" />
             <TextAreaField className="field field-wide" id="transaction-notes" label="Notes" name="notes" />
             <div className="button-row">
-              <button disabled={portfolios.length === 0} type="submit">Add transaction</button>
+              <button disabled={portfolios.length === 0} type="submit">Record security activity</button>
+            </div>
+          </form>
+        </Panel>
+
+        <Panel title="Record Cash Activity">
+          <form action={createPortfolioTransaction} className="form-grid">
+            <PortfolioSelect id="cash-transaction-portfolio-id" portfolios={portfolios} />
+            <input name="company_id" type="hidden" value="" />
+            <input name="ticker" type="hidden" value="CASH" />
+            <input name="price" type="hidden" value="0" />
+            <input name="fees" type="hidden" value="0" />
+            <SelectField defaultValue="deposit" id="cash-transaction-type" label="Type" name="transaction_type" required>
+              {cashTransactionTypes.map((transactionType) => (
+                <option key={transactionType} value={transactionType}>
+                  {transactionTypeLabel(transactionType)}
+                </option>
+              ))}
+            </SelectField>
+            <TextField id="cash-transaction-amount" label="Amount" min="0" name="quantity" required step="0.01" type="number" />
+            <TextField defaultValue="USD" id="cash-transaction-currency" label="Currency" name="currency" required />
+            <TextField defaultValue={today} id="cash-transaction-date" label="Date" name="transaction_date" required type="date" />
+            <TextAreaField className="field field-wide" id="cash-transaction-notes" label="Notes" name="notes" />
+            <div className="button-row">
+              <button disabled={portfolios.length === 0} type="submit">Record cash activity</button>
             </div>
           </form>
         </Panel>
@@ -198,9 +248,7 @@ export default async function PortfolioPage() {
                       <td>{portfolio.base_currency}</td>
                       <td>{portfolio.description ?? "-"}</td>
                       <td>
-                        {valuationsById.get(portfolio.id)?.total_portfolio_value != null
-                          ? `${portfolio.base_currency} ${numberText(valuationsById.get(portfolio.id)!.total_portfolio_value!)}`
-                          : valuationsById.get(portfolio.id)?.total_market_value != null
+                        {valuationsById.get(portfolio.id)?.total_market_value != null
                           ? `${portfolio.base_currency} ${numberText(valuationsById.get(portfolio.id)!.total_market_value!)}`
                           : "-"}
                       </td>
@@ -240,6 +288,9 @@ export default async function PortfolioPage() {
 
 
         <Panel title="Holdings">
+          <div style={{ marginBottom: "1rem" }}>
+            <DataFreshnessIndicator meta={holdingsRes.meta} source="Portfolio API" />
+          </div>
           {holdings.length === 0 ? (
             <EmptyState label="No holdings yet." />
           ) : (
@@ -351,7 +402,7 @@ export default async function PortfolioPage() {
                     <tr key={transaction.id}>
                       <td>{portfoliosById.get(transaction.portfolio_id)?.name ?? `#${transaction.portfolio_id}`}</td>
                       <td>{transaction.transaction_date}</td>
-                      <td><span className="badge">{transaction.transaction_type}</span></td>
+                      <td><span className="badge">{transactionTypeLabel(transaction.transaction_type)}</span></td>
                       <td>{transaction.ticker}</td>
                       <td>{numberText(transaction.quantity)}</td>
                       <td>
@@ -371,7 +422,7 @@ export default async function PortfolioPage() {
                               <SelectField defaultValue={transaction.transaction_type} id={`transaction-type-${transaction.id}`} label="Type" name="transaction_type" required>
                                 {transactionTypes.map((transactionType) => (
                                   <option key={transactionType} value={transactionType}>
-                                    {transactionType}
+                                    {transactionTypeLabel(transactionType)}
                                   </option>
                                 ))}
                               </SelectField>
@@ -406,11 +457,12 @@ export default async function PortfolioPage() {
         </div>
       </>
     );
-  } catch {
+  } catch (error: any) {
+    console.error("PAGE RENDER ERROR:", error);
     return (
       <>
         <PageHeader eyebrow="Portfolio" title="Portfolio" />
-        <ErrorState message="Could not load portfolio records from the backend API." />
+        <ErrorState message={`Could not load portfolio records from the backend API. Error: ${error?.message || error}`} />
       </>
     );
   }

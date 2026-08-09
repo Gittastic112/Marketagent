@@ -1,3 +1,5 @@
+"use client";
+
 import { PortfolioAnalytics } from "@/lib/api";
 import {
   LineChart,
@@ -26,7 +28,7 @@ export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { ana
     date: s.snapshot_date,
     value: s.total_market_value != null ? Number(s.total_market_value) : 0
   })).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
-  
+
   const sectorData = Object.entries(analytics.sector_exposure).map(([sector, weight]) => ({
     name: sector,
     weight: weight
@@ -34,7 +36,7 @@ export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { ana
 
   return (
     <div className="analytics-dashboard" style={{ display: 'flex', flexDirection: 'column', gap: '2rem', marginBottom: '2rem' }}>
-      
+
       {analytics.diversification_warnings.length > 0 && (
         <div style={{ backgroundColor: 'var(--danger-bg)', color: 'var(--danger)', padding: '1rem', borderRadius: '0.5rem', border: '1px solid var(--danger)' }}>
           <h4 style={{ margin: '0 0 0.5rem 0' }}>⚠️ Diversification Warnings</h4>
@@ -51,13 +53,13 @@ export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { ana
             <LineChart data={chartData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
               <XAxis dataKey="date" tick={{ fontSize: 12, fill: 'var(--muted)' }} tickLine={false} axisLine={false} />
-              <YAxis 
+              <YAxis
                 tickFormatter={(val) => new Intl.NumberFormat('en-US', { notation: "compact", compactDisplay: "short" }).format(val)}
-                tick={{ fontSize: 12, fill: 'var(--muted)' }} 
-                tickLine={false} 
-                axisLine={false} 
+                tick={{ fontSize: 12, fill: 'var(--muted)' }}
+                tickLine={false}
+                axisLine={false}
               />
-              <Tooltip 
+              <Tooltip
                 formatter={(value: number) => formatMoney(value, analytics.base_currency)}
                 contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', backgroundColor: 'var(--surface)' }}
               />
@@ -86,6 +88,27 @@ export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { ana
             {formatMoney(analytics.total_unrealized_pnl, analytics.base_currency)}
             {analytics.total_unrealized_pnl_percent != null && <div style={{ fontSize: '1rem', marginTop: '0.25rem' }}>{formatPercent(analytics.total_unrealized_pnl_percent)}</div>}
           </div>
+        </div>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>FX Impact</div>
+          {analytics.fx_impact != null ? (
+            <div style={{ fontSize: '1.5rem', fontWeight: 600, color: analytics.fx_impact >= 0 ? 'var(--success)' : 'var(--danger)' }}>
+              {formatMoney(analytics.fx_impact, analytics.base_currency)}
+            </div>
+          ) : (
+            <div style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--muted)', fontStyle: 'italic' }}>Not Configured</div>
+          )}
+        </div>
+        <div style={{ padding: '1.5rem', border: '1px solid var(--line)', borderRadius: '0.5rem', backgroundColor: 'var(--surface)' }}>
+          <div style={{ fontSize: '0.875rem', color: 'var(--muted)', marginBottom: '0.5rem' }}>Opportunity Cost</div>
+          {analytics.opportunity_cost != null ? (
+            <div style={{ fontSize: '1.5rem', fontWeight: 600, color: 'var(--text)' }}>
+              {formatMoney(analytics.opportunity_cost, analytics.base_currency)}
+              {analytics.opportunity_cost_percent != null && <div style={{ fontSize: '1rem', marginTop: '0.25rem', color: 'var(--muted)' }}>{formatPercent(analytics.opportunity_cost_percent)} vs benchmark</div>}
+            </div>
+          ) : (
+            <div style={{ fontSize: '1.25rem', fontWeight: 500, color: 'var(--muted)', fontStyle: 'italic' }}>Not Configured</div>
+          )}
         </div>
       </div>
 
@@ -124,8 +147,8 @@ export function PortfolioAnalyticsDashboard({ analytics, snapshots = [] }: { ana
                   <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="var(--line)" />
                   <XAxis type="number" tickFormatter={(val) => formatPercent(val)} tick={{ fontSize: 12, fill: 'var(--muted)' }} />
                   <YAxis dataKey="name" type="category" width={100} tick={{ fontSize: 12, fill: 'var(--muted)' }} axisLine={false} tickLine={false} />
-                  <Tooltip 
-                    formatter={(value: number) => formatPercent(value)} 
+                  <Tooltip
+                    formatter={(value: number) => formatPercent(value)}
                     contentStyle={{ borderRadius: '8px', border: '1px solid var(--line)', backgroundColor: 'var(--surface)' }}
                   />
                   <Bar dataKey="weight" fill="var(--accent)" radius={[0, 4, 4, 0]} />

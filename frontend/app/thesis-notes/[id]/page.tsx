@@ -3,7 +3,8 @@ import { createThesisAssumption, createThesisChange, deleteThesisAssumption, upd
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, ThesisNote } from "@/lib/api";
 
 async function createAssumptionAction(formData: FormData) {
@@ -54,10 +55,13 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
   try {
     const { id } = await params;
     const noteId = Number(id);
-    const [note, companies] = await Promise.all([
-      fetchApi<ThesisNote>(`/thesis-notes/${noteId}`),
-      fetchApi<Company[]>("/companies")
+    const [noteRes, companiesRes] = await Promise.all([
+      serverFetchApiResponse<ThesisNote>(`/thesis-notes/${noteId}`),
+      serverFetchApiResponse<Company[]>("/companies")
     ]);
+    const note = noteRes.data!;
+    const companies = companiesRes.data || [];
+
     const company = companies.find((c) => c.id === note.company_id);
     const companyTicker = company?.ticker ?? `Company #${note.company_id}`;
 
@@ -67,6 +71,11 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
           eyebrow={companyTicker}
           title={note.title}
           status={`Status: ${note.status} · Drift: ${note.thesis_drift_score.toFixed(2)}`}
+        />
+        <DataStateNotices
+          metas={[noteRes.meta, companiesRes.meta]}
+          partialMessage="Company linkages failed to load. The company name may not display correctly."
+          mockMessage="This thesis detail view includes mock data. Treat affected assumptions as placeholders."
         />
 
         <div style={{ marginBottom: "12px" }}>

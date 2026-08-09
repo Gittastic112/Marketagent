@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Panel } from "@/components/page";
+import { unwrapCsvTransferResponse } from "@/lib/csv-transfer";
 
 type ImportError = {
   row_index: number;
@@ -28,6 +29,15 @@ type CsvImporterProps = {
   title: string;
   endpoint: string; // e.g. "/import/market-prices"
 };
+
+function transferErrorMessage(payload: any, fallback: string): string {
+  if (Array.isArray(payload?.errors) && typeof payload.errors[0]?.message === "string") {
+    return payload.errors[0].message;
+  }
+  if (typeof payload?.detail?.message === "string") return payload.detail.message;
+  if (typeof payload?.detail === "string") return payload.detail;
+  return fallback;
+}
 
 export function CsvImporter({ title, endpoint }: CsvImporterProps) {
   const [file, setFile] = useState<File | null>(null);
@@ -64,10 +74,12 @@ export function CsvImporter({ title, endpoint }: CsvImporterProps) {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.detail?.message || errorData.detail || "Upload failed");
+        throw new Error(transferErrorMessage(errorData, "Upload failed"));
       }
 
-      const data = await res.json();
+      const data = unwrapCsvTransferResponse<ImportPreviewResponse>(
+        await res.json(),
+      );
       setPreview(data);
     } catch (err: any) {
       setErrorMsg(err.message || "An unexpected error occurred.");
@@ -93,10 +105,12 @@ export function CsvImporter({ title, endpoint }: CsvImporterProps) {
 
       if (!res.ok) {
         const errorData = await res.json().catch(() => ({}));
-        throw new Error(errorData.detail?.message || errorData.detail || "Import failed");
+        throw new Error(transferErrorMessage(errorData, "Import failed"));
       }
 
-      const data = await res.json();
+      const data = unwrapCsvTransferResponse<{ imported_count: number }>(
+        await res.json(),
+      );
       setSuccessMsg(`Successfully imported ${data.imported_count} records.`);
       setFile(null);
       setPreview(null);

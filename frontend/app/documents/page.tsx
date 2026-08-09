@@ -3,9 +3,10 @@ import {
   updateRawDocument
 } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
-import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
+import { SelectField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, RawDocument, Source } from "@/lib/api";
 
 function sourceOptions(sources: Source[]) {
@@ -26,16 +27,22 @@ function companyOptions(companies: Company[]) {
 
 export default async function DocumentsPage() {
   try {
-    const [documents, companies, sources] = await Promise.all([
-      fetchApi<RawDocument[]>("/raw-documents"),
-      fetchApi<Company[]>("/companies"),
-      fetchApi<Source[]>("/sources")
+    const [docsRes, companiesRes, sourcesRes] = await Promise.all([
+      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries"),
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<Source[]>("/sources")
     ]);
+    const documents = docsRes.data || [];
+    const companies = companiesRes.data || [];
+    const sources = sourcesRes.data || [];
 
     return (
       <>
         <PageHeader eyebrow="Source material" title="Raw Documents" status={`${documents.length} stored`} />
-        
+        <DataStateNotices
+          metas={[docsRes.meta, companiesRes.meta, sourcesRes.meta]}
+          mockMessage="One or more document inputs are using mock data. Treat affected source trails as placeholders."
+        />
         <Panel title="Stored Documents">
           {documents.length === 0 ? (
             <EmptyState label="No raw documents yet." />
@@ -77,7 +84,6 @@ export default async function DocumentsPage() {
                               <TextField defaultValue={document.content_hash} id={`doc-hash-${document.id}`} label="Hash" name="content_hash" required />
                               <TextField className="field field-full" defaultValue={document.title} id={`doc-title-${document.id}`} label="Title" name="title" required />
                               <TextField className="field field-full" defaultValue={document.url ?? ""} id={`doc-url-${document.id}`} label="URL" name="url" type="url" />
-                              <TextAreaField className="field field-full" defaultValue={document.raw_text ?? ""} id={`doc-text-${document.id}`} label="Raw Text" name="raw_text" />
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>

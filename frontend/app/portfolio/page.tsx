@@ -1,29 +1,53 @@
 import Link from "next/link";
-import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
+import { serverFetchApiResponse } from "@/lib/server-api";
+import { StaleDataBanner, PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
+import { summarizeApiMetas } from "@/lib/data-state-meta";
 import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction, PortfolioValuation, PortfolioAnalytics } from "@/lib/api";
 import { PortfolioAnalyticsDashboard } from "@/components/portfolio-analytics";
 import { CsvImporter } from "@/components/csv-importer";
 
-
-
 export default async function PortfolioPage() {
+  function numberText(value: number): string {
+    return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
+  }
+
+  function companyLabel(companyId: number | null, companiesById: Map<number, Company>): string {
+    if (companyId === null) {
+      return "-";
+    }
+    return companiesById.get(companyId)?.ticker ?? `#${companyId}`;
+  }
+
   try {
-    const [portfolios, holdings, transactions, companies] = await Promise.all([
-      fetchApi<Portfolio[]>("/portfolios"),
-      fetchApi<PortfolioHolding[]>("/portfolio-holdings"),
-      fetchApi<PortfolioTransaction[]>("/portfolio-transactions"),
-      fetchApi<Company[]>("/companies")
+    const [portfoliosRes, holdingsRes, transactionsRes, companiesRes] = await Promise.all([
+      serverFetchApiResponse<Portfolio[]>("/portfolios").catch(() => null),
+      serverFetchApiResponse<PortfolioHolding[]>("/portfolio-holdings").catch(() => null),
+      serverFetchApiResponse<PortfolioTransaction[]>("/portfolio-transactions").catch(() => null),
+      serverFetchApiResponse<Company[]>("/companies").catch(() => null)
     ]);
+    const portfolios = portfoliosRes?.data || [];
+    const holdings = holdingsRes?.data || [];
+    const transactions = transactionsRes?.data || [];
+    const companies = companiesRes?.data || [];
+
+    const baseDataState = summarizeApiMetas([
+      portfoliosRes?.meta,
+      holdingsRes?.meta,
+      transactionsRes?.meta,
+      companiesRes?.meta
+    ]);
+
     const today = new Date().toISOString().slice(0, 10);
     const portfoliosById = new Map(portfolios.map((portfolio) => [portfolio.id, portfolio]));
     const companiesById = new Map(companies.map((company) => [company.id, company]));
 
-    const valuations = await Promise.all(
+    const valuationsRes = await Promise.all(
       portfolios.map((portfolio) =>
-        fetchApi<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => null)
+        serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => null)
       )
     );
+    const valuations = valuationsRes.map(res => res?.data);
     const valuationsById = new Map(
       valuations.filter(Boolean).map((v) => [v!.portfolio_id, v!])
     );
@@ -34,18 +58,31 @@ export default async function PortfolioPage() {
       return val.holdings.find(h => h.holding_id === holdingId) || null;
     };
 
-    const analyticsResults = await Promise.all(
+    const analyticsResponses = await Promise.all(
       portfolios.map((portfolio) =>
-        fetchApi<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => null)
+        serverFetchApiResponse<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => null)
       )
     );
+    const analyticsResults = analyticsResponses.map(res => res?.data);
     const validAnalytics = analyticsResults.filter((a): a is PortfolioAnalytics => a !== null);
 
-    const snapshotsResults = await Promise.all(
+    const snapshotsRes = await Promise.all(
       portfolios.map((portfolio) =>
-        fetchApi<any[]>(`/portfolio-snapshots?portfolio_id=${portfolio.id}`).catch(() => [])
+        serverFetchApiResponse<any[]>(`/portfolio-snapshots?portfolio_id=${portfolio.id}`).catch(() => null)
       )
     );
+    const fullDataState = summarizeApiMetas([
+      portfoliosRes?.meta,
+      holdingsRes?.meta,
+      transactionsRes?.meta,
+      companiesRes?.meta,
+      ...valuationsRes.map((res) => res?.meta),
+      ...analyticsResponses.map((res) => res?.meta),
+      ...snapshotsRes.map((res) => res?.meta)
+    ]);
+    const snapshotsResults = snapshotsRes.map(res => res?.data || []);
+
+    const missingHoldings = !holdingsRes;
     const snapshotsById = new Map(portfolios.map((p, i) => [p.id, snapshotsResults[i]]));
 
     return (
@@ -54,10 +91,15 @@ export default async function PortfolioPage() {
           <PageHeader eyebrow="Portfolio Intelligence" title="Overview" status={`${portfolios.length} portfolios`} />
           <div style={{ marginBottom: "2rem" }}>
             <Link href="/portfolio/manage" className="btn btn-outline">
-              Manage Data
+              Manage Portfolios & Transactions
             </Link>
           </div>
         </div>
+
+        {baseDataState.allStale && <StaleDataBanner />}
+        {!baseDataState.allStale && fullDataState.someStale && <PartialDataNotice message="Some portfolio components are showing cached data because the backend is partially reachable." />}
+        {missingHoldings && <PartialDataNotice message="Holdings failed to load. The portfolio metrics below will be incomplete." />}
+        {fullDataState.hasMock && <MockDataState message="One or more portfolio panels are using mock data. Do not treat those values as live portfolio intelligence." />}
 
         {portfolios.length === 0 && (
           <Panel title="Welcome to Portfolio Intelligence">
@@ -90,13 +132,13 @@ export default async function PortfolioPage() {
             let untaggedValue = 0;
             let untaggedPercent = 0;
             const val = valuationsById.get(portfolio.id);
-            
+
             if (val) {
               for (const h of portfolioHoldings) {
                 const company = companiesById.get(h.company_id!);
                 const hVal = val.holdings.find(vh => vh.holding_id === h.id);
                 if (!hVal || hVal.market_value == null || hVal.weight_percent == null) continue;
-                
+
                 if (!company || !company.exposure_tags || company.exposure_tags.length === 0) {
                   untaggedValue += hVal.market_value;
                   untaggedPercent += hVal.weight_percent;
@@ -111,7 +153,7 @@ export default async function PortfolioPage() {
                 }
               }
             }
-            
+
             const sortedTags = Array.from(tagExposures.entries()).sort((a, b) => b[1].percent - a[1].percent);
 
             return (
@@ -154,6 +196,9 @@ export default async function PortfolioPage() {
         </Panel>
 
         <Panel title="Holdings">
+          <div style={{ marginBottom: "1rem" }}>
+            <DataFreshnessIndicator meta={holdingsRes?.meta} source="Portfolio API" />
+          </div>
           {holdings.length === 0 ? (
             <EmptyState label="No holdings yet." />
           ) : (
@@ -167,9 +212,13 @@ export default async function PortfolioPage() {
                     <th>Quantity</th>
                     <th>Average Cost</th>
                     <th>Market Price</th>
+                    <th>Intrinsic Value</th>
                     <th>Market Value</th>
                     <th>Unrealized P&L</th>
                     <th>Weight</th>
+                    <th>Thesis</th>
+                    <th>Alerts</th>
+                    <th>Valuation</th>
                     <th>As Of</th>
                   </tr>
                 </thead>
@@ -189,11 +238,18 @@ export default async function PortfolioPage() {
                         {val?.market_price != null ? (
                           <>
                             {holding.currency} {numberText(val.market_price)}
-                            {val.is_stale_price && <span className="badge badge-warning" title="Stale price">⚠️</span>}
+                            {val.is_stale_price && <span className="badge badge-warning" title="Stale price" style={{marginLeft: "4px"}}>⚠️</span>}
                           </>
                         ) : (
                           "-"
                         )}
+                      </td>
+                      <td>
+                        {val?.intrinsic_value != null ? (
+                          <span style={{ color: val.market_price != null && val.intrinsic_value > val.market_price ? "var(--color-green-700)" : "var(--color-red-700)" }}>
+                            {holding.currency} {numberText(val.intrinsic_value)}
+                          </span>
+                        ) : "-"}
                       </td>
                       <td>
                         {val?.market_value != null ? `${holding.currency} ${numberText(val.market_value)}` : "-"}
@@ -209,6 +265,25 @@ export default async function PortfolioPage() {
                       <td>
                         {val?.weight_percent != null ? `${numberText(val.weight_percent)}%` : "-"}
                       </td>
+                      <td>
+                        {val?.thesis_status ? (
+                          <span className={`badge ${val.thesis_status === 'active' ? 'badge-success' : 'badge-warning'}`}>{val.thesis_status}</span>
+                        ) : "-"}
+                      </td>
+                      <td>
+                        {val?.active_alerts_count ? (
+                          <span className="badge badge-error" title={`${val.active_alerts_count} active alerts`}>
+                            ⚠️ {val.active_alerts_count}
+                          </span>
+                        ) : "-"}
+                      </td>
+                      <td>
+                        {val?.is_valuation_stale ? (
+                           <span className="badge badge-warning" title={val.stale_valuation_reason || "Valuation broken by market event"}>⚠️ Stale</span>
+                        ) : (
+                           <span className="badge badge-success">Valid</span>
+                        )}
+                      </td>
                       <td>{holding.as_of_date}</td>
                       </tr>
                     );
@@ -220,11 +295,12 @@ export default async function PortfolioPage() {
         </Panel>
       </>
     );
-  } catch {
+  } catch (error: any) {
+    console.error("PAGE RENDER ERROR:", error);
     return (
       <>
         <PageHeader eyebrow="Portfolio" title="Portfolio" />
-        <ErrorState message="Could not load portfolio records from the backend API." />
+        <ErrorState message={`Could not load portfolio records from the backend API. Error: ${error?.message || error}`} />
       </>
     );
   }

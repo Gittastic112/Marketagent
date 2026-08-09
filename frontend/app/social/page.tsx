@@ -9,19 +9,26 @@ import {
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { NarrativeCluster, SocialPost } from "@/lib/api";
 
 export default async function SocialPage() {
   try {
-    const [posts, clusters] = await Promise.all([
-      fetchApi<SocialPost[]>("/social-posts"),
-      fetchApi<NarrativeCluster[]>("/narrative-clusters")
+    const [postsRes, clustersRes] = await Promise.all([
+      serverFetchApiResponse<SocialPost[]>("/social-posts"),
+      serverFetchApiResponse<NarrativeCluster[]>("/narrative-clusters")
     ]);
+    const posts = postsRes.data || [];
+    const clusters = clustersRes.data || [];
 
     return (
       <>
         <PageHeader eyebrow="Social & Narratives" title="Social Intelligence" status={`${posts.length} posts, ${clusters.length} clusters`} />
+        <DataStateNotices
+          metas={[postsRes.meta, clustersRes.meta]}
+          mockMessage="Social or narrative data is mocked. Do not treat it as live social intelligence."
+        />
 
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           <section id="social-posts">

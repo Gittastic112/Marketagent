@@ -10,20 +10,22 @@ export default function SessionsPage() {
   const [sessions, setSessions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
     api.get("/research/sessions")
-      .then((res) => { setSessions(res.data || []); setLoading(false); })
-      .catch((err) => { setError(err.message); setLoading(false); });
+      .then((res: any) => { setSessions(res.data as any[] || []); setLoading(false); })
+      .catch((err: any) => { setError(err.message); setLoading(false); });
   }, []);
 
   const createSession = async () => {
+    setCreateError(null);
     try {
       const title = `Research Session ${new Date().toLocaleDateString()}`;
-      const res = await api.post("/research/sessions", { title });
+      const res: any = await api.post("/research/sessions", { title });
       if (res.data?.id) router.push(`/research/sessions/${res.data.id}`);
     } catch (err: any) {
-      alert("Failed to create session");
+      setCreateError(err.message || "Failed to create the research session.");
     }
   };
 
@@ -35,6 +37,7 @@ export default function SessionsPage() {
       <PageHeader eyebrow="AI Analysis" title="Research Sessions" />
       <div style={{ marginBottom: "2rem" }}>
         <button onClick={createSession} className="primary-button">Start New Session</button>
+        {createError ? <p className="inline-error" role="alert">{createError}</p> : null}
       </div>
 
       <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "1.5rem" }}>

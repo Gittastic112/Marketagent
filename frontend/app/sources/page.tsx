@@ -2,17 +2,23 @@ import { createSource, deleteSourceWithState, fetchActiveRssFeeds, fetchRssFeed,
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { CheckboxField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import { fetchApi } from "@/lib/api";
+import { DataStateNotices } from "@/components/ui/data-states";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Source } from "@/lib/api";
 
 export default async function SourcesPage() {
   try {
-    const sources = await fetchApi<Source[]>("/sources");
+    const sourcesRes = await serverFetchApiResponse<Source[]>("/sources");
+    const sources = sourcesRes.data || [];
     const activeRssCount = sources.filter((source) => source.source_type === "rss" && source.active && source.base_url).length;
 
     return (
       <>
         <PageHeader eyebrow="Evidence inputs" title="Sources" status={`${sources.length} sources`} />
+        <DataStateNotices
+          metas={[sourcesRes.meta]}
+          mockMessage="Source configuration is mocked. Configure real sources before using ingestion outputs."
+        />
         <Panel title="RSS Feed Runs">
           <form action={fetchActiveRssFeeds} className="button-row">
             <button disabled={activeRssCount === 0} type="submit">Fetch active RSS feeds</button>
