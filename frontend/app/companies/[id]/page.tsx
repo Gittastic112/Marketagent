@@ -169,24 +169,24 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
         <DataHealthUpdater segment="" isStale={dataState.someStale || dataState.allStale} />
         {dataState.someStale && <PartialDataNotice message="Some company panels are showing cached data because the backend is partially reachable." />}
         {dataState.hasMock && <MockDataState message="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders." />}
-        {/* Header */}
-        <div style={{ marginBottom: "1.5rem", paddingBottom: "1.5rem", borderBottom: "1px solid var(--border-color)" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
-            <div>
-              <div style={{ fontSize: "0.85rem", fontWeight: 500, color: "var(--text-secondary)", marginBottom: "0.25rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <header className="company-overview-header">
+          <div className="company-overview-identity">
+              <div className="company-meta-line">
                 <span>{company.market ?? "Unknown Market"} / {company.primary_exchange ?? company.exchange ?? "Unknown Exchange"}</span>
                 {company.local_symbol && <span>• Local: {company.local_symbol}</span>}
                 {company.regulatory_id && <span>• {company.regulatory_id_type || "Reg ID"}: {company.regulatory_id}</span>}
                 {company.market && company.market !== "US" && <ManualDataBadge />}
               </div>
-              <h1 style={{ fontSize: "1.75rem", fontWeight: 600, margin: 0 }}>
-                {company.ticker} <span style={{ color: "var(--text-secondary)", fontWeight: 400, fontSize: "1.5rem", margin: "0 0.5rem" }}>|</span> {company.name}
+              <h1 className="company-title">
+                <span>{company.ticker}</span>
+                <span className="company-title-divider" aria-hidden="true">/</span>
+                <span>{company.name}</span>
               </h1>
-              <div style={{ display: "flex", alignItems: "flex-end", gap: "1rem" }}>
+              <div className="company-market-row">
                 <CompanyMarketHeader data={marketQuote} />
                 <SyncPriceButton companyId={company.id} market={company.market} />
               </div>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.75rem" }}>
+              <div className="company-badge-row">
                 <span className="badge">{metadataValue(company.sector)}</span>
                 <span className="badge">{metadataValue(company.market_cap_category)}</span>
                 <span className="badge">{company.active ? "Active Tracking" : "Inactive"}</span>
@@ -194,21 +194,12 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                   <span key={tag.id} className="badge">{tag.name}</span>
                 ))}
               </div>
-            </div>
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/setup`}>Setup</Link>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/filings`}>Filings</Link>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/thesis`}>Thesis</Link>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/decisions`}>Decision Intelligence</Link>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/fundamentals`}>Fundamentals</Link>
-              <Link className="btn btn-outline" href={`/companies/${company.id}/valuation`}>Valuation</Link>
-              <a className="btn btn-primary" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download Memo</a>
-            </div>
           </div>
-        </div>
+          <a className="secondary-button company-memo-link" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download memo</a>
+        </header>
 
         {/* Metric Cards */}
-        <section className="metric-grid" style={{ marginBottom: "2rem" }}>
+        <section className="metric-grid company-metric-grid">
           <div className="metric">
             <div className="metric-label">Activity Score</div>
             <div className="metric-value">{detail.counts.events + detail.counts.alerts}</div>
@@ -227,10 +218,9 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           </div>
         </section>
 
-        {/* Two-column Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", alignItems: "start" }}>
+        <div className="company-overview-grid">
           {/* Left Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div className="company-overview-column">
             <Panel title="Thesis Notes">
               {detail.thesisNotes.length === 0 ? (
                 <EmptyState label="No linked thesis notes." />
@@ -396,61 +386,44 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           </div>
 
           {/* Right Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+          <div className="company-overview-column">
             <Panel title="News Flow (Events)">
               {detail.events.length === 0 ? (
                 <EmptyState label="No linked events." />
               ) : (
-                <div className="table-wrap">
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>Headline</th>
-                        <th>Type</th>
-                        <th>Priority</th>
-                        <th>Score</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detail.events.map((event) => (
-                        <tr key={event.id}>
-                          <td>
-                            <strong>{event.title}</strong>
-                            {boundedSummary(event.description) ? (
-                              <p className="muted">{boundedSummary(event.description)}</p>
-                            ) : null}
-                          </td>
-                          <td>{event.event_type}</td>
-                          <td>{scoreText(event.priority_score)}</td>
-                          <td>
-                            <details className="edit-panel">
-                              <summary>Details</summary>
-                              <ScoreExplanationView explanation={event.score_explanation_json} />
-                            </details>
-                          </td>
-                          <td>
-                            <form action={triggerEventClassification} style={{ display: "inline" }}>
-                              <input type="hidden" name="event_id" value={event.id} />
-                              <input type="hidden" name="company_id" value={company.id} />
-                              <label style={{ display: "flex", gap: "0.35rem", alignItems: "flex-start", maxWidth: "18rem", marginBottom: "0.4rem", fontSize: "0.7rem" }}>
-                                <input
-                                  type="checkbox"
-                                  name="privacy_disclosure_version"
-                                  value={AI_PRIVACY_DISCLOSURE_VERSION}
-                                  required
-                                />
-                                <span>{AI_DISCLOSURES.thesisImpact}</span>
-                              </label>
-                              <button type="submit" className="secondary-button" style={{ fontSize: "0.75rem", padding: "0.2rem 0.5rem" }}>
-                                Propose Impact
-                              </button>
-                            </form>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                <div className="company-event-list">
+                  {detail.events.map((event) => (
+                    <article className="company-event-card" key={event.id}>
+                      <div className="company-event-copy">
+                        <strong>{event.title}</strong>
+                        {boundedSummary(event.description) ? (
+                          <p className="muted">{boundedSummary(event.description)}</p>
+                        ) : null}
+                        <div className="company-event-meta">
+                          <span className="badge">{event.event_type}</span>
+                          <span>Priority {scoreText(event.priority_score)}</span>
+                        </div>
+                      </div>
+                      <details className="edit-panel company-event-details">
+                        <summary>Score details</summary>
+                        <ScoreExplanationView explanation={event.score_explanation_json} />
+                      </details>
+                      <form action={triggerEventClassification} className="company-event-action">
+                        <input type="hidden" name="event_id" value={event.id} />
+                        <input type="hidden" name="company_id" value={company.id} />
+                        <label className="privacy-consent">
+                          <input
+                            type="checkbox"
+                            name="privacy_disclosure_version"
+                            value={AI_PRIVACY_DISCLOSURE_VERSION}
+                            required
+                          />
+                          <span>{AI_DISCLOSURES.thesisImpact}</span>
+                        </label>
+                        <button type="submit" className="secondary-button">Propose impact</button>
+                      </form>
+                    </article>
+                  ))}
                 </div>
               )}
             </Panel>

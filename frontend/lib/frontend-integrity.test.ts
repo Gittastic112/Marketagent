@@ -51,6 +51,29 @@ test("navigation and company route infrastructure are centralized", () => {
   assert.match(styles, /\.company-tabs/);
 });
 
+test("company workspace typography and layout do not force page-level horizontal scrolling", () => {
+  const detail = readFrontendFile("app/companies/[id]/page.tsx");
+  const wizard = readFrontendFile("components/company-setup-wizard.tsx");
+  const page = readFrontendFile("components/page.tsx");
+  const styles = readFrontendFile("app/globals.css");
+
+  assert.match(detail, /company-overview-header/);
+  assert.match(detail, /company-overview-grid/);
+  assert.match(detail, /company-event-card/);
+  assert.match(detail, /privacy-consent/);
+  assert.doesNotMatch(detail, /gridTemplateColumns: "1fr 1fr"/);
+  assert.doesNotMatch(detail, />Decision Intelligence<|>Fundamentals<|>Valuation<\/Link>/);
+  assert.match(wizard, /company-setup-steps/);
+  assert.match(wizard, /responsive-field-row/);
+  assert.doesNotMatch(wizard, /maxWidth: "600px"/);
+  assert.match(page, /page-header-title-row/);
+  assert.match(styles, /table \{[\s\S]*?min-width: 100%/);
+  assert.doesNotMatch(styles, /table \{[\s\S]{0,100}min-width: 760px/);
+  assert.match(styles, /\.table-wrap \{[\s\S]*?max-width: 100%/);
+  assert.match(styles, /\.company-tabs \{[\s\S]*?flex-wrap: wrap/);
+  assert.match(styles, /overflow-wrap: anywhere/);
+});
+
 
 test("production workflows do not use blocking browser dialogs", () => {
   const workflowFiles = [

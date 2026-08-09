@@ -126,25 +126,19 @@ export function CompanySetupWizard() {
   function renderStepIndicator() {
     const steps = ["Identity", "Lookup", "Fundamentals", "Industry", "Review"];
     return (
-      <div style={{ display: "flex", gap: "10px", marginBottom: "2rem", justifyContent: "space-between" }}>
+      <ol className="company-setup-steps" aria-label={`Company setup step ${step} of ${steps.length}`}>
         {steps.map((s, idx) => (
-          <div key={s} style={{
-            flex: 1,
-            padding: "8px",
-            borderBottom: step >= idx + 1 ? "2px solid var(--text-primary)" : "2px solid var(--border)",
-            color: step >= idx + 1 ? "var(--text-primary)" : "var(--muted)",
-            fontSize: "0.85rem",
-            fontWeight: step >= idx + 1 ? 600 : 400
-          }}>
-            {idx + 1}. {s}
-          </div>
+          <li className={step >= idx + 1 ? "is-reached" : ""} key={s}>
+            <span>{idx + 1}</span>
+            {s}
+          </li>
         ))}
-      </div>
+      </ol>
     );
   }
 
   return (
-    <div style={{ maxWidth: "600px" }}>
+    <div className="company-setup-wizard">
       <h2>Company Setup Wizard</h2>
       <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
         Guided setup to ensure consistent identity, currency, and industry mapping.
@@ -182,7 +176,7 @@ export function CompanySetupWizard() {
         {step === 1 && (
           <div className="field-full" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <h3>Step 1: Market & Ticker</h3>
-            <div style={{ display: "flex", gap: "1rem" }}>
+            <div className="responsive-field-row">
               <SelectField id="market" label="Market" name="_market" onChange={(e) => applyMarketDefaults(e.target.value)} value={market}>
                 <option value="US">United States (US)</option>
                 <option value="IN">India (IN)</option>
@@ -234,11 +228,11 @@ export function CompanySetupWizard() {
           <div className="field-full" style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <h3>Step 3: Company Details & Fundamentals</h3>
             <TextField id="name" label="Company Name" name="_name" onChange={(e) => setName(e.target.value)} required value={name} />
-            <div style={{ display: "flex", gap: "1rem" }}>
+            <div className="responsive-field-row">
               <TextField id="country" label="Country" name="_country" onChange={(e) => setCountry(e.target.value)} required value={country} />
               <TextField id="currency" label="Currency" name="_currency" onChange={(e) => setCurrency(e.target.value.toUpperCase())} required value={currency} />
             </div>
-            <div style={{ display: "flex", gap: "1rem" }}>
+            <div className="responsive-field-row">
               <TextField id="exchange" label="Exchange" name="_exchange" onChange={(e) => setExchange(e.target.value.toUpperCase())} value={exchange} />
               <TextField id="local_symbol" label="Local Symbol" name="_local_symbol" onChange={(e) => setLocalSymbol(e.target.value.toUpperCase())} required value={localSymbol} />
             </div>

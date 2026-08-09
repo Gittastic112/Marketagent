@@ -22,15 +22,15 @@ export function SyncPriceButton({ companyId, market }: { companyId: number, mark
   // Currently supporting India for explicit yfinance integration per Phase 15.
   // We can show it for others too if yfinance works globally.
   return (
-    <div className="flex flex-col gap-1 items-start">
+    <div className="sync-price-control">
       <button
         onClick={handleSync}
         disabled={loading}
-        className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded border border-gray-300 disabled:opacity-50"
+        className="secondary-button"
       >
         {loading ? "Syncing..." : "Sync Latest Price"}
       </button>
-      {error && <span className="text-red-500 text-xs">{error}</span>}
+      {error && <span className="inline-error">{error}</span>}
     </div>
   );
 }
