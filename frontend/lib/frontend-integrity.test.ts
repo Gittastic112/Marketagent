@@ -152,6 +152,23 @@ test("market regime exposes bounded inputs and calculation provenance", () => {
   assert.match(api, /input_type: "manual" \| "provider"/);
 });
 
+test("AI research uses the same complete citation and human-review workflow", () => {
+  const controls = readFrontendFile("components/ai-output-review-controls.tsx");
+  const metadata = readFrontendFile("components/ai-metadata.tsx");
+  const session = readFrontendFile("app/research/sessions/[id]/page.tsx");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(controls, /output_text\.matchAll/);
+  assert.match(controls, /Validate all cited sources/);
+  assert.match(controls, /citedSourceIds\.map/);
+  assert.match(controls, /!output\.evaluation_json\?\.passed/);
+  assert.match(controls, /citation_source_coverage|Object\.entries\(output\.evaluation_json\.checks\)/);
+  assert.match(session, /AiOutputReviewControls initialOutput=\{msg\.ai_output\}/);
+  assert.match(metadata, /Human review:/);
+  assert.match(metadata, /cit\.reason/);
+  assert.match(api, /is_blocked: boolean/);
+});
+
 test("data health exposes the authenticated evidence integrity report", () => {
   const page = readFrontendFile("app/data-health/page.tsx");
   assert.match(page, /serverFetchApiResponse<EvidenceIntegrityReport>\("\/data-health\/evidence-integrity"\)/);

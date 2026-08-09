@@ -6,6 +6,7 @@ import { PageHeader, ErrorState, EmptyState } from "@/components/page";
 import api from "@/lib/api";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 import { AiOutputMetadata } from "@/components/ai-metadata";
+import { AiOutputReviewControls } from "@/components/ai-output-review-controls";
 
 export default function SessionDetailPage() {
   const params = useParams();
@@ -111,6 +112,7 @@ export default function SessionDetailPage() {
               }}>
                 <p style={{ margin: 0, whiteSpace: "pre-wrap", lineHeight: 1.5 }}>{msg.content}</p>
                 {msg.ai_output && <AiOutputMetadata aiOutput={msg.ai_output} />}
+                {msg.ai_output && <AiOutputReviewControls initialOutput={msg.ai_output} />}
                 <div style={{ fontSize: "0.7rem", marginTop: "0.5rem", opacity: 0.7, textAlign: msg.role === "user" ? "right" : "left" }}>
                   {new Date(msg.created_at).toLocaleTimeString()}
                 </div>

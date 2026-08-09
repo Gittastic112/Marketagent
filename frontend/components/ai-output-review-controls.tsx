@@ -11,19 +11,23 @@ type Props = {
 
 export function AiOutputReviewControls({ initialOutput }: Props) {
   const [output, setOutput] = useState(initialOutput);
-  const [quote, setQuote] = useState("");
+  const [quotes, setQuotes] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState(initialOutput.review_notes ?? "");
   const [message, setMessage] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const rawDocumentSource = output.source_ids_json.find((source) => source.startsWith("raw_document:"));
+  const citedSourceIds = Array.from(
+    output.output_text.matchAll(/\[source_id:([^\]]+)\]/g),
+    (match) => match[1].trim(),
+  ).filter((source, index, sources) => source.startsWith("raw_document:") && sources.indexOf(source) === index);
+  const allQuotesPresent = citedSourceIds.length > 0 && citedSourceIds.every((source) => quotes[source]?.trim());
 
   async function validateCitation() {
-    if (!rawDocumentSource || !quote.trim()) return;
+    if (!allQuotesPresent) return;
     setBusy(true);
     setMessage(null);
     try {
       const updated = await postApi<AiOutput>(`/ai-outputs/${output.id}/citations/validate`, {
-        citations: [{ source_id: rawDocumentSource, quote: quote.trim() }],
+        citations: citedSourceIds.map((source_id) => ({ source_id, quote: quotes[source_id].trim() })),
       });
       setOutput(updated);
       setMessage(updated.citation_validation_status === "valid" ? "Exact citation verified." : "Citation could not be verified.");
@@ -56,17 +60,21 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
       <div>
         <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Evidence</h4>
         <p><strong>Citation status:</strong> {output.citation_validation_status.replace("_", " ")}</p>
-        <label style={{ display: "grid", gap: "0.35rem", marginTop: "0.75rem" }}>
-          Exact supporting passage
-          <textarea
-            value={quote}
-            onChange={(event) => setQuote(event.target.value)}
-            rows={3}
-            placeholder="Paste one exact passage from the stored source"
-          />
-        </label>
-        <button type="button" disabled={busy || !rawDocumentSource || !quote.trim()} onClick={validateCitation}>
-          Validate citation
+        {citedSourceIds.length === 0 ? (
+          <p style={{ color: "var(--danger)" }}>Blocked: the output has no supported raw-document source markers.</p>
+        ) : citedSourceIds.map((source) => (
+          <label key={source} style={{ display: "grid", gap: "0.35rem", marginTop: "0.75rem" }}>
+            Exact supporting passage for {source}
+            <textarea
+              value={quotes[source] ?? ""}
+              onChange={(event) => setQuotes((current) => ({ ...current, [source]: event.target.value }))}
+              rows={3}
+              placeholder="Paste the exact supporting passage from the stored source"
+            />
+          </label>
+        ))}
+        <button type="button" disabled={busy || !allQuotesPresent} onClick={validateCitation}>
+          Validate all cited sources
         </button>
         {output.citations_json.map((citation, index) => (
           <p key={`${citation.source_id}-${index}`} style={{ marginTop: "0.5rem" }}>
@@ -81,12 +89,19 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Human review</h4>
         <p><strong>Status:</strong> {output.human_review_status.replace("_", " ")}</p>
         <p><strong>Automated checks:</strong> {output.evaluation_json?.passed ? "passed" : "not passed"}</p>
+        {output.evaluation_json && !output.evaluation_json.passed ? (
+          <ul>
+            {Object.entries(output.evaluation_json.checks)
+              .filter(([name, passed]) => name !== "citations_required" && !passed)
+              .map(([name]) => <li key={name}>{name.replaceAll("_", " ")}</li>)}
+          </ul>
+        ) : null}
         <label style={{ display: "grid", gap: "0.35rem", marginTop: "0.75rem" }}>
           Review notes
           <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} />
         </label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          <button type="button" disabled={busy} onClick={() => review("approved")}>Approve</button>
+          <button type="button" disabled={busy || !output.evaluation_json?.passed} onClick={() => review("approved")}>Approve</button>
           <button type="button" disabled={busy || !notes.trim()} onClick={() => review("needs_revision")}>Request revision</button>
           <button type="button" disabled={busy || !notes.trim()} onClick={() => review("rejected")}>Reject</button>
         </div>

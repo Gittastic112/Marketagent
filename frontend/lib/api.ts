@@ -299,6 +299,7 @@ export type AiOutput = {
   transmission_scope: string;
   execution_status: string;
   failure_code: string | null;
+  is_blocked: boolean;
   output_text: string;
   limitations: string | null;
   confidence_label: string;

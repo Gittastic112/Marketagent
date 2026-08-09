@@ -35,6 +35,8 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: any }) {
             <span>{aiOutput.execution_status} {aiOutput.failure_code ? `(${aiOutput.failure_code})` : ''}</span>
             <span style={{ color: 'var(--muted)' }}>Confidence:</span>
             <span>{aiOutput.confidence_label}</span>
+            <span style={{ color: 'var(--muted)' }}>Human review:</span>
+            <span>{aiOutput.human_review_status}</span>
             <span style={{ color: 'var(--muted)' }}>Prompt Version:</span>
             <span style={{ fontFamily: 'monospace' }}>{aiOutput.prompt_version}</span>
           </div>
@@ -47,6 +49,8 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: any }) {
                   <li key={i}>
                     <strong>[{cit.source_id}]</strong>
                     {cit.quote && <span style={{ fontStyle: 'italic', marginLeft: '0.5rem' }}>"{cit.quote}"</span>}
+                    <span style={{ marginLeft: '0.5rem' }}>{cit.status}</span>
+                    {cit.reason && <span style={{ marginLeft: '0.5rem' }}>({cit.reason})</span>}
                   </li>
                 ))}
               </ul>

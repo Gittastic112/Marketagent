@@ -2503,15 +2503,8 @@ class CitationSchema(BaseModel):
     reason: str | None = None
     internal_href: str | None = None
 
-class ResearchAiOutputRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    model_name: str
-    is_mock: bool
-    citation_validation_status: str
-    is_blocked: bool
-    citations_json: list[CitationSchema] = Field(default_factory=list)
-    evaluation_json: dict[str, Any] | None = None
+class ResearchAiOutputRead(AiOutputRead):
+    """Full review contract so research responses use the same approval gates as document AI."""
 
 class ResearchMessageRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
