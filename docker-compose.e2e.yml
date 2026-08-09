@@ -1,0 +1,48 @@
+services:
+  postgres-e2e:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: marketintel
+      POSTGRES_PASSWORD: marketintel_password
+      POSTGRES_DB: marketintel_e2e
+    tmpfs:
+      - /var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U marketintel -d marketintel_e2e"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  backend-e2e:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres-e2e:5432/marketintel_e2e
+      APP_ENV: test
+      APP_NAME: Market Intelligence Engine E2E
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      SEC_USER_AGENT: Market Intelligence Engine E2E test-suite@example.invalid
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000"
+    ports:
+      - "${E2E_BACKEND_PORT:-8000}:8000"
+    depends_on:
+      postgres-e2e:
+        condition: service_healthy
+
+  frontend-e2e:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      API_BASE_URL: http://backend-e2e:8000
+      NEXT_PUBLIC_BROWSER_API_BASE_URL: /api/backend
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
+      NEXTAUTH_URL: http://127.0.0.1:${E2E_FRONTEND_PORT:-3000}
+      LOCAL_AUTH_USERNAME: ${LOCAL_AUTH_USERNAME:-}
+      LOCAL_AUTH_PASSWORD: ${LOCAL_AUTH_PASSWORD:-}
+    command: sh -c "npm run build && npm run start -- --hostname 0.0.0.0"
+    ports:
+      - "${E2E_FRONTEND_PORT:-3000}:3000"
+    depends_on:
+      - backend-e2e

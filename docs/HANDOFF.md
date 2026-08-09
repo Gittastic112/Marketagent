@@ -17,6 +17,10 @@ Do not read archived checkpoints unless the task needs historical evidence.
 ## Safe Starting State
 
 - Current database head: `z1z1z1z1z1z1`.
+- The migration history was intentionally replaced on 2026-08-09 after the
+  user confirmed every database created from the prior chain was disposable.
+  Recreate, rather than upgrade, any database still stamped with the deleted
+  `20260524_*` or `20260530_*` revisions.
 - Fresh 2026-08-09 worktree baseline: 492 backend tests and 91 frontend tests
   pass; TypeScript and the Next.js production build pass. Local API health and
   authentication readiness also pass. Four upstream `openpyxl` deprecation
@@ -28,6 +32,13 @@ Do not read archived checkpoints unless the task needs historical evidence.
   reset, or reformat unrelated files.
 
 ## Latest Delivered Boundary
+
+The source-truth worktree was reconciled into 20 dependency-ordered phases on
+2026-08-09. The committed boundary now includes the replacement migration
+chain, expanded persistence and API contracts, provider and evidence workflows,
+valuation engines, authenticated frontend workflows, operational checks, and
+the audited valuation knowledge base. Agent scratch and the duplicate
+`Data for Model/` input folder remain intentionally uncommitted.
 
 The documentation architecture has been consolidated. Active current-state,
 architecture, schema, runbook, capability, handoff, roadmap, feature-register,
@@ -56,7 +67,10 @@ Recent feature milestones completed include:
   and readiness checks are implemented and validated for localhost use.
 - **Frontend/Backend Truth Parity (Priority 1):** Audited `events`, `portfolio`, and key routes. Standardized `serverFetchApi` to return direct `T` instead of nested wrapper to align with service layers.
 - **Portfolio Pricing Reality (Phase 3):** Removed mock FX Impact and Opportunity Cost logic; configured `market_data/factory.py` to raise explicit `NOT_CONFIGURED` errors when providers are missing, and updated `PortfolioAnalyticsDashboard` to display "Not Configured" instead of fake values.
-- **Advanced Portfolio Analytics (Priority 4):** Integrated sector, asset, and currency exposure breakdowns, HHI concentration, opportunity cost, and FX impact directly into the portfolio UI (`portfolio/[id]/page.tsx`).
+- **Advanced Portfolio Analytics (Priority 4):** Integrated sector, asset, and
+  currency exposure breakdowns and HHI concentration. Recorded activity is
+  separated by currency; opportunity cost and historical FX impact remain
+  visibly unavailable until real benchmark and FX series exist.
 - **Provider Health Mock-Status (Priority 5):** Added explicit `mock` and `prototype` statuses to `provider_health.py` and the data-health dashboard to prevent deceptive presentation of AI outputs.
 - **AI DCF Variable Mapping (Priority 3 Expansion):** Added a new AI service and `/ai/map-event-to-dcf` endpoint to map market events to DCF variables, accessible via the new `DcfImpactPredictor` component on the events page.
 

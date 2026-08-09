@@ -1,7 +1,7 @@
 # Data Sources & Ingestion Flow
 
 ## Principle
-Start with clean, legal, source-backed inputs. The first version should prioritize public, stable, structured sources.
+Start with clean, legal, source-backed inputs. Prioritize public, stable, structured sources.
 
 This file explains what data sources exist, how ingestion flows operate (manual vs. automatic), and what data is preserved.
 
@@ -10,29 +10,117 @@ This file explains what data sources exist, how ingestion flows operate (manual 
 ## 1. Current Ingestion Flow
 
 ```text
-manual setup or ingestion trigger
--> RawDocument
--> Event
--> score Event
--> generate Alert if priority is high enough
+manual setup, provider status check, or ingestion trigger
+-> Source / ProcessingRun / RawDocument / provider-specific table
+-> optional Event extraction
+-> deterministic Event scoring
+-> Alert if priority is high enough
 -> DailyBrief reads scored Events and Alerts
+-> optional valuation/fundamentals candidate review path
 ```
 
-No AI is currently involved. 
+AI is not the primary ingestion layer. Current ingestion and scoring should remain deterministic and source-backed. AI-adjacent services exist for memos, narrative-to-numbers, summaries, and event-to-thesis impact classification, but their outputs must be treated as interpretations requiring provenance and human review.
 
 ### 1.1 Automatic Steps
 - **RSS Ingestion:** Stores each feed item as a `RawDocument`. Links a company only when deterministic matching finds exactly one active company by ticker, company name, or alias.
-- **SEC Ingestion:** Stores each filing metadata item as a `RawDocument`.
+- **SEC Ingestion:** Stores filing metadata and available filing text as `RawDocument` records for US companies when `SEC_USER_AGENT` is configured. It accepts an optional source id, validates a supplied SEC source, otherwise resolves an active SEC source or creates the local `SEC EDGAR` source record.
+- **Market-Aware Filing Acquisition:** `GET /api/companies/{company_id}/filings/discover` returns US SEC candidates or an explicit India manual-only state. `POST /api/companies/{company_id}/filings/manual-link` stores reviewed manual filing links/text as traceable `RawDocument` records.
+- **Financial Candidate Extraction:** `POST /api/filings/{filing_id}/extract-financials` creates first-pass candidates from reviewed filing text with typed line/page/section locators. `POST /api/companies/{company_id}/extract-xbrl` creates SEC `companyfacts` candidates with concept, unit, fiscal period, filing, accession, and frame locators. Warning codes and confidence expose missing units, inferred fiscal years, and ambiguous source lines.
+- **PDF Filing Upload, Extraction, and Evidence Rendering:** Authenticated `POST /api/companies/{company_id}/filings/pdf` stores a validated original PDF, optional official source URL, extracted page text, and deterministic candidates. Files may be up to 40MB and 1,000 pages. Full scans stop at 500 pages; longer reports require explicit `page_ranges` covering at most 75 pages. Statement-row parsing supports explicit year headers, INR crore/lakh units, consolidated attribution rows, and auditable sums of reported borrowing or lease components. Locators preserve page/row/cell references and bounding boxes where available. `GET /api/raw-documents/{id}/asset` returns metadata only; authenticated `GET /api/raw-documents/{id}/asset/content` streams the original source. Authenticated `GET /api/raw-documents/{id}/asset/pages/{page}.png` renders a bounded stored page for exact evidence overlays; it is not a generic URL or arbitrary-PDF renderer.
+- **Screener Workbook Extraction:** `POST /api/companies/{company_id}/fundamentals/screener` accepts `.xlsx` files up to 2MB. It hashes bytes, rejects duplicates, creates source/raw-document/processing-run records, removes temporary files, and emits reviewable candidates with sheet, row label, column header, cell coordinate, and reporting unit.
+- **Financial Candidate Review:** Review, reject, override, and promote endpoints exist. A reporting unit is mandatory before review/override. Promotion writes legacy metrics plus canonical normalized snapshots, persists currency source/confidence, and blocks conflicting currencies.
 - **Post-Ingestion Pipeline:**
   - Extracts events from raw documents that do not already have events.
   - Scores those events deterministically.
   - Generates alerts for events whose priority passes the alert threshold.
-- **Processing Runs:** Each SEC/RSS ingestion attempt creates a `ProcessingRun` record with counts, status, timestamps, errors, and source/company links where available.
+- **Processing Runs:** SEC/RSS ingestion, PDF/Screener upload, filing text extraction, SEC XBRL extraction, and normalized backfill preview/apply attempts create `ProcessingRun` records with standardized `running`, `success`, `partial_success`, or `failed` states, counts, timestamps, safe errors, metadata, and source/company links. These operations remain synchronous; background workers, retry, and cancellation semantics are not implemented.
+- **Provider Health:** `GET /api/providers/health` reports configured, missing, failing, manual-only, and not-configured states for SEC EDGAR, RSS, FRED, market data, AI, OpenFIGI, Damodaran benchmarks, and India manual filing support.
+- **Source Capability Matrix:** `GET /api/source-capabilities?market=US|IN` reports whether each source class is available, manual-only, not configured, or unsupported for the selected market.
 - **Daily Brief:** Automatically pulls the highest-priority scored events and latest alerts when requested.
 
-### 1.2 Manual Inputs
+### 1.2 Damodaran Source Layers
+
+Damodaran data has two distinct locations:
+
+- `damodaran_knowledge_base_v1/` is the canonical evidence and doctrine layer.
+  It contains immutable originals, SHA-256 hashes, source dates, date confidence,
+  status, processing decisions, model references, and review items.
+- `data/damodaran/raw/` is the application runtime mirror used by backend import
+  tooling. Presence in this folder does not mean the workbook is parsed or shown
+  in the UI.
+
+Before source or valuation work, run:
+
+```bash
+python3 damodaran_knowledge_base_v1/tools/audit_kb.py
+```
+
+New originals go only to `damodaran_knowledge_base_v1/raw/inbox/`. Process them
+under the nested `AGENTS.md`, then update the catalog, processing ledger, hash
+ledger, manifest, derived references, and review queue. Never edit a routed raw
+file. Current source state and prioritized follow-up are in
+`damodaran_knowledge_base_v1/PROCESSING_PLAN.md`.
+
+`GET /data-health/damodaran-coverage` is the application-ingestion truth
+boundary for the 35-workbook runtime mirror. It combines a versioned
+source/metric registry with live source presence, dataset metadata, typed
+destination row counts, freshness, omissions, and required actions. A workbook
+is `ingested` only when source-specific typed rows exist. A successful generic
+admin parse is `metadata_only` and must not be presented as a usable benchmark.
+The 2026-08-08 local snapshot is 14/35 sources with typed rows and 3,290 typed
+records; 9 sources are fully supported, 13 partial, and 13 unsupported.
+
+Capex, ROE, Margin, Working Capital, Dividend, FCFE, Volatility, PE, PBV, PS,
+EV/EBITDA, and Country Statistics use
+`DamodaranDatasetVersionService`. The importer hashes the actual runtime source,
+records byte size and canonical source metadata, verifies same-hash row counts,
+preserves changed versions, and exposes the active version in Data Health. The
+four newly converted parsers require exact workbook headers before version
+creation, reject empty sources transactionally, preserve firm counts, exclude
+aggregate Total Market rows, and preserve null source cells.
+
+Source semantics are strict. Margin `ebit_margin` maps to `Pre-tax Unadjusted
+Operating Margin`. FCFE maps `Net Income`, `FCFE (before debt cash flows)`, and
+`FCFE (after debt cash flows)`. The workbook does not provide separate Capex
+minus depreciation, working-capital change, or net-debt-issued columns, so those
+legacy fields remain null. Compatibility `fcfe` mirrors the after-debt value.
+
+Volatility requires exact `optvarIndia.xls` headers and both source assumption
+rows. It stores the source's relative bond/equity volatility ratio (`0.40`) and
+stock/bond correlation (`0.50`) explicitly. Active reads require a linked active
+dataset version; old unlinked rows are preserved but ignored. Legitimate zeros
+and nulls remain unchanged. The API returns a stable not-found error instead of
+generic fallback values.
+
+Use scoped ingestion to avoid refreshing unrelated legacy sources:
+
+```bash
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only roe
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only capex roe
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only margin working_capital dividend fcfe
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only volatility
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only pe pbv ps vebitda
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only country_stats
+```
+
+The command reports active version ID, full SHA-256, source date, row count,
+and the current coverage/provenance summary. Generic admin uploads are
+`metadata_only` and inactive. Pricing rows are version-safe but intentionally
+remain source-separated; relative-valuation reads assemble only active rows and
+return source provenance per method. Country-statistics reads likewise require
+the active hashed version and expose it with the country facts. All current
+source-specific typed Damodaran importers are version-safe; unsupported mirror
+files remain unimplemented rather than implicitly covered.
+
+### 1.3 Manual Inputs
 - Companies, Sources, Raw Documents, Events, Alerts, and Thesis Notes can all be added manually via `POST` routes or their respective UI pages.
 - RSS sources use the existing Source record with `source_type="rss"`, a feed URL in `base_url`, manual `reliability_score`, and `active` status.
+- India filings are manual-first. Use reviewed links/text until a compliant NSE/BSE/vendor data source is selected and implemented.
+- Manual PDF upload is available for both markets. Long text-based reports can
+  use bounded target page ranges. Scanned PDFs still need OCR; arbitrary merged
+  layouts and operating/non-operating accounting classification still require
+  review or a later layout-aware parser.
+- Market/rate context can be entered manually through country/market context endpoints. Missing values must return not-configured states, not fabricated defaults.
 - Alert review status and notes are manual human feedback.
 - Daily briefs are generated live and saved manually.
 
@@ -43,19 +131,42 @@ No AI is currently involved.
 ### 2.1 SEC EDGAR Strategy
 SEC ingestion exists in `backend/app/services/sec_ingestion.py`.
 - **SEC User-Agent:** SEC APIs require respectful access. The system must enforce a valid `SEC_USER_AGENT` environment variable (e.g., `MarketIntelligenceApp/0.1 contact: email@example.com`) before any SEC API calls are made.
-- **CIK Lookup:** The backend needs a dedicated, robust CIK lookup endpoint (`/api/sec/company/{ticker}/cik`) for the frontend to display lookup status.
+- **CIK Lookup:** US company lookup routes through SEC EDGAR and can return CIK/regulatory identity. India lookup is not equivalent and must stay explicit about manual or not-implemented provider status.
 - **Filing Diffs:** When filing text is present, event extraction compares the current filing with the prior stored filing for the same company and form type. If the text changed, it creates a `filing_text_change` event with prior/current RawDocument IDs, source URLs, and a first-pass line diff.
+- **Bounded Downstream Text:** Generated event and alert summaries are concise, HTML-stripped, and bounded. Full filing text remains in the raw document and is not copied into event descriptions, alerts, or collection payloads.
+- **SEC XBRL Candidate Extraction:** `backend/app/services/sec_xbrl_extractor.py` reads SEC `companyfacts`, creates or resolves the SEC source without hardcoded ids, selects a deterministic unit, stores typed fact locators, and emits reviewable candidates. It is not filing-specific statement reconstruction and does not prove completeness.
 
 ### 2.2 RSS / News Strategy
 RSS ingestion exists in `backend/app/services/rss_ingestion.py`.
-- News will expand beyond manual RSS to structured News APIs.
-- The pipeline will require `NEWS_API_KEY` configurations.
+- RSS is the current lowest-risk news ingestion route.
+- Structured News APIs are future/provider-backed work and must appear as not configured or unavailable until keys and provider logic are present.
+- The pipeline may use `NEWS_API_KEY` or equivalent provider keys later, but UI claims must not imply live provider coverage before it exists.
 
 ### 2.3 Price Data Strategy
-- Currently manual.
-- Future state: integration with stable end-of-day providers (e.g., Alpha Vantage, Yahoo Finance). Requires `ALPHA_VANTAGE_API_KEY` configuration.
+- Manual prices and market context are supported.
+- `POST /api/market/ingest` is the canonical quote-plus-history ingestion route. `POST /market-prices/fetch-latest` is a quote-only compatibility route. Both use the configured `MarketDataProvider` factory and the same persistence boundary.
+- Normalized quote/history results carry provider, provider symbol, market, exchange, ticker, currency, source/observed time, price type, delay, adjustment state, and warnings. Stored `market_prices` and `company_market_data` rows expose this provenance; manual rows are labeled `manual` and legacy rows are labeled `legacy_unknown`.
+- `/market-prices` renders source/timing labels and warning details so manual, legacy, unofficial, and configured-provider rows are distinguishable without inspecting the API.
+- Alpha Vantage and explicit `yfinance_personal` adapters are implemented. yfinance is unofficial and personal-use oriented, never a silent fallback, and emits a warning on every result. FMP is an explicit non-operational placeholder and returns `PROVIDER_NOT_IMPLEMENTED`.
+- Explicit market-context routes avoid ambiguous symbols. Legacy ticker-only routes reject cross-market or cross-exchange ambiguity.
+- Missing credentials, unsupported providers/symbols, rate limits, timeouts, invalid responses, identity/currency mismatches, and provider failures return stable public errors. Provider failure does not become zero, mock, or silent fallback data.
+- Provider-backed data must expose configured/missing/failing/stale states through provider health and API metadata.
+- Price routing/provenance is repaired, but this is not a certified US/India market-data layer. AAPL financial history is certified; India certification and Tiingo/Upstox adapters remain incomplete.
+- Dated free/public provider research and terms constraints are preserved in the [archived provider landscape](archive/research/free-api-provider-landscape-2026-08-01.md). It is research evidence, not proof that a listed provider is integrated.
 
-### 2.4 Social / Forum Strategy
+### 2.4 Financial Statement and Fundamentals Strategy
+- First-pass extraction from reviewed filing text exists.
+- SEC XBRL `companyfacts` candidate extraction exists for US companies with CIKs.
+- India fundamentals remain manual-first unless a compliant structured provider is selected.
+- `financial_extraction_candidates` are review candidates, not trusted normalized statements.
+- `normalized_financial_snapshots` and `normalized_financial_metrics` are the canonical read path when a snapshot exists. Coverage and reconciliation endpoints expose stale, missing, mismatched, or normalized-only metrics before valuation use.
+- Assumption autofill must not silently use placeholder actuals as if they were source-backed financial data.
+- The APSEZ reference flow uses the latest annual-report comparative for each
+  year, stores NCI and associates separately, sums exact reported debt
+  components with a Calculation warning, and refuses to invent operating EBIT.
+  See `archive/checkpoints/2026/adani-ports-real-source-checkpoint-2026-08-01.md`.
+
+### 2.5 Social / Forum Strategy
 - The system will NOT scrape Reddit or X/Twitter HTML.
 - Will only use official/approved APIs. Social posts must maintain exact source URLs and hashes.
 
@@ -89,13 +200,29 @@ Every source record must store:
 - content hash
 - linked company if applicable
 
+Financial extraction candidates and normalized financial metrics must additionally preserve:
+
+- source document id or source provider
+- extraction method
+- review status
+- reviewed/overridden value when applicable
+- currency/unit
+- warning or provenance notes
+- whether the value is candidate, reviewed, overridden, rejected, or promoted
+
 ---
 
 ## 5. Security Notes
 - Treat imported CSV, markdown, RSS, social posts, and AI output as untrusted inputs.
+- Treat SEC/RSS/provider text as untrusted display content even when the source itself is reputable.
 - Do not store broker passwords.
 - Do not sync brokers until OAuth is fully implemented.
 
 ## Market Data & Financials
 
-Market Data is ingested via the MarketDataProvider interface (AlphaVantage, FMP). Financial trends are ingested from SEC Company Facts API using the SEC_USER_AGENT.
+Market data uses the `MarketDataProvider` interface for Alpha Vantage or the
+explicit `yfinance_personal` adapter when configured. FMP is not implemented.
+Manual prices and manual country/market context remain valid and are labeled.
+Tiingo and Upstox are approved roadmap choices, not current integrations.
+
+Financial trends can be drafted from SEC `companyfacts` using `SEC_USER_AGENT`, but extraction outputs are candidates until reviewed. Do not treat extracted or autofilled numbers as valuation-ready without user review, source labels, warnings, and deterministic calculation support.

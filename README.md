@@ -5,8 +5,8 @@
 This project is a local-first Market Intelligence Engine and portfolio tracker
 for public equity research.
 
-It is not a trading bot.  
-It is not a generic AI summarizer.  
+It is not a trading bot.
+It is not a generic AI summarizer.
 It is not a Bloomberg clone.
 
 It is a source-backed research and portfolio system that helps track:
@@ -31,37 +31,30 @@ The goal is to answer:
 
 ---
 
-## First MVP
+## Product boundary
 
-The first version should be intentionally narrow:
+The current deployment boundary is intentionally narrow:
 
 - local only
-- 10 to 25 public companies
+- single-user credential login
 - source-backed data storage
-- manual thesis notes
-- SEC filing ingestion
-- RSS/news ingestion
-- macro data ingestion later
-- market data ingestion later
-- portfolio holdings and transactions next
-- manual prices and portfolio valuation after holdings
-- credibility scoring
-- change detection
-- daily intelligence brief
+- reviewed financial facts and evidence
+- SEC, RSS, manual PDF, macro, and selected market-data ingestion
+- portfolio holdings, transactions, cash, prices, and valuation
+- deterministic valuation and scoring
+- reviewable AI assistance
 
-Do not build:
+Do not add yet:
 
 - trading execution
 - buy/sell recommendations
 - Twitter scraping
-- options flow engine
 - broker credential storage
 - broker sync before OAuth/token security is designed
-- multi-user authentication
 - payment system
 - production deployment
 
-The expanded product plan lives in `docs/archive/portfolio-expansion-plan.md`.
+The active product roadmap lives in `docs/roadmaps/product-roadmap.md`.
 The repository threat model lives in `docs/06-security-threat-model.md`.
 
 ---
@@ -72,14 +65,12 @@ Use `docs/00-current-state.md` as the source of truth.
 
 Short version:
 
-- Built: local Docker app, FastAPI backend, Next.js frontend, PostgreSQL,
-  companies, sources, raw documents, events, alerts, thesis notes, SEC/RSS
-  ingestion, scoring, alert review, daily briefs, and manual portfolio tracking
-  for portfolios, holdings, and transactions.
-- Built (Milestones D-K): Deterministic portfolio valuation, manual prices, DCF
-  models, section-aware SEC diffs, AI provenance foundations, compliant sentiment,
-  narrative clustering, thesis-aware alerts, and macro/exposure metrics.
-- Not built: real-time market data, broker sync, auth, or production deployment.
+- Strongest areas: deterministic valuation, evidence/provenance foundations,
+  local ownership, Damodaran source versioning, and broad backend coverage.
+- Partial areas: India automation, providers, financial layout coverage, daily
+  workflow integration, AI citations, portfolio attribution, and frontend parity.
+- Not ready: market-regime decisions, broker sync, real-time trading data, or
+  public deployment.
 
 ---
 
@@ -122,12 +113,19 @@ The backend container uses PostgreSQL through the Docker service name `postgres`
 The frontend server talks to the backend through the Docker service name
 `backend`. Browser-side frontend requests go through the frontend proxy at
 `/api/backend`, so the browser does not need to resolve Docker service names.
+The development container keeps Linux `node_modules` and `.next` data in
+container-only volumes so Mac native packages cannot replace Linux binaries.
+After upgrading from an older container layout, recreate only the frontend with:
+
+```bash
+docker compose up --build -d --force-recreate --renew-anon-volumes frontend
+```
 
 When running the backend directly on the laptop instead of inside Docker, use `localhost` in `DATABASE_URL`.
 
 ## Milestone A local verification & Manual Setup
 
-If you are setting up API keys, running verification scripts, or configuring external sources, please refer to the detailed [Local Development Guide](file:///Users/mananmaheshwari/Documents/Codex/Market%20Intelligence%20App/market-intelligence-md-files%20copy/docs/07-local-development.md).
+If you are setting up API keys, running verification scripts, or configuring external sources, refer to the detailed [Local Development Guide](docs/07-local-development.md).
 
 After Docker is running, run:
 
@@ -144,7 +142,27 @@ python3 scripts/verify_milestone_a.py --write --ticker AAPL --form-type 10-K \
   --rss-feed "YOUR_RSS_FEED_3"
 ```
 
-Replace the example RSS URLs with real feeds you want to track. Refer to [docs/07-local-development.md](file:///Users/mananmaheshwari/Documents/Codex/Market%20Intelligence%20App/market-intelligence-md-files%20copy/docs/07-local-development.md) for troubleshooting feed errors and other common verification issues.
+Replace the example RSS URLs with real feeds you want to track. Refer to [docs/07-local-development.md](docs/07-local-development.md) for troubleshooting feed errors and other common verification issues.
+
+---
+
+## Damodaran Valuation Benchmarks
+
+The Market Intelligence Engine features a fully structured valuation flow that begins with Damodaran industry benchmarks.
+
+1. **Canonical knowledge vs. app runtime data**: `damodaran_knowledge_base_v1/` is the immutable, hash-audited source and doctrine layer. `data/damodaran/raw/` is the backend runtime mirror mounted into Docker at `/workspace/data/damodaran/raw/`. Do not treat the runtime mirror as the provenance catalog.
+2. **How ingestion works**: Run `docker compose exec backend python /workspace/scripts/ingest_damodaran.py`. The helper ingests a defined subset of the available workbooks; a file being present does not prove parser/database/UI support. Unsupported coverage must remain explicit.
+3. **How industry mapping and autofill works**: When creating a valuation model, the user chooses a company, a country, and confirms a Damodaran industry. The app uses the `IndustryMappingService` to match the company's sector to the normalized industries, and uses the `IndustryAssumptionService` to automatically build assumption priors from the ingested benchmark data.
+4. **Differentiation of assumptions**: In the final UI, company actuals (extracted from uploaded financials), industry priors (from Damodaran), formula-derived metrics, and user-entered assumptions are explicitly labeled and tracked using an explicit `confidence` and `sourceType`.
+
+Audit the canonical corpus with:
+
+```bash
+python3 damodaran_knowledge_base_v1/tools/audit_kb.py
+```
+
+See `damodaran_knowledge_base_v1/INDEX.md` and
+`damodaran_knowledge_base_v1/PROCESSING_PLAN.md` before adding or using sources.
 
 ---
 
@@ -162,6 +180,9 @@ market-intelligence-engine/
 │   ├── 01-product-brief.md
 │   ├── 07-local-development.md
 │   ├── 08-execution-runbook.md
+│   ├── roadmaps/
+│   ├── valuation-agent/
+│   ├── archive/
 │   └── (other numbered docs)
 ├── backend/
 ├── frontend/

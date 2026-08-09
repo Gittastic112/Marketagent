@@ -1,0 +1,26 @@
+segment,metric,value,unit,source,status
+Launch,2025 revenue,4086,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B8,VALID
+Starlink,2025 revenue,11387,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B9,VALID
+xAI,2025 revenue,3201,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B10,VALID
+Company,2025 EBIT,-2589,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B11,VALID
+Company,Cash,24747,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B17,VALID
+Company,Debt,22896,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B14,VALID
+Company,IPO proceeds,75000,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B18,VALID
+Launch,2036 target revenue,40000,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B26,CONFLICTING
+Starlink,2036 target revenue,120000,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B27,VALID
+xAI,2036 target revenue,160000,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B28,VALID
+Other,2036 target revenue,100000,USD mm,SpaceX2026IPOUpdated.xlsx Input sheet B29,CONFLICTING
+Launch,target operating margin,0.45,%,SpaceX2026IPOUpdated.xlsx Input sheet B30,VALID
+Starlink,target operating margin,0.6,%,SpaceX2026IPOUpdated.xlsx Input sheet B31,VALID
+xAI,target operating margin,0.25,%,SpaceX2026IPOUpdated.xlsx Input sheet B32,VALID
+Other,target operating margin,0.3,%,SpaceX2026IPOUpdated.xlsx Input sheet B33,VALID
+Launch,sales/capital years 1-5,3.0,x,SpaceX2026IPOUpdated.xlsx Input sheet B36,VALID
+Launch,sales/capital years 6-10,4.0,x,SpaceX2026IPOUpdated.xlsx Input sheet C36,VALID
+Starlink,sales/capital years 1-5,3.0,x,SpaceX2026IPOUpdated.xlsx Input sheet B37,VALID
+Starlink,sales/capital years 6-10,5.0,x,SpaceX2026IPOUpdated.xlsx Input sheet C37,VALID
+xAI,sales/capital years 1-5,1.5,x,SpaceX2026IPOUpdated.xlsx Input sheet B38,VALID
+xAI,sales/capital years 6-10,2.5,x,SpaceX2026IPOUpdated.xlsx Input sheet C38,VALID
+Company,risk-free rate,0.0456,%,SpaceX2026IPOUpdated.xlsx Input sheet B41,VALID
+Company,initial cost of capital,0.083745,%,SpaceX2026IPOUpdated.xlsx Input sheet B42,VALID
+Company,stable cost of capital,0.0825,%,SpaceX2026IPOUpdated.xlsx Input sheet B53,VALID
+Company,stable ROC,0.15,%,SpaceX2026IPOUpdated.xlsx Input sheet B56,VALID

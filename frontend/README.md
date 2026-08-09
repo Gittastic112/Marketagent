@@ -1,88 +1,71 @@
 # Frontend
 
-This is a minimal Next.js dashboard for the local Market Intelligence Engine.
+The frontend is a Next.js 16 App Router application for the local Market
+Intelligence Engine. It is a research workspace, not a minimal dashboard.
 
-It reads from the FastAPI backend through:
+## Runtime Boundaries
 
-```text
-API_BASE_URL=http://127.0.0.1:8000
-NEXT_PUBLIC_BROWSER_API_BASE_URL=/api/backend
-```
+- Server-rendered requests use `API_BASE_URL`.
+- Browser requests use the same-origin `/api/backend` proxy configured by
+  `NEXT_PUBLIC_BROWSER_API_BASE_URL`.
+- NextAuth local credentials protect pages and API proxy requests.
+- The frontend signs short-lived internal identity assertions; it does not expose
+  backend secrets or forward raw session cookies to FastAPI.
+- Debug logs are disabled unless `NEXT_PUBLIC_DEBUG_LOGS=true`.
 
-`API_BASE_URL` is used by server-side frontend code. Browser-side requests use
-the same-origin `/api/backend` proxy so the browser does not need to resolve
-Docker-only hostnames such as `backend`.
+Required local auth settings are documented in
+[`../docs/07-local-development.md`](../docs/07-local-development.md).
 
-Debug logs are off by default. Enable them with:
+## Product Surface
 
-```text
-NEXT_PUBLIC_DEBUG_LOGS=true
-```
+The app includes company setup/research, filing and financial review, evidence,
+events, alerts, thesis notes, valuation workflows, portfolios, market/macro
+context, research sessions, narratives, search, Data Health, sources, and
+settings. Capability status and limitations live in
+[`../docs/roadmaps/feature-register.md`](../docs/roadmaps/feature-register.md).
 
-## Current scope
+Do not add mock values to make a route appear complete. Components must preserve
+loading, empty, error, stale, partial, not-configured, mock, and success states.
 
-Built:
+## Run
 
-- overview metrics
-- companies page
-- company detail page
-- add-company ticker lookup for SEC title and CIK
-- sources page
-- raw documents page
-- events page
-- alerts page
-- thesis notes page
-- daily brief page
-- saved daily brief history
-- pasted RSS XML import
-- RSS feed URL import
-- RSS source active/inactive controls
-- run-one and run-all-active RSS feed controls
-- company aliases for source matching
-- pasted SEC filing metadata import
-- recent SEC filing metadata fetch for companies with CIKs
-- company detail SEC picker for form type, filing year, exact filing, and
-  optional text download
-- rule-based event extraction from raw documents
-- rule-based alert generation from high-priority events
-- score explanations on events and alerts
-- create forms for companies, sources, raw documents, events, alerts, and thesis notes
-- edit controls for companies, sources, raw documents, events, alerts, and thesis notes
-- delete controls for companies, sources, raw documents, events, alerts, and thesis notes
-- inline delete errors when linked records prevent deletion
-- SEC filing text download checkbox on SEC ingestion forms
-- first-pass SEC filing text change events shown through the existing Events page
-- optional frontend API/action debug logs when `NEXT_PUBLIC_DEBUG_LOGS=true`
-
-Not built yet:
-
-- client-side filtering
-- charts
-- authentication
-
-## Local run with Docker
-
-From the project root:
+Preferred, from the repository root:
 
 ```bash
-docker compose up --build
+docker compose up --build -d
 ```
 
-Then open:
+Open `http://localhost:3000`.
 
-```text
-http://localhost:3000
-```
-
-This is the preferred local path because it does not require `npm` to be installed on the host machine.
-
-## Local run without Docker
-
-After a JavaScript package manager is available:
+Host development, with the backend already on `127.0.0.1:8000`:
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-The backend should be running on `127.0.0.1:8000`.
+## Validate
+
+```bash
+npm test
+npm run typecheck
+npm run build
+```
+
+Use Playwright for changed user workflows. A successful build proves compilation,
+not live provider behavior or visual correctness.
+
+## Key Locations
+
+| Path | Responsibility |
+|---|---|
+| `app/` | Routes and server/client composition |
+| `app/api/backend/[...path]/route.ts` | Authenticated same-origin backend proxy |
+| `components/` | Reusable UI and workflow components |
+| `lib/api.ts` | Browser API client and shared contracts |
+| `lib/server-api.ts` | Authenticated server-side backend client |
+| `lib/auth-options.ts` | Local NextAuth credential configuration |
+| `e2e/` | Isolated browser workflows |
+
+See [`../docs/02-architecture.md`](../docs/02-architecture.md) for the full
+system boundary.

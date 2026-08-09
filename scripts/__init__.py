@@ -1,1 +1,1 @@
-"""Project helper scripts."""
+"""Repository verification and operations scripts."""

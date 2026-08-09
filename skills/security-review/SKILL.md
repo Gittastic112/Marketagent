@@ -1,42 +1,88 @@
 ---
-name: Security Review
-description: A mandatory security checklist for ensuring the Market Intelligence App remains secure during new feature additions. Focuses on SSRF prevention, CSRF, untrusted text rendering, and API key handling.
+name: security-review
+description: Use when a Market Intelligence App task touches external inputs, files, URLs, provider APIs, AI calls, secrets, auth, broker integrations, exports, proxy routes, or public deployment.
 ---
 
-# Security Review Skill
+# Security Review
 
-This skill provides a checklist and guidelines for conducting security reviews when adding new features, APIs, or integrations to the Market Intelligence App.
+## Purpose
 
-## Pre-Integration Checklist
+Run the project security checklist before changing risky surfaces. The canonical project workflow is `docs/skills/security/security-review.md`.
 
-Before adding any new external API, data import, or AI model integration, verify the following:
+## When to use
 
-- [ ] **No Hardcoded Secrets:** Verify that no API keys, tokens, or credentials are hardcoded in the source code or tests.
-- [ ] **`.env` Management:** Ensure that secrets are only loaded from the environment or `.env` files. Ensure `.env.example` does not contain real secrets.
-- [ ] **Log Sanitization:** Ensure that proxy routes or data fetchers redact or strip provider keys and authorization headers before logging request/response data.
-- [ ] **SSRF Prevention:** If the app accepts user-provided URLs (e.g., RSS feeds, SEC filing URLs, or general web scraping), ensure URL validation blocks requests to localhost, internal network IPs (10.x.x.x, 192.168.x.x, 172.16.x.x), and the Docker socket.
-- [ ] **Untrusted Input Rendering:** Treat all imported text (RSS, SEC filings, CSV imports, social posts) and AI-generated outputs as untrusted. Do NOT render them as raw HTML. Use safe rendering conventions (e.g., Markdown parsers that sanitize HTML, or React's default text escaping).
-- [ ] **CSV Injection Prevention:** Any CSV export feature MUST prepend a single quote (`'`) to fields starting with `=`, `+`, `-`, or `@` to prevent CSV formula injection attacks when opened in Excel or Google Sheets.
-- [ ] **Broker / Financial Integrations:** Do NOT store broker passwords directly. Any future broker integration MUST use official OAuth2 or token-based flows.
+- External APIs, SEC/RSS/provider ingestion, user-provided URLs, uploads, CSV import/export, AI calls, auth, broker integrations, proxy routes, or deployment.
+- Any feature touches private portfolio, thesis, valuation, or source data.
 
-## Actionable Guidelines
+## When NOT to use
 
-### URL Validation (SSRF)
-When implementing a fetch from a user-supplied URL (like RSS), use a dedicated URL validation function in `backend/app/core/security.py` that parses the URL and explicitly denies internal IP ranges.
+- Pure copy edits with no behavior or data-flow change.
 
-### CSV Export Escaping
-When generating CSVs (e.g., for portfolios or macros), implement a helper function:
-```python
-def escape_csv_formula(value: str) -> str:
-    if not value:
-        return value
-    if value.startswith(("=", "+", "-", "@")):
-        return f"'{value}"
-    return value
-```
+## Prerequisites
 
-### React / Next.js Safe Rendering
-When rendering raw text or AI summaries on the frontend, avoid `dangerouslySetInnerHTML`. If you must render Markdown, use a library like `react-markdown` which escapes HTML tags by default.
+- Read `docs/06-security-threat-model.md`.
+- If the task is in this repository, also read `docs/skills/security/security-review.md`.
 
-### External API Mocking
-Do not call live external APIs (like OpenAI, SEC, or RSS feeds) in the automated test suite. Use `unittest.mock.patch` or pytest fixtures to mock HTTP responses.
+## Inputs
+
+- Changed files.
+- User-controlled inputs.
+- Secrets or credentials involved.
+- External provider or AI calls.
+
+## Outputs
+
+- Security risks and required mitigations.
+- Tests or manual checks.
+- Threat-model updates when security assumptions change.
+
+## Workflow
+
+1. Check secrets and environment handling.
+2. Check untrusted input rendering.
+3. Check URL fetching and SSRF risk.
+4. Check CSV/spreadsheet injection.
+5. Check API errors/logs for secret leakage.
+6. Check AI data sharing and provenance.
+7. Check broker/auth/deployment boundaries.
+8. Verify tests avoid live external APIs.
+9. For uploads, verify size/type limits, hashes, duplicate handling, temporary-file cleanup, safe errors, and processing runs.
+10. For readiness/diagnostic routes, verify they return state only and never secret values.
+11. For generated diff markup, escape every source token and parse only generator-owned semantics into React text. Do not use `dangerouslySetInnerHTML`, including for legacy rows.
+
+## Acceptance criteria
+
+- No secrets are exposed to frontend or committed files.
+- User-controlled URLs cannot fetch internal resources.
+- Imported text is not rendered as trusted HTML.
+- Private portfolio/thesis/valuation data is not sent externally without explicit design and audit trail.
+- Public deployment remains blocked until production identity, authorization,
+  and deployment security exist; local credential auth is not sufficient.
+- Upload provenance never stores temporary paths, and auth readiness never returns credential values.
+- Imported filing text cannot inject markup through diff or evidence rendering.
+
+## Common mistakes
+
+- Treating local-first as no security needed.
+- Logging provider keys.
+- Rendering RSS/AI/markdown as raw HTML.
+- Storing broker passwords.
+
+## Do not do
+
+- Do not recommend `sudo chmod 666 /var/run/docker.sock`.
+- Do not expose the app publicly without production identity/authorization,
+  HTTPS, CSRF/CORS review, rate limits, and secret management.
+- Do not call live external APIs in automated tests.
+
+## Related skills
+
+- `docs/skills/data-ingestion/data-ingestion-workflow.md`
+- `docs/skills/backend/backend-api-change.md`
+- `docs/skills/frontend/frontend-data-state.md`
+- `docs/skills/operations/local-operations.md`
+
+## References
+
+- `docs/06-security-threat-model.md`
+- `docs/skills/security/security-review.md`

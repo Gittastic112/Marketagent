@@ -1,0 +1,18 @@
+{
+  "case": "SpaceX 2026",
+  "sources": [
+    {
+      "file": "SpaceX valuation.pdf",
+      "role": "pre/post prospectus narrative, valuation logic, uncertainty, pricing vs value"
+    },
+    {
+      "file": "SpaceX2026IPOUpdated.xlsx",
+      "role": "post-prospectus model inputs/formulas; reproduce workbook values but validate contamination/conflicts"
+    },
+    {
+      "file": "Musings on Markets.pdf",
+      "role": "related market expectations, country risk and market-structure logic"
+    }
+  ],
+  "canonical_case_status": "worked_example_only"
+}

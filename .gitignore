@@ -23,4 +23,5 @@ output/playwright/
 frontend/playwright-report/
 frontend/test-results/
 backups/
-scratch/venv/
+scratch/
+Data for Model/

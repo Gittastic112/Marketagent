@@ -1,5 +1,7 @@
 .DS_Store
 .next
 node_modules
+playwright-report
+test-results
 tsconfig.tsbuildinfo
 *.tsbuildinfo

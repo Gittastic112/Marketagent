@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Case Assumption",
+  "type": "object",
+  "required": [
+    "entity",
+    "metric",
+    "value",
+    "source",
+    "status"
+  ],
+  "properties": {
+    "entity": {
+      "type": "string"
+    },
+    "segment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "metric": {
+      "type": "string"
+    },
+    "value": {},
+    "unit": {
+      "type": "string"
+    },
+    "as_of": {
+      "type": "string"
+    },
+    "rationale": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "source": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "VALID",
+        "LIKELY_VALID",
+        "CONFLICTING",
+        "STALE_TEMPLATE",
+        "UNRESOLVED"
+      ]
+    }
+  }
+}

@@ -28,22 +28,25 @@ daily workflow integration, portfolio analytics, and frontend consistency.
 | Damodaran application coverage | 9 supported, 13 partial, 13 unsupported |
 | Damodaran typed data | 14 sources, 3,290 rows, 12 complete active provenance records |
 
-This table reflects the current 2026-08-09 dirty worktree. Local API health,
-authentication readiness, documentation links, and secret scanning also pass.
-The worktree still contains substantial uncommitted prior-agent changes, so
-future phases must continue to stage only their reviewed files.
+This table reflects the reconciled 2026-08-09 source-truth worktree. Local API
+health, authentication readiness, documentation links, and secret scanning also
+pass. Uncommitted paths that remain after reconciliation are duplicate input
+data or agent scratch, not application dependencies.
+
+The migration history was deliberately replaced after the user confirmed all
+databases created from the previous chain were disposable. Databases stamped
+with the deleted `20260524_*` or `20260530_*` revisions must be recreated.
 
 ## Documentation State
 
-The active `/docs` layer is now 31 Markdown files and 3,489 lines, including the
-project skill library. One roadmap and one feature register drive future work.
+The active documentation checker covers 62 Markdown files and 273 local links,
+including the project skill library. One roadmap and one feature register drive future work.
 Dated checkpoints, prior handoffs, old assessments, and superseded plans are
 categorized under `archive/`. `scripts/check_docs.py` validates active Markdown
 links and rejects retired active-plan paths.
 
-The Docker daemon was unavailable during the documentation cleanup. The table
-above records the immediately preceding verified baseline; documentation checks
-for this cleanup are reported separately in `HANDOFF.md`.
+Docker runtime checks, the full backend suite, frontend tests, TypeScript, and
+the production build were all available and green during reconciliation.
 
 ## Capability Map
 

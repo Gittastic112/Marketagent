@@ -1,5 +1,4 @@
-# Product Brief
-# Market Intelligence Engine
+# Product Brief: Market Intelligence Engine
 
 ## 1. Product North Star
 The Market Intelligence App is a local-first, source-backed financial research and portfolio intelligence cockpit. It combines portfolio analytics, company research, SEC filings, news flow, narrative tracking, sentiment, scoring, and valuation tools into a unified, source-backed research workflow.
@@ -17,8 +16,8 @@ Markets produce too much information. The problem is knowing what changed, what 
 
 ---
 
-## 3. Core Workflows (Planned)
-The application is structured around six core workflows:
+## 3. Core Workflows
+The application is structured around six core workflows. Some are implemented, some are partial, and all must keep source/provenance state visible:
 1. **Daily Intelligence Workflow:** "What changed since I last checked?" (Dashboard, Top Movers, Filings, Risk Alerts)
 2. **Portfolio Monitoring Workflow:** "What am I actually exposed to?" (Sector/Theme exposure, concentration, narrative exposure)
 3. **Company Research Workflow:** "Do I understand this company better after 5 minutes?" (Filings, News, Financials, Narratives, DCF)
@@ -47,7 +46,7 @@ Every major view follows a strict 4-layer hierarchy to prevent data dumping:
 ---
 
 ## 6. MVP Scope (Current Phase)
-The initial MVP focuses on local functionality:
+The current app remains local-first, but the MVP has expanded into a broader research and valuation cockpit:
 - [x] Company watchlist
 - [x] Manual thesis notes
 - [x] Raw document storage
@@ -57,9 +56,17 @@ The initial MVP focuses on local functionality:
 - [x] Portfolio holdings and transactions
 - [x] Manual market prices
 - [x] Portfolio valuation and exposure analytics
-- [ ] SEC filing ingestion (Planned next phase)
-- [ ] RSS/news ingestion (Planned next phase)
-- [ ] Automated Narrative tracking (Planned next phase)
+- [x] SEC filing ingestion for US companies when `SEC_USER_AGENT` is configured
+- [x] RSS/news ingestion through configured RSS sources
+- [x] Market-aware US/India company identity
+- [x] Provider health and source capability visibility
+- [x] Damodaran-style valuation engine with DCF, source-backed synthetic-rating WACC, sensitivity, scenarios, reverse DCF, FCFE/DDM, macro sensitivity, real options, and benchmark priors
+- [x] Financial extraction candidate workflow from reviewed filing text
+- [x] SEC XBRL `companyfacts` candidate extraction foundation
+- [x] Candidate review/reject/override/promote UI foundation
+- [~] Narrative tracking and research workspace: modeled and routed, but still needs UX/provenance hardening
+- [~] India data support: structurally supported and manual-first; automated NSE/BSE/provider ingestion is not complete
+- [~] Assumption autofill: route and service exist, but drafts are not fully source-grounded yet
 
 ---
 

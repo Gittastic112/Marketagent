@@ -10,6 +10,7 @@ COPY backend/requirements.txt backend/requirements.txt
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
 COPY alembic.ini alembic.ini
+COPY pyproject.toml pyproject.toml
 COPY backend backend
 COPY scripts scripts
 

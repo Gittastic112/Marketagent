@@ -1,0 +1,8 @@
+assumption,old,new,evidence_reasoning,directional_value_effect
+Launch target margin,40%,45%,Prospectus reinforces falling launch costs / strong unit economics,Positive
+xAI target revenue,$80B,$160B,"Enterprise AI scope larger than initially assumed, but below claimed TAM",Positive
+xAI target margin,45%,25%,Competition and cost of delivering AI services,Negative
+Near-term investment efficiency,Higher sales/capital,Lower sales/capital,Actual capex/R&D substantially higher,Negative
+Initial cost of capital,8.02%,8.37% approx,Higher Treasury/risk-free rate,Negative
+Base-year financials,Estimated,Prospectus reported,Replace estimates with reported revenue/EBIT/cash/debt/share data,Mixed/minor to EV
+IPO cash,Not included,$75B proceeds,"Cash added to equity bridge, not operating enterprise value",Positive to equity value

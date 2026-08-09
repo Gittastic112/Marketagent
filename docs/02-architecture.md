@@ -1,126 +1,156 @@
 # Architecture
 
-## 1. System Overview
-The Market Intelligence Engine is a source-backed event system and portfolio tracker. It is not designed to be an open-ended chatbot.
+**Audited:** 2026-08-08
 
-**Correct Architecture Flow:**
-```text
-Raw source
-↓
-Stored with provenance
-↓
-Normalized event & Processing Run Tracking
-↓
-Classified by speed/type
-↓
-Scored for credibility/novelty/impact (Explainable Scoring)
-↓
-Linked to company/thesis/narrative
-↓
-Linked to portfolio exposure when owned
-↓
-Brief or alert
+**Deployment boundary:** local Docker Compose only
+
+## System Shape
+
+```mermaid
+flowchart LR
+    U["Browser"] --> N["Next.js App Router"]
+    N --> A["NextAuth local credential session"]
+    N --> P["Same-origin /api/backend proxy"]
+    P --> F["FastAPI application"]
+    F --> S["Domain services"]
+    S --> R["Provider adapters"]
+    S --> D["SQLAlchemy"]
+    D --> PG["PostgreSQL 16"]
+    R --> X["SEC, RSS, FRED, market data, AI"]
+    S --> K["Damodaran runtime datasets"]
+    KB["Damodaran knowledge base"] -. doctrine and audited sources .-> S
 ```
 
----
+Docker services are `frontend`, `backend`, `postgres`, and optional `pgadmin`.
+The frontend uses `API_BASE_URL` (with a fallback to `NEXT_PUBLIC_API_BASE_URL`) for server-rendered API requests. For browser-initiated API requests, the frontend uses the same-origin Next.js proxy route (`/api/backend`). The backend is still reachable on port 8000 for local
+operations and tests; signed internal identity protects owned routes.
 
-## 2. Frontend Architecture
+## Ownership Boundaries
 
-**Technology:** Next.js
-**Purpose:** Display dashboards, companies, narratives, DCF valuations, and orchestrate the research workspace.
+| Layer | Owns | Must not own |
+|---|---|---|
+| `frontend/app` | Routes, composition, server/client boundaries | Finance formulas or provider secrets |
+| `frontend/components` | Reusable interaction and data-state UI | Direct database or external-provider access |
+| `frontend/lib` | API clients, types, validation, formatting | Hidden business decisions |
+| `backend/app/api/routers` | HTTP validation, auth dependencies, response envelopes | Multi-step domain logic |
+| `backend/app/services` | Business workflows, deterministic calculations, persistence orchestration | UI formatting |
+| `backend/app/providers` | External-source contracts and provider-specific behavior | Cross-domain application policy |
+| `backend/app/models` | Persistence structure and relationships | API response shape |
+| `backend/app/schemas` | Typed request/response contracts | Database lifecycle logic |
+| `backend/alembic/versions` | Ordered schema evolution | Runtime data repair without explicit migration logic |
+| `damodaran_knowledge_base_v1` | Valuation doctrine, source catalog, immutable raw corpus | Live application state |
 
-**Structure Rules:**
-1. Pages should orchestrate data and layout.
-2. Components should render reusable UI (organized into Layout, Finance, Intelligence, Charts, Data).
-3. API functions live under `lib/api`.
-4. Do not scatter fetch logic across components.
-5. All UI must properly handle API states: Loading, Empty, Error, Stale, Partial, Not Configured.
+## Request and Identity Flow
 
----
+1. The user signs in through the local NextAuth credential page.
+2. Server-rendered frontend code uses the server API helper.
+3. Browser code calls `/api/backend/*` on the frontend origin.
+4. The proxy validates the session and forwards a signed internal identity.
+5. FastAPI dependencies resolve the user and enforce owned-resource access.
+6. Routers return the shared response envelope.
 
-## 3. Backend Architecture
+Only explicit health/readiness routes are public. The canonical health route is `/api/health`. The route `/health` is maintained only for legacy compatibility. This boundary is designed for
+localhost, not internet exposure.
 
-**Technology:** Python FastAPI, PostgreSQL (via Docker), Alembic
+## Response and Trust Contract
 
-**Structure Rules:**
-1. **Routes (`app/api/routes`):** Must be thin and only handle HTTP requests/responses.
-2. **Services (`app/services`):** All business logic, scoring, and data manipulation lives here.
-3. **Database Models (`app/models`):** SQLAlchemy ORM models. Never leak directly to the frontend.
-4. **Schemas (`app/schemas`):** Pydantic schemas for strict request validation and response serialization.
+New endpoints use:
 
-### 3.1 API Response Envelope (Standard)
-Every backend API response must follow a predictable shape to enable the frontend to display honest data states.
-
-**Success Example:**
 ```json
 {
   "data": {},
   "meta": {
     "status": "success",
-    "last_updated": "2026-05-30T10:00:00Z",
     "source": "internal",
+    "last_updated": "2026-08-08T00:00:00Z",
     "is_stale": false,
-    "warnings": []
+    "is_mock": false,
+    "warnings": [],
+    "confidence": "medium"
   },
   "errors": []
 }
 ```
 
-**Error Example:**
-```json
-{
-  "data": null,
-  "meta": {
-    "status": "error",
-    "last_updated": null,
-    "source": "SEC",
-    "is_stale": true,
-    "warnings": []
-  },
-  "errors": [
-    {
-      "code": "SEC_USER_AGENT_MISSING",
-      "message": "SEC ingestion requires a valid SEC User-Agent."
-    }
-  ]
-}
+Important facts and calculations should carry source, timestamp/as-of date,
+freshness, claim type, confidence, and limitations. The frontend must preserve
+those states rather than flattening the response into an unexplained number.
+
+The standard frontend pattern for rendering these states is the `DataStateNotices` component in `frontend/components/ui/data-states.tsx`. All page and panel components fetching data should pass the response `meta` block to `DataStateNotices` to ensure consistent rendering of stale data warnings, mock data disclaimers, and provider errors. All page-level fetch promises should include a `.catch()` block that yields a `meta.is_mock` or `meta.status = "error"` envelope, allowing partial renders via `DataStateNotices` instead of crashing the Next.js server component.
+
+## Core Workflows
+
+### Document to intelligence
+
+```mermaid
+flowchart LR
+    I["Source or upload"] --> RD["Raw document"]
+    RD --> PR["Processing run"]
+    PR --> E["Events and evidence"]
+    E --> SC["Deterministic score"]
+    SC --> AL["Alerts"]
+    AL --> TH["Thesis impact and review"]
+    TH --> DB["Daily brief"]
 ```
 
----
+Every external action should create a processing run. Imported text and HTML are
+untrusted. Exact locators are stored where available; unsupported historical
+records must retain explicit fallback states.
 
-## 4. Ingestion & Data Freshness Strategy
-Trust is paramount. The system must explicitly expose what data is broken, stale, or missing.
+### Financials to valuation
 
-- **Processing Runs:** Every ingestion job (SEC, News, Prices) must create a `processing_run` record tracking started_at, completed_at, status, records_processed, and error messages.
-- **Data Freshness:** The backend must return a `last_updated` and `is_stale` boolean in the `meta` envelope. The frontend will use this to display stale banners.
-- **Sources:** Initially SEC EDGAR, RSS/News, and manual prices.
+```mermaid
+flowchart LR
+    F["Filing, XBRL, spreadsheet"] --> C["Extraction candidates"]
+    C --> RV["User review"]
+    RV --> N["Normalized financials"]
+    N --> AS["Assumptions and provenance"]
+    AS --> V["DCF, FCFE/DDM, relative, options"]
+    V --> DG["Diagnostics and sensitivity"]
+    DG --> M["Reviewable memo"]
+```
 
----
+Promotion is a trust boundary. Unreviewed candidates and AI suggestions must not
+silently become valuation facts.
 
-## 5. Scoring Architecture
-All scoring must be explainable. The score is not useful unless users can inspect why it exists.
+### Damodaran data lifecycle
 
-**Required Scores:** Fundamental, Valuation, Narrative, Sentiment, Risk, Momentum, Confidence, Overall Signal.
+Runtime workbooks are mirrored under `data/damodaran/raw`. Implemented importers
+validate exact contracts, hash source bytes, preserve changed versions, reactivate
+known hashes, link typed rows to a dataset version, and expose only the active
+version. Generic parsing is inventory, not application support.
 
-**API Transparency Requirement:**
-Score endpoints must return the inputs, weightings, direction, and text explanation. Do not hide the formula.
+The separate knowledge base preserves raw doctrine and source extraction under
+its own `AGENTS.md` and audit process.
 
----
+## Provider Architecture
 
-## 6. Narrative Tracking Architecture (Planned)
-The system will group events and sentiment into cohesive "Narratives" (e.g., "AI Capex Cycle", "Margin Compression").
+Provider interfaces isolate market data, fundamentals, company lookup, filings,
+macro data, and AI. Provider configuration and health must be explicit. Missing
+keys produce not-configured states, not fake fallback values. Unofficial Yahoo
+access is personal-use only and must remain labeled as such.
 
-- Narratives track source velocity over time.
-- They link to multiple companies.
-- They include confidence scores and price reaction correlations.
+## Current Architectural Debt
 
----
+1. Router prefixes and legacy aliases are not fully uniform.
+2. The frontend still mixes server-rendered and client data access patterns in
+   ways that require route-by-route review.
+3. Many advanced models exist before their user workflows are equally mature.
+4. Provider coverage and health are thinner than the valuation/domain layer.
+5. Historical evidence precision is uneven.
+6. One-active Damodaran version is enforced by the serial service path rather
+   than a partial database uniqueness constraint.
+7. Public deployment architecture is intentionally absent.
 
-## 7. Valuation & Research Layers (Planned)
-- **Valuation:** A DCF builder with assumptions, scenarios (Bear/Base/Bull), and sensitivity tables.
-- **Research Workspace:** A structured chat interface for source-backed AI interactions, linking back to exact `research_sources`.
+## Architecture Change Rules
 
----
+- Prefer existing service and provider boundaries.
+- Keep routers thin and calculations deterministic.
+- Add migrations; never rewrite or drop local data casually.
+- Preserve tenant ownership on all user-created resources.
+- Keep external content untrusted and fetched through bounded provider code.
+- Do not add a model unless a real workflow consumes it.
+- Keep current architecture here; put implementation history in `archive/`.
 
-## 8. Current Implementation Status
-The MVP backend currently supports basic event extraction, manual RSS/SEC pasting, deterministic rule-based event scoring, and manual portfolio/holdings CRUD. The next massive shift is implementing the **API Response Envelope** and **Processing Runs** to stabilize data trust before expanding AI features.
+The previous cumulative architecture document is preserved at
+[`archive/assessments/02-architecture.md`](archive/assessments/02-architecture.md).

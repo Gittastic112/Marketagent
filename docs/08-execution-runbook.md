@@ -1,101 +1,171 @@
-# Execution Runbook & Implementation Checklist
+# Execution Runbook
 
-This checklist supersedes older development plans and outlines the strict order of implementation required to align the application with the new frontend and backend design brief. It also serves as a runbook with validation steps.
+**Updated:** 2026-08-08
 
-## Operating Rules & Avoiding Giant Diffs
-- **Keep tasks narrow:** Do not rewrite the entire frontend or backend in one go.
-- **Incremental PRs/Commits:** Commit after *every* phase. 
-- **Explain files touched:** After each phase, output a brief summary of the exact files changed and the manual tests performed.
-- **Rollback:** If a phase breaks the app, use `git checkout .` to revert to the previous phase checkpoint rather than adding more complexity.
+This is an operating checklist, not phase history. Completed phase records live
+under `archive/checkpoints/` and `archive/plans/`.
 
----
+## Start a Task
 
-## Phase 0: Audit & Documentation (Completed)
-- [x] Audit the current codebase against the design brief.
-- [x] Create an execution plan.
-- [x] Consolidate and amend all existing markdown documents.
+1. Read `HANDOFF.md`, `00-current-state.md`, and the relevant core doc.
+2. Inspect the actual route, service, model, migration, frontend component, and tests.
+3. State a small plan and likely files.
+4. Add a failing test first where practical.
+5. Implement the smallest safe change.
+6. Run focused tests, then the appropriate broader baseline.
+7. Update only current docs whose reality changed.
 
-## Phase 1: Stabilize local dev
-- [x] Ensure Docker startup works flawlessly.
-- [x] Confirm Alembic migration chain is unbroken and local DB spins up.
-- [x] Add `GET /api/health` endpoint and verify backend health.
-- **Validation:** Run `docker compose up --build -d`. Visit `http://localhost:8000/api/health`.
-- **Checkpoint Command:** `git add . && git commit -m "chore: stabilize local dev and add healthcheck"`
+Split work that touches more than 10 files unless the task is explicitly a
+cross-cutting audit, migration, or documentation reorganization.
 
-## Phase 2: API Response Envelope
-- [x] Add the standard `{"data", "meta", "errors"}` response envelope schema to the backend.
-- [x] Refactor all existing FastAPI routes to use this envelope.
-- [x] Update frontend `fetchApi` client to parse this envelope.
-- **Validation:** Write unit tests to confirm the `{"data", "meta", "errors"}` wrapper correctly wraps success and error responses. Verify frontend `fetchApi` parses it correctly without white-screening.
-- **Checkpoint Command:** `git add . && git commit -m "feat: standard api response envelope"`
+## Start the Stack
 
-## Phase 3: Processing Runs and Ingestion Status
-- [x] Create `processing_runs` table and models.
-- [x] Update SEC and RSS services to track ingestion health to `processing_runs`.
-- [x] Create `GET /api/ingestion/status` endpoint.
-- **Validation:** Trigger an SEC or RSS fetch. Query the DB or check the `GET /api/ingestion/status` endpoint to ensure the run was logged successfully.
-- **Checkpoint Command:** `git add . && git commit -m "feat: processing runs tracking"`
+```bash
+cd "/Users/mananmaheshwari/Documents/Codex/Market Intelligence App/market-intelligence-md-files copy"
+docker compose up --build -d
+docker compose ps
+docker compose exec backend alembic upgrade head
+curl http://localhost:8000/api/health
+```
 
-## Phase 4: SEC User-Agent and CIK Lookup
-- [x] Add `SEC_USER_AGENT` environment variable validation.
-- [x] Create `GET /api/sec/company/{ticker}/cik` endpoint.
-- **Validation:** Remove the `SEC_USER_AGENT` from `.env` and verify the ingestion fails gracefully with a standard error. Put it back and verify success.
-- **Checkpoint Command:** `git add . && git commit -m "feat: sec user agent and cik lookup"`
+Frontend: `http://localhost:3000`
 
-## Phase 5: Frontend App Shell
-- [x] Build the new global `Sidebar` and `TopBar`.
-- [x] Implement global page layout components.
-- [x] Add basic Next.js routing for the new folder structure.
+Backend: `http://localhost:8000`
 
-## Phase 6: Dashboard
-- [x] Build the Daily Intelligence Brief UI.
-- [x] Connect dashboard to backend events/alerts.
-- [x] Add ingestion health summary.
-- [x] Add portfolio concentration warnings.
+pgAdmin: `http://localhost:5050`
 
-## Phase 7: Portfolio Page
-- [x] Build Holdings table and Portfolio summary cards.
-- [x] Connect to existing portfolio backend routes.
+For first-time environment and sign-in setup, use `07-local-development.md`.
 
-## Phase 8: Company Intelligence Page
-- [x] Build the individual `companies/[ticker]` view.
-- [x] Add Ticker Header, Metric Cards, and SEC filings timeline.
-- [x] Add Market Data header and Financial Trends.
+## Focused Validation
 
-## Phase 9: Narrative Page
-- [x] Create backend models and endpoints for Narratives.
-- [x] Build Narrative tracking UI and evidence timelines.
+Backend change:
 
-## Phase 10: Scoring Breakdown
-- [x] Create backend models and endpoints for expanded Score types.
-- [x] Build the `ScoreBreakdown` UI component to explain score formulas.
-- [x] Integrate visual weighted bar chart into Events page.
+```bash
+docker compose exec backend pytest -q backend/tests/test_target.py
+python3 -m py_compile backend/app/path/to/changed.py
+```
 
-## Phase 11: Valuation Tool
-- [x] Create backend models and endpoints for Valuation Cases.
-- [x] Build the frontend DCF UI (Assumptions, Scenarios, Sensitivity tables).
+Frontend change:
 
-## Phase 12: Research Workspace
-- [x] Create backend models for Research Sessions and Messages.
-- [x] Build the source-backed AI workspace UI.
+```bash
+cd frontend
+npm test
+npm run typecheck
+npm run build
+```
 
-## Phase 13: Data Health Page
-- [x] Build the Data Health page UI showing API connections and ingestion statuses.
-- [x] Show recent processing runs with success/failure counts.
-- [x] Show ingestion freshness per source type.
+Migration change:
 
-## Phase 14: Polish & Finalize
-- [x] Add Error, Empty, Stale, and Loading states globally.
-- [x] Perform final security checks (prevent secret leakage).
-- [x] Clean up any remaining known issues.
-- **Validation:** Run automated security checks (SSRF prevention, CSV escaping, no secrets logged). Ensure all known issues in `docs/known-issues.md` have been addressed.
-- **Checkpoint Command:** `git add . && git commit -m "chore: final polish and security hardening"`
+```bash
+docker compose exec backend alembic heads
+docker compose exec backend alembic current
+docker compose exec backend pytest -q backend/tests/test_alembic.py
+```
 
----
+Damodaran knowledge change:
 
-## Testing Checklist (Pre-Commit)
-Before any commit, ensure:
-1. `docker compose logs backend` shows no Python stack traces.
-2. Migrations are up to date (`alembic upgrade head`).
-3. No environment variables or API keys have been hardcoded.
-4. The frontend compiles without fatal Next.js errors.
+```bash
+python3 -m unittest -q damodaran_knowledge_base_v1/tools/test_audit_kb.py
+python3 damodaran_knowledge_base_v1/tools/audit_kb.py
+```
+
+Documentation change:
+
+```bash
+python3 scripts/check_docs.py
+git diff --check
+```
+
+## Full Baseline
+
+```bash
+docker compose exec backend pytest -q
+cd frontend
+npm test
+npm run typecheck
+npm run build
+cd ..
+python3 damodaran_knowledge_base_v1/tools/audit_kb.py
+python3 scripts/check_docs.py
+git diff --check
+```
+
+The last verified product baseline is recorded in `00-current-state.md`. Do not
+overwrite that count with a focused-test count.
+
+## Common Operations
+
+Logs:
+
+```bash
+docker compose logs backend --tail=100
+docker compose logs frontend --tail=100
+```
+
+Damodaran scoped import:
+
+```bash
+docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only country_stats
+```
+
+Local auth preflight:
+
+```bash
+python3 scripts/check_local_auth.py
+```
+
+Backup and restore scripts:
+
+```bash
+./scripts/backup_local.sh
+./scripts/restore_local.sh PATH_TO_BACKUP
+```
+
+Review script arguments before running restore or reset operations. Never delete
+the database volume unless the user explicitly accepts data loss.
+
+## Debugging Order
+
+1. Read the visible error and exact browser/network response.
+2. Check `docker compose ps`.
+3. Check backend and frontend logs.
+4. Call the backend health route directly.
+5. Verify migration head.
+6. Verify required environment variables without printing secrets.
+7. Reproduce with the smallest focused test.
+8. Fix the owning layer rather than masking the error in UI code.
+
+For a missing Lightning CSS native module, recreate the frontend container and
+its anonymous `node_modules` volume. Do not bind-mount host modules into Linux.
+
+## Data and Trust Checklist
+
+- Is every claim typed as Fact, Source Summary, Calculation, User Assumption,
+  AI Interpretation, Estimate, or Mock Data?
+- Is source, freshness, confidence, and review state available?
+- Are missing providers shown as not configured?
+- Does imported content remain untrusted?
+- Does a processing run expose external-action failures?
+- Are user-owned resources owner-scoped?
+- Are valuation assumptions reviewed and traceable?
+
+## Documentation Maintenance
+
+When behavior changes:
+
+1. Update the relevant core doc.
+2. Update `00-current-state.md` only if product status or baseline changes.
+3. Update `roadmaps/feature-register.md` for feature status changes.
+4. Update `roadmaps/product-roadmap.md` if priorities or gates change.
+5. Replace the short `HANDOFF.md` status; do not append history.
+6. Move detailed shipped evidence to `archive/checkpoints/YYYY/`.
+7. Run `python3 scripts/check_docs.py`.
+
+## Completion Report
+
+Report files changed, tests run, manual checks, known limitations, and the next
+recommended task. Do not claim a browser workflow was validated if only unit
+tests or a build ran.
+
+The previous 39-phase cumulative history is preserved at
+[`archive/assessments/08-execution-runbook.md`](archive/assessments/08-execution-runbook.md).

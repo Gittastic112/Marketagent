@@ -1,0 +1,8 @@
+situation,trigger,primary_model,notes
+Standard non-financial company,EBIT positive or can be normalized positive,FCFF / fcffginzu,"Primary default; 2/3-stage, accounting adjustments, WACC, terminal value"
+Young/high-growth company,EBIT negative or current margins not meaningful,higrowth,"Forecast revenues, margins and reinvestment directly; do not force current-EBIT FCFF"
+Financial service firm,Debt is operating input; book equity/ROE meaningful,eqexret or dividend/FCFE,Prefer equity-side models
+Mature dividend payer,Payout policy meaningful and sustainable,divginzu,Dividend discount as primary or cross-check
+Product patent / project right,Investment can be delayed; option characteristics material,project,Real option value
+Distressed/high leverage,Equity behaves like residual call on firm assets,equity + distress,Equity-as-option; explicit distress/recovery as relevant
+Relative pricing,"Need market pricing comparison, not intrinsic value",pedata / psdata / vebitda,Keep separate from intrinsic valuation

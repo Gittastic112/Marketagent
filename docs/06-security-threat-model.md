@@ -7,9 +7,10 @@ personal equity research. It runs a Next.js frontend, a FastAPI backend,
 PostgreSQL, and local Docker Compose services.
 
 The system stores research documents, SEC/RSS data, events, alerts, thesis
-notes, daily briefs, and planned portfolio records. Future phases may add market
-prices, financial metrics, DCF models, AI outputs, social posts, CSV imports,
-and broker integrations.
+notes, daily briefs, portfolios, holdings, transactions, market prices,
+financial metrics, DCF models, AI outputs, social posts, and valuation
+assumptions. Future phases may add broader CSV imports, more provider-backed
+data feeds, and broker integrations.
 
 The highest-value assets are:
 
@@ -18,7 +19,7 @@ The highest-value assets are:
 - thesis notes and valuation assumptions
 - source-backed documents and alerts
 - future broker tokens, if broker integrations are ever added
-- future AI prompts, model outputs, and source links
+- AI prompts, model outputs, and source links
 
 This app is currently local-first and single-user. That lowers some internet
 threats, but it does not remove security responsibility. External source data,
@@ -53,6 +54,7 @@ Attacker-controlled or untrusted inputs:
 - SEC filing text, even though source credibility is high
 - URLs entered into source records
 - CSV imports
+- Excel workbook uploads
 - markdown/text uploads
 - social posts and forum text
 - future AI model outputs
@@ -61,8 +63,9 @@ Attacker-controlled or untrusted inputs:
 Assumptions:
 
 - The app is local-first and not exposed publicly.
-- There is no authentication yet, so it must not be deployed to the public
-  internet.
+- Local credentials and a NextAuth session protect the current single-user
+  workflow, but there is no production-ready authentication or authorization
+  design. It must not be deployed to the public internet.
 - Tests must not call live APIs.
 - Secrets are kept out of source control.
 - Future broker integrations use official OAuth or token flows, never stored
@@ -75,6 +78,11 @@ Assumptions:
 Relevant files:
 
 - `frontend/app/api/backend/[...path]/route.ts`
+- `frontend/app/api/auth/readiness/route.ts`
+- `frontend/proxy.ts`
+- `frontend/lib/auth-options.ts`
+- `frontend/lib/internal-auth.ts`
+- `frontend/lib/server-api.ts`
 - `frontend/lib/api.ts`
 - `backend/app/api/routers/`
 - `backend/app/core/config.py`
@@ -83,11 +91,72 @@ Security requirements:
 
 - The frontend proxy must remain a narrow backend proxy, not an arbitrary URL
   fetcher.
+- The Next.js page proxy is an optimistic signed-out redirect only. Next.js
+  validates the JWT again at server-rendered and browser-proxy request
+  boundaries, then signs a 60-second internal identity assertion with
+  `NEXTAUTH_SECRET`. FastAPI verifies the assertion locally before applying
+  per-record ownership checks.
+- Never forward raw NextAuth cookies to FastAPI. The browser backend proxy must
+  strip caller-supplied internal identity/signature headers before generating
+  its own, preventing browser header spoofing.
+- `NEXTAUTH_SECRET` is shared by the frontend and backend containers only for
+  this local single-user assertion flow. It must remain secret and must not be
+  exposed through any `NEXT_PUBLIC_*` variable.
+- The aggregate FastAPI router requires the verified current-user dependency.
+  Only `GET /api/health` and `GET /health` are public application routes. The
+  automated route-security inventory must fail if an authenticated operation
+  loses that dependency.
+- Backend and server-rendered frontend requests must use finite timeouts so an
+  unavailable service cannot leave the UI compiling or rendering indefinitely.
+- Portfolio parents and every portfolio child route must verify current-user
+  ownership. Ingestion-created alerts must store the authenticated user id and
+  deduplicate within that user's records.
+- Alert evidence reads must resolve the alert with the current user id before
+  following event/document relationships. Event evidence reads must require
+  authentication and filter thesis and valuation impacts through their
+  user-owned parent records. Evidence responses must use explicit summary
+  schemas and must never serialize `RawDocument.raw_text`,
+  `RawDocument.raw_payload_json`, document bytes, or another user's alerts.
+- Event PDF-region creation may inspect only the already stored authenticated
+  `DocumentAsset`. Reject missing boxes, unknown coordinate systems, non-finite
+  or out-of-page bounds, page mismatches, and declared dimensions that do not
+  match the stored PDF. Overlay pages must continue using the bounded private
+  page renderer and must never accept arbitrary URLs or request-supplied PDFs.
+- Historical evidence backfill must read alert-derived claims only from the
+  authenticated user's alerts. It may create a span only for one bounded exact
+  case-sensitive occurrence in stored source text. Apply must lock the event,
+  recheck existing references, preserve creator and processing-run provenance,
+  and leave ambiguous, conflicting, fuzzy, or unmatched claims unapplied.
+- Manual event-evidence search may inspect only the event's already stored linked
+  document. It must return bounded context snippets rather than the full source
+  body, enforce query/context/result limits, and preserve exact case and
+  whitespace. Save must lock the event and revalidate the linked document,
+  company, content hash, offsets, quote, occurrence index, and duplicate state.
+  Search parameters and locator provenance are generated or verified server-side;
+  creator identity comes only from the authenticated backend identity.
+- Thesis assumptions/impacts and valuation child records must never be resolved
+  by child ID alone. Join or resolve through the current user's `ThesisNote` or
+  `ValuationModel`, including updates, deletes, outputs, scenarios, diagnostics,
+  change logs, and reverse DCF.
+- Keep `/api` routes outside the page redirect so protected API failures remain
+  structured JSON responses instead of HTML redirects.
+- Auth readiness may expose required environment-variable names and boolean
+  configuration state. It must never return secret or credential values, and
+  its response must remain non-cacheable.
+- Browser automation must use the isolated `market-intel-e2e` Compose project,
+  its tmpfs database, and non-default ports. It may read local credentials from
+  the ignored root `.env`, but tests, traces, logs, screenshots, and docs must
+  not contain credential values. The runner must remove its containers,
+  network, and volumes on every exit path.
+- Runtime schema mutation endpoints are prohibited. Database tables and indexes
+  must be owned by reviewed Alembic migrations; the temporary
+  `/companies/setup_db_temp_script` route has been removed.
 - Do not allow user-controlled full URLs to decide proxy destinations.
 - Preserve backend error messages that help the user, but do not leak secrets.
-- If this app is ever deployed beyond localhost, add authentication,
-  authorization, CSRF review, CORS policy, rate limits, and HTTPS before
-  exposing private portfolio data.
+- If this app is ever deployed beyond localhost, add a reviewed production
+  authentication and authorization design, CSRF review, CORS policy, rate
+  limits, and HTTPS before exposing private portfolio data. Local credential
+  environment variables are not a substitute.
 
 ### External ingestion
 
@@ -95,7 +164,7 @@ Relevant areas:
 
 - RSS ingestion
 - SEC ingestion
-- future market/fundamentals/social data ingestion
+- market/fundamentals/social data ingestion
 
 Security requirements:
 
@@ -110,17 +179,62 @@ Security requirements:
 
 ### CSV, markdown, and manual imports
 
-Future import features will handle portfolio holdings, transactions, prices, and
-thesis notes.
+Import features may handle portfolio holdings, transactions, prices, thesis
+notes, filing text, and other source documents.
 
 Security requirements:
 
 - Validate every row.
 - Return row-level errors.
+- Require authenticated access for every transfer route.
+- Resolve every imported or exported portfolio row through the current user's
+  portfolio.
+- Enforce finite UTF-8 file-size and row-count limits before applying records.
+- Keep preview read-only and roll back the full apply transaction when any
+  blocking row or downstream portfolio update fails.
 - Do not execute formulas or scripts from uploaded spreadsheets.
 - Escape spreadsheet-export cells that begin with `=`, `+`, `-`, or `@` to
   reduce CSV formula injection risk.
 - Treat markdown and raw text as untrusted display content.
+- Filing section diffs may render only parser-recognized generator-owned `<ins>` and `<del>` semantics. Escape every source token before storage, parse stored legacy diff strings into React text segments, and keep regression tests for changed and first-time sections. Filing diff rendering must not use `dangerouslySetInnerHTML`.
+- Accept Screener uploads as `.xlsx` only, cap them at 2MB, hash bytes before
+  persistence, reject duplicate content, and delete temporary files in a
+  `finally` path.
+- Persist source, raw-document metadata, content hash, and processing-run
+  outcome. Do not persist temporary file paths or workbook bytes.
+- Accept PDF uploads only through authenticated routes. Require `.pdf`, an
+  allowlisted MIME type, `%PDF-` magic bytes, a 40MB size cap, a 1,000-page hard
+  cap, a sanitized basename, a SHA-256 digest, company-scoped duplicate
+  rejection, controlled parser errors, and a processing-run outcome. Full scans
+  stop at 500 pages; longer files require at most 75 explicitly targeted pages.
+- Keep original PDF bytes in the one-to-one `document_assets` table, never in
+  normal raw-document/asset metadata responses. Stream them only through an
+  authenticated route with `private, no-store`, inline disposition, and
+  `nosniff` headers.
+- Raw-document collection and picker routes must return metadata summaries
+  without `raw_text`. Metadata updates must use a metadata-only schema so an
+  omitted body cannot erase stored filing evidence.
+- Treat extracted PDF text, table labels, filenames, and parser metadata as
+  untrusted. Do not render extracted HTML or expose local paths/tracebacks.
+- PDF parsing is synchronous and can consume CPU. The current size/page caps
+  reduce risk but do not replace worker isolation, timeouts, malware scanning,
+  or content-disarm controls required for public deployment.
+- Render evidence images only from stored authenticated assets. Restrict scale
+  to `0.5`-`2.0`, reject nonexistent pages, cap output at 16 million pixels, and
+  return PNG bytes with `private, no-store`, inline disposition, and `nosniff`.
+  The renderer must not fetch user-controlled URLs or accept arbitrary bytes.
+- Do not return parser stack traces or local file paths to the browser.
+
+### Dependency supply chain
+
+- Keep direct frontend framework/auth dependencies on reviewed patch releases.
+- Use narrow npm overrides only when a transitive advisory has a compatible
+  patched release and prove the override with unit tests, typecheck,
+  production build, and browser workflows.
+- Do not follow an audit suggestion that downgrades the framework to an
+  incompatible historical major version.
+- Run the current dependency audit against the checked-in lockfile. Do not
+  carry an old zero-vulnerability result forward as proof of current safety.
 
 ### Secrets and credentials
 
@@ -141,17 +255,33 @@ Security requirements:
 
 ### AI outputs
 
-Future AI features are allowed only after source-backed storage and portfolio
-context are stable.
+AI features are allowed only when source-backed storage, provenance, and
+portfolio/valuation privacy boundaries are explicit.
 
 Security requirements:
 
-- Store model name, prompt version, input hash, generated timestamp,
-  limitations, confidence label, and source links.
+- Store authenticated owner, provider, model, prompt version, SHA-256 input
+  hash, generated timestamp, explicit mock state, source IDs/scope,
+  limitations, confidence, review metadata, privacy-disclosure version,
+  external data classes, transmission scope, and safe execution/failure state.
+- Permit mock output only in tests or explicit `AI_DEMO_MODE`; missing provider
+  configuration and provider failure must remain visible failures.
+- Display the exact data classes that may leave the machine and require the
+  current disclosure version before every external-capable AI action.
 - Do not let AI invent sources.
-- Do not auto-rewrite thesis notes or DCF assumptions.
+- Do not auto-rewrite thesis notes, thesis impacts, or DCF assumptions. AI may
+  return proposals that require a separate reviewed write.
 - Do not generate buy/sell recommendations.
 - Treat model output as untrusted text for display.
+- Do not include prompts, provider bodies, raw documents, private request
+  bodies, holdings, thesis text, credentials, or raw exception text in logs.
+
+Implemented boundaries include `backend/app/services/ai_contract.py` and
+`backend/app/services/ai_citations.py`. Active entry points use the execution
+contract; exact declared-source citation validation, deterministic evaluation,
+owner-scoped review, and approval blocking exist. Providers do not yet generate
+complete citations reliably and the evaluation corpus remains small, so AI text
+is not certified source-backed research.
 
 ### Portfolio and financial privacy
 
@@ -170,8 +300,8 @@ Security requirements:
 Critical:
 
 - Exposing `.env`, API keys, broker tokens, or future OAuth refresh tokens.
-- Publicly deploying the app without authentication while it stores portfolio
-  holdings, transactions, thesis notes, and valuations.
+- Publicly deploying the app with only its local credential flow while it
+  stores portfolio holdings, transactions, thesis notes, and valuations.
 - Adding broker password storage or unsafe broker credential handling.
 
 High:

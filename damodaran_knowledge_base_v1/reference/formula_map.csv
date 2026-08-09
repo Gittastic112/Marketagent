@@ -1,0 +1,26 @@
+name,category,formula_or_logic,source
+FCFF,Operating cash flow,FCFF = EBIT*(1-tax) - (CapEx-Depreciation) - Change in non-cash WC,fcffginzu: Valuation Model rows 43-46
+Fundamental EBIT growth,Growth,g = ROC * Reinvestment Rate,fcffginzu: Valuation Model D15/D34
+Fundamental EPS growth,Growth,g = ROE * Retention Ratio,fundgr / dividend models
+Stable reinvestment,Terminal,Reinvestment Rate = g / ROC,fcffginzu: Valuation Model E24
+Terminal value,Terminal,TV_n = FCFF_(n+1)/(WACC_stable-g),fcffginzu: Valuation Model D59
+Cost of equity,Risk,Ke = Rf + Beta * ERP,fcffginzu: Valuation Model D27
+WACC,Risk,WACC = E/V*Ke + D/V*Kd*(1-tax) [+ Preferred/V*Kp],fcffginzu: Cost of capital worksheet
+Levered beta,Risk,Beta_L = Beta_U * (1 + (1-tax)*D/E),fcffginzu: Cost of capital worksheet C35
+Pure-play cash correction,Risk,Beta_U_business = Beta_U_company / (1 - Cash/Firm Value),betas.xls
+Synthetic cost of debt,Risk,Kd = Rf + company default spread + country default spread,fcffginzu: Ratings estimator D13
+Market value of debt,Capital structure,"PV(coupon=interest expense, principal=book debt, rate=current Kd, maturity=estimated maturity)",fcffginzu: Cost of capital worksheet C31
+Non-cash working capital,Reinvestment,NWC = (Current Assets-Cash) - (Current Liabilities-ST interest-bearing debt),fcffginzu Master Inputs / wcdata
+R&D-adjusted EBIT,Normalization,Adjusted EBIT = Reported EBIT + Current R&D - R&D amortization,fcffginzu: R&D converter D39
+Research asset,Normalization,Research Asset = Sum(prior/current R&D * unamortized portion),fcffginzu: R&D converter D35
+Lease debt,Normalization,"Lease Debt = PV(future operating lease commitments, pretax Kd)",fcffginzu: Operating lease converter C30
+Lease-adjusted EBIT,Normalization,Adjusted EBIT = Reported EBIT + Lease Expense - Lease Asset Depreciation,fcffginzu: Operating lease converter F34
+Business beta weighting,Risk,Beta_U_company = Sum(Beta_U_i * EstimatedValue_i / TotalEstimatedValue),fcffginzu: Cost of capital worksheet K48/K64
+Estimated business value weight,Risk,EstimatedValue_i = Segment Revenue_i * Industry EV/Sales_i,fcffginzu: Cost of capital worksheet J36:J47
+Country ERP weighting,Risk,Company ERP = Sum(ExposureWeight_country * ERP_country),fcffginzu: Cost of capital worksheet K18/K32
+Default-adjusted risk-free rate,Risk,Riskfree currency rate = government bond yield - sovereign default spread,Country Default Spreads and Risk Premiums.pdf (2026-01-05)
+Country risk premium,Risk,Country risk premium = adjusted default spread * relative equity-to-bond volatility,Country Default Spreads and Risk Premiums.pdf (2026-01-05)
+Total country ERP,Risk,Country ERP = mature-market ERP + country risk premium,Country Default Spreads and Risk Premiums.pdf (2026-01-05)
+Equity bridge,Valuation,Equity = Operating assets + Cash + Non-operating assets - Debt - Minority interests - Option value,fcffginzu: Valuation Model F63:F70
+Option value dilution,Dilution,Use dilution-adjusted option/warrant valuation with shares and options outstanding,fcffginzu: Option Value
+Value of growth,Diagnostics,Growth Value = Operating Asset Value - Assets-in-Place Value,fcffginzu: Stories to Numbers
