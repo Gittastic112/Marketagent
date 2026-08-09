@@ -370,6 +370,73 @@ export async function updatePortfolioSnapshot(formData: FormData) {
   await updateRecord("/portfolio-snapshots", formData, buildPortfolioSnapshotPayload(formData), ["/portfolio"]);
 }
 
+export async function createPortfolioBenchmark(formData: FormData) {
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  await serverPostApi("/portfolio-benchmarks", {
+    portfolio_id: portfolioId,
+    ticker: actionFormString(formData, "ticker"),
+    currency: actionFormString(formData, "currency"),
+    provider_name: actionFormString(formData, "provider_name") || "manual",
+    provider_symbol: actionFormString(formData, "provider_symbol") || null,
+    effective_from: actionFormString(formData, "effective_from"),
+    active: true,
+    notes: actionFormString(formData, "notes") || null,
+  });
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
+export async function updatePortfolioBenchmark(formData: FormData) {
+  const benchmarkId = getRequiredFormId(formData);
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  await serverPatchApi(`/portfolio-benchmarks/${benchmarkId}`, {
+    ticker: actionFormString(formData, "ticker"),
+    currency: actionFormString(formData, "currency"),
+    provider_name: actionFormString(formData, "provider_name") || "manual",
+    provider_symbol: actionFormString(formData, "provider_symbol") || null,
+    effective_from: actionFormString(formData, "effective_from"),
+    active: formData.get("active") === "on",
+    notes: actionFormString(formData, "notes") || null,
+  });
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
+export async function deletePortfolioBenchmark(formData: FormData) {
+  const benchmarkId = getRequiredFormId(formData);
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  await serverDeleteApi(`/portfolio-benchmarks/${benchmarkId}`);
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
+export async function capturePortfolioSnapshot(formData: FormData) {
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  const asOfDate = actionFormString(formData, "as_of_date");
+  await serverPostApi(
+    `/portfolios/${portfolioId}/snapshots/capture?as_of_date=${encodeURIComponent(asOfDate)}`,
+    {},
+  );
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
+export async function createFxRateObservation(formData: FormData) {
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  await serverPostApi("/fx-rates", {
+    base_currency: actionFormString(formData, "base_currency"),
+    quote_currency: actionFormString(formData, "quote_currency"),
+    rate: Number(actionFormString(formData, "rate")),
+    as_of_date: actionFormString(formData, "as_of_date"),
+    provider_name: actionFormString(formData, "provider_name") || "manual",
+    source_url: actionFormString(formData, "source_url") || null,
+  });
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
+export async function deleteFxRateObservation(formData: FormData) {
+  const observationId = getRequiredFormId(formData);
+  const portfolioId = getRequiredFormId(formData, "portfolio_id");
+  await serverDeleteApi(`/fx-rates/${observationId}`);
+  revalidatePath(`/portfolio/${portfolioId}`);
+}
+
 export async function deletePortfolioCashBalance(formData: FormData) {
   await deleteRecord("/portfolio-cash-balances", formData, ["/portfolio"]);
 }
