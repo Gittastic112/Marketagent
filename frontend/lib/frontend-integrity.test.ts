@@ -93,6 +93,42 @@ test("portfolio attribution exposes partial calculations without fake FX or benc
   assert.doesNotMatch(detail, /Performance Attribution/);
 });
 
+test("portfolio performance uses owned setup, generated snapshots, and dated calculations", () => {
+  const detail = readFrontendFile("app/portfolio/[id]/page.tsx");
+  const setup = readFrontendFile("components/portfolio-performance-setup.tsx");
+  const panel = readFrontendFile("components/portfolio-performance-panel.tsx");
+  const actions = readFrontendFile("app/actions.ts");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(detail, /PortfolioPerformanceSetup/);
+  assert.match(detail, /PortfolioPerformancePanel/);
+  assert.match(detail, /\/performance\?start_date=/);
+  assert.match(detail, /\/period-attribution\?start_date=/);
+  assert.match(detail, /\/opportunity-cost\?start_date=/);
+  assert.match(detail, /capturePortfolioSnapshot/);
+  assert.doesNotMatch(detail, /createPortfolioSnapshot|updatePortfolioSnapshot/);
+
+  assert.match(setup, /Period returns require complete dated snapshots/);
+  assert.match(setup, /createPortfolioBenchmark/);
+  assert.match(setup, /createFxRateObservation/);
+  assert.match(setup, /Remove Benchmark/);
+  assert.match(setup, /Historical FX/);
+
+  assert.match(panel, /attribution\.blockers/);
+  assert.match(panel, /formula/);
+  assert.match(panel, /source_snapshot_ids/);
+  assert.match(panel, /Reconciliation Residual/);
+  assert.match(panel, /Opportunity Cost/);
+  assert.doesNotMatch(panel, /mock|placeholder/i);
+
+  assert.match(actions, /portfolios\/\$\{portfolioId\}\/snapshots\/capture/);
+  assert.match(actions, /portfolio-benchmarks/);
+  assert.match(actions, /fx-rates/);
+  assert.match(api, /export type PortfolioPerformance/);
+  assert.match(api, /export type PortfolioPeriodAttribution/);
+  assert.match(api, /export type PortfolioOpportunityCost/);
+});
+
 test("data health exposes the authenticated evidence integrity report", () => {
   const page = readFrontendFile("app/data-health/page.tsx");
   assert.match(page, /serverFetchApiResponse<EvidenceIntegrityReport>\("\/data-health\/evidence-integrity"\)/);
