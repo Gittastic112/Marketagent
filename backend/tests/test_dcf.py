@@ -1,46 +1,80 @@
 from app.models.dcf import DcfAssumptionSet
 from app.services.dcf import calculate_dcf
 
-
 def test_calculate_dcf_deterministic_math():
     assumption_set = DcfAssumptionSet(
         id=1,
         valuation_model_id=1,
         scenario="Base",
-        discount_rate=0.10,
+        starting_revenue=1000.0,
+        current_operating_margin=0.10,
+        target_operating_margin=0.15,
+        tax_rate=0.25,
+        sales_to_capital_ratio=2.0,
+        starting_invested_capital=500.0,
+        revenue_growth_years_json={"1": 0.10, "2": 0.10, "3": 0.05, "4": 0.05, "5": 0.05},
+        projection_years_count=5,
+        wacc_start=0.10,
+        wacc_terminal=0.08,
         terminal_growth_rate=0.02,
-        projection_years=5,
-        assumptions_json={
-            "current_fcf": 100.0,
-            "shares_outstanding": 10.0,
-            "net_debt": 50.0,
-            "fcf_growth_rate": 0.05
-        }
+        terminal_roic=0.08,
+        cash=50.0,
+        debt=200.0,
+        diluted_shares=100.0,
+        current_market_price=10.0
     )
 
-    output = calculate_dcf(assumption_set)
+    output, projection_years, sensitivity_tables = calculate_dcf(assumption_set)
 
-    assert len(output.output_json["projected_fcfs"]) == 5
-    
-    # Year 1: 100 * 1.05 = 105
-    # Year 2: 105 * 1.05 = 110.25
-    # Year 3: 110.25 * 1.05 = 115.7625
-    # Year 4: 115.7625 * 1.05 = 121.550625
-    # Year 5: 121.550625 * 1.05 = 127.62815625
-    assert abs(output.output_json["projected_fcfs"][0] - 105.0) < 0.01
-    assert abs(output.output_json["projected_fcfs"][4] - 127.628) < 0.01
+    assert len(projection_years) == 5
+    # Year 1 revenue: 1000 * 1.1 = 1100
+    assert abs(projection_years[0].revenue - 1100.0) < 0.01
 
-    # Terminal value = 127.62815625 * 1.02 / (0.10 - 0.02) = 130.1807 / 0.08 = 1627.258
-    assert abs(output.output_json["terminal_value"] - 1627.258) < 0.01
+    # Reinvestment year 1: (1100 - 1000) / 2.0 = 50.0
+    assert abs(projection_years[0].reinvestment - 50.0) < 0.01
 
-    # PV of TV = 1627.258 / (1.10 ^ 5) = 1627.258 / 1.61051 = 1010.40
-    assert abs(output.output_json["pv_terminal_value"] - 1010.40) < 0.01
-
-    # Enterprise Value
+    # Check that diagnostics ran
+    assert isinstance(output.warnings_json, list)
     assert output.enterprise_value > 0
-    
-    # Equity Value
-    assert output.equity_value == output.enterprise_value - 50.0
+    assert output.equity_value == output.enterprise_value + 50.0 - 200.0
 
-    # Implied Share Price
-    assert output.implied_share_price == output.equity_value / 10.0
+
+def test_dcf_diagnostics():
+    assumption_set = DcfAssumptionSet(
+        id=2,
+        valuation_model_id=1,
+        scenario="Base",
+        projection_years_count=1,
+        starting_revenue=100.0,
+        revenue_growth_years_json={"1": 0.05},
+        wacc_start=0.10,
+        wacc_terminal=0.08,
+        terminal_growth_rate=0.10, # Violates WACC and > 5%
+        debt=0.0
+    )
+    output, _, _ = calculate_dcf(assumption_set)
+    warnings = output.warnings_json
+    warning_messages = [warning["message"] for warning in warnings]
+
+    assert any("greater than or equal to terminal WACC" in message for message in warning_messages)
+    assert any("exceeds 5%" in message for message in warning_messages)
+    assert any("Debt is 0" in message for message in warning_messages)
+
+
+def test_dcf_sensitivity():
+    assumption_set = DcfAssumptionSet(
+        id=3,
+        valuation_model_id=1,
+        projection_years_count=1,
+        wacc_terminal=0.10,
+        terminal_growth_rate=0.02
+    )
+    output, _, sensitivity_tables = calculate_dcf(assumption_set)
+    sensitivity_table = next(
+        table for table in sensitivity_tables if table.table_type == "wacc_vs_terminal_growth"
+    )
+
+    # 5x5 table around the base assumptions.
+    assert len(sensitivity_table.values_json) == 5
+    for w_key, row in sensitivity_table.values_json.items():
+        assert len(row) == 5
