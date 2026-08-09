@@ -2280,7 +2280,7 @@ class CitationSchema(BaseModel):
     reason: str | None = None
     internal_href: str | None = None
 
-class AiOutputRead(BaseModel):
+class ResearchAiOutputRead(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     model_name: str
@@ -2299,7 +2299,7 @@ class ResearchMessageRead(BaseModel):
     content: str
     created_at: datetime
     ai_output_id: int | None = None
-    ai_output: AiOutputRead | None = None
+    ai_output: ResearchAiOutputRead | None = None
 
 class ResearchSessionCreate(BaseModel):
     title: str = Field(min_length=1, max_length=255)
