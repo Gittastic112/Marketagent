@@ -137,6 +137,9 @@ class PortfolioCashBalance(Base):
 
 class PortfolioSnapshot(Base):
     __tablename__ = "portfolio_snapshots"
+    __table_args__ = (
+        UniqueConstraint("portfolio_id", "snapshot_date", name="uq_portfolio_snapshots_portfolio_date"),
+    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     portfolio_id: Mapped[int] = mapped_column(ForeignKey("portfolios.id"), index=True)
@@ -144,6 +147,13 @@ class PortfolioSnapshot(Base):
     total_market_value: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
     total_cost_basis: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
     total_cash: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    total_portfolio_value: Mapped[Decimal | None] = mapped_column(Numeric(20, 6))
+    base_currency: Mapped[str | None] = mapped_column(String(10), nullable=True)
+    calculation_status: Mapped[str] = mapped_column(String(30), default="not_available")
+    holdings_count: Mapped[int] = mapped_column(default=0)
+    priced_holdings_count: Mapped[int] = mapped_column(default=0)
+    missing_price_tickers_json: Mapped[list[str]] = mapped_column(JSON, default=list)
+    missing_fx_pairs_json: Mapped[list[str]] = mapped_column(JSON, default=list)
     payload_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
