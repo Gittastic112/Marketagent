@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import PortfolioSnapshot
+from app.services.portfolio_cash_flows import normalize_external_cash_flows
 
 
 def _snapshot(
@@ -94,9 +95,40 @@ def calculate_period_attribution(
     total_fx_impact = 0.0
     price_complete = True
     fx_complete = True
-    for key in sorted(set(start_holdings).intersection(end_holdings)):
-        beginning = start_holdings[key]
-        ending = end_holdings[key]
+    total_position_change = 0.0
+    component_complete = True
+    for key in sorted(set(start_holdings).union(end_holdings)):
+        beginning = start_holdings.get(key)
+        ending = end_holdings.get(key)
+        if beginning is None or ending is None:
+            boundary = ending or beginning
+            market_value_base = boundary.get("market_value_base") if boundary else None
+            if market_value_base is None:
+                component_complete = False
+                holding_results.append(
+                    {
+                        "key": key,
+                        "ticker": boundary.get("ticker") if boundary else None,
+                        "price_movement": None,
+                        "fx_impact": None,
+                        "position_change": None,
+                        "calculation_status": "not_available",
+                    }
+                )
+                continue
+            position_change = float(market_value_base) if beginning is None else -float(market_value_base)
+            total_position_change += position_change
+            holding_results.append(
+                {
+                    "key": key,
+                    "ticker": boundary.get("ticker"),
+                    "price_movement": 0.0,
+                    "fx_impact": 0.0,
+                    "position_change": position_change,
+                    "calculation_status": "complete",
+                }
+            )
+            continue
         required = (
             beginning.get("quantity"),
             beginning.get("market_price"),
@@ -107,6 +139,7 @@ def calculate_period_attribution(
         if any(value is None for value in required) or beginning.get("currency") != ending.get("currency"):
             price_complete = False
             fx_complete = False
+            component_complete = False
             holding_results.append(
                 {
                     "key": key,
@@ -133,36 +166,90 @@ def calculate_period_attribution(
             )
         )
         total_fx_impact += fx_impact
+        if beginning.get("market_value_base") is None or ending.get("market_value_base") is None:
+            component_complete = False
+            position_change = None
+        else:
+            position_change = (
+                float(ending["market_value_base"])
+                - float(beginning["market_value_base"])
+                - price_movement
+                - fx_impact
+            )
+            total_position_change += position_change
         holding_results.append(
             {
                 "key": key,
                 "ticker": ending.get("ticker") or beginning.get("ticker"),
                 "price_movement": price_movement,
                 "fx_impact": fx_impact,
-                "position_change": None,
-                "calculation_status": "partial",
+                "position_change": position_change,
+                "calculation_status": "complete" if position_change is not None else "not_available",
             }
         )
 
-    if set(start_holdings) != set(end_holdings):
-        warnings.append("Holdings entered or exited during the period; position-change attribution is pending.")
     if not price_complete:
         warnings.append("One or more continuing holdings lack comparable price or FX inputs.")
-    warnings.append("Position-change and external-flow components are not included in this phase.")
+    flow_report = normalize_external_cash_flows(
+        db,
+        portfolio_id,
+        start_date=start_date,
+        end_date=end_date,
+    )
+    external_cash_flow = (
+        float(flow_report.net_external_cash_flow)
+        if flow_report.net_external_cash_flow is not None
+        else None
+    )
+    if not flow_report.complete:
+        component_complete = False
+        warnings.append("External cash-flow attribution is blocked by missing historical FX.")
+    cash_change = None
+    internal_cash_change = None
+    if start.total_cash is not None and end.total_cash is not None:
+        cash_change = float(end.total_cash - start.total_cash)
+        if external_cash_flow is not None:
+            internal_cash_change = cash_change - external_cash_flow
+    else:
+        component_complete = False
+        warnings.append("Snapshot cash totals are required for internal position-flow reconciliation.")
+
+    total_change = float(end.total_portfolio_value - start.total_portfolio_value)
+    unexplained_change = None
+    if (
+        component_complete
+        and price_complete
+        and fx_complete
+        and cash_change is not None
+    ):
+        unexplained_change = (
+            total_change
+            - total_price_movement
+            - total_fx_impact
+            - total_position_change
+            - cash_change
+        )
+        if abs(unexplained_change) > 0.01:
+            warnings.append(
+                "Attribution does not reconcile within 0.01 base-currency units; inspect snapshot provenance."
+            )
+            component_complete = False
     return {
         "portfolio_id": portfolio_id,
         "start_date": start_date,
         "end_date": end_date,
         "base_currency": end.base_currency,
-        "calculation_status": "partial",
-        "total_change": float(end.total_portfolio_value - start.total_portfolio_value),
+        "calculation_status": "complete" if component_complete and price_complete and fx_complete else "partial",
+        "total_change": total_change,
         "price_movement": total_price_movement if price_complete else None,
         "fx_impact": total_fx_impact if fx_complete else None,
-        "position_change": None,
-        "external_cash_flow": None,
-        "unexplained_change": None,
+        "position_change": total_position_change if component_complete else None,
+        "cash_change": cash_change,
+        "external_cash_flow": external_cash_flow,
+        "internal_cash_change": internal_cash_change,
+        "unexplained_change": unexplained_change,
         "holdings": holding_results,
         "warnings": warnings,
         "source_snapshot_ids": [start.id, end.id],
-        "source_transaction_ids": [],
+        "source_transaction_ids": [flow.transaction_id for flow in flow_report.flows],
     }
