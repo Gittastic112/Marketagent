@@ -963,6 +963,7 @@ export type PortfolioTransaction = {
 };
 
 export type DailyBriefPayload = {
+  summary: string;
   new_since_last_review: {
     filings: Array<{
       ticker: string;

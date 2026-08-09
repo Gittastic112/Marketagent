@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.db.base import Base
 from app.models import Company, DailyBrief, Event
-from app.services.daily_brief import save_daily_brief
+from app.services.morning_briefing_engine import MorningBriefingEngine
 
 
 def test_save_daily_brief_persists_generated_snapshot() -> None:
@@ -24,12 +24,18 @@ def test_save_daily_brief_persists_generated_snapshot() -> None:
         session.add_all([company, event])
         session.commit()
 
-        saved = save_daily_brief(session, brief_date=date(2026, 5, 24))
+        saved = MorningBriefingEngine.generate_briefing(
+            session,
+            user_id="brief-owner",
+            target_date=date(2026, 5, 24),
+        )
 
         persisted = session.scalar(select(DailyBrief).where(DailyBrief.id == saved.id))
 
     assert persisted is not None
+    assert persisted.user_id == "brief-owner"
     assert persisted.brief_date == date(2026, 5, 24)
     assert persisted.title == "Daily Intelligence Brief"
-    assert persisted.summary == "1 events, 0 alerts, 0 active thesis notes reviewed."
-    assert persisted.payload_json["top_events"][0]["title"] == "Azure growth note"
+    assert persisted.summary == "Market is active. 1 new events processed. 0 thesis contradictions found."
+    assert persisted.payload_json["new_since_last_review"]["filings"] == []
+    assert persisted.payload_json["high_materiality_events"] == []

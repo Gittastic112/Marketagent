@@ -110,6 +110,7 @@ class MorningBriefingEngine:
             })
 
         return {
+            "summary": f"{len(events)} events, {len(contradiction_alerts)} alerts, {len(thesis_notes)} active thesis notes reviewed.",
             "new_since_last_review": {
                 "filings": filings,
                 "portfolio_moves": portfolio_moves

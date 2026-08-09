@@ -20,7 +20,7 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
     <Panel title="Daily Intelligence Brief">
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
-          {dailyBrief.high_materiality_events.length} high-materiality events and {dailyBrief.thesis_contradictions.length} thesis contradictions require review.
+          {dailyBrief.summary}
         </p>
 
         {dailyBrief.high_materiality_events.length > 0 && (
