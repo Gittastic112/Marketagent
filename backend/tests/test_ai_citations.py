@@ -49,7 +49,7 @@ def _create_output(db: Session, case: dict, *, suffix: str) -> tuple[AiOutput, R
         external_data_classes_json=[],
         transmission_scope="none",
         execution_status="success",
-        output_text=case["output_text"],
+        output_text=case["output_text"].replace("SOURCE_ID", str(document.id)),
         confidence_label="test_fixture",
     )
     db.add(output)
@@ -81,6 +81,33 @@ def test_ai_citation_fixture_cases(
 
     assert data["citation_validation_status"] == case["expected_status"]
     assert data["evaluation_json"]["passed"] is case["expected_passed"]
+
+
+def test_ai_citation_validation_requires_output_source_markers(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    output, document = _create_output(db_session, CASES[0], suffix="missing-marker")
+    output.output_text = "Revenue increased 12% year over year."
+    db_session.commit()
+
+    data = response_data(
+        client.post(
+            f"/ai-outputs/{output.id}/citations/validate",
+            json={
+                "citations": [
+                    {
+                        "source_id": f"raw_document:{document.id}",
+                        "quote": "Revenue increased 12% year over year",
+                    }
+                ]
+            },
+        )
+    )
+
+    assert data["citation_validation_status"] == "invalid"
+    assert data["evaluation_json"]["checks"]["source_markers_present"] is False
+    assert data["is_blocked"] is True
 
 
 def test_ai_output_approval_requires_passing_evaluation(

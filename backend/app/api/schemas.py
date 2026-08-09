@@ -2382,6 +2382,7 @@ class AiOutputRead(BaseModel):
     transmission_scope: str
     execution_status: str
     failure_code: str | None = None
+    is_blocked: bool
     output_text: str
     limitations: str | None = None
     confidence_label: str

@@ -11,12 +11,14 @@ PROHIBITED_RECOMMENDATION_PATTERNS = (
     re.compile(r"\b(?:buy|sell)\s+(?:this|the|shares?|stock)\b", re.IGNORECASE),
     re.compile(r"\byou should (?:buy|sell)\b", re.IGNORECASE),
     re.compile(r"\bguaranteed (?:upside|return|profit)\b", re.IGNORECASE),
+    re.compile(r"\bstrong (?:buy|sell)\b", re.IGNORECASE),
+    re.compile(r"\b(?:must|need to) (?:buy|sell)\b", re.IGNORECASE),
 )
 
 def extract_source_ids(text: str) -> list[str]:
     """Extracts all unique source IDs from [source_id:X] patterns in the text."""
     pattern = re.compile(r"\[source_id:([^\]]+)\]")
-    return list(set(pattern.findall(text or "")))
+    return list(dict.fromkeys(value.strip() for value in pattern.findall(text or "") if value.strip()))
 
 
 
@@ -66,16 +68,48 @@ def validate_ai_citations(
     citations: list[dict[str, Any]],
 ) -> tuple[list[dict[str, Any]], str]:
     declared_sources = set(output.source_ids_json or [])
+    referenced_sources = set(extract_source_ids(output.output_text or ""))
     results: list[dict[str, Any]] = []
     for citation in citations:
         source_id = str(citation.get("source_id") or "")
         if source_id not in declared_sources:
             results.append({**citation, "status": "invalid", "reason": "Source was not declared for this AI output"})
             continue
+        if source_id not in referenced_sources:
+            results.append({**citation, "status": "invalid", "reason": "Source is not cited in the AI output text"})
+            continue
         if source_id.startswith("raw_document:"):
             results.append(_validate_document_citation(db, citation))
             continue
         results.append({**citation, "status": "invalid", "reason": "This source type has no exact-text validator"})
+
+    validated_sources = {
+        str(result.get("source_id")) for result in results if result.get("status") == "valid"
+    }
+    for source_id in sorted(referenced_sources - validated_sources):
+        if any(str(result.get("source_id")) == source_id for result in results):
+            continue
+        results.append(
+            {
+                "source_id": source_id,
+                "quote": "",
+                "start_char": None,
+                "end_char": None,
+                "status": "invalid",
+                "reason": "No validated exact-text citation was supplied for this output source marker",
+            }
+        )
+    if declared_sources and not referenced_sources:
+        results.append(
+            {
+                "source_id": "",
+                "quote": "",
+                "start_char": None,
+                "end_char": None,
+                "status": "invalid",
+                "reason": "Source-backed AI output contains no [source_id:...] markers",
+            }
+        )
 
     valid_count = sum(result["status"] == "valid" for result in results)
     if valid_count == len(results) and results:
@@ -87,6 +121,7 @@ def validate_ai_citations(
     output.citations_json = results
     output.citation_validation_status = status
     output.evaluation_json = evaluate_ai_output(output)
+    output.is_blocked = not output.evaluation_json["passed"]
     db.commit()
     db.refresh(output)
     return results, status
@@ -99,11 +134,21 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
         if pattern.search(output.output_text or "")
     ]
     citations_required = bool(output.source_ids_json) and output.execution_status == "success"
+    referenced_sources = set(extract_source_ids(output.output_text or ""))
+    declared_sources = set(output.source_ids_json or [])
+    validated_sources = {
+        str(citation.get("source_id"))
+        for citation in (output.citations_json or [])
+        if citation.get("status") == "valid"
+    }
     checks = {
         "execution_succeeded": output.execution_status == "success",
         "output_nonempty": bool((output.output_text or "").strip()),
         "no_recommendation_language": not recommendation_matches,
         "citations_required": citations_required,
+        "source_markers_present": not citations_required or bool(referenced_sources),
+        "source_markers_declared": referenced_sources.issubset(declared_sources),
+        "citation_source_coverage": not citations_required or referenced_sources.issubset(validated_sources),
         "citations_valid": not citations_required or output.citation_validation_status == "valid",
     }
     passed = all(
@@ -112,8 +157,11 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
         if key != "citations_required"
     )
     return {
-        "version": "ai-output-eval-v1",
+        "version": "ai-output-eval-v2",
         "passed": passed,
         "checks": checks,
         "recommendation_pattern_matches": recommendation_matches,
+        "referenced_source_ids": sorted(referenced_sources),
+        "validated_source_ids": sorted(validated_sources),
+        "missing_validated_source_ids": sorted(referenced_sources - validated_sources),
     }
