@@ -13,6 +13,9 @@ import type {
   Alert,
 } from "@/lib/api";
 
+type HealthAuditMode = "evidence" | "coverage" | "backfill" | null;
+type HealthMetricTone = "neutral" | "success" | "warning" | "danger" | "muted";
+
 export const dynamic = "force-dynamic";
 
 function formatDate(iso: string) {
@@ -69,25 +72,66 @@ function statusBadge(status: string) {
   );
 }
 
-export default async function DataHealthPage() {
+function HealthMetric({
+  label,
+  value,
+  detail,
+  tone = "neutral",
+  compact = false,
+}: {
+  label: string;
+  value: string | number;
+  detail?: string;
+  tone?: HealthMetricTone;
+  compact?: boolean;
+}) {
+  return (
+    <article className={`health-metric-card${compact ? " health-metric-card-compact" : ""}`} data-tone={tone}>
+      <span className="health-metric-label">{label}</span>
+      <strong className="health-metric-value">{value}</strong>
+      {detail ? <span className="health-metric-detail">{detail}</span> : null}
+    </article>
+  );
+}
+
+export default async function DataHealthPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ audit?: string }>;
+}) {
+  const { audit } = await searchParams;
+  const auditMode: HealthAuditMode = audit === "evidence" || audit === "coverage" || audit === "backfill" ? audit : null;
   try {
-    const [processingRunsRes, sourcesRes, providerHealthRes, evidenceIntegrityRes, eventBackfillRes, damodaranCoverageRes, alertsRes] = await Promise.all([
+    const [processingRunsRes, sourcesRes, providerHealthRes, alertsRes] = await Promise.all([
       serverFetchApiResponse<ProcessingRun[]>("/processing-runs"),
       serverFetchApiResponse<Source[]>("/sources"),
       serverFetchApiResponse<ProviderHealth[]>("/api/providers/health"),
-      serverFetchApiResponse<EvidenceIntegrityReport>("/data-health/evidence-integrity"),
-      serverFetchApiResponse<EventEvidenceBackfillReport>("/data-health/event-evidence-backfill?limit=100"),
-      serverFetchApiResponse<DamodaranCoverageReport>("/data-health/damodaran-coverage"),
       serverFetchApiResponse<Alert[]>("/alerts"),
     ]);
+
+    const evidenceIntegrityRes = auditMode === "evidence"
+      ? await serverFetchApiResponse<EvidenceIntegrityReport>("/data-health/evidence-integrity?deep=true", { timeoutMs: 60_000 })
+      : null;
+    const eventBackfillRes = auditMode === "backfill"
+      ? await serverFetchApiResponse<EventEvidenceBackfillReport>("/data-health/event-evidence-backfill?limit=100", { timeoutMs: 30_000 })
+      : null;
+    const damodaranCoverageRes = auditMode === "coverage"
+      ? await serverFetchApiResponse<DamodaranCoverageReport>("/data-health/damodaran-coverage", { timeoutMs: 30_000 })
+      : null;
 
     const processingRuns = processingRunsRes.data || [];
     const sources = sourcesRes.data || [];
     const providerHealth = providerHealthRes.data || [];
-    const evidenceIntegrity = evidenceIntegrityRes.data;
-    const eventBackfill = eventBackfillRes.data;
-    const damodaranCoverage = damodaranCoverageRes.data;
+    const evidenceIntegrity = evidenceIntegrityRes?.data ?? null;
+    const eventBackfill = eventBackfillRes?.data ?? null;
+    const damodaranCoverage = damodaranCoverageRes?.data ?? null;
     const alerts = alertsRes.data || [];
+    const overviewMetas = [
+      processingRunsRes,
+      sourcesRes,
+      providerHealthRes,
+      alertsRes,
+    ].filter((response) => response.data !== null).map((response) => response.meta);
 
     const unreviewedContradictions = alerts.filter((a: Alert) => a.alert_type === "contradiction" && a.review_status === "unreviewed");
 
@@ -101,7 +145,12 @@ export default async function DataHealthPage() {
     const totalCreated = processingRuns.reduce((sum, r) => sum + r.created_count, 0);
     const totalErrors = processingRuns.reduce((sum, r) => sum + r.error_count, 0);
     const workingProviders = providerHealth.filter((provider) => provider.status === "working").length;
-    const missingProviders = providerHealth.filter((provider) => provider.status === "missing_key" || provider.status === "not_configured").length;
+    const missingCoreProviders = providerHealth.filter((provider) =>
+      provider.requirement_level === "core" && (provider.status === "missing_key" || provider.status === "not_configured")
+    ).length;
+    const missingOptionalProviders = providerHealth.filter((provider) =>
+      provider.requirement_level === "optional" && (provider.status === "missing_key" || provider.status === "not_configured")
+    ).length;
     const failingProviders = providerHealth.filter((provider) => provider.status === "failing").length;
 
     // Group by run_type for freshness
@@ -116,92 +165,82 @@ export default async function DataHealthPage() {
       <>
         <PageHeader eyebrow="System Health" title="Data Health" status={`${totalRuns} runs tracked`} />
 
+        <section className="health-command-bar" aria-label="Health check mode and diagnostics">
+          <div>
+            <strong className="health-command-title">{auditMode ? `${auditMode[0].toUpperCase()}${auditMode.slice(1)} diagnostic` : "Fast health check"}</strong>
+            <p className="health-command-description">
+              {auditMode === "evidence"
+                ? "Verifies stored asset bytes, hashes, exact references, and PDF-region geometry. This intentionally takes longer."
+                : auditMode === "coverage"
+                ? "Reconciles typed Damodaran datasets with the current application coverage inventory."
+                : auditMode === "backfill"
+                ? "Previews bounded exact-span evidence candidates without applying any writes."
+                : "Loads operational health without launching expensive integrity audits."}
+            </p>
+          </div>
+          <div className="health-command-actions">
+            {auditMode ? <Link className="secondary-button" href="/data-health">Fast health check</Link> : null}
+            <Link className="secondary-button" href="/data-health?audit=evidence">Run deep evidence audit</Link>
+            <Link className="secondary-button" href="/data-health?audit=coverage">Check benchmark coverage</Link>
+            <Link className="secondary-button" href="/data-health?audit=backfill">Preview evidence backfill</Link>
+          </div>
+        </section>
+
         <DataStateNotices
-          metas={[processingRunsRes.meta, sourcesRes.meta, providerHealthRes.meta, evidenceIntegrityRes.meta, eventBackfillRes.meta, damodaranCoverageRes.meta]}
-          staleMessage="Showing cached data"
+          metas={overviewMetas}
+          staleMessage="Live health summaries are unavailable."
+          partialMessage="Some live health summaries are unavailable; unaffected panels remain usable."
           mockMessage="Data health rows are mocked. Treat provider status as placeholder information."
         />
 
-        {/* Summary Cards */}
-        <section className="metric-grid" style={{ marginBottom: "2rem" }}>
-          <div className="metric">
-            <div className="metric-label">Successful Runs</div>
-            <div className="metric-value" style={{ color: "var(--success)" }}>{successRuns}</div>
+        <section className="health-summary-section" aria-labelledby="operations-health-title">
+          <div className="health-section-heading">
+            <div>
+              <h2 id="operations-health-title">Operations</h2>
+              <p>Recorded ingestion outcomes across the current local database.</p>
+            </div>
+            <span>{totalFetched.toLocaleString()} records fetched</span>
           </div>
-          <div className="metric">
-            <div className="metric-label">Failed Runs</div>
-            <div className="metric-value" style={{ color: failedRuns > 0 ? "var(--error)" : undefined }}>{failedRuns}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Records Created</div>
-            <div className="metric-value">{totalCreated.toLocaleString()}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Errors Encountered</div>
-            <div className="metric-value" style={{ color: totalErrors > 0 ? "var(--error)" : undefined }}>{totalErrors.toLocaleString()}</div>
+          <div className="health-metric-grid">
+            <HealthMetric label="Successful runs" value={successRuns} tone="success" />
+            <HealthMetric label="Failed runs" value={failedRuns} tone={failedRuns > 0 ? "danger" : "neutral"} />
+            <HealthMetric label="Records created" value={totalCreated.toLocaleString()} />
+            <HealthMetric label="Processing errors" value={totalErrors.toLocaleString()} tone={totalErrors > 0 ? "danger" : "neutral"} />
           </div>
         </section>
 
-        <section className="metric-grid" style={{ marginBottom: "2rem" }}>
-          <div className="metric">
-            <div className="metric-label">Working Providers</div>
-            <div className="metric-value" style={{ color: "var(--success)" }}>{workingProviders}</div>
+        <section className="health-summary-section" aria-labelledby="provider-readiness-title">
+          <div className="health-section-heading">
+            <div>
+              <h2 id="provider-readiness-title">Provider readiness</h2>
+              <p>Required gaps are blockers. Optional connections are informational.</p>
+            </div>
           </div>
-          <div className="metric">
-            <div className="metric-label">Missing Configuration</div>
-            <div className="metric-value" style={{ color: missingProviders > 0 ? "var(--warning)" : undefined }}>{missingProviders}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Failing Providers</div>
-            <div className="metric-value" style={{ color: failingProviders > 0 ? "var(--error)" : undefined }}>{failingProviders}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Manual-Only Providers</div>
-            <div className="metric-value">{providerHealth.filter((provider) => provider.status === "manual_only").length}</div>
+          <div className="health-metric-grid">
+            <HealthMetric label="Working providers" value={workingProviders} tone="success" />
+            <HealthMetric label="Required config gaps" value={missingCoreProviders} tone={missingCoreProviders > 0 ? "danger" : "success"} />
+            <HealthMetric label="Failing providers" value={failingProviders} tone={failingProviders > 0 ? "danger" : "neutral"} />
+            <HealthMetric label="Optional integrations" value={missingOptionalProviders} detail="Not configured" tone="muted" />
           </div>
         </section>
 
-        <section className="metric-grid" style={{ marginBottom: "2rem" }}>
-          <div className="metric">
-            <div className="metric-label">Evidence Errors</div>
-            <div className="metric-value" style={{ color: evidenceIntegrity?.error_count ? "var(--error)" : "var(--success)" }}>
-              {evidenceIntegrity?.error_count ?? 0}
+        <section className="health-summary-section health-diagnostic-summary" aria-labelledby="diagnostic-status-title">
+          <div className="health-section-heading">
+            <div>
+              <h2 id="diagnostic-status-title">Diagnostic status</h2>
+              <p>These values remain unavailable until the explicit evidence audit runs.</p>
             </div>
+            {!evidenceIntegrity ? <Link href="/data-health?audit=evidence">Run audit</Link> : null}
           </div>
-          <div className="metric">
-            <div className="metric-label">Evidence Warnings</div>
-            <div className="metric-value" style={{ color: evidenceIntegrity?.warning_count ? "var(--warning)" : undefined }}>
-              {evidenceIntegrity?.warning_count ?? 0}
-            </div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Documents Checked</div>
-            <div className="metric-value">{evidenceIntegrity?.checked_documents ?? 0}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Exact References Checked</div>
-            <div className="metric-value">{evidenceIntegrity?.checked_references ?? 0}</div>
-          </div>
-        </section>
-
-        <section className="metric-grid" style={{ marginBottom: "2rem" }}>
-          <div className="metric">
-            <div className="metric-label">Promoted Financial Facts</div>
-            <div className="metric-value">{evidenceIntegrity?.checked_financial_candidates ?? 0}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Annual Periods Checked</div>
-            <div className="metric-value">{evidenceIntegrity?.checked_financial_periods ?? 0}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Certified Histories</div>
-            <div className="metric-value">{evidenceIntegrity?.certified_financial_history_count ?? 0}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Certified Markets</div>
-            <div className="metric-value" style={{ fontSize: "1.25rem" }}>
-              {evidenceIntegrity?.certified_markets.join(", ") || "None"}
-            </div>
+          <div className="health-diagnostic-grid">
+            <HealthMetric compact label="Evidence errors" value={evidenceIntegrity ? evidenceIntegrity.error_count : "Not run"} tone={!evidenceIntegrity ? "muted" : evidenceIntegrity.error_count > 0 ? "danger" : "success"} />
+            <HealthMetric compact label="Evidence warnings" value={evidenceIntegrity ? evidenceIntegrity.warning_count : "Not run"} tone={!evidenceIntegrity ? "muted" : evidenceIntegrity.warning_count > 0 ? "warning" : "neutral"} />
+            <HealthMetric compact label="Documents checked" value={evidenceIntegrity ? evidenceIntegrity.checked_documents : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
+            <HealthMetric compact label="Exact references" value={evidenceIntegrity ? evidenceIntegrity.checked_references : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
+            <HealthMetric compact label="Financial facts" value={evidenceIntegrity ? evidenceIntegrity.checked_financial_candidates : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
+            <HealthMetric compact label="Annual periods" value={evidenceIntegrity ? evidenceIntegrity.checked_financial_periods : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
+            <HealthMetric compact label="Certified histories" value={evidenceIntegrity ? evidenceIntegrity.certified_financial_history_count : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
+            <HealthMetric compact label="Certified markets" value={evidenceIntegrity ? evidenceIntegrity.certified_markets.join(", ") || "None" : "Not run"} tone={evidenceIntegrity ? "neutral" : "muted"} />
           </div>
         </section>
 
@@ -239,8 +278,12 @@ export default async function DataHealthPage() {
         </Panel>
 
         <Panel title="Damodaran Application Coverage">
-          {!damodaranCoverage ? (
-            <ErrorState message="Damodaran application coverage is unavailable." />
+          {!damodaranCoverageRes ? (
+            <div className="empty">
+              Coverage reconciliation is not run during the fast health check. <Link href="/data-health?audit=coverage">Check benchmark coverage</Link>.
+            </div>
+          ) : !damodaranCoverage ? (
+            <ErrorState message="Damodaran application coverage is unavailable." errors={damodaranCoverageRes.errors} />
           ) : (
             <>
               <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-start", flexWrap: "wrap", marginBottom: "1rem" }}>
@@ -352,8 +395,12 @@ export default async function DataHealthPage() {
         </Panel>
 
         <Panel title="Financial History Certification">
-          {!evidenceIntegrity ? (
-            <EmptyState label="Financial certification details are unavailable." />
+          {!evidenceIntegrityRes ? (
+            <div className="empty">
+              Financial certification is part of the explicit evidence audit. <Link href="/data-health?audit=evidence">Run deep evidence audit</Link>.
+            </div>
+          ) : !evidenceIntegrity ? (
+            <ErrorState message="Financial certification details are unavailable." errors={evidenceIntegrityRes.errors} />
           ) : evidenceIntegrity.financial_histories.length === 0 ? (
             <EmptyState label="No promoted financial histories are available for certification." />
           ) : (
@@ -398,8 +445,12 @@ export default async function DataHealthPage() {
         </Panel>
 
         <Panel title="Evidence Integrity">
-          {!evidenceIntegrity ? (
-            <EmptyState label="Evidence integrity report is unavailable." />
+          {!evidenceIntegrityRes ? (
+            <div className="empty">
+              Deep asset and exact-reference verification is not run automatically. <Link href="/data-health?audit=evidence">Run deep evidence audit</Link>.
+            </div>
+          ) : !evidenceIntegrity ? (
+            <ErrorState message="Evidence integrity report is unavailable." errors={evidenceIntegrityRes.errors} />
           ) : evidenceIntegrity.issues.length === 0 ? (
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
               <div>
@@ -416,6 +467,17 @@ export default async function DataHealthPage() {
             </div>
           ) : (
             <>
+              <div style={{ display: "flex", gap: "0.5rem", alignItems: "center", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+                {statusBadge(evidenceIntegrity.verification_scope)}
+                <span style={{ color: "var(--text-secondary)", fontSize: "0.82rem" }}>
+                  Asset content verification: {evidenceIntegrity.asset_content_verification_status.replaceAll("_", " ")}
+                </span>
+              </div>
+              {evidenceIntegrity.limitations.length > 0 ? (
+                <div className="notice notice-warning" style={{ marginBottom: "0.75rem" }}>
+                  {evidenceIntegrity.limitations.join(" ")}
+                </div>
+              ) : null}
               {evidenceIntegrity.is_truncated && (
                 <div className="notice notice-warning" style={{ marginBottom: "0.75rem" }}>
                   Only the first {evidenceIntegrity.reported_issue_count} issues are shown. Resolve them and run the report again.
@@ -456,8 +518,12 @@ export default async function DataHealthPage() {
         </Panel>
 
         <Panel title="Historical Event Evidence Backfill">
-          {!eventBackfill ? (
-            <ErrorState message="The historical evidence preview is unavailable." />
+          {!eventBackfillRes ? (
+            <div className="empty">
+              Historical backfill preview is not run automatically. <Link href="/data-health?audit=backfill">Preview evidence backfill</Link>.
+            </div>
+          ) : !eventBackfill ? (
+            <ErrorState message="The historical evidence preview is unavailable." errors={eventBackfillRes.errors} />
           ) : eventBackfill.entries.length === 0 ? (
             <EmptyState label="No unreferenced events are available in the current bounded batch." />
           ) : (
@@ -541,6 +607,7 @@ export default async function DataHealthPage() {
                   <tr>
                     <th>Provider</th>
                     <th>Capability</th>
+                    <th>Requirement</th>
                     <th>Market</th>
                     <th>Coverage</th>
                     <th>Status</th>
@@ -564,6 +631,7 @@ export default async function DataHealthPage() {
                         )}
                       </td>
                       <td><span className="badge">{provider.capability}</span></td>
+                      <td>{statusBadge(provider.requirement_level)}</td>
                       <td>{provider.market ?? "Global"}</td>
                       <td style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>{provider.coverage_state ?? "Unknown"}</td>
                       <td>{statusBadge(provider.status)}</td>

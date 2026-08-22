@@ -595,7 +595,7 @@ export function AdvancedWorkspace({
           <div style={{ marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               Intrinsic Value
-              <span className="badge" style={{ backgroundColor: "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", color: "var(--text-muted)" }}>Estimate</span>
+              <span className="badge" style={{ backgroundColor: "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "var(--font-size-xs)", color: "var(--text-muted)" }}>Estimate</span>
             </div>
             <div className="valuation-output-value">
               {outputTrustBlocked ? "Not reliable" : formatCurrency(out?.intrinsic_value_per_share, outputCurrency)}
@@ -617,7 +617,7 @@ export function AdvancedWorkspace({
           <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid var(--line)", marginBottom: "0.75rem", alignItems: "center" }}>
             <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
               Current Price
-              <span className="badge" style={{ backgroundColor: hasMarketPrice ? "var(--accent-light)" : "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "0.7rem", color: hasMarketPrice ? "var(--accent)" : "var(--text-muted)" }}>
+              <span className="badge" style={{ backgroundColor: hasMarketPrice ? "var(--accent-light)" : "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "var(--font-size-xs)", color: hasMarketPrice ? "var(--accent)" : "var(--text-muted)" }}>
                 {hasMarketPrice ? "Market Fact" : "Missing data"}
               </span>
             </span>

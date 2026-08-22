@@ -60,8 +60,8 @@ export function StaleDataBanner({ message, lastUpdated }: { message?: string; la
       </svg>
       <div>
         <span style={{ color: "rgb(249, 115, 22)", fontWeight: 500 }}>Stale Data</span>
-        {message ? ` - ${message}` : ""}
-        {lastUpdated ? ` (Last updated: ${new Date(lastUpdated).toLocaleString()})` : " (The backend is currently unreachable. Showing cached data.)"}
+        {` - ${message || "The backend is currently unreachable. Showing cached data."}`}
+        {lastUpdated ? ` (Last updated: ${new Date(lastUpdated).toLocaleString()})` : ""}
       </div>
     </div>
   );
@@ -69,7 +69,7 @@ export function StaleDataBanner({ message, lastUpdated }: { message?: string; la
 
 export function MockDataBadge() {
   return (
-    <span style={{ fontSize: "0.7rem", padding: "0.1rem 0.4rem", backgroundColor: "rgba(100,100,100,0.2)", border: "1px dashed var(--border-color)", borderRadius: "4px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(100,100,100,0.2)", border: "1px dashed var(--border-color)", borderRadius: "4px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       Mock Data
     </span>
   );
@@ -271,7 +271,7 @@ export function DataFreshnessIndicator({ meta, lastUpdated, source }: { meta?: A
     const badges = buildDataStateBadges(meta);
 
     return (
-      <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+      <div style={{ fontSize: "var(--font-size-xs)", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
         {badges.map((badge) => {
           if (badge.label === "Mock Data") {
             return <MockDataBadge key={badge.label} />;
@@ -290,7 +290,7 @@ export function DataFreshnessIndicator({ meta, lastUpdated, source }: { meta?: A
       display: "flex",
       alignItems: "center",
       gap: "6px",
-      fontSize: "0.75rem",
+      fontSize: "var(--font-size-xs)",
       color: "var(--muted)",
       marginTop: "8px"
     }}>
@@ -320,7 +320,7 @@ export function UnsupportedState({ message = "This feature is currently unsuppor
 
 export function ManualDataBadge() {
   return (
-    <span style={{ fontSize: "0.7rem", padding: "0.1rem 0.4rem", backgroundColor: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "4px", color: "rgb(59, 130, 246)", textTransform: "uppercase", letterSpacing: "0.05em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "4px", color: "rgb(59, 130, 246)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       Manual Data
     </span>
   );
@@ -328,7 +328,7 @@ export function ManualDataBadge() {
 
 export function PrototypeBadge() {
   return (
-    <span style={{ fontSize: "0.7rem", padding: "0.1rem 0.4rem", backgroundColor: "rgba(168, 85, 247, 0.1)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "4px", color: "rgb(168, 85, 247)", textTransform: "uppercase", letterSpacing: "0.05em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(168, 85, 247, 0.1)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "4px", color: "rgb(168, 85, 247)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       Prototype
     </span>
   );
@@ -336,7 +336,7 @@ export function PrototypeBadge() {
 
 export function SourceBadge({ source }: { source: string }) {
   return (
-    <span style={{ fontSize: "0.7rem", padding: "0.1rem 0.4rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.05em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "var(--surface)", border: "1px solid var(--border)", borderRadius: "4px", color: "var(--text-secondary)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       {source}
     </span>
   );
@@ -351,7 +351,7 @@ export function ConfidenceIndicator({ level }: { level: "high" | "medium" | "low
   };
 
   return (
-    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "0.7rem", color: "var(--text-secondary)", verticalAlign: "middle" }}>
+    <span style={{ display: "inline-flex", alignItems: "center", gap: "4px", fontSize: "var(--font-size-xs)", color: "var(--text-secondary)", verticalAlign: "middle" }}>
       <div style={{ width: "6px", height: "6px", borderRadius: "50%", background: colors[level] || colors.none }}></div>
       <span style={{ textTransform: "capitalize" }}>{level} Confidence</span>
     </span>
@@ -369,7 +369,7 @@ export function ReviewStateBadge({ state }: { state: "reviewed" | "unreviewed" |
   const label = state.replace("_", " ");
 
   return (
-    <span style={{ fontSize: "0.7rem", padding: "0.1rem 0.4rem", backgroundColor: current.bg, border: `1px solid ${current.border}`, borderRadius: "4px", color: current.color, textTransform: "capitalize", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: current.bg, border: `1px solid ${current.border}`, borderRadius: "4px", color: current.color, textTransform: "capitalize", verticalAlign: "middle" }}>
       {label}
     </span>
   );

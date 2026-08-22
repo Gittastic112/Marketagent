@@ -11,8 +11,8 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: any }) {
         <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ fontWeight: 600, color: 'var(--muted)' }}>Model:</span>
           <span>{aiOutput.model_name}</span>
-          {aiOutput.is_mock && <span style={{ backgroundColor: 'var(--warning-color)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold' }}>MOCK</span>}
-          {aiOutput.is_blocked && <span style={{ backgroundColor: 'var(--error-color)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '0.25rem', fontSize: '0.7rem', fontWeight: 'bold' }}>UNSUPPORTED CLAIM</span>}
+          {aiOutput.is_mock && <span style={{ backgroundColor: 'var(--warning-color)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '0.25rem', fontSize: 'var(--font-size-xs)', fontWeight: 'bold' }}>MOCK</span>}
+          {aiOutput.is_blocked && <span style={{ backgroundColor: 'var(--error-color)', color: 'white', padding: '0.1rem 0.4rem', borderRadius: '0.25rem', fontSize: 'var(--font-size-xs)', fontWeight: 'bold' }}>UNSUPPORTED CLAIM</span>}
         </div>
         <button
           onClick={() => setShowDetails(!showDetails)}

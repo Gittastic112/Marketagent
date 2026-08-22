@@ -103,7 +103,7 @@ export function DiagnosticPanel({ warnings }: { warnings: DiagnosticWarning[] })
                   <span
                     key={idx}
                     style={{
-                      fontSize: "0.7rem",
+                      fontSize: "var(--font-size-xs)",
                       background: "rgba(0,0,0,0.05)",
                       color: "var(--text-secondary)",
                       padding: "0.15rem 0.4rem",

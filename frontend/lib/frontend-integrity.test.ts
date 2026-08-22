@@ -74,6 +74,21 @@ test("company workspace typography and layout do not force page-level horizontal
   assert.match(styles, /overflow-wrap: anywhere/);
 });
 
+test("responsive route matrix enforces readable typography", () => {
+  const spec = readFrontendFile("e2e/accessibility-responsive.spec.ts");
+  const timeline = readFrontendFile("components/events-timeline.tsx");
+  const workspace = readFrontendFile("components/advanced-workspace.tsx");
+  const diagnostics = readFrontendFile("components/valuation/diagnostic-panel.tsx");
+  assert.match(spec, /collectTypographyFailures/);
+  assert.match(spec, /Body text is \$\{bodySize\}px; expected at least 15px/);
+  assert.match(spec, /Page title is \$\{titleSize\}px; expected 26–40px/);
+  assert.match(spec, /fontSize\(element\) < 12/);
+  assert.match(spec, /typography failures/);
+  assert.doesNotMatch(timeline, /fontSize: "0\.7rem"/);
+  assert.doesNotMatch(workspace, /fontSize: "0\.7rem"/);
+  assert.doesNotMatch(diagnostics, /fontSize: "0\.7rem"/);
+});
+
 
 test("production workflows do not use blocking browser dialogs", () => {
   const workflowFiles = [
@@ -92,12 +107,71 @@ test("production workflows do not use blocking browser dialogs", () => {
 
 test("dashboard uses the consolidated overview endpoint", () => {
   const dashboard = readFrontendFile("app/page.tsx");
-  assert.match(dashboard, /serverFetchApiResponse<DashboardOverview>\("\/dashboard\/overview"\)/);
+  assert.match(dashboard, /serverFetchApiResponse<DashboardOverview>\("\/dashboard\/overview"/);
+  assert.match(dashboard, /timeoutMs: 30_000/);
   for (const legacyPath of ["/companies", "/events", "/alerts", "/thesis-notes", "/processing-runs"]) {
     assert.doesNotMatch(dashboard, new RegExp(`serverFetchApiResponse[^\\n]+${legacyPath}`));
   }
   assert.match(dashboard, /overviewWarnings\.join/);
+  assert.match(dashboard, /defaultPortfolioSnapshot\.snapshot_date/);
   assert.match(dashboard, /defaultPortfolio \? "Add Prices" : "\+ Connect Portfolio"/);
+});
+
+test("research routes use parallel requests and responsive layouts", () => {
+  const brief = readFrontendFile("app/daily-brief/page.tsx");
+  const research = readFrontendFile("app/research/page.tsx");
+  const narratives = readFrontendFile("app/narratives/page.tsx");
+  const styles = readFrontendFile("app/globals.css");
+
+  assert.match(brief, /const \[briefRes, savedBriefsRes\] = await Promise\.all/);
+  assert.match(brief, /className="brief-comparison-grid"/);
+  assert.match(research, /className="research-actions"/);
+  assert.match(research, /className="metric-grid research-grid"/);
+  assert.doesNotMatch(research, /minmax\(400px/);
+  assert.match(narratives, /className="narrative-extraction-layout"/);
+  assert.match(narratives, /htmlFor=\{`narrative-claim-\$\{cluster\.id\}`\}/);
+  assert.match(styles, /\.brief-comparison-grid/);
+  assert.match(styles, /\.research-grid/);
+  assert.match(styles, /\.narrative-extraction-layout/);
+});
+
+test("CSV import controls have unique programmatic labels", () => {
+  const importer = readFrontendFile("components/csv-importer.tsx");
+  const uploader = readFrontendFile("components/csv-upload-form.tsx");
+  assert.match(importer, /const fileInputId = useId\(\)/);
+  assert.match(importer, /<label htmlFor=\{fileInputId\}>CSV File<\/label>/);
+  assert.match(importer, /id=\{fileInputId\}/);
+  assert.match(uploader, /const fileInputId = useId\(\)/);
+  assert.match(uploader, /htmlFor=\{fileInputId\}/);
+  assert.match(uploader, /id=\{fileInputId\}/);
+});
+
+test("data management loads in parallel with valid responsive actions", () => {
+  const dataPage = readFrontendFile("app/data/page.tsx");
+  const styles = readFrontendFile("app/globals.css");
+
+  assert.match(
+    dataPage,
+    /const \[companiesRes, sourcesRes, usCapabilitiesRes, indiaCapabilitiesRes\] = await Promise\.all/
+  );
+  assert.match(dataPage, /className="metric-grid data-management-grid"/);
+  assert.doesNotMatch(dataPage, /<Link[^>]*>[\s\n]*<button/);
+  assert.match(dataPage, /className="secondary-button" href="\/sources"/);
+  assert.match(styles, /\.data-management-grid/);
+});
+
+test("system routes use labelled controls and bounded parallel setup", () => {
+  const admin = readFrontendFile("app/admin/damodaran/page.tsx");
+  const settings = readFrontendFile("app/settings/page.tsx");
+  const search = readFrontendFile("app/search/page.tsx");
+  const styles = readFrontendFile("app/globals.css");
+
+  assert.match(admin, /htmlFor="damodaran-dataset-code"/);
+  assert.match(admin, /id="damodaran-workbook"/);
+  assert.doesNotMatch(admin, /catch \(err: any\)/);
+  assert.match(settings, /const \[configRes, oauthStatusResult\] = await Promise\.all/);
+  assert.match(search, /className="search-form"/);
+  assert.match(styles, /\.search-form/);
 });
 
 test("portfolio attribution exposes partial calculations without fake FX or benchmarks", () => {
@@ -152,6 +226,37 @@ test("portfolio performance uses owned setup, generated snapshots, and dated cal
   assert.match(api, /export type PortfolioOpportunityCost/);
 });
 
+test("portfolio risk comparison labels calculations and estimates without requiring setup clicks", () => {
+  const detail = readFrontendFile("app/portfolio/[id]/page.tsx");
+  const panel = readFrontendFile("components/portfolio-risk-return-panel.tsx");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(detail, /PortfolioRiskReturnPanel/);
+  assert.match(detail, /risk-return-comparison\?as_of_date=/);
+  assert.match(panel, /Annualized volatility/);
+  assert.match(panel, /Risk from \+1% weight/);
+  assert.match(panel, /DCF valuation gap/);
+  assert.match(panel, /This is not an annualized forecast/);
+  assert.match(panel, /source_market_price_ids/);
+  assert.match(panel, /source_fx_observation_ids/);
+  assert.match(panel, /source_dcf_output_ids/);
+  assert.doesNotMatch(panel, /mock|placeholder/i);
+  assert.match(api, /export type PortfolioRiskReturn/);
+  assert.match(api, /expected_return_claim_type: "Estimate" \| "Unavailable"/);
+});
+
+test("portfolio overview hides DCF outputs that fail trust gates", () => {
+  const page = readFrontendFile("app/portfolio/page.tsx");
+  const api = readFrontendFile("lib/api.ts");
+
+  assert.match(page, /href=\{`\/portfolio\/\$\{portfolio\.id\}`\}/);
+  assert.doesNotMatch(page, /\/analytics|\/portfolio-snapshots/);
+  assert.match(page, /valuation_status === "trusted"/);
+  assert.match(page, />Untrusted</);
+  assert.match(page, />Unavailable</);
+  assert.match(api, /valuation_status\?: "trusted" \| "stale" \| "untrusted" \| "unavailable"/);
+});
+
 test("market regime exposes bounded inputs and calculation provenance", () => {
   const page = readFrontendFile("app/portfolio/regime/page.tsx");
   const form = readFrontendFile("components/portfolio/RegimeInputForm.tsx");
@@ -171,6 +276,11 @@ test("market regime exposes bounded inputs and calculation provenance", () => {
   assert.match(form, /Provider-backed observation/);
   assert.match(form, /Normalization Methodology/);
   assert.match(form, /required=\{inputType === "provider"\}/);
+  for (const id of ["metric-name", "normalized-score", "input-type", "source-name", "source-url", "methodology", "as-of-date"]) {
+    assert.match(form, new RegExp(`htmlFor="${id}"`));
+    assert.match(form, new RegExp(`id="${id}"`));
+  }
+  assert.match(page, /className="regime-layout"/);
   assert.match(api, /calculation_status: "complete" \| "stale" \| "blocked"/);
   assert.match(api, /input_type: "manual" \| "provider"/);
 });
@@ -194,14 +304,47 @@ test("AI research uses the same complete citation and human-review workflow", ()
 
 test("data health exposes the authenticated evidence integrity report", () => {
   const page = readFrontendFile("app/data-health/page.tsx");
-  assert.match(page, /serverFetchApiResponse<EvidenceIntegrityReport>\("\/data-health\/evidence-integrity"\)/);
+  const styles = readFrontendFile("app/globals.css");
+  assert.match(page, /\/data-health\/evidence-integrity\?deep=true/);
+  assert.match(page, /Fast health check/);
+  assert.match(page, /Run deep evidence audit/);
+  assert.match(page, /timeoutMs: 60_000/);
+  assert.match(page, /evidenceIntegrityRes\?\.data/);
+  assert.match(page, /evidenceIntegrityRes\.errors/);
   assert.match(page, /Evidence Integrity/);
   assert.match(page, /Required Action/);
   assert.match(page, /issue\.document_id/);
   assert.match(page, /Financial certification/);
-  assert.match(page, /Promoted Financial Facts/);
+  assert.match(page, /label="Financial facts"/);
   assert.match(page, /Financial History Certification/);
   assert.match(page, /statement_identity_status/);
+  assert.match(page, /className="health-command-bar"/);
+  assert.match(page, /aria-labelledby="operations-health-title"/);
+  assert.match(page, /aria-labelledby="provider-readiness-title"/);
+  assert.match(page, /aria-labelledby="diagnostic-status-title"/);
+  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.error_count : "Not run"/);
+  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.certified_markets\.join\(", "\) \|\| "None" : "Not run"/);
+  assert.doesNotMatch(page, /className="metric-grid" style=\{\{ marginBottom: "2rem" \}\}/);
+  assert.match(styles, /\.health-metric-grid/);
+  assert.match(styles, /\.health-diagnostic-grid/);
+});
+
+test("stale notices do not claim cached data when a caller supplies a specific failure message", () => {
+  const states = readFrontendFile("components/ui/data-states.tsx");
+  assert.match(states, /message \|\| "The backend is currently unreachable\. Showing cached data\."/);
+  assert.doesNotMatch(states, /lastUpdated \?[^\n]+: " \(The backend is currently unreachable\. Showing cached data\.\)"/);
+  assert.doesNotMatch(states, /fontSize: "0\.7rem"/);
+});
+
+test("navigation and AI provenance labels avoid sub-12px text", () => {
+  const styles = readFrontendFile("app/globals.css");
+  const aiMetadata = readFrontendFile("components/ai-metadata.tsx");
+
+  assert.match(
+    styles,
+    /\.nav-group-label\s*\{[\s\S]*?font-size:\s*var\(--font-size-xs\)/,
+  );
+  assert.doesNotMatch(aiMetadata, /fontSize:\s*["']0\.7rem["']/);
 });
 
 test("provider health exposes run classification, freshness, and owned coverage", () => {
@@ -214,7 +357,11 @@ test("provider health exposes run classification, freshness, and owned coverage"
   assert.match(page, /provider\.consecutive_failures/);
   assert.match(page, /provider\.freshness_label/);
   assert.match(page, /provider\.coverage_state/);
+  assert.match(page, /provider\.requirement_level/);
+  assert.match(page, /label="Required config gaps"/);
+  assert.match(page, /label="Optional integrations"/);
   assert.match(api, /last_attempt_at: string \| null/);
+  assert.match(api, /requirement_level: "core" \| "optional" \| "manual"/);
   assert.match(api, /data_age_hours: number \| null/);
   assert.match(api, /configured_source_count: number \| null/);
   assert.match(api, /\| "running"/);
@@ -241,7 +388,7 @@ test("data health exposes typed Damodaran application coverage", () => {
   const page = readFrontendFile("app/data-health/page.tsx");
   const api = readFrontendFile("lib/api.ts");
 
-  assert.match(page, /serverFetchApiResponse<DamodaranCoverageReport>\("\/data-health\/damodaran-coverage"\)/);
+  assert.match(page, /serverFetchApiResponse<DamodaranCoverageReport>\("\/data-health\/damodaran-coverage"/);
   assert.match(page, /Damodaran Application Coverage/);
   assert.match(page, /coverage\.implementation_status/);
   assert.match(page, /coverage\.ingestion_status/);
@@ -333,6 +480,16 @@ test("valuation industry mapping supports persisted revenue-weighted segments", 
   assert.match(api, /fetchIndustryMix/);
   assert.match(api, /saveIndustryMix/);
   assert.match(api, /industry-allocations/);
+});
+
+test("valuation model deletion reports failures instead of silently submitting", () => {
+  const page = readFrontendFile("app/companies/[id]/valuation/page.tsx");
+  const actions = readFrontendFile("app/actions.ts");
+
+  assert.match(page, /DeleteRecordForm/);
+  assert.match(page, /deleteValuationModelWithState\.bind/);
+  assert.match(actions, /export async function deleteValuationModelWithState/);
+  assert.match(actions, /return formActionError\(error\)/);
 });
 
 test("valuation drafts allow one explicit confirmation for valid current defaults", () => {

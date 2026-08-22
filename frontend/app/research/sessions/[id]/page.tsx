@@ -113,7 +113,7 @@ export default function SessionDetailPage() {
                 <p style={{ margin: 0, whiteSpace: "pre-wrap", lineHeight: 1.5 }}>{msg.content}</p>
                 {msg.ai_output && <AiOutputMetadata aiOutput={msg.ai_output} />}
                 {msg.ai_output && <AiOutputReviewControls initialOutput={msg.ai_output} />}
-                <div style={{ fontSize: "0.7rem", marginTop: "0.5rem", opacity: 0.7, textAlign: msg.role === "user" ? "right" : "left" }}>
+                <div style={{ fontSize: "var(--font-size-xs)", marginTop: "0.5rem", opacity: 0.7, textAlign: msg.role === "user" ? "right" : "left" }}>
                   {new Date(msg.created_at).toLocaleTimeString()}
                 </div>
               </div>

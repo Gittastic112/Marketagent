@@ -5,11 +5,25 @@ import { signIn } from "./helpers";
 
 const CORE_ROUTES = [
   ["dashboard", "/"],
-  ["companies", "/companies"],
+  ["daily-brief", "/daily-brief"],
+  ["alerts", "/alerts"],
   ["portfolio", "/portfolio"],
+  ["portfolio-manage", "/portfolio/manage"],
+  ["market-regime", "/portfolio/regime"],
+  ["companies", "/companies"],
+  ["research", "/research"],
+  ["narratives", "/narratives"],
+  ["events", "/events"],
+  ["contradictions", "/intelligence/review"],
+  ["macro", "/macro"],
   ["valuation", "/valuation"],
   ["documents", "/documents"],
+  ["ingestion", "/data"],
   ["data-health", "/data-health"],
+  ["sources", "/sources"],
+  ["admin", "/admin/damodaran"],
+  ["settings", "/settings"],
+  ["search", "/search"],
 ] as const;
 
 async function collectSemanticFailures(page: Page): Promise<string[]> {
@@ -60,6 +74,46 @@ async function collectSemanticFailures(page: Page): Promise<string[]> {
   });
 }
 
+async function collectTypographyFailures(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const failures: string[] = [];
+    const visible = (element: HTMLElement) => {
+      const style = window.getComputedStyle(element);
+      return style.display !== "none" && style.visibility !== "hidden" && element.getClientRects().length > 0;
+    };
+    const fontSize = (element: Element) => Number.parseFloat(window.getComputedStyle(element).fontSize);
+    const bodySize = fontSize(document.body);
+    if (bodySize < 15) failures.push(`Body text is ${bodySize}px; expected at least 15px`);
+
+    const title = document.querySelector<HTMLElement>("main h1");
+    if (title) {
+      const titleSize = fontSize(title);
+      if (titleSize < 26 || titleSize > 40) {
+        failures.push(`Page title is ${titleSize}px; expected 26–40px`);
+      }
+    }
+
+    for (const heading of document.querySelectorAll<HTMLElement>(".panel-header h2")) {
+      if (visible(heading) && fontSize(heading) < 16) {
+        failures.push(`Panel heading is ${fontSize(heading)}px: ${heading.textContent?.trim()}`);
+      }
+    }
+
+    const undersized = [...document.querySelectorAll<HTMLElement>(
+      "main p, main span, main td, main th, main label, main button, main a",
+    )].filter((element) => (
+      visible(element)
+      && !element.classList.contains("sr-only")
+      && Boolean(element.textContent?.trim())
+      && fontSize(element) < 12
+    ));
+    for (const element of undersized.slice(0, 5)) {
+      failures.push(`Text is ${fontSize(element)}px: ${element.textContent?.trim().slice(0, 80)}`);
+    }
+    return failures;
+  });
+}
+
 async function verifyRoute(
   page: Page,
   testInfo: TestInfo,
@@ -73,8 +127,9 @@ async function verifyRoute(
   await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe("loaded");
   await expect.poll(
     () => page.locator('body > div[hidden][id^="S:"]').count(),
-    { message: `${label} must finish applying its React server stream` },
+    { message: `${label} must finish applying its React server stream`, timeout: 30_000 },
   ).toBe(0);
+  await expect(page.getByText(/Internal Server Error|Application error|API request failed: 5\d\d/i)).toHaveCount(0);
 
   const overflow = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,
@@ -84,6 +139,7 @@ async function verifyRoute(
     overflow.clientWidth + 1,
   );
   expect(await collectSemanticFailures(page), `${label} semantic failures`).toEqual([]);
+  expect(await collectTypographyFailures(page), `${label} typography failures`).toEqual([]);
 
   await page.keyboard.press("Tab");
   await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");

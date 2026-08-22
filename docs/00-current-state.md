@@ -1,6 +1,6 @@
 # Current State
 
-**Audited:** 2026-08-09
+**Audited:** 2026-08-22
 
 **Scope:** local-first, single-user investment research
 
@@ -56,6 +56,65 @@ DCF assumptions are rejected on new writes; historical invalid models remain
 readable but their output, rerun action, and sensitivity tables are blocked as
 unreliable until corrected.
 
+The portfolio detail implementation now includes a source-traced risk and DCF
+valuation-gap comparison. It converts dated holding prices with dated FX,
+aligns daily returns, calculates sample covariance, annualized volatility,
+marginal volatility, and reconciling component risk, and shows coverage when a
+holding lacks enough history. The expected-return label is deliberately limited
+to a current DCF valuation gap Estimate. Stale, low-quality, warned, or missing
+DCF outputs remain unavailable and are not treated as forecasts.
+
+Portfolio valuation now batches prices, owned DCF outputs, thesis state, and
+alert counts instead of issuing per-holding queries. Portfolio surfaces expose
+trusted, stale, untrusted, and unavailable valuation states; an output that fails
+quality, warning, currency, freshness, or positivity gates cannot be displayed
+as a valid intrinsic value.
+
+The dashboard overview no longer runs AI generation, creates alerts, or performs
+a live full-portfolio recalculation during a GET request. It reads the latest
+explicitly captured portfolio snapshot for the headline value; deeper live
+analytics remain in the Portfolio workspace. Latency budget breaches are logged
+for operators instead of being misreported as partial investment data.
+
+The portfolio index is now a bounded overview. It loads owned portfolios,
+holdings, companies, and trust-gated valuation status, then links to each
+portfolio's detail workspace for performance, attribution, benchmark, snapshot,
+and risk calculations. Those deep calculations no longer block the overview.
+Market Regime inputs have programmatic labels and its two-column layout collapses
+responsively. The authenticated responsive smoke matrix now covers 20 primary
+routes at desktop and mobile widths and now rejects undersized body text, page
+titles, panel headings, and meaningful controls. Seventeen routes reached a
+complete authenticated render in the latest live sweep. Narratives, Macro, and
+Documents require a live recheck after the local frontend container reset during
+repeated cold-route compilation; all 20 routes remain covered by the automated
+matrix and source-level integrity checks.
+
+Daily Brief now loads its current and saved briefs in parallel. Research and
+Narratives use responsive layouts without fixed-width overflow. Data Management
+loads companies, sources, and both market capability matrices concurrently, uses
+valid link actions, and collapses its cards safely. CSV upload, Damodaran admin,
+and search controls now have programmatic labels and bounded responsive layouts;
+Settings loads scoring and integration status concurrently.
+
+Data Health now keeps its normal page load bounded by separating deep evidence,
+Damodaran coverage, and evidence-backfill diagnostics into explicit user-run
+checks. Provider cards separate required configuration from optional
+integrations. Its summary now separates operations, provider readiness, and
+diagnostic status; a diagnostic that has not run is muted instead of being shown
+as a successful zero, and optional integrations no longer compete visually with
+required failures. The deep evidence audit accepts retrieval time as the
+freshness clock for SEC Company Facts snapshots, while publication documents
+still require a source publication timestamp.
+
+Current validation for this 2026-08-22 increment: backend compile passes,
+all 108 frontend tests pass, TypeScript passes, the documentation checker passes,
+and live authenticated browser checks cover the fast/deep Data Health paths,
+US and India financial certification, industry-mix loading, and default-first DCF
+creation. Full backend pytest remains pending because this agent cannot access
+the Docker socket and the host Python runtime does not include pytest. A host
+production build is also blocked by protected `.env.local` metadata and the
+Docker-owned `.next` directory; the running Docker frontend remains available.
+
 ## Capability Map
 
 See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canonical list of capabilities and their current implementation statuses.
@@ -88,8 +147,8 @@ See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canon
 2. Expand beyond the certified APSEZ India case and strengthen official India providers.
 3. Build a coherent daily research loop from ingestion to evidence, alerts,
    thesis impact, portfolio impact, and next action.
-4. Browser-test portfolio performance with real dated prices, FX, flows, and a
-   benchmark, then add marginal-risk and expected-return comparisons.
+4. Browser-test portfolio performance and the implemented marginal-risk/DCF-gap
+   comparison with real dated prices, FX, flows, and a benchmark.
 5. Add automated, compliant inputs for regime modules where a provider is
    available; keep manual/provider provenance visible.
 

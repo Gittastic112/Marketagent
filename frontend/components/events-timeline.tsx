@@ -56,7 +56,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
             </div>
 
             <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", gap: "0.5rem", alignItems: "center" }}>
-              <span className="badge badge-outline" style={{ fontSize: "0.7rem", padding: "0.1rem 0.3rem" }}>
+              <span className="badge badge-outline" style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.3rem" }}>
                 {event.event_type}
               </span>
               <span>Speed: {event.information_speed}</span>

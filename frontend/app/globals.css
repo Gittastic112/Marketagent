@@ -312,7 +312,7 @@ a:hover {
 }
 
 .page-header h1 {
-  font-size: clamp(30px, 3vw, 38px);
+  font-size: clamp(28px, 2.4vw, 34px);
   font-weight: 700;
   line-height: 1.1;
   margin: 0;
@@ -381,17 +381,150 @@ a:hover {
 
 .metric-label {
   color: #475569;
-  font-size: 14px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
   margin: 0;
 }
 
 .metric-value {
-  font-size: clamp(28px, 3vw, 36px);
-  font-weight: 800;
+  font-size: clamp(26px, 2.5vw, 32px);
+  font-weight: var(--font-weight-bold);
   color: var(--text);
+  line-height: 1.15;
+}
+
+.health-command-bar {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  justify-content: space-between;
+  margin-bottom: var(--space-6);
+}
+
+.health-command-title {
+  display: block;
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+}
+
+.health-command-description {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: var(--space-1) 0 0;
+  max-width: 680px;
+}
+
+.health-command-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.health-summary-section {
+  margin-bottom: var(--space-8);
+}
+
+.health-section-heading {
+  align-items: end;
+  display: flex;
+  gap: var(--space-4);
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.health-section-heading h2 {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  margin: 0;
+}
+
+.health-section-heading p,
+.health-section-heading > span {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  margin: var(--space-1) 0 0;
+}
+
+.health-section-heading > span {
+  flex: none;
+  margin-bottom: 2px;
+}
+
+.health-metric-grid,
+.health-diagnostic-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.health-metric-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: var(--space-5);
+}
+
+.health-metric-label {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.health-metric-value {
+  color: var(--text);
+  font-size: clamp(24px, 2vw, 30px);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.health-metric-detail {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.health-metric-card[data-tone="success"] .health-metric-value {
+  color: var(--success);
+}
+
+.health-metric-card[data-tone="warning"] .health-metric-value {
+  color: var(--warning-text);
+}
+
+.health-metric-card[data-tone="danger"] .health-metric-value {
+  color: var(--error);
+}
+
+.health-metric-card[data-tone="muted"] .health-metric-value {
+  color: var(--text-secondary);
+}
+
+.health-diagnostic-summary {
+  background: color-mix(in srgb, var(--surface-muted) 55%, transparent);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+}
+
+.health-metric-card-compact {
+  background: transparent;
+  border: 0;
+  border-left: 2px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-4);
+}
+
+.health-metric-card-compact .health-metric-value {
+  font-size: var(--font-size-lg);
+  letter-spacing: 0;
 }
 
 .summary-grid {
@@ -1002,6 +1135,11 @@ button:disabled {
 }
 
 @media (max-width: 960px) {
+  .health-metric-grid,
+  .health-diagnostic-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .app-shell {
     grid-template-columns: 1fr;
   }
@@ -1115,7 +1253,7 @@ button:disabled {
 
 .nav-group-label {
   color: var(--color-text-muted);
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   font-weight: var(--font-weight-bold);
   margin: 0 0 var(--space-1);
   padding: 0 var(--space-3);
@@ -1980,6 +2118,58 @@ a.secondary-button {
   height: 180px;
 }
 
+.regime-layout {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+  margin-top: var(--space-6);
+}
+
+.brief-comparison-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: var(--space-4);
+}
+
+.research-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.research-grid {
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+}
+
+.data-management-grid {
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  margin-bottom: var(--space-8);
+}
+
+.search-form {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.narrative-extraction-layout {
+  align-items: center;
+  display: flex;
+  gap: var(--space-5);
+  justify-content: space-between;
+}
+
+.narrative-claim-form {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
 @keyframes skeleton-pulse {
   50% {
     opacity: 0.55;
@@ -2075,6 +2265,15 @@ a.secondary-button {
     grid-template-columns: minmax(0, 1fr);
   }
 
+  .regime-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .narrative-extraction-layout {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
   .topbar {
     padding: 12px var(--space-5);
   }
@@ -2141,6 +2340,28 @@ a.secondary-button {
     grid-template-columns: 1fr;
   }
 
+  .health-command-bar,
+  .health-section-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .health-command-actions > *,
+  .health-section-heading > a {
+    justify-content: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .health-metric-grid,
+  .health-diagnostic-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .health-diagnostic-summary {
+    padding: var(--space-4);
+  }
+
   .company-tabs {
     margin-bottom: var(--space-5);
     flex-wrap: nowrap;
@@ -2149,6 +2370,15 @@ a.secondary-button {
 
   .responsive-field-row {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .brief-comparison-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .narrative-claim-form {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .company-event-card {

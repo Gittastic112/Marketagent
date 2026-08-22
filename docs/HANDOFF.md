@@ -1,6 +1,6 @@
 # Agent Handoff
 
-**Updated:** 2026-08-09
+**Updated:** 2026-08-22
 
 **Purpose:** the shortest safe starting point for the next agent.
 
@@ -58,6 +58,41 @@ is archived at
 [`archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md`](archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md).
 
 Recent feature milestones completed include:
+- **Bounded Data Health:** The normal health page no longer launches three
+  expensive diagnostics. Deep evidence, Damodaran coverage, and historical
+  backfill checks are explicit, carry longer diagnostic timeouts, and distinguish
+  not-run from zero. Provider health separates core requirements, optional
+  integrations, and manual-only coverage. The page now groups operations,
+  provider readiness, and diagnostic status with calmer type and status
+  semantics; optional setup and not-run diagnostics are not styled as failures or
+  successes.
+- **Portfolio Marginal Risk and DCF Gap:** The owned portfolio endpoint and
+  responsive detail panel now use dated base-currency returns, minimum coverage,
+  sample covariance, annualized volatility, marginal risk for a one-percentage-
+  point weight change, reconciling component risk, and trust-gated Base DCF
+  valuation gaps. Missing inputs remain unavailable and all source record IDs,
+  formulas, warnings, blockers, coverage, and claim types are exposed.
+- **Bounded Portfolio Overview and Accessibility:** The portfolio index no
+  longer blocks on deep analytics or snapshot calculations. It retains holdings
+  and trust-gated valuation status and links to owned detail workspaces for the
+  expensive calculations. Market Regime controls now have programmatic labels
+  and a responsive layout. The desktop/mobile smoke matrix covers 20 primary
+  routes and includes typography minimums. Seventeen routes reached a complete
+  authenticated render in the latest sweep. Narratives, Macro, and Documents
+  still need a live recheck after the local frontend reset; source-level integrity
+  tests cover all 20.
+- **Primary-route UI hardening:** Daily Brief request batches are parallel;
+  Research, Narratives, Data Management, Search, and Market Regime layouts now
+  collapse without fixed-width page overflow. CSV and workbook inputs have
+  programmatic labels, Data Management no longer nests buttons inside links,
+  and Settings loads independent configuration requests concurrently.
+- **Dashboard Read Safety and Latency:** Dashboard GET requests no longer run AI
+  contradiction/valuation generation or create divergence alerts. Price writes
+  trigger divergence checks, explicit brief generation retains AI behavior,
+  oversized raw source payloads and per-event price lookups are excluded from the
+  dashboard path, headline portfolio value comes from the latest explicit
+  snapshot, portfolio valuation inputs are batch-loaded, and internal latency
+  breaches are logged rather than labeled as partial data.
 - **Valuation workflow repair:** The frontend proxy now forwards industry-mix
   `PUT` requests. DCF drafts offer one explicit bulk acknowledgement for valid
   defaults, collapse warning and assumption detail, and derive positive
@@ -98,10 +133,20 @@ Recent feature milestones completed include:
 
 ## Next Recommended Work
 
-Run a browser smoke test with a small real portfolio containing two complete
-snapshot dates, one non-base-currency holding, and one configured benchmark.
-Then build the still-missing marginal-risk and expected-return comparison layer,
-without converting it into buy/sell advice.
+Run the focused and full backend suites from a terminal with Docker socket
+access, then finish the portfolio smoke with real, source-labeled inputs containing
+two complete snapshot dates,
+one non-base-currency holding, one configured benchmark, at least 20 aligned
+return observations per holding, and one trusted Base DCF output. Verify the
+dashboard stays read-only and no longer renders a latency budget as partial data.
+
+The 2026-08-22 increment passed backend compile, all 108 frontend tests,
+TypeScript, the documentation checker, and authenticated browser checks for
+Data Health, financial certification, industry allocation, and default-first DCF
+creation. Backend pytest is unverified because this agent cannot access the
+Docker socket and the bundled host Python runtime has no pytest. The host Next.js
+build is blocked by the protected `.env.local` path and Docker-owned `.next`
+artifacts; do not weaken secret protections to make that command pass.
 
 ## Commands
 
