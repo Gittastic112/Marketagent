@@ -1,3 +1,9 @@
+x-logging: &bounded-logging
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "3"
+
 services:
   postgres:
     image: postgres:16
@@ -16,6 +22,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    logging: *bounded-logging
 
   backend:
     build:
@@ -23,6 +30,7 @@ services:
       dockerfile: backend/Dockerfile
     container_name: market_intel_backend
     restart: unless-stopped
+    init: true
     environment:
       DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
       APP_ENV: local
@@ -44,19 +52,26 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend:/workspace/backend
-      - ./scripts:/workspace/scripts
       - ./data:/workspace/data
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    logging: *bounded-logging
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: runner
     container_name: market_intel_frontend
     restart: unless-stopped
+    init: true
     environment:
       API_BASE_URL: http://backend:8000
       NEXT_PUBLIC_BROWSER_API_BASE_URL: /api/backend
@@ -67,25 +82,31 @@ services:
       LOCAL_AUTH_PASSWORD: ${LOCAL_AUTH_PASSWORD:-}
     ports:
       - "3000:3000"
-    command: sh -c "npm ci --prefer-offline --no-audit && npm run dev -- --hostname 0.0.0.0"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/auth/readiness').then(r => { if (!r.ok) process.exit(1) }).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
+    logging: *bounded-logging
 
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: market_intel_pgadmin
     restart: unless-stopped
+    profiles: ["admin"]
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.com
       PGADMIN_DEFAULT_PASSWORD: admin_password
     ports:
       - "5050:80"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy
+    logging: *bounded-logging
 
 volumes:
   marketintel_postgres_data:

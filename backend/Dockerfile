@@ -14,4 +14,4 @@ COPY pyproject.toml pyproject.toml
 COPY backend backend
 COPY scripts scripts
 
-CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000"]

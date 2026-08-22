@@ -34,6 +34,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
+      target: builder
     environment:
       API_BASE_URL: http://backend-e2e:8000
       NEXT_PUBLIC_BROWSER_API_BASE_URL: /api/backend
@@ -41,7 +42,7 @@ services:
       NEXTAUTH_URL: http://127.0.0.1:${E2E_FRONTEND_PORT:-3000}
       LOCAL_AUTH_USERNAME: ${LOCAL_AUTH_USERNAME:-}
       LOCAL_AUTH_PASSWORD: ${LOCAL_AUTH_PASSWORD:-}
-    command: sh -c "npm run build && npm run start -- --hostname 0.0.0.0"
+    command: npm run start -- --hostname 0.0.0.0
     ports:
       - "${E2E_FRONTEND_PORT:-3000}:3000"
     depends_on:

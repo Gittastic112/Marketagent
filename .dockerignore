@@ -9,6 +9,12 @@ __pycache__
 .mypy_cache
 *.pyc
 *.tsbuildinfo
+backups/
+data/
+docs/
+frontend/
+output/
+scratch/
 frontend/.next
 frontend/node_modules
 frontend/tsconfig.tsbuildinfo
