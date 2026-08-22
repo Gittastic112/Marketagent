@@ -10,14 +10,14 @@ export function TopBar() {
     <header className="topbar">
       <p className="topbar-context">Source-backed investment research</p>
       <div className="topbar-actions">
-        <Link href="/data-health" className="data-freshness">
+        <Link prefetch={false} href="/data-health" className="data-freshness">
           Check data health
         </Link>
         <div className="user-controls">
-          <Link href="/search" className="secondary-button" aria-label="Search evidence" title="Search evidence">
+          <Link prefetch={false} href="/search" className="secondary-button" aria-label="Search evidence" title="Search evidence">
             <Search size={16} />
           </Link>
-          <Link href="/settings" className="secondary-button" aria-label="Settings" title="Settings">
+          <Link prefetch={false} href="/settings" className="secondary-button" aria-label="Settings" title="Settings">
             <Settings size={16} />
           </Link>
           {status === "authenticated" ? (
@@ -26,7 +26,7 @@ export function TopBar() {
               <span>{session.user?.name || "Sign out"}</span>
             </button>
           ) : (
-            <Link href="/auth/signin" className="secondary-button" title="Sign in">
+            <Link prefetch={false} href="/auth/signin" className="secondary-button" title="Sign in">
               <LogIn size={16} />
               <span>Sign in</span>
             </Link>

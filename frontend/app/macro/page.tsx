@@ -162,7 +162,10 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
   const values = stringParams(query);
 
   try {
-    const seriesListRes = await serverFetchApiResponse<MacroSeries[]>("/macro");
+    const [seriesListRes, providerHealthRes] = await Promise.all([
+      serverFetchApiResponse<MacroSeries[]>("/macro"),
+      serverFetchApiResponse<ProviderHealthRead[]>("/api/providers/health").catch(() => ({ data: [], meta: null })),
+    ]);
     const seriesList = seriesListRes.data || [];
 
     let sectorResult: MacroSectorSensitivity | null = null;
@@ -174,17 +177,9 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
     const metas: ApiMeta[] = [];
     if (seriesListRes.meta) metas.push(seriesListRes.meta);
 
-    let fredConfigured = false;
-    try {
-      const healthRes = await serverFetchApiResponse<ProviderHealthRead[]>("/api/providers/health");
-      if (healthRes.meta) metas.push(healthRes.meta);
-      const fredHealth = (healthRes.data || []).find((p) => p.provider_name === "FRED");
-      if (fredHealth) {
-        fredConfigured = fredHealth.configured;
-      }
-    } catch (e) {
-      // ignore
-    }
+    if (providerHealthRes.meta) metas.push(providerHealthRes.meta);
+    const fredConfigured = (providerHealthRes.data || [])
+      .find((provider) => provider.provider_name === "FRED")?.configured ?? false;
 
     if (sic) {
       try {

@@ -719,13 +719,13 @@ class NarrativeClaimRead(NarrativeClaimCreate):
 
 class NarrativeMentionCreate(BaseModel):
     cluster_id: int
-    post_id: int
+    event_id: int
     context_text: str | None = None
 
 
 class NarrativeMentionUpdate(BaseModel):
     cluster_id: int | None = None
-    post_id: int | None = None
+    event_id: int | None = None
     context_text: str | None = None
 
 
@@ -1043,6 +1043,7 @@ class ProcessingRunRead(BaseModel):
 class ProviderHealthRead(BaseModel):
     provider_name: str
     capability: str
+    requirement_level: Literal["core", "optional", "manual"]
     market: str | None = None
     status: Literal[
         "configured",
@@ -1277,10 +1278,13 @@ class PortfolioValuationHoldingRead(BaseModel):
     is_stale_price: bool
     is_valuation_stale: bool | None = None
     stale_valuation_reason: str | None = None
+    valuation_status: Literal["trusted", "stale", "untrusted", "unavailable"] = "unavailable"
+    valuation_status_reason: str | None = None
     fx_impact: float | None = None
     opportunity_cost: float | None = None
     opportunity_cost_percent: float | None = None
     intrinsic_value: float | None = None
+    dcf_output_id: int | None = None
     expected_return: float | None = None
     thesis_status: str | None = None
     active_alerts_count: int | None = 0
@@ -1417,6 +1421,60 @@ class PortfolioOpportunityCostRead(BaseModel):
     source_transaction_ids: list[int] = Field(default_factory=list)
 
 
+class PortfolioRiskReturnHoldingRead(BaseModel):
+    holding_id: int
+    company_id: int | None
+    ticker: str
+    portfolio_weight_decimal: float | None
+    risk_model_weight_decimal: float | None
+    current_market_value_base: float | None
+    observation_count: int
+    aligned_observation_count: int
+    return_start_date: date | None
+    return_end_date: date | None
+    historical_return_decimal: float | None
+    annualized_volatility: float | None
+    marginal_volatility: float | None
+    marginal_volatility_for_one_percent: float | None
+    component_risk: float | None
+    component_risk_percent: float | None
+    expected_return_decimal: float | None
+    expected_return_kind: Literal["dcf_valuation_gap_not_annualized", "unavailable"]
+    expected_return_claim_type: Literal["Estimate", "Unavailable"]
+    expected_return_contribution: float | None
+    source_dcf_output_id: int | None
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    source_fx_observation_ids: list[int] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+
+
+class PortfolioRiskReturnRead(BaseModel):
+    portfolio_id: int
+    as_of_date: date
+    lookback_start_date: date
+    lookback_days: int
+    min_observations: int
+    base_currency: str
+    calculation_status: Literal["complete", "partial", "not_available"]
+    risk_calculation_status: Literal["complete", "partial", "not_available"]
+    expected_return_calculation_status: Literal["complete", "partial", "not_available"]
+    portfolio_volatility_annualized: float | None
+    risk_covered_weight_percent: float
+    risk_reconciliation_error: float | None
+    portfolio_expected_return_decimal: float | None
+    expected_return_coverage_percent: float
+    risk_claim_type: Literal["Calculation", "Unavailable"]
+    expected_return_claim_type: Literal["Estimate", "Unavailable"]
+    risk_formula: str
+    expected_return_formula: str
+    holdings: list[PortfolioRiskReturnHoldingRead] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    blockers: list[str] = Field(default_factory=list)
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    source_fx_observation_ids: list[int] = Field(default_factory=list)
+    source_dcf_output_ids: list[int] = Field(default_factory=list)
+
+
 class PortfolioAnalyticsRead(BaseModel):
     portfolio_id: int
     as_of_date: date
@@ -1450,6 +1508,7 @@ class DashboardOverviewRead(BaseModel):
     daily_brief: dict[str, Any]
     processing_runs: list[ProcessingRunRead]
     default_portfolio: PortfolioRead | None = None
+    default_portfolio_snapshot: PortfolioSnapshotRead | None = None
     portfolio_analytics: PortfolioAnalyticsRead | None = None
 
 
@@ -1492,6 +1551,9 @@ class FinancialHistoryIntegrityRead(BaseModel):
 
 class EvidenceIntegrityReportRead(BaseModel):
     status: Literal["healthy", "issues_found"]
+    verification_scope: Literal["metadata", "deep"]
+    asset_content_verification_status: Literal["not_run", "checked"]
+    limitations: list[str] = Field(default_factory=list)
     checked_documents: int
     checked_assets: int
     checked_references: int

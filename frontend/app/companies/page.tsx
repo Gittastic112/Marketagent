@@ -81,7 +81,7 @@ export default async function CompaniesPage() {
                     <tr key={company.id}>
                       <td>{company.market ?? "-"}</td>
                       <td>
-                        <Link href={`/companies/${company.id}`}>{company.ticker}</Link>
+                        <Link prefetch={false} href={`/companies/${company.id}`}>{company.ticker}</Link>
                         {company.local_symbol && company.local_symbol !== company.ticker ? <div className="muted">{company.local_symbol}</div> : null}
                       </td>
                       <td>{company.name}</td>
@@ -103,7 +103,7 @@ export default async function CompaniesPage() {
                       </td>
                       <td>
                         <div className="action-stack">
-                          <Link className="secondary-button" href={`/companies/${company.id}/setup`}>
+                          <Link prefetch={false} className="secondary-button" href={`/companies/${company.id}/setup`}>
                             Setup
                           </Link>
                           <details className="edit-panel">

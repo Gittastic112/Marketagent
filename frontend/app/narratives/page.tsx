@@ -16,27 +16,22 @@ function formatDate(iso: string) {
 
 export default async function NarrativesPage() {
   try {
-    const [clustersRes, eventsRes] = await Promise.all([
+    const [clustersRes, eventsRes, claimsRes, mentionsRes] = await Promise.all([
       serverFetchApiResponse<NarrativeCluster[]>("/narrative-clusters"),
       serverFetchApiResponse<EventRecord[]>("/events").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<NarrativeClaim[]>("/narrative-claims").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<NarrativeMention[]>("/narrative-mentions").catch(() => ({ data: [], meta: null })),
     ]);
     const clusters = clustersRes.data || [];
     const events = eventsRes.data || [];
-    const narrativeMetas = [clustersRes.meta, eventsRes.meta];
-
-    // Fetch claims and mentions for each cluster
-    const clusterDetails = await Promise.all(
-      clusters.map(async (cluster) => {
-        const [claimsRes, mentionsRes] = await Promise.all([
-          serverFetchApiResponse<NarrativeClaim[]>(`/narrative-claims?cluster_id=${cluster.id}`).catch(() => ({ data: [], meta: null })),
-          serverFetchApiResponse<NarrativeMention[]>(`/narrative-mentions?cluster_id=${cluster.id}`).catch(() => ({ data: [], meta: null })),
-        ]);
-        const claims = claimsRes.data || [];
-        const mentions = mentionsRes.data || [];
-        narrativeMetas.push(claimsRes.meta, mentionsRes.meta);
-        return { cluster, claims, mentions };
-      })
-    );
+    const narrativeMetas = [clustersRes.meta, eventsRes.meta, claimsRes.meta, mentionsRes.meta];
+    const claimsByCluster = Map.groupBy(claimsRes.data || [], (claim) => claim.cluster_id);
+    const mentionsByCluster = Map.groupBy(mentionsRes.data || [], (mention) => mention.cluster_id);
+    const clusterDetails = clusters.map((cluster) => ({
+      cluster,
+      claims: claimsByCluster.get(cluster.id) || [],
+      mentions: mentionsByCluster.get(cluster.id) || [],
+    }));
 
     const eventsById = new Map(events.map((e) => [e.id, e]));
 
@@ -50,7 +45,7 @@ export default async function NarrativesPage() {
 
         {/* Action Panel */}
         <Panel title="Automated Extraction">
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div className="narrative-extraction-layout">
             <div>
               <h3 style={{ margin: "0 0 0.5rem 0" }}>Automated Extraction</h3>
               <p style={{ margin: 0, color: "var(--text-secondary)", fontSize: "0.9rem" }}>
@@ -129,9 +124,11 @@ export default async function NarrativesPage() {
                     const { createNarrativeClaim } = await import("@/app/actions");
                     data.set("cluster_id", cluster.id.toString());
                     await createNarrativeClaim(data);
-                  }} style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
+                  }} className="narrative-claim-form">
                     <input type="hidden" name="cluster_id" value={cluster.id} />
+                    <label className="sr-only" htmlFor={`narrative-claim-${cluster.id}`}>Claim text for {cluster.name}</label>
                     <input
+                      id={`narrative-claim-${cluster.id}`}
                       type="text"
                       name="claim_text"
                       placeholder="Add a claim (e.g. 'NVDA guiding $12B data center revenue')"

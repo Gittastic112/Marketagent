@@ -96,6 +96,16 @@ valid link actions, and collapses its cards safely. CSV upload, Damodaran admin,
 and search controls now have programmatic labels and bounded responsive layouts;
 Settings loads scoring and integration status concurrently.
 
+The default Docker stack now runs a multi-stage standalone Next.js image and a
+single backend process instead of permanent development compilers and reloaders.
+Development bind mounts are opt-in, named caches replace anonymous frontend
+volumes, pgAdmin is opt-in, service startup is health-gated, logs are capped, and
+the backend build context excludes data, documentation, and frontend files.
+Narratives now loads four bounded datasets in parallel instead of issuing two
+requests per cluster; Macro setup calls run concurrently. Expensive workspace and
+deep-diagnostic links do not prefetch server work. The 20-route matrix enforces a
+15-second ready-state budget in addition to its accessibility and layout gates.
+
 Data Health now keeps its normal page load bounded by separating deep evidence,
 Damodaran coverage, and evidence-backfill diagnostics into explicit user-run
 checks. Provider cards separate required configuration from optional
@@ -107,7 +117,7 @@ freshness clock for SEC Company Facts snapshots, while publication documents
 still require a source publication timestamp.
 
 Current validation for this 2026-08-22 increment: backend compile passes,
-all 108 frontend tests pass, TypeScript passes, the documentation checker passes,
+all 110 frontend tests pass, TypeScript passes, the documentation checker passes,
 and live authenticated browser checks cover the fast/deep Data Health paths,
 US and India financial certification, industry-mix loading, and default-first DCF
 creation. Full backend pytest remains pending because this agent cannot access

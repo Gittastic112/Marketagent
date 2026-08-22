@@ -179,10 +179,10 @@ export default async function DataHealthPage({
             </p>
           </div>
           <div className="health-command-actions">
-            {auditMode ? <Link className="secondary-button" href="/data-health">Fast health check</Link> : null}
-            <Link className="secondary-button" href="/data-health?audit=evidence">Run deep evidence audit</Link>
-            <Link className="secondary-button" href="/data-health?audit=coverage">Check benchmark coverage</Link>
-            <Link className="secondary-button" href="/data-health?audit=backfill">Preview evidence backfill</Link>
+            {auditMode ? <Link prefetch={false} className="secondary-button" href="/data-health">Fast health check</Link> : null}
+            <Link prefetch={false} className="secondary-button" href="/data-health?audit=evidence">Run deep evidence audit</Link>
+            <Link prefetch={false} className="secondary-button" href="/data-health?audit=coverage">Check benchmark coverage</Link>
+            <Link prefetch={false} className="secondary-button" href="/data-health?audit=backfill">Preview evidence backfill</Link>
           </div>
         </section>
 
@@ -230,7 +230,7 @@ export default async function DataHealthPage({
               <h2 id="diagnostic-status-title">Diagnostic status</h2>
               <p>These values remain unavailable until the explicit evidence audit runs.</p>
             </div>
-            {!evidenceIntegrity ? <Link href="/data-health?audit=evidence">Run audit</Link> : null}
+            {!evidenceIntegrity ? <Link prefetch={false} href="/data-health?audit=evidence">Run audit</Link> : null}
           </div>
           <div className="health-diagnostic-grid">
             <HealthMetric compact label="Evidence errors" value={evidenceIntegrity ? evidenceIntegrity.error_count : "Not run"} tone={!evidenceIntegrity ? "muted" : evidenceIntegrity.error_count > 0 ? "danger" : "success"} />
@@ -280,7 +280,7 @@ export default async function DataHealthPage({
         <Panel title="Damodaran Application Coverage">
           {!damodaranCoverageRes ? (
             <div className="empty">
-              Coverage reconciliation is not run during the fast health check. <Link href="/data-health?audit=coverage">Check benchmark coverage</Link>.
+              Coverage reconciliation is not run during the fast health check. <Link prefetch={false} href="/data-health?audit=coverage">Check benchmark coverage</Link>.
             </div>
           ) : !damodaranCoverage ? (
             <ErrorState message="Damodaran application coverage is unavailable." errors={damodaranCoverageRes.errors} />
@@ -397,7 +397,7 @@ export default async function DataHealthPage({
         <Panel title="Financial History Certification">
           {!evidenceIntegrityRes ? (
             <div className="empty">
-              Financial certification is part of the explicit evidence audit. <Link href="/data-health?audit=evidence">Run deep evidence audit</Link>.
+              Financial certification is part of the explicit evidence audit. <Link prefetch={false} href="/data-health?audit=evidence">Run deep evidence audit</Link>.
             </div>
           ) : !evidenceIntegrity ? (
             <ErrorState message="Financial certification details are unavailable." errors={evidenceIntegrityRes.errors} />
@@ -447,7 +447,7 @@ export default async function DataHealthPage({
         <Panel title="Evidence Integrity">
           {!evidenceIntegrityRes ? (
             <div className="empty">
-              Deep asset and exact-reference verification is not run automatically. <Link href="/data-health?audit=evidence">Run deep evidence audit</Link>.
+              Deep asset and exact-reference verification is not run automatically. <Link prefetch={false} href="/data-health?audit=evidence">Run deep evidence audit</Link>.
             </div>
           ) : !evidenceIntegrity ? (
             <ErrorState message="Evidence integrity report is unavailable." errors={evidenceIntegrityRes.errors} />
@@ -520,7 +520,7 @@ export default async function DataHealthPage({
         <Panel title="Historical Event Evidence Backfill">
           {!eventBackfillRes ? (
             <div className="empty">
-              Historical backfill preview is not run automatically. <Link href="/data-health?audit=backfill">Preview evidence backfill</Link>.
+              Historical backfill preview is not run automatically. <Link prefetch={false} href="/data-health?audit=backfill">Preview evidence backfill</Link>.
             </div>
           ) : !eventBackfill ? (
             <ErrorState message="The historical evidence preview is unavailable." errors={eventBackfillRes.errors} />

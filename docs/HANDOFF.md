@@ -58,6 +58,13 @@ is archived at
 [`archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md`](archive/checkpoints/2026/next-5-damodaran-versioned-country-statistics-checkpoint-2026-08-08.md).
 
 Recent feature milestones completed include:
+- **Bounded local runtime:** Default Compose uses the standalone production
+  frontend, one backend process, health-gated dependencies, capped logs, and an
+  optional pgAdmin profile. `docker-compose.dev.yml` contains reloaders, bind
+  mounts, named frontend caches, and a 1536 MB frontend heap cap. Narratives no
+  longer has per-cluster request waterfalls, Macro setup requests are parallel,
+  and expensive links opt out of automatic prefetch. The 20-route matrix now has
+  a 15-second ready-state budget.
 - **Bounded Data Health:** The normal health page no longer launches three
   expensive diagnostics. Deep evidence, Damodaran coverage, and historical
   backfill checks are explicit, carry longer diagnostic timeouts, and distinguish
@@ -140,7 +147,7 @@ one non-base-currency holding, one configured benchmark, at least 20 aligned
 return observations per holding, and one trusted Base DCF output. Verify the
 dashboard stays read-only and no longer renders a latency budget as partial data.
 
-The 2026-08-22 increment passed backend compile, all 108 frontend tests,
+The 2026-08-22 increment passed backend compile, all 110 frontend tests,
 TypeScript, the documentation checker, and authenticated browser checks for
 Data Health, financial certification, industry allocation, and default-first DCF
 creation. Backend pytest is unverified because this agent cannot access the

@@ -27,12 +27,29 @@ test("frontend utility compiler and project tokens are wired", () => {
 });
 
 
-test("Docker development keeps Linux native modules outside the host bind mount", () => {
+test("Docker defaults to a bounded production runtime with an explicit development override", () => {
   const compose = readRepositoryFile("docker-compose.yml");
+  const developmentCompose = readRepositoryFile("docker-compose.dev.yml");
+  const dockerfile = readFrontendFile("Dockerfile");
+  const nextConfig = readFrontendFile("next.config.mjs");
+  const rootDockerignore = readRepositoryFile(".dockerignore");
 
-  assert.match(compose, /npm ci --prefer-offline --no-audit/);
-  assert.match(compose, /- \/app\/node_modules/);
-  assert.match(compose, /- \/app\/\.next/);
+  assert.doesNotMatch(compose, /npm ci|npm run dev|--reload/);
+  assert.match(compose, /target: runner/);
+  assert.match(compose, /profiles: \["admin"\]/);
+  assert.match(compose, /max-size: "10m"/);
+  assert.match(compose, /condition: service_healthy/);
+  assert.match(developmentCompose, /npm run dev/);
+  assert.match(developmentCompose, /--reload/);
+  assert.match(developmentCompose, /frontend_node_modules:\/app\/node_modules/);
+  assert.match(developmentCompose, /frontend_next_cache:\/app\/\.next/);
+  assert.match(dockerfile, /FROM base AS builder/);
+  assert.match(dockerfile, /FROM node:24-slim AS runner/);
+  assert.match(dockerfile, /\.next\/standalone/);
+  assert.match(nextConfig, /output: "standalone"/);
+  assert.match(rootDockerignore, /^data\/$/m);
+  assert.match(rootDockerignore, /^docs\/$/m);
+  assert.match(rootDockerignore, /^frontend\/$/m);
 });
 
 
@@ -84,9 +101,39 @@ test("responsive route matrix enforces readable typography", () => {
   assert.match(spec, /Page title is \$\{titleSize\}px; expected 26–40px/);
   assert.match(spec, /fontSize\(element\) < 12/);
   assert.match(spec, /typography failures/);
+  assert.match(spec, /ROUTE_READY_BUDGET_MS = 15_000/);
+  assert.match(spec, /must render within the route-ready budget/);
   assert.doesNotMatch(timeline, /fontSize: "0\.7rem"/);
   assert.doesNotMatch(workspace, /fontSize: "0\.7rem"/);
   assert.doesNotMatch(diagnostics, /fontSize: "0\.7rem"/);
+});
+
+test("slow workspaces avoid sequential and per-record request waterfalls", () => {
+  const narratives = readFrontendFile("app/narratives/page.tsx");
+  const macro = readFrontendFile("app/macro/page.tsx");
+
+  assert.match(narratives, /claimsRes, mentionsRes/);
+  assert.match(narratives, /claimsByCluster/);
+  assert.doesNotMatch(narratives, /clusters\.map\(async/);
+  assert.match(macro, /seriesListRes, providerHealthRes/);
+  assert.doesNotMatch(macro, /let fredConfigured = false;[\s\S]*?try/);
+});
+
+test("high-fanout and explicit diagnostic links do not prefetch expensive work", () => {
+  const guardedFiles = [
+    "components/topbar.tsx",
+    "app/data-health/page.tsx",
+    "app/companies/page.tsx",
+    "app/portfolio/page.tsx",
+    "app/valuation/page.tsx",
+    "app/research/page.tsx",
+    "app/page.tsx",
+  ];
+  for (const file of guardedFiles) {
+    assert.match(readFrontendFile(file), /prefetch=\{false\}/, file);
+  }
+  const dataHealth = readFrontendFile("app/data-health/page.tsx");
+  assert.doesNotMatch(dataHealth, /<Link(?![^>]*prefetch=\{false\})[^>]*href="\/data-health\?audit=/);
 });
 
 

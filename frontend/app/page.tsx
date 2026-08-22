@@ -11,7 +11,9 @@ import type { DashboardOverview } from "@/lib/api";
 export const dynamic = "force-dynamic";
 
 async function loadOverview() {
-  return serverFetchApiResponse<DashboardOverview>("/dashboard/overview");
+  return serverFetchApiResponse<DashboardOverview>("/dashboard/overview", {
+    timeoutMs: 30_000,
+  });
 }
 
 export default async function HomePage() {
@@ -29,6 +31,7 @@ export default async function HomePage() {
     const dailyBrief = overviewRes.data?.daily_brief || null;
     const analytics = overviewRes.data?.portfolio_analytics;
     const defaultPortfolio = overviewRes.data?.default_portfolio;
+    const defaultPortfolioSnapshot = overviewRes.data?.default_portfolio_snapshot;
     const processingRuns = overviewRes.data?.processing_runs || [];
     const overviewWarnings = overviewRes.meta?.warnings || [];
 
@@ -51,11 +54,14 @@ export default async function HomePage() {
         <section className="metric-grid" style={{ marginBottom: "2rem" }}>
           <div className="metric">
             <div className="metric-label">Total Portfolio Value</div>
-            {analytics?.total_portfolio_value !== null && analytics?.total_portfolio_value !== undefined ? (
-              <div className="metric-value">${analytics.total_portfolio_value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+            {defaultPortfolioSnapshot?.total_portfolio_value !== null && defaultPortfolioSnapshot?.total_portfolio_value !== undefined ? (
+              <div>
+                <div className="metric-value">${defaultPortfolioSnapshot.total_portfolio_value.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                <div className="muted" style={{ marginTop: "0.25rem" }}>Snapshot: {defaultPortfolioSnapshot.snapshot_date}</div>
+              </div>
             ) : (
               <div className="metric-value">
-                <Link href={defaultPortfolio ? "/market-prices" : "/portfolio/manage"} style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--accent)", display: "inline-flex", alignItems: "center", height: "100%" }}>
+                <Link prefetch={false} href={defaultPortfolio ? "/market-prices" : "/portfolio/manage"} style={{ fontSize: "1.1rem", fontWeight: 600, color: "var(--accent)", display: "inline-flex", alignItems: "center", height: "100%" }}>
                   {defaultPortfolio ? "Add Prices" : "+ Connect Portfolio"}
                 </Link>
               </div>
@@ -102,7 +108,7 @@ export default async function HomePage() {
             <Panel title="Ingestion Health">
               <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "0.75rem" }}>
                 <span style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Last {recentRuns.length} runs</span>
-                <Link href="/data-health" style={{ fontSize: "0.85rem" }}>View All →</Link>
+                <Link prefetch={false} href="/data-health" style={{ fontSize: "0.85rem" }}>View All →</Link>
               </div>
               {failedRecent.length > 0 && (
                 <div style={{ padding: "0.5rem 0.75rem", borderRadius: "6px", backgroundColor: "var(--error-bg, #fef2f2)", border: "1px solid var(--error, #ef4444)30", marginBottom: "0.75rem", fontSize: "0.85rem", color: "var(--error)" }}>

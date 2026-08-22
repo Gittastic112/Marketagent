@@ -15,7 +15,7 @@ export default async function ValuationPage() {
         <PageHeader eyebrow="Financial modeling" title="Valuation & DCF" />
 
         <div style={{ marginBottom: "2rem" }}>
-          <Link href="/valuation/quick" className="btn btn-primary" style={{ padding: "0.75rem 1.5rem", fontSize: "1rem", fontWeight: 600 }}>
+          <Link prefetch={false} href="/valuation/quick" className="btn btn-primary" style={{ padding: "0.75rem 1.5rem", fontSize: "1rem", fontWeight: 600 }}>
             ⚡ Start Quick Valuation
           </Link>
           <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
@@ -63,10 +63,10 @@ export default async function ValuationPage() {
                       <td>{company.market_cap_category || "-"}</td>
                       <td>
                         <div className="action-stack" style={{ flexDirection: "row", gap: "0.5rem" }}>
-                          <Link className="btn btn-primary" href={`/companies/${company.id}/valuation`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
+                          <Link prefetch={false} className="btn btn-primary" href={`/companies/${company.id}/valuation`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
                             DCF Models
                           </Link>
-                          <Link className="secondary-button" href={`/companies/${company.id}/fundamentals`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
+                          <Link prefetch={false} className="secondary-button" href={`/companies/${company.id}/fundamentals`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
                             Fundamentals
                           </Link>
                         </div>

@@ -84,6 +84,38 @@ curl http://localhost:3000/api/auth/readiness
 The preflight command returns only configured/missing state and exits nonzero
 when a required value is absent. It never prints credential values.
 
+### Choose the runtime mode
+
+Normal local use now runs the production-built frontend and a single backend
+process. This avoids keeping the Next.js development compiler and Python reload
+watcher resident in memory:
+
+```bash
+docker compose up --build -d
+```
+
+Use the development override only while actively editing code:
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --build -d
+```
+
+The development override retains hot reload and uses named Linux-only volumes
+for `node_modules` and `.next`; it does not reinstall npm packages on every
+restart. Its frontend heap is capped at 1536 MB. Rebuild the development stack
+after changing `package-lock.json`.
+
+PgAdmin is optional and no longer consumes memory during normal use. Start it
+only when required:
+
+```bash
+docker compose --profile admin up -d pgadmin
+```
+
+All services cap local JSON logs at three 10 MB files. Docker image/build cache
+can still use disk, so inspect it with `docker system df`; do not run broad prune
+commands without reviewing what Docker will remove.
+
 The readiness response must show:
 
 ```json
@@ -115,7 +147,9 @@ If sign-in stays disabled:
 4. Recheck `/api/auth/readiness`; it intentionally never returns secret values.
 5. Inspect `docker compose logs frontend --tail=100`.
 
-If credentials are accepted but the page stays on `Rendering` or `Compiling`:
+If credentials are accepted but the page stays on `Rendering` or `Compiling`,
+confirm that you did not accidentally start the development override for normal
+use:
 
 1. Run `docker compose ps` and confirm both `backend` and `frontend` are up.
 2. Run `curl http://localhost:8000/api/health`.
@@ -436,20 +470,22 @@ The same command is the core GitHub Actions gate in `.github/workflows/ci.yml`.
 It uses explicit test-only auth and SEC identity values and removes its volumes
 on exit.
 
-The normal development frontend masks `/app/node_modules` and `/app/.next`
-with container-only volumes and runs `npm ci` inside Linux before Next starts.
-This prevents a Mac host `node_modules` directory from causing errors such as
+The default frontend is a multi-stage standalone Next.js image. It contains only
+the traced production server and static output, not the development compiler,
+test runner, or host `node_modules`. The opt-in development override masks
+`/app/node_modules` and `/app/.next` with named Linux-only volumes. This prevents
+a Mac host dependency tree from causing native-module errors such as
 `Cannot find module '../lightningcss.linux-arm64-gnu.node'`.
 
-When frontend dependencies change, or when upgrading an older local container,
-rebuild and renew only the frontend's anonymous volumes:
+When frontend dependencies change, rebuild the default runtime:
 
 ```bash
-docker compose up --build -d --force-recreate --renew-anon-volumes frontend
+docker compose up --build -d frontend
 ```
 
-Do not run `docker compose down -v` for this problem; that would also delete the
-local PostgreSQL volume and is unnecessary.
+For development mode, remove only the named frontend dependency volume before
+rebuilding it. Do not use `docker compose down -v` unless the local PostgreSQL
+database is intentionally disposable.
 
 The US/India normalized-history fixture under
 `backend/tests/fixtures/normalized_financial_histories.json` is synthetic

@@ -22,6 +22,10 @@ flowchart LR
 ```
 
 Docker services are `frontend`, `backend`, `postgres`, and optional `pgadmin`.
+The default stack runs a standalone production-built Next.js server and a
+single-process FastAPI server. Hot reload and bind-mounted source trees are
+isolated in `docker-compose.dev.yml`; pgAdmin is behind the `admin` profile.
+Compose healthchecks gate dependent startup and local JSON logs are bounded.
 The frontend uses `API_BASE_URL` (with a fallback to `NEXT_PUBLIC_API_BASE_URL`) for server-rendered API requests. For browser-initiated API requests, the frontend uses the same-origin Next.js proxy route (`/api/backend`). The backend is still reachable on port 8000 for local
 operations and tests; signed internal identity protects owned routes.
 

@@ -7,11 +7,19 @@ from sqlalchemy.pool import StaticPool
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
+from app.api.schemas import NarrativeMentionCreate
 from helpers import response_data
 
 
 def unwrap(response):
     return response_data(response)
+
+
+def test_narrative_mentions_use_event_identity():
+    payload = NarrativeMentionCreate(cluster_id=1, event_id=2, context_text="Earnings call")
+
+    assert payload.event_id == 2
+    assert "post_id" not in payload.model_dump()
 
 
 # Create in-memory SQLite database for testing

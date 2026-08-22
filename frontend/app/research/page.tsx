@@ -31,15 +31,15 @@ export default async function ResearchPage() {
           mockMessage="One or more research panels are using mock data. Treat affected evidence as placeholder material."
         />
 
-        <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-          <Link href="/research/sessions" className="secondary-button" style={{ backgroundColor: "var(--accent-color)", color: "white" }}>AI Sessions</Link>
-          <Link href="/documents" className="secondary-button">All Documents</Link>
-          <Link href="/events" className="secondary-button">All Events</Link>
-          <Link href="/thesis-notes" className="secondary-button">All Thesis Notes</Link>
-          <Link href="/daily-brief" className="secondary-button">Daily Briefs</Link>
+        <div className="research-actions">
+          <Link prefetch={false} href="/research/sessions" className="secondary-button" style={{ backgroundColor: "var(--accent-color)", color: "white" }}>AI Sessions</Link>
+          <Link prefetch={false} href="/documents" className="secondary-button">All Documents</Link>
+          <Link prefetch={false} href="/events" className="secondary-button">All Events</Link>
+          <Link prefetch={false} href="/thesis-notes" className="secondary-button">All Thesis Notes</Link>
+          <Link prefetch={false} href="/daily-brief" className="secondary-button">Daily Briefs</Link>
         </div>
 
-        <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))", gap: "1.5rem" }}>
+        <div className="metric-grid research-grid">
 
           <Panel title="Recent Source Documents">
             {recentDocuments.length === 0 ? (
@@ -54,8 +54,8 @@ export default async function ResearchPage() {
                     </div>
 
                     <div style={{ marginTop: "0.5rem" }}>
-                      <Link href={`/documents/${doc.id}/sections`} style={{ fontSize: "0.85rem", marginRight: "0.75rem" }}>View Sections</Link>
-                      <Link href={`/documents/${doc.id}/ai`} style={{ fontSize: "0.85rem" }}>AI Summaries</Link>
+                      <Link prefetch={false} href={`/documents/${doc.id}/sections`} style={{ fontSize: "0.85rem", marginRight: "0.75rem" }}>View Sections</Link>
+                      <Link prefetch={false} href={`/documents/${doc.id}/ai`} style={{ fontSize: "0.85rem" }}>AI Summaries</Link>
                     </div>
                   </div>
                 ))}

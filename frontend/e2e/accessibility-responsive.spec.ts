@@ -26,6 +26,8 @@ const CORE_ROUTES = [
   ["search", "/search"],
 ] as const;
 
+const ROUTE_READY_BUDGET_MS = 15_000;
+
 async function collectSemanticFailures(page: Page): Promise<string[]> {
   return page.evaluate(() => {
     const failures: string[] = [];
@@ -122,6 +124,7 @@ async function verifyRoute(
   viewport: { width: number; height: number },
 ) {
   await page.setViewportSize(viewport);
+  const routeStartedAt = Date.now();
   await page.goto(path);
   await expect(page.locator("main")).toBeVisible();
   await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe("loaded");
@@ -129,6 +132,11 @@ async function verifyRoute(
     () => page.locator('body > div[hidden][id^="S:"]').count(),
     { message: `${label} must finish applying its React server stream`, timeout: 30_000 },
   ).toBe(0);
+  const routeReadyMs = Date.now() - routeStartedAt;
+  expect(
+    routeReadyMs,
+    `${label} must render within the route-ready budget`,
+  ).toBeLessThanOrEqual(ROUTE_READY_BUDGET_MS);
   await expect(page.getByText(/Internal Server Error|Application error|API request failed: 5\d\d/i)).toHaveCount(0);
 
   const overflow = await page.evaluate(() => ({

@@ -3,9 +3,7 @@ import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/comp
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { StaleDataBanner, PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
-import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction, PortfolioValuation, PortfolioAnalytics } from "@/lib/api";
-import { PortfolioAnalyticsDashboard } from "@/components/portfolio-analytics";
-import { CsvImporter } from "@/components/csv-importer";
+import type { Company, Portfolio, PortfolioHolding, PortfolioValuation } from "@/lib/api";
 
 export default async function PortfolioPage() {
   function numberText(value: number): string {
@@ -20,21 +18,18 @@ export default async function PortfolioPage() {
   }
 
   try {
-    const [portfoliosRes, holdingsRes, transactionsRes, companiesRes] = await Promise.all([
+    const [portfoliosRes, holdingsRes, companiesRes] = await Promise.all([
       serverFetchApiResponse<Portfolio[]>("/portfolios").catch(() => null),
       serverFetchApiResponse<PortfolioHolding[]>("/portfolio-holdings").catch(() => null),
-      serverFetchApiResponse<PortfolioTransaction[]>("/portfolio-transactions").catch(() => null),
       serverFetchApiResponse<Company[]>("/companies").catch(() => null)
     ]);
     const portfolios = portfoliosRes?.data || [];
     const holdings = holdingsRes?.data || [];
-    const transactions = transactionsRes?.data || [];
     const companies = companiesRes?.data || [];
 
     const baseDataState = summarizeApiMetas([
       portfoliosRes?.meta,
       holdingsRes?.meta,
-      transactionsRes?.meta,
       companiesRes?.meta
     ]);
 
@@ -58,39 +53,21 @@ export default async function PortfolioPage() {
       return val.holdings.find(h => h.holding_id === holdingId) || null;
     };
 
-    const analyticsResponses = await Promise.all(
-      portfolios.map((portfolio) =>
-        serverFetchApiResponse<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => null)
-      )
-    );
-    const analyticsResults = analyticsResponses.map(res => res?.data);
-    const validAnalytics = analyticsResults.filter((a): a is PortfolioAnalytics => a !== null);
-
-    const snapshotsRes = await Promise.all(
-      portfolios.map((portfolio) =>
-        serverFetchApiResponse<any[]>(`/portfolio-snapshots?portfolio_id=${portfolio.id}`).catch(() => null)
-      )
-    );
     const fullDataState = summarizeApiMetas([
       portfoliosRes?.meta,
       holdingsRes?.meta,
-      transactionsRes?.meta,
       companiesRes?.meta,
-      ...valuationsRes.map((res) => res?.meta),
-      ...analyticsResponses.map((res) => res?.meta),
-      ...snapshotsRes.map((res) => res?.meta)
+      ...valuationsRes.map((res) => res?.meta)
     ]);
-    const snapshotsResults = snapshotsRes.map(res => res?.data || []);
 
     const missingHoldings = !holdingsRes;
-    const snapshotsById = new Map(portfolios.map((p, i) => [p.id, snapshotsResults[i]]));
 
     return (
       <>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
           <PageHeader eyebrow="Portfolio Intelligence" title="Overview" status={`${portfolios.length} portfolios`} />
           <div style={{ marginBottom: "2rem" }}>
-            <Link href="/portfolio/manage" className="btn btn-outline">
+            <Link prefetch={false} href="/portfolio/manage" className="btn btn-outline">
               Manage Portfolios & Transactions
             </Link>
           </div>
@@ -105,22 +82,32 @@ export default async function PortfolioPage() {
           <Panel title="Welcome to Portfolio Intelligence">
             <EmptyState label="No portfolios exist yet." />
             <div style={{ textAlign: "center", marginTop: "1rem" }}>
-              <Link href="/portfolio/manage" className="btn btn-primary">
+              <Link prefetch={false} href="/portfolio/manage" className="btn btn-primary">
                 Create your first portfolio
               </Link>
             </div>
           </Panel>
         )}
 
-        {validAnalytics.map(analytics => {
-          const portfolioName = portfoliosById.get(analytics.portfolio_id)?.name ?? `#${analytics.portfolio_id}`;
-          const snaps = snapshotsById.get(analytics.portfolio_id) || [];
-          return (
-            <Panel key={analytics.portfolio_id} title={`Analytics: ${portfolioName}`}>
-              <PortfolioAnalyticsDashboard analytics={analytics} snapshots={snaps} />
-            </Panel>
-          );
-        })}
+        {portfolios.length > 0 && (
+          <Panel title="Portfolio Workspaces">
+            <div className="brief-list">
+              {portfolios.map((portfolio) => (
+                <article className="brief-item" key={portfolio.id}>
+                  <div className="page-header-title-row">
+                    <div>
+                      <h3>{portfolio.name}</h3>
+                      <p className="muted">Deep performance, attribution, risk, benchmark, and snapshot analysis.</p>
+                    </div>
+                    <Link prefetch={false} className="secondary-button" href={`/portfolio/${portfolio.id}`}>
+                      Open analytics
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </Panel>
+        )}
 
         <Panel title="Exposure Summary">
           {portfolios.map(portfolio => {
@@ -278,10 +265,14 @@ export default async function PortfolioPage() {
                         ) : "-"}
                       </td>
                       <td>
-                        {val?.is_valuation_stale ? (
-                           <span className="badge badge-warning" title={val.stale_valuation_reason || "Valuation broken by market event"}>⚠️ Stale</span>
+                        {val?.valuation_status === "trusted" ? (
+                          <span className="badge badge-success">Trusted</span>
+                        ) : val?.valuation_status === "stale" ? (
+                          <span className="badge badge-warning" title={val.valuation_status_reason || val.stale_valuation_reason || "Valuation requires review"}>Stale</span>
+                        ) : val?.valuation_status === "untrusted" ? (
+                          <span className="badge badge-warning" title={val.valuation_status_reason || "Valuation output failed a trust gate"}>Untrusted</span>
                         ) : (
-                           <span className="badge badge-success">Valid</span>
+                          <span className="badge" title={val?.valuation_status_reason || "No completed Base DCF output"}>Unavailable</span>
                         )}
                       </td>
                       <td>{holding.as_of_date}</td>
