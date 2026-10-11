@@ -10,12 +10,12 @@ records implementation, cleanup and the full source-test baseline.
 
 | Gate | Result |
 |---|---|
-| Full backend baseline | 1,294 passed, five upstream deprecation warnings, isolated source tests; application code unchanged since that run |
-| Frontend baseline | 234 passed; TypeScript passed again with the final browser test repairs |
+| Full backend baseline | 1,294 passed, five upstream deprecation warnings, isolated source tests; repeated successfully in GitHub's repaired release baseline |
+| Frontend baseline | 234 passed locally and in GitHub's repaired release baseline; TypeScript passed again with the final browser test repairs |
 | Contract boundaries | Backend schema/import/compatibility and frontend API/export/transport guards included in the passing full suites |
 | Production builds | Backend runtime/test/tools and standalone frontend built; normal runtime contains no pytest/backend test tree, UID 10001 |
-| Disposable browser | Daily Brief evidence/price changes, multi-currency portfolio reconciliation, and valuation save/reset/refresh/archive/review/promotion/metadata/recalculation all passed |
-| Normal browser | Authenticated dashboard, companies, portfolio, Daily Brief and Data Health return 200; visible headings in 364–640 ms in this single sample; no page exceptions or horizontal overflow |
+| Disposable browser | Final local full run: 19 functional workflows passed, one route-timing failure. Complete desktop/mobile route matrix and mobile keyboard test passed on repeat without changing thresholds; details below |
+| Normal browser | Final patched frontend: authenticated dashboard, companies, portfolio, Daily Brief and Data Health return 200; visible headings in 154–613 ms in this single sample; no page exceptions or horizontal overflow |
 | Normal responsive check | Dashboard inspected at 1440px and 390px; screenshots reviewed, no horizontal overflow |
 | Browser security boundary | Authenticated read passes; missing and foreign Origin mutations both return 403 before writes |
 | Normal readiness | Backend/frontend/PostgreSQL healthy, Daily Brief worker running, zero restarts and no OOM events |
@@ -23,7 +23,8 @@ records implementation, cleanup and the full source-test baseline.
 | Rollout preservation | All 109 fingerprints identical before and immediately after rollout, before resuming the worker |
 | Public reference snapshot | Knowledge-base audit passes: 64 canonical files/catalog rows, 44 ledger rows, no inbox files; four auditor tests pass |
 | Source publication | Secret scan and Git whitespace check pass for the explicit application/reference snapshot; local reconstructed Git tree equals uploaded tree |
-| Final repository/docs | 28 repository/recovery tests pass; 78 active Markdown files and 644 local links validate |
+| Dependency audits | Fresh frontend audit: zero vulnerabilities; resolved backend/test audit: no known vulnerabilities. GitHub dependency-security job passes after sharp 0.35.5/source-map-js 1.2.2 patches |
+| Final repository/docs | 28 repository/recovery tests pass; 78 active Markdown files and 645 local links validate |
 
 The original browser setup first lacked installed runner dependencies, then hit
 a shared-filesystem trace-folder error and a test hostname mismatch. The app's
@@ -32,8 +33,28 @@ page's Origin. The user explicitly approved updating the existing valuation test
 it opens collapsed input groups through their summaries and uses the desktop
 Payouts navigation button. No assertions or valuation calculations were removed.
 
+GitHub's full browser run then exposed six additional inherited failures; the
+user authorized investigating all of them. Tests now scope duplicated evidence
+labels to main content, wait for completed PDF review after reload, use the current
+company wizard/industry-mix section, and expand draft sections after they load.
+The missing-price dashboard test captures and verifies an actual stored portfolio
+snapshot before asserting its warning and holding link, then removes its own
+disposable rows. The fixture helper handles 204 responses. One UI sign-in per
+worker supplies cookies to fresh test contexts, avoiding repeated-login throttling
+without changing application security limits. Financial calculations are unchanged.
+
+The final full local run passed 19 tests and failed the dashboard route-ready
+budget at 17.752 seconds against an unchanged 15-second limit. A targeted repeat
+passed both the full 20-route desktop/mobile matrix and mobile keyboard navigation
+in 37.6 seconds. Earlier full-run route matrices also passed. This is recorded as
+a timing failure plus passing repeat, not a clean 20/20 local full run. Current
+GitHub results belong to the exact published revision in
+[PR #1](https://github.com/Gittastic112/Marketagent/pull/1).
+
 Screenshots and normal-browser results are under
-`output/playwright/m01-20261010/normal-runtime/`, ignored by Git. Test data stayed
+`output/playwright/m01-20261010/normal-runtime/` and `normal-runtime-security/`;
+full-suite and repeat artifacts are in `browser-workflows/` and `browser-timing/`
+under that same parent, ignored by Git. Test data stayed
 inside a separate tmpfs PostgreSQL stack; that stack and the restore instance
 were removed. Temporary browser/build image tags and superseded application
 containers were removed after verification. Existing persistent volumes remain.
@@ -49,11 +70,18 @@ Migration head remains `s1s1s1s1s1s1`.
 
 Current backend and both workers use image
 `sha256:0d4206bab801466ee7f50ed722239ea312095dc272c0c5542d4c2ce45b196b9e`.
-The 402-file runtime source manifest matches the checkout exactly; aggregate
+At rollout, the 402-file runtime source manifest matched the checkout exactly; aggregate
 SHA-256 is `3383bbd979dd2f617b164d36cc91078d674160f5f295204f476cf74673b36cb3`.
 The final rebuild incorporated the latest Compose guard script from the earlier
-cleanup pass. Standalone frontend image:
-`sha256:2cff08c3a75d861517d9bdd1ea7b815691bc35f4e165b0e2e7cb3749e0f4bbd1`.
+cleanup pass. The later CI repair changes only `scripts/verify_release_baseline.sh`
+among those 402 files; the other 401, including application/migration/worker code,
+remain identical. That validation script is not part of the running application.
+Current checkout aggregate is
+`d28d34b0856880c102dd1832cd3770cb4d8f597c8b873c048f22db18b49b7bfc`.
+The standalone frontend was rebuilt and redeployed after the dependency audit:
+`sha256:28bc14fe1b08f387e0bd0fcc78b2e937a148132b4ae39fa36491f36c918f7420`.
+The previous `2cff08c3a75d861517d9bdd1ea7b815691bc35f4e165b0e2e7cb3749e0f4bbd1`
+frontend image remains available for rollback.
 Normal Compose image tags point to these validated images.
 
 Protected environment files were never read. The controlled replacement reused
@@ -78,28 +106,43 @@ historical evidence, not the current database inventory.
 Opening Daily Brief created one deterministic stored brief through the existing
 GET get-or-generate behavior. Its row count changed from two to three after the
 browser check; the two earlier rows still match their original fingerprint, and
-all other 108 tables remain identical. No external AI or provider fetch was
-triggered. This is a foundation/browser gate, not genuine-input certification.
+all other 108 tables were identical at that comparison. That browser run did not
+trigger external AI or a provider fetch.
+
+Later normal runtime activity completed a `market_quote_ingestion` processing run
+through `yfinance_personal` at 2026-10-11 02:46:41 UTC, before the frontend security
+rollout. Its initiating actor was not established. It changed company_market_data,
+added one market_prices row (67 to 68), and one processing_runs row (3 to 4); the
+other 106 tables matched. This task did not intentionally request that ingestion
+or undo it. Immediately before and after the final normal browser check, all 109
+table fingerprints matched. Do not combine these separate intervals into a claim
+that the running database never changed throughout the session.
+
+This is a foundation/browser gate, not genuine-input certification.
 M03 still owns concurrent backup consistency, both evidence stores and off-device
 recovery; M04 onward still own data/research completeness.
 
 ## Docker after verification and cleanup
 
-| Container | Two idle CPU samples | Memory samples |
+| Container | Final idle CPU | Final memory |
 |---|---|---|
-| Frontend | 0.49%, 0.06% | 83.55, 84.49 MiB |
-| Backend | 0.60%, 0.21% | 273.9, 273.9 MiB |
-| Daily Brief worker | 0.01%, 0.00% | 79.88, 80.12 MiB |
-| PostgreSQL | 0.00%, 0.00% | 59.45, 59.85 MiB |
+| Frontend | 0.01% | 91.52 MiB |
+| Backend | 0.13% | 221.4 MiB |
+| Daily Brief worker | 0.00% | 78.48 MiB |
+| PostgreSQL | 0.00% | 64.83 MiB |
 
-Approximately 497–498 MiB of container RAM, plus Docker Desktop VM overhead.
+Approximately 456 MiB of container RAM, plus Docker Desktop VM overhead.
+Earlier post-rollout idle samples were 497–498 MiB, also with low CPU.
 Four running containers, six present. No observed runaway idle CPU, restart loop
 or OOM. Normal published ports remain 127.0.0.1:3000/8000/5432.
 
-Docker reports 51 images/19.74 GB, build cache 21.81 GB (11.27 GB reclaimable),
+Docker reports 52 images/19.8 GB, build cache 18.04 GB (7.44 GB reclaimable),
 and the same 18 volumes/3.108 GB. Shared categories cannot be added as unique host
 disk consumption. The earlier cache prune reclaimed 11.69 GB; verification builds
-subsequently added cache. No permanent cache cap or future monitoring was added.
+subsequently added cache. Final removal of unused build cache older than two hours
+reclaimed another 5.197 GB; host available space was then 31 GiB. These are separate
+prune events, not a unique-space total. No volumes were pruned and rollback image
+tags remain. No permanent cache cap or future monitoring was added.
 Container resource usage is healthy now; build/image disk usage can grow again.
 
 ## GitHub and handoff
@@ -117,6 +160,15 @@ compared before publication. Snapshot scanning excludes environment files,
 databases, backups, local agent configuration and unclassified scratch scripts.
 Public benchmark bytes were verified; CSV publication respects existing LF rules.
 The shared local index, branch and prior/untracked files were not reset or staged.
+
+GitHub initially caught shallow-history assumptions in the release job, missing
+reference fixtures in its backend test container, and root-file frontend guards
+running without repository context. The repair fetches two commits, uses the
+network-disabled backend test service with read-only references, and supplies
+read-only root context only to frontend source tests. The runtime image stays
+small. Release-baseline and dependency-security jobs both pass at `5f6a8b1`;
+browser repairs follow in the same draft PR. The PR's checks retain final results
+for each published revision; this checkpoint does not predict a future run.
 
 M01 is accepted at 10%; M02 is next. Use the published review branch as the
 integration baseline once its review/CI status is checked. Full-release browser,

@@ -99,8 +99,10 @@ No database reset, volume removal or new provider call is needed for cleanup.
 
 Accepted October 10: [dated evidence](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md)
 includes a 109-table backup/restore comparison, identical post-rollout fingerprints,
-source/image checks, three disposable browser workflows and authenticated normal
-desktop/mobile checks. Existing normal screens show **Mock Data**; this foundation
+source/image checks, disposable functional workflows and authenticated normal
+desktop/mobile checks after the dependency patch. The unchanged route-timing gate
+passed on repeat after one slow local sample; the checkpoint and PR retain results.
+Existing normal screens show **Mock Data**; this foundation
 gate does not certify genuine-input portfolio coverage or complete M03 recovery.
 
 ## M02: clear code and folder ownership

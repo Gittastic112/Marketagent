@@ -173,6 +173,9 @@ must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
 host/Origin guards intact. If shared filesystem trace folders fail, write artifacts
 inside the test container and copy completed results to output/playwright. Use
 explicit disposable credentials and staged source; do not read protected env files.
+The browser helper signs in once per worker and reuses cookies in fresh contexts;
+it does not disable or raise the normal sign-in throttle. Seed a fresh disposable
+database before each full run, because some workflow fixtures use fixed identities.
 Use E2E_FRONTEND_PORT and E2E_BACKEND_PORT only when those ports are occupied.
 Do not run two invocations against the same disposable project concurrently.
 The browser script runs a production Next.js build with `npm run start` from
@@ -181,7 +184,10 @@ Both Compose definitions bind published ports to 127.0.0.1. Check the actual
 runtime bindings; previously created containers retain their old configuration.
 
 The release script builds, migrates a fresh PostgreSQL database, checks readiness,
-and runs backend/frontend/type/static checks. It is not the genuine-input
+and runs backend/frontend/type/static checks. Backend unit tests use the separate
+network-disabled test service with read-only reference files. Frontend source
+guards receive a read-only repository through REPOSITORY_ROOT; these files stay
+out of the normal frontend image. It is not the genuine-input
 portfolio smoke. Screenshots and traces belong in output/playwright.
 
 ## Normal runtime operations

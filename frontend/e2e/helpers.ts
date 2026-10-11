@@ -1,4 +1,6 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
+
+let authenticatedCookies: Awaited<ReturnType<BrowserContext["cookies"]>> | null = null;
 
 type BackendOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -14,12 +16,22 @@ export async function signIn(page: Page): Promise<void> {
     );
   }
 
+  // Authenticate through the UI once per worker. Each test still gets a fresh
+  // context, without repeatedly hitting the normal sign-in throttle.
+  if (authenticatedCookies) {
+    await page.context().addCookies(authenticatedCookies);
+    await page.goto("/");
+    await expect(page).toHaveURL("/");
+    return;
+  }
+
   await page.goto("/auth/signin");
   await expect(page.getByRole("button", { name: "Sign in" })).toBeEnabled();
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL("/");
+  authenticatedCookies = await page.context().cookies();
 }
 
 export async function backendData<T>(

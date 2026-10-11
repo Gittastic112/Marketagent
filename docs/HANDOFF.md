@@ -19,15 +19,16 @@ owners before editing. For architecture work, also read
 M02 owns legacy source classification, safe folder cleanup and module boundaries.
 Portable tooling provides Git and recovery-script checks despite blocked host
 runtimes. The private GitHub branch codex/m01-foundation preserves the tested
-application/reference baseline and completion evidence. Check its review/CI state
-before integration. The shared local index/branch and unclassified prior files
+application/reference baseline and completion evidence in
+[draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1). Check its review/CI
+state before integration. The shared local index/branch and unclassified prior files
 remain preserved; do not infer a clean checkout or reset/stage everything.
 
 ## Runtime and source changes
 
 - Docker's initial high CPU settled during idle samples. Old build cache and the
-  local frontend generated cache were cleaned; volumes, images, databases,
-  backups and the immutable corpus were preserved.
+  local frontend generated cache were cleaned; temporary test images were removed.
+  Volumes, rollback images, databases, backups and the immutable corpus were preserved.
 - pgAdmin was stopped and its existing restart policy changed to no. Frontend,
   backend, PostgreSQL and the Daily Brief worker remain running. The source worker
   was already stopped; it was not started because it can perform external ingestion.
@@ -36,18 +37,22 @@ remain preserved; do not infer a clean checkout or reset/stage everything.
   runs migrations; both workers wait for healthy backend readiness. pgAdmin is
   bounded/opt-in; the development frontend's memory limit matches its heap budget.
 - Normal frontend, backend and worker containers now use validated rebuilt images.
-  The 402-file backend source fingerprint matches the checkout. Workers run their
+  Application/migration source matches the preserved rollout baseline. The only
+  later backend-image source difference is a CI-only release script. Workers run
   direct commands; only the backend runs migrations. The source worker stays
   stopped with restart=no; pgAdmin is stopped and its 512 MiB limit is applied.
 - A separate tools target runs repository/fake-Docker recovery tests without
   network, normal credentials or a Docker socket. Current database restore and
   all 109 table fingerprints pass; concurrent/off-device recovery still needs M03.
 - Normal/source head remains s1s1s1s1s1s1. All 109 table fingerprints matched across
-  rollout. Browser access then generated one deterministic Daily Brief; existing
-  rows and the other 108 tables stayed unchanged. No provider/AI call was made.
-- Three disposable browser workflows and five authenticated normal routes pass.
-  Desktop/mobile screenshots were inspected. Normal data is currently an existing
-  Mock Data demonstration, not the historical September genuine-input inventory.
+  rollout. Initial browser access generated one deterministic Daily Brief. A later
+  normal quote ingestion changed three tables before the frontend security patch;
+  the final browser check left all 109 unchanged. See the checkpoint for exact scope.
+- Approved browser repairs cover navigation, review status, stored snapshots and
+  fixture authentication without changing application guards. Functional workflows
+  pass; the unchanged route-timing gate passed on repeat after one slow sample.
+  The patched normal frontend passes five routes and inspected desktop/mobile views.
+  Existing Mock Data screens do not certify the September genuine-input inventory.
 
 ## Remaining workstream designs
 
