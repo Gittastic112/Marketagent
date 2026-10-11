@@ -50,6 +50,10 @@ in 37.6 seconds. Earlier full-run route matrices also passed. This is recorded a
 a timing failure plus passing repeat, not a clean 20/20 local full run. Current
 GitHub results belong to the exact published revision in
 [PR #1](https://github.com/Gittastic112/Marketagent/pull/1).
+At `a914960`, GitHub passed the route matrix but found duplicate global text
+matches after PDF promotion and valuation navigation. The follow-up scopes those
+assertions to the visible candidate panel, named reconciliation/coverage regions
+and exact saved-model row, preserving the original outcome checks.
 
 Screenshots and normal-browser results are under
 `output/playwright/m01-20261010/normal-runtime/` and `normal-runtime-security/`;

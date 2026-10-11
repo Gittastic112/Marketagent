@@ -108,7 +108,10 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
 
   await page.goto(`/companies/${company.id}/valuation`);
   await expect(page.getByRole("columnheader", { name: "Model readiness" })).toBeVisible();
-  await expect(page.getByText("Calculated", { exact: true })).toBeVisible();
+  const savedModelRow = page.getByRole("row").filter({
+    has: page.getByRole("link", { name: `E2E Updated DCF ${unique}`, exact: true }),
+  });
+  await expect(savedModelRow.getByText("Calculated", { exact: true })).toBeVisible();
 
   const models = await backendData<Array<{ name: string }>>(
     page,

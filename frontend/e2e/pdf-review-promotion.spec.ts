@@ -38,7 +38,9 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
 
   await page.getByRole("link", { name: "Financials" }).click();
-  await expect(page.getByRole("heading", { name: "Extracted Financial Candidates" })).toBeVisible();
+  const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
+  await expect(candidateHeading).toBeVisible();
+  const candidateReview = candidateHeading.locator("xpath=../../..");
   await expect(page.getByText("There are 12 extraction candidates")).toBeVisible();
 
   while (await page.getByRole("button", { name: "Accept" }).count()) {
@@ -61,10 +63,10 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
 
   await expect(page.getByRole("heading", { name: "Review Required" })).toHaveCount(0);
   await page.getByRole("button", { name: "Promote Reviewed Candidates" }).click();
-  await expect(page.getByRole("main").getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
-  await expect(page.getByText("No extracted candidates yet")).toBeVisible();
-  await expect(page.getByText("2 of 2 periods normalized")).toBeVisible();
-  await expect(page.getByText(/exact matches, 0 mismatches/)).toBeVisible();
+  await expect(candidateReview.getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
+  await expect(candidateReview.getByText("No extracted candidates yet")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Normalization Coverage" })).toContainText("2 of 2 periods normalized");
+  await expect(page.getByRole("region", { name: "Source Reconciliation" })).toContainText(/exact matches, 0 mismatches/);
 
   const coverage = await backendData<{
     status: string;
