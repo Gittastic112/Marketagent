@@ -54,7 +54,8 @@ test("Docker defaults to a bounded production runtime with an explicit developme
   assert.doesNotMatch(testCompose, /env_file:|ports:|depends_on:|postgresql\+/);
   assert.match(developmentCompose, /frontend_next_cache:\/app\/\.next/);
   assert.match(dockerfile, /FROM base AS builder/);
-  assert.match(dockerfile, /FROM node:24-slim AS runner/);
+  assert.match(dockerfile, /FROM node:24-slim@sha256:[a-f0-9]{64} AS base/);
+  assert.match(dockerfile, /FROM base AS runner/);
   assert.match(dockerfile, /\.next\/standalone/);
   assert.match(nextConfig, /output: "standalone"/);
   assert.match(rootDockerignore, /^\*\*$/m);

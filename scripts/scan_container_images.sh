@@ -17,7 +17,9 @@ reports=()
 for image in "$@"; do
   index=$((index + 1))
   "$DOCKER_BIN" image save "$image" -o "$SCRATCH_DIR/image.tar"
-  "$DOCKER_BIN" run --rm --read-only --cap-drop ALL --security-opt no-new-privileges:true \
+  # Match the report/archive owner's UID on Linux. Root with all capabilities
+  # dropped cannot write a runner-owned directory (Docker Desktop masks this).
+  "$DOCKER_BIN" run --rm --user "$(id -u):$(id -g)" --read-only --cap-drop ALL --security-opt no-new-privileges:true \
     --memory 1g --pids-limit 128 --tmpfs /tmp \
     -v "$SCRATCH_DIR:/input:ro" -v "$REPORT_DIR:/reports" "$SCANNER" image \
     --cache-dir /reports/cache --scanners vuln --pkg-types os --list-all-pkgs \
