@@ -83,6 +83,32 @@ def test_create_market_price(client: TestClient, db: Session) -> None:
     assert float(price.price) == 150.25
 
 
+def test_create_market_price_triggers_divergence_check_on_write(
+    client: TestClient,
+    db: Session,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    company = Company(ticker="WRITE", name="Write Trigger", active=True)
+    db.add(company)
+    db.commit()
+    checked_company_ids: list[int | None] = []
+    monkeypatch.setattr(
+        "app.api.routers.market_prices.check_price_valuation_divergence",
+        lambda session, company_id, **kwargs: checked_company_ids.append(company_id),
+    )
+
+    response = client.post("/market-prices", json={
+        "company_id": company.id,
+        "ticker": company.ticker,
+        "price": 10,
+        "currency": "USD",
+        "as_of_date": "2026-08-22",
+    })
+
+    assert response.status_code == 201, response.text
+    assert checked_company_ids == [company.id]
+
+
 def test_list_market_prices(client: TestClient, db: Session) -> None:
     p1 = MarketPrice(ticker="AAPL", price=100.0, currency="USD", as_of_date=date(2026, 5, 27))
     p2 = MarketPrice(ticker="AAPL", price=105.0, currency="USD", as_of_date=date(2026, 5, 28))
@@ -181,7 +207,7 @@ def test_fetch_latest_uses_configured_provider_and_persists_provenance(
             )
 
     monkeypatch.setattr(
-        "app.api.routers.market_prices.get_market_data_provider",
+        "app.services.market_data.ingestion.get_market_data_provider",
         lambda: FakeProvider(),
     )
 
@@ -243,7 +269,7 @@ def test_fetch_latest_preserves_provider_error_code(
             )
 
     monkeypatch.setattr(
-        "app.api.routers.market_prices.get_market_data_provider",
+        "app.services.market_data.ingestion.get_market_data_provider",
         lambda: MissingProvider(),
     )
 

@@ -9,7 +9,7 @@ import {
   type QuickValuationOutput,
 } from "@/lib/api";
 import { SelectField, TextField, TextAreaField } from "@/components/form-fields";
-import { Panel } from "@/components/page";
+import { NotConfiguredState, Panel } from "@/components/page";
 
 type Step = "select_company" | "edit_assumptions" | "results";
 
@@ -151,6 +151,9 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
   };
   const fmtPct = (n: number | null | undefined) => n != null ? `${(n * 100).toFixed(1)}%` : "—";
   const formDefault = (value: number | null | undefined) => value ?? undefined;
+  const quickOutputBlocked = valuationOutput?.warnings_json?.some(
+    (warning) => warning.severity === "blocking" || warning.severity === "critical",
+  ) ?? false;
   return (
     <div style={{ maxWidth: "900px", margin: "0 auto", paddingBottom: "4rem" }}>
 
@@ -170,6 +173,9 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
       {/* STEP 1: SELECT COMPANY */}
       {step === "select_company" && (
         <Panel title="Which company do you want to value?">
+          {companies.length === 0 ? (
+            <NotConfiguredState title="No companies available" description="Create a company and review its market and currency identity before starting a quick valuation." />
+          ) : null}
           <form onSubmit={handleCompanySelect} className="form-grid">
             <SelectField id="company_id" name="company_id" label="Company" required>
               <option value="">-- Select a Company --</option>
@@ -179,7 +185,7 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
             </SelectField>
 
             <div className="button-row" style={{ marginTop: "1rem" }}>
-              <button type="submit" disabled={isGenerating}>
+              <button type="submit" disabled={isGenerating || companies.length === 0}>
                 {isGenerating ? "Generating Baseline..." : "Generate Baseline Assumptions \u2192"}
               </button>
             </div>
@@ -273,7 +279,10 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
             <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", marginBottom: "2rem" }}>
               <div className="metric">
                 <div className="metric-label">Intrinsic Value / Share</div>
-                <div className="metric-value" style={{ color: "var(--accent)", fontSize: "1.75rem" }}>{fmtMoney(valuationOutput.intrinsic_value_per_share)}</div>
+                <div className="metric-value" style={{ color: quickOutputBlocked ? "var(--danger)" : "var(--accent)", fontSize: "1.75rem" }}>
+                  {quickOutputBlocked ? "Not reliable" : fmtMoney(valuationOutput.intrinsic_value_per_share)}
+                </div>
+                <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Estimate</div>
               </div>
               <div className="metric">
                 <div className="metric-label">Current Price</div>
@@ -282,7 +291,7 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
               <div className="metric">
                 <div className="metric-label">Upside / Downside</div>
                 <div className="metric-value" style={{ color: valuationOutput.upside_downside_pct && valuationOutput.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
-                  {fmtPct(valuationOutput.upside_downside_pct)}
+                  {quickOutputBlocked ? "Not shown" : fmtPct(valuationOutput.upside_downside_pct)}
                 </div>
               </div>
               <div className="metric">
@@ -305,6 +314,13 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
                 </div>
               </div>
             )}
+
+            {quickOutputBlocked ? (
+              <div className="valuation-output-blocker" role="alert">
+                <strong>Quick valuation output is blocked by critical diagnostics.</strong>
+                <span>Review the warnings above and correct the assumptions before using the stored calculation.</span>
+              </div>
+            ) : null}
 
             <div className="notice" style={{ marginBottom: "1.5rem" }}>
               <strong>{valuationOutput.claim_type}</strong> | This quick result is not saved. Use the full valuation workflow for durable scenarios, sensitivity, and reverse DCF.

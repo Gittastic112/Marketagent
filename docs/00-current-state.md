@@ -1,173 +1,179 @@
 # Current State
 
-**Audited:** 2026-08-22
+Source tests: 2026-10-10. Scope: local-first, single-user equity research.
+Infrastructure/plan review: [2026-10-10](archive/checkpoints/2026/architecture-and-completion-2026-10-10.md); product/browser claims below retain their dates.
 
-**Scope:** local-first, single-user investment research
+Latest delivery: [security hardening and analyst review receipts](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md).
+The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
+records the actual Apple scan, illustrative calculation and recovery verification.
 
-**Code wins:** verify routes, models, migrations, and tests before relying on this summary.
+## Product position
 
-## Product Position
+This is a broad research, valuation, evidence and portfolio platform, not a
+finished daily-driver or trading system. Reviewed-source coverage, workflow
+integrity, and public-deployment security remain uneven. No completion percentage
+is asserted. The [feature register](roadmaps/feature-register.md) owns detailed
+capability status; the [single limitation ledger](agent_capabilities_and_limitations.md)
+owns remaining gaps and the confirmed personal-research US/India, USD-base scope.
 
-The repository is a broad, functional research, valuation, and portfolio
-performance platform, not a finished daily-driver product. No new completion
-percentage was calculated for this release. Valuation, evidence, portfolio
-performance, provider diagnostics, and local authentication are stronger than
-official India coverage, autonomous daily workflows, and public-deployment
-security.
+## Current source validation
 
-## Last Recorded Full Baseline
-
-| Check | Current result |
+| Check | Evidence |
 |---|---|
-| Backend tests | 538 passed; four upstream `openpyxl` deprecation warnings |
-| Frontend tests | 98 passed |
-| TypeScript | Passes |
-| Production build | Next.js 16.2.11 passes |
-| Database migration | `cc4cc4cc4cc4` (market-regime score evidence) |
-| Knowledge-base tests | 4 passed |
-| Knowledge-base audit | 61 canonical files, 61 catalog rows, 38 ledger rows, 0 pending |
-| Damodaran application coverage | 9 supported, 13 partial, 13 unsupported |
-| Damodaran typed data | 14 sources, 3,290 rows, 12 complete active provenance records |
+| Backend | 1,294 passed October 10 in the network-disabled source test container, including request/DNS/upload/rate boundaries and immutable/stale/owned analyst reviews; five upstream deprecation warnings |
+| Frontend | 234 tests and TypeScript pass October 10, including the updated build-context guard. Production-built desktop/mobile browser evidence remains September 30 with disposable Mock Data |
+| API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
+| Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
+| Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
+| Documentation / operations | October 10: 28 documentation/secret-scanner-fixture/Compose/backup-workflow tests pass in isolated tooling; scoped Git whitespace passes. Active links/workflow checks are recorded in the infrastructure checkpoint. Full secret scan and knowledge-base audit retain their older dates; no corpus changes |
+| Production / browser | September 30 production builds pass; normal app deployed. Disposable browser verifies explicit confirmation, persisted reviews, stale-version/evidence conflicts, immutable receipts/history, lost-response blocking/refresh recovery and missing/foreign-Origin 403. Desktop 1440px/mobile 390px inspected without overflow. Both package advisory scans report zero known vulnerabilities, not security certification |
+| PostgreSQL concurrency | Five competing analyst-review pairs each returned 201/409, adding exactly five versions while the original receipt stayed unchanged. Visible stale forms did not write. Reviews remain User Assumption, not AI approval or financial edits |
+| Runtime evidence | September 22: existing 11 drafts, 694 unreviewed SEC candidates and 196 FRED observations retained. Added public annual filings/business sections for AAPL/GOOGL and private Apple PDF source 1 with five real Gemini findings, pending review. Two models, four assumption sets, two holdings and three transactions have identical fingerprints to the pre-inbox backup. Non-saving AAPL illustration is USD106.01/share, not an approved current valuation |
+| Migrations / recovery | Normal head s1s1s1s1s1s1 adds only an empty review table. Backup 20261001T015318Z restores all 108 r9 table fingerprints including private PDF/AI evidence. Rehearsed and normal s1 upgrades preserve all 107 prior data tables exactly; only migration metadata changes and an empty table is added (109 total). Dump mode 0600, directory 0700. Off-device recovery remains unproven |
+| Performance | Same-data local authenticated checks: portfolio overview full server response 8,897 ms before vs 45/127 ms in two after samples; companies 890 vs 65/59 ms; Data Health 3,501 vs 193/152 ms. Valuation read queries 168 to 11; risk 204 to 12. Dashboard was already small and did not improve. These are not browser-interactivity or load-test guarantees; [measurement checkpoint](archive/checkpoints/2026/frontend-performance-2026-09-21.md) includes all results |
+| Provider evidence | September 22 FRED DGS10/NFCI and SEC imports succeeded; six US securities have annual candidates. US/NSE personal-provider quotes have unknown timing. Real gemini-3.5-flash-lite scanned the public Apple PDF in the isolated browser and normal app with valid exact quotes, retained provenance and pending review. No stored portfolio/model values sent. This is workflow proof, not interpretation-quality certification |
 
-This table reflects the reconciled 2026-08-09 source-truth worktree. Local API
-health, authentication readiness, documentation links, and secret scanning also
-pass. Uncommitted paths that remain after reconciliation are duplicate input
-data or agent scratch, not application dependencies.
+The October 10 infrastructure checkpoint records fresh tests, resource measurements,
+cleanup and separate backend builds, not new provider/portfolio/browser certification.
+Normal application images were not replaced; pgAdmin is now stopped. Tooling Git
+confirms a large dirty tree. The ten-milestone tracker has no fully accepted gate yet.
 
-The migration history was deliberately replaced after the user confirmed all
-databases created from the previous chain were disposable. Databases stamped
-with the deleted `20260524_*` or `20260530_*` revisions must be recreated.
+[Refactor checkpoint](archive/checkpoints/2026/repository-architecture-refactor-2026-09-09.md)
+records the older production/browser scope. The
+[saved-input/reverse checkpoint](archive/checkpoints/2026/saved-input-reverse-dcf-integrity-2026-09-10.md)
+records current implementation, completed verification and cleanup evidence.
+The [core zero/default checkpoint](archive/checkpoints/2026/core-dcf-zero-defaults-2026-09-14.md)
+records the subsequent backend calculation correction and its verification scope.
+The [Real Options checkpoint](archive/checkpoints/2026/real-options-integrity-2026-09-15.md)
+records the subsequent saved-basis integration and isolated browser verification.
+The [FCFE/DDM checkpoint](archive/checkpoints/2026/fcfe-ddm-integrity-2026-09-16.md)
+records the subsequent explicit-equity-input correction and backend verification.
+The [specialized-engine checkpoint](archive/checkpoints/2026/specialized-valuation-integrity-2026-09-21.md)
+records the 30-item bank/distress integrity batch and its verification.
+The [provider/portfolio checkpoint](archive/checkpoints/2026/provider-portfolio-architecture-2026-09-21.md)
+records model connectivity, assumed portfolio setup, shared ingestion and contract extraction.
+The [source-pipeline checkpoint](archive/checkpoints/2026/valuation-source-pipeline-2026-09-22.md)
+records the latest SEC/FRED automation, source-scope repairs and verification.
+Prior runtime evidence remains valid only for the environment and inputs tested.
 
-## Documentation State
+## Architecture now
 
-The active documentation checker covers 62 Markdown files and 270 local links,
-including the project skill library. One roadmap and one feature register drive future work.
-Dated checkpoints, prior handoffs, old assessments, and superseded plans are
-categorized under `archive/`. `scripts/check_docs.py` validates active Markdown
-links and rejects retired active-plan paths.
+- FastAPI, SQLAlchemy, Pydantic and Alembic persist and serve source-backed data.
+- Next.js App Router uses a server-only signed-identity client and an authenticated
+  same-origin browser proxy. Transport failures are unavailable, not cached data.
+- Valuation input/output contracts are independent of HTTP and ORM. Saved
+  response assembly retains detached non-writing pricing reconciliation.
+- Portfolio and common envelope contracts are pure, with compatibility re-exports.
+  Error handling does not load domain services/models. Market ingestion shares
+  one audited atomic service; private price-divergence alerts are owner-scoped.
+- Internal portfolio calculations derive the persisted owner's DCF/thesis/alerts;
+  explicit owner mismatches fail. Event-driven alerts validate relationships and
+  link only the model owner's portfolios. Historical records are not rewritten.
+- Common ORM reads avoid automatic graph cascades. SQL windows bound latest-price
+  and provider-run object loading; tests protect query and row budgets.
+- Queued public-source refreshes run in a separately locked local worker. SEC
+  annual candidates, USD FRED proxies and dated quotes feed review-required drafts,
+  not canonical financial facts or saved models. Explicit edits survive refresh.
+- Private sources have bounded intake, explicit AI triage, paged search and owned
+  versioned archiving, grouped comparison and append-only analyst receipts. No automatic resolution.
+- Portfolio detail streams only its selected server view. Dashboard uses one
+  consolidated read; company editing renders one selected form. Shared layout,
+  table readability and keyboard navigation are improved. Risk price-age warnings
+  withhold stale current DCF gaps without hiding historical risk calculations.
+- Core FCFF defaults distinguish missing inputs from explicit zeros across
+  forecasts, terminal values, sensitivity and diagnostics. Existing historical
+  outputs remain unchanged; adjacent methods still require separate audits.
+- Supplementary FCFE/DDM share a finite one-stage equity helper requiring explicit
+  cost of equity, growth, shares and complete cash flows. Zero is preserved;
+  unavailable estimates receive method-specific watch diagnostics. Payout messages
+  use saved currency and do not assert causation. Historical outputs are unchanged.
+- Financial-services excess returns require explicit finite equity inputs,
+  preserve zeros, diagnose unavailable results and use equity-specific scenarios.
+  Distressed calculations validate probability/recovery/shares, reconcile the full
+  bridge and final price gap, and withhold unadjusted supplementary/sensitivity
+  estimates. Forms now remove unreviewed special-case presets, require model-specific
+  inputs, expose hidden invalid controls and use currency-aware payout/recovery labels.
+  Saved projections use relative years and equity-specific bank labels.
+- Version writes preserve omitted saved inputs with an owned basis, optimistic
+  timestamp check, serialized writers and atomic calculation persistence.
+- Reverse DCF uses a non-writing validation service, supported model dispatch,
+  bracketed convergence and saved-result identity checks in an on-demand panel.
+  Focused PostgreSQL/browser verification passed with disposable Mock Data.
+- Real Options uses pure contracts and an owned saved-FCFF validation service.
+  Backend total-equity integration precedes per-share conversion; saved currency,
+  seven eligibility confirmations, explicit equity-basis review, fingerprints
+  and independent-form request invalidation replace the old panel's custom base.
+- Frontend domain contracts/endpoints are split under lib/api. The old api.ts is
+  compatibility-only. HTTP and error-envelope code is centralized.
+- Extraction evaluation has narrow contracts, a local non-writing extractor preview,
+  an owner-scoped persisted report and a dedicated UI. Review assertions and exact
+  hashes are required; scores do not certify PDF/XBRL/AI or company facts.
+- Nested agent instructions describe real entry points. The handoff is bounded;
+  task routing lives in the [code map](code-map.md), not cumulative history.
+- Remaining legacy schemas, large action/UI/service files and split provider
+  placement remain deliberate follow-up boundaries, not claimed solved problems.
 
-Docker runtime checks, the full backend suite, frontend tests, TypeScript, and
-the production build were all available and green during reconciliation.
+## Capability summary
 
-The valuation UI now persists industry mixes through the authenticated proxy,
-supports one explicit acknowledgement for all valid autofill defaults, and
-collapses detailed warnings and assumption groups. Invalid percentage-point
-DCF assumptions are rejected on new writes; historical invalid models remain
-readable but their output, rerun action, and sensitivity tables are blocked as
-unreliable until corrected.
+| Area | Current boundary |
+|---|---|
+| Companies and documents | Market identity, setup, dated annual-business cards in company/portfolio views, SEC/RSS ingestion, manual PDF/workbook/XBRL candidate review, raw assets and source locators |
+| Financial facts | Review/promotion, normalization, reconciliation and statement identities for supported layouts; not universal extraction |
+| Extraction evaluation | Executes the existing local text parser against a separately reviewed reference, retaining source/reference hashes and explicit unit/period/locator failures; no automatic truth or forecast calibration |
+| Valuation | Multi-stage FCFF, specialized engines, scenarios, reverse DCF, options, sensitivity, versioned drafts and provenance; not all analysis panels have equal integrity |
+| Saved outputs | Stale/invalid/critical, identity/currency and finite-value gates; saved prices are User Assumptions, quality scores are historical |
+| Scenarios | Owned model dispatch, zero-preserving shocks, on-demand request isolation, saved currency and backend gaps; deterministic shocks are not probabilities |
+| Relative pricing | Source-separated active industry benchmarks and owner-reviewed peers; exact input hashes, diagnostic receipts, normalized immutable revisions and bounded CSV workflows |
+| Portfolio | Holdings/activity, FX, benchmarks, snapshots, TWR/MWR and marginal/component risk. Confirmed AAPL/GOOGL User Assumption case has sourced prices and checked calculations; broad genuine-input smoke is still pending |
+| Evidence and briefing | Source-linked events/alerts/theses, deterministic briefs, private paste/PDF inbox, bounded comparison and exact-evidence analyst receipts. AAPL still shows five pending non-mock findings across five inputs; no normal review was invented. Direction flags are not verified contradictions or numerical edits |
+| AI and research | Provenance, exact-span review, bounded local passage suggestions, human approval, owner-scoped stored search; no semantic truth guarantee |
+| Provider health | Observable runs/configuration/freshness; FRED NFCI exact-record macro application; unsupported regime provider modules remain manual |
+| Runtime | Production-built Compose services, liveness/readiness, local credential login, signed internal identity; not public-deployment security |
 
-The portfolio detail implementation now includes a source-traced risk and DCF
-valuation-gap comparison. It converts dated holding prices with dated FX,
-aligns daily returns, calculates sample covariance, annualized volatility,
-marginal volatility, and reconciling component risk, and shows coverage when a
-holding lacks enough history. The expected-return label is deliberately limited
-to a current DCF valuation gap Estimate. Stale, low-quality, warned, or missing
-DCF outputs remain unavailable and are not treated as forecasts.
+## Data evidence, not inferred runtime contents
 
-Portfolio valuation now batches prices, owned DCF outputs, thesis state, and
-alert counts instead of issuing per-holding queries. Portfolio surfaces expose
-trusted, stale, untrusted, and unavailable valuation states; an output that fails
-quality, warning, currency, freshness, or positivity gates cannot be displayed
-as a valid intrinsic value.
+September 22 benchmark audit: 24 active typed sources, 3,756 rows, all with
+complete active provenance; 14 supported, 18 partial and 9 unsupported mirrors.
+Repeated US intake created no duplicate versions or values and retained India rows.
 
-The dashboard overview no longer runs AI generation, creates alerts, or performs
-a live full-portfolio recalculation during a GET request. It reads the latest
-explicitly captured portfolio snapshot for the headline value; deeper live
-analytics remain in the Portfolio workspace. Latency budget breaches are logged
-for operators instead of being misreported as partial investment data.
+The audited AAPL FY2022-FY2025 and APSEZ FY2023-FY2025 reference histories prove
+covered real-source extraction paths. They do not prove those histories exist in
+the normal user's database. September 22 leaves 694 unreviewed SEC candidates
+and no normalized snapshots. Annual values populate drafts with source, unit,
+period and review warnings; they are not approved financial statements. Missing
+debt scope, share-class reconciliation and India statements remain explicit.
+US industry priors are loaded but mappings require review. Workbook inspection
+corrected global-input labels and a US country-tax alias without rewriting old rows.
 
-The portfolio index is now a bounded overview. It loads owned portfolios,
-holdings, companies, and trust-gated valuation status, then links to each
-portfolio's detail workspace for performance, attribution, benchmark, snapshot,
-and risk calculations. Those deep calculations no longer block the overview.
-Market Regime inputs have programmatic labels and its two-column layout collapses
-responsively. The authenticated responsive smoke matrix now covers 20 primary
-routes at desktop and mobile widths and now rejects undersized body text, page
-titles, panel headings, and meaningful controls. Seventeen routes reached a
-complete authenticated render in the latest live sweep. Narratives, Macro, and
-Documents require a live recheck after the local frontend container reset during
-repeated cold-route compilation; all 20 routes remain covered by the automated
-matrix and source-level integrity checks.
+Portfolio 1 models 200 AAPL and 200 GOOGL at January 2, 2024 unadjusted closes,
+rounded to USD185.64/USD138.17. The confirmed USD64,762 deposit, zero fees,
+no later trades and dividend exclusion are User Assumptions, not verified trades.
+Two snapshots (January 2, 2024 and September 18, 2026), returns, attribution and
+historical risk were checked; DCF coverage remains explicitly incomplete.
 
-Daily Brief now loads its current and saved briefs in parallel. Research and
-Narratives use responsive layouts without fixed-width overflow. Data Management
-loads companies, sources, and both market capability matrices concurrently, uses
-valid link actions, and collapses its cards safely. CSV upload, Damodaran admin,
-and search controls now have programmatic labels and bounded responsive layouts;
-Settings loads scoring and integration status concurrently.
+The separate knowledge base retains its own immutable corpus, source catalog,
+hash ledger, rules and audit tool. September 22: 64 canonical files/catalog rows,
+44 processing-ledger rows and no pending inbox files. Three new US originals were
+added; three existing originals were reused. All pre-existing raw hashes remain intact.
 
-The default Docker stack now runs a multi-stage standalone Next.js image and a
-single backend process instead of permanent development compilers and reloaders.
-Development bind mounts are opt-in, named caches replace anonymous frontend
-volumes, pgAdmin is opt-in, service startup is health-gated, logs are capped, and
-the backend build context excludes data, documentation, and frontend files.
-Narratives now loads four bounded datasets in parallel instead of issuing two
-requests per cluster; Macro setup calls run concurrently. Expensive workspace and
-deep-diagnostic links do not prefetch server work. The 20-route matrix enforces a
-15-second ready-state budget in addition to its accessibility and layout gates.
+## Prior verification scope
 
-Data Health now keeps its normal page load bounded by separating deep evidence,
-Damodaran coverage, and evidence-backfill diagnostics into explicit user-run
-checks. Provider cards separate required configuration from optional
-integrations. Its summary now separates operations, provider readiness, and
-diagnostic status; a diagnostic that has not run is muted instead of being shown
-as a successful zero, and optional integrations no longer compete visually with
-required failures. The deep evidence audit accepts retrieval time as the
-freshness clock for SEC Company Facts snapshots, while publication documents
-still require a source publication timestamp.
+The preceding valuation task passed production builds and focused disposable
+browser checks for saved output and scenario integrity. The latest September 21
+28-route desktop/mobile matrix extends the older August 25 checks using isolated
+fixtures. Neither replaces the pending genuine-input portfolio proof.
 
-Current validation for this 2026-08-22 increment: backend compile passes,
-all 110 frontend tests pass, TypeScript passes, the documentation checker passes,
-and live authenticated browser checks cover the fast/deep Data Health paths,
-US and India financial certification, industry-mix loading, and default-first DCF
-creation. Full backend pytest remains pending because this agent cannot access
-the Docker socket and the host Python runtime does not include pytest. A host
-production build is also blocked by protected `.env.local` metadata and the
-Docker-owned `.next` directory; the running Docker frontend remains available.
+The normal runtime is s1s1s1s1s1s1 after fresh and populated restore/migration
+preflights. Legacy evaluation ownership/report fields remain null.
+Databases stamped with deliberately deleted 20260524_* or 20260530_* revisions
+cannot be assumed upgradeable; stop and inspect before any reset/stamp.
 
-## Capability Map
+## Next priorities
 
-See [`roadmaps/feature-register.md`](roadmaps/feature-register.md) for the canonical list of capabilities and their current implementation statuses.
+Follow the [completion tracker](roadmaps/completion-tracker.md) for percentage
+requests, [Knull](../Knull%28readme%29.md) for detailed feature scopes/ownership,
+and the [handoff](HANDOFF.md) for the next safe execution boundary.
 
-## Certified Data State
-
-- AAPL FY2022-FY2025 core facts are reviewed, promoted, and reconciled.
-- AAPL FY2021 is intentionally not promoted.
-- Adani Ports FY2023-FY2025 is promoted, normalized, reconciled, and certified.
-  The representative US/India two-market certification gate passes.
-- `countrystats.xls` active version `#50` is dated `2026-01-05`, contains 127
-  rows, and has SHA-256
-  `900b6594f808461f9ce5194abf1a50e66f22854bc998473ad8282037d464829b`.
-
-## Do Not Trust Without Review
-
-- Stale, incomplete, or manual market-regime values without reviewing their
-  normalization methodology and source.
-- AI memos, narrative-to-numbers suggestions, or generated conclusions.
-- Industry mapping or industry averages as company-specific facts.
-- Autofilled valuation assumptions without checking source, age, method, and warnings.
-- Financial metrics from unreviewed extraction candidates.
-- Prices without provider, timestamp, freshness, and currency context.
-- India automated filing/provider coverage.
-- Any output phrased as a buy or sell recommendation.
-
-## Current Priorities
-
-1. Complete route-by-route frontend/backend truth and data-state parity. (DONE - Phase 16)
-2. Expand beyond the certified APSEZ India case and strengthen official India providers.
-3. Build a coherent daily research loop from ingestion to evidence, alerts,
-   thesis impact, portfolio impact, and next action.
-4. Browser-test portfolio performance and the implemented marginal-risk/DCF-gap
-   comparison with real dated prices, FX, flows, and a benchmark.
-5. Add automated, compliant inputs for regime modules where a provider is
-   available; keep manual/provider provenance visible.
-
-Acceptance criteria and sequencing live in
-[`roadmaps/product-roadmap.md`](roadmaps/product-roadmap.md). Feature status
-lives in [`roadmaps/feature-register.md`](roadmaps/feature-register.md).
-
-## Historical Evidence
-
-Dated checkpoints, previous audits, accumulated handoffs, and superseded plans
-are preserved under [`archive/`](archive/). They are evidence of prior work, not
-current instructions.
+[Previous detailed current state](archive/assessments/current-state-before-refactor-2026-09-09.md)
+preserves source-specific milestone evidence. Do not resume its chronological
+task numbers or treat older test counts as today's baseline.

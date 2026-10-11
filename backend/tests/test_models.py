@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 
 from sqlalchemy import create_engine, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.db.base import Base
 from app.models import Alert, Company, Event, RawDocument, Source, ThesisNote
@@ -59,7 +59,12 @@ def test_mvp_models_can_be_persisted_with_relationships() -> None:
         session.add_all([company, source, raw_document, event, alert, thesis_note])
         session.commit()
 
-        saved_company = session.scalar(select(Company).where(Company.ticker == "AAPL"))
+        # Detached consumers declare the graph they need before closing a session.
+        saved_company = session.scalar(select(Company).where(Company.ticker == "AAPL").options(
+            selectinload(Company.raw_documents).selectinload(RawDocument.source),
+            selectinload(Company.events).selectinload(Event.alerts),
+            selectinload(Company.thesis_notes),
+        ))
 
     assert saved_company is not None
     assert saved_company.raw_documents[0].source.name == "SEC EDGAR"

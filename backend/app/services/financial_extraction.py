@@ -340,6 +340,11 @@ def promote_reviewed_candidates(db: Session, company_id: int) -> int:
     return promoted_count
 
 
+def preview_financial_candidates(document: RawDocument) -> list[FinancialExtractionCandidate]:
+    """Run the text extractor without persisting or promoting its candidates."""
+    return _extract_candidates(document)
+
+
 def _extract_candidates(document: RawDocument) -> list[FinancialExtractionCandidate]:
     assert document.raw_text is not None
     candidates: list[FinancialExtractionCandidate] = []

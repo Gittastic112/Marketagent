@@ -58,6 +58,23 @@ test("buildDataStateBadges treats source mock as mock data for legacy envelopes"
   ]);
 });
 
+test("buildDataStateBadges prioritizes request errors over legacy stale flags", () => {
+  const badges = buildDataStateBadges({
+    status: "error",
+    source: "internal",
+    last_updated: null,
+    is_stale: true,
+    warnings: ["The backend is unavailable"],
+    confidence: "none",
+    processing_time_ms: null
+  });
+
+  assert.deepEqual(badges, [
+    { label: "Error", tone: "danger" },
+    { label: "None confidence", tone: "muted" }
+  ]);
+});
+
 test("summarizeApiMetas reports stale and mock aggregate states", () => {
   const summary = summarizeApiMetas([
     {
@@ -85,6 +102,8 @@ test("summarizeApiMetas reports stale and mock aggregate states", () => {
   assert.deepEqual(summary, {
     allStale: false,
     someStale: true,
+    allUnavailable: false,
+    someUnavailable: false,
     hasMock: true,
     hasManual: false,
     warnings: []
@@ -97,8 +116,62 @@ test("summarizeApiMetas treats only real metadata entries as candidates", () => 
   assert.deepEqual(summary, {
     allStale: false,
     someStale: false,
+    allUnavailable: false,
+    someUnavailable: false,
     hasMock: false,
     hasManual: false,
     warnings: []
   });
+});
+
+test("summarizeApiMetas separates unavailable requests from stale successful data", () => {
+  const summary = summarizeApiMetas([
+    {
+      status: "error",
+      source: "internal",
+      last_updated: null,
+      is_stale: true,
+      warnings: ["The backend is unavailable"],
+      confidence: "none",
+      processing_time_ms: null
+    },
+    {
+      status: "success",
+      source: "internal",
+      last_updated: "2026-06-18T10:00:00Z",
+      is_stale: false,
+      warnings: [],
+      confidence: "high",
+      processing_time_ms: 12
+    }
+  ]);
+
+  assert.deepEqual(summary, {
+    allStale: false,
+    someStale: false,
+    allUnavailable: false,
+    someUnavailable: true,
+    hasMock: false,
+    hasManual: false,
+    warnings: ["The backend is unavailable"]
+  });
+});
+
+test("summarizeApiMetas reports all requests unavailable without calling them stale", () => {
+  const summary = summarizeApiMetas([
+    {
+      status: "error",
+      source: "internal",
+      last_updated: null,
+      is_stale: false,
+      warnings: [],
+      confidence: "none",
+      processing_time_ms: null
+    }
+  ]);
+
+  assert.equal(summary.allUnavailable, true);
+  assert.equal(summary.someUnavailable, true);
+  assert.equal(summary.allStale, false);
+  assert.equal(summary.someStale, false);
 });

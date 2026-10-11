@@ -10,7 +10,8 @@ from fastapi import HTTPException
 from starlette.requests import Request
 from app.core.security import validate_safe_url, escape_csv_formula
 
-def test_validate_safe_url_valid():
+def test_validate_safe_url_valid(monkeypatch):
+    monkeypatch.setattr("socket.getaddrinfo", lambda *_a, **_k: [(2, 1, 6, "", ("93.184.216.34", 443))])
     assert validate_safe_url("https://example.com/feed.xml") == "https://example.com/feed.xml"
     assert validate_safe_url("http://google.com") == "http://google.com"
 
@@ -52,6 +53,8 @@ def test_escape_csv_formula():
     assert escape_csv_formula("@SUM()") == "'@SUM()"
     assert escape_csv_formula("\tTabbed") == "'\tTabbed"
     assert escape_csv_formula("\rNewline") == "'\rNewline"
+    assert escape_csv_formula("\n=1+1") == "'\n=1+1"
+    assert escape_csv_formula("  =1+1") == "'  =1+1"
 
 def test_encrypt_decrypt_token(monkeypatch):
     from app.core.security import encrypt_token, decrypt_token

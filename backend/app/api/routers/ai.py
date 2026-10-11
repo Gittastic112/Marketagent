@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.api.ai_errors import ai_output_meta, public_ai_error
 from app.api.dependencies import get_current_user
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.db.session import get_db
 from app.models.ai import AiOutput
 from app.models.company import Company

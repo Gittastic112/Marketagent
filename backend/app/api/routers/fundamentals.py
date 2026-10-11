@@ -40,6 +40,7 @@ from app.services.sec_xbrl_extractor import extract_xbrl_candidates
 from app.services.financial_statement_identity import FinancialStatementIdentityService
 from app.services.processing_runs import complete_processing_run, fail_processing_run, start_processing_run
 from app.providers.fundamentals.screener import ScreenerExcelParser
+from app.services.workbook_safety import validate_workbook_bytes
 
 router = APIRouter(tags=["fundamentals"])
 
@@ -153,11 +154,12 @@ def ingest_screener_excel(
     temp_path: str | None = None
     processing_run_id: int | None = None
     try:
-        content = file.file.read()
+        content = file.file.read(2 * 1024 * 1024 + 1)
         if not content:
             raise HTTPException(status_code=400, detail="Uploaded file is empty.")
         if len(content) > 2 * 1024 * 1024:
             raise HTTPException(status_code=413, detail="File too large. Maximum size is 2MB.")
+        validate_workbook_bytes(content)
 
         digest = hashlib.sha256(content).hexdigest()
         content_hash = f"screener-upload:{digest}"

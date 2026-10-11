@@ -6,8 +6,9 @@ from app.db.session import get_db
 from app.models.damodaran import DamodaranDatasetFile
 from app.services.damodaran_parser import parse_damodaran_workbook
 from app.services.damodaran_dataset_versions import source_provenance_from_bytes
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.api.errors import PublicApiError
+from app.services.workbook_safety import MAX_WORKBOOK_BYTES, validate_workbook_bytes
 
 router = APIRouter(
     prefix="/api/admin/damodaran",
@@ -27,7 +28,11 @@ async def import_damodaran_dataset(
     if not filename.lower().endswith((".xls", ".xlsx")):
         raise HTTPException(status_code=400, detail="Only .xls or .xlsx files are supported")
 
-    contents = await file.read()
+    try:
+        contents = await file.read(MAX_WORKBOOK_BYTES + 1)
+    finally:
+        await file.close()
+    validate_workbook_bytes(contents)
 
     try:
         results = parse_damodaran_workbook(contents)

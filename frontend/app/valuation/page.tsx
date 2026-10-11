@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DataFreshnessIndicator, PageHeader, Panel, ErrorState, EmptyState, MockDataState, StaleDataBanner } from "@/components/page";
+import { DataStateNotices, PageHeader, Panel, ErrorState, EmptyState } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company } from "@/lib/api";
 
@@ -7,44 +7,30 @@ export default async function ValuationPage() {
   try {
     const companiesRes = await serverFetchApiResponse<Company[]>("/companies");
     const companies = companiesRes.data || [];
-    const isStale = companiesRes.meta?.is_stale;
-    const isMock = companiesRes.meta?.is_mock || companiesRes.meta?.source === "mock";
 
     return (
       <>
-        <PageHeader eyebrow="Financial modeling" title="Valuation & DCF" />
+        <PageHeader eyebrow="Financial modeling" title="Valuation & DCF"
+          description="Start with sourced facts, review the assumptions, and explore what drives value."
+          actions={<Link prefetch={false} href="/valuation/quick" className="primary-button">Start Quick Valuation</Link>} />
 
-        <div style={{ marginBottom: "2rem" }}>
-          <Link prefetch={false} href="/valuation/quick" className="btn btn-primary" style={{ padding: "0.75rem 1.5rem", fontSize: "1rem", fontWeight: 600 }}>
-            ⚡ Start Quick Valuation
-          </Link>
-          <p style={{ marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-secondary)" }}>
-            Complete a baseline valuation in under 5 minutes.
-          </p>
-        </div>
-
-        {isStale && <StaleDataBanner message="Showing cached company data because backend is unreachable." />}
-        {isMock && <MockDataState message="Company rows are mock data. Do not use them as live market coverage." />}
+        <DataStateNotices
+          metas={[companiesRes.meta]}
+          mockMessage="Company rows are mock data. Do not use them as live market coverage."
+        />
 
         <Panel title="Valuation Models by Company">
-          <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "flex-start", marginBottom: "1rem" }}>
-            <p style={{ margin: 0, color: "var(--text-secondary)" }}>
-              Select a company below to manage its DCF valuation models, financial metrics, and assumptions.
-            </p>
-            <DataFreshnessIndicator meta={companiesRes.meta ?? undefined} />
-          </div>
+          <p className="section-intro">Choose a company to review its financial evidence and saved models. These are stored company records, not live quotes.</p>
 
-          {companies.length === 0 ? (
+          {companiesRes.data === null ? <ErrorState message="Companies could not be loaded." errors={companiesRes.errors} /> : companies.length === 0 ? (
             <EmptyState label="No companies exist yet." />
           ) : (
             <div className="table-wrap">
               <table>
                 <thead>
                   <tr>
-                    <th>Ticker</th>
-                    <th>Name</th>
-                    <th>Market</th>
-                    <th>Currency</th>
+                    <th>Company</th>
+                    <th>Listing</th>
                     <th>Sector</th>
                     <th>Market Cap</th>
                     <th>Actions</th>
@@ -54,19 +40,18 @@ export default async function ValuationPage() {
                   {companies.map((company) => (
                     <tr key={company.id}>
                       <td>
-                        <strong>{company.ticker}</strong>
+                        <Link prefetch={false} href={`/companies/${company.id}/valuation`}><strong>{company.ticker}</strong></Link>
+                        <span className="cell-secondary">{company.name}</span>
                       </td>
-                      <td>{company.name}</td>
-                      <td>{company.market || "-"}</td>
-                      <td>{company.currency || "-"}</td>
+                      <td>{company.market || "-"} · {company.currency || "-"}</td>
                       <td>{company.sector || "-"}</td>
                       <td>{company.market_cap_category || "-"}</td>
                       <td>
                         <div className="action-stack" style={{ flexDirection: "row", gap: "0.5rem" }}>
-                          <Link prefetch={false} className="btn btn-primary" href={`/companies/${company.id}/valuation`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
+                          <Link prefetch={false} className="secondary-button" href={`/companies/${company.id}/valuation`}>
                             DCF Models
                           </Link>
-                          <Link prefetch={false} className="secondary-button" href={`/companies/${company.id}/fundamentals`} style={{ padding: "0.25rem 0.75rem", fontSize: "0.875rem" }}>
+                          <Link prefetch={false} className="secondary-button" href={`/companies/${company.id}/fundamentals`}>
                             Fundamentals
                           </Link>
                         </div>
@@ -80,7 +65,7 @@ export default async function ValuationPage() {
         </Panel>
       </>
     );
-  } catch (error) {
+  } catch {
     return (
       <>
         <PageHeader eyebrow="Financial modeling" title="Valuation & DCF" />

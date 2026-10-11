@@ -55,7 +55,8 @@ def test_generic_admin_import_hashes_source_and_stays_metadata_only(
         "app.api.routers.admin_damodaran.parse_damodaran_workbook",
         lambda contents: {"Industry Averages": {"records": [{"Industry Name": "Advertising"}], "metadata": {}}},
     )
-    contents = b"generic-workbook-content"
+    # OLE header passes the intake preflight; the parser itself is mocked here.
+    contents = b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1generic-workbook-content"
 
     response = client.post(
         "/api/admin/damodaran/import",

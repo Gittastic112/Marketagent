@@ -73,6 +73,7 @@ export default async function DraftValuationPage({
         </Link>
       </header>
       <AutofillDraftReview
+        key={persistedDraft.id}
         company={company}
         draft={draft}
         draftId={persistedDraft.id}

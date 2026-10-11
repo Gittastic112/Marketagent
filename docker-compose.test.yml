@@ -1,0 +1,20 @@
+# Deterministic backend tests only. No normal database, credentials, network or ports.
+name: market-intelligence-tests
+services:
+  backend-tests:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: test
+    image: market-intelligence-tests:local
+    network_mode: none
+    environment:
+      DATABASE_URL: sqlite+pysqlite:////tmp/isolated-test-default.sqlite
+      APP_ENV: test
+      SEC_USER_AGENT: Market Intelligence test suite tests@example.invalid
+      NEXTAUTH_SECRET: disposable-unit-test-secret-not-for-runtime
+    volumes:
+      - ./backend:/workspace/backend:ro
+      - ./scripts:/workspace/scripts:ro
+      - ./data:/workspace/data:ro
+    command: pytest -q -p no:cacheprovider backend/tests

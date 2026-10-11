@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
+import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
-import { StaleDataBanner, PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
-import { summarizeApiMetas } from "@/lib/data-state-meta";
+import { PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
 import type { Company, Portfolio, PortfolioHolding, PortfolioValuation } from "@/lib/api";
+import { formatCurrency } from "@/lib/formatting";
 
 export default async function PortfolioPage() {
   function numberText(value: number): string {
@@ -27,13 +27,7 @@ export default async function PortfolioPage() {
     const holdings = holdingsRes?.data || [];
     const companies = companiesRes?.data || [];
 
-    const baseDataState = summarizeApiMetas([
-      portfoliosRes?.meta,
-      holdingsRes?.meta,
-      companiesRes?.meta
-    ]);
-
-    const today = new Date().toISOString().slice(0, 10);
+    if (!portfoliosRes?.data) return <><PageHeader eyebrow="Portfolio research" title="Portfolios" /><ErrorState message="Your portfolios could not be loaded." errors={portfoliosRes?.errors} /></>;
     const portfoliosById = new Map(portfolios.map((portfolio) => [portfolio.id, portfolio]));
     const companiesById = new Map(companies.map((company) => [company.id, company]));
 
@@ -53,30 +47,19 @@ export default async function PortfolioPage() {
       return val.holdings.find(h => h.holding_id === holdingId) || null;
     };
 
-    const fullDataState = summarizeApiMetas([
-      portfoliosRes?.meta,
-      holdingsRes?.meta,
-      companiesRes?.meta,
-      ...valuationsRes.map((res) => res?.meta)
-    ]);
-
-    const missingHoldings = !holdingsRes;
+    const missingHoldings = !holdingsRes?.data;
 
     return (
       <>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
-          <PageHeader eyebrow="Portfolio Intelligence" title="Overview" status={`${portfolios.length} portfolios`} />
-          <div style={{ marginBottom: "2rem" }}>
-            <Link prefetch={false} href="/portfolio/manage" className="btn btn-outline">
-              Manage Portfolios & Transactions
-            </Link>
-          </div>
-        </div>
+        <PageHeader eyebrow="Portfolio research" title="Portfolios" status={`${portfolios.length} portfolios`}
+          description="Your positions, recorded activity and valuation context."
+          actions={<Link prefetch={false} href="/portfolio/manage" className="secondary-button">Manage portfolios</Link>} />
 
-        {baseDataState.allStale && <StaleDataBanner />}
-        {!baseDataState.allStale && fullDataState.someStale && <PartialDataNotice message="Some portfolio components are showing cached data because the backend is partially reachable." />}
+        <DataStateNotices
+          metas={[portfoliosRes?.meta, holdingsRes?.meta, companiesRes?.meta, ...valuationsRes.map((res) => res?.meta)]}
+          mockMessage="One or more portfolio panels are using mock data. Do not treat those values as live portfolio intelligence."
+        />
         {missingHoldings && <PartialDataNotice message="Holdings failed to load. The portfolio metrics below will be incomplete." />}
-        {fullDataState.hasMock && <MockDataState message="One or more portfolio panels are using mock data. Do not treat those values as live portfolio intelligence." />}
 
         {portfolios.length === 0 && (
           <Panel title="Welcome to Portfolio Intelligence">
@@ -97,12 +80,14 @@ export default async function PortfolioPage() {
                   <div className="page-header-title-row">
                     <div>
                       <h3>{portfolio.name}</h3>
-                      <p className="muted">Deep performance, attribution, risk, benchmark, and snapshot analysis.</p>
+                      <p className="muted">{portfolio.base_currency} base · {holdings.filter(holding => holding.portfolio_id === portfolio.id).length} recorded holdings</p>
+                      <p className="portfolio-card-value">{valuationsById.get(portfolio.id)?.total_portfolio_value == null ? "Value not available" : formatCurrency(valuationsById.get(portfolio.id)!.total_portfolio_value, portfolio.base_currency)}</p>
                     </div>
                     <Link prefetch={false} className="secondary-button" href={`/portfolio/${portfolio.id}`}>
-                      Open analytics
+                      Open portfolio →
                     </Link>
                   </div>
+                  {portfolio.description && <p className="muted">{portfolio.description}</p>}
                 </article>
               ))}
             </div>
@@ -124,16 +109,16 @@ export default async function PortfolioPage() {
               for (const h of portfolioHoldings) {
                 const company = companiesById.get(h.company_id!);
                 const hVal = val.holdings.find(vh => vh.holding_id === h.id);
-                if (!hVal || hVal.market_value == null || hVal.weight_percent == null) continue;
+                if (!hVal || hVal.market_value_base == null || hVal.weight_percent == null) continue;
 
                 if (!company || !company.exposure_tags || company.exposure_tags.length === 0) {
-                  untaggedValue += hVal.market_value;
+                  untaggedValue += hVal.market_value_base;
                   untaggedPercent += hVal.weight_percent;
                 } else {
                   for (const tag of company.exposure_tags) {
                     const current = tagExposures.get(tag.name) || { value: 0, percent: 0 };
                     tagExposures.set(tag.name, {
-                      value: current.value + hVal.market_value,
+                      value: current.value + hVal.market_value_base,
                       percent: current.percent + hVal.weight_percent
                     });
                   }
@@ -146,6 +131,7 @@ export default async function PortfolioPage() {
             return (
               <div key={`exp-${portfolio.id}`} className="mb-8 last:mb-0">
                 <h3 className="text-lg font-medium mb-4">{portfolio.name} Exposures</h3>
+                <p className="muted">Calculation from priced holdings in {portfolio.base_currency}. Tags can overlap, so tag weights need not total 100%.</p>
                 {sortedTags.length === 0 && untaggedValue === 0 ? (
                   <p className="text-sm text-gray-500">No exposure data calculated.</p>
                 ) : (
@@ -186,7 +172,7 @@ export default async function PortfolioPage() {
           <div style={{ marginBottom: "1rem" }}>
             <DataFreshnessIndicator meta={holdingsRes?.meta} source="Portfolio API" />
           </div>
-          {holdings.length === 0 ? (
+          {missingHoldings ? <ErrorState message="Holdings could not be loaded." errors={holdingsRes?.errors} /> : holdings.length === 0 ? (
             <EmptyState label="No holdings yet." />
           ) : (
             <div className="table-wrap">
@@ -206,7 +192,7 @@ export default async function PortfolioPage() {
                     <th>Thesis</th>
                     <th>Alerts</th>
                     <th>Valuation</th>
-                    <th>As Of</th>
+                    <th>Price as of</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -232,7 +218,7 @@ export default async function PortfolioPage() {
                         )}
                       </td>
                       <td>
-                        {val?.intrinsic_value != null ? (
+                        {val?.valuation_status === "trusted" && val.intrinsic_value != null ? (
                           <span style={{ color: val.market_price != null && val.intrinsic_value > val.market_price ? "var(--color-green-700)" : "var(--color-red-700)" }}>
                             {holding.currency} {numberText(val.intrinsic_value)}
                           </span>
@@ -275,7 +261,7 @@ export default async function PortfolioPage() {
                           <span className="badge" title={val?.valuation_status_reason || "No completed Base DCF output"}>Unavailable</span>
                         )}
                       </td>
-                      <td>{holding.as_of_date}</td>
+                      <td>{val?.market_price_as_of || "Not available"}</td>
                       </tr>
                     );
                   })}
@@ -286,12 +272,11 @@ export default async function PortfolioPage() {
         </Panel>
       </>
     );
-  } catch (error: any) {
-    console.error("PAGE RENDER ERROR:", error);
+  } catch {
     return (
       <>
         <PageHeader eyebrow="Portfolio" title="Portfolio" />
-        <ErrorState message={`Could not load portfolio records from the backend API. Error: ${error?.message || error}`} />
+        <ErrorState message="Could not load portfolio records from the backend API." />
       </>
     );
   }

@@ -2,9 +2,11 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Company, DcfAssumptionSet, ValuationCompanyContext, ValuationModel } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
-import { PageHeader } from "@/components/page";
+import { ErrorState, NotConfiguredState, Panel } from "@/components/page";
+import { updateValuationModelWithState } from "@/app/actions";
 import { AdvancedWorkspace } from "@/components/advanced-workspace";
-import { StaleDataBanner, MockDataState } from "@/components/ui/data-states";
+import { ValuationModelMetadataForm } from "@/components/valuation/valuation-model-metadata-form";
+import { DataStateNotices, StaleDataBanner } from "@/components/ui/data-states";
 import { EvidenceTrailDrawerWrapper } from "@/components/intelligence/EvidenceTrailDrawerWrapper";
 
 export const dynamic = "force-dynamic";
@@ -18,31 +20,29 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
     notFound();
   }
 
-  let company: Company;
-  let context: ValuationCompanyContext | undefined = undefined;
-  try {
-    company = await serverFetchApi<Company>(`/companies/${companyId}`);
-    try {
-      context = await serverFetchApi<ValuationCompanyContext>(`/api/valuation/context/company/${companyId}`);
-    } catch {
-      // Ignore if missing
-    }
-  } catch {
+  const [companyResult, modelResult] = await Promise.allSettled([
+    serverFetchApi<Company>(`/companies/${companyId}`),
+    serverFetchApi<ValuationModel>(`/valuation-models/${modelId}`),
+  ]);
+  if (companyResult.status === "rejected" || modelResult.status === "rejected") {
+    notFound();
+  }
+  const company = companyResult.value;
+  const model = modelResult.value;
+  if (model.company_id !== companyId) {
     notFound();
   }
 
-  const models = await serverFetchApi<ValuationModel[]>(`/companies/${companyId}/valuation-models`);
-  const model = models.find((m) => m.id === modelId);
-
-  if (!model) {
-    notFound();
-  }
-
-  const assumptionsRes = await serverFetchApiResponse<DcfAssumptionSet[]>(`/valuation-models/${modelId}/assumptions`);
-  const assumptions = assumptionsRes.data || [];
+  const [contextResult, assumptionsResult] = await Promise.allSettled([
+    serverFetchApi<ValuationCompanyContext>(`/api/valuation/context/company/${companyId}`),
+    serverFetchApiResponse<DcfAssumptionSet[]>(`/valuation-models/${modelId}/assumptions`),
+  ]);
+  const context = contextResult.status === "fulfilled" ? contextResult.value : undefined;
+  const assumptionsRes = assumptionsResult.status === "fulfilled" ? assumptionsResult.value : null;
+  const assumptions = assumptionsRes?.data || [];
   // Get the most recent assumption set (since it's ordered by created_at desc)
   const latestAssumptionSet = assumptions.length > 0 ? assumptions[0] : undefined;
-  const isMock = assumptionsRes.meta?.is_mock || assumptionsRes.meta?.source === "mock";
+  const updateModelAction = updateValuationModelWithState.bind(null, modelId.toString(), companyId.toString());
 
   return (
     <>
@@ -64,11 +64,27 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
         </div>
       </div>
 
-      {isMock && (
-        <div style={{ marginBottom: "1.5rem" }}>
-          <MockDataState message="These DCF assumptions are populated with mock data for demonstration purposes." />
-        </div>
-      )}
+      <Panel title="Model details">
+        <ValuationModelMetadataForm action={updateModelAction} name={model.name} description={model.description} />
+      </Panel>
+
+      {assumptionsRes?.meta ? (
+        <DataStateNotices
+          metas={[assumptionsRes.meta]}
+          mockMessage="These DCF assumptions are mock data and must not be used as investment evidence."
+        />
+      ) : null}
+
+      {!context ? (
+        <NotConfiguredState
+          title="Market context unavailable"
+          description="Currency and benchmark context could not be loaded. Saving is gated until the model currencies can be reviewed."
+        />
+      ) : null}
+
+      {assumptionsResult.status === "rejected" || !assumptionsRes?.data ? (
+        <ErrorState message="Could not load this model's assumptions or outputs. No cached valuation result is being shown." />
+      ) : null}
 
       {latestAssumptionSet?.is_stale && (
         <div style={{ marginBottom: "1.5rem" }}>
@@ -82,7 +98,16 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
         </div>
       )}
 
-      <AdvancedWorkspace model={model} modelId={modelId} companyId={companyId} latestAssumptionSet={latestAssumptionSet} valuationContext={context} />
+      {assumptionsResult.status === "fulfilled" && assumptionsRes?.data ? (
+        <AdvancedWorkspace
+          key={`${companyId}:${modelId}`}
+          model={model}
+          modelId={modelId}
+          companyId={companyId}
+          latestAssumptionSet={latestAssumptionSet}
+          valuationContext={context}
+        />
+      ) : null}
     </>
   );
 }

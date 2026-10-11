@@ -165,7 +165,7 @@ function CapabilityStatusCell({ cell }: { cell: CapabilityCell }) {
   return (
     <td>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.35rem" }}>
-        <span className="badge" style={{ backgroundColor: `${color}18`, border: `1px solid ${color}40`, color }}>
+        <span className="badge" style={{ backgroundColor: "var(--surface-muted)", border: `1px solid ${color}`, color }}>
           {STATUS_LABELS[cell.status]}
         </span>
         <span style={{ color: "var(--text-primary)", fontSize: "0.9rem" }}>{cell.provider}</span>

@@ -1,7 +1,10 @@
 "use client";
 
 import { AlertTriangle, Archive, CheckCircle2, Database, RotateCcw, ShieldCheck } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ValuationSourceRefreshPanel } from "./source-refresh-panel";
+import { fetchApi } from "@/lib/api/transport";
+import type { ValuationSetupDraft } from "@/lib/api/valuation-drafts";
 
 import type {
   AssumptionProvenance,
@@ -33,9 +36,17 @@ type DraftReviewProps = {
 type FieldDefinition = {
   key: string;
   label: string;
+  required?: boolean;
+  formName?: string;
 };
 
 const FIELD_GROUPS: Array<{ title: string; fields: FieldDefinition[] }> = [
+  {
+    title: "Forecast Structure",
+    fields: [
+      { key: "projection_years_count", label: "Projection Years", formName: "projection_years" },
+    ],
+  },
   {
     title: "Operating Assumptions",
     fields: [
@@ -68,17 +79,56 @@ const FIELD_GROUPS: Array<{ title: string; fields: FieldDefinition[] }> = [
     fields: [
       { key: "cash", label: "Cash" },
       { key: "debt", label: "Debt" },
+      { key: "cross_holdings", label: "Cross Holdings", required: false },
+      { key: "operating_leases", label: "Operating Leases", required: false },
       { key: "minority_interests", label: "Minority Interests" },
       { key: "preferred_stock", label: "Preferred Stock" },
       { key: "employee_options_value", label: "Employee Options Value" },
       { key: "diluted_shares", label: "Diluted Shares" },
+      { key: "basic_shares", label: "Basic Shares", required: false },
       { key: "current_market_price", label: "Current Market Price" },
+    ],
+  },
+  {
+    title: "Equity Cash Flow and Payout Inputs",
+    fields: [
+      { key: "net_income", label: "Net Income", required: false },
+      { key: "capex", label: "Capital Expenditure", required: false },
+      { key: "depreciation", label: "Depreciation", required: false },
+      { key: "change_in_nwc", label: "Change in Net Working Capital", required: false },
+      { key: "new_debt_issued", label: "New Debt Issued", required: false },
+      { key: "debt_repaid", label: "Debt Repaid", required: false },
+      { key: "dividends", label: "Dividends", required: false },
+      { key: "buybacks", label: "Buybacks", required: false },
+      { key: "stock_issuances", label: "Stock Issuances", required: false },
+    ],
+  },
+  {
+    title: "Lifecycle and Special-Case Inputs",
+    fields: [
+      { key: "company_age", label: "Company Age", required: false },
+      { key: "probability_of_failure", label: "Probability of Failure", required: false },
+      { key: "distress_sale_proceeds", label: "Distress Sale Proceeds", required: false },
+      { key: "book_value_of_equity", label: "Book Value of Equity", required: false },
+      { key: "target_roe", label: "Target ROE", required: false },
     ],
   },
 ];
 
+const TEXT_FIELDS = [
+  { key: "cash_flow_currency", label: "Cash-Flow Currency", required: true },
+  { key: "discount_rate_currency", label: "Discount-Rate Currency", required: true },
+  { key: "currency_override_note", label: "Currency Override Note", required: false },
+  { key: "story_text", label: "Valuation Story", required: false },
+  { key: "growth_story", label: "Growth Story", required: false },
+  { key: "margin_story", label: "Margin Story", required: false },
+  { key: "reinvestment_story", label: "Reinvestment Story", required: false },
+  { key: "risk_story", label: "Risk Story", required: false },
+];
+
 const RENDERED_FIELDS = new Set([
   "revenue_growth_years_json",
+  ...TEXT_FIELDS.map((field) => field.key),
   ...FIELD_GROUPS.flatMap((group) => group.fields.map((field) => field.key)),
 ]);
 
@@ -103,6 +153,24 @@ export function AutofillDraftReview({
   initialUpdatedAt,
   action,
 }: DraftReviewProps) {
+  useEffect(() => {
+    const revealField = () => {
+      const key = window.location.hash.slice(1);
+      const allowed = key === "revenue-growth" || FIELD_GROUPS.some(group => group.fields.some(field => field.key === key));
+      if (!allowed) return;
+      const field = document.getElementById(key);
+      let parent = field?.parentElement;
+      while (parent) {
+        if (parent instanceof HTMLDetailsElement) parent.open = true;
+        parent = parent.parentElement;
+      }
+      field?.scrollIntoView({ block: "center" });
+      field?.focus({ preventScroll: true });
+    };
+    revealField();
+    window.addEventListener("hashchange", revealField);
+    return () => window.removeEventListener("hashchange", revealField);
+  }, [draftId]);
   const [values, setValues] = useState<Record<string, unknown>>({ ...draft.assumptions });
   const [reviewedFields, setReviewedFields] = useState<Set<string>>(new Set(initialReviewedFields));
   const [editedFields, setEditedFields] = useState<Set<string>>(new Set(initialEditedFields));
@@ -111,6 +179,7 @@ export function AutofillDraftReview({
   const [warnings, setWarnings] = useState(draft.warnings);
   const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [saveMessage, setSaveMessage] = useState("");
+  const [pipelineBusy, setPipelineBusy] = useState(false);
   const [archiveConfirmationOpen, setArchiveConfirmationOpen] = useState(false);
   const [defaultsAccepted, setDefaultsAccepted] = useState(false);
   const [bulkAcceptedFields, setBulkAcceptedFields] = useState<Set<string>>(new Set());
@@ -204,6 +273,21 @@ export function AutofillDraftReview({
     }
   }
 
+  async function loadRefreshedDraft() {
+    const saved = await fetchApi<ValuationSetupDraft>(`/valuation-drafts/${draftId}`);
+    setValues(saved.assumptions_json);
+    setUpdatedAt(saved.updated_at);
+    setReviewedFields(new Set(saved.reviewed_fields_json));
+    setEditedFields(new Set(saved.edited_fields_json));
+    setSourceMetadata(saved.source_metadata_json);
+    setProvenance(saved.provenance_json);
+    setWarnings(saved.warnings_json);
+    setDefaultsAccepted(false);
+    setBulkAcceptedFields(new Set());
+    setSaveState("idle");
+    setSaveMessage("Source refresh finished. Review the updated draft and any incomplete steps.");
+  }
+
   async function refreshSources() {
     setSaveState("saving");
     setSaveMessage("");
@@ -250,6 +334,14 @@ export function AutofillDraftReview({
     const source = edited ? "User edited" : provenanceLabel(rawEntry);
     const claimType = edited ? "User Assumption" : entry.claim_type || "Unclassified";
     const warning = typeof entry.warnings === "string" ? entry.warnings : null;
+    const sourceParts = [
+      typeof entry.source_file === "string" ? entry.source_file : null,
+      typeof entry.source_sheet === "string" ? entry.source_sheet : null,
+      typeof entry.source_row === "string" ? `row ${entry.source_row}` : null,
+      typeof entry.source_column === "string" ? entry.source_column : null,
+    ].filter(Boolean);
+    const sourceAsOf = typeof entry.source_as_of === "string" ? entry.source_as_of : null;
+    const sourceUrl = typeof entry.source_url === "string" && /^https?:\/\//i.test(entry.source_url) ? entry.source_url : null;
     const displayEntry = edited ? { ...entry, is_placeholder: false, requires_review: false } : entry;
 
     return (
@@ -268,6 +360,14 @@ export function AutofillDraftReview({
         {warning ? (
           <span style={{ color: "var(--danger)", fontSize: "12px" }}>{warning}</span>
         ) : null}
+        {sourceParts.length > 0 ? (
+          <span style={{ color: "var(--muted)", fontSize: "12px" }}>
+            {sourceParts.join(" · ")}{sourceAsOf ? ` · as of ${sourceAsOf}` : ""}
+          </span>
+        ) : null}
+        {sourceAsOf && sourceParts.length === 0 ? <small>As of {sourceAsOf}{entry.is_stale ? " · stale, review required" : ""}</small> : null}
+        {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noreferrer">Open source evidence</a> : null}
+        {typeof entry.unit === "string" ? <small>Source unit: {entry.unit}</small> : null}
         {edited ? (
           <button
             type="button"
@@ -314,6 +414,9 @@ export function AutofillDraftReview({
 
   return (
     <form action={action} style={{ display: "grid", gap: "20px" }}>
+      <ValuationSourceRefreshPanel companyId={company.id} beforeQueue={persistDraft}
+        onFinished={loadRefreshedDraft} onBusyChange={setPipelineBusy} />
+      <fieldset disabled={pipelineBusy} className="valuation-draft-fields">
       {warnings.length > 0 ? (
         <details className="panel valuation-draft-warnings">
           <summary>
@@ -351,6 +454,24 @@ export function AutofillDraftReview({
               Fields with unknown freshness: {sourceMetadata.freshness_unknown_fields.join(", ")}.
             </p>
           ) : null}
+        </section>
+      ) : null}
+
+      {sourceMetadata.input_readiness_summary ? (
+        <section className="panel" style={{ padding: "16px 20px" }}>
+          <div style={{ alignItems: "center", display: "flex", flexWrap: "wrap", gap: "8px" }}>
+            <strong>Valuation Input Readiness</strong>
+            <span className="badge">{sourceMetadata.input_readiness_summary.field_count} tracked inputs</span>
+            <span className="badge badge-danger">
+              {sourceMetadata.input_readiness_summary.required_missing_fields.length} required missing
+            </span>
+            <span className="badge badge-warn">
+              {sourceMetadata.input_readiness_summary.required_review_fields.length} required to review
+            </span>
+          </div>
+          <p className="subtitle" style={{ marginBottom: 0, marginTop: "10px" }}>
+            Optional and model-specific inputs stay visible below. Missing values are not replaced with industry aggregate cash flows.
+          </p>
         </section>
       ) : null}
 
@@ -416,6 +537,30 @@ export function AutofillDraftReview({
 
       <details className="panel valuation-draft-group">
         <summary>
+          <span>Currency and Narrative Inputs</span>
+          <small>Currency consistency and source-backed valuation story</small>
+        </summary>
+        <div className="form-grid valuation-draft-group-content">
+          {TEXT_FIELDS.map((field) => (
+            <div className="field" key={field.key} style={{ alignContent: "start" }}>
+              <label htmlFor={field.key}>{field.label}</label>
+              <textarea
+                id={field.key}
+                name={field.key}
+                rows={field.key.includes("story") || field.key.includes("note") ? 3 : 1}
+                value={typeof values[field.key] === "string" ? values[field.key] as string : ""}
+                onChange={(event) => updateValue(field.key, event.target.value)}
+                required={field.required}
+              />
+              {renderProvenance(field.key)}
+              {renderReviewControl(field.key)}
+            </div>
+          ))}
+        </div>
+      </details>
+
+      <details className="panel valuation-draft-group">
+        <summary>
           <span>Revenue Growth Path</span>
           <small>Year-by-year growth assumptions</small>
         </summary>
@@ -454,7 +599,7 @@ export function AutofillDraftReview({
                 <label htmlFor={field.key}>{field.label}</label>
                 <input
                   id={field.key}
-                  name={field.key}
+                  name={field.formName || field.key}
                   type="number"
                   step="any"
                   value={typeof values[field.key] === "number" ? (values[field.key] as number) : ""}
@@ -462,7 +607,7 @@ export function AutofillDraftReview({
                     field.key,
                     event.target.value === "" ? "" : Number(event.target.value),
                   )}
-                  required
+                  required={field.required !== false}
                 />
                 {renderProvenance(field.key)}
                 {renderReviewControl(field.key)}
@@ -516,13 +661,14 @@ export function AutofillDraftReview({
             Save Draft
           </button>
           <button type="button" className="secondary-button" onClick={refreshSources} disabled={saveState === "saving"}>
-            Refresh Sources
+            Refresh Stored Inputs
           </button>
           <button type="submit" className="primary-button" disabled={!promotionReady}>
             Confirm and Create Model
           </button>
         </div>
       </section>
+      </fieldset>
     </form>
   );
 }

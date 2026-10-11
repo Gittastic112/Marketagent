@@ -2,6 +2,12 @@
 
 ## Overview
 
+Implemented controls were reviewed September 30, 2026. The dated
+[security checkpoint](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md)
+records evidence; prioritized residual work lives only in the
+[limitation ledger](agent_capabilities_and_limitations.md#security-boundary).
+Requirements below are not a claim of complete public-deployment readiness.
+
 This repository is a local-first market intelligence and portfolio tracker for
 personal equity research. It runs a Next.js frontend, a FastAPI backend,
 PostgreSQL, and local Docker Compose services.
@@ -23,7 +29,7 @@ The highest-value assets are:
 
 This app is currently local-first and single-user. That lowers some internet
 threats, but it does not remove security responsibility. External source data,
-CSV imports, user-provided URLs, social posts, and future AI inputs must all be
+CSV imports, user-provided URLs, social posts, and AI inputs must all be
 treated as untrusted.
 
 ## Threat Model, Trust Boundaries, and Assumptions
@@ -57,12 +63,14 @@ Attacker-controlled or untrusted inputs:
 - Excel workbook uploads
 - markdown/text uploads
 - social posts and forum text
-- future AI model outputs
+- AI model outputs
 - future broker/provider API responses
 
 Assumptions:
 
-- The app is local-first and not exposed publicly.
+- The app is intended for local use. Checked-in Compose publishes on 127.0.0.1;
+  older containers can retain all-interface bindings until recreated. Inspect
+  actual bindings and host/network controls rather than inferring isolation.
 - Local credentials and a NextAuth session protect the current single-user
   workflow, but there is no production-ready authentication or authorization
   design. It must not be deployed to the public internet.
@@ -97,13 +105,23 @@ Security requirements:
   `NEXTAUTH_SECRET`. FastAPI verifies the assertion locally before applying
   per-record ownership checks.
 - Never forward raw NextAuth cookies to FastAPI. The browser backend proxy must
-  strip caller-supplied internal identity/signature headers before generating
-  its own, preventing browser header spoofing.
+  allow only content type, accept and request-id headers before generating its
+  own signed identity. Reject untrusted Host and cross-origin/missing-Origin
+  mutations; never trust forwarded-host headers or follow upstream redirects.
+- Frontend and backend bound request bodies at 42 MiB with a 30-second body
+  deadline. The backend spools above 1 MiB before parsing. File-specific limits
+  remain smaller. Backend per-path/IP throttling covers included routes;
+  local credential login allows ten attempts per process/minute. These are not
+  distributed per-user abuse controls. Private responses are no-store, validation
+  errors omit raw input/context, and browser responses add basic CSP/frame headers.
 - `NEXTAUTH_SECRET` is shared by the frontend and backend containers only for
   this local single-user assertion flow. It must remain secret and must not be
   exposed through any `NEXT_PUBLIC_*` variable.
 - The aggregate FastAPI router requires the verified current-user dependency.
-  Only `GET /api/health` and `GET /health` are public application routes. The
+  The explicit public APIRoute allowlist is `GET /api/health`,
+  `GET /api/readiness` and `GET /health`. Framework documentation/OpenAPI
+  routes are outside that inventory. Shared company/source catalogs require
+  authentication but are not owner-private tables. The
   automated route-security inventory must fail if an authenticated operation
   loses that dependency.
 - Backend and server-rendered frontend requests must use finite timeouts so an
@@ -111,6 +129,11 @@ Security requirements:
 - Portfolio parents and every portfolio child route must verify current-user
   ownership. Ingestion-created alerts must store the authenticated user id and
   deduplicate within that user's records.
+- Portfolio valuation derives private DCF, thesis and alert context from its
+  persisted owner even for internal callers; an explicit different owner is
+  rejected. Event-driven valuation alerts derive their owner from the model,
+  require matching company/event/change-log relationships and link only that
+  owner's portfolios. Price-ingestion alerts use the requesting owner.
 - Alert evidence reads must resolve the alert with the current user id before
   following event/document relationships. Event evidence reads must require
   authentication and filter thesis and valuation impacts through their
@@ -134,6 +157,16 @@ Security requirements:
   company, content hash, offsets, quote, occurrence index, and duplicate state.
   Search parameters and locator provenance are generated or verified server-side;
   creator identity comes only from the authenticated backend identity.
+- Unified stored-research search must preserve each model's access boundary.
+  Shared documents, events, and narratives may be searched as shared records;
+  alerts, theses, decisions, valuations, research sessions/messages, and AI
+  outputs must be filtered by the authenticated owner. User messages may return
+  only bounded excerpts. Assistant message text must not bypass AI review by
+  appearing as a generic message result.
+- Search may index AI output only when execution succeeded, human review is
+  approved, `is_blocked` is false, and a review timestamp exists. The result
+  remains `AI Interpretation`, carries mock state, and does not become a fact
+  merely because it is searchable.
 - Thesis assumptions/impacts and valuation child records must never be resolved
   by child ID alone. Join or resolve through the current user's `ThesisNote` or
   `ValuationModel`, including updates, deletes, outputs, scenarios, diagnostics,
@@ -143,7 +176,8 @@ Security requirements:
 - Auth readiness may expose required environment-variable names and boolean
   configuration state. It must never return secret or credential values, and
   its response must remain non-cacheable.
-- Browser automation must use the isolated `market-intel-e2e` Compose project,
+- Browser automation must use the isolated `market-intel-e2e` Compose project
+  or an explicitly scoped disposable equivalent,
   its tmpfs database, and non-default ports. It may read local credentials from
   the ignored root `.env`, but tests, traces, logs, screenshots, and docs must
   not contain credential values. The runner must remove its containers,
@@ -176,6 +210,12 @@ Security requirements:
 - Do not scrape sources that prohibit scraping.
 - Use official APIs, licensed feeds, approved exports, or manual import.
 - Add timeouts and clear error handling for future network fetches.
+- Public RSS and filing-text downloads validate every DNS answer, including
+  IPv6, reject non-public addresses, pin the numeric connection while preserving
+  TLS verification/Host, and disable redirects/environment proxies. RSS is capped
+  at 4 MiB and filing text at 40 MiB; unexpected compression is rejected.
+  Other fixed-provider clients have separate policies, not blanket pinning.
+- RSS parsing rejects DTD/entities through defusedxml and caps inline XML too.
 
 ### CSV, markdown, and manual imports
 
@@ -193,8 +233,12 @@ Security requirements:
 - Keep preview read-only and roll back the full apply transaction when any
   blocking row or downstream portfolio update fails.
 - Do not execute formulas or scripts from uploaded spreadsheets.
+- Manual benchmark workbooks cap intake at 12 MiB; Screener keeps its 2 MiB cap.
+  ZIP preflight rejects encrypted, excessive-entry and oversized-expanded files
+  before parsing. Legacy XLS still needs its parser; these are not CPU isolation.
 - Escape spreadsheet-export cells that begin with `=`, `+`, `-`, or `@` to
-  reduce CSV formula injection risk.
+  reduce CSV formula injection risk, including whitespace-prefixed formulas and
+  leading tab/newline/carriage-return values.
 - Treat markdown and raw text as untrusted display content.
 - Filing section diffs may render only parser-recognized generator-owned `<ins>` and `<del>` semantics. Escape every source token before storage, parse stored legacy diff strings into React text segments, and keep regression tests for changed and first-time sections. Filing diff rendering must not use `dangerouslySetInnerHTML`.
 - Accept Screener uploads as `.xlsx` only, cap them at 2MB, hash bytes before
@@ -224,6 +268,26 @@ Security requirements:
   return PNG bytes with `private, no-store`, inline disposition, and `nosniff`.
   The renderer must not fetch user-controlled URLs or accept arbitrary bytes.
 - Do not return parser stack traces or local file paths to the browser.
+- Daily Brief uploads use a separate owner-private `brief_sources` table, never
+  the shared raw-document catalog. Text is capped at 60,000 characters; PDFs at
+  12 MB, 1,000 total pages and 20 selected pages. Oversized ranges are rejected
+  before allocating page lists. Resolve indirect content streams and bound each
+  decoded page before text extraction. No OCR or visual/table-layout analysis.
+  Original PDF bytes and source text are deferred and excluded from collections;
+  only owned detail/binary routes expose them, with private/no-store headers.
+- Inbox scans require explicit current disclosure. Only selected source text,
+  source date, public company identity and field names leave the machine. Stored
+  portfolio/thesis/model values do not. Exact unique quotes, declared source IDs,
+  a fixed valuation-field catalog and recommendation checks guard publication.
+  Failed or unverifiable output stays blocked; successful output remains pending
+  human review. Source matching does not certify interpretation or materiality.
+  No scan endpoint promotes facts or changes valuation drafts/saved models.
+- Archive/restore requires the source owner and viewed lifecycle version. It
+  retains private evidence and review state rather than deleting or approving it.
+  Archived sources cannot initiate scans. Active attempts block archiving; expired
+  attempts can be abandoned. Publication/failure must match the claimed scan
+  timestamp and lifecycle version, never overwrite a newer attempt, and never
+  resolve a failure by taking another request's latest AI output.
 
 ### Dependency supply chain
 
@@ -249,9 +313,15 @@ Security requirements:
 - Never commit `.env`.
 - Keep `.env.example` placeholder-only.
 - Do not log API keys, bearer tokens, broker tokens, or model keys.
+- Gemini credentials use the x-goog-api-key header, never URL query parameters.
+  The explicit connectivity check sends a fixed non-private prompt, records a
+  model-specific Processing Run and suppresses raw provider failure bodies.
 - Do not store broker passwords.
 - Future broker integrations must use official OAuth/token flows and should
   encrypt stored tokens if persistence is required.
+- Legacy generic `/oauth/store-token` writes are disabled with 503 because the
+  table lacks a supported owner-scoped provider workflow. Status returns no
+  global inventory and explicitly says not configured; existing rows are retained.
 
 ### AI outputs
 
@@ -269,6 +339,15 @@ Security requirements:
 - Display the exact data classes that may leave the machine and require the
   current disclosure version before every external-capable AI action.
 - Do not let AI invent sources.
+- Citation suggestions may inspect only source IDs declared by an owned AI
+  output. They must use already stored raw-document text, bound scan and quote
+  sizes, preserve exact offsets, expose low-confidence and unavailable states,
+  and make no external calls.
+- Selecting a suggested passage must not validate a citation, change review
+  status, or approve an output. Manual edits must discard previously suggested
+  offsets so the validator resolves the edited text again.
+- Reviewed-AI search must remain owner-scoped, omit pending/blocked/failed
+  output, and return bounded excerpts rather than full private output bodies.
 - Do not auto-rewrite thesis notes, thesis impacts, or DCF assumptions. AI may
   return proposals that require a separate reviewed write.
 - Do not generate buy/sell recommendations.
@@ -276,12 +355,14 @@ Security requirements:
 - Do not include prompts, provider bodies, raw documents, private request
   bodies, holdings, thesis text, credentials, or raw exception text in logs.
 
-Implemented boundaries include `backend/app/services/ai_contract.py` and
-`backend/app/services/ai_citations.py`. Active entry points use the execution
-contract; exact declared-source citation validation, deterministic evaluation,
-owner-scoped review, and approval blocking exist. Providers do not yet generate
-complete citations reliably and the evaluation corpus remains small, so AI text
-is not certified source-backed research.
+Implemented boundaries include `backend/app/services/ai_contract.py`,
+`backend/app/services/ai_citations.py`, and
+`backend/app/services/ai_citation_suggestions.py`. Active entry points use the
+execution contract; exact declared-source citation validation, local
+deterministic passage candidates, owner-scoped review, and approval blocking
+exist. Providers do not yet generate complete citations reliably and the
+evaluation corpus remains small, so AI text is not certified source-backed
+research.
 
 ### Portfolio and financial privacy
 

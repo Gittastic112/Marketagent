@@ -18,7 +18,8 @@ Make backend API changes without route, schema, service, model, migration, or te
 
 ## Prerequisites
 
-- Read `AGENTS.md` backend rules.
+- Read [backend rules](../../../backend/AGENTS.md) and use the code map to locate
+  the owning domain.
 - Inspect the relevant router, schema, service, model, migration, and tests.
 
 ## Inputs
@@ -39,13 +40,22 @@ Make backend API changes without route, schema, service, model, migration, or te
 ## Workflow
 
 1. Locate router in `backend/app/api/routers/`.
-2. Locate schemas in `backend/app/api/schemas.py` or `backend/app/schemas/`.
+2. Locate the domain contract in `backend/app/schemas/`; the legacy
+   `backend/app/api/schemas.py` is a compatibility facade/unextracted legacy owner.
+   New valuation/portfolio fields belong in their narrow modules. Pure calculation
+   contracts must not import HTTP, services or ORM.
 3. Locate service in `backend/app/services/`.
 4. Locate model and migration if persistence changes.
 5. Add or update focused tests first where practical.
 6. Implement the smallest service/route change.
 7. Return envelope responses and specific errors.
 8. Run targeted backend tests, then broader tests if risk warrants.
+9. Resolve owned parent resources before reading child evidence or source IDs.
+10. Keep deterministic suggestion/read endpoints separate from validation or
+    mutation endpoints. Bound query limits, source scans, and returned excerpts.
+11. For cross-model search, apply ownership filters inside each model query,
+    exclude records without a truthful company relationship when company-filtered,
+    preserve one global result limit, and carry scope/review/mock metadata.
 
 ## Acceptance criteria
 
@@ -54,6 +64,9 @@ Make backend API changes without route, schema, service, model, migration, or te
 - Response shape matches frontend client expectations.
 - No secrets leak in errors/logs.
 - Tests cover the changed behavior.
+- Evidence candidates are not described as validated claims, and read endpoints
+  cannot silently mutate review state.
+- Search tests cover cross-user isolation and pending/blocked AI exclusion.
 
 ## Common mistakes
 

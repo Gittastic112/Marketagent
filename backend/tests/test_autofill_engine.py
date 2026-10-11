@@ -3,6 +3,7 @@ from datetime import date
 from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.damodaran import DamodaranDatasetFile
+from app.models.assumption_methodology import AssumptionMethodValue
 from app.models.financial import FinancialStatementPeriod, FinancialMetric, NormalizedFinancialSnapshot, NormalizedFinancialMetric
 from app.models.damodaran_fundamentals import DamodaranMarginBenchmark
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
@@ -30,12 +31,105 @@ def test_autofill_engine_with_no_data(db_session: Session):
     assert provenance.get("revenue_growth_years_json", {}).get("source_type") == "generic_market_default"
     assert provenance["revenue_growth_years_json"]["is_placeholder"] is True
     assert provenance["revenue_growth_years_json"]["label"].startswith("[PLACEHOLDER]")
-    assert provenance.get("terminal_growth_rate", {}).get("source_type") == "formula"
-    assert "Capped" in provenance.get("terminal_growth_rate", {}).get("label", "")
-    assert provenance["terminal_growth_rate"]["claim_type"] == "Calculation"
+    assert provenance.get("terminal_growth_rate", {}).get("source_type") == "missing_dependency"
+    assert provenance["terminal_growth_rate"]["requires_review"] is True
     assert provenance.get("starting_revenue", {}).get("source_type") == "missing_actual_default"
     assert provenance["starting_revenue"]["label"].startswith("[PLACEHOLDER]")
     assert provenance["starting_revenue"]["requires_review"] is True
+    assert set(item["field"] for item in source_metadata["input_readiness"]) == set(
+        AssumptionAutofillEngine.INPUT_CONTRACT
+    )
+    assert source_metadata["input_readiness_summary"]["required_missing_fields"]
+
+
+def test_autofill_uses_currency_matched_active_workbook_methods(db_session: Session):
+    company = Company(
+        name="Transportation Co",
+        ticker="TRANS",
+        market="India",
+        country="India",
+        currency="INR",
+        damodaran_industry="Transportation",
+    )
+    dataset = DamodaranDatasetFile(
+        uploaded_filename="waccIndia.xls",
+        dataset_code="wacc_methods",
+        country="India",
+        source_file_type="xls",
+        source_sha256="workbook-hash",
+        source_as_of="2026-01-05",
+        canonical_source_path="raw/datasets/waccIndia.xls",
+        import_kind="typed",
+        is_active=True,
+        row_count=4,
+    )
+    db_session.add_all([company, dataset])
+    db_session.flush()
+    common = {
+        "dataset_file_id": dataset.id,
+        "country": "India",
+        "unit": "decimal",
+        "source_type": "damodaran",
+        "source_name": "Damodaran January 2026 benchmark",
+        "source_file": "waccIndia.xls",
+        "source_sheet": "Industry Averages",
+        "confidence": "high",
+        "is_default_candidate": True,
+    }
+    db_session.add_all([
+        AssumptionMethodValue(
+            **common,
+            assumption_key="risk_free_rate",
+            method_key="inflation_parity_from_us_treasury",
+            currency="INR",
+            value=0.06485365853658531,
+            source_row="9,16,17",
+            source_column="Rows 9, 16, and 17",
+        ),
+        AssumptionMethodValue(
+            **common,
+            assumption_key="equity_risk_premium",
+            method_key="damodaran_country_erp",
+            value=0.0708,
+            source_row="10",
+            source_column="Risk Premium to Use for Equity",
+        ),
+        AssumptionMethodValue(
+            **common,
+            assumption_key="wacc_start",
+            method_key="industry_cost_of_capital_local",
+            industry="Transportation",
+            currency="INR",
+            value=0.13400219494298193,
+            source_row="31",
+            source_column="Cost of Capital (Local Currency)",
+        ),
+        AssumptionMethodValue(
+            **common,
+            assumption_key="debt_to_capital",
+            method_key="industry_market_debt_ratio",
+            industry="Transportation",
+            value=0.17552459524761466,
+            source_row="31",
+            source_column="D/(D+E)",
+        ),
+    ])
+    db_session.commit()
+
+    result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
+
+    assert result["assumptions"]["risk_free_rate"] == pytest.approx(0.06485365853658531)
+    assert result["assumptions"]["equity_risk_premium"] == pytest.approx(0.0708)
+    assert result["assumptions"]["debt_to_capital"] == pytest.approx(0.17552459524761466)
+    assert result["assumptions"]["wacc_start"] == pytest.approx(0.13400219494298193)
+    source = result["provenance"]["wacc_start"]
+    assert source["source_file"] == "waccIndia.xls"
+    assert source["source_sha256"] == "workbook-hash"
+    assert source["source_as_of"] == "2026-01-05"
+    assert source["source_row"] == "31"
+    assert source["requires_review"] is True
+    assert result["assumptions"]["cash_flow_currency"] == "INR"
+    assert result["assumptions"]["discount_rate_currency"] == "INR"
 
 def test_autofill_engine_with_priors(db_session: Session):
     company = Company(name="Priors Co", ticker="PRI", market="India", damodaran_industry="Software (Internet)")

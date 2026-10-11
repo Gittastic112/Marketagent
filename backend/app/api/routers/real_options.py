@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.errors import PublicApiError
+from app.api.dependencies import get_current_user
+from app.models.dcf import DcfAssumptionSet, ValuationModel
+from app.schemas.real_options import SavedRealOptionRequest, SavedRealOptionResponse
+from app.services.saved_real_options import calculate_saved_real_option
 
 from app.api.schemas import (
     ApiResponse,
@@ -20,6 +25,22 @@ from app.models.real_options import IndustryVolatilityBenchmark
 from app.models.damodaran import DamodaranDatasetFile
 
 router = APIRouter()
+
+
+@router.post("/api/valuation/options/assumptions/{assumption_id}/calculate", response_model=ApiResponse[SavedRealOptionResponse])
+def calculate_owned_real_option(assumption_id: int, request: SavedRealOptionRequest,
+                               db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    row = db.scalar(select(DcfAssumptionSet).join(ValuationModel).where(
+        DcfAssumptionSet.id == assumption_id, ValuationModel.user_id == current_user["id"]))
+    if row is None:
+        raise HTTPException(status_code=404, detail="Assumption set not found")
+    try:
+        result = calculate_saved_real_option(row, request)
+    except (ValueError, ArithmeticError) as exc:
+        raise PublicApiError(status_code=422, code="REAL_OPTION_BASIS_INVALID",
+            message=str(exc) if isinstance(exc, ValueError) else "The option inputs do not produce a finite calculation.") from None
+    return ApiResponse(data=result, meta={"source": "saved_dcf_and_user_option_assumptions", "confidence": "medium",
+        "warnings": result.warnings})
 
 @router.get(
     "/volatility",

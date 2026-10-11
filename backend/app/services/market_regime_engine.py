@@ -90,6 +90,22 @@ class MarketRegimeEngine:
                         "source_name": latest.source_name,
                         "source_url": latest.source_url,
                         "methodology": latest.methodology,
+                        "claim_type": (
+                            "Calculation"
+                            if latest.source_record_id is not None
+                            else "Source Summary"
+                            if latest.input_type == "provider"
+                            else "User Assumption"
+                        ),
+                        "evidence_state": (
+                            "linked_record"
+                            if latest.source_record_id is not None
+                            else "declared_source"
+                            if latest.input_type == "provider"
+                            else "manual_assumption"
+                        ),
+                        "source_record_type": latest.source_record_type,
+                        "source_record_id": latest.source_record_id,
                     }
                 )
             else:

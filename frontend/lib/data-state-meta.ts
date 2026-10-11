@@ -10,6 +10,8 @@ export type DataStateBadge = {
 export type ApiMetaSummary = {
   allStale: boolean;
   someStale: boolean;
+  allUnavailable: boolean;
+  someUnavailable: boolean;
   hasMock: boolean;
   hasManual: boolean;
   warnings: string[];
@@ -29,10 +31,10 @@ export function buildDataStateBadges(meta: (ApiMeta & { is_mock?: boolean }) | n
 
   const badges: DataStateBadge[] = [];
 
-  if (meta.is_stale) {
-    badges.push({ label: "Stale", tone: "warning" });
-  } else if (meta.status !== "success") {
+  if (meta.status !== "success") {
     badges.push({ label: sentenceCase(meta.status), tone: "danger" });
+  } else if (meta.is_stale) {
+    badges.push({ label: "Stale", tone: "warning" });
   } else {
     badges.push({ label: "Live", tone: "success" });
   }
@@ -63,15 +65,22 @@ export function summarizeApiMetas(
     return {
       allStale: false,
       someStale: false,
+      allUnavailable: false,
+      someUnavailable: false,
       hasMock: false,
       hasManual: false,
       warnings: []
     };
   }
 
+  const successfulMetas = presentMetas.filter((meta) => meta.status === "success");
+  const unavailableMetas = presentMetas.filter((meta) => meta.status !== "success");
+
   return {
-    allStale: presentMetas.every((meta) => meta.is_stale),
-    someStale: presentMetas.some((meta) => meta.is_stale),
+    allStale: successfulMetas.length === presentMetas.length && successfulMetas.every((meta) => meta.is_stale),
+    someStale: successfulMetas.some((meta) => meta.is_stale),
+    allUnavailable: unavailableMetas.length === presentMetas.length,
+    someUnavailable: unavailableMetas.length > 0,
     hasMock: presentMetas.some((meta) => Boolean(meta.is_mock) || meta.source === "mock"),
     hasManual: presentMetas.some((meta) => meta.source === "manual" || (meta as any).is_manual),
     warnings: Array.from(new Set(presentMetas.flatMap((meta) => meta.warnings || [])))

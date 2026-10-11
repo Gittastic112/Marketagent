@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.api.errors import PublicApiError
 from app.db.session import get_db
 from app.models.macro import MacroObservation, MacroSeries

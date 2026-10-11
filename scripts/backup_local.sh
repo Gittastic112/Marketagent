@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+umask 077
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKUP_ROOT="${BACKUP_ROOT:-$ROOT_DIR/backups}"
@@ -51,11 +52,12 @@ table_names="$("${compose[@]}" exec -T "$POSTGRES_SERVICE" psql \
 : > "$counts_path"
 while IFS= read -r table_name; do
   [[ -z "$table_name" ]] && continue
+  # Keep Docker from consuming the remaining table names from this loop's stdin.
   count="$("${compose[@]}" exec -T "$POSTGRES_SERVICE" psql \
     -U "$POSTGRES_USER" \
     -d "$POSTGRES_DB" \
     -At \
-    -c "SELECT count(*) FROM \"$table_name\";")"
+    -c "SELECT count(*) FROM \"$table_name\";" </dev/null)"
   printf '%s\t%s\n' "$table_name" "$count" >> "$counts_path"
 done <<< "$table_names"
 

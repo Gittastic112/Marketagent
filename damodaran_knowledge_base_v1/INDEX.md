@@ -29,6 +29,7 @@
 - January 2025 empirical priors: `reference/regression_priors_2025.md`
 - Synthetic ratings: `reference/ratings_model_architecture.md`
 - Macro sensitivity/duration: `reference/macrodur_architecture.md`
+- US industry priors and source-scope review: `reference/us_benchmark_intake_2026.md`
 
 ## Other
 

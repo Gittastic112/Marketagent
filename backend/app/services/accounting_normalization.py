@@ -131,11 +131,11 @@ class MetricNormalizationEngine:
         depreciation_codes = ["depreciation_and_amortization", "da", "depreciation"]
         nwc_change_codes = ["change_in_working_capital", "nwc_change", "change_in_nwc"]
         cash_codes = ["cash", "cash_and_equivalents"]
-        debt_codes = ["debt", "total_debt", "short_term_debt", "long_term_debt"]
+        debt_codes = ["debt", "total_debt"]
         diluted_share_codes = ["diluted_shares", "weighted_average_diluted_shares"]
         basic_share_codes = ["basic_shares", "weighted_average_basic_shares"]
         acquisition_codes = ["acquisitions", "business_acquisitions"]
-        lease_liability_codes = ["lease_liabilities", "operating_lease_liabilities"]
+        lease_liability_codes = ["operating_leases", "lease_liabilities", "operating_lease_liabilities"]
         minority_interest_codes = ["minority_interests", "noncontrolling_interests"]
         preferred_stock_codes = ["preferred_stock"]
         employee_options_codes = ["employee_options_value"]
@@ -145,6 +145,16 @@ class MetricNormalizationEngine:
         nwc_change = val(nwc_change_codes)
         cash = val(cash_codes)
         debt = val(debt_codes)
+        debt_is_calculated = False
+        if not has(debt_codes):
+            for components in (["current_debt", "long_term_debt_noncurrent"],
+                ["short_term_borrowings", "long_term_debt_total"], ["short_term_debt", "long_term_debt"]):
+                rows = [next((m for m in metrics if m.metric_name == code), None) for code in components]
+                if all(row is not None and row.unit and math.isfinite(row.value) for row in rows) and len({row.unit for row in rows}) == 1:
+                    debt_codes = components
+                    debt = sum(row.value for row in rows)
+                    debt_is_calculated = True
+                    break
         diluted_shares = val(diluted_share_codes)
         basic_shares = val(basic_share_codes)
         operating_leases = val(lease_liability_codes)
@@ -205,7 +215,7 @@ class MetricNormalizationEngine:
         invested_capital = invested_capital_reported
         ic_warnings = None
         if not has(["invested_capital"]):
-            if has(["book_equity"]) and has(["debt"]):
+            if has(["book_equity"]) and has(debt_codes) and has(cash_codes):
                 invested_capital = book_equity + debt - cash
             else:
                 ic_warnings = "Missing invested capital, book equity, or debt."
@@ -280,7 +290,8 @@ class MetricNormalizationEngine:
             add_metric("net_income", net_income, "From reported line items", source_codes=["net_income", "profit"], unit=metric_unit(["net_income", "profit"]))
         add_metric("effective_tax_rate", tax_rate, "Computed: Tax / Pre-Tax Income" if not tax_warnings else "Default or Capped", tax_warnings, source_codes=["tax_expense", "pre_tax_income", "ebit"])
         add_metric("nopat", nopat, "Computed: EBIT * (1 - Tax Rate)", source_codes=["ebit", "tax_expense", "pre_tax_income"])
-        add_metric("net_debt", net_debt, "Computed: Debt - Cash", source_codes=[*debt_codes, *cash_codes])
+        if has(debt_codes) and has(cash_codes):
+            add_metric("net_debt", net_debt, "Computed: Debt - Cash", source_codes=[*debt_codes, *cash_codes])
         add_metric("working_capital", working_capital, "Computed: Current Assets - Current Liab - Cash", wc_warnings, source_codes=["current_assets", "current_liabilities", "cash"])
         reinvestment_sources = [*capex_codes, *depreciation_codes, *nwc_change_codes, *acquisition_codes]
         add_metric("reinvestment", reinvestment, "Computed: Capex - D&A + dWC + Acq", reinvest_warnings, source_codes=reinvestment_sources)
@@ -292,7 +303,6 @@ class MetricNormalizationEngine:
 
         for code, value, source_codes in (
             ("cash", cash, cash_codes),
-            ("debt", debt, debt_codes),
             ("diluted_shares", diluted_shares, diluted_share_codes),
             ("basic_shares", basic_shares, basic_share_codes),
             ("capex", capex, capex_codes),
@@ -315,6 +325,11 @@ class MetricNormalizationEngine:
                     unit=metric_unit(source_codes),
                 )
 
+        if has(debt_codes):
+            add_metric("debt", debt, "Computed: " + " + ".join(debt_codes) if debt_is_calculated else "From reported line items",
+                "Review lease inclusion and other financing claims." if debt_is_calculated else "",
+                source_codes=debt_codes, unit=metric_unit(debt_codes))
+
         if commit:
             db.commit()
         else:
@@ -333,7 +348,7 @@ class NormalizedSnapshotBackfillService:
         "change_in_nwc": {"change_in_working_capital", "nwc_change", "change_in_nwc"},
         "acquisitions": {"acquisitions", "business_acquisitions"},
         "basic_shares": {"basic_shares", "weighted_average_basic_shares"},
-        "operating_leases": {"lease_liabilities", "operating_lease_liabilities"},
+        "operating_leases": {"operating_leases", "lease_liabilities", "operating_lease_liabilities"},
         "minority_interests": {"minority_interests", "noncontrolling_interests"},
         "preferred_stock": {"preferred_stock"},
         "employee_options_value": {"employee_options_value"},
@@ -549,7 +564,7 @@ class FinancialReconciliationService:
         "depreciation": ("depreciation_and_amortization", "da", "depreciation"),
         "change_in_nwc": ("change_in_working_capital", "nwc_change", "change_in_nwc"),
         "acquisitions": ("acquisitions", "business_acquisitions"),
-        "operating_leases": ("lease_liabilities", "operating_lease_liabilities"),
+        "operating_leases": ("operating_leases", "lease_liabilities", "operating_lease_liabilities"),
         "minority_interests": ("minority_interests", "noncontrolling_interests"),
         "preferred_stock": ("preferred_stock",),
         "employee_options_value": ("employee_options_value",),

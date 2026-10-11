@@ -4,7 +4,7 @@ import type { Company, DecisionLog, EvidenceLedgerItem, VariantPerception } from
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
-import { PartialDataNotice } from "@/components/ui/data-states";
+import { DataStateNotices } from "@/components/ui/data-states";
 import { PageHeader, Panel, EmptyState } from "@/components/page";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 
@@ -54,7 +54,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
       </div>
 
       <DataHealthUpdater segment="decisions" isStale={dataState.someStale || dataState.allStale} />
-      {dataState.someStale && <PartialDataNotice message="Some decisions data is cached because the backend is unreachable." />}
+      <DataStateNotices metas={[evidenceRes.meta, perceptionsRes.meta, decisionsRes.meta]} />
 
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 

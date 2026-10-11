@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, JSON, String, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -11,6 +11,9 @@ class EvaluationRun(Base):
     __tablename__ = "evaluation_runs"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # Historical runs have no provable owner and remain inaccessible to user lists.
+    user_id: Mapped[str | None] = mapped_column(ForeignKey("users.id"), nullable=True, index=True)
+    report_json: Mapped[dict[str, Any] | None] = mapped_column(JSON, nullable=True)
     run_name: Mapped[str] = mapped_column(String(200))
     evaluation_type: Mapped[str] = mapped_column(String(50))  # e.g., 'financial', 'event', 'alert', 'ai', 'valuation'
     status: Mapped[str] = mapped_column(String(50), default="running")

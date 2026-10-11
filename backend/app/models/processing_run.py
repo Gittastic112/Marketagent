@@ -33,5 +33,5 @@ class ProcessingRun(Base):
     metadata_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    source = relationship("Source", lazy="selectin")
-    company = relationship("Company", lazy="selectin")
+    source = relationship("Source", lazy="select")
+    company = relationship("Company", lazy="select")

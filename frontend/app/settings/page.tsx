@@ -7,17 +7,13 @@ import type { ScoringConfig, TokenStatusResponse } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 
 export default async function SettingsPage() {
-  const configRes = await serverFetchApiResponse<ScoringConfig>("/scoring-config");
+  const [configRes, oauthStatusResult] = await Promise.all([
+    serverFetchApiResponse<ScoringConfig>("/scoring-config"),
+    serverFetchApi<TokenStatusResponse[]>("/oauth/status").catch(() => null),
+  ]);
   const config = configRes.data;
-
-  // Fetch OAuth status, handle potential 500 if ENCRYPTION_KEY is missing
-  let oauthStatus: TokenStatusResponse[] = [];
-  let encryptionError = false;
-  try {
-    oauthStatus = await serverFetchApi<TokenStatusResponse[]>("/oauth/status");
-  } catch (e) {
-    encryptionError = true;
-  }
+  const oauthStatus = oauthStatusResult ?? [];
+  const encryptionError = oauthStatusResult === null;
 
   return (
     <>
@@ -29,21 +25,19 @@ export default async function SettingsPage() {
 
       <Panel title="Integrations & Security">
         <p className="text-sm text-gray-500 mb-4">
-          Manage secure connections to external providers.
-          Broker sync is planned for a future phase once this foundation is fully verified.
+          OAuth connections and broker sync are not available yet. API-key providers are configured separately in the local environment.
         </p>
 
         {encryptionError ? (
           <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
             <p className="text-sm text-red-700">
-              <strong>Encryption Key Missing:</strong> The <code>ENCRYPTION_KEY</code> environment variable is not set.
-              Tokens cannot be securely encrypted. Please generate a key and add it to your <code>.env</code> file.
+              Integration status could not be loaded. This does not establish whether encryption is configured.
             </p>
           </div>
         ) : (
-          <div className="bg-green-50 border-l-4 border-green-500 p-4 mb-4">
-            <p className="text-sm text-green-700">
-              <strong>Secure Storage Active:</strong> Symmetric encryption is configured and active.
+          <div className="basis-note">
+            <p>
+              <strong>Token storage disabled:</strong> No approved owner-scoped OAuth flow exists yet. Do not submit broker credentials.
             </p>
           </div>
         )}

@@ -5,7 +5,9 @@ from hashlib import sha256
 import logging
 from re import escape, search, sub
 from typing import Any, Callable
-from xml.etree import ElementTree
+from xml.etree.ElementTree import Element
+from defusedxml import ElementTree
+from defusedxml.common import DefusedXmlException
 
 import httpx
 from sqlalchemy import or_, select
@@ -73,7 +75,7 @@ def ingest_rss_xml(db: Session, source_id: int, rss_xml: str, company_id: int | 
 
     try:
         items = parse_rss_items(rss_xml)
-    except ElementTree.ParseError as exc:
+    except (ElementTree.ParseError, DefusedXmlException) as exc:
         logger.error(
             "RSS payload parsing failed",
             extra={"provider": "rss", "exception_type": type(exc).__name__},
@@ -171,7 +173,9 @@ def ingest_rss_feed_url(
 
 
 def parse_rss_items(rss_xml: str) -> list[RssItem]:
-    root = ElementTree.fromstring(rss_xml)
+    if len(rss_xml.encode("utf-8")) > 4 * 1024 * 1024:
+        raise ElementTree.ParseError("RSS payload exceeds the size limit.")
+    root = ElementTree.fromstring(rss_xml, forbid_dtd=True)
     items: list[RssItem] = []
 
     for item in root.findall(".//item"):
@@ -247,7 +251,7 @@ def _term_matches(text: str, term: str) -> bool:
     return bool(search(rf"\b{escape(term)}\b", text))
 
 
-def _node_text(parent: ElementTree.Element, name: str) -> str | None:
+def _node_text(parent: Element, name: str) -> str | None:
     node = parent.find(name)
     if node is None or node.text is None:
         return None

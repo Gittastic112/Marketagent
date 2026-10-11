@@ -1,5 +1,5 @@
 from app.api.errors import PublicApiError
-from app.api.schemas import ApiMeta
+from app.schemas.common import ApiMeta
 from app.models.ai import AiOutput
 from app.services.ai_contract import AIExecutionError
 

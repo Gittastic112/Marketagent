@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import { backendData, createCompany, signIn } from "./helpers";
 
@@ -29,6 +29,13 @@ const ASSUMPTIONS: Record<string, string> = {
   current_market_price: "10",
 };
 
+async function expandDraftSections(page: Page) {
+  const closedSections = page.locator("details.valuation-draft-group:not([open]) > summary");
+  while (await closedSections.count()) {
+    await closedSections.first().click();
+  }
+}
+
 test("valuation draft save, reset, refresh, archive, and promotion", async ({ page }) => {
   await signIn(page);
   const unique = Date.now().toString().slice(-7);
@@ -42,6 +49,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(
     page.getByRole("heading", { name: "Draft New Valuation Model: Valuation E2E Fixture" }),
   ).toBeVisible();
+  await expandDraftSections(page);
 
   await page.locator("#starting_revenue:visible").fill("1200");
   await page.getByRole("button", { name: "Save Draft" }).click();
@@ -49,7 +57,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await page.getByRole("button", { name: "Reset starting_revenue to source" }).click();
   await expect(page.getByRole("button", { name: "Reset starting_revenue to source" })).toHaveCount(0);
 
-  await page.getByRole("button", { name: "Refresh Sources" }).click();
+  await page.getByRole("button", { name: "Refresh Stored Inputs" }).click();
   await expect(page.getByRole("heading", { name: "Model Settings" })).toBeVisible();
 
   await page.getByRole("button", { name: "Archive" }).click();
@@ -57,6 +65,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(page).toHaveURL(`/companies/${company.id}/valuation`);
 
   await page.goto(`/companies/${company.id}/valuation/draft`);
+  await expandDraftSections(page);
   await expect(page.locator("#starting_revenue:visible")).toHaveCount(1);
   for (const [field, value] of Object.entries(ASSUMPTIONS)) {
     await page.locator(`#${field}:visible`).fill(value);
@@ -78,9 +87,39 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(page).toHaveURL(new RegExp(`/companies/${company.id}/valuation/\\d+$`));
   await expect(page.getByText(`E2E Reviewed DCF ${unique}`, { exact: false })).toBeVisible();
 
+  await expect(page.getByText("User Assumption", { exact: true })).toBeVisible();
+  await page.getByLabel("Model name").fill(`E2E Updated DCF ${unique}`);
+  await page.getByLabel("Description").fill("Metadata update from the complete valuation workflow");
+  await page.getByRole("button", { name: "Save model details" }).click();
+  await expect(page.getByText(`E2E Updated DCF ${unique}`, { exact: false })).toBeVisible();
+
+  await page.getByRole("navigation", { name: "Valuation model sections" })
+    .getByRole("button", { name: "Payouts & Cash Return", exact: true }).click();
+  await page.locator("#capex:visible").fill("120");
+  await page.locator("#depreciation:visible").fill("80");
+  await page.locator("#change_in_nwc:visible").fill("25");
+  await page.locator("#buybacks:visible").fill("15");
+  await page.locator("#new_debt_issued:visible").fill("40");
+  await page.getByRole("button", { name: "Save & Run Valuation" }).click();
+  await expect(page.getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
+
+  const detailUrl = new URL(page.url());
+  const modelId = Number(detailUrl.pathname.split("/").at(-1));
+  const assumptionSets = await backendData<Array<{ capex: number; depreciation: number; buybacks: number }>>(
+    page,
+    `/valuation-models/${modelId}/assumptions`,
+  );
+  expect(assumptionSets[0].capex).toBe(120);
+  expect(assumptionSets[0].depreciation).toBe(80);
+  expect(assumptionSets[0].buybacks).toBe(15);
+
+  await page.goto(`/companies/${company.id}/valuation`);
+  await expect(page.getByRole("columnheader", { name: "Model readiness" })).toBeVisible();
+  await expect(page.getByText("Calculated", { exact: true })).toBeVisible();
+
   const models = await backendData<Array<{ name: string }>>(
     page,
     `/companies/${company.id}/valuation-models`,
   );
-  expect(models.some((model) => model.name === `E2E Reviewed DCF ${unique}`)).toBeTruthy();
+  expect(models.some((model) => model.name === `E2E Updated DCF ${unique}`)).toBeTruthy();
 });

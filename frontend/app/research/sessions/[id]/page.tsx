@@ -96,8 +96,8 @@ export default function SessionDetailPage() {
           <EmptyState label="No messages yet. Start the research session by asking a question." />
         ) : (
           session.messages.map((msg: any) => (
-            <div key={msg.id} style={{ display: "flex", gap: "1rem", flexDirection: msg.role === "user" ? "row-reverse" : "row" }}>
-              <div style={{
+            <div id={`message-${msg.id}`} key={msg.id} className="anchored-record" style={{ display: "flex", gap: "1rem", flexDirection: msg.role === "user" ? "row-reverse" : "row" }}>
+              <div id={msg.ai_output ? `ai-output-${msg.ai_output.id}` : undefined} style={{
                 width: "2rem", height: "2rem", borderRadius: "50%",
                 backgroundColor: msg.role === "user" ? "var(--accent-color)" : "var(--bg-secondary)",
                 display: "flex", alignItems: "center", justifyContent: "center",

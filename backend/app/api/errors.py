@@ -1,4 +1,5 @@
 import logging
+from math import isfinite
 from http import HTTPStatus
 from typing import Any
 
@@ -6,7 +7,7 @@ from fastapi import HTTPException, Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.responses import JSONResponse
 
-from app.api.schemas import ApiErrorDetail, ApiMeta, ApiResponse
+from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 
 logger = logging.getLogger(__name__)
@@ -49,6 +50,8 @@ class PublicApiError(HTTPException):
 
 
 def _json_safe(value: Any) -> Any:
+    if isinstance(value, float) and not isfinite(value):
+        return None
     if value is None or isinstance(value, (str, int, float, bool)):
         return value
     if isinstance(value, dict):
@@ -143,7 +146,7 @@ async def request_validation_exception_handler(
         request,
         status_code=422,
         errors=errors,
-        legacy_detail=exc.errors(),
+        legacy_detail=[{key: issue[key] for key in ("type", "loc", "msg") if key in issue} for issue in exc.errors()],
     )
 
 

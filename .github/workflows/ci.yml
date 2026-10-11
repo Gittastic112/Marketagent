@@ -12,6 +12,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  dependency-security:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - name: Audit frontend lockfile (package metadata only)
+        working-directory: frontend
+        run: npm audit --audit-level=moderate
+      - name: Audit resolved backend dependencies (package metadata only)
+        run: |
+          python -m pip install pip-audit
+          pip-audit -r backend/requirements-test.txt --progress-spinner off
+
   release-baseline:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -22,9 +41,15 @@ jobs:
         if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
       - name: Run repository static quality gates
         run: |
+          python3 -m unittest scripts.test_check_docs
+          python3 scripts/check_docs.py
           python3 -m unittest scripts.test_check_secrets
+          python3 -m unittest scripts.test_local_compose
+          python3 -m unittest scripts.test_backup_workflow
           python3 scripts/check_secrets.py
           python3 scripts/validate_project_skills.py
+          bash scripts/test_workstream_ownership.sh
+          bash scripts/check_workstream_ownership.sh
       - name: Verify clean-checkout backend, migration, and frontend baseline
         run: ./scripts/verify_release_baseline.sh
 

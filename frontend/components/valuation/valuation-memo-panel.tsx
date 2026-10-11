@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { generateValuationMemo, fetchValuationMemo, ValuationMemoResponse } from "@/lib/api";
+import { ApiError, generateValuationMemo, fetchValuationMemo, ValuationMemoResponse } from "@/lib/api";
 import { AI_DISCLOSURES } from "@/lib/ai-privacy";
 
 interface ValuationMemoPanelProps {
@@ -26,9 +26,10 @@ export function ValuationMemoPanel({ valuationId, scenario }: ValuationMemoPanel
     try {
       const data = await fetchValuationMemo(valuationId, scenario);
       setMemo(data);
-    } catch (err: any) {
-      console.error(err);
-      // It's okay if not found, we just show empty
+    } catch (err: unknown) {
+      if (!(err instanceof ApiError && err.status === 404)) {
+        setError(err instanceof Error ? err.message : "Could not load the stored valuation memo.");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -41,8 +42,8 @@ export function ValuationMemoPanel({ valuationId, scenario }: ValuationMemoPanel
     try {
       const data = await generateValuationMemo(valuationId, scenario);
       setMemo(data);
-    } catch (err: any) {
-      setError(err.message || "Failed to generate memo. Ensure you have calculated the DCF first.");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to generate memo. Ensure you have calculated the DCF first.");
     } finally {
       setIsGenerating(false);
     }

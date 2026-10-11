@@ -8,13 +8,24 @@ from sqlalchemy.orm import Session
 
 from app.models.company import Company
 from app.models.dcf import DcfAssumptionSet, ValuationModel, ValuationSetupDraft
-from app.api.schemas import DcfAssumptionSetWrite
+from app.schemas.valuation_inputs import DcfAssumptionSetWrite
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
 from app.services.dcf import calculate_dcf
 from app.services.industry_mapping import IndustryMappingService
+from app.services.valuation_source_inputs import source_input_signature
+
+
+def _review_basis(value: Any) -> Any:
+    """Age is display metadata; changed evidence or a stale boundary clears review."""
+    if isinstance(value, dict):
+        return {key: _review_basis(item) for key, item in value.items() if key != "age_days"}
+    if isinstance(value, list):
+        return [_review_basis(item) for item in value]
+    return value
 
 
 class ValuationSetupDraftService:
+    TEXT_FIELDS = {"cash_flow_currency", "discount_rate_currency"}
     POSITIVE_FIELDS = {
         "starting_revenue",
         "sales_to_capital_ratio",
@@ -27,9 +38,12 @@ class ValuationSetupDraftService:
     NONNEGATIVE_FIELDS = {
         "cash",
         "debt",
+        "cross_holdings",
+        "operating_leases",
         "minority_interests",
         "preferred_stock",
         "employee_options_value",
+        "distress_sale_proceeds",
     }
     ASSUMPTION_FIELDS = {
         "scenario",
@@ -62,10 +76,15 @@ class ValuationSetupDraftService:
         "minority_interests",
         "preferred_stock",
         "debt",
+        "cross_holdings",
+        "operating_leases",
         "employee_options_value",
         "diluted_shares",
         "basic_shares",
         "current_market_price",
+        "cash_flow_currency",
+        "discount_rate_currency",
+        "currency_override_note",
         "net_income",
         "capex",
         "depreciation",
@@ -95,7 +114,7 @@ class ValuationSetupDraftService:
 
     @classmethod
     def create_or_reopen(cls, db: Session, company_id: int, user_id: str) -> ValuationSetupDraft:
-        company = db.get(Company, company_id)
+        company = db.scalar(select(Company).where(Company.id == company_id).with_for_update())
         if company is None:
             raise HTTPException(status_code=404, detail="Company not found")
         existing = db.scalar(
@@ -115,6 +134,7 @@ class ValuationSetupDraftService:
                 existing.industry_name != company.damodaran_industry
                 or stored_mix_signature != current_mix_signature
                 or stored_financial_signature != current_financial_signature
+                or (existing.source_metadata_json or {}).get("source_input_signature") != source_input_signature(db, company)
             ):
                 return cls.refresh(db, existing)
             return existing
@@ -147,6 +167,7 @@ class ValuationSetupDraftService:
         reviewed_fields: list[str],
         expected_updated_at: datetime | None = None,
     ) -> ValuationSetupDraft:
+        db.refresh(draft, with_for_update=True)
         cls._assert_mutable(draft)
         cls._assert_version(draft, expected_updated_at)
         unknown = sorted(set(assumptions_patch) - cls.ASSUMPTION_FIELDS)
@@ -179,10 +200,14 @@ class ValuationSetupDraftService:
         draft.provenance_json = provenance
         draft.reviewed_fields_json = sorted(set(reviewed_fields))
         draft.edited_fields_json = sorted(edited_fields)
-        source_metadata = cls._merge_source_metadata(
-            source_metadata,
-            AssumptionAutofillEngine._source_metadata(provenance),
+        generated_metadata = AssumptionAutofillEngine._source_metadata(provenance)
+        readiness_rows, readiness_summary = AssumptionAutofillEngine._input_readiness(
+            assumptions,
+            provenance,
         )
+        generated_metadata["input_readiness"] = readiness_rows
+        generated_metadata["input_readiness_summary"] = readiness_summary
+        source_metadata = cls._merge_source_metadata(source_metadata, generated_metadata)
         draft.source_metadata_json = source_metadata
         if not source_metadata["stale_source_fields"]:
             draft.warnings_json = [
@@ -208,6 +233,7 @@ class ValuationSetupDraftService:
         draft: ValuationSetupDraft,
         expected_updated_at: datetime | None = None,
     ) -> ValuationSetupDraft:
+        db.refresh(draft, with_for_update=True)
         cls._assert_mutable(draft)
         cls._assert_version(draft, expected_updated_at)
         company = db.get(Company, draft.company_id)
@@ -222,11 +248,15 @@ class ValuationSetupDraftService:
         generated = AssumptionAutofillEngine.draft_assumptions(db, draft.company_id, base_assumptions)
         assumptions = cls._normalize_assumptions(generated["assumptions"])
         provenance = generated["provenance"]
+        for field in edited_fields:
+            if field in old_provenance:
+                provenance[field] = old_provenance[field]
         reviewed_fields: set[str] = set()
         for field in old_reviewed:
             if field in edited_fields:
                 reviewed_fields.add(field)
-            elif old_assumptions.get(field) == assumptions.get(field) and old_provenance.get(field) == provenance.get(field):
+            elif (old_assumptions.get(field) == assumptions.get(field)
+                    and _review_basis(old_provenance.get(field)) == _review_basis(provenance.get(field))):
                 reviewed_fields.add(field)
 
         old_source_metadata = dict(draft.source_metadata_json or {})
@@ -270,6 +300,7 @@ class ValuationSetupDraftService:
         fields: list[str],
         expected_updated_at: datetime | None = None,
     ) -> ValuationSetupDraft:
+        db.refresh(draft, with_for_update=True)
         cls._assert_mutable(draft)
         cls._assert_version(draft, expected_updated_at)
         requested = set(fields)
@@ -281,6 +312,7 @@ class ValuationSetupDraftService:
 
         draft.edited_fields_json = sorted(set(draft.edited_fields_json or []) - requested)
         draft.reviewed_fields_json = sorted(set(draft.reviewed_fields_json or []) - requested)
+        db.flush()
         return cls.refresh(db, draft)
 
     @classmethod
@@ -290,6 +322,7 @@ class ValuationSetupDraftService:
         draft: ValuationSetupDraft,
         expected_updated_at: datetime | None = None,
     ) -> ValuationSetupDraft:
+        db.refresh(draft, with_for_update=True)
         cls._assert_mutable(draft)
         cls._assert_version(draft, expected_updated_at)
         draft.status = "archived"
@@ -311,9 +344,11 @@ class ValuationSetupDraftService:
         model_type: str,
         expected_updated_at: datetime | None = None,
     ) -> ValuationModel:
+        db.refresh(draft, with_for_update=True)
         cls._assert_version(draft, expected_updated_at)
         if draft.status == "promoted":
             raise HTTPException(status_code=409, detail="Draft has already been promoted")
+        cls._assert_mutable(draft)
         cls._update_status(draft)
         if draft.status != "ready_to_value":
             unresolved = cls._unresolved_fields(draft)
@@ -411,6 +446,8 @@ class ValuationSetupDraftService:
 
     @classmethod
     def _valid_value(cls, field: str, value: Any) -> bool:
+        if field in cls.TEXT_FIELDS:
+            return isinstance(value, str) and len(value.strip()) == 3 and value.strip().isalpha()
         if isinstance(value, list):
             return bool(value) and all(isinstance(item, (int, float)) for item in value)
         if isinstance(value, dict):

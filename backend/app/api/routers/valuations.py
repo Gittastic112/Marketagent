@@ -1,8 +1,9 @@
 from typing import Sequence, Any
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from pydantic import ValidationError
 from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 import app.api.schemas as schemas
 from app.api.dependencies import get_current_user
@@ -11,16 +12,18 @@ from app.db.session import get_db
 from app.models.company import Company
 from app.models.dcf import ValuationModel, DcfAssumptionSet, DcfOutput, DcfProjectionYear, DcfSensitivityTable
 from app.services.dcf import calculate_dcf
-from app.services.reverse_dcf_engine import MarketImpliedAssumptionSolver
+from app.services.reverse_dcf_service import solve_saved_reverse_dcf
 from app.services.industry_mapping import IndustryMappingService
 from app.services.industry_assumption import IndustryAssumptionService
 from app.services.valuation_context import build_company_valuation_context
 from app.services.valuation_setup_draft import ValuationSetupDraftService
+from app.services.assumption_versions import AssumptionVersionConflict, create_assumption_version
 from app.services.quick_valuation import (
     calculate_quick_valuation,
     generate_quick_valuation_assumptions,
 )
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
+from app.schemas.valuation_inputs import DcfAssumptionVersionWrite
 
 router = APIRouter(prefix="", tags=["valuations"])
 
@@ -154,30 +157,133 @@ def list_valuation_models(company_id: int, db: Session = Depends(get_db), curren
     return ApiResponse(data=models)
 
 
+@router.get(
+    "/companies/{company_id}/valuation-model-summaries",
+    response_model=ApiResponse[list[schemas.ValuationModelSummaryRead]],
+)
+def list_valuation_model_summaries(
+    company_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[list[schemas.ValuationModelSummaryRead]]:
+    if db.get(Company, company_id) is None:
+        raise HTTPException(status_code=404, detail="Company not found")
+    models = db.scalars(
+        select(ValuationModel)
+        .options(selectinload(ValuationModel.assumption_sets).selectinload(DcfAssumptionSet.outputs))
+        .where(
+            ValuationModel.user_id == current_user["id"],
+            ValuationModel.company_id == company_id,
+        )
+        .order_by(ValuationModel.created_at.desc())
+    ).all()
+    summaries: list[schemas.ValuationModelSummaryRead] = []
+    for model in models:
+        latest = max(model.assumption_sets, key=lambda item: item.created_at, default=None)
+        output = latest.outputs if latest is not None else None
+        if latest is None:
+            readiness, detail = "setup_incomplete", "No saved assumption set"
+        elif latest.is_stale:
+            readiness, detail = "review_required", latest.stale_reason or "Assumptions marked stale"
+        elif output is None:
+            readiness, detail = "calculation_unavailable", "Latest assumptions have no stored output"
+        elif any(
+            isinstance(warning, dict) and warning.get("severity") in {"blocking", "critical"}
+            for warning in (output.warnings_json or [])
+        ):
+            readiness, detail = "blocked", "Resolve diagnostic warnings before relying on output"
+        else:
+            readiness, detail = "calculated", "Latest assumptions have a stored deterministic output"
+        summaries.append(schemas.ValuationModelSummaryRead(
+            id=model.id,
+            company_id=model.company_id,
+            name=model.name,
+            description=model.description,
+            model_type=model.model_type,
+            created_at=model.created_at,
+            updated_at=model.updated_at,
+            assumption_set_count=len(model.assumption_sets),
+            latest_assumption_set_id=latest.id if latest else None,
+            latest_scenario=latest.scenario if latest else None,
+            latest_run_at=latest.created_at if latest else None,
+            readiness=readiness,
+            readiness_detail=detail,
+            intrinsic_value_per_share=output.intrinsic_value_per_share if output else None,
+            model_quality_score=output.model_quality_score if output else None,
+            cash_flow_currency=latest.cash_flow_currency if latest else None,
+        ))
+    return ApiResponse(
+        data=summaries,
+        meta=schemas.ApiMeta(source="persisted_valuation_models", confidence="medium"),
+    )
+
+
+@router.get("/valuation-models/{model_id}", response_model=ApiResponse[schemas.ValuationModelRead])
+def get_valuation_model(
+    model_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[ValuationModel]:
+    return ApiResponse(data=get_owned_valuation_model(db, model_id, current_user["id"]))
+
+
+@router.patch("/valuation-models/{model_id}", response_model=ApiResponse[schemas.ValuationModelRead])
+def update_valuation_model(
+    model_id: int,
+    model_in: schemas.ValuationModelUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[ValuationModel]:
+    model = get_owned_valuation_model(db, model_id, current_user["id"])
+    changes = model_in.model_dump(exclude_unset=True)
+    if "name" in changes and not (changes["name"] or "").strip():
+        raise PublicApiError(
+            status_code=422,
+            code="VALUATION_MODEL_NAME_REQUIRED",
+            message="Valuation model name cannot be blank.",
+        )
+    for field, value in changes.items():
+        setattr(model, field, value.strip() if isinstance(value, str) else value)
+    db.commit()
+    db.refresh(model)
+    return ApiResponse(data=model)
+
+
 @router.post("/valuation-models/{model_id}/assumptions", response_model=ApiResponse[schemas.DcfAssumptionSetRead], status_code=status.HTTP_201_CREATED)
-def create_dcf_assumption_set(model_id: int, assumption_in: schemas.DcfAssumptionSetWrite, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Any:
+def create_dcf_assumption_set(model_id: int, assumption_in: DcfAssumptionVersionWrite, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Any:
     vmodel = get_owned_valuation_model(db, model_id, current_user["id"])
 
-    aset = DcfAssumptionSet(**assumption_in.model_dump())
-    aset.valuation_model_id = model_id
-    db.add(aset)
-    db.commit()
+    try:
+        aset = create_assumption_version(db, vmodel, assumption_in)
+        db.commit()
+    except AssumptionVersionConflict as exc:
+        db.rollback()
+        raise PublicApiError(status_code=409, code="VALUATION_VERSION_CONFLICT", message=str(exc)) from exc
+    except ValidationError:
+        db.rollback()
+        raise PublicApiError(status_code=422, code="VALUATION_INPUTS_INVALID",
+            message="Review the merged saved and submitted inputs: units, currencies and capital weights must remain valid.") from None
+    except ValueError as exc:
+        db.rollback()
+        raise PublicApiError(
+            status_code=422,
+            code="VALUATION_CALCULATION_INVALID",
+            message=str(exc),
+        ) from exc
+    except Exception:
+        db.rollback()
+        raise
+
     db.refresh(aset)
 
-    # Immediately calculate and store output
-    output, projection_years, sensitivity_tables = calculate_dcf(aset, model_type=vmodel.model_type)
-    db.add(output)
-    db.add_all(projection_years)
-    db.add_all(sensitivity_tables)
-    db.commit()
-    db.refresh(aset)
-
-    # Generate assumption diffs
-    from app.services.assumption_diff_service import AssumptionDiffService
-    AssumptionDiffService.generate_change_logs(db, aset)
-    db.refresh(aset)
-
-    return ApiResponse(data=aset)
+    return ApiResponse(
+        data=aset,
+        meta=schemas.ApiMeta(
+            source="user_assumption_and_deterministic_calculation",
+            confidence="medium",
+            warnings=["Assumption values require source and methodology review before the calculated output is relied on."],
+        ),
+    )
 
 
 @router.get("/valuation-models/{model_id}/assumptions", response_model=ApiResponse[list[schemas.DcfAssumptionSetRead]])
@@ -187,9 +293,16 @@ def list_dcf_assumption_sets(model_id: int, db: Session = Depends(get_db), curre
     asets = db.scalars(
         select(DcfAssumptionSet)
         .where(DcfAssumptionSet.valuation_model_id == model_id)
-        .order_by(DcfAssumptionSet.created_at.desc())
+        .order_by(DcfAssumptionSet.created_at.desc(), DcfAssumptionSet.id.desc())
     ).all()
-    return ApiResponse(data=asets)
+    return ApiResponse(
+        data=asets,
+        meta=schemas.ApiMeta(
+            source="persisted_user_assumptions",
+            confidence="medium",
+            warnings=["Stored assumptions can become stale when company facts, market prices, or benchmark data change."],
+        ),
+    )
 
 
 @router.delete("/valuation-models/{model_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -213,7 +326,7 @@ def get_dcf_results(model_id: int, assumption_id: int, db: Session = Depends(get
     if not aset.outputs:
         raise HTTPException(status_code=404, detail="Results not found")
 
-    return ApiResponse(data=aset.outputs)
+    return ApiResponse(data=schemas.DcfOutputRead.model_validate(aset.outputs, context={"assumption_set": aset}))
 
 
 @router.get("/valuation-models/{model_id}/assumptions/{assumption_id}/sensitivity", response_model=ApiResponse[list[schemas.DcfSensitivityTableRead]])
@@ -225,9 +338,16 @@ def get_dcf_sensitivity(model_id: int, assumption_id: int, db: Session = Depends
 @router.get("/valuation-models/{model_id}/assumptions/{assumption_id}/scenarios", response_model=ApiResponse[list[schemas.DcfScenarioOutput]])
 def get_dcf_scenarios(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Sequence[schemas.DcfScenarioOutput]:
     aset = get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
+    if aset.is_stale:
+        raise PublicApiError(status_code=422, code="SCENARIO_INPUTS_STALE", message="Review stale saved assumptions and save a new calculation before generating scenarios.")
+    from pydantic import ValidationError
+    try:
+        schemas.DcfAssumptionSetWrite.model_validate(aset, from_attributes=True)
+    except ValidationError:
+        raise PublicApiError(status_code=422, code="SCENARIO_INPUTS_INVALID", message="Correct invalid saved assumptions before generating scenarios.") from None
 
     from app.services.scenario_engine import ScenarioEngine
-    scenarios = ScenarioEngine.run_scenarios(aset)
+    scenarios = ScenarioEngine.run_scenarios(aset, model_type=aset.valuation_model.model_type or "fcff_dcf")
     return ApiResponse(data=scenarios)
 
 
@@ -235,22 +355,12 @@ def get_dcf_scenarios(model_id: int, assumption_id: int, db: Session = Depends(g
 def solve_reverse_dcf(request: schemas.ReverseDcfRequest, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> ApiResponse[schemas.ReverseDcfResponse]:
     aset = get_owned_assumption_set_by_id(db, request.assumption_set_id, current_user["id"])
 
-    diluted_shares = request.diluted_shares or aset.diluted_shares or 1.0
-
-    implied_value, original_value, diagnostics = MarketImpliedAssumptionSolver.solve(
-        assumption_set=aset,
-        target_parameter=request.target_parameter,
-        current_market_price=request.current_market_price,
-        diluted_shares=diluted_shares
-    )
-
-    return ApiResponse(data=schemas.ReverseDcfResponse(
-        target_parameter=request.target_parameter,
-        implied_value=implied_value,
-        original_value=original_value,
-        intrinsic_value_at_implied=request.current_market_price if implied_value is not None else None,
-        diagnostics=diagnostics
-    ))
+    try:
+        result = solve_saved_reverse_dcf(aset, request)
+    except ValueError as exc:
+        raise PublicApiError(status_code=422, code="REVERSE_DCF_INPUTS_INVALID", message=str(exc)) from exc
+    return ApiResponse(data=result, meta=schemas.ApiMeta(source="saved_user_assumptions_and_reverse_calculation",
+        confidence="unknown", warnings=["Comparison price and share overrides are User Assumptions, not live market facts. The calculation is non-writing and does not verify its economic plausibility."]))
 
 @router.get("/industries/suggest", response_model=ApiResponse[list[dict[str, Any]]])
 def suggest_industries(companyId: int, country: str = "India", db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):

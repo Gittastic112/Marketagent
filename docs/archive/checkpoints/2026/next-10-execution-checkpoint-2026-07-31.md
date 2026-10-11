@@ -24,7 +24,7 @@ foundation from full product certification.
 ## Validation
 
 ```bash
-docker compose exec backend pytest backend/tests -q
+docker compose exec -w /workspace/backend backend pytest tests -q
 # 352 passed, 4 third-party openpyxl warnings
 
 npm --prefix frontend test

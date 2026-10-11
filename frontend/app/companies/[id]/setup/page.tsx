@@ -20,7 +20,7 @@ function statusBadge(status: string) {
   };
   const color = colors[status] ?? "var(--text-secondary)";
   return (
-    <span className="badge" style={{ backgroundColor: `${color}18`, border: `1px solid ${color}40`, color }}>
+    <span className="badge" style={{ backgroundColor: "var(--surface-muted)", border: `1px solid ${color}`, color }}>
       {status.replaceAll("_", " ")}
     </span>
   );

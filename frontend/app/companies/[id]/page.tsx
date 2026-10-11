@@ -1,13 +1,15 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { CompanyResearchCards } from "@/components/company-research-cards";
 import { importSecFilings, lookupCompanyCik, addCompanyExposureTag, removeCompanyExposureTag, createExposureTag } from "@/app/actions";
-import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
+import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
 import { triggerEventClassification } from "@/app/actions";
 import { CompanyMarketHeader } from "@/components/company-market-header";
 import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
-import { StaleDataBanner, PartialDataNotice, ManualDataBadge } from "@/components/ui/data-states";
+import { ManualDataBadge } from "@/components/ui/data-states";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
 import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialPeriod } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
@@ -123,7 +125,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (!company) {
       return (
         <>
-          <PageHeader eyebrow="Company" title="Not found" />
+        <PageHeader eyebrow="Company" title="Not found" />
           <ErrorState message="No company exists for this ID." />
         </>
       );
@@ -167,8 +169,10 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     return (
       <>
         <DataHealthUpdater segment="" isStale={dataState.someStale || dataState.allStale} />
-        {dataState.someStale && <PartialDataNotice message="Some company panels are showing cached data because the backend is partially reachable." />}
-        {dataState.hasMock && <MockDataState message="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders." />}
+        <DataStateNotices
+          metas={[companiesRes.meta, documentsRes.meta, eventsRes.meta, alertsRes.meta, thesisNotesRes.meta, sourcesRes.meta, allExposureTagsRes.meta]}
+          mockMessage="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders."
+        />
         <header className="company-overview-header">
           <div className="company-overview-identity">
               <div className="company-meta-line">
@@ -197,6 +201,8 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           </div>
           <a className="secondary-button company-memo-link" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download memo</a>
         </header>
+
+        <Suspense fallback={<p role="status">Loading business context…</p>}><CompanyResearchCards companyIds={[company.id]} /></Suspense>
 
         {/* Metric Cards */}
         <section className="metric-grid company-metric-grid">
@@ -249,7 +255,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <form action={removeCompanyExposureTag} style={{ display: "inline", marginLeft: "0.25rem" }}>
                           <input type="hidden" name="company_id" value={company.id} />
                           <input type="hidden" name="tag_id" value={tag.id} />
-                          <button type="submit" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--error)" }}>&times;</button>
+                          <button type="submit" aria-label={`Remove ${tag.name} exposure tag`} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--error)" }}>&times;</button>
                         </form>
                       </span>
                     ))}
@@ -259,7 +265,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 )}
                 <form action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
                   <input type="hidden" name="company_id" value={company.id} />
-                  <select name="tag_id" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
+                  <select name="tag_id" aria-label="Exposure tag" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
                     <option value="" disabled>Add an exposure tag...</option>
                     {allExposureTags.filter(t => !company.exposure_tags?.some(ct => ct.id === t.id)).map(tag => (
                       <option key={tag.id} value={tag.id}>{tag.name}</option>

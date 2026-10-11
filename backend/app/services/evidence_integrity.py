@@ -2,8 +2,8 @@ from datetime import date, datetime, timezone
 from hashlib import sha256
 from typing import Any
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session, selectinload
 
 from app.models import (
     Company,
@@ -12,6 +12,7 @@ from app.models import (
     EventEvidenceReference,
     FinancialExtractionCandidate,
     FinancialStatementPeriod,
+    PeerValuationSet,
     RawDocument,
 )
 from app.services.financial_history_certification import (
@@ -20,36 +21,153 @@ from app.services.financial_history_certification import (
     assess_history_candidate,
 )
 from app.services.pdf_page_rendering import validate_pdf_region_against_asset
+from app.services.peer_valuation_sets import (
+    calculate_peer_diagnostics,
+    peer_set_calculation_eligibility,
+    peer_set_members,
+    peer_set_target_context,
+)
 
 
 MAX_REPORTED_ISSUES = 200
 
 
-def build_evidence_integrity_report(db: Session) -> dict[str, Any]:
+def build_peer_review_receipt_health(
+    db: Session,
+    *,
+    user_id: str,
+    limit: int = 50,
+    after_id: int = 0,
+) -> dict[str, Any]:
+    if not 1 <= limit <= 100 or after_id < 0:
+        raise ValueError("Invalid receipt-health pagination")
+    generated_at = datetime.now(timezone.utc)
+    total_owned = db.scalar(select(func.count()).select_from(PeerValuationSet).where(
+        PeerValuationSet.user_id == user_id,
+    )) or 0
+    peer_sets = list(db.scalars(
+        select(PeerValuationSet)
+        .options(
+            selectinload(PeerValuationSet.member_records),
+            selectinload(PeerValuationSet.target_profile),
+        )
+        .where(PeerValuationSet.user_id == user_id, PeerValuationSet.id > after_id)
+        .order_by(PeerValuationSet.id)
+        .limit(limit + 1)
+    ))
+    has_more = len(peer_sets) > limit
+    peer_sets = peer_sets[:limit]
+    active_reviewed = [
+        peer_set
+        for peer_set in peer_sets
+        if peer_set.is_active and peer_set.review_status == "reviewed"
+    ]
+    attention: list[dict[str, Any]] = []
+    ready_count = 0
+    missing_count = 0
+    stale_count = 0
+    storage_blocked_count = 0
+    coverage_blocked_count = 0
+
+    for peer_set in active_reviewed:
+        diagnostics = calculate_peer_diagnostics(
+            peer_set_members(peer_set),
+            target_context=peer_set_target_context(peer_set),
+            as_of=generated_at.date(),
+        )
+        eligibility = peer_set_calculation_eligibility(peer_set, diagnostics=diagnostics)
+        receipt_status = eligibility["receiptStatus"]
+        if receipt_status == "missing":
+            missing_count += 1
+        elif receipt_status == "stale":
+            stale_count += 1
+        storage_blocked = any("storage_mismatch" in code for code in eligibility["blockers"])
+        coverage_blocked = "insufficient_method_coverage" in eligibility["blockers"]
+        storage_blocked_count += int(storage_blocked)
+        coverage_blocked_count += int(coverage_blocked)
+        if eligibility["canCalculate"]:
+            ready_count += 1
+            continue
+        action = (
+            "Repair conflicting peer or target evidence by saving verified source values, then review again."
+            if storage_blocked else
+            "Supply at least three included positive multiples for one method, then review again."
+            if coverage_blocked else
+            "Open the peer workspace and acknowledge the current peer diagnostics."
+        )
+
+        attention.append(
+            {
+                "peer_set_id": peer_set.id,
+                "company_id": peer_set.company_id,
+                "name": peer_set.name,
+                "version": peer_set.version,
+                "review_status": peer_set.review_status,
+                "receipt_status": receipt_status,
+                "blockers": eligibility["blockers"],
+                "usable_methods": eligibility["usableMethods"],
+                "current_diagnostics_as_of": date.fromisoformat(diagnostics["asOf"]),
+                "receipt_diagnostics_as_of": peer_set.review_diagnostics_as_of,
+                "current_warning_codes": diagnostics["warningCodes"],
+                "acknowledged_warning_codes": peer_set.review_warning_codes_json or [],
+                "action": action,
+            }
+        )
+
+    return {
+        "status": "attention_required" if attention else "healthy",
+        "scope": "page",
+        "total_owned_set_count": total_owned,
+        "after_id": after_id,
+        "limit": limit,
+        "has_more": has_more,
+        "next_after_id": peer_sets[-1].id if has_more else None,
+        "checked_set_count": len(peer_sets),
+        "active_reviewed_set_count": len(active_reviewed),
+        "ready_for_valuation_count": ready_count,
+        "missing_receipt_count": missing_count,
+        "stale_receipt_count": stale_count,
+        "storage_blocked_count": storage_blocked_count,
+        "coverage_blocked_count": coverage_blocked_count,
+        "draft_set_count": sum(
+            peer_set.is_active and peer_set.review_status == "draft"
+            for peer_set in peer_sets
+        ),
+        "archived_set_count": sum(not peer_set.is_active for peer_set in peer_sets),
+        "sets_requiring_attention": attention,
+        "generated_at": generated_at,
+    }
+
+
+def build_evidence_integrity_report(
+    db: Session,
+    *,
+    deep_asset_validation: bool = True,
+) -> dict[str, Any]:
     documents = {
         row.id: row
         for row in db.execute(
             select(
                 RawDocument.id,
                 RawDocument.company_id,
+                RawDocument.document_type,
                 RawDocument.published_at,
+                RawDocument.ingested_at,
                 RawDocument.raw_text,
             )
         )
     }
     event_companies = dict(db.execute(select(Event.id, Event.company_id)).all())
-    assets = list(
-        db.execute(
-            select(
-                DocumentAsset.id,
-                DocumentAsset.raw_document_id,
-                DocumentAsset.size_bytes,
-                DocumentAsset.sha256,
-                DocumentAsset.page_count,
-                DocumentAsset.content,
-            )
-        )
-    )
+    asset_columns = [
+        DocumentAsset.id,
+        DocumentAsset.raw_document_id,
+        DocumentAsset.size_bytes,
+        DocumentAsset.sha256,
+        DocumentAsset.page_count,
+    ]
+    if deep_asset_validation:
+        asset_columns.append(DocumentAsset.content)
+    assets = list(db.execute(select(*asset_columns)))
     assets_by_document = {asset.raw_document_id: asset for asset in assets}
     references = list(
         db.execute(
@@ -116,7 +234,11 @@ def build_evidence_integrity_report(db: Session) -> dict[str, Any]:
         )
 
     for document in documents.values():
-        if document.published_at is None:
+        is_retrieval_snapshot = (
+            document.document_type == "xbrl_facts"
+            and document.ingested_at is not None
+        )
+        if document.published_at is None and not is_retrieval_snapshot:
             add_issue(
                 "DOCUMENT_SOURCE_TIMESTAMP_MISSING",
                 "warning",
@@ -128,29 +250,30 @@ def build_evidence_integrity_report(db: Session) -> dict[str, Any]:
                 document_id=document.id,
             )
 
-    for asset in assets:
-        actual_size = len(asset.content)
-        if actual_size != asset.size_bytes:
-            add_issue(
-                "ASSET_SIZE_MISMATCH",
-                "error",
-                "asset",
-                asset.id,
-                "Stored asset bytes do not match the recorded size.",
-                "Re-import the original document asset and verify storage integrity.",
-                document_id=asset.raw_document_id,
-            )
-        actual_hash = sha256(asset.content).hexdigest()
-        if actual_hash.lower() != asset.sha256.lower():
-            add_issue(
-                "ASSET_HASH_MISMATCH",
-                "error",
-                "asset",
-                asset.id,
-                "Stored asset bytes do not match the recorded SHA-256 digest.",
-                "Quarantine the asset and re-import it from the original source.",
-                document_id=asset.raw_document_id,
-            )
+    if deep_asset_validation:
+        for asset in assets:
+            actual_size = len(asset.content)
+            if actual_size != asset.size_bytes:
+                add_issue(
+                    "ASSET_SIZE_MISMATCH",
+                    "error",
+                    "asset",
+                    asset.id,
+                    "Stored asset bytes do not match the recorded size.",
+                    "Re-import the original document asset and verify storage integrity.",
+                    document_id=asset.raw_document_id,
+                )
+            actual_hash = sha256(asset.content).hexdigest()
+            if actual_hash.lower() != asset.sha256.lower():
+                add_issue(
+                    "ASSET_HASH_MISMATCH",
+                    "error",
+                    "asset",
+                    asset.id,
+                    "Stored asset bytes do not match the recorded SHA-256 digest.",
+                    "Quarantine the asset and re-import it from the original source.",
+                    document_id=asset.raw_document_id,
+                )
 
     for reference in references:
         document = documents.get(reference.raw_document_id)
@@ -261,7 +384,8 @@ def build_evidence_integrity_report(db: Session) -> dict[str, Any]:
                     reference_id=reference.id,
                 )
             elif (
-                asset is not None
+                deep_asset_validation
+                and asset is not None
                 and reference.source_page is not None
                 and reference.source_page <= asset.page_count
             ):
@@ -478,8 +602,18 @@ def build_evidence_integrity_report(db: Session) -> dict[str, Any]:
     warning_count = len(issues) - error_count
     reported_issues = issues[:MAX_REPORTED_ISSUES]
     checked_at = datetime.now(timezone.utc)
+    limitations = (
+        []
+        if deep_asset_validation
+        else [
+            "Asset byte/hash verification and PDF-region geometry checks were not run in metadata scope."
+        ]
+    )
     return {
         "status": "issues_found" if issues else "healthy",
+        "verification_scope": "deep" if deep_asset_validation else "metadata",
+        "asset_content_verification_status": "checked" if deep_asset_validation else "not_run",
+        "limitations": limitations,
         "checked_documents": len(documents),
         "checked_assets": len(assets),
         "checked_references": len(references),

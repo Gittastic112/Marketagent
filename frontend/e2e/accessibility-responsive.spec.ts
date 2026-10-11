@@ -138,6 +138,7 @@ async function verifyRoute(
     `${label} must render within the route-ready budget`,
   ).toBeLessThanOrEqual(ROUTE_READY_BUDGET_MS);
   await expect(page.getByText(/Internal Server Error|Application error|API request failed: 5\d\d/i)).toHaveCount(0);
+  await expect(page.getByText(/Authentication error|authentication is not configured|local session is missing or expired/i)).toHaveCount(0);
 
   const overflow = await page.evaluate(() => ({
     clientWidth: document.documentElement.clientWidth,

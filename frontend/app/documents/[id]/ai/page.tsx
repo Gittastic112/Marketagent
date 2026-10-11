@@ -65,7 +65,8 @@ export default async function DocumentAiPage({ params }: PageProps) {
           <EmptyState label="No AI summaries generated yet." />
         ) : (
           aiOutputs.map((output) => (
-            <Panel key={output.id} title={`${output.is_mock ? "Mock Data" : "Summary"} by ${output.model_name}`}>
+            <div key={output.id} id={`ai-output-${output.id}`} className="anchored-record">
+            <Panel title={`${output.is_mock ? "Mock Data" : "Summary"} by ${output.model_name}`}>
               <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
                 <div>
                   <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Metadata</h4>
@@ -103,6 +104,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
                 <AiOutputReviewControls initialOutput={output} />
               </div>
             </Panel>
+            </div>
           ))
         )}
       </>

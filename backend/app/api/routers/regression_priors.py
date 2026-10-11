@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.db.session import get_db
 from app.services.regression_prior_service import RegressionPriorService
 

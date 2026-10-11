@@ -85,3 +85,12 @@ def test_factory_rejects_unknown_provider(monkeypatch: pytest.MonkeyPatch) -> No
         get_market_data_provider()
 
     assert exc_info.value.code == "PROVIDER_NOT_SUPPORTED"
+
+
+def test_single_configured_provider_is_not_hidden_by_a_fallback_wrapper(monkeypatch):
+    class Settings:
+        market_data_provider = "yfinance_personal"
+        alpha_vantage_api_key = None
+        fmp_api_key = None
+    monkeypatch.setattr("app.services.market_data.factory.get_settings", lambda: Settings())
+    assert isinstance(get_market_data_provider(), YFinanceMarketProvider)

@@ -27,10 +27,16 @@ export async function backendData<T>(
   path: string,
   options: BackendOptions = {},
 ): Promise<T> {
+  const method = options.method || "GET";
   const response = await page.request.fetch(`/api/backend${path}`, {
-    method: options.method || "GET",
+    method,
     data: options.data,
-    headers: { accept: "application/json" },
+    // APIRequestContext does not add the browser's Origin header automatically.
+    // Fixture mutations must obey the same origin boundary as real UI actions.
+    headers: {
+      accept: "application/json",
+      ...(method === "GET" ? {} : { origin: new URL(page.url()).origin }),
+    },
   });
   const body = await response.json().catch(() => null);
   expect(

@@ -106,6 +106,9 @@ class DcfAssumptionSet(Base):
     diluted_shares: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     basic_shares: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     current_market_price: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    cash_flow_currency: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    discount_rate_currency: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    currency_override_note: Mapped[Optional[str]] = mapped_column(String, nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(default=utc_now, onupdate=utc_now)
@@ -133,7 +136,6 @@ class DcfAssumptionSet(Base):
     distress_sale_proceeds: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     book_value_of_equity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     target_roe: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
-    cost_of_equity: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
 
     outputs = relationship("DcfOutput", back_populates="assumption_set", cascade="all, delete-orphan", uselist=False)
     projection_years = relationship("DcfProjectionYear", back_populates="assumption_set", cascade="all, delete-orphan")

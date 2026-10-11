@@ -4,8 +4,8 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 COMPOSE_FILE="$ROOT_DIR/docker-compose.e2e.yml"
 PROJECT_NAME="market-intel-e2e"
-E2E_FRONTEND_PORT="${E2E_FRONTEND_PORT:-3000}"
-E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-8000}"
+E2E_FRONTEND_PORT="${E2E_FRONTEND_PORT:-13000}"
+E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-18000}"
 COMPOSE=(docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE")
 
 cleanup() {
@@ -23,18 +23,26 @@ if [[ ! -f "$ROOT_DIR/.env" ]] && {
 fi
 
 cleanup
+
+for port in "$E2E_FRONTEND_PORT" "$E2E_BACKEND_PORT"; do
+  if command -v lsof >/dev/null 2>&1 && lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
+    printf 'Port %s is already allocated. Stop the owning service or override E2E_FRONTEND_PORT/E2E_BACKEND_PORT.\n' "$port" >&2
+    exit 1
+  fi
+done
+
 E2E_FRONTEND_PORT="$E2E_FRONTEND_PORT" E2E_BACKEND_PORT="$E2E_BACKEND_PORT" \
   "${COMPOSE[@]}" up --build --detach
 
 for _ in $(seq 1 90); do
-  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null \
+  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null \
     && curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null; then
     break
   fi
   sleep 2
 done
 
-if ! curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null; then
+if ! curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null; then
   "${COMPOSE[@]}" logs --tail=120 backend-e2e >&2
   exit 1
 fi

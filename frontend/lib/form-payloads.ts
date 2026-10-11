@@ -112,6 +112,7 @@ export function buildRawDocumentMetadataPayload(formData: FormData): JsonPayload
     document_type: requiredString(formData, "document_type"),
     title: requiredString(formData, "title"),
     url: optionalString(formData, "url"),
+    published_at: optionalString(formData, "published_at"),
     content_hash: requiredString(formData, "content_hash")
   };
 }
@@ -295,7 +296,7 @@ export function buildValuationModelPayload(formData: FormData): JsonPayload {
 export function buildDcfAssumptionSetPayload(formData: FormData): JsonPayload {
   const revenueGrowthYearsStr = optionalString(formData, "revenue_growth_years_json");
 
-  return {
+  const payload: JsonPayload = {
     valuation_model_id: optionalNumber(formData, "valuation_model_id"),
     scenario: requiredString(formData, "scenario"),
 
@@ -328,20 +329,48 @@ export function buildDcfAssumptionSetPayload(formData: FormData): JsonPayload {
     terminal_roic: optionalNumber(formData, "terminal_roic"),
 
     cash: optionalNumber(formData, "cash"),
+    cross_holdings: optionalNumber(formData, "cross_holdings"),
     minority_interests: optionalNumber(formData, "minority_interests"),
     preferred_stock: optionalNumber(formData, "preferred_stock"),
     debt: optionalNumber(formData, "debt"),
+    operating_leases: optionalNumber(formData, "operating_leases"),
     employee_options_value: optionalNumber(formData, "employee_options_value"),
     diluted_shares: optionalNumber(formData, "diluted_shares"),
+    basic_shares: optionalNumber(formData, "basic_shares"),
     current_market_price: optionalNumber(formData, "current_market_price"),
-    projection_years_count: optionalNumber(formData, "projection_years") || 10,
+    cash_flow_currency: optionalString(formData, "cash_flow_currency")?.toUpperCase() || null,
+    discount_rate_currency: optionalString(formData, "discount_rate_currency")?.toUpperCase() || null,
+    currency_override_note: optionalString(formData, "currency_override_note"),
+    projection_years_count: optionalNumber(formData, "projection_years") ?? 10,
 
     probability_of_failure: optionalNumber(formData, "probability_of_failure"),
     distress_sale_proceeds: optionalNumber(formData, "distress_sale_proceeds"),
     book_value_of_equity: optionalNumber(formData, "book_value_of_equity"),
     target_roe: optionalNumber(formData, "target_roe"),
     net_income: optionalNumber(formData, "net_income"),
+    capex: optionalNumber(formData, "capex"),
+    depreciation: optionalNumber(formData, "depreciation"),
+    change_in_nwc: optionalNumber(formData, "change_in_nwc"),
+    new_debt_issued: optionalNumber(formData, "new_debt_issued"),
+    debt_repaid: optionalNumber(formData, "debt_repaid"),
+    dividends: optionalNumber(formData, "dividends"),
+    buybacks: optionalNumber(formData, "buybacks"),
+    stock_issuances: optionalNumber(formData, "stock_issuances"),
+    company_age: optionalNumber(formData, "company_age"),
   };
+  for (const [field, value] of Object.entries(payload)) {
+    if (typeof value === "number" && !Number.isFinite(value)) throw new Error(`${field} must be a finite number`);
+  }
+  if (formData.has("base_assumption_set_id")) {
+    // Absent controls preserve the owned server-side basis. Blank controls clear it.
+    for (const field of Object.keys(payload)) {
+      const control = field === "projection_years_count" ? "projection_years" : field;
+      if (!formData.has(control)) delete payload[field];
+    }
+    payload.base_assumption_set_id = getRequiredFormId(formData, "base_assumption_set_id");
+    payload.base_assumption_set_updated_at = requiredString(formData, "base_assumption_set_updated_at");
+  }
+  return payload;
 }
 
 export function buildSocialPostPayload(formData: FormData): JsonPayload {

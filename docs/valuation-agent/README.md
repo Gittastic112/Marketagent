@@ -13,9 +13,15 @@ jobs:
 
 - FCFF DCF with explicit revenue, margins, reinvestment, WACC, terminal value,
   equity bridge, sensitivity, and diagnostics.
-- Reverse DCF.
-- FCFE and dividend discount workflows.
+- Non-writing saved-basis Reverse DCF with convergence and model-support gates.
+- Explicit-input, single-stage FCFE and dividend discount estimates; not
+  multi-stage equity forecasts or automatic recalculation of historical outputs.
 - Relative valuation using active source-separated benchmarks.
+- DCF implied-pricing reconciliation from explicit saved net income, book equity,
+  revenue and margin, with unavailable EBITDA, traceable formulas, and non-writing
+  historical response repair. Stored quality scores remain historical.
+- Owned saved-DCF relative input mapping, per-field source basis, currency/scale
+  disclosure, exact preview-hash confirmation, and stale/invalid-input gating.
 - WACC with source-backed synthetic ratings.
 - Macro sensitivity and real-options workflows.
 - Durable setup drafts, assumption provenance, change logs, and review states.

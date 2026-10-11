@@ -1,6 +1,6 @@
 from datetime import date
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -17,8 +17,8 @@ from app.api.helpers import (
     validate_portfolio_transaction_refs,
 )
 from app.api.errors import PublicApiError
-from app.api.schemas import (
-    ApiResponse,
+from app.schemas.common import ApiResponse
+from app.schemas.portfolio import (
     PortfolioCashBalanceCreate,
     PortfolioCashBalanceRead,
     PortfolioCashBalanceUpdate,
@@ -43,6 +43,8 @@ from app.api.schemas import (
     PortfolioPerformanceRead,
     PortfolioPeriodAttributionRead,
     PortfolioOpportunityCostRead,
+    PortfolioRealInputReadinessRead,
+    PortfolioRiskReturnRead,
 )
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
@@ -62,6 +64,8 @@ from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
 from app.services.portfolio_performance import calculate_money_weighted_return, calculate_time_weighted_return
 from app.services.portfolio_period_attribution import calculate_period_attribution
 from app.services.portfolio_benchmark import calculate_benchmark_opportunity_cost
+from app.services.portfolio_risk_return import calculate_portfolio_risk_return
+from app.services.portfolio_real_input_readiness import audit_portfolio_real_input_readiness
 
 
 router = APIRouter()
@@ -714,5 +718,75 @@ def get_portfolio_opportunity_cost(
             "is_stale": result["calculation_status"] != "complete",
             "warnings": result["warnings"],
             "confidence": "high" if result["calculation_status"] == "complete" else "low",
+        },
+    )
+
+
+@router.get(
+    "/portfolios/{portfolio_id}/risk-return-comparison",
+    response_model=ApiResponse[PortfolioRiskReturnRead],
+)
+def get_portfolio_risk_return_comparison(
+    portfolio_id: int,
+    as_of_date: date | None = None,
+    lookback_days: int = Query(default=365, ge=30, le=3650),
+    min_observations: int = Query(default=20, ge=2, le=2520),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    result = calculate_portfolio_risk_return(
+        db,
+        portfolio_id,
+        as_of_date,
+        lookback_days=lookback_days,
+        min_observations=min_observations,
+        user_id=current_user["id"],
+    )
+    return ApiResponse(
+        data=result,
+        meta={
+            "source": "historical_market_prices_fx_and_trust_gated_dcf",
+            "is_mock": result["contains_mock_data"],
+            "is_stale": result["calculation_status"] != "complete",
+            "warnings": [*result["warnings"], *result["blockers"]],
+            "confidence": (
+                "high"
+                if result["calculation_status"] == "complete"
+                else "medium"
+                if result["calculation_status"] == "partial"
+                else "low"
+            ),
+        },
+    )
+
+
+@router.get(
+    "/portfolios/{portfolio_id}/real-input-readiness",
+    response_model=ApiResponse[PortfolioRealInputReadinessRead],
+)
+def get_portfolio_real_input_readiness(
+    portfolio_id: int,
+    min_observations: int = Query(default=20, ge=2, le=2520),
+    lookback_days: int = Query(default=365, ge=30, le=3650),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    get_owned_portfolio(db, portfolio_id, current_user["id"])
+    result = audit_portfolio_real_input_readiness(
+        db,
+        portfolio_id,
+        user_id=current_user["id"],
+        min_observations=min_observations,
+        lookback_days=lookback_days,
+    )
+    return ApiResponse(
+        data=result,
+        meta={
+            "source": "persisted_portfolio_inputs",
+            "is_mock": result["contains_mock_data"],
+            "is_stale": False,
+            "warnings": result["warnings"],
+            "confidence": "high",
         },
     )

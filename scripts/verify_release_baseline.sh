@@ -17,6 +17,9 @@ export E2E_FRONTEND_PORT="${E2E_FRONTEND_PORT:-13000}"
 export E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-18000}"
 
 python3 -m unittest scripts.test_check_secrets
+python3 -m unittest scripts.test_check_docs
+python3 -m unittest scripts.test_local_compose scripts.test_backup_workflow
+python3 "$ROOT_DIR/scripts/check_docs.py"
 python3 "$ROOT_DIR/scripts/check_secrets.py" "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate_project_skills.py"
 
@@ -25,14 +28,14 @@ cleanup
 "${COMPOSE[@]}" up --detach postgres-e2e backend-e2e frontend-e2e
 
 for _ in $(seq 1 90); do
-  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null \
+  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null \
     && curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null; then
     break
   fi
   sleep 2
 done
 
-curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null
+curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null
 curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null
 "${COMPOSE[@]}" exec -T backend-e2e alembic heads
 "${COMPOSE[@]}" exec -T backend-e2e alembic current

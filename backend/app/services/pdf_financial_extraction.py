@@ -196,6 +196,8 @@ def parse_pdf_page_ranges(
         end = int(match.group(2) or start)
         if start < 1 or end < start:
             raise HTTPException(status_code=422, detail="Page ranges must contain positive ascending pages.")
+        if end - start + 1 > max_targeted_pages:
+            raise HTTPException(status_code=422, detail=f"Select at most {max_targeted_pages} pages.")
         pages.update(range(start, end + 1))
         if len(pages) > max_targeted_pages:
             raise HTTPException(

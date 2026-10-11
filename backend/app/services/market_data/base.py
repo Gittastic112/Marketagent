@@ -19,6 +19,7 @@ class MarketDataProviderError(RuntimeError):
         provider: str,
         status_code: int = 502,
         retryable: bool = True,
+        processing_run_id: int | None = None,
     ) -> None:
         super().__init__(message)
         self.code = code
@@ -26,6 +27,7 @@ class MarketDataProviderError(RuntimeError):
         self.provider = provider
         self.status_code = status_code
         self.retryable = retryable
+        self.processing_run_id = processing_run_id
 
 
 class MarketDataRequest(BaseModel):

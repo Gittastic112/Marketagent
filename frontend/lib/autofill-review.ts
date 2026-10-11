@@ -15,6 +15,10 @@ const NONNEGATIVE_FIELDS = new Set([
   "minority_interests",
   "preferred_stock",
   "employee_options_value",
+  "cross_holdings",
+  "operating_leases",
+  "basic_shares",
+  "distress_sale_proceeds",
 ]);
 const UNIT_INTERVAL_FIELDS = new Set([
   "tax_rate",
@@ -31,6 +35,9 @@ const UNIT_INTERVAL_FIELDS = new Set([
 const MARGIN_FIELDS = new Set(["current_operating_margin", "target_operating_margin"]);
 
 export function reviewFieldValueIsValid(field: string, value: unknown): boolean {
+  if (field === "cash_flow_currency" || field === "discount_rate_currency") {
+    return typeof value === "string" && /^[A-Za-z]{3}$/.test(value.trim());
+  }
   if (Array.isArray(value)) {
     return value.length > 0 && value.every((item) => typeof item === "number" && Number.isFinite(item));
   }

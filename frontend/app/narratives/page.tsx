@@ -85,7 +85,8 @@ export default async function NarrativesPage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             {clusterDetails.map(({ cluster, claims, mentions }) => (
-              <Panel key={cluster.id} title={cluster.name}>
+              <div key={cluster.id} id={`narrative-${cluster.id}`} className="anchored-record">
+              <Panel title={cluster.name}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
                   <div>
                     {cluster.description && (
@@ -172,6 +173,7 @@ export default async function NarrativesPage() {
                   )}
                 </div>
               </Panel>
+              </div>
             ))}
           </div>
         )}

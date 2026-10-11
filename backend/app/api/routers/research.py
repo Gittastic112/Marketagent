@@ -11,7 +11,7 @@ from app.db.session import get_db
 from app.models.research import ResearchSession, ResearchMessage
 from app.models.raw_document import RawDocument
 from app.services.evidence_search import search_evidence
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.api.ai_errors import ai_output_meta, public_ai_error
 from app.services.ai_contract import (
     AIExecutionError,

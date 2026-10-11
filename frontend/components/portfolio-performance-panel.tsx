@@ -48,6 +48,7 @@ export function PortfolioPerformancePanel({
       ) : (
         <>
           <form className="form-grid" method="get" style={{ marginBottom: "1.5rem" }}>
+            <input type="hidden" name="tab" value="performance" />
             <label className="field"><span>Start Date</span><input defaultValue={startDate || ""} name="start_date" required type="date" /></label>
             <label className="field"><span>End Date</span><input defaultValue={endDate || ""} name="end_date" required type="date" /></label>
             <div className="button-row"><button type="submit">Calculate Period</button></div>

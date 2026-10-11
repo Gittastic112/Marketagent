@@ -14,7 +14,7 @@ services:
       POSTGRES_PASSWORD: marketintel_password
       POSTGRES_DB: marketintel
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - marketintel_postgres_data:/var/lib/postgresql/data
     healthcheck:
@@ -25,6 +25,10 @@ services:
     logging: *bounded-logging
 
   backend:
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    mem_limit: 2g
     build:
       context: .
       dockerfile: backend/Dockerfile
@@ -38,11 +42,14 @@ services:
       ALERT_PRIORITY_THRESHOLD: ${ALERT_PRIORITY_THRESHOLD:-70}
       SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
       FRED_API_KEY: ${FRED_API_KEY:-}
+      VALUATION_REFRESH_ENABLED: ${VALUATION_REFRESH_ENABLED:-false}
+      VALUATION_REFRESH_OWNER_ID: ${VALUATION_REFRESH_OWNER_ID:-local-user}
       MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-alphavantage}
       ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
       FMP_API_KEY: ${FMP_API_KEY:-}
       OPENFIGI_API_KEY: ${OPENFIGI_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
@@ -50,14 +57,14 @@ services:
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
       CORS_ORIGINS: ${CORS_ORIGINS:-["http://localhost:3000"]}
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
-      - ./data:/workspace/data
+      - ./data:/workspace/data:ro
     depends_on:
       postgres:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/readiness', timeout=3)"]
       interval: 10s
       timeout: 5s
       retries: 12
@@ -65,6 +72,10 @@ services:
     logging: *bounded-logging
 
   frontend:
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 256
+    mem_limit: 1g
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -81,7 +92,7 @@ services:
       LOCAL_AUTH_USERNAME: ${LOCAL_AUTH_USERNAME:-}
       LOCAL_AUTH_PASSWORD: ${LOCAL_AUTH_PASSWORD:-}
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     depends_on:
       backend:
         condition: service_healthy
@@ -93,16 +104,71 @@ services:
       start_period: 15s
     logging: *bounded-logging
 
+  scheduler:
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: market_intel_scheduler
+    restart: unless-stopped
+    init: true
+    profiles: ["automation"]
+    command: ["python", "-m", "app.workers.daily_brief_scheduler"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      APP_ENV: local
+      APP_NAME: Market Intelligence Engine Scheduler
+      SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+      DAILY_BRIEF_SCHEDULER_INTERVAL_SECONDS: ${DAILY_BRIEF_SCHEDULER_INTERVAL_SECONDS:-60}
+    mem_limit: 256m
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging: *bounded-logging
+
+  source_scheduler:
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: market_intel_source_scheduler
+    restart: unless-stopped
+    init: true
+    profiles: ["automation"]
+    command: ["python", "-m", "app.workers.valuation_source_scheduler"]
+    environment:
+      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      APP_ENV: local
+      SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
+      FRED_API_KEY: ${FRED_API_KEY:-}
+      MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-alphavantage}
+      ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
+      FMP_API_KEY: ${FMP_API_KEY:-}
+      VALUATION_REFRESH_ENABLED: ${VALUATION_REFRESH_ENABLED:-false}
+      VALUATION_REFRESH_OWNER_ID: ${VALUATION_REFRESH_OWNER_ID:-local-user}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    mem_limit: 512m
+    depends_on:
+      backend:
+        condition: service_healthy
+    logging: *bounded-logging
+
   pgadmin:
     image: dpage/pgadmin4:8
     container_name: market_intel_pgadmin
-    restart: unless-stopped
+    restart: "no"
+    mem_limit: 512m
     profiles: ["admin"]
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.com
       PGADMIN_DEFAULT_PASSWORD: admin_password
     ports:
-      - "5050:80"
+      - "127.0.0.1:5050:80"
     depends_on:
       postgres:
         condition: service_healthy

@@ -4,7 +4,7 @@ import { buildDataStateBadges, summarizeApiMetas, type DataStateTone } from "@/l
 
 export function LoadingState({ message = "Loading..." }: { message?: string }) {
   return (
-    <div style={{ padding: "2rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.9rem" }}>
+    <div role="status" aria-live="polite" style={{ padding: "2rem", textAlign: "center", color: "var(--text-secondary)", fontSize: "0.9rem" }}>
       <div className="spinner" style={{ marginBottom: "1rem" }}></div>
       {message}
     </div>
@@ -17,7 +17,7 @@ export function ErrorState({ message, errors }: { message?: string; errors?: Api
   }
 
   return (
-    <div style={{ padding: "1.5rem", border: "1px solid var(--error-color, #ef4444)", borderRadius: "8px", backgroundColor: "rgba(239, 68, 68, 0.05)", margin: "1rem 0" }}>
+    <div role="alert" style={{ padding: "1.5rem", border: "1px solid var(--error-color, #ef4444)", borderRadius: "8px", backgroundColor: "rgba(239, 68, 68, 0.05)", margin: "1rem 0" }}>
       <h3 style={{ color: "var(--error-color, #ef4444)", fontSize: "1rem", margin: "0 0 0.5rem 0" }}>
         {message || "Could not load data"}
       </h3>
@@ -59,10 +59,37 @@ export function StaleDataBanner({ message, lastUpdated }: { message?: string; la
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
       <div>
-        <span style={{ color: "rgb(249, 115, 22)", fontWeight: 500 }}>Stale Data</span>
-        {` - ${message || "The backend is currently unreachable. Showing cached data."}`}
+        <span style={{ color: "var(--warning-text)", fontWeight: 500 }}>Stale Data</span>
+        {` - ${message || "Stored source data is older than its freshness threshold. Refresh or re-run the owning source."}`}
         {lastUpdated ? ` (Last updated: ${new Date(lastUpdated).toLocaleString()})` : ""}
       </div>
+    </div>
+  );
+}
+
+export function UnavailableDataNotice({ message }: { message?: string }) {
+  return (
+    <div style={{
+      padding: "10px 14px",
+      borderRadius: "6px",
+      background: "rgba(239, 68, 68, 0.06)",
+      border: "1px solid rgba(239, 68, 68, 0.24)",
+      color: "var(--text-secondary)",
+      fontSize: "0.85rem",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      marginBottom: "1rem"
+    }} role="status">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error-color, #ef4444)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>
+        <strong style={{ color: "var(--error-color, #ef4444)" }}>Data unavailable: </strong>
+        {message || "The request failed. No cached replacement is being shown."}
+      </span>
     </div>
   );
 }
@@ -87,8 +114,7 @@ export function MockDataState({ message }: { message: string }) {
       display: "flex",
       alignItems: "center",
       gap: "10px",
-      marginBottom: "2rem",
-      backdropFilter: "blur(4px)"
+      marginBottom: "2rem"
     }}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(234, 179, 8)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10"></circle>
@@ -96,7 +122,7 @@ export function MockDataState({ message }: { message: string }) {
         <line x1="12" y1="16" x2="12.01" y2="16"></line>
       </svg>
       <div>
-        <strong style={{ color: "rgb(234, 179, 8)", display: "block", marginBottom: "2px" }}>Mock Data</strong>
+        <strong style={{ color: "var(--warning-text)", display: "block", marginBottom: "2px" }}>Mock Data</strong>
         {message}
       </div>
     </div>
@@ -115,15 +141,14 @@ export function ManualDataState({ message }: { message: string }) {
       display: "flex",
       alignItems: "center",
       gap: "10px",
-      marginBottom: "2rem",
-      backdropFilter: "blur(4px)"
+      marginBottom: "2rem"
     }}>
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgb(59, 130, 246)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M12 20h9"></path>
         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
       </svg>
       <div>
-        <strong style={{ color: "rgb(59, 130, 246)", display: "block", marginBottom: "2px" }}>Manual Data</strong>
+        <strong style={{ color: "var(--color-info)", display: "block", marginBottom: "2px" }}>Manual Data</strong>
         {message}
       </div>
     </div>
@@ -207,12 +232,14 @@ export function DataStateNotices({
   metas,
   staleMessage,
   partialMessage,
+  unavailableMessage,
   mockMessage,
   manualMessage
 }: {
   metas: Array<ApiMeta | null | undefined>;
   staleMessage?: string;
   partialMessage?: string;
+  unavailableMessage?: string;
   mockMessage?: string;
   manualMessage?: string;
 }) {
@@ -220,9 +247,13 @@ export function DataStateNotices({
 
   return (
     <>
+      {dataState.allUnavailable && <UnavailableDataNotice message={unavailableMessage} />}
+      {!dataState.allUnavailable && dataState.someUnavailable && (
+        <PartialDataNotice message={unavailableMessage || "Some requests failed. Available panels use returned data; missing panels are not cache fallbacks."} />
+      )}
       {dataState.allStale && <StaleDataBanner message={staleMessage} />}
       {!dataState.allStale && dataState.someStale && (
-        <PartialDataNotice message={partialMessage || "Some panels are showing cached data because the backend is partially reachable."} />
+        <PartialDataNotice message={partialMessage || "Some successful responses contain source data older than their freshness threshold."} />
       )}
       {dataState.hasMock && (
         <MockDataState message={mockMessage || "One or more panels are using mock data. Treat affected values as placeholders."} />
@@ -243,7 +274,7 @@ export function DataStateNotices({
           gap: "4px",
           marginBottom: "1rem"
         }}>
-          <strong style={{ color: "rgb(234, 179, 8)" }}>Warnings:</strong>
+          <strong style={{ color: "var(--warning-text)" }}>Warnings:</strong>
           <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
             {dataState.warnings.map((w, i) => <li key={i}>{w}</li>)}
           </ul>
@@ -258,7 +289,7 @@ function badgeColor(tone: DataStateTone) {
     return "var(--success-color, #4CAF50)";
   }
   if (tone === "warning") {
-    return "rgb(249, 115, 22)";
+    return "var(--warning-text)";
   }
   if (tone === "danger") {
     return "var(--error-color, #ef4444)";

@@ -127,8 +127,6 @@ def ingest_sec_filing_metadata(
     skipped_duplicates = 0
     error_count = 0
     errors: list[str] = []
-    http_get = http_get or httpx.get
-
     for filing in filings:
         content_hash = build_sec_content_hash(filing)
         existing = _find_existing_raw_document(db, content_hash, filing.filing_url)
@@ -202,7 +200,6 @@ def ingest_recent_sec_filings_for_company(
         return SecIngestionResult(fetched_count=0, created_count=0, skipped_duplicate_count=0, error_count=1, errors=("Company not found",))
     if not company.cik:
         try:
-            http_get = http_get or httpx.get
             company.cik = lookup_cik_for_ticker(company.ticker, http_get=http_get)
             if company.cik is None:
                 return SecIngestionResult(
@@ -228,7 +225,6 @@ def ingest_recent_sec_filings_for_company(
             )
 
     try:
-        http_get = http_get or httpx.get
         filings = fetch_recent_sec_filing_metadata(
             company.cik,
             form_types=form_types,

@@ -12,6 +12,8 @@ class MacroSeries(Base):
     description: Mapped[str | None] = mapped_column(String, nullable=True)
     units: Mapped[str | None] = mapped_column(String, nullable=True)
     frequency: Mapped[str | None] = mapped_column(String, nullable=True)
+    provider_name: Mapped[str | None] = mapped_column(String(100), nullable=True)
+    source_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
 
     observations: Mapped[list["MacroObservation"]] = relationship(
         "MacroObservation", back_populates="series", cascade="all, delete-orphan"

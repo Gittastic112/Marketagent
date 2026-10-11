@@ -84,6 +84,13 @@ export default async function DocumentsPage() {
                               <TextField defaultValue={document.content_hash} id={`doc-hash-${document.id}`} label="Hash" name="content_hash" required />
                               <TextField className="field field-full" defaultValue={document.title} id={`doc-title-${document.id}`} label="Title" name="title" required />
                               <TextField className="field field-full" defaultValue={document.url ?? ""} id={`doc-url-${document.id}`} label="URL" name="url" type="url" />
+                              <TextField
+                                defaultValue={document.published_at?.slice(0, 16) ?? ""}
+                                id={`doc-published-${document.id}`}
+                                label="Source publication time"
+                                name="published_at"
+                                type="datetime-local"
+                              />
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>

@@ -1,19 +1,22 @@
 from datetime import UTC, datetime
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user
 from app.api.schemas import (
     AiCitationValidationRequest,
+    AiCitationSuggestionRead,
     AiOutputRead,
     AiOutputReviewRequest,
+    ApiMeta,
     ApiResponse,
 )
 from app.db.session import get_db
 from app.models.ai import AiOutput
 from app.services.ai_citations import evaluate_ai_output, validate_ai_citations
+from app.services.ai_citation_suggestions import suggest_ai_citations
 
 
 router = APIRouter()
@@ -50,6 +53,37 @@ def validate_output_citations(
     output = _owned_output(db, output_id, current_user["id"])
     validate_ai_citations(db, output, [citation.model_dump() for citation in payload.citations])
     return ApiResponse(data=output)
+
+
+@router.get(
+    "/ai-outputs/{output_id}/citations/suggestions",
+    response_model=ApiResponse[list[AiCitationSuggestionRead]],
+)
+def suggest_output_citations(
+    output_id: int,
+    limit_per_source: int = Query(default=3, ge=1, le=5),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[list[dict]]:
+    output = _owned_output(db, output_id, current_user["id"])
+    suggestions = suggest_ai_citations(db, output, limit_per_source=limit_per_source)
+    unavailable_count = sum(item["status"] != "ready" for item in suggestions)
+    warnings = (
+        [f"{unavailable_count} cited source(s) have no ready exact-passage candidate."]
+        if unavailable_count
+        else []
+    )
+    return ApiResponse(
+        data=suggestions,
+        meta=ApiMeta(
+            source="stored_source_text_lexical_match",
+            last_updated=output.created_at,
+            is_stale=False,
+            is_mock=output.is_mock,
+            confidence="medium",
+            warnings=warnings,
+        ),
+    )
 
 
 @router.post("/ai-outputs/{output_id}/evaluate", response_model=ApiResponse[AiOutputRead])

@@ -3,11 +3,10 @@ from app.services.market_data.base import MarketDataProvider, MarketDataProvider
 from app.services.market_data.alpha_vantage import AlphaVantageProvider
 from app.services.market_data.fmp import FMPProvider
 from app.providers.market_data.yfinance_provider import YFinanceMarketProvider
-from app.services.market_data.fallback import FallbackMarketDataProvider
 
 def get_market_data_provider() -> MarketDataProvider:
     """
-    Factory function to get the configured market data provider ladder.
+    Return the explicitly selected adapter. No implicit source fallback.
     """
     settings = get_settings()
     provider_name = settings.market_data_provider.strip().lower()
@@ -43,4 +42,4 @@ def get_market_data_provider() -> MarketDataProvider:
             retryable=False,
         )
 
-    return FallbackMarketDataProvider(providers)
+    return providers[0]

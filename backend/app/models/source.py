@@ -22,4 +22,4 @@ class Source(Base):
         onupdate=func.now(),
     )
 
-    raw_documents = relationship("RawDocument", back_populates="source", lazy="selectin")
+    raw_documents = relationship("RawDocument", back_populates="source", lazy="select")

@@ -22,6 +22,12 @@ SOURCE_CODES = (
     "dividend",
     "fcfe",
     "roe",
+    "beta_methods",
+    "wacc_methods",
+    "industry_tax_methods",
+    "country_tax_methods",
+    "growth",
+    "financing_flows",
     "macro",
     "macro_duration",
     "volatility",
@@ -71,7 +77,7 @@ def print_coverage_summary(db) -> None:
     )
 
 
-def run_ingestion(only: set[str] | None = None):
+def run_ingestion(only: set[str] | None = None, market: str = "IN"):
     if not DATA_DIR.exists():
         print(f"Data directory {DATA_DIR} does not exist.")
         return
@@ -81,6 +87,12 @@ def run_ingestion(only: set[str] | None = None):
 
     db = SessionLocal()
     try:
+        if market == "US":
+            from app.services.damodaran_us_ingestion import ingest_us_benchmarks
+            for source, count in ingest_us_benchmarks(db, DATA_DIR, only).items():
+                print(f"US {source}: {count} source-linked records")
+            print_coverage_summary(db)
+            return
         margin_file = DATA_DIR / "marginIndia.xls"
         if selected("margin") and margin_file.exists():
             print(f"Ingesting {margin_file}...")
@@ -122,6 +134,60 @@ def run_ingestion(only: set[str] | None = None):
             count = DamodaranBenchmarkIngestionService.ingest_roe_file(db, str(roe_file), COUNTRY)
             print(f"Ingested {count} records.")
             print_active_version(db, "roe", COUNTRY)
+
+        beta_file = DATA_DIR / "betaIndia.xls"
+        if selected("beta_methods") and beta_file.exists():
+            print(f"Ingesting {beta_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_beta_methods_file(
+                db, str(beta_file), COUNTRY
+            )
+            print(f"Ingested {count} assumption method records.")
+            print_active_version(db, "beta_methods", COUNTRY)
+
+        wacc_file = DATA_DIR / "waccIndia.xls"
+        if selected("wacc_methods") and wacc_file.exists():
+            print(f"Ingesting {wacc_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_wacc_methods_file(
+                db, str(wacc_file), COUNTRY
+            )
+            print(f"Ingested {count} assumption method records.")
+            print_active_version(db, "wacc_methods", COUNTRY)
+
+        industry_tax_file = DATA_DIR / "taxrateIndia.xls"
+        if selected("industry_tax_methods") and industry_tax_file.exists():
+            print(f"Ingesting {industry_tax_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_industry_tax_methods_file(
+                db, str(industry_tax_file), COUNTRY
+            )
+            print(f"Ingested {count} assumption method records.")
+            print_active_version(db, "industry_tax_methods", COUNTRY)
+
+        country_tax_file = DATA_DIR / "countrytaxrates.xls"
+        if selected("country_tax_methods") and country_tax_file.exists():
+            print(f"Ingesting {country_tax_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_country_tax_methods_file(
+                db, str(country_tax_file)
+            )
+            print(f"Ingested {count} assumption method records.")
+            print_active_version(db, "country_tax_methods", "Global")
+
+        growth_file = DATA_DIR / "histgrIndia.xls"
+        if selected("growth") and growth_file.exists():
+            print(f"Ingesting {growth_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_growth_file(
+                db, str(growth_file), COUNTRY
+            )
+            print(f"Ingested {count} records.")
+            print_active_version(db, "historical_growth", COUNTRY)
+
+        financing_file = DATA_DIR / "finflowsIndia.xls"
+        if selected("financing_flows") and financing_file.exists():
+            print(f"Ingesting {financing_file}...")
+            count = DamodaranBenchmarkIngestionService.ingest_financing_flows_file(
+                db, str(financing_file), COUNTRY
+            )
+            print(f"Ingested {count} records.")
+            print_active_version(db, "financing_flows", COUNTRY)
 
         macro_file = DATA_DIR / "macro.xls"
         if selected("macro") and macro_file.exists():
@@ -188,6 +254,7 @@ def run_ingestion(only: set[str] | None = None):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Ingest reviewed Damodaran workbook contracts.")
+    parser.add_argument("--market", choices=("IN", "US"), default="IN", help="Separate approved country-specific benchmark scope.")
     parser.add_argument(
         "--only",
         nargs="+",
@@ -196,5 +263,5 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
     print("Starting Damodaran benchmark ingestion...")
-    run_ingestion(set(args.only) if args.only else None)
+    run_ingestion(set(args.only) if args.only else None, market=args.market)
     print("Done.")

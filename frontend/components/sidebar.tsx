@@ -69,6 +69,7 @@ const navGroups: NavGroup[] = [
       { href: "/documents", label: "Documents", icon: FileSearch },
       { href: "/data", label: "Ingestion", icon: Database },
       { href: "/data-health", label: "Data Health", icon: ShieldCheck },
+      { href: "/evaluations", label: "Evaluations", icon: ShieldCheck },
       { href: "/sources", label: "Sources", icon: Database },
     ],
   },
@@ -85,6 +86,7 @@ export function Sidebar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const openButtonRef = useRef<HTMLButtonElement>(null);
+  const sidebarRef = useRef<HTMLElement>(null);
   const allItems = useMemo(() => navGroups.flatMap((group) => group.items), []);
   const activeHref = useMemo(() => {
     const matches = allItems.filter((item) =>
@@ -98,11 +100,40 @@ export function Sidebar() {
   useEffect(() => setOpen(false), [pathname]);
   useEffect(() => {
     if (!open) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") closeNavigation();
+    const panel = sidebarRef.current;
+    const content = document.querySelector<HTMLElement>(".main-content-wrapper");
+    const previousOverflow = document.body.style.overflow;
+    const previousInert = content?.inert ?? false;
+    document.body.style.overflow = "hidden";
+    if (content) content.inert = true;
+    const focusable = () => Array.from(panel?.querySelectorAll<HTMLElement>('a[href], button, summary, [tabindex="0"]') || [])
+      .filter(element => element.checkVisibility({ visibilityProperty: true }));
+    const focusFrame = window.requestAnimationFrame(() => focusable()[0]?.focus());
+    const containFocus = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); closeNavigation(); }
+      if (event.key !== "Tab") return;
+      const items = focusable();
+      const first = items[0];
+      const last = items.at(-1);
+      if (!panel?.contains(document.activeElement)) {
+        event.preventDefault();
+        (event.shiftKey ? last : first)?.focus();
+        return;
+      }
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     };
-    document.addEventListener("keydown", closeOnEscape);
-    return () => document.removeEventListener("keydown", closeOnEscape);
+    const desktop = window.matchMedia("(min-width: 961px)");
+    const closeOnDesktop = () => { if (desktop.matches) setOpen(false); };
+    desktop.addEventListener("change", closeOnDesktop);
+    document.addEventListener("keydown", containFocus);
+    return () => {
+      window.cancelAnimationFrame(focusFrame);
+      document.body.style.overflow = previousOverflow;
+      if (content) content.inert = previousInert;
+      document.removeEventListener("keydown", containFocus);
+      desktop.removeEventListener("change", closeOnDesktop);
+    };
   }, [open]);
 
   function closeNavigation() {
@@ -120,6 +151,7 @@ export function Sidebar() {
           className="icon-button"
           aria-label="Open navigation"
           aria-expanded={open}
+          aria-controls="primary-sidebar"
           onClick={() => setOpen(true)}
         >
           <Menu size={20} />
@@ -130,12 +162,13 @@ export function Sidebar() {
           type="button"
           className="sidebar-backdrop"
           aria-label="Close navigation"
+          tabIndex={-1}
           onClick={closeNavigation}
         />
       ) : null}
-      <aside className={`sidebar${open ? " sidebar-open" : ""}`}>
+      <aside ref={sidebarRef} id="primary-sidebar" role={open ? "dialog" : undefined} aria-modal={open ? true : undefined} aria-label="Navigation" className={`sidebar${open ? " sidebar-open" : ""}`}>
         <div className="sidebar-heading">
-          <Link href="/" className="brand" prefetch={false}>Market Intelligence</Link>
+          <Link href="/" className="brand" prefetch={false}><span className="brand-mark" aria-hidden="true">MI</span><span>Market<br />Intelligence</span></Link>
           <button
             type="button"
             className="icon-button sidebar-close"
@@ -146,10 +179,8 @@ export function Sidebar() {
           </button>
         </div>
         <nav className="nav" aria-label="Primary navigation">
-          {navGroups.map((group) => (
-            <div className="nav-group" key={group.label}>
-              <p className="nav-group-label">{group.label}</p>
-              {group.items.map((item) => {
+          {navGroups.map((group) => {
+            const links = group.items.map((item) => {
                 const Icon = item.icon;
                 return (
                   <Link
@@ -163,9 +194,11 @@ export function Sidebar() {
                     <span>{item.label}</span>
                   </Link>
                 );
-              })}
-            </div>
-          ))}
+              });
+            return ["Data", "System"].includes(group.label)
+              ? <details className="nav-group nav-disclosure" key={group.label} open={group.items.some(item => item.href === activeHref)}><summary className="nav-group-label">{group.label}</summary>{links}</details>
+              : <div className="nav-group" key={group.label}><p className="nav-group-label">{group.label}</p>{links}</div>;
+          })}
         </nav>
       </aside>
     </>

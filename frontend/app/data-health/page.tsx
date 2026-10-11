@@ -1,112 +1,44 @@
 import Link from "next/link";
+import { PeerReceiptHealthPanel } from "@/components/peer-receipt-health-panel";
+import { receiptAuditCursor } from "@/lib/peer-health-navigation";
 import { applyEventEvidenceBackfill } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices } from "@/components/ui/data-states";
+import { RuntimeReadinessPanel } from "@/components/runtime-readiness-panel";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type {
   DamodaranCoverageReport,
   EventEvidenceBackfillReport,
   EvidenceIntegrityReport,
+  PeerReviewReceiptHealth,
   ProcessingRun,
   ProviderHealth,
+  RuntimeReadiness,
   Source,
   Alert,
 } from "@/lib/api";
 
 type HealthAuditMode = "evidence" | "coverage" | "backfill" | null;
-type HealthMetricTone = "neutral" | "success" | "warning" | "danger" | "muted";
-
 export const dynamic = "force-dynamic";
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
-}
-
-function statusBadge(status: string) {
-  const colors: Record<string, string> = {
-    success: "var(--success)",
-    completed: "var(--success)",
-    working: "var(--success)",
-    configured: "var(--accent)",
-    failed: "var(--error)",
-    error: "var(--error)",
-    failing: "var(--error)",
-    running: "var(--warning)",
-    missing_key: "var(--warning)",
-    not_configured: "var(--warning)",
-    not_available: "var(--text-secondary)",
-    manual_only: "var(--text-secondary)",
-    unsupported_market: "var(--text-secondary)",
-    unknown: "var(--text-secondary)",
-    pending: "var(--text-secondary)",
-    healthy: "var(--success)",
-    passed: "var(--success)",
-    partial: "var(--warning)",
-    supported: "var(--success)",
-    unsupported: "var(--error)",
-    ingested: "var(--success)",
-    metadata_only: "var(--warning)",
-    not_ingested: "var(--text-secondary)",
-    source_missing: "var(--error)",
-    current: "var(--success)",
-    stale: "var(--warning)",
-    historical: "var(--text-secondary)",
-    user_assumed_recent: "var(--accent)",
-    complete: "var(--success)",
-    missing: "var(--warning)",
-    hash_mismatch: "var(--error)",
-    blocked: "var(--error)",
-    issues_found: "var(--error)",
-    eligible: "var(--warning)",
-    applied: "var(--success)",
-    ambiguous_match: "var(--warning)",
-    mock: "var(--warning)",
-    prototype: "var(--accent)",
-  };
-  const normalized = status.toLowerCase();
-  const color = colors[normalized] ?? colors[normalized.split(" ").at(-1) ?? ""] ?? "var(--text-secondary)";
-  return (
-    <span className="badge" style={{ backgroundColor: `${color}20`, color, border: `1px solid ${color}40` }}>
-      {status}
-    </span>
-  );
-}
-
-function HealthMetric({
-  label,
-  value,
-  detail,
-  tone = "neutral",
-  compact = false,
-}: {
-  label: string;
-  value: string | number;
-  detail?: string;
-  tone?: HealthMetricTone;
-  compact?: boolean;
-}) {
-  return (
-    <article className={`health-metric-card${compact ? " health-metric-card-compact" : ""}`} data-tone={tone}>
-      <span className="health-metric-label">{label}</span>
-      <strong className="health-metric-value">{value}</strong>
-      {detail ? <span className="health-metric-detail">{detail}</span> : null}
-    </article>
-  );
-}
+import { formatDate, HealthMetric, statusBadge } from "@/components/data-health/health-ui";
 
 export default async function DataHealthPage({
   searchParams,
 }: {
-  searchParams: Promise<{ audit?: string }>;
+  searchParams: Promise<{ audit?: string; peer_after?: string | string[] }>;
 }) {
-  const { audit } = await searchParams;
+  const { audit, peer_after } = await searchParams;
+  const peerAfter = receiptAuditCursor(peer_after);
   const auditMode: HealthAuditMode = audit === "evidence" || audit === "coverage" || audit === "backfill" ? audit : null;
   try {
-    const [processingRunsRes, sourcesRes, providerHealthRes, alertsRes] = await Promise.all([
+    const [runtimeReadinessRes, processingRunsRes, sourcesRes, providerHealthRes, alertsRes, peerReceiptHealthRes] = await Promise.all([
+      serverFetchApiResponse<RuntimeReadiness>("/api/readiness"),
       serverFetchApiResponse<ProcessingRun[]>("/processing-runs"),
       serverFetchApiResponse<Source[]>("/sources"),
       serverFetchApiResponse<ProviderHealth[]>("/api/providers/health"),
       serverFetchApiResponse<Alert[]>("/alerts"),
+      serverFetchApiResponse<PeerReviewReceiptHealth>(`/data-health/peer-review-receipts?limit=50&after_id=${peerAfter}`),
     ]);
 
     const evidenceIntegrityRes = auditMode === "evidence"
@@ -131,6 +63,7 @@ export default async function DataHealthPage({
       sourcesRes,
       providerHealthRes,
       alertsRes,
+      peerReceiptHealthRes,
     ].filter((response) => response.data !== null).map((response) => response.meta);
 
     const unreviewedContradictions = alerts.filter((a: Alert) => a.alert_type === "contradiction" && a.review_status === "unreviewed");
@@ -193,6 +126,12 @@ export default async function DataHealthPage({
           mockMessage="Data health rows are mocked. Treat provider status as placeholder information."
         />
 
+        <RuntimeReadinessPanel
+          readiness={runtimeReadinessRes.data}
+          errors={runtimeReadinessRes.errors}
+        />
+
+        <PeerReceiptHealthPanel response={peerReceiptHealthRes} audit={auditMode} />
         <section className="health-summary-section" aria-labelledby="operations-health-title">
           <div className="health-section-heading">
             <div>

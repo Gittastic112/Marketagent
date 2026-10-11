@@ -11,12 +11,68 @@ from app.models.financial import (
     NormalizedFinancialMetric,
     NormalizedFinancialSnapshot,
 )
-from app.models.market_price import CompanyMarketData
 from app.services.industry_assumption import IndustryAssumptionService
 from app.services.industry_mapping import IndustryMappingService
 from app.services.financial_statement_identity import FinancialStatementIdentityService
+from app.services.valuation_source_inputs import (
+    sec_draft_inputs, source_input_signature, stored_market_price, stored_usd_risk_free_rate,
+)
 
 class AssumptionAutofillEngine:
+    INPUT_CONTRACT = {
+        "story_text": ("narrative", False, "all"),
+        "growth_story": ("narrative", False, "all"),
+        "margin_story": ("narrative", False, "all"),
+        "reinvestment_story": ("narrative", False, "all"),
+        "risk_story": ("narrative", False, "all"),
+        "projection_years_count": ("operating", True, "all"),
+        "starting_revenue": ("operating", True, "all"),
+        "revenue_growth_years_json": ("operating", True, "all"),
+        "target_operating_margin": ("operating", True, "all"),
+        "current_operating_margin": ("operating", True, "all"),
+        "tax_rate": ("operating", True, "all"),
+        "sales_to_capital_ratio": ("operating", True, "fcff_dcf"),
+        "reinvestment_method": ("operating", True, "fcff_dcf"),
+        "starting_invested_capital": ("operating", True, "fcff_dcf"),
+        "risk_free_rate": ("discount_rate", True, "all"),
+        "equity_risk_premium": ("discount_rate", True, "all"),
+        "beta": ("discount_rate", True, "all"),
+        "cost_of_equity": ("discount_rate", True, "all"),
+        "pre_tax_cost_of_debt": ("discount_rate", True, "fcff_dcf"),
+        "debt_to_capital": ("discount_rate", True, "fcff_dcf"),
+        "equity_to_capital": ("discount_rate", True, "fcff_dcf"),
+        "wacc_start": ("discount_rate", True, "fcff_dcf"),
+        "wacc_terminal": ("discount_rate", True, "fcff_dcf"),
+        "terminal_growth_rate": ("terminal_value", True, "all"),
+        "terminal_roic": ("terminal_value", True, "fcff_dcf"),
+        "cash": ("equity_bridge", True, "all"),
+        "cross_holdings": ("equity_bridge", False, "all"),
+        "minority_interests": ("equity_bridge", True, "all"),
+        "preferred_stock": ("equity_bridge", True, "all"),
+        "debt": ("equity_bridge", True, "all"),
+        "operating_leases": ("equity_bridge", False, "all"),
+        "employee_options_value": ("equity_bridge", True, "all"),
+        "diluted_shares": ("equity_bridge", True, "all"),
+        "basic_shares": ("equity_bridge", False, "all"),
+        "current_market_price": ("market_context", True, "all"),
+        "cash_flow_currency": ("currency", True, "all"),
+        "discount_rate_currency": ("currency", True, "all"),
+        "currency_override_note": ("currency", False, "all"),
+        "net_income": ("equity_cash_flow", False, "fcfe_ddm"),
+        "capex": ("equity_cash_flow", False, "fcfe_ddm"),
+        "depreciation": ("equity_cash_flow", False, "fcfe_ddm"),
+        "change_in_nwc": ("equity_cash_flow", False, "fcfe_ddm"),
+        "new_debt_issued": ("equity_cash_flow", False, "fcfe_ddm"),
+        "debt_repaid": ("equity_cash_flow", False, "fcfe_ddm"),
+        "dividends": ("equity_cash_flow", False, "fcfe_ddm"),
+        "buybacks": ("equity_cash_flow", False, "fcfe_ddm"),
+        "stock_issuances": ("equity_cash_flow", False, "fcfe_ddm"),
+        "company_age": ("lifecycle", False, "special_case"),
+        "probability_of_failure": ("distress", False, "distressed"),
+        "distress_sale_proceeds": ("distress", False, "distressed"),
+        "book_value_of_equity": ("financial_services", False, "financial_services"),
+        "target_roe": ("financial_services", False, "financial_services"),
+    }
     PLACEHOLDER_SOURCE_TYPES = {
         "missing_actual_default",
         "generic_market_default",
@@ -242,6 +298,61 @@ class AssumptionAutofillEngine:
         }
 
     @staticmethod
+    def _input_readiness(
+        assumptions: Dict[str, Any],
+        provenance: Dict[str, Any],
+    ) -> tuple[list[Dict[str, Any]], Dict[str, Any]]:
+        rows: list[Dict[str, Any]] = []
+        for field, (category, required, model_scope) in AssumptionAutofillEngine.INPUT_CONTRACT.items():
+            value = assumptions.get(field)
+            entry = provenance.get(field, {})
+            if not isinstance(entry, dict):
+                entry = {}
+            present = value is not None and value != ""
+            source_type = entry.get("source_type")
+            if not present:
+                status = "missing" if required else "optional_unavailable"
+            elif entry.get("is_placeholder") or entry.get("requires_review"):
+                status = "review_required"
+            elif source_type == "user_input":
+                status = "user_input"
+            elif source_type in {"formula", "calculation"}:
+                status = "calculated"
+            else:
+                status = "source_backed"
+            rows.append({
+                "field": field,
+                "category": category,
+                "required": required,
+                "model_scope": model_scope,
+                "status": status,
+                "source_type": source_type,
+                "source_file": entry.get("source_file"),
+                "source_as_of": entry.get("source_as_of"),
+                "claim_type": entry.get("claim_type"),
+            })
+
+        counts: Dict[str, int] = {}
+        for row in rows:
+            counts[row["status"]] = counts.get(row["status"], 0) + 1
+        required_missing = [
+            row["field"] for row in rows
+            if row["required"] and row["status"] == "missing"
+        ]
+        required_review = [
+            row["field"] for row in rows
+            if row["required"] and row["status"] == "review_required"
+        ]
+        return rows, {
+            "field_count": len(rows),
+            "counts_by_status": counts,
+            "required_missing_fields": required_missing,
+            "required_review_fields": required_review,
+            "ready_for_review": not required_missing,
+            "ready_for_promotion": not required_missing and not required_review,
+        }
+
+    @staticmethod
     def draft_assumptions(db: Session, company_id: int, base_assumptions: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """
         Drafts a full set of DCF assumptions by combining:
@@ -266,6 +377,16 @@ class AssumptionAutofillEngine:
         if "scenario" not in draft:
             draft["scenario"] = "Base"
             provenance["scenario"] = AssumptionAutofillEngine._provenance("formula", "Structural Default", "high")
+        if "projection_years_count" not in draft:
+            draft["projection_years_count"] = 10
+            provenance["projection_years_count"] = AssumptionAutofillEngine._provenance(
+                "formula", "Ten-year explicit forecast structure", "high"
+            )
+        if "reinvestment_method" not in draft:
+            draft["reinvestment_method"] = "sales_to_capital"
+            provenance["reinvestment_method"] = AssumptionAutofillEngine._provenance(
+                "formula", "Sales-to-capital reinvestment method", "high"
+            )
 
         # 1. Fetch Damodaran Priors
         priors = {}
@@ -296,6 +417,21 @@ class AssumptionAutofillEngine:
 
         # 2. Extract latest reviewed/promoted actuals from the current canonical path
         actuals = AssumptionAutofillEngine._extract_latest_actuals(db, company)
+        candidates = sec_draft_inputs(db, company)
+        if candidates:
+            reviewed_year = max((source.get("fiscal_year", 0) for _, source in actuals.values()), default=0)
+            candidate_year = max(source.get("fiscal_year", 0) for _, source in candidates.values())
+            # A newer draft basis does not modify reviewed financial records.
+            # Never fill a new annual basis with old-year optional cash flows.
+            actuals = candidates if candidate_year > reviewed_year else actuals
+            warnings.append("SEC annual candidates populate draft suggestions only. Review their filing, units and scope; no financial facts have been approved.")
+            if candidate_year > reviewed_year:
+                warnings.append("SEC draft amounts are in full reporting-currency units and full shares, not millions. Keep manual edits on the same scale.")
+            else:
+                warnings.append("The reviewed annual basis is preserved. SEC candidates are not mixed into it because legacy financial scales may differ; review and normalize missing inputs first.")
+        market_price = stored_market_price(db, company)
+        if market_price is not None:
+            actuals["current_market_price"] = market_price
         if not actuals:
             warnings.append("Company has no extracted actuals. Falling back to industry priors or defaults.")
         legacy_actuals = [
@@ -321,8 +457,21 @@ class AssumptionAutofillEngine:
             warnings.append(
                 "Reporting currency has low-confidence provenance because reviewed source units and filing metadata did not identify it."
             )
+        actual_reporting_currency = next(
+            (
+                source.get("reporting_currency")
+                for _, source in actuals.values()
+                if source.get("reporting_currency")
+            ),
+            None,
+        )
+        valuation_currency = (company.currency or actual_reporting_currency or "").upper() or None
+        if valuation_currency is None:
+            warnings.append(
+                "The company cash-flow currency is not identified. Currency-specific discount-rate methods are unavailable until it is reviewed."
+            )
 
-        def industry_provenance(suffix: str = "") -> Dict[str, Any]:
+        def industry_provenance(suffix: str = "", module: str | None = None) -> Dict[str, Any]:
             if industry_mix:
                 return AssumptionAutofillEngine._provenance(
                     "industry_benchmark_blend",
@@ -333,17 +482,47 @@ class AssumptionAutofillEngine:
                     industry_mix_signature=industry_mix["signature"],
                     industry_mix_basis=industry_mix["basis"],
                     industry_mix_allocations=industry_mix["allocations"],
+                    source_summary=priors.get("sourceSummary", []),
+                    requires_review=True,
                 )
             industry_name = company.damodaran_industry or "Unknown Industry"
+            source = next(
+                (
+                    item for item in priors.get("sourceSummary", [])
+                    if module is None or item.get("module") == module
+                ),
+                {},
+            )
+            freshness = AssumptionAutofillEngine._freshness_metadata(
+                source.get("source_as_of"),
+                550,
+            )
+            source_claim_type = source.get("claim_type")
+            source_metadata = {
+                **source,
+                **freshness,
+                "requires_review": True,
+            }
+            source_metadata.pop("claim_type", None)
             return AssumptionAutofillEngine._provenance(
                 "industry_benchmark",
                 f"Damodaran Prior: {industry_name}{suffix}",
                 "medium",
+                claim_type=source_claim_type,
                 industry=industry_name,
                 country=country,
+                **source_metadata,
             )
 
-        def set_val(key, actual_key=None, prior_val=None, default_val=None, fallback_type="missing_actual_default", fallback_label="Missing Actual Default"):
+        def set_val(
+            key,
+            actual_key=None,
+            prior_val=None,
+            default_val=None,
+            fallback_type="missing_actual_default",
+            fallback_label="Missing Actual Default",
+            prior_module: str | None = None,
+        ):
             if key in draft:
                 if key not in provenance:
                     provenance[key] = AssumptionAutofillEngine._provenance(
@@ -358,7 +537,7 @@ class AssumptionAutofillEngine:
                 provenance[key] = actuals[actual_key][1]
             elif prior_val is not None:
                 draft[key] = prior_val
-                provenance[key] = industry_provenance()
+                provenance[key] = industry_provenance(module=prior_module)
             else:
                 draft[key] = default_val
                 provenance[key] = AssumptionAutofillEngine._provenance(fallback_type, fallback_label, "low")
@@ -371,31 +550,76 @@ class AssumptionAutofillEngine:
 
         # 3. Merge Strategy: Actuals > Priors > Defaults
 
-        set_val("current_operating_margin", "operating_margin", prior_val=margin_priors.get("industryUnadjustedOperatingMargin"), default_val=0.10, fallback_type="generic_market_default", fallback_label="Generic Default Margin")
-        set_val("target_operating_margin", prior_val=margin_priors.get("suggestedTargetMargin"), default_val=draft["current_operating_margin"], fallback_type="generic_market_default", fallback_label="Derived from current margin")
+        set_val("current_operating_margin", "operating_margin", prior_val=margin_priors.get("industryUnadjustedOperatingMargin"), default_val=0.10, fallback_type="generic_market_default", fallback_label="Generic Default Margin", prior_module="margin")
+        set_val("target_operating_margin", prior_val=margin_priors.get("suggestedTargetMargin"), default_val=draft["current_operating_margin"], fallback_type="generic_market_default", fallback_label="Derived from current margin", prior_module="margin")
 
-        set_val("sales_to_capital_ratio", "sales_to_capital", prior_val=reinvestment_priors.get("suggestedSalesToCapital"), default_val=1.5, fallback_type="generic_market_default", fallback_label="Generic Sales to Capital")
+        set_val("sales_to_capital_ratio", "sales_to_capital", prior_val=reinvestment_priors.get("suggestedSalesToCapital"), default_val=1.5, fallback_type="generic_market_default", fallback_label="Generic Sales to Capital", prior_module="reinvestment")
 
         from app.services.assumption_methodology import AssumptionMethodologyService
 
-        def apply_methodology_default(key: str, default_fallback: float, label_fallback: str):
+        method_industry = None if industry_mix else company.damodaran_industry
+
+        def apply_methodology_default(
+            key: str,
+            default_fallback: float | None,
+            label_fallback: str,
+            *,
+            industry: str | None = method_industry,
+            currency: str | None = valuation_currency,
+        ) -> bool:
             if key not in draft:
-                default_method = AssumptionMethodologyService.get_default_method(db, key, country)
+                default_method = AssumptionMethodologyService.get_default_method(
+                    db,
+                    key,
+                    country,
+                    industry,
+                    currency,
+                )
                 if default_method:
                     draft[key] = default_method["value"]
+                    source = default_method["source"]
+                    freshness = AssumptionAutofillEngine._freshness_metadata(
+                        source.get("source_as_of") or source.get("dataset_date"),
+                        550,
+                    )
+                    method_metadata = {
+                        **source,
+                        **freshness,
+                        "requires_review": True,
+                    }
                     provenance[key] = AssumptionAutofillEngine._provenance(
                         "methodology_engine",
-                        f"{default_method['label']} ({default_method['source']['source_name']})",
+                        f"{default_method['label']} ({source['source_name']})",
                         default_method["confidence"],
+                        claim_type=default_method.get("claim_type"),
                         method_key=default_method["method_key"],
+                        method_industry=default_method.get("industry"),
+                        method_currency=default_method.get("currency"),
+                        **method_metadata,
                     )
+                    return True
                 else:
                     set_val(key, None, None, default_val=default_fallback, fallback_type="country_default", fallback_label=label_fallback)
+            return False
 
+        fred_rate = stored_usd_risk_free_rate(db, valuation_currency)
+        if "risk_free_rate" not in draft and fred_rate is not None:
+            draft["risk_free_rate"], provenance["risk_free_rate"] = fred_rate
         apply_methodology_default("risk_free_rate", None, f"Not configured for {country}")
-        apply_methodology_default("equity_risk_premium", None, f"Not configured for {country}")
+        apply_methodology_default(
+            "equity_risk_premium",
+            None,
+            f"Not configured for {country}",
+            industry=None,
+            currency=None,
+        )
 
-        set_val("beta", None, None, default_val=1.0, fallback_type="generic_market_default", fallback_label="Generic Market Beta")
+        apply_methodology_default(
+            "beta",
+            1.0,
+            "Generic Market Beta",
+            currency=None,
+        )
 
         if "cost_of_equity" not in draft:
             if draft.get("risk_free_rate") is not None and draft.get("beta") is not None and draft.get("equity_risk_premium") is not None:
@@ -415,12 +639,35 @@ class AssumptionAutofillEngine:
                     requires_review=True,
                 )
 
-        if draft.get("risk_free_rate") is not None:
-            set_val("pre_tax_cost_of_debt", "cost_of_debt", None, default_val=draft["risk_free_rate"] + 0.02, fallback_type="generic_market_default", fallback_label="Risk Free Rate + 2% Spread")
-        else:
-            set_val("pre_tax_cost_of_debt", "cost_of_debt", None, default_val=None, fallback_type="missing_dependency", fallback_label="Missing Risk Free Rate")
-        set_val("tax_rate", "effective_tax_rate", None, default_val=0.25, fallback_type="generic_market_default", fallback_label="Generic Corporate Tax Rate")
-        set_val("debt_to_capital", None, prior_val=capital_structure_priors.get("suggestedTargetDebtRatio"), default_val=0.20, fallback_type="generic_market_default", fallback_label="Generic Debt to Capital")
+        if "pre_tax_cost_of_debt" not in draft and "cost_of_debt" in actuals:
+            set_val("pre_tax_cost_of_debt", "cost_of_debt")
+        if "pre_tax_cost_of_debt" not in draft:
+            fallback_debt_cost = (
+                draft["risk_free_rate"] + 0.02
+                if draft.get("risk_free_rate") is not None
+                else None
+            )
+            apply_methodology_default(
+                "pre_tax_cost_of_debt",
+                fallback_debt_cost,
+                "Risk-free rate plus an unverified 2% spread" if fallback_debt_cost is not None else "Missing risk-free rate",
+            )
+        if "tax_rate" not in draft and "effective_tax_rate" in actuals:
+            set_val("tax_rate", "effective_tax_rate")
+        if "tax_rate" not in draft:
+            apply_methodology_default(
+                "tax_rate",
+                0.25,
+                "Generic Corporate Tax Rate",
+                industry=None,
+                currency=None,
+            )
+        apply_methodology_default(
+            "debt_to_capital",
+            0.20,
+            "Generic Debt to Capital",
+            currency=None,
+        )
 
         if "equity_to_capital" not in draft:
             draft["equity_to_capital"] = 1.0 - draft["debt_to_capital"]
@@ -431,8 +678,11 @@ class AssumptionAutofillEngine:
                 requires_review=dependencies_require_review("debt_to_capital"),
             )
 
-        # WACC
-        if "wacc_start" not in draft:
+        # Use the currency-matched industry workbook WACC when available. The
+        # component calculation remains visible in the component inputs above.
+        if provenance.get("risk_free_rate", {}).get("source_type") != "market_reference":
+            apply_methodology_default("wacc_start", None, "Missing WACC source")
+        if "wacc_start" not in draft or draft.get("wacc_start") is None:
             if draft.get("cost_of_equity") is not None and draft.get("pre_tax_cost_of_debt") is not None and draft.get("equity_to_capital") is not None and draft.get("debt_to_capital") is not None and draft.get("tax_rate") is not None:
                 draft["wacc_start"] = (draft["cost_of_equity"] * draft["equity_to_capital"]) + \
                                       (draft["pre_tax_cost_of_debt"] * (1 - draft["tax_rate"]) * draft["debt_to_capital"])
@@ -539,16 +789,19 @@ class AssumptionAutofillEngine:
 
         if "revenue_growth_years_json" not in draft:
             historical_growth = actuals.get("historical_revenue_growth")
-            initial_growth = historical_growth[0] if historical_growth else growth_priors.get("industryExpected5Y")
+            initial_growth = historical_growth[0] if historical_growth else growth_priors.get("industryExpected2Y")
+            medium_growth = growth_priors.get("industryExpected5Y")
             if initial_growth is None:
-                initial_growth = 0.10
+                initial_growth = medium_growth if medium_growth is not None else 0.10
+            if medium_growth is None:
+                medium_growth = initial_growth
 
             tgr = draft.get("terminal_growth_rate", 0.03)
             if tgr is None:
                 tgr = 0.03
 
-            growth_values = [initial_growth] * 5 + [
-                initial_growth - ((initial_growth - tgr) / 5) * i for i in range(1, 6)
+            growth_values = [initial_growth] * 2 + [medium_growth] * 3 + [
+                medium_growth - ((medium_growth - tgr) / 5) * i for i in range(1, 6)
             ]
             draft["revenue_growth_years_json"] = {
                 str(index): value for index, value in enumerate(growth_values, start=1)
@@ -557,13 +810,19 @@ class AssumptionAutofillEngine:
             if historical_growth:
                 provenance["revenue_growth_years_json"] = historical_growth[1]
             elif growth_priors.get("industryExpected5Y") is not None:
-                provenance["revenue_growth_years_json"] = industry_provenance(" (decay)")
+                provenance["revenue_growth_years_json"] = industry_provenance(" (2Y/5Y path and decay)", "growth")
             else:
                 provenance["revenue_growth_years_json"] = AssumptionAutofillEngine._provenance("generic_market_default", "10% decay to terminal", "low")
 
         # Equity Bridge
         set_val("cash", "cash", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
+        set_val("cross_holdings", "cross_holdings", None, None, fallback_type="missing_actual_default", fallback_label="Optional comparison unavailable")
+        if draft["cross_holdings"] is None:
+            provenance["cross_holdings"]["requires_review"] = False
         set_val("debt", "debt", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
+        set_val("operating_leases", "operating_leases", None, None, fallback_type="missing_actual_default", fallback_label="Optional comparison unavailable")
+        if draft["operating_leases"] is None:
+            provenance["operating_leases"]["requires_review"] = False
         set_val("minority_interests", "minority_interests", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("preferred_stock", "preferred_stock", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("employee_options_value", "employee_options_value", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
@@ -573,10 +832,61 @@ class AssumptionAutofillEngine:
             provenance["basic_shares"]["requires_review"] = False
         set_val("current_market_price", "current_market_price", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
 
-        for key in ("net_income", "capex", "depreciation", "change_in_nwc"):
+        for key in (
+            "net_income",
+            "capex",
+            "depreciation",
+            "change_in_nwc",
+            "new_debt_issued",
+            "debt_repaid",
+            "dividends",
+            "buybacks",
+            "stock_issuances",
+            "book_value_of_equity",
+        ):
             if key not in draft and key in actuals:
                 draft[key] = actuals[key][0]
                 provenance[key] = actuals[key][1]
+
+        for key in ("cash_flow_currency", "discount_rate_currency"):
+            if key in draft:
+                provenance.setdefault(
+                    key,
+                    AssumptionAutofillEngine._provenance("user_input", "User Provided", "high"),
+                )
+            elif valuation_currency is not None:
+                draft[key] = valuation_currency
+                provenance[key] = AssumptionAutofillEngine._provenance(
+                    "company_actual",
+                    "Company reporting currency",
+                    "high" if actual_reporting_currency else "medium",
+                    source_table="financial_statement_periods" if actual_reporting_currency else "companies",
+                    reporting_currency=valuation_currency,
+                    reporting_currency_source=(
+                        "unreviewed_sec_unit" if candidates and candidate_year > reviewed_year
+                        else "reviewed_financial_history" if actual_reporting_currency else "company_profile"
+                    ),
+                    reporting_currency_confidence="high" if actual_reporting_currency else "medium",
+                )
+            else:
+                draft[key] = None
+                provenance[key] = AssumptionAutofillEngine._provenance(
+                    "missing_dependency",
+                    "Reporting currency is required",
+                    "low",
+                    requires_review=True,
+                )
+
+        for key, (_, required, _) in AssumptionAutofillEngine.INPUT_CONTRACT.items():
+            if key in draft:
+                continue
+            draft[key] = None
+            provenance[key] = AssumptionAutofillEngine._provenance(
+                "missing_dependency" if required else "optional_unavailable",
+                "Required valuation input is unavailable" if required else "Optional input is not available from reviewed sources",
+                "low",
+                requires_review=required,
+            )
 
         # Check for missing actual defaults
         missing_keys = [k for k, v in provenance.items() if isinstance(v, dict) and v.get("source_type") == "missing_actual_default"]
@@ -602,6 +912,14 @@ class AssumptionAutofillEngine:
             )
 
         source_metadata = AssumptionAutofillEngine._source_metadata(provenance)
+        readiness_rows, readiness_summary = AssumptionAutofillEngine._input_readiness(
+            draft,
+            provenance,
+        )
+        source_metadata["input_readiness"] = readiness_rows
+        source_metadata["input_readiness_summary"] = readiness_summary
+        source_metadata["source_input_signature"] = source_input_signature(db, company)
+        source_metadata["financial_period_policy"] = "latest_completed_annual"
         source_metadata["financial_history_signature"] = AssumptionAutofillEngine.financial_history_signature(
             db,
             company_id,
@@ -709,7 +1027,7 @@ class AssumptionAutofillEngine:
             for metric in db.scalars(
                 select(NormalizedFinancialMetric).where(NormalizedFinancialMetric.snapshot_id == snapshot.id)
             ):
-                is_derived = metric.metric_code in AssumptionAutofillEngine.DERIVED_NORMALIZED_METRICS
+                is_derived = metric.metric_code in AssumptionAutofillEngine.DERIVED_NORMALIZED_METRICS or (metric.provenance_notes or "").startswith("Computed:")
                 normalized_metrics[metric.metric_code] = (
                     metric.value,
                     AssumptionAutofillEngine._provenance(
@@ -744,9 +1062,18 @@ class AssumptionAutofillEngine:
                 "diluted_shares",
                 "basic_shares",
                 "lease_liabilities",
+                "operating_leases",
+                "cross_holdings",
                 "minority_interests",
                 "preferred_stock",
                 "employee_options_value",
+                "cost_of_debt",
+                "new_debt_issued",
+                "debt_repaid",
+                "dividends",
+                "buybacks",
+                "stock_issuances",
+                "book_equity",
             ):
                 if metric_code not in legacy_metrics or metric_code in normalized_metrics:
                     continue
@@ -768,19 +1095,29 @@ class AssumptionAutofillEngine:
             ("debt", "debt"),
             ("diluted_shares", "diluted_shares"),
             ("basic_shares", "basic_shares"),
-            ("lease_liabilities", "lease_liabilities"),
+            ("operating_leases", "operating_leases"),
+            ("cross_holdings", "cross_holdings"),
             ("minority_interests", "minority_interests"),
             ("preferred_stock", "preferred_stock"),
             ("employee_options_value", "employee_options_value"),
+            ("cost_of_debt", "cost_of_debt"),
             ("effective_tax_rate", "effective_tax_rate"),
             ("invested_capital", "invested_capital"),
             ("net_income", "net_income"),
             ("capex", "capex"),
             ("depreciation", "depreciation"),
             ("change_in_nwc", "change_in_nwc"),
+            ("new_debt_issued", "new_debt_issued"),
+            ("debt_repaid", "debt_repaid"),
+            ("dividends", "dividends"),
+            ("buybacks", "buybacks"),
+            ("stock_issuances", "stock_issuances"),
+            ("book_equity", "book_value_of_equity"),
         ):
             if source_key in metrics:
                 actuals[target_key] = metrics[source_key]
+        if "operating_leases" not in actuals and "lease_liabilities" in metrics:
+            actuals["operating_leases"] = metrics["lease_liabilities"]
 
         revenue_tuple = metrics.get("revenue")
         ebit_tuple = metrics.get("ebit")
@@ -819,26 +1156,6 @@ class AssumptionAutofillEngine:
         revenue_history = AssumptionAutofillEngine._extract_revenue_history(db, company.id)
         if revenue_history is not None:
             actuals["historical_revenue_growth"] = revenue_history
-
-        market_data = db.scalar(select(CompanyMarketData).where(CompanyMarketData.company_id == company.id))
-        if market_data is not None and market_data.current_price is not None:
-            market_freshness = AssumptionAutofillEngine._freshness_metadata(
-                market_data.last_updated.isoformat() if market_data.last_updated else None,
-                7,
-            )
-            actuals["current_market_price"] = (
-                float(market_data.current_price),
-                AssumptionAutofillEngine._provenance(
-                    "company_actual",
-                    "Latest Company Market Data",
-                    "medium",
-                    source_table="company_market_data",
-                    source_record_id=market_data.id,
-                    last_updated=market_data.last_updated.isoformat() if market_data.last_updated else None,
-                    currency=market_data.currency,
-                    **market_freshness,
-                ),
-            )
 
         return actuals
 

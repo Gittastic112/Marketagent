@@ -43,8 +43,9 @@ export function RegimeInputForm() {
     <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       {submitError ? <p role="alert" style={{ color: "var(--danger)", margin: 0 }}>{submitError}</p> : null}
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Metric Name</label>
+        <label htmlFor="metric-name" style={{ display: "block", marginBottom: "0.5rem" }}>Metric Name</label>
         <select
+          id="metric-name"
           value={metricName}
           onChange={(e) => setMetricName(e.target.value as MarketRegimeInputCreate["metric_name"])}
           style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
@@ -57,8 +58,9 @@ export function RegimeInputForm() {
         </select>
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Normalized Score (-100 to 100)</label>
+        <label htmlFor="normalized-score" style={{ display: "block", marginBottom: "0.5rem" }}>Normalized Score (-100 to 100)</label>
         <input
+          id="normalized-score"
           max="100"
           min="-100"
           type="number"
@@ -70,8 +72,9 @@ export function RegimeInputForm() {
         />
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Input Type</label>
+        <label htmlFor="input-type" style={{ display: "block", marginBottom: "0.5rem" }}>Input Type</label>
         <select
+          id="input-type"
           value={inputType}
           onChange={(e) => setInputType(e.target.value as MarketRegimeInputCreate["input_type"])}
           style={{ padding: "0.5rem", borderRadius: "4px", width: "100%", background: "var(--bg-secondary)", color: "var(--text-primary)", border: "1px solid var(--border-color)" }}
@@ -81,8 +84,9 @@ export function RegimeInputForm() {
         </select>
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Source Name</label>
+        <label htmlFor="source-name" style={{ display: "block", marginBottom: "0.5rem" }}>Source Name</label>
         <input
+          id="source-name"
           minLength={2}
           required
           value={sourceName}
@@ -91,8 +95,9 @@ export function RegimeInputForm() {
         />
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Source URL {inputType === "provider" ? "(required)" : "(optional)"}</label>
+        <label htmlFor="source-url" style={{ display: "block", marginBottom: "0.5rem" }}>Source URL {inputType === "provider" ? "(required)" : "(optional)"}</label>
         <input
+          id="source-url"
           required={inputType === "provider"}
           type="url"
           value={sourceUrl}
@@ -101,8 +106,9 @@ export function RegimeInputForm() {
         />
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>Normalization Methodology</label>
+        <label htmlFor="methodology" style={{ display: "block", marginBottom: "0.5rem" }}>Normalization Methodology</label>
         <textarea
+          id="methodology"
           minLength={10}
           required
           value={methodology}
@@ -111,8 +117,9 @@ export function RegimeInputForm() {
         />
       </div>
       <div>
-        <label style={{ display: "block", marginBottom: "0.5rem" }}>As Of Date</label>
+        <label htmlFor="as-of-date" style={{ display: "block", marginBottom: "0.5rem" }}>As Of Date</label>
         <input
+          id="as-of-date"
           type="date"
           required
           value={asOfDate}

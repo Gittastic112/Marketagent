@@ -36,6 +36,8 @@ def test_save_daily_brief_persists_generated_snapshot() -> None:
     assert persisted.user_id == "brief-owner"
     assert persisted.brief_date == date(2026, 5, 24)
     assert persisted.title == "Daily Intelligence Brief"
-    assert persisted.summary == "Market is active. 1 new events processed. 0 thesis contradictions found."
+    assert persisted.summary == "1 event since the last reviewed brief; 0 unresolved contradiction alerts; 0 affected held companies."
+    assert persisted.payload_json["calculation_status"] == "complete"
+    assert persisted.payload_json["valuation_analysis_status"] == "not_required"
     assert persisted.payload_json["new_since_last_review"]["filings"] == []
     assert persisted.payload_json["high_materiality_events"] == []

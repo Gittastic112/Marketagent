@@ -16,7 +16,9 @@ Review security risks for local-first investment research features.
 ## Prerequisites
 
 - Read `docs/06-security-threat-model.md`.
-- Inspect `.env.example`, config, logs, routes, and user-input paths.
+- Inspect permitted config declarations, routes, input paths and sanitized logs.
+  Respect denied secret-file paths, including examples if the session blocks them;
+  verify configuration state without reading credential values.
 
 ## Inputs
 
@@ -45,6 +47,23 @@ Review security risks for local-first investment research features.
 9. For upload routes, verify size/type limits, content hashing, duplicate handling, temporary-file cleanup, safe errors, and processing-run persistence.
 10. For readiness endpoints, verify responses contain configuration state only, never environment values, and are not cached.
 11. If generated diff markup is stored, HTML-escape every source token and parse only generator-owned semantics into React text. Do not use `dangerouslySetInnerHTML`, including for legacy rows.
+12. For AI citation assistance, resolve the owned AI output first, accept only
+    its declared source markers, scan stored text locally with finite limits,
+    return bounded exact spans, and keep selection separate from validation and
+    approval. Manual edits invalidate suggested offsets.
+13. For server-rendered auth, decode supported standard, secure, or chunked
+    session cookies at the request boundary and sign only the internal identity.
+    Never forward or log the browser session cookie.
+14. For unified research search, preserve every model's shared/private boundary,
+    filter private rows by authenticated owner, bound excerpts, exclude generic
+    assistant-message indexing, and admit AI output only after successful,
+    approved, reviewed, and unblocked state.
+15. Check browser mutations for same-origin enforcement, bounded bodies and safe
+    forwarded headers. Check download/DNS/redirect and parser resource bounds at
+    the actual client being changed; one safe client does not certify all providers.
+16. Preserve private source/receipt ownership, append-only decisions and evidence
+    hash/version conflicts. A matching quote proves text identity, not semantic
+    truth; an analyst receipt does not approve AI output or numerical assumptions.
 
 ## Acceptance criteria
 
@@ -56,6 +75,9 @@ Review security risks for local-first investment research features.
 - Uploaded workbooks do not leave persistent temporary paths or return parser stack traces.
 - Auth readiness names missing variables without exposing their values.
 - Filing/RSS/AI text cannot inject markup through diff, excerpt, or evidence rendering.
+- Evidence suggestions cannot expose undeclared sources or mutate review state.
+- Search cannot expose another user's private research or surface pending,
+  blocked, failed, or unreviewed AI output.
 
 ## Common mistakes
 

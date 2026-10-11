@@ -18,6 +18,7 @@ class MarketPrice(Base):
     as_of_date: Mapped[date] = mapped_column(Date, index=True)
     provider_name: Mapped[str] = mapped_column(String(50), default="manual", index=True)
     provider_symbol: Mapped[str | None] = mapped_column(String(50))
+    source_url: Mapped[str | None] = mapped_column(String(1000), nullable=True)
     market: Mapped[str | None] = mapped_column(String(20))
     exchange: Mapped[str | None] = mapped_column(String(30))
     source_timestamp: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
@@ -27,6 +28,10 @@ class MarketPrice(Base):
         server_default=func.now(),
     )
     price_type: Mapped[str] = mapped_column(String(30), default="manual")
+    claim_type: Mapped[str] = mapped_column(String(30), default="Fact")
+    import_run_id: Mapped[int | None] = mapped_column(
+        ForeignKey("processing_runs.id"), nullable=True, index=True
+    )
     delay_minutes: Mapped[int | None] = mapped_column()
     adjustment_state: Mapped[str] = mapped_column(String(30), default="not_applicable")
     warnings_json: Mapped[list[str]] = mapped_column(JSON, default=list)
@@ -37,7 +42,7 @@ class MarketPrice(Base):
         onupdate=func.now(),
     )
 
-    company = relationship("Company", back_populates="market_prices", lazy="selectin")
+    company = relationship("Company", back_populates="market_prices", lazy="select")
 
     @property
     def warnings(self) -> list[str]:
@@ -77,7 +82,7 @@ class CompanyMarketData(Base):
         onupdate=func.now(),
     )
 
-    company = relationship("Company", back_populates="market_data", lazy="selectin")
+    company = relationship("Company", back_populates="market_data", lazy="select")
 
     @property
     def warnings(self) -> list[str]:

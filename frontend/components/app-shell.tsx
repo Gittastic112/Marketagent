@@ -15,10 +15,11 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Sidebar />
       <div className="main-content-wrapper">
         <TopBar />
-        <main className="main">{children}</main>
+        <main className="main" id="main-content" tabIndex={-1}>{children}</main>
       </div>
     </div>
   );

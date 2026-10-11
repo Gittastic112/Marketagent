@@ -1,88 +1,38 @@
 ---
 name: security-review
-description: Use when a Market Intelligence App task touches external inputs, files, URLs, provider APIs, AI calls, secrets, auth, broker integrations, exports, proxy routes, or public deployment.
+description: Review Market Intelligence App changes involving authentication, private research or portfolio data, uploads, URLs, imports/exports, provider or AI calls, proxy routes, secrets, or deployment. Use for explicit security reviews or when those trust boundaries change; skip pure copy and layout edits.
 ---
 
-# Security Review
+# Market Intelligence security review
 
-## Purpose
-
-Run the project security checklist before changing risky surfaces. The canonical project workflow is `docs/skills/security/security-review.md`.
-
-## When to use
-
-- External APIs, SEC/RSS/provider ingestion, user-provided URLs, uploads, CSV import/export, AI calls, auth, broker integrations, proxy routes, or deployment.
-- Any feature touches private portfolio, thesis, valuation, or source data.
-
-## When NOT to use
-
-- Pure copy edits with no behavior or data-flow change.
-
-## Prerequisites
-
-- Read `docs/06-security-threat-model.md`.
-- If the task is in this repository, also read `docs/skills/security/security-review.md`.
-
-## Inputs
-
-- Changed files.
-- User-controlled inputs.
-- Secrets or credentials involved.
-- External provider or AI calls.
-
-## Outputs
-
-- Security risks and required mitigations.
-- Tests or manual checks.
-- Threat-model updates when security assumptions change.
+This repository package routes to one canonical project workflow. When installed,
+its metadata permits implicit invocation for matching tasks; explicit invocation
+is also supported. A checked-in package alone does not establish installation.
 
 ## Workflow
 
-1. Check secrets and environment handling.
-2. Check untrusted input rendering.
-3. Check URL fetching and SSRF risk.
-4. Check CSV/spreadsheet injection.
-5. Check API errors/logs for secret leakage.
-6. Check AI data sharing and provenance.
-7. Check broker/auth/deployment boundaries.
-8. Verify tests avoid live external APIs.
-9. For uploads, verify size/type limits, hashes, duplicate handling, temporary-file cleanup, safe errors, and processing runs.
-10. For readiness/diagnostic routes, verify they return state only and never secret values.
-11. For generated diff markup, escape every source token and parse only generator-owned semantics into React text. Do not use `dangerouslySetInnerHTML`, including for legacy rows.
+1. Locate the Market Intelligence repository from its root AGENTS.md and docs map.
+   If unavailable, report the missing project context; do not pretend this package
+   contains a standalone copy of the project's threat model.
+2. Read [the security workflow](../../docs/skills/security/security-review.md).
+   Apply the sections relevant to the changed input/data/identity boundary, using
+   [the threat model](../../docs/06-security-threat-model.md) for deeper context.
+3. Inspect the changed routes, services, callers and tests. Preserve owner scoping,
+   exact evidence and review/version gates. Treat sources and AI output as untrusted.
+4. Use the [runbook](../../docs/08-execution-runbook.md) for verification. In an
+   assigned batch respect [exclusive ownership](../../docs/workstreams/ownership.tsv)
+   and request shared changes through the coordinator.
+5. Report concrete findings with source location, consequence, remediation and
+   validation evidence. Separate passed, failed, blocked and untested checks.
 
-## Acceptance criteria
+## Boundaries and output
 
-- No secrets are exposed to frontend or committed files.
-- User-controlled URLs cannot fetch internal resources.
-- Imported text is not rendered as trusted HTML.
-- Private portfolio/thesis/valuation data is not sent externally without explicit design and audit trail.
-- Public deployment remains blocked until production identity, authorization,
-  and deployment security exist; local credential auth is not sufficient.
-- Upload provenance never stores temporary paths, and auth readiness never returns credential values.
-- Imported filing text cannot inject markup through diff or evidence rendering.
+Never read/print secrets, invent provider success, approve evidence implicitly,
+store broker passwords, call live APIs from deterministic tests, or deploy publicly
+as a side effect of a review. A clean scanner is not security certification.
+Existing user authorization governs actions; this skill adds no blanket approval
+step and does not authorize messaging, deployment or private-data transmission.
 
-## Common mistakes
-
-- Treating local-first as no security needed.
-- Logging provider keys.
-- Rendering RSS/AI/markdown as raw HTML.
-- Storing broker passwords.
-
-## Do not do
-
-- Do not recommend `sudo chmod 666 /var/run/docker.sock`.
-- Do not expose the app publicly without production identity/authorization,
-  HTTPS, CSRF/CORS review, rate limits, and secret management.
-- Do not call live external APIs in automated tests.
-
-## Related skills
-
-- `docs/skills/data-ingestion/data-ingestion-workflow.md`
-- `docs/skills/backend/backend-api-change.md`
-- `docs/skills/frontend/frontend-data-state.md`
-- `docs/skills/operations/local-operations.md`
-
-## References
-
-- `docs/06-security-threat-model.md`
-- `docs/skills/security/security-review.md`
+Return actionable findings and verification limits. Update the canonical workflow
+when recurring guidance changes rather than expanding this entrypoint into a
+second checklist. Keep invocation policy in [openai.yaml](agents/openai.yaml).

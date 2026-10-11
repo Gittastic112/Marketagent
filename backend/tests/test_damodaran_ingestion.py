@@ -8,11 +8,14 @@ from sqlalchemy.orm import sessionmaker
 
 from app.db.base import Base
 from app.models.damodaran import DamodaranDatasetFile
+from app.models.assumption_methodology import AssumptionMethodValue
 from app.models.damodaran_fundamentals import (
     DamodaranCapexBenchmark,
     DamodaranDividendBenchmark,
     DamodaranFCFEBenchmark,
     DamodaranMarginBenchmark,
+    DamodaranGrowthBenchmark,
+    DamodaranFinancingFlowsBenchmark,
     DamodaranRoeBenchmark,
     DamodaranWcBenchmark,
 )
@@ -294,6 +297,118 @@ def test_fcfe_ingestion_matches_approved_source_and_is_idempotent() -> None:
         assert db.query(DamodaranFCFEBenchmark).filter(
             DamodaranFCFEBenchmark.industry_name.like("Total Market%")
         ).count() == 0
+    finally:
+        db.close()
+
+
+def test_beta_and_wacc_method_imports_match_approved_sources() -> None:
+    db = _session()
+    try:
+        beta_count = DamodaranBenchmarkIngestionService.ingest_beta_methods_file(
+            db, str(_approved_source("betaIndia.xls")), "India"
+        )
+        wacc_count = DamodaranBenchmarkIngestionService.ingest_wacc_methods_file(
+            db, str(_approved_source("waccIndia.xls")), "India"
+        )
+
+        assert beta_count == 280
+        assert wacc_count == 654
+        beta_dataset = _assert_version(
+            db,
+            filename="betaIndia.xls",
+            expected_hash="63fad7617385e82f36622eec9893bf45f7063504938c8b29ede3d7c1d73155b2",
+            expected_rows=280,
+        )
+        wacc_dataset = _assert_version(
+            db,
+            filename="waccIndia.xls",
+            expected_hash="56a6a79b1f6fb9f28d4e835aeab95d21243570c20df6dbea43d531a635b7c935",
+            expected_rows=654,
+        )
+        transportation_beta = db.query(AssumptionMethodValue).filter_by(
+            dataset_file_id=beta_dataset.id,
+            industry="Transportation",
+            assumption_key="beta",
+            method_key="industry_regression_beta",
+        ).one()
+        assert transportation_beta.value == pytest.approx(1.1292760081081277)
+        assert transportation_beta.source_sheet == "Industry Averages"
+
+        inr_wacc = db.query(AssumptionMethodValue).filter_by(
+            dataset_file_id=wacc_dataset.id,
+            industry="Transportation",
+            assumption_key="wacc_start",
+            currency="INR",
+        ).one()
+        assert inr_wacc.value == pytest.approx(0.13400219494298193)
+        india_erp = db.query(AssumptionMethodValue).filter_by(
+            dataset_file_id=wacc_dataset.id,
+            assumption_key="equity_risk_premium",
+            country="India",
+        ).one()
+        assert india_erp.value == pytest.approx(0.0708)
+        assert india_erp.source_column == "Risk Premium to Use for Equity"
+    finally:
+        db.close()
+
+
+def test_tax_growth_and_financing_imports_preserve_exact_workbook_values() -> None:
+    db = _session()
+    try:
+        industry_tax_count = DamodaranBenchmarkIngestionService.ingest_industry_tax_methods_file(
+            db, str(_approved_source("taxrateIndia.xls")), "India"
+        )
+        country_tax_count = DamodaranBenchmarkIngestionService.ingest_country_tax_methods_file(
+            db, str(_approved_source("countrytaxrates.xls"))
+        )
+        growth_count = DamodaranBenchmarkIngestionService.ingest_growth_file(
+            db, str(_approved_source("histgrIndia.xls")), "India"
+        )
+        financing_count = DamodaranBenchmarkIngestionService.ingest_financing_flows_file(
+            db, str(_approved_source("finflowsIndia.xls")), "India"
+        )
+
+        assert (industry_tax_count, country_tax_count, growth_count, financing_count) == (94, 248, 94, 94)
+        _assert_version(
+            db,
+            filename="taxrateIndia.xls",
+            expected_hash="bde6a540ae868428fd82f6aad2ab251caf39e84dd8a43529594f0b83ce73317f",
+        )
+        _assert_version(
+            db,
+            filename="countrytaxrates.xls",
+            expected_hash="acaf535aa974c9f77898c26fb0333ee26ad1ef3ce1db0412f817fa7ec60b5582",
+            expected_rows=248,
+        )
+        _assert_version(
+            db,
+            filename="histgrIndia.xls",
+            expected_hash="dabe3ba450f35220df1e50f97e2c9bf8b2949117c2a18048379d23480398294a",
+        )
+        _assert_version(
+            db,
+            filename="finflowsIndia.xls",
+            expected_hash="b4b065af5a33f3bdf4c9e33d90e8522a06625a42cd6e2179cb1df557cb31e571",
+        )
+
+        india_tax = db.query(AssumptionMethodValue).filter_by(
+            country="India",
+            method_key="country_marginal_corporate_tax_rate",
+        ).one()
+        assert india_tax.value == pytest.approx(0.30)
+        assert india_tax.source_sheet == "Sheet1"
+        transportation_growth = db.query(DamodaranGrowthBenchmark).filter_by(
+            industry_name="Transportation"
+        ).one()
+        assert transportation_growth.expected_revenue_growth_2y == pytest.approx(0.11916666666666667)
+        assert transportation_growth.expected_revenue_growth_5y == pytest.approx(0.052385508894145616)
+        assert transportation_growth.historical_revenue_growth == pytest.approx(0.11042307692307693)
+        transportation_flows = db.query(DamodaranFinancingFlowsBenchmark).filter_by(
+            industry_name="Transportation"
+        ).one()
+        assert transportation_flows.dividends_usd_millions == pytest.approx(55.9482)
+        assert transportation_flows.debt_raised_usd_millions == pytest.approx(227.592)
+        assert transportation_flows.net_debt_change_usd_millions == pytest.approx(-188.151)
     finally:
         db.close()
 

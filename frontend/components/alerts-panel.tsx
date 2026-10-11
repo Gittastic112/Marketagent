@@ -46,8 +46,8 @@ export function AlertsPanel({ alerts, companiesById }: AlertsPanelProps) {
             <div key={alert.id} style={{
               padding: "0.75rem",
               borderRadius: "0.25rem",
-              border: `1px solid ${severityColor}40`,
-              backgroundColor: `${severityColor}0a`,
+              border: `1px solid ${severityColor}`,
+              backgroundColor: "var(--surface)",
               display: "flex",
               flexDirection: "column",
               gap: "0.25rem"

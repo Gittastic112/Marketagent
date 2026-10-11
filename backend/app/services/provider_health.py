@@ -2,19 +2,21 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.orm import Session
 
 from app.api.schemas import ProviderHealthRead
 from app.models.damodaran import DamodaranDatasetFile
 from app.models.processing_run import ProcessingRun
 from app.models.source import Source
+from app.providers.ai_provider import DEFAULT_GEMINI_MODEL
+from app.services.sec_ingestion import get_valid_sec_user_agent
 
 
 COMPLETED_STATUSES = {"completed", "success"}
 FAILED_STATUSES = {"failed", "error"}
 RUNNING_STATUSES = {"running", "in_progress", "queued"}
-PARTIAL_STATUSES = {"partial", "completed_with_errors"}
+PARTIAL_STATUSES = {"partial", "partial_success", "completed_with_errors"}
 DEFAULT_SEC_USER_AGENT = "Market Intelligence Engine local research app"
 
 
@@ -37,6 +39,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         _configured_provider(
             provider_name="SEC EDGAR",
             capability="filings",
+            requirement_level="core",
             market="US",
             configured=_valid_sec_user_agent(_env("SEC_USER_AGENT")),
             run_summary=latest_runs.get("sec_ingestion"),
@@ -48,6 +51,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         _configured_provider(
             provider_name="FRED",
             capability="macro",
+            requirement_level="optional",
             market="US",
             configured=bool(_env("FRED_API_KEY")),
             run_summary=latest_runs.get("fred_ingestion"),
@@ -59,6 +63,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         _configured_provider(
             provider_name=market_provider,
             capability="market_prices",
+            requirement_level="optional",
             market="US/IN",
             configured=_market_data_key_configured(market_provider),
             run_summary=latest_runs.get("market_data_ingestion"),
@@ -71,10 +76,11 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         _configured_provider(
             provider_name="AI Provider",
             capability="ai_analysis",
+            requirement_level="optional",
             market=None,
-            configured=bool(_first_configured_ai_provider()),
-            run_summary=None,
-            missing_action="Set GEMINI_API_KEY, OPENAI_API_KEY, or ANTHROPIC_API_KEY to enable non-mock AI output.",
+            configured=bool(_first_configured_ai_provider()) and not _ai_demo_mode_enabled(),
+            run_summary=None if _ai_demo_mode_enabled() else _ai_probe_summary(db),
+            missing_action="Disable AI_DEMO_MODE to use configured Gemini." if _ai_demo_mode_enabled() else "Set GEMINI_API_KEY and an accessible GEMINI_MODEL to enable non-mock AI output.",
             configured_notes=_ai_provider_notes(),
             unconfigured_status="mock" if _ai_demo_mode_enabled() else "missing_key",
             rate_limit_status="Depends on Tier",
@@ -83,6 +89,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         _configured_provider(
             provider_name="OpenFIGI",
             capability="identity_resolution",
+            requirement_level="optional",
             market=None,
             configured=bool(_env("OPENFIGI_API_KEY")),
             run_summary=None,
@@ -96,6 +103,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
         ProviderHealthRead(
             provider_name="India Manual Filings",
             capability="filings",
+            requirement_level="manual",
             market="IN",
             status="manual_only",
             configured=True,
@@ -117,7 +125,13 @@ def _env(name: str) -> str | None:
 
 
 def _valid_sec_user_agent(value: str | None) -> bool:
-    return bool(value and "@" in value and value != DEFAULT_SEC_USER_AGENT)
+    if not value or "@" not in value or value == DEFAULT_SEC_USER_AGENT:
+        return False
+    try:
+        get_valid_sec_user_agent(value)
+    except ValueError:
+        return False
+    return True
 
 
 def _market_data_provider_name() -> str:
@@ -162,14 +176,18 @@ def _market_data_provider_notes(provider_name: str) -> str | None:
 
 
 def _first_configured_ai_provider() -> str | None:
-    for provider_name, env_name in (
-        ("Gemini", "GEMINI_API_KEY"),
-        ("OpenAI", "OPENAI_API_KEY"),
-        ("Anthropic", "ANTHROPIC_API_KEY"),
-    ):
-        if _env(env_name):
-            return provider_name
-    return None
+    # Keep health aligned with select_ai_provider: other adapters are not built.
+    return "Gemini" if _env("GEMINI_API_KEY") else None
+
+
+def _ai_probe_summary(db: Session) -> RunSummary | None:
+    # A successful check of a different model is not proof for this configuration.
+    model = _env("GEMINI_MODEL") or DEFAULT_GEMINI_MODEL
+    return _run_summaries(db,
+        ProcessingRun.run_type == "ai_provider_probe",
+        ProcessingRun.source_type == "gemini",
+        ProcessingRun.metadata_json["model"].as_string() == model,
+    ).get("ai_provider_probe")
 
 
 def _ai_provider_notes() -> str | None:
@@ -189,6 +207,7 @@ def _configured_provider(
     *,
     provider_name: str,
     capability: str,
+    requirement_level: str,
     market: str | None,
     configured: bool,
     run_summary: RunSummary | None,
@@ -213,6 +232,7 @@ def _configured_provider(
     return ProviderHealthRead(
         provider_name=provider_name,
         capability=capability,
+        requirement_level=requirement_level,
         market=market,
         status=status,
         configured=configured,
@@ -227,7 +247,7 @@ def _configured_provider(
         last_failure_at=summary.last_failure_at,
         failure_reason=summary.failure_reason,
         freshness_label=freshness_label,
-        notes=configured_notes,
+        notes=configured_notes if configured else None,
         action_required=_action_for_provider(
             configured=configured,
             status=status,
@@ -318,63 +338,64 @@ def _action_for_provider(
 
 
 def _latest_run_summaries(db: Session) -> dict[str, RunSummary]:
-    runs = list(db.scalars(select(ProcessingRun).order_by(ProcessingRun.started_at.desc(), ProcessingRun.id.desc())))
-    runs_by_type: dict[str, list[ProcessingRun]] = {}
-    for run in runs:
-        runs_by_type.setdefault(run.run_type, []).append(run)
-    return {run_type: _summarize_runs(items) for run_type, items in runs_by_type.items()}
+    return _run_summaries(db, ProcessingRun.run_type.in_(
+        ("sec_ingestion", "fred_ingestion", "market_data_ingestion", "rss_ingestion")
+    ))
 
 
-def _normalized_run_status(run: ProcessingRun) -> str:
-    status = run.status.lower()
-    if status in RUNNING_STATUSES:
-        return "running"
-    if status in FAILED_STATUSES:
-        return "failed"
-    if status in PARTIAL_STATUSES or (status in COMPLETED_STATUSES and run.error_count > 0):
-        return "partial"
-    if status in COMPLETED_STATUSES:
-        return "completed"
-    return "unknown"
-
-
-def _summarize_runs(runs: list[ProcessingRun]) -> RunSummary:
-    latest = runs[0]
-    latest_status = _normalized_run_status(latest)
-    last_success = next(
-        ((run.finished_at or run.started_at) for run in runs if _normalized_run_status(run) == "completed"),
-        None,
+def _run_summaries(db: Session, *conditions) -> dict[str, RunSummary]:
+    """Load at most one row per status/type, retaining all-history counts/dates."""
+    status = func.lower(ProcessingRun.status)
+    normalized = case(
+        (status.in_(RUNNING_STATUSES), "running"),
+        (status.in_(FAILED_STATUSES), "failed"),
+        (status.in_(PARTIAL_STATUSES) | (status.in_(COMPLETED_STATUSES) & (ProcessingRun.error_count > 0)), "partial"),
+        (status.in_(COMPLETED_STATUSES), "completed"),
+        else_="unknown",
     )
-    last_failure_run = next(
-        (run for run in runs if _normalized_run_status(run) in {"failed", "partial"}),
-        None,
-    )
-    consecutive_failures = 0
-    for run in runs:
-        if _normalized_run_status(run) != "failed":
-            break
-        consecutive_failures += 1
-    return RunSummary(
-        last_attempt_at=latest.started_at,
-        latest_run_status=latest_status,
-        recent_run_count=len(runs),
-        consecutive_failures=consecutive_failures,
-        last_success_at=last_success,
-        last_failure_at=(last_failure_run.finished_at or last_failure_run.started_at) if last_failure_run else None,
-        failure_reason=_failure_reason(last_failure_run) if last_failure_run else None,
-    )
+    ordering = (ProcessingRun.started_at.desc(), ProcessingRun.id.desc())
+    ranked = select(
+        ProcessingRun.id,
+        normalized.label("normalized_status"),
+        func.row_number().over(partition_by=ProcessingRun.run_type, order_by=ordering).label("position"),
+        func.row_number().over(partition_by=(ProcessingRun.run_type, normalized), order_by=ordering).label("status_position"),
+        func.count().over(partition_by=ProcessingRun.run_type).label("total"),
+    ).where(*conditions).subquery()
+    selected = db.execute(select(ProcessingRun, ranked.c.position, ranked.c.total, ranked.c.normalized_status)
+                          .join(ranked, ranked.c.id == ProcessingRun.id)
+                          .where(ranked.c.status_position == 1)
+                          .order_by(ranked.c.position)).all()
+    grouped: dict[str, list] = {}
+    for row in selected:
+        grouped.setdefault(row[0].run_type, []).append(row)
+    summaries = {}
+    for run_type, rows in grouped.items():
+        latest, _, total, latest_status = rows[0]
+        success = next((row[0] for row in rows if row[3] == "completed"), None)
+        failure = next((row[0] for row in rows if row[3] in {"failed", "partial"}), None)
+        first_nonfailure = next((row[1] for row in rows if row[3] != "failed"), total + 1)
+        summaries[run_type] = RunSummary(
+            last_attempt_at=latest.started_at, latest_run_status=latest_status,
+            recent_run_count=total, consecutive_failures=first_nonfailure - 1,
+            last_success_at=(success.finished_at or success.started_at) if success else None,
+            last_failure_at=(failure.finished_at or failure.started_at) if failure else None,
+            failure_reason=_failure_reason(failure) if failure else None,
+        )
+    return summaries
 
 
 def _failure_reason(run: ProcessingRun) -> str | None:
     details = run.error_details_json or {}
     if isinstance(details, dict):
         value = details.get("error") or details.get("message") or details.get("detail")
+        if not value and isinstance(details.get("errors"), list) and details["errors"]:
+            value = details["errors"][0]
         return str(value) if value else None
     return str(details)
 
 
 def _damodaran_health(db: Session) -> ProviderHealthRead:
-    latest_file = db.scalar(select(DamodaranDatasetFile).order_by(DamodaranDatasetFile.imported_at.desc()))
+    latest_file = db.scalar(select(DamodaranDatasetFile).order_by(DamodaranDatasetFile.imported_at.desc()).limit(1))
     configured = latest_file is not None
     age_hours = _data_age_hours(latest_file.imported_at) if latest_file is not None else None
     threshold_hours = 24 * 400
@@ -382,6 +403,7 @@ def _damodaran_health(db: Session) -> ProviderHealthRead:
     return ProviderHealthRead(
         provider_name="Damodaran Benchmarks",
         capability="benchmarks",
+        requirement_level="core",
         market="Global",
         status="working" if configured else "not_configured",
         configured=configured,
@@ -409,6 +431,7 @@ def _rss_health(db: Session, run_summary: RunSummary | None) -> ProviderHealthRe
     return _configured_provider(
         provider_name="RSS Feeds",
         capability="news",
+        requirement_level="optional",
         market="US/IN",
         configured=has_active_source,
         run_summary=run_summary,

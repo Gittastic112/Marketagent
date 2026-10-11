@@ -1,74 +1,155 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import {
   getRelativeValuationCountries,
   getRelativeValuationIndustries,
+  listPeerValuationSets,
+  PeerSetMethodSource,
+  PeerValuationSet,
+  PricingSourceProvenance,
   runRelativeValuation,
   RelativeValuationResponse,
   RelativeValuationRequest
 } from "@/lib/api";
+import { PeerSetManager } from "@/components/valuation/peer-set-manager";
+import { RelativeInputBasis } from "./relative-input-basis";
+import { createRequestGate } from "@/lib/latest-request";
+import { useLatestResource } from "@/lib/use-latest-resource";
+import { hasReadySelection, isPeerSetCalculationReady } from "@/lib/relative-valuation-selection";
 
-export function RelativeValuationPanel({
-  companyId,
-  financials
-}: {
-  companyId?: string,
-  financials: RelativeValuationRequest["financials"]
+type PanelProps = {
+  companyId?: string;
+  financials: RelativeValuationRequest["financials"];
+  runValuation?: typeof runRelativeValuation;
+  inputContextKey?: string;
+  inputBlockedReason?: string;
+};
+
+function RequestNotice({ label, resource }: {
+  label: string;
+  resource: { status: string; error: string | null; reload: () => Promise<void> };
 }) {
-  const [countries, setCountries] = useState<string[]>([]);
-  const [industries, setIndustries] = useState<string[]>([]);
+  if (resource.status === "loading") return <p role="status">Loading {label}...</p>;
+  if (resource.status !== "error") return null;
+  return <div role="alert" style={{ marginBottom: "12px", color: "#b71c1c" }}>
+    <p>{label} unavailable: {resource.error}</p>
+    <button type="button" onClick={() => { void resource.reload().catch(() => {}); }}>Retry {label}</button>
+  </div>;
+}
+
+export function RelativeValuationPanel(props: PanelProps) {
+  // Never carry an old company's peer editor, requests, or results into another company.
+  return <CompanyRelativeValuationPanel key={props.companyId || "unassigned"} {...props} />;
+}
+
+function CompanyRelativeValuationPanel({
+  companyId,
+  financials,
+  runValuation = runRelativeValuation,
+  inputContextKey,
+  inputBlockedReason,
+}: PanelProps) {
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [selectedIndustry, setSelectedIndustry] = useState<string>("");
+  const [benchmarkMode, setBenchmarkMode] = useState<"industry_aggregate" | "reviewed_peer_set">("industry_aggregate");
+  const [selectedPeerSetId, setSelectedPeerSetId] = useState<string>("");
   const [methods, setMethods] = useState<string[]>(["pe", "pbv", "ps", "ev_sales", "ev_ebitda", "ev_ebit"]);
+  const countryResource = useLatestResource(getRelativeValuationCountries);
+  const industryLoader = useCallback(() => selectedCountry
+    ? getRelativeValuationIndustries(selectedCountry) : Promise.resolve<string[]>([]), [selectedCountry]);
+  const industryResource = useLatestResource(industryLoader);
+  const peerLoader = useCallback(() => companyId
+    ? listPeerValuationSets(Number(companyId), true) : Promise.resolve<PeerValuationSet[]>([]), [companyId]);
+  const peerResource = useLatestResource(peerLoader);
+  const countries = countryResource.data || [];
+  const industries = industryResource.data || [];
+  const peerSets = peerResource.data || [];
+  const eligiblePeerIds = peerSets.filter(isPeerSetCalculationReady).map(set => String(set.id));
+  const benchmarkReady = benchmarkMode === "industry_aggregate"
+    ? hasReadySelection(countryResource.status, countries, selectedCountry)
+      && hasReadySelection(industryResource.status, industries, selectedIndustry)
+    : Boolean(companyId) && hasReadySelection(peerResource.status, eligiblePeerIds, selectedPeerSetId);
 
   const [result, setResult] = useState<RelativeValuationResponse | null>(null);
+  const [resultInputKey, setResultInputKey] = useState<string | null>(null);
+  const currentInputKey = JSON.stringify({ companyId, financials, inputContextKey, inputBlockedReason, benchmarkMode, selectedCountry,
+    selectedIndustry, selectedPeerSetId, methods,
+    peerEvidence: peerSets.find(set => String(set.id) === selectedPeerSetId),
+    evidenceRevision: benchmarkMode === "industry_aggregate"
+      ? [countryResource.revision, industryResource.revision] : peerResource.revision,
+    benchmarkReady,
+  });
+  const inputKeyRef = useRef(currentInputKey);
+  inputKeyRef.current = currentInputKey;
+  const runGate = useMemo(createRequestGate, []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    getRelativeValuationCountries()
-      .then((availableCountries) => {
-        setCountries(availableCountries);
-        setSelectedCountry((current) => current || availableCountries[0] || "");
-      })
-      .catch((err: Error) => setError(err.message || "Failed to load benchmark countries"));
-  }, []);
+    if (countryResource.status !== "ready") return;
+    setSelectedCountry(current => countryResource.data?.includes(current)
+      ? current : countryResource.data?.[0] || "");
+  }, [countryResource.status, countryResource.data]);
+
+  const refreshPeerSets = useCallback(async () => {
+    runGate.invalidate();
+    setResult(null);
+    await peerResource.reload();
+  }, [peerResource.reload, runGate]);
 
   useEffect(() => {
-    if (selectedCountry) {
-      setSelectedIndustry("");
-      setResult(null);
-      setError(null);
-      getRelativeValuationIndustries(selectedCountry)
-        .then(setIndustries)
-        .catch((err: Error) => setError(err.message || "Failed to load benchmark industries"));
-    }
-  }, [selectedCountry]);
+    if (peerResource.status !== "ready") return;
+    const reviewed = (peerResource.data || []).filter(isPeerSetCalculationReady);
+    setSelectedPeerSetId(current => reviewed.some(set => String(set.id) === current)
+      ? current : String(reviewed[0]?.id || ""));
+  }, [peerResource.status, peerResource.data]);
+
+  useEffect(() => {
+    runGate.invalidate();
+    setLoading(false);
+    setResult(null);
+    setError(null);
+    return runGate.invalidate;
+  }, [currentInputKey, runGate]);
 
   const handleRun = async () => {
-    if (!selectedIndustry) {
-      setError("Please select an industry");
+    if (inputBlockedReason) {
+      setError(inputBlockedReason);
+      return;
+    }
+    if (methods.length === 0) {
+      setError("Select at least one multiple");
+      return;
+    }
+    if (!benchmarkReady) {
+      setError("Load current benchmark evidence and select an eligible benchmark");
       return;
     }
 
+    const isLatestRun = runGate.begin();
+    const canPublish = () => isLatestRun() && inputKeyRef.current === currentInputKey;
     setLoading(true);
     setError(null);
     setResult(null);
 
     try {
-      const res = await runRelativeValuation({
+      const res = await runValuation({
         companyId,
-        country: selectedCountry,
-        industryName: selectedIndustry,
+        country: benchmarkMode === "industry_aggregate" ? selectedCountry : undefined,
+        industryName: benchmarkMode === "industry_aggregate" ? selectedIndustry : undefined,
+        peerSetId: benchmarkMode === "reviewed_peer_set" ? Number(selectedPeerSetId) : undefined,
         financials,
         methods
       });
-      setResult(res);
+      if (canPublish()) {
+        setResultInputKey(currentInputKey);
+        setResult(res);
+      }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to run relative valuation");
+      if (canPublish()) setError(err instanceof Error ? err.message : "Failed to run relative valuation");
     } finally {
-      setLoading(false);
+      if (canPublish()) setLoading(false);
     }
   };
 
@@ -82,32 +163,90 @@ export function RelativeValuationPanel({
     <div className="valuation-panel" style={{ border: "1px solid #eaeaea", borderRadius: "8px", padding: "16px", marginTop: "16px", backgroundColor: "#fafafa" }}>
       <h3 style={{ marginTop: 0, marginBottom: "16px" }}>Relative Valuation</h3>
 
-      <div style={{ display: "flex", gap: "16px", marginBottom: "16px", flexWrap: "wrap" }}>
+      <div style={{ marginBottom: "1rem" }}>
+        <label style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }} htmlFor="relative-valuation-benchmark-mode">Benchmark basis</label>
+        <select
+          id="relative-valuation-benchmark-mode"
+          value={benchmarkMode}
+          onChange={(event) => {
+            setBenchmarkMode(event.target.value as "industry_aggregate" | "reviewed_peer_set");
+            setResult(null);
+            setError(null);
+          }}
+          style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+        >
+          <option value="industry_aggregate">Source-backed industry aggregate</option>
+          <option value="reviewed_peer_set">User-reviewed peer set</option>
+        </select>
+      </div>
+
+      {benchmarkMode === "industry_aggregate" ? <div style={{ display: "flex", gap: "16px", marginBottom: "16px", flexWrap: "wrap" }}>
         <div style={{ flex: 1, minWidth: "200px" }}>
-          <label style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Region / Country</label>
+          <label htmlFor="relative-valuation-country" style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Region / Country</label>
           <select
+            id="relative-valuation-country"
             value={selectedCountry}
-            onChange={(e) => setSelectedCountry(e.target.value)}
-            disabled={countries.length === 0}
+            onChange={(e) => { setSelectedCountry(e.target.value); setSelectedIndustry(""); }}
+            disabled={countryResource.status !== "ready" || countries.length === 0}
             style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
           >
-            {countries.length === 0 && <option value="">No active pricing sources</option>}
+            {countries.length === 0 && <option value="">{countryResource.status === "ready" ? "No active pricing sources" : "Countries unavailable"}</option>}
             {countries.map(c => <option key={c} value={c}>{c}</option>)}
           </select>
+          <RequestNotice label="benchmark countries" resource={countryResource} />
         </div>
 
         <div style={{ flex: 1, minWidth: "200px" }}>
-          <label style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Industry</label>
+          <label htmlFor="relative-valuation-industry" style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Industry</label>
           <select
+            id="relative-valuation-industry"
             value={selectedIndustry}
             onChange={(e) => setSelectedIndustry(e.target.value)}
+            disabled={!selectedCountry || industryResource.status !== "ready" || industries.length === 0}
             style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
           >
             <option value="">Select an industry...</option>
             {industries.map(i => <option key={i} value={i}>{i}</option>)}
           </select>
+          {selectedCountry && <RequestNotice label="benchmark industries" resource={industryResource} />}
+          {selectedCountry && industryResource.status === "ready" && industries.length === 0 && (
+            <p>No active industry benchmarks for this country. Choose another country or import supported pricing sources.</p>
+          )}
         </div>
-      </div>
+      </div> : (
+        <div style={{ marginBottom: "1rem" }}>
+          <label htmlFor="relative-valuation-peer-set" style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Reviewed peer set</label>
+          <select
+            id="relative-valuation-peer-set"
+            value={selectedPeerSetId}
+            onChange={(event) => { setSelectedPeerSetId(event.target.value); setResult(null); }}
+            disabled={!companyId || peerResource.status !== "ready" || eligiblePeerIds.length === 0}
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          >
+            <option value="">Select a reviewed peer set...</option>
+            {peerSets.filter(isPeerSetCalculationReady).map((peerSet) => (
+              <option key={peerSet.id} value={peerSet.id}>{peerSet.name} · {peerSet.includedMemberCount} peers</option>
+            ))}
+          </select>
+          {!companyId ? <p>Select a company before using reviewed peer evidence.</p> : <>
+            <RequestNotice label="peer evidence" resource={{ ...peerResource, reload: refreshPeerSets }} />
+            {peerResource.status === "ready" && <button type="button" onClick={() => { void refreshPeerSets().catch(() => {}); }}>Refresh peer evidence</button>}
+          </>}
+          {companyId && peerResource.status === "ready" && eligiblePeerIds.length === 0 && (
+            <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+              No eligible reviewed peer set is available. Check evidence conflicts, method coverage, and the current diagnostic receipt below.
+            </p>
+          )}
+        </div>
+      )}
+
+      {companyId && (
+        <PeerSetManager
+          companyId={Number(companyId)}
+          peerSets={peerSets}
+          onChanged={refreshPeerSets}
+        />
+      )}
 
       <div style={{ marginBottom: "16px" }}>
         <label style={{ display: "block", marginBottom: "4px", fontSize: "0.875rem", fontWeight: 500 }}>Multiples to apply</label>
@@ -134,26 +273,37 @@ export function RelativeValuationPanel({
 
       <div style={{ marginBottom: "16px" }}>
         <button
+          type="button"
           onClick={handleRun}
-          disabled={loading || !selectedIndustry}
+          disabled={loading || !benchmarkReady || methods.length === 0 || Boolean(inputBlockedReason)}
           style={{
             backgroundColor: "#000", color: "#fff", border: "none",
-            padding: "8px 16px", borderRadius: "4px", cursor: loading || !selectedIndustry ? "not-allowed" : "pointer"
+            padding: "8px 16px", borderRadius: "4px", cursor: loading || !benchmarkReady || methods.length === 0 ? "not-allowed" : "pointer"
           }}
         >
           {loading ? "Calculating..." : "Run Valuation"}
         </button>
       </div>
 
+      {inputBlockedReason && <p role="status">{inputBlockedReason}</p>}
+
       {error && (
-        <div style={{ color: "#d32f2f", backgroundColor: "#ffebee", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
+        <div role="alert" style={{ color: "#d32f2f", backgroundColor: "#ffebee", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
           {error}
         </div>
       )}
 
-      {result && (
+      {result && !inputBlockedReason && benchmarkReady && resultInputKey === currentInputKey && (
         <div style={{ borderTop: "1px solid #eaeaea", paddingTop: "16px" }}>
-          <h4 style={{ margin: "0 0 12px 0" }}>Results against {result.industryName}</h4>
+          {result.inputBasis && <RelativeInputBasis basis={result.inputBasis} />}
+          <h4 style={{ margin: "0 0 12px 0" }}>
+            Results against {result.benchmarkType === "reviewed_peer_set" ? result.peerSet?.name : result.industryName}
+          </h4>
+          <p style={{ margin: "0 0 12px 0", color: "var(--text-secondary)", fontSize: "0.85rem" }}>
+            {result.benchmarkType === "reviewed_peer_set"
+              ? `Calculation using the reviewed median for ${result.peerSet?.includedMemberCount || 0} included peers.`
+              : "Calculation using active source-backed industry pricing aggregates."}
+          </p>
 
           {result.diagnostics.length > 0 && (
             <div style={{ backgroundColor: "#fff3cd", color: "#856404", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
@@ -186,6 +336,7 @@ export function RelativeValuationPanel({
             </div>
           )}
 
+          <div className="relative-table-scroll" tabIndex={0} role="region" aria-label="Relative valuation method results">
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem", textAlign: "left" }}>
             <thead>
               <tr style={{ borderBottom: "2px solid #ddd" }}>
@@ -224,11 +375,24 @@ export function RelativeValuationPanel({
               )}
             </tbody>
           </table>
+          </div>
 
           <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #eaeaea", fontSize: "0.75rem", color: "#555" }}>
-            {result.benchmarkSources.map((source) => (
+            {result.benchmarkSources.map((source: PricingSourceProvenance) => (
               <div key={source.datasetVersionId} style={{ marginBottom: "4px" }}>
                 <strong>{source.sourceCode.toUpperCase()}</strong>: {source.sourceFile}, version {source.datasetVersionId}, as of {source.sourceAsOf || "unknown"}, {source.dateConfidence} date confidence
+              </div>
+            ))}
+            {result.relativeValues.flatMap((value) => (
+              "peerSetId" in value.source ? [value.source as PeerSetMethodSource] : []
+            )).filter((source, index, sources) => sources.findIndex((candidate) => candidate.peerSetId === source.peerSetId && candidate.formula === source.formula) === index).map((source) => (
+              <div key={`${source.peerSetId}-${source.formula}`} style={{ marginBottom: "6px" }}>
+                <strong>{source.peerSetName}</strong>: {source.formula}; {source.eligibleCount} reviewed peer sources.
+                {source.memberSources.map((member) => (
+                  <div key={member.identifier}>
+                    {member.identifier}: <a href={member.sourceUrl} target="_blank" rel="noreferrer">{member.sourceName}</a>, as of {member.sourceAsOf}, {member.claimType}
+                  </div>
+                ))}
               </div>
             ))}
           </div>

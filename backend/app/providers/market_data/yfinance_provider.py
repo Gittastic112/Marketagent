@@ -70,8 +70,13 @@ class YFinanceMarketProvider(MarketDataProvider):
         provider_symbol = self.provider_symbol(request)
         try:
             ticker_obj = yf.Ticker(provider_symbol)
-            start = datetime.now(timezone.utc).date() - timedelta(days=days)
-            history = ticker_obj.history(start=start.isoformat(), auto_adjust=False)
+            today = datetime.now(timezone.utc).date()
+            start = today - timedelta(days=days)
+            # The current daily bar can still be trading. Keep history conservative
+            # until the next UTC day instead of calling an intraday value a close.
+            history = ticker_obj.history(
+                start=start.isoformat(), end=today.isoformat(), auto_adjust=False,
+            )
             if history.empty:
                 raise ValueError("history was empty")
             currency = ticker_obj.fast_info.get("currency") or request.currency
@@ -91,10 +96,13 @@ class YFinanceMarketProvider(MarketDataProvider):
                     observed_at=observed_at,
                     price_type="end_of_day",
                     adjustment_state="unadjusted",
-                    warnings=[self._warning],
+                    warnings=[
+                        self._warning,
+                        "Daily history excludes the current UTC date because its daily bar may be incomplete.",
+                    ],
                 )
                 for index, row in history.iterrows()
-                if row.get("Close") is not None and row["Close"] > 0
+                if index.date() < today and row.get("Close") is not None and row["Close"] > 0
             ]
             if not results:
                 raise ValueError("history contained no positive closing prices")

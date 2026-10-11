@@ -1,0 +1,78 @@
+/* Private source inbox and company research surfaces. Reuse the application tokens. */
+.brief-intake-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr); gap: var(--space-6); margin: var(--space-5) 0; }
+.brief-intake-form fieldset { border: 0; padding: 0; min-width: 0; display: grid; gap: var(--space-4); }
+.brief-intake-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.brief-intake-form label { display: grid; gap: var(--space-2); font-size: var(--font-size-sm); font-weight: var(--font-weight-medium); }
+.brief-intake-form input, .brief-intake-form textarea, .brief-intake-form select { width: 100%; min-width: 0; }
+.brief-intake-form .btn { justify-self: start; }
+.brief-intake-note { border: 1px solid var(--color-border-default); border-radius: var(--radius-medium); background: var(--color-surface-muted); padding: var(--space-5); align-self: start; }
+.brief-intake-note h3 { margin-top: 0; }
+.brief-intake-note ol { padding-left: var(--space-5); display: grid; gap: var(--space-3); }
+.brief-intake-note p, .brief-consent { font-size: var(--font-size-sm); line-height: 1.6; }
+.brief-consent { display: flex; align-items: flex-start; gap: var(--space-3); margin: var(--space-4) 0; }
+.brief-consent input { flex: 0 0 auto; width: auto; margin-top: 5px; }
+.brief-source-list { display: grid; gap: var(--space-4); }
+.brief-source-card { border: 1px solid var(--color-border-default); border-radius: var(--radius-medium); overflow: hidden; }
+.brief-source-card > summary { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-4); cursor: pointer; background: var(--color-surface-muted); }
+.brief-source-card > summary::before { content: "+"; font-size: var(--font-size-lg); color: var(--color-accent); }
+.brief-source-card[open] > summary::before { content: "−"; }
+.brief-source-card > summary > span:first-of-type { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.brief-source-body { padding: var(--space-5); }
+.brief-finding { margin-top: var(--space-4); border-top: 1px solid var(--color-border-default); padding-top: var(--space-4); }
+.brief-finding-heading { display: flex; align-items: center; flex-wrap: wrap; gap: var(--space-3); }
+.brief-finding-heading h3 { margin: 0; font-size: var(--font-size-md); }
+.brief-source-quote { white-space: pre-wrap; overflow-wrap: anywhere; border-left: 3px solid var(--color-accent); padding: var(--space-3) var(--space-4); margin: var(--space-3) 0; background: var(--color-surface-muted); }
+.brief-input-links { display: grid; gap: var(--space-2); margin-top: var(--space-4); }
+.brief-input-links > div { border: 1px solid var(--color-border-default); padding: var(--space-3); border-radius: var(--radius-small); }
+.brief-input-links p { margin-bottom: 0; font-size: var(--font-size-sm); }
+.brief-source-text { max-height: 560px; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; background: var(--color-surface-muted); padding: var(--space-4); font-family: inherit; font-size: var(--font-size-sm); line-height: 1.65; }
+.brief-source-hash { overflow-wrap: anywhere; }
+.company-research-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: var(--space-4); }
+.company-research-card { min-width: 0; padding: var(--space-5); border: 1px solid var(--color-border-default); border-radius: var(--radius-medium); }
+.company-research-card h3 { font-size: var(--font-size-lg); margin: var(--space-3) 0; }
+.company-business-excerpt { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow-y: auto; font-size: var(--font-size-sm); line-height: 1.65; }
+.company-research-links { display: flex; flex-wrap: wrap; gap: var(--space-4); border-top: 1px solid var(--color-border-default); padding-top: var(--space-4); margin-top: var(--space-4); font-size: var(--font-size-sm); }
+.triage-filters, .triage-toolbar { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-4); margin: var(--space-4) 0; }
+.triage-filters > label:not(.triage-checkbox) { display: grid; gap: var(--space-2); flex: 1; min-width: min(100%, 240px); }
+.triage-filters select { width: 100%; min-width: 0; }
+.triage-checkbox { display: flex; align-items: center; gap: var(--space-2); padding: var(--space-3) 0; font-size: var(--font-size-sm); }
+.triage-checkbox input { width: auto; flex-shrink: 0; }
+.triage-toolbar { align-items: center; font-size: var(--font-size-sm); }
+.triage-coverage { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-4); margin: var(--space-4) 0; }
+.triage-coverage > div { display: grid; align-content: start; gap: var(--space-2); padding: var(--space-4); background: var(--color-surface-muted); border-radius: var(--radius-small); }
+.triage-coverage span { color: var(--text-secondary); font-size: var(--font-size-sm); }
+.triage-coverage strong { font-size: var(--font-size-xl); font-variant-numeric: tabular-nums; }
+.triage-groups { display: grid; gap: var(--space-4); margin: var(--space-5) 0; }
+.triage-group { min-width: 0; border: 1px solid var(--color-border-default); border-radius: var(--radius-medium); }
+.triage-group > summary { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); cursor: pointer; padding: var(--space-5); background: var(--color-surface-muted); }
+.triage-group > summary::before { content: "+"; color: var(--color-accent); font-size: var(--font-size-lg); }
+.triage-group[open] > summary::before { content: "−"; }
+.triage-group > summary > span:first-child { display: grid; flex: 1; min-width: 0; gap: var(--space-2); }
+.triage-group > summary small { color: var(--text-secondary); font-weight: normal; }
+.triage-group-body { padding: var(--space-5); }
+.triage-evidence-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
+.triage-evidence { min-width: 0; overflow-wrap: anywhere; padding: var(--space-4); border: 1px solid var(--color-border-default); border-radius: var(--radius-small); }
+.triage-evidence h4 { margin: var(--space-3) 0; font-size: var(--font-size-md); }
+.triage-evidence p, .triage-evidence details { font-size: var(--font-size-sm); }
+.triage-source-line { display: grid; gap: var(--space-2); }
+.triage-source-line span { color: var(--text-secondary); }
+.triage-review-link { margin-top: var(--space-5); }
+.triage-method { margin-top: var(--space-4); }
+.brief-finding { scroll-margin-top: var(--space-5); }
+@media (max-width: 780px) {
+  .triage-coverage-panel .panel-header { flex-wrap: wrap; }
+  .triage-coverage-panel .panel-header h2 { flex: 1 1 100%; }
+  .triage-group > summary > span:first-child { flex-basis: calc(100% - 2rem); }
+  .triage-coverage { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .triage-evidence-grid { grid-template-columns: minmax(0, 1fr); }
+  .triage-group-body, .triage-group > summary { padding: var(--space-4); }
+  .brief-intake-layout, .brief-intake-grid { grid-template-columns: minmax(0, 1fr); }
+  .brief-source-body, .company-research-card { padding: var(--space-4); }
+  .brief-source-card > summary { flex-wrap: wrap; }
+  .brief-source-card > summary > span:first-of-type { flex-basis: calc(100% - 32px); }
+}
+.triage-analyst-review { border-top: 1px solid var(--color-border-default); padding-top: 1rem; margin-top: 1rem; }
+.triage-analyst-review fieldset { display: grid; gap: 0.8rem; border: 0; padding: 0; margin: 0 0 0.75rem; min-width: 0; }
+.triage-analyst-review label:not(.triage-checkbox) { display: grid; gap: 0.4rem; font-weight: 600; }
+.triage-analyst-review textarea, .triage-analyst-review select { width: 100%; min-width: 0; }
+.preserve-whitespace { white-space: pre-wrap; overflow-wrap: anywhere; }

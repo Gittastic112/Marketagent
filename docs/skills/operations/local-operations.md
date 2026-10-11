@@ -39,7 +39,7 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 5. Run broader tests when risk warrants.
 6. Avoid destructive resets unless explicitly approved.
 7. Update handoff or docs when verification state changes.
-8. For local auth, use only the root `.env`, recreate the frontend container after changes, and verify `/api/auth/readiness` without printing credential values.
+8. For Compose auth, use the root `.env`; recreate both backend and frontend after shared-secret changes. Verify `/api/auth/readiness` without printing values. Host development has a separate process environment, as documented in local setup.
 9. For workflow regressions, run an authenticated browser lifecycle that creates
    temporary records, verifies derived state, and removes every temporary
    record. Confirm cleanup with the API or database without exposing secrets.
@@ -50,6 +50,27 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 11. Treat a fresh migration failure as a release blocker. Repair schema
     ownership in Alembic; do not restore runtime DDL endpoints or stamp past the
     failure.
+12. Browser workflows use the isolated `13000/18000` ports by default and must
+    preflight collisions before startup. Do not reuse `3000/8000` while the
+    normal stack is running.
+13. Respect protected secret files. Agents may verify readiness state or consume
+    already exported variables, but must not read `.env`; when that blocks a
+    runtime check, give the exact user-run command and keep the gate pending.
+14. The production backend does not bind-mount source code. Use the runbook's
+    source-mounted, network-disabled test Compose for edited-source tests;
+    production image tests can otherwise certify old code.
+15. Before debugging an import-file mismatch, compare root `backend/test_*.py`
+    basenames with `backend/tests/test_*.py`. Preserve untracked/prior work;
+    establish ownership and obtain direction before removing a scratch collision.
+    Do not clear broad caches or delete the real suite file.
+16. Keep manual scripts out of pytest collection. A file under
+    `backend/scripts/` must not expose a `test_*` function, and any database smoke
+    utility must use isolated disposable storage. Move durable assertions into
+    `backend/tests/`; `test_pytest_layout.py` enforces both collection boundaries.
+17. For concurrent agents, follow the parallel-workstreams reference and runbook.
+    Current browser/release/restore project names collide across worktrees;
+    serialize those lanes. Different ports alone do not isolate cleanup or volumes.
+    Keep test databases, build outputs and new fixtures separate from normal data.
 
 ## Acceptance criteria
 
@@ -63,6 +84,8 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 - The isolated E2E Compose project is absent after the runner exits.
 - Dependency overrides are accepted only after audit, typecheck, production
   build, and relevant browser workflows pass.
+- Docker or browser validation is not claimed when socket or credential access prevented execution.
+- Container-relative validation commands resolve to real test files.
 
 ## Common mistakes
 
@@ -73,6 +96,11 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 - Editing `frontend/.env.local` while expecting Docker Compose to load local-auth values.
 - Running authenticated browser tests against the user's normal PostgreSQL volume.
 - Treating npm's suggested framework downgrade as a safe audit fix.
+- Running new tests in a stale production image or splitting a multiline pytest
+  command by omitting shell continuation backslashes.
+- Keeping a root scratch test with the same basename as a real suite module.
+- Naming a manual database utility `test_*`, which lets a broad pytest run
+  execute it against the configured database.
 
 ## Do not do
 

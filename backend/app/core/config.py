@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     sec_user_agent: str = "Market Intelligence Engine local research app"
     alert_priority_threshold: int = 60
     fred_api_key: str | None = None
+    valuation_refresh_enabled: bool = False
+    valuation_refresh_owner_id: str = "local-user"
     encryption_key: str | None = None
     market_data_provider: str = "alphavantage"
     alpha_vantage_api_key: str | None = None

@@ -2,7 +2,7 @@ from dataclasses import dataclass
 
 from fastapi import FastAPI
 from fastapi.dependencies.models import Dependant
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, iter_route_contexts
 
 from app.api.dependencies import get_current_user
 
@@ -10,6 +10,7 @@ from app.api.dependencies import get_current_user
 PUBLIC_ROUTE_ALLOWLIST = frozenset(
     {
         ("GET", "/api/health"),
+        ("GET", "/api/readiness"),
         ("GET", "/health"),
     }
 )
@@ -35,8 +36,8 @@ def _has_dependency(dependant: Dependant, dependency: object) -> bool:
 
 def build_route_security_inventory(app: FastAPI) -> list[RouteSecurityRecord]:
     records: list[RouteSecurityRecord] = []
-    for route in app.routes:
-        if not isinstance(route, APIRoute):
+    for route in iter_route_contexts(app.routes):
+        if not isinstance(route.original_route, APIRoute):
             continue
         for method in sorted(route.methods or []):
             key = (method, route.path)

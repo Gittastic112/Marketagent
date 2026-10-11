@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from app.services.runtime_readiness import EXPECTED_MIGRATION_HEAD
+
 
 def test_alembic_migrations_contain_core_tables_and_company_fields() -> None:
     versions_dir = Path(__file__).resolve().parents[1] / "alembic" / "versions"
@@ -66,3 +68,32 @@ def test_alembic_migrations_contain_core_tables_and_company_fields() -> None:
     assert '"dataset_file_id"' in volatility_text
     assert '"damodaran_dataset_files"' in volatility_text
     assert '["id"]' in volatility_text
+
+    current_head = versions_dir / "o6o6o6o6o6o6_add_peer_review_diagnostic_receipts.py"
+    assert current_head.is_file()
+    current_head_text = current_head.read_text(encoding="utf-8")
+    assert 'revision: str = "o6o6o6o6o6o6"' in current_head_text
+    assert 'down_revision: str | None = "n5n5n5n5n5n5"' in current_head_text
+    assert '"review_diagnostics_sha256"' in current_head_text
+    assert '"review_warning_codes_json"' in current_head_text
+    assert '"review_diagnostics_as_of"' in current_head_text
+    assert '"peer_valuation_set_revisions"' in current_head_text
+    evaluation_head = (versions_dir / "p7p7p7p7p7p7_add_owned_evaluation_reports.py").read_text()
+    assert 'revision: str = "p7p7p7p7p7p7"' in evaluation_head
+    assert 'down_revision: str | None = "o6o6o6o6o6o6"' in evaluation_head
+    assert '"report_json"' in evaluation_head
+    assert '"user_id"' in evaluation_head
+    source_head = (versions_dir / "q8q8q8q8q8q8_add_private_brief_sources.py").read_text()
+    assert 'revision = "q8q8q8q8q8q8"' in source_head
+    assert 'down_revision = "p7p7p7p7p7p7"' in source_head
+    assert '"uq_brief_source_owner_content"' in source_head
+    assert '"pdf_bytes"' in source_head
+    lifecycle_head = (versions_dir / "r9r9r9r9r9r9_add_brief_source_lifecycle.py").read_text()
+    assert 'revision = "r9r9r9r9r9r9"' in lifecycle_head
+    assert 'down_revision = "q8q8q8q8q8q8"' in lifecycle_head
+    assert '"archived_at"' in lifecycle_head and '"lifecycle_version"' in lifecycle_head
+    review_head = (versions_dir / "s1s1s1s1s1s1_add_brief_comparison_reviews.py").read_text()
+    assert f'revision = "{EXPECTED_MIGRATION_HEAD}"' in review_head
+    assert 'down_revision = "r9r9r9r9r9r9"' in review_head
+    assert '"brief_comparison_reviews"' in review_head
+    assert '"uq_brief_review_scope_version"' in review_head

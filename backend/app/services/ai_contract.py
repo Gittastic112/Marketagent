@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.core.hashing import sha256_text
 from app.models.ai import AiOutput
-from app.providers.ai_provider import GeminiAIProvider
+from app.providers.ai_provider import DEFAULT_GEMINI_MODEL, GeminiAIProvider
 from app.providers.base import AIProviderResult, BaseAIProvider
 from app.providers.mock_provider import MockAIProvider
 
@@ -76,9 +76,9 @@ def select_ai_provider() -> BaseAIProvider:
         return MockAIProvider()
     if _is_enabled(os.environ.get("AI_DEMO_MODE")):
         return MockAIProvider()
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = (os.environ.get("GEMINI_API_KEY") or "").strip()
     if api_key:
-        return GeminiAIProvider(api_key=api_key)
+        return GeminiAIProvider(api_key=api_key, model_name=os.environ.get("GEMINI_MODEL") or DEFAULT_GEMINI_MODEL)
     raise AIProviderNotConfigured()
 
 

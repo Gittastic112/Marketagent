@@ -4,7 +4,7 @@ from typing import Any
 
 from sqlalchemy.orm import Session
 
-from app.api.schemas import (
+from app.schemas.valuation_inputs import (
     DcfAssumptionSetCreate,
     QuickValuationCalculateRequest,
 )

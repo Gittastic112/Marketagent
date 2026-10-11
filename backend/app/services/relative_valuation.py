@@ -1,34 +1,88 @@
 from dataclasses import dataclass
+from math import fsum, isfinite
 from typing import Any, Literal, Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 from sqlalchemy.orm import Session
 
 from app.models.damodaran import DamodaranDatasetFile
 from app.models.damodaran_fundamentals import CountryMarketStats, DamodaranPricingBenchmark
+from app.services.peer_valuation_sets import (
+    PeerValuationSetService,
+    calculate_peer_diagnostics,
+    calculate_peer_aggregates,
+    peer_set_members,
+    peer_set_calculation_eligibility,
+    peer_set_response,
+    peer_set_target_context,
+)
 
 
 PRICING_SOURCE_CODES = ("pe", "pbv", "ps", "vebitda")
 
 
 class FinancialsInput(BaseModel):
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False)
+
     revenue: Optional[float] = None
     ebitda: Optional[float] = None
     ebit: Optional[float] = None
     netIncome: Optional[float] = None
     bookEquity: Optional[float] = None
     investedCapital: Optional[float] = None
-    debt: Optional[float] = None
-    cash: Optional[float] = None
-    dilutedShares: Optional[float] = None
+    debt: Optional[float] = Field(default=None, ge=0)
+    cash: Optional[float] = Field(default=None, ge=0)
+    dilutedShares: Optional[float] = Field(default=None, gt=0)
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def reject_boolean_financials(cls, value: Any) -> Any:
+        if isinstance(value, bool):
+            raise ValueError("Financial inputs must be numbers, not booleans")
+        return value
 
 
-class RelativeValuationRequest(BaseModel):
+class RelativeValuationBasis(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    country: Optional[str] = Field(default=None, min_length=1, max_length=120)
+    industryName: Optional[str] = Field(default=None, min_length=1, max_length=255)
+    peerSetId: Optional[int] = Field(default=None, ge=1, le=2_147_483_647, strict=True)
+    methods: list[Literal["pe", "pbv", "ps", "ev_sales", "ev_ebitda", "ev_ebit"]] = Field(min_length=1, max_length=6)
+
+    @field_validator("methods")
+    @classmethod
+    def require_unique_methods(cls, value: list[str]) -> list[str]:
+        if len(set(value)) != len(value):
+            raise ValueError("Select each valuation method only once")
+        return value
+
+    @model_validator(mode="after")
+    def require_one_benchmark(self) -> "RelativeValuationBasis":
+        if self.peerSetId is not None and (self.country is not None or self.industryName is not None):
+            raise ValueError("Choose either a peer set or a country/industry benchmark, not both")
+        if self.peerSetId is None and (not self.country or not self.industryName):
+            raise ValueError("Country and industry are required without a reviewed peer set")
+        return self
+
+
+class RelativeValuationRequest(RelativeValuationBasis):
     companyId: Optional[str] = None
-    country: str
-    industryName: str
     financials: FinancialsInput
-    methods: list[Literal["pe", "pbv", "ps", "ev_sales", "ev_ebitda", "ev_ebit"]]
+
+    @field_validator("companyId")
+    @classmethod
+    def validate_company_id(cls, value: str | None) -> str | None:
+        if value is not None:
+            if not value.isascii() or not value.isdecimal() or len(value) > 10 or not 1 <= int(value) <= 2_147_483_647:
+                raise ValueError("Company ID must be a positive database identifier")
+            return str(int(value))
+        return value
+
+
+class SavedRelativeValuationRequest(RelativeValuationBasis):
+    confirmInputBasis: bool = Field(strict=True)
+    inputBasisSha256: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
 @dataclass(frozen=True, slots=True)
@@ -254,12 +308,58 @@ class RelativeValuationBenchmarkService:
 
 class RelativeValuationRunService:
     @staticmethod
-    def run_valuation(db: Session, req: RelativeValuationRequest) -> dict[str, Any]:
-        benchmark = RelativeValuationBenchmarkService.get_industry_benchmark(
-            db, req.country, req.industryName
-        )
-        if not benchmark:
-            return {"error": "Benchmark not found for the given country and industry"}
+    def run_valuation(
+        db: Session,
+        req: RelativeValuationRequest,
+        *,
+        user_id: str | None = None,
+    ) -> dict[str, Any]:
+        peer_set = None
+        peer_aggregates = None
+        peer_diagnostics = None
+        benchmark = None
+        if req.peerSetId is not None:
+            if user_id is None:
+                return {"error": "Authenticated owner is required for peer-set valuation"}
+            peer_set = PeerValuationSetService.get_set(
+                db,
+                peer_set_id=req.peerSetId,
+                user_id=user_id,
+            )
+            if req.companyId is not None:
+                try:
+                    requested_company_id = int(req.companyId)
+                except ValueError:
+                    return {"error": "Company ID must be an integer for peer-set valuation"}
+                if requested_company_id != peer_set.company_id:
+                    return {"error": "Peer valuation set does not belong to the requested company"}
+            peer_members = peer_set_members(peer_set)
+            target_context = peer_set_target_context(peer_set)
+            peer_aggregates = calculate_peer_aggregates(peer_members)
+            peer_diagnostics = calculate_peer_diagnostics(
+                peer_members,
+                target_context=target_context,
+            )
+            eligibility = peer_set_calculation_eligibility(peer_set, diagnostics=peer_diagnostics)
+            receipt_error = "Peer valuation set diagnostics acknowledgement is missing or stale; review the current warnings before use"
+            blocking_messages = {
+                "archived": "Peer valuation set is archived",
+                "review_required": "Peer valuation set must be reviewed before use",
+                "member_storage_mismatch": "Peer member storage mismatch must be repaired before valuation use",
+                "target_storage_mismatch": "Target profile storage mismatch must be repaired before valuation use",
+                "receipt_missing": receipt_error,
+                "receipt_stale": receipt_error,
+            }
+            for blocker in eligibility["blockers"]:
+                if blocker in blocking_messages:
+                    return {"error": blocking_messages[blocker]}
+            # Sparse methods retain the existing per-method unavailable response below.
+        else:
+            benchmark = RelativeValuationBenchmarkService.get_industry_benchmark(
+                db, req.country or "", req.industryName or ""
+            )
+            if not benchmark:
+                return {"error": "Benchmark not found for the given country and industry"}
 
         results: list[dict[str, Any]] = []
         implied_prices: list[float] = []
@@ -287,12 +387,36 @@ class RelativeValuationRunService:
             enterprise_multiple: bool,
             pct_money_losing: float | None = None,
         ) -> None:
-            source_row = benchmark.row(source_code)
-            if source_row is None or multiple is None:
-                unavailable_methods.append(
-                    {"method": method_id, "reason": f"Active {source_code} benchmark is unavailable"}
+            source_row = benchmark.row(source_code) if benchmark is not None else None
+            source: dict[str, Any] | None
+            reliability: str
+            if peer_set is not None:
+                method_aggregate = (peer_aggregates or {}).get("methods", {}).get(method_id)
+                multiple = method_aggregate.get("multiple") if method_aggregate else None
+                source = PeerValuationSetService.method_source(peer_set, method_id)
+                if multiple is None or source is None:
+                    eligible_count = method_aggregate.get("eligibleCount", 0) if method_aggregate else 0
+                    unavailable_methods.append(
+                        {
+                            "method": method_id,
+                            "reason": (
+                                f"Reviewed peer set has {eligible_count} eligible value(s); "
+                                "at least 3 are required"
+                            ),
+                        }
+                    )
+                    return
+                reliability = "low" if source["warnings"] else "medium"
+            else:
+                source = benchmark.provenance(source_code) if benchmark is not None else None
+                if source_row is None or multiple is None or source is None:
+                    unavailable_methods.append(
+                        {"method": method_id, "reason": f"Active {source_code} benchmark is unavailable"}
+                    )
+                    return
+                reliability = RelativeValuationBenchmarkService.calculate_reliability(
+                    source_row.number_of_firms, pct_money_losing, multiple
                 )
-                return
             if base_value is None or base_value <= 0:
                 unavailable_methods.append(
                     {"method": method_id, "reason": "Required positive company financial is unavailable"}
@@ -301,6 +425,14 @@ class RelativeValuationRunService:
             enterprise_value = base_value * multiple if enterprise_multiple else None
             equity_value = to_equity_value(enterprise_value) if enterprise_multiple else base_value * multiple
             value_per_share = to_per_share(equity_value)
+            if any(value is not None and not isfinite(value) for value in (
+                multiple, enterprise_value, equity_value, value_per_share,
+            )):
+                unavailable_methods.append({
+                    "method": method_id,
+                    "reason": "Calculation exceeds the supported numeric range; check input units and share count",
+                })
+                return
             result = {
                 "method": label,
                 "methodId": method_id,
@@ -308,20 +440,28 @@ class RelativeValuationRunService:
                 "enterpriseValue": enterprise_value,
                 "equityValue": equity_value,
                 "valuePerShare": value_per_share,
-                "reliability": RelativeValuationBenchmarkService.calculate_reliability(
-                    source_row.number_of_firms, pct_money_losing, multiple
-                ),
+                "reliability": reliability,
                 "claimType": "Calculation",
-                "source": benchmark.provenance(source_code),
+                "source": source,
             }
             results.append(result)
             if value_per_share is not None:
                 implied_prices.append(value_per_share)
 
-        pe = benchmark.row("pe")
-        pbv = benchmark.row("pbv")
-        ps = benchmark.row("ps")
-        ev = benchmark.row("vebitda")
+        pe = benchmark.row("pe") if benchmark is not None else None
+        pbv = benchmark.row("pbv") if benchmark is not None else None
+        ps = benchmark.row("ps") if benchmark is not None else None
+        ev = benchmark.row("vebitda") if benchmark is not None else None
+
+        if peer_set is not None:
+            diagnostics.append(
+                f"Reviewed peer set '{peer_set.name}' uses the median of at least 3 positive included peer multiples."
+            )
+            diagnostics.extend(
+                warning["message"]
+                for warning in (peer_diagnostics or {}).get("warnings", [])
+                if warning.get("method") in (None, *req.methods)
+            )
 
         if "pe" in req.methods:
             add_result(
@@ -401,21 +541,29 @@ class RelativeValuationRunService:
         value_range = None
         if implied_prices:
             implied_prices.sort()
+            scale = max(abs(value) for value in implied_prices)
             value_range = {
                 "low": implied_prices[0],
-                "base": sum(implied_prices) / len(implied_prices),
+                # Normalize before summation to keep even near-limit means finite.
+                "base": (fsum(value / scale for value in implied_prices) / len(implied_prices)) * scale if scale else 0.0,
                 "high": implied_prices[-1],
             }
 
         return {
-            "industryName": benchmark.industry_name,
+            "benchmarkType": "reviewed_peer_set" if peer_set is not None else "industry_aggregate",
+            "industryName": benchmark.industry_name if benchmark is not None else None,
+            "peerSet": peer_set_response(peer_set, include_members=False) if peer_set is not None else None,
             "relativeValues": results,
             "range": value_range,
             "diagnostics": diagnostics,
             "unavailableMethods": unavailable_methods,
-            "benchmarkSources": [
-                benchmark.sources[code].provenance()
-                for code in PRICING_SOURCE_CODES
-                if code in benchmark.sources
-            ],
+            "benchmarkSources": (
+                [
+                    benchmark.sources[code].provenance()
+                    for code in PRICING_SOURCE_CODES
+                    if code in benchmark.sources
+                ]
+                if benchmark is not None
+                else []
+            ),
         }

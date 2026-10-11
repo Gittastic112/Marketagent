@@ -66,10 +66,13 @@ class BlackScholesRealOptionService:
         S: float, K: float, t: float, r: float, sigma: float, y: float,
         option_type: str = "call", exclusivity_score: float = 1.0
     ) -> Dict[str, Any]:
+        if (not all(math.isfinite(v) for v in (S, K, t, r, sigma, y, exclusivity_score))
+                or not 0 <= exclusivity_score <= 1 or option_type.lower() not in {"call", "put"}):
+            raise ValueError("Option inputs must be finite, with a supported type and exclusivity between zero and one.")
         if t <= 0 or sigma <= 0 or K <= 0 or S <= 0:
             raise ValueError("Invalid inputs for Black-Scholes. Ensure S, K, t, and sigma are > 0.")
 
-        d1 = (math.log(S / K) + (r - y + (sigma ** 2) / 2) * t) / (sigma * math.sqrt(t))
+        d1 = (math.log(S) - math.log(K) + (r - y + (sigma ** 2) / 2) * t) / (sigma * math.sqrt(t))
         d2 = d1 - sigma * math.sqrt(t)
 
         nd1 = norm_cdf(d1)
@@ -81,6 +84,9 @@ class BlackScholesRealOptionService:
             raw_value = K * math.exp(-r * t) * (1 - norm_cdf(d2)) - S * math.exp(-y * t) * (1 - norm_cdf(d1))
 
         adjusted_value = raw_value * exclusivity_score
+
+        if not all(math.isfinite(v) for v in (d1, d2, raw_value, adjusted_value)):
+            raise ValueError("Option calculation must produce finite values.")
 
         return {
             "d1": d1,

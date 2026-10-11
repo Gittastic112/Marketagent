@@ -4,8 +4,8 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ApiError } from "@/lib/api";
-import type { AutofillAssumptionDraft } from "@/lib/api";
-import { serverDeleteApi, serverPatchApi, serverPostApi } from "@/lib/server-api";
+import type { AutofillAssumptionDraft, DailyBriefSchedule, DailyBriefScheduleRunResult } from "@/lib/api";
+import { serverDeleteApi, serverPatchApi, serverPostApi, serverPutApi } from "@/lib/server-api";
 import { unresolvedReviewFields } from "@/lib/autofill-review";
 import {
   buildAlertPayload,
@@ -128,6 +128,20 @@ export async function importFredSeries(formData: FormData) {
       throw new Error(`Failed to import FRED series: ${error.message}`);
     }
     throw error;
+  }
+}
+
+export async function applyFredMacroRegimeInputWithState(
+  _state: FormActionState,
+  _formData: FormData,
+): Promise<FormActionState> {
+  try {
+    await serverPostApi("/market-regime/providers/fred/macro/apply", {});
+    revalidatePath("/portfolio/regime");
+    revalidatePath("/data-health");
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
   }
 }
 
@@ -610,7 +624,7 @@ export async function deleteMarketPriceWithState(
   }
 }
 
-export async function saveDailyBrief() {
+export async function generateDailyBrief() {
   await createRecord("/daily-brief", {}, ["/daily-brief"]);
 }
 
@@ -620,6 +634,30 @@ export async function markDailyBriefReviewed(formData: FormData) {
   await serverPatchApi(`/daily-brief/${id}/review`, {});
   revalidatePath("/daily-brief");
   logAction(`marked /daily-brief/${id} as reviewed; revalidated /daily-brief`);
+}
+
+export async function updateDailyBriefScheduleWithState(
+  _state: FormActionState,
+  formData: FormData,
+): Promise<FormActionState> {
+  try {
+    await serverPutApi<DailyBriefSchedule>("/daily-brief-schedule", {
+      enabled: formData.get("enabled") === "on",
+      timezone: actionFormString(formData, "timezone") || "UTC",
+      local_time: actionFormString(formData, "local_time") || "07:00",
+      days_of_week: formData.getAll("days_of_week").map((value) => Number(value)),
+    });
+    revalidatePath("/daily-brief");
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
+  }
+}
+
+export async function runDueDailyBriefSchedule() {
+  await serverPostApi<DailyBriefScheduleRunResult>("/daily-brief-schedule/run-due", {});
+  revalidatePath("/daily-brief");
+  revalidatePath("/data-health");
 }
 
 export async function createFinancialStatementPeriod(formData: FormData, companyId: string) {
@@ -646,12 +684,59 @@ export async function createDcfAssumptionSet(formData: FormData, modelId: string
   await createRecord(`/valuation-models/${modelId}/assumptions`, buildDcfAssumptionSetPayload(formData), [`/companies/${companyId}`]);
 }
 
+export async function createDcfAssumptionSetWithState(
+  formData: FormData,
+  modelId: string,
+  companyId: string,
+): Promise<FormActionState> {
+  try {
+    await createDcfAssumptionSet(formData, modelId, companyId);
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
+  }
+}
+
 export async function deleteValuationModel(formData: FormData, companyId: string) {
   const modelId = getRequiredFormId(formData);
   logAction(`deleting /valuation-models/${modelId}`);
   await serverDeleteApi(`/valuation-models/${modelId}`);
   revalidatePath(`/companies/${companyId}`);
   logAction(`deleted /valuation-models/${modelId}; revalidated /companies/${companyId}`);
+}
+
+export async function deleteValuationModelWithState(
+  companyId: string,
+  _state: FormActionState,
+  formData: FormData,
+): Promise<FormActionState> {
+  try {
+    await deleteValuationModel(formData, companyId);
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
+  }
+}
+
+export async function updateValuationModelWithState(
+  modelId: string,
+  companyId: string,
+  _state: FormActionState,
+  formData: FormData,
+): Promise<FormActionState> {
+  try {
+    const name = actionFormString(formData, "name");
+    if (!name) return { error: "Model name is required." };
+    await serverPatchApi(`/valuation-models/${modelId}`, {
+      name,
+      description: actionFormString(formData, "description") || null,
+    });
+    revalidatePath(`/companies/${companyId}/valuation`);
+    revalidatePath(`/companies/${companyId}/valuation/${modelId}`);
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
+  }
 }
 
 export async function triggerParseFilingSections(rawDocumentId: number) {

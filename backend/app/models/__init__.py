@@ -4,6 +4,9 @@ from app.models.company import Company, ExposureTag, CompanyExposureTag
 from app.models.company_setup import CompanySetupWorkflow
 from app.models.company_industry import CompanyIndustryAllocation, CompanyIndustryMix
 from app.models.daily_brief import DailyBrief
+from app.models.brief_source import BriefSource
+from app.models.brief_review import BriefComparisonReview
+from app.models.daily_brief_schedule import DailyBriefSchedule
 from app.models.document_asset import DocumentAsset
 from app.models.event import Event, EventCorroboration, EventContradiction
 from app.models.event_evidence_reference import EventEvidenceReference
@@ -77,6 +80,7 @@ from app.models.market_regime_input import MarketRegimeInput
 from app.models.assumption_methodology import AssumptionMethodValue, ValuationAssumptionProvenance
 
 __all__ = [
+    "BriefComparisonReview",
     "Base",
     "DamodaranDatasetFile",
     "DamodaranMarginBenchmark",
@@ -99,6 +103,8 @@ __all__ = [
     "ExposureTag",
     "CompanyExposureTag",
     "DailyBrief",
+    "BriefSource",
+    "DailyBriefSchedule",
     "DocumentAsset",
     "Event",
     "EventCorroboration",
@@ -163,6 +169,13 @@ __all__ = [
 ]
 from .provider_quota import ProviderQuota
 from .forecast_calibration import ForecastCalibration
-from .peer_valuation import PeerValuationSet
+from .peer_valuation import (
+    PeerValuationMemberRecord,
+    PeerValuationRevisionMemberRecord,
+    PeerValuationRevisionTargetProfile,
+    PeerValuationSet,
+    PeerValuationSetRevision,
+    PeerValuationTargetProfile,
+)
 from .entity_score import EntityScore
 from .decision_readiness import DecisionReadiness

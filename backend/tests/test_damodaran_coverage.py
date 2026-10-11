@@ -18,9 +18,13 @@ def _row(report: dict, filename: str) -> dict:
 
 
 def test_coverage_registry_is_complete_and_preserves_source_boundaries() -> None:
-    assert len(DAMODARAN_APPLICATION_COVERAGE) == 35
-    assert len({spec.source_filename for spec in DAMODARAN_APPLICATION_COVERAGE}) == 35
-    assert len({spec.canonical_path for spec in DAMODARAN_APPLICATION_COVERAGE}) == 35
+    assert len(DAMODARAN_APPLICATION_COVERAGE) == 41
+    assert len({spec.source_filename for spec in DAMODARAN_APPLICATION_COVERAGE}) == 41
+    assert len({spec.canonical_path for spec in DAMODARAN_APPLICATION_COVERAGE}) == 41
+    us = [spec for spec in DAMODARAN_APPLICATION_COVERAGE if "US-2026-01-05" in spec.source_filename]
+    assert len(us) == 6
+    assert all(spec.geography == "United States" and spec.source_as_of == "2026-01-05" for spec in us)
+    assert all("INR" not in metric for spec in us for metric in spec.supported_metrics)
 
     rating = next(
         spec for spec in DAMODARAN_APPLICATION_COVERAGE
@@ -159,7 +163,7 @@ def test_coverage_report_distinguishes_typed_rows_from_metadata_only(
         data_root=tmp_path,
     )
 
-    assert report["source_count"] == 35
+    assert report["source_count"] == 41
     assert report["source_present_count"] == 4
     assert report["typed_record_count"] == 1
     assert report["provenance_complete_count"] == 1
@@ -178,7 +182,7 @@ def test_coverage_report_distinguishes_typed_rows_from_metadata_only(
     assert capex["provenance_status"] == "complete"
 
     beta = _row(report, "betaIndia.xls")
-    assert beta["implementation_status"] == "unsupported"
+    assert beta["implementation_status"] == "partial"
     assert beta["ingestion_status"] == "metadata_only"
     assert beta["typed_record_count"] == 0
     assert beta["provenance_status"] == "missing"
@@ -200,14 +204,14 @@ def test_coverage_report_distinguishes_typed_rows_from_metadata_only(
 def test_damodaran_coverage_endpoint_returns_typed_honest_inventory(client) -> None:
     report = response_data(client.get("/data-health/damodaran-coverage"))
 
-    assert report["inventory_version"] == "2026-08-08.6"
-    assert report["source_count"] == 35
-    assert report["supported_count"] + report["partial_count"] + report["unsupported_count"] == 35
+    assert report["inventory_version"] == "2026-09-22.1"
+    assert report["source_count"] == 41
+    assert report["supported_count"] + report["partial_count"] + report["unsupported_count"] == 41
     assert report["typed_record_count"] >= 0
     assert report["provenance_complete_count"] >= 0
     assert report["generated_at"]
     assert report["limitations"]
-    assert len(report["rows"]) == 35
+    assert len(report["rows"]) == 41
 
     rating = _row(report, "ratings.xls")
     assert rating["claim_type"] == "Source Summary"

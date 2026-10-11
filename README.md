@@ -1,212 +1,74 @@
 # Market Intelligence Engine
 
-## What this project is
+Local-first equity research, valuation and portfolio tracking. The app connects
+source documents, reviewed financials, events, thesis notes, assumptions and
+portfolio exposure. It is not a trading bot or a source of buy/sell advice.
 
-This project is a local-first Market Intelligence Engine and portfolio tracker
-for public equity research.
+## Start here
 
-It is not a trading bot.
-It is not a generic AI summarizer.
-It is not a Bloomberg clone.
+- [Current status](docs/00-current-state.md): what is implemented and verified.
+- [Code map](docs/code-map.md): where changes belong.
+- [Agent rules](AGENTS.md) and [handoff](docs/HANDOFF.md): safe development entry.
+- [Documentation index](docs/README.md): task-specific references.
+- [Completion tracker](docs/roadmaps/completion-tracker.md): ten cumulative 10%
+  milestones, exact task IDs, dependencies and acceptance gates.
+- [Next five workstreams](Knull%28readme%29.md): independent assignments, file
+  ownership, acceptance gates and integration procedure.
+- [Limitations](docs/agent_capabilities_and_limitations.md): one current ledger.
 
-It is a source-backed research and portfolio system that helps track:
+## Run locally
 
-- companies
-- filings
-- news
-- macro data
-- market data
-- thesis notes
-- holdings
-- transactions
-- portfolio exposure
-- valuation assumptions
-- catalysts
-- narrative shifts
-- alerts
+Configure the root environment using [.env.example](.env.example), including
+local credentials, a session secret and SEC contact identity. Never overwrite
+an existing .env or commit secrets. See [local setup](docs/07-local-development.md).
 
-The goal is to answer:
+From the repository root:
 
-> What changed, why does it matter, how credible is it, does it affect my thesis, and how exposed am I through my portfolio?
+~~~bash
+docker compose up --build -d
+docker compose ps
+curl --fail http://localhost:8000/api/readiness
+~~~
 
----
+The frontend is at http://localhost:3000. Backend liveness is /api/health;
+readiness also checks the database and migrations. pgAdmin uses the opt-in admin
+profile; Daily Brief and valuation-source workers use the automation profile.
 
-## Product boundary
+This is not public-deployment-ready. Checked-in Compose ports bind 127.0.0.1;
+inspect running container bindings because older containers can retain previous
+settings. Localhost bindings do not establish production security.
 
-The current deployment boundary is intentionally narrow:
+## Develop and verify
 
-- local only
-- single-user credential login
-- source-backed data storage
-- reviewed financial facts and evidence
-- SEC, RSS, manual PDF, macro, and selected market-data ingestion
-- portfolio holdings, transactions, cash, prices, and valuation
-- deterministic valuation and scoring
-- reviewable AI assistance
+The supported runtime uses production-built Next.js and FastAPI images.
+docker-compose.dev.yml enables source mounts and reloaders. Do not assume tests
+inside an old production container exercise edited source.
 
-Do not add yet:
+[The runbook](docs/08-execution-runbook.md) owns source-mounted backend tests,
+frontend tests/type checking, production builds, browser checks, migrations,
+and safe operational commands. [CI](.github/workflows/ci.yml) runs documentation,
+secret, workflow, release and browser gates.
 
-- trading execution
-- buy/sell recommendations
-- Twitter scraping
-- broker credential storage
-- broker sync before OAuth/token security is designed
-- payment system
-- production deployment
+No source datasets, user database, credentials, or investment assumptions should
+be changed merely to make a test pass. Synthetic fixtures must say Mock Data.
 
-The active product roadmap lives in `docs/roadmaps/product-roadmap.md`.
-The repository threat model lives in `docs/06-security-threat-model.md`.
+## Repository boundaries
 
----
-
-## Current implementation status
-
-Use `docs/00-current-state.md` as the source of truth.
-
-Short version:
-
-- Strongest areas: deterministic valuation, evidence/provenance foundations,
-  local ownership, Damodaran source versioning, and broad backend coverage.
-- Partial areas: India automation, providers, financial layout coverage, daily
-  workflow integration, AI citations, portfolio attribution, and frontend parity.
-- Not ready: market-regime decisions, broker sync, real-time trading data, or
-  public deployment.
-
----
-
-## Recommended local stack
-
-| Layer | Tool |
+| Area | Owns |
 |---|---|
-| Editor | VS Code |
-| AI coding assistant | Codex |
-| Version control | Git + GitHub |
-| Frontend | Next.js |
-| Backend | FastAPI |
-| Database | PostgreSQL through Docker |
-| Database admin | pgAdmin or TablePlus optional |
-| Background jobs | Simple scripts first |
-| AI model calls | OpenAI API later |
-| Documentation | Markdown files in `/docs` |
+| [backend](backend/) | FastAPI routes, contracts, deterministic services, persistence, providers and tests |
+| [frontend](frontend/) | App Router pages, UI, server-only auth client and domain browser APIs |
+| [scripts](scripts/) | Maintained verification and operations; inspect side effects before running |
+| [data](data/) | Runtime source assets and mirrored versioned datasets |
+| [knowledge base](damodaran_knowledge_base_v1/) | Separate audited valuation doctrine and immutable raw sources |
+| [docs](docs/) | Current architecture, setup, workflows and categorized historical evidence |
+| [workstream coordination](docs/workstreams/) | Exclusive edit ownership and per-agent evidence; shared docs have one coordinator |
 
----
+The dependency manifests and exact entry points are linked in the code map.
+Old root debug scripts, generated repo_map.txt and archived plans are not the
+current development workflow. Do not delete untracked material without checking
+its ownership and purpose.
 
-## Local Docker run
-
-The simplest local path is Docker Compose:
-
-```bash
-docker compose up --build
-```
-
-Services:
-
-| Service | URL |
-|---|---|
-| Frontend | `http://localhost:3000` |
-| Backend API | `http://localhost:8000` |
-| Backend health check | `http://localhost:8000/health` |
-| pgAdmin | `http://localhost:5050` |
-| PostgreSQL | `localhost:5432` |
-
-The backend container uses PostgreSQL through the Docker service name `postgres`.
-The frontend server talks to the backend through the Docker service name
-`backend`. Browser-side frontend requests go through the frontend proxy at
-`/api/backend`, so the browser does not need to resolve Docker service names.
-The development container keeps Linux `node_modules` and `.next` data in
-container-only volumes so Mac native packages cannot replace Linux binaries.
-After upgrading from an older container layout, recreate only the frontend with:
-
-```bash
-docker compose up --build -d --force-recreate --renew-anon-volumes frontend
-```
-
-When running the backend directly on the laptop instead of inside Docker, use `localhost` in `DATABASE_URL`.
-
-## Milestone A local verification & Manual Setup
-
-If you are setting up API keys, running verification scripts, or configuring external sources, refer to the detailed [Local Development Guide](docs/07-local-development.md).
-
-After Docker is running, run:
-
-```bash
-python3 scripts/verify_milestone_a.py
-```
-
-To create/reuse local verification records and test SEC plus three real RSS feeds:
-
-```bash
-python3 scripts/verify_milestone_a.py --write --ticker AAPL --form-type 10-K \
-  --rss-feed "YOUR_RSS_FEED_1" \
-  --rss-feed "YOUR_RSS_FEED_2" \
-  --rss-feed "YOUR_RSS_FEED_3"
-```
-
-Replace the example RSS URLs with real feeds you want to track. Refer to [docs/07-local-development.md](docs/07-local-development.md) for troubleshooting feed errors and other common verification issues.
-
----
-
-## Damodaran Valuation Benchmarks
-
-The Market Intelligence Engine features a fully structured valuation flow that begins with Damodaran industry benchmarks.
-
-1. **Canonical knowledge vs. app runtime data**: `damodaran_knowledge_base_v1/` is the immutable, hash-audited source and doctrine layer. `data/damodaran/raw/` is the backend runtime mirror mounted into Docker at `/workspace/data/damodaran/raw/`. Do not treat the runtime mirror as the provenance catalog.
-2. **How ingestion works**: Run `docker compose exec backend python /workspace/scripts/ingest_damodaran.py`. The helper ingests a defined subset of the available workbooks; a file being present does not prove parser/database/UI support. Unsupported coverage must remain explicit.
-3. **How industry mapping and autofill works**: When creating a valuation model, the user chooses a company, a country, and confirms a Damodaran industry. The app uses the `IndustryMappingService` to match the company's sector to the normalized industries, and uses the `IndustryAssumptionService` to automatically build assumption priors from the ingested benchmark data.
-4. **Differentiation of assumptions**: In the final UI, company actuals (extracted from uploaded financials), industry priors (from Damodaran), formula-derived metrics, and user-entered assumptions are explicitly labeled and tracked using an explicit `confidence` and `sourceType`.
-
-Audit the canonical corpus with:
-
-```bash
-python3 damodaran_knowledge_base_v1/tools/audit_kb.py
-```
-
-See `damodaran_knowledge_base_v1/INDEX.md` and
-`damodaran_knowledge_base_v1/PROCESSING_PLAN.md` before adding or using sources.
-
----
-
-## Folder structure
-
-```text
-market-intelligence-engine/
-├── README.md
-├── AGENTS.md
-├── docker-compose.yml
-├── .env.example
-├── docs/
-│   ├── README.md (Documentation Index)
-│   ├── 00-current-state.md
-│   ├── 01-product-brief.md
-│   ├── 07-local-development.md
-│   ├── 08-execution-runbook.md
-│   ├── roadmaps/
-│   ├── valuation-agent/
-│   ├── archive/
-│   └── (other numbered docs)
-├── backend/
-├── frontend/
-└── scripts/
-```
-
----
-
-## Build principle
-
-Build the source-backed system first.
-
-Then add AI.
-
-Bad architecture:
-
-```text
-Raw source → LLM summary → answer
-```
-
-Better architecture:
-
-```text
-Raw source → stored with provenance → normalized event → scored → brief/alert
-```
-
-AI should assist the system. It should not replace the system.
+Company actuals, user assumptions, benchmark priors, calculations and AI
+interpretations must remain distinguishable. Stored sources and review gates
+come before generated conclusions.

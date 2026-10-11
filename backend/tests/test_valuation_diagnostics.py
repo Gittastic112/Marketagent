@@ -69,20 +69,22 @@ def test_relative_valuation():
         current_operating_margin=0.20, # EBIT = 20
         tax_rate=0.25,
         debt=100.0,
-        wacc_start=0.05 # interest = 5
+        wacc_start=0.05,
+        net_income=10.0,
     )
 
-    # PE = 800 / ((20 - 5) * 0.75) = 800 / (15 * 0.75) = 800 / 11.25 = 71.1
+    # P/E uses saved net income: 800 / 10 = 80, not a WACC-based proxy.
     # EV/EBIT = 1000 / 20 = 50
     # EV/Sales = 1000 / 100 = 10
     RelativeValuationService.calculate_implied_multiples(output, assumption_set)
 
     assert abs(output.implied_ev_sales - 10.0) < 0.01
     assert abs(output.implied_ev_ebit - 50.0) < 0.01
-    assert abs(output.implied_pe - 71.11) < 0.1
+    assert output.implied_pe == 80
+    assert output.implied_ev_ebitda is None
 
     warnings = RelativeValuationService.generate_relative_pricing_diagnostics(output)
-    assert any("PE is very high" in w.message for w in warnings)
+    assert any("configured 50x review threshold" in w.message for w in warnings)
 
 
 def test_black_scholes():

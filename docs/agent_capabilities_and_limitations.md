@@ -1,58 +1,167 @@
 # Agent Capabilities and Limitations
 
-**Audited:** 2026-08-08
+**Updated:** 2026-10-10 (infrastructure audit and completion sequencing).
+Product validation dates remain in Current State.
 
 This document is the practical trust boundary for the product. It intentionally
 summarizes capabilities instead of duplicating route-by-route implementation.
+
+## Confirmed Scope and Input Checklist
+
+Confirmed by the user on September 21: personal research only, US and India,
+USD portfolio base currency, five large companies per market, daily closes
+acceptable with a preference for the latest available price. The user reported
+existing SEC/Gemini integrations and no other subscriptions. The supplied SEC
+contact identity is configured locally and official SEC requests succeeded.
+The user accepts a Google Sheets quote delay of up to 20 minutes. Gemini's key
+now works with locally configured gemini-3.5-flash-lite. September 22 verification
+also scanned Apple's public FY2025 PDF through the private-source workflow. Only
+the source text/date, public company identity and field names were transmitted,
+not stored holdings, thesis notes or valuation values. Results remain unreviewed.
+
+Interpretation of "top five": market capitalization, not an investment ranking.
+The September 21 selection snapshot is NVIDIA (NVDA), Apple (AAPL), Alphabet
+(GOOG, one share class only), Microsoft (MSFT), Amazon (AMZN); Reliance Industries
+(NSE:RELIANCE), HDFC Bank (NSE:HDFCBANK), Bharti Airtel (NSE:BHARTIARTL), ICICI Bank
+(NSE:ICICIBANK), State Bank of India (NSE:SBIN). Selection sources:
+[US ranking](https://companiesmarketcap.com/usa/largest-companies-in-the-usa-by-market-cap/)
+and [India ranking](https://companiesmarketcap.com/india/largest-companies-in-india-by-market-cap/).
+The initial ten-company import added 205 sourced price records from successful
+30-day-window imports (195 completed daily prices and 10 latest quotes).
+Subsequent AAPL/GOOGL imports added longer history, and GOOGL Class A was added
+separately from GOOG Class C for the requested portfolio. The two pre-existing
+companies remain. This does not certify
+company financials or maintain the ranking automatically. Do not substitute Indian banks' US ADRs
+for their NSE shares. Preserve company reporting currencies, normally INR for
+these Indian companies; USD portfolio reporting requires dated, sourced FX.
+
+| Needed | Current decision and remaining action |
+|---|---|
+| US company statements | Official SEC companyfacts populate latest-completed-annual draft suggestions with exact candidate/source/period/unit provenance, including additional cash-flow, payout, tax, equity and debt-component tags. Revisions append candidates without overwriting reviewed evidence. GOOG/GOOGL use separate security-linked snapshots for their shared issuer. All suggestions still require review; no normalized facts or saved models are auto-approved. Standard-tag coverage is not complete-statement certification. No paid SEC API key is required. [SEC API documentation](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) |
+| India company statements | Official issuer reports can enter the existing PDF/manual workflow. Automatic exchange discovery is incomplete. No need to invent facts or use an ADR's share count |
+| Benchmark assumptions | User chose US-specific priors. Six January 5, 2026 US datasets are loaded for beta, ERP/cost of capital, margins, reinvestment, ROE and working capital, with distinct country scope and full source provenance. US country-name aliases recover the supplied country-tax prior. None of the 11 tracked securities has a confirmed industry mapping. Forecast growth, specialized inputs and omitted columns are not automatically supported. `waccIndia.xls` D10/D11 are explicitly labeled Global weighted average, not verified country-specific risk. Review mapping, leverage and ERP/risk-free conventions; priors do not supply company facts or holdings |
+| FRED and valuation automation | The supplied key passed real DGS10/NFCI imports September 22. Stored DGS10 percent values become a reviewed USD risk-free proxy with exact observation/date links; INR retains currency-matched benchmark methods. Weekday 07:00 New York refresh is enabled locally. SEC/FRED/price steps are audited and draft-only, with edits preserved; no external AI or saved-model recalculation. Docker and the separate source worker must run |
+| Latest prices | `yfinance_personal` is enabled in the ignored local configuration after the user's personal-use confirmation. Updating yfinance from 0.2.37 to 1.7.0 restored live US/NSE fetching; all ten normal imports succeeded. It requires no provider key but is unofficial, without uptime or quote-timing guarantees. Latest source timestamps/delay remain unknown. Daily history excludes the current UTC date to avoid treating an unfinished bar as a completed close; same-day final closes therefore wait until the next UTC day. Existing older rows are not retroactively reclassified. [Provider usage notice](https://ranaroussi.github.io/yfinance/) |
+| Google Sheets alternative | User accepts the up-to-20-minute quote delay. No bridge implemented or Sheet created; the functioning personal Yahoo adapter remains selected. GOOGLEFINANCE does not support most international exchanges; its historical values cannot be accessed through Sheets API or Apps Script. Never publish holdings to make a quote bridge work. [Google documentation](https://support.google.com/docs/answer/3093281?hl=en) |
+| Additional API accounts | No paid account is needed for the verified personal-price/SEC/manual-source workflow. SEC contact and Gemini key are configured locally. The configured gemini-3.5-flash-lite passes real public-PDF triage with exact quote checks and pending review. Keys use headers, not URLs. Scanning a private upload sends its disclosed text to the provider; it does not send stored portfolio/model values. This does not certify interpretation quality or future quota. Paid real-time entitlements/coverage are separate choices. FMP is a stub. Never paste keys into chat |
+| Assumed portfolio | Saved portfolio 1 has 200 AAPL and 200 GOOGL shares purchased at January 2, 2024 unadjusted closes, rounded to USD cents: 185.64 and 138.17. Confirmed User Assumptions: initial deposit 64,762.00 USD, zero fees, no later trades, dividends excluded. Source price IDs, funding/trade notes and Processing Runs retain the basis. Two complete snapshots and period calculations were verified; this is a price-return model, not broker-verified executions or actual total return. Broker activity/cash records are only needed to replace these assumptions with verified history |
+| Starbucks documents | Optional useful validation case. The offered files are not yet supplied in this exchange; SEC can be used without waiting for them. Do not label a fixture as Starbucks evidence |
+| Human review | Financial candidates, weighted industry mappings, model suitability and valuation assumptions still require review. User confirmation of personal use is recorded; it is not a blanket license for redistribution, prohibited scraping or professional use |
 
 ## What the Product Can Do
 
 | Capability | State | Evidence boundary |
 |---|---|---|
-| Track companies and market identity | Built | Company ownership, setup workflow, aliases, source capabilities |
+| Track companies and market identity | Built | Shared authenticated company catalog, setup workflow, aliases, source capabilities; not private company ownership |
 | Store and inspect source documents | Built | Raw documents, sections, PDF assets, exact locators where available |
-| Ingest SEC filings and RSS | Built when configured | Manual triggering and provider constraints remain |
+| Ingest SEC filings and RSS | Built when configured | SEC annual facts also have an opt-in source worker; filing discovery/RSS scheduling and provider constraints remain |
 | Upload India filing PDFs | Built | Automated NSE/BSE discovery is incomplete |
 | Extract and review financial candidates | Built | Review is required before promotion |
+| Evaluate local text extraction | Built, narrow scope | Owner-scoped persisted reports compare an exact stored-text hash to a separately reviewed complete reference. Numeric/unit/period/locator failures remain visible; no PDF/XBRL/AI or forecast certification |
 | Normalize and reconcile financial histories | Built for covered metrics | Broad issuer/layout certification remains incomplete |
 | Extract events and deterministic scores | Built | Rule-based extraction can miss nuance |
 | Review alerts and thesis impact | Built | Historical evidence precision varies |
 | Track portfolios, transactions, cash, and prices | Built | No broker sync; provider freshness varies |
 | Run multi-stage valuation workflows | Built | Output quality depends on reviewed assumptions and source definitions |
-| Use Damodaran benchmark priors | Built for 14 typed sources | 21 mirrored sources remain partial or unsupported |
+| Run reviewed-peer relative valuation | Built | Owner-scoped reviewed sets, normalized member and target-company revision evidence, exact diagnostic-warning acknowledgement receipts, retry-safe exact-hash v2 CSV round-trip with legacy support, provenance, median aggregation, and deterministic peer and target-relative warnings exist; facts are still supplied and reviewed by the user |
+| Audit peer review receipt health | Built | Bounded owner-scoped Data Health pages report receipt state, evidence conflicts, and method coverage; direct links open the specific peer set in a standalone review workspace without requiring a DCF |
+| Use Damodaran benchmark priors | Built for 24 active typed sources | 17 other mirrors have no typed rows; some loaded contracts also cover only part of their workbook. Every applied prior still requires review |
 | Run research sessions and AI assistance | Partial | Exact-source review and approval gates exist; generated claims are not automatically factual |
-| Search stored evidence | Partial | Coverage is strongest for documents and events, not every domain |
-| Generate a daily brief | Built but not autonomous | Continuous scheduling and complete provider coverage are absent |
+| Search stored evidence | Built for registered corpus types | Documents/events/narratives and owned research/approved AI are covered; semantic truth and every possible source type are not implied |
+| Generate a daily brief | Built with opt-in local scheduling | Deterministic scheduled generation exists; autonomous external AI and complete provider coverage do not |
 
 ## What Still Requires the User
 
-- Choose and verify companies, market identity, and reporting currency.
+- Initial markets, coverage size and USD base are chosen above. Verify security
+  identity, issuer reporting currency and any later coverage changes.
 - Supply or approve source documents and provider keys.
 - Review extracted financial candidates and reconciliation results.
 - Confirm weighted industry mappings.
 - Review valuation model choice, assumptions, and source age.
+- Supply and review target-company comparability facts when target-relative peer
+  diagnostics are required.
 - Interpret thesis impact and approve AI-assisted output.
 - Enter or validate prices when provider data is missing or stale.
-- Decide whether a source is acceptable for personal/internal use.
+- Review source-specific personal-use restrictions before enabling providers.
 
 ## What Is Not Product-Ready
 
 | Gap | Consequence |
 |---|---|
 | Public deployment security | Keep the app on localhost |
+| Local-only runtime boundary | Normal and E2E Compose bind published ports to 127.0.0.1, protected by regression checks. September 30 rollout verifies non-root backend/workers/frontend, dropped capabilities, no-new-privileges, memory/process limits and local port bindings. This does not establish public-deployment security or fully audit host forwarding rules |
+| Backup verification scope | Fresh backup `backups/20261001T015318Z-market-intelligence` restored all 108 r9 table fingerprints including the private Apple PDF and AI result. Rehearsed and normal s1 upgrades preserved all 107 pre-existing data tables exactly and added an empty review table. Older backups remain. Dump files now use mode 0600, directories 0700. The manifest's asset summary counts document_assets only; private PDF bytes are included. Off-device recovery remains unproven; concurrent writers must be quiesced |
+| Disposable verification cleanup | September 30 `market-intel-security-review` and earlier test stacks are removed, including Mock Data and temporary restored databases. The normal persistent database, on-disk backups and evidence captures remain intact. All six previously running normal services are back; web/backend/database health checks pass |
 | Production India provider coverage | India workflows remain manual/partial |
 | Broker integration | Portfolio activity must be entered/imported manually |
 | Real-time data | Do not infer trading-grade freshness |
 | Automated market-regime feeds | Manual/provider input workflow exists, but automated module coverage is not configured |
-| Fully automatic statements | Review and normalization are still required |
+| Fully automatic statements | Draft suggestions are automated, not source approval. Standard annual US-GAAP tags cannot fill every issuer's custom disclosures, consolidated/class-specific shares, option value, cross-holdings, complete working-capital/debt cash flows or special-case forecasts. Missing values remain unavailable or explicitly marked placeholders, not inferred zero facts |
+| FRED revisions | New dates import automatically; changed values for already stored dates are flagged `FRED_OBSERVATION_REVISION_REQUIRES_REVIEW`, not silently rewritten. Full vintage/revision storage remains open. DGS10 is a reviewed USD methodology proxy, not a universally appropriate discount rate |
+| Scheduled source refresh | One attempt per local weekday after 07:00, no missed-date backfill or automatic failure retry. Explicit retry is available. Queue status is persisted, but there is no dedicated heartbeat/notification transport; inspect the draft or Data Health when a job stays queued. Configuration remains local `.env`, not a general schedule editor |
+| SEC scale and component scope | Full-currency/full-share candidates never fill gaps in an existing reviewed million-scale annual basis. Legacy v2 long-term-only debt candidates are excluded from automatic drafts and receive a scope warning on refresh; prior reviewed historical facts are not rewritten. Current/noncurrent component sums require matching source bases/units and explicit review. Missing total borrowing coverage, lease treatment and issuer/class share reconciliation remain analyst work |
+| SEC download resource bounds | Companyfacts now uses the existing safe-URL check, fixed official HTTPS host, no redirects, a 32 MiB declared/decoded response limit, 20-second I/O timeout and a 60-second elapsed deadline checked between chunks. Oversized/invalid/wrong-issuer payloads fail before candidate writes. DNS/connection and in-flight reads are not a strict 60-second wall-clock cancellation guarantee; this does not harden every legacy SEC/RSS downloader |
+| Adjusted industry margins | Unadjusted EBIT and EBITDA are no longer mislabeled as lease/R&D-adjusted operating margins. The typed margin contract does not expose those adjusted source columns; adjusted-prior fields remain unavailable until separately mapped and tested |
+| Evaluation scope and reference quality | The financial text executor now runs and stores scores, but its existing extractor misses units. Missing units count as errors, even when the number matches. Reference completeness/correctness and genuine/mock classification are reviewer assertions. Other evaluation domains and forecast calibration remain incomplete; historical unowned runs are preserved but not exposed to arbitrary users |
 | Fully cited AI research | AI remains assistive and review-only |
-| Complete frontend parity | Some pages still need source/data-state auditing |
-| Portfolio comparison | Performance attribution exists; marginal-risk and expected-return comparisons remain incomplete |
+| Private source triage scope | Text/PDF inbox produces exact-quote-checked, ranked AI suggestions for 14 core valuation fields. It does not certify materiality, infer numerical forecast edits, approve facts, rewrite saved models, merge into scheduled brief snapshots or add private sources to global search. Private search, pagination and reversible archiving are implemented; original source editing remains absent |
+| Private source lifecycle | Archive/restore is owner-scoped, version-checked and reversible. Active sources are the default; archived originals and findings remain inspectable. Duplicate imports do not restore them. Running scans block archiving for two minutes; expired attempts can be abandoned, and late success/failure cannot overwrite a newer state. Archiving neither deletes nor approves evidence. No bulk archive, permanent deletion, full organization-event history or storage-space reclamation is provided |
+| Multi-source comparison | Comparison reads remain deterministic and bounded to the newest 50 active sources, with exact passages and exclusions. Analyst decisions now persist separately with immutable evidence receipts, owner/company/field/Mock Data scope and stale-evidence/version rejection. They do not approve AI, certify semantic contradictions, reconcile periods/horizons, change valuation inputs or enter scheduled briefs. Hashes cover the whole bounded company comparison, so even changes outside the selected input conservatively invalidate its review. Literal-copy detection is not independent corroboration or paraphrase detection |
+| Private source retrieval | Owner-scoped, case-insensitive literal phrase search covers titles and stored source text, with company, format and scan-state filters. Cursor pages expose older sources beyond the default 20 without loading original bodies into list responses. PDFs cover only their extracted pages; AI findings are not search text. Scan completion is not human approval. This is not semantic search, OCR, a full-text index or large-corpus performance certification |
+| Research PDF coverage | 12 MB, 20 selected pages and 60,000 extracted characters per source; larger reports need selected pages. No OCR, chart interpretation or visual financial-table reconciliation. Synchronous parser limits do not replace worker isolation/content-disarm controls |
+| Company business descriptions | Cards show bounded parser-selected annual Item 1 excerpts, with source dates/links, not live curated profiles. AAPL and GOOGL annual sections were imported on September 22; broader company/India coverage remains incomplete |
+| AAPL demonstration scope | September 22 non-saving Quick Valuation run uses FY2025 reported inputs and explicit assistant-selected estimates. It is not an approved current valuation: no fiscal roll-forward, accounting normalization, market-debt/option analysis or forecast review. The result does not establish trusted portfolio DCF coverage |
+| Complete frontend parity | Shared styling/navigation, dashboard, company list and valuation hub are cleaned up; portfolio detail now loads one selected view. Readable table scrolling, save confirmation and mobile focus were verified. This does not certify every field, chart, source state or legacy page; deeper company workflows still need targeted visual/data-state audits |
+| Genuine-input portfolio proof | The confirmed USD-only User Assumption portfolio has sourced history, funding/trades, two snapshots and verified returns/attribution/risk. It is not actual broker history. The separate comprehensive genuine-input gate still needs real activity, foreign exposure/dated FX, a selected benchmark and trusted DCF evidence. Do not invent FX or forecasts to clear it; the current portfolio honestly reports missing DCF coverage |
+| Historical holdings reconstruction | Snapshot valuation currently applies stored holdings/cash to the requested date, rather than replaying all activity. The confirmed no-later-trades portfolio was checked at dates on/after its purchases. Arbitrary past-date capture after later trades, fees or cash changes needs a transaction-replay design and tests before being treated as reliable history |
+| Issuer versus security identity | Company.cik remains unique, conflating issuer and listed security. A tested explicit regulatory_id fallback now imports GOOG/GOOGL shared-issuer SEC evidence into distinct security-linked snapshots; their prices remain separate. A dedicated issuer/security model and class-share reconciliation are still needed; issuer weighted-average shares are not automatically class-specific shares |
+| Ownership audit scope | Price-divergence reads/deduplication/impacts use the requesting owner. Event-driven valuation alerts derive the model owner and validate company/change-log relationships. Portfolio calculations derive DCF/thesis/alert context from the persisted portfolio owner and reject mismatched explicit callers. Regression tests cover these paths; this is not full multi-user security certification or a rewrite of historical alerts |
+| Risk comparison freshness | Latest price date/age is now exposed per holding. Prices older than five calendar days make comparison partial and withhold the current DCF price gap; historical risk can still be shown with warnings. Mock provider identity is retained even when its latest row lies outside the historical window. This threshold is not an exchange calendar, corporate-action audit or guarantee of live pricing; complete still does not mean live |
+| Historical portfolio basis | October 5 source inspection: valuation filters prices by requested date but selects current positive holding quantities; snapshot capture uses that valuation path. General past-position/cash replay is not established by the constant-holdings AAPL/GOOGL example. W3 owns dated replay and completeness tests; no historical records were changed by this audit |
+| Automated comparable-company data | Peer values and sources must be entered manually; no licensed provider verifies or refreshes them |
+| Legacy CSV receipt boundary | Imports created before migration `n5n5n5n5n5n5` have no provable original-file receipt; the first retry of such an old file can create one additional tracked Draft, after which exact retries are idempotent |
+| Legacy peer review receipts | Reviews created before migration `o6o6o6o6o6o6` have no diagnostic acknowledgement receipt and cannot drive relative valuation until the current warnings are explicitly re-acknowledged; the normal database contained no peer sets when this migration was applied |
+| Diagnostic receipt semantics | A current receipt proves that the displayed deterministic warning categories were acknowledged for one diagnostic snapshot; it does not prove the underlying facts, economic comparability, source correctness, or reviewer diligence, and time-sensitive freshness changes can require re-acknowledgement |
+| Receipt-health timing | Data Health recomputes receipt status when the page is requested; it is not a background monitor and cannot automatically re-acknowledge a stale or missing receipt |
+| Receipt audit scope | Each response checks at most 100 sets (UI: 50) and reports page-local counts plus the total owned count. Cursor pages are live reads, not one immutable snapshot. Refresh from the first page after changes; a current receipt alone does not establish method coverage or valid company financial inputs |
+| Relative valuation numeric contract | Finite input validation and overflow guards prevent invalid numeric responses, but do not validate currency/unit consistency or source accuracy. Supplied cash/debt must be nonnegative and supplied shares positive; losses remain valid inputs but may leave a multiple method unavailable |
+| Relative valuation refresh boundary | Superseded browser requests cannot restore old options, results, or errors. Refresh failures clear usable peer evidence and block calculation until retry succeeds. Requests are logically invalidated, not transport-aborted; remote edits still require refresh and are independently checked by the backend when calculating |
+| Saved relative-input evidence | Zero preservation, book equity mapping, server-derived EBIT, owned input reads, exact-hash calculation, and input disclosure are implemented. These values are still saved User Assumptions, not verified company actuals. EBITDA remains unavailable because the saved depreciation field does not establish complete D&A; unsaved form edits are excluded |
+| Saved relative-input units and bridge | Users must confirm consistent currency and monetary/share scales plus the simplified enterprise value minus debt plus cash bridge. That confirmation is not independent verification. Nonzero leases, cross-holdings, minority interests, preferred stock, and employee options are disclosed as omitted adjustments, not included in this bridge; the direct custom-financial API remains available under its existing contract |
+| DCF implied-pricing evidence | New calculations and historical API reads use saved net income for P/E, saved book equity for P/B, and explicit revenue/margin for sales and EBIT ratios. EBITDA is unavailable without complete D&A evidence. Ratios are Calculations from User Assumptions, not verified earnings or market multiples; currency, scale and source accuracy still require review |
+| Historical DCF storage | Reconciled reads replace legacy pricing ratios and structured pricing warnings in responses only. They do not rewrite stored outputs, rerun the DCF, or recalculate its historical quality score. Untyped legacy string warnings cannot safely be classified and remain preserved. Contextless output reads hide ratios |
+| Saved output-card evidence | Headline, supplementary and multi-method values now share stale/invalid/critical, identity, currency and finite-value display gates. Saved prices are User Assumptions, not live Market Facts. Stored diagnostic scores remain historical and are never synthesized in the browser. These UI gates do not independently verify sources or replace backend enforcement in other consumers |
+| Scenario evidence | Scenarios retain the owned model type and zero assumptions, reject stale/invalid saved inputs, and expose per-scenario diagnostics, saved currency and backend price gaps. Deterministic shocks are not probabilities or forecasts; missing optional assumptions can still trigger existing engine defaults. Requests are logically invalidated, not transport-aborted |
+| Reverse DCF evidence | Source requires explicit positive comparison price, valid saved inputs/currency/diagnostics and actual convergence, without price-100 or one-share fallbacks. FCFF/distressed dispatch and result identity checks are implemented; financial-services reverse analysis is unsupported. Bounded bisection does not prove uniqueness or find every possible root. Prices/shares remain User Assumptions; request cancellation is logical, not transport abortion. Focused FCFF browser convergence, unreachable-target and delayed-response checks pass with Mock Data, not genuine-input certification |
+| Saved-input version preservation | Both UI callers send the saved basis ID/time; the server merges omitted fields, preserves explicit clears/zeros and rejects outdated bases. Common book equity and saved horizon controls are implemented. Actual advanced-form resaves and five competing PostgreSQL writer pairs pass on disposable fixtures, including visible stale-form rejection. Prior versions remain intact; full API creations without a basis retain legacy behavior. The legacy form caller has source/test coverage, not separate mounted-browser proof |
+| Core DCF zero/default semantics | Core FCFF forecasts, terminal values, sensitivity inputs/centers and related diagnostics now distinguish explicit zero from missing values. Zero shares and sales-to-capital remain invalid and diagnosed; a zero projection horizon is rejected. Existing missing-value presets remain, including the internal one-share fallback when shares are absent, which must remain blocked by diagnostics/display gates. Existing saved outputs are not rewritten or recalculated by this code change |
+| FCFE/DDM method boundary | New calculations use explicit cost of equity, growth and positive shares, never WACC or missing-value presets. FCFE needs all six cash-flow components, including explicit zeros. Missing, invalid, nonfinite, negative-cash-flow or non-convergent inputs make that supplementary estimate unavailable with watch diagnostics, not a blocked core FCFF value. These are single-stage stable-growth estimates from current cash flow, not multi-stage forecasts or proof of sustainable payouts. A zero dividend estimate assumes zero dividends continue; it does not imply the company has no economic value |
+| FCFE/DDM historical and consumer boundary | Existing saved supplementary values and historical scores are not recalculated or rewritten; resave to apply corrected math. Scenario operating-growth/margin and WACC shocks do not automatically change the explicit equity cash-flow/rate inputs. Currency, monetary scale, sustainable period, dilution and source correctness remain user-reviewed. Older unmounted dcf-form.tsx still has truthiness/dollar formatting; the advanced workspace uses shared zero-aware output cards and currency-aware payout labels |
+| Payout completeness | Net cash returned is unavailable without finite explicit dividends, buybacks and issuance inputs. Comparisons no longer substitute missing components or assert actual funding, stock-compensation causation or value destruction. This is calculation-level protection, not comprehensive nonfinite validation across every legacy write contract |
+| Financial-services model boundary | New excess-return calculations require explicit finite positive book equity/shares, finite net income/target ROE/cost of equity/growth and a 1-30 year horizon. Explicit zeros survive, nonconvergent/overflowing results are unavailable with blocking diagnostics, and enterprise value is not fabricated. This is a simplified linear ROE fade with constant book-equity growth, not a regulatory-capital/payout forecast. The workspace and scenario display validate equity inputs without requiring irrelevant FCFF fields; the saved projection view labels equity meanings. Persisted legacy projection field names remain unchanged |
+| Distressed model boundary | New calculations require explicit probability, nonnegative common-equity recovery and positive shares. Gaps and the bridge include the final probability-weighted equity, including lease/cross-holding adjustments. Recovery currency/scale and treatment after senior claims remain user assertions; this batch does not introduce an independent recovery-review receipt. Base forecasts/terminal amounts remain conditional on survival, not an adjusted-value decomposition. Unadjusted supplementary FCFE/DDM and FCFF sensitivity tables are unavailable rather than displayed as distressed estimates |
+| Specialized historical/UI boundary | Historical outputs, diagnostics and sensitivities are not recalculated on read; save a new version to apply repairs. The advanced form no longer presets ROE/failure/recovery or missing operating growth/tax/reinvestment inputs, and recovery explicitly means total common equity after senior claims in the saved currency/scale. Financial-services scenarios shock equity inputs; FCFF/distressed operating shocks retain existing meanings. Saved projections show relative Year 1 onward, not invented calendar dates; the backend's legacy fixed-2024 calendar field still needs a fiscal-anchor migration/design |
+| Sensitivity method boundary | Funding sensitivities still recompute CAPM cost of equity and set terminal ROIC to recalculated WACC unless explicitly overridden, rather than preserving every saved rate. Missing-value defaults differ between forecast/terminal/sensitivity paths; cells do not have individual validity diagnostics. Zero substitution was fixed, not the entire sensitivity methodology |
+| Real Options saved-basis boundary | The panel now uses owned, timestamp-checked FCFF inputs/output, saved currency and shares, and backend total-equity integration before per-share conversion. Stale/critical/invalid bases are rejected; zero exclusivity and already-counted value add nothing. Independent-form, delayed-response and failure/retry checks pass with INR Mock Data. Requests are logically invalidated, not transport-aborted; remote edits still require refresh |
+| Real Options judgment and persistence | All seven eligibility criteria and the incremental common-equity/currency/scale basis require explicit user confirmation, not independent verification. Generic enterprise/project option values cannot automatically be added to equity. Black-Scholes and exclusivity scaling are simplified assumptions. Inputs/results are not persisted, unsaved DCF edits are excluded, and distressed/financial-services integration is unavailable |
+| Legacy Real Options compatibility | Direct custom-base calculation and scored-eligibility endpoints remain for compatibility; they do not enforce the new saved-basis ownership/confirmation contract and are not used by the panel. Their legacy delta omits yield discounting and is not displayed by the new panel. This batch does not certify those legacy outputs |
+| Save confirmation lifecycle | Resolved for the mounted advanced workspace: only its versioned form resets after refresh, so the success notice and selected section survive. A disposable browser save persisted the changed payout inputs and retained the confirmation. This does not certify every legacy form caller |
+| Host backend test runtime | Local Python environments lack pytest. Use the maintained network-disabled test Compose with disposable SQLite; do not substitute normal database settings. Focused PostgreSQL/browser proof is recorded separately |
+| Responsive coverage | Final September 21 sanity checks covered 28 routes at 1440px/390px, including saved valuation and company fundamentals, without page overflow or visible-field label failures. Shared tables preserve whole words in bounded scrolling panels. Screenshots and targeted interactions extend that evidence, but this is not every viewport, data state, workflow or a complete accessibility certification |
+| Latest browser recovery proof | Initial review, eligible health state, missing-receipt detection, and exact-set navigation passed on the disposable browser stack. Re-acknowledgement was clicked, but its final API confirmation could not be collected after the test endpoint stopped responding; backend recovery regressions pass |
+| Peer comparability analytics | Market-cap comparisons are now limited to matching stated currencies and expose skipped coverage; other currency, accounting, fiscal-period, growth, margin, freshness, coverage, and dispersion differences are flagged, but the system does not fetch FX for peer normalization, normalize accounting, weight peers, verify facts, or claim a calibrated comparability score |
+| Native frontend production build | Tests and TypeScript pass locally, but the recorded host dependency tree lacks the optional macOS ARM SWC binary. Docker remains the supported gate. September 22 final-source builds used verified cached Node 24/dependency images with matching package/lock hashes after Docker Hub metadata timed out; no dependency or authentication shortcuts were introduced |
 
 ## Reliability Baseline
 
-- 483 backend tests and 90 frontend tests passed at the latest full baseline.
-- TypeScript and the Next.js production build passed.
+For current source/build/browser validation, use [Current State](00-current-state.md).
+Do not treat older fixture or reference-source records as verified normal-database
+contents. The September 9 architecture refactor did not seed user data. The
+September 21 user-authorized setup added the explicitly assumed portfolio and
+sourced histories without rewriting existing valuation outputs.
+
+- The preceding valuation task's deployment and focused browser evidence is
+  archived in the [output/scenario checkpoint](archive/checkpoints/2026/output-scenario-integrity-checkpoint-2026-09-09.md).
 - Exact evidence, ownership, response contracts, valuation math, migrations,
   Damodaran versioning, and representative source workflows have targeted tests.
 - Browser coverage exists for selected workflows, not every active route.
@@ -74,15 +183,90 @@ growth, margins, reinvestment, WACC, terminal assumptions, equity bridge,
 currency, diluted shares, and source comparability. Industry data is a prior,
 not a company fact.
 
+Reviewed peer sets are a controlled user assertion, not independently verified
+market data. Each member requires source metadata and every method requires at
+least three positive included observations. Review makes the selected evidence
+eligible for calculation; it does not prove economic comparability, consistent
+accounting, aligned fiscal periods, or source accuracy.
+Review eligibility now also requires a stored SHA-256 receipt for the exact
+diagnostic snapshot and warning-code inventory displayed to the reviewer. A stale
+hash or incomplete warning set cannot be accepted. Editing or restoring a set
+clears the receipt, and time-sensitive diagnostic changes make the prior receipt
+stale until the current warnings are re-acknowledged. Immutable revisions retain
+the receipt that applied at each review.
+Optional comparability facts produce deterministic warnings only. CSV preview
+never writes, exact-hash apply creates Draft evidence, and export preserves the
+stored sources.
+An optional target-company profile now carries its own source, date, claim type,
+and comparability facts. It is versioned and storage-audited separately from peer
+members. CSV v2 round-trips that profile, requires identical target columns on
+each peer row, and visibly accepts legacy member-only files. Missing target facts
+remain a warning, not an excuse to infer them.
+
+Peer CSV parsing is bounded to 1 MB of UTF-8 content and 50 peer rows. Malformed
+quotes, inconsistent row widths, NUL bytes, non-finite numeric cells, and invalid
+create metadata block apply. Numeric error messages do not echo uploaded cells.
+Conflicting normalized/JSON evidence blocks export. Browser file reads enforce
+size and encoding checks and clear stale previews before new requests.
+Exact-file apply is idempotent within one owner and target company. Reuse does
+not reactivate an archived set or reset later edits, and the UI identifies the
+existing version returned. Hash identity covers the UTF-8 request content; a
+client that changes line endings or other bytes has created a different import.
+
+Peer market-cap dispersion is calculated separately for each stated currency.
+Target market cap is compared only with peers using the target currency. Missing,
+invalid, and cross-currency amounts are excluded with explicit identifiers and
+counts. This prevents raw cross-currency comparisons but is not FX normalization:
+the application does not translate market caps to a common as-of currency, prove
+that source timestamps align, or independently verify the supplied amounts.
+
+The January 2026 benchmark workbooks seed risk-free rates, ERP, beta, cost of
+debt, capital weights, WACC, tax, growth, and financing-policy context with
+version/hash/cell provenance. They do not contain company starting financials,
+bridge values, shares, market price, or payout facts. The September 22 source
+pipeline adds SEC annual draft suggestions and original-date stored quotes while
+keeping all financial candidates unapproved. Drafts now have source suggestions,
+but trusted financial facts still require matching sources, review and normalization.
+Forecast growth, target margins, terminal growth/returns, distress probability,
+recovery and employee-option value are judgments or separate evidence, not values
+that can honestly be filled by a macro API or an industry workbook.
+
 ## Data Boundary
 
-- AAPL FY2022-FY2025 and APSEZ FY2023-FY2025 are reviewed, reconciled,
-  real-source histories. The representative US/India certification gate passes.
+- Audited AAPL FY2022-FY2025 and APSEZ FY2023-FY2025 reference histories cover
+  representative real-source extraction paths, not the normal database's contents
+  or certification of the newly imported five-company review queue.
 - Manual prices and explicit personal-use Yahoo data must remain labeled.
 - Damodaran generic workbook inventory is not the same as typed application support.
 - Historical source rows without provable versions remain excluded from active reads.
 
 ## Security Boundary
+
+Company and source catalogs are shared authenticated data, not private tenant
+records. The September 30 security review covers code, dependencies, request and
+outbound boundaries, containers, secrets handling, AI/privacy and recovery. It is
+not an independent penetration test or host-compromise assessment. Framework
+OpenAPI/docs routes remain outside the three-route public APIRoute allowlist.
+
+Fixed in source: known package advisories in the scanned dependency sets,
+unused JWT/OAuth libraries, global token-storage writes, permissive proxy headers,
+missing same-origin mutation checks, unbounded request bodies, unsafe DNS handling,
+RSS/filing download limits, workbook expansion and RSS entity risks. Backend and
+workers now use an unprivileged account; web/workers drop Linux capabilities and
+set resource limits. Local `.env` permissions are 0600; new backups use umask 077.
+The [security checkpoint](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md)
+records verification and scope. No clean scanner result proves absence of bugs.
+
+| Priority / area | Remaining limitation and safe next action |
+|---|---|
+| High: host and local administration | Host firewall reports disabled; FileVault status could not be determined by the available command. Docker sharing/account privacy were not certified. Check these with the operator. PostgreSQL and optional pgAdmin retain development credentials; rotate together with persisted roles, not just `.env`, and run pgAdmin only when needed. Its version-8 image and host Docker installation need their own update/recovery assessment. All published ports must stay localhost-only |
+| High: recovery and confidentiality | Local restore rehearsal protects against migration loss, not stolen disks or simultaneous device/backup loss. Dumps contain private documents, AI evidence and portfolio data and are not application-encrypted. Arrange encrypted off-device backups and a restore drill; keep environment/key recovery separate |
+| High before public use | No public release: production identity/MFA, broader authorization testing, TLS, strict CORS/CSRF design, persistent per-user/operation throttles, security logging/alerting, least-privilege DB roles and explicit OpenAPI exposure decisions are still needed. Current login limits are per-process; backend defaults are per-path/IP and browser requests share the proxy IP |
+| Medium: untrusted parsers and availability | Body/download/workbook/RSS bounds reduce resource abuse but PDF parsing still runs synchronously without an isolated CPU/memory-limited job or malware scanner. No comprehensive hostile-parser fuzzing or load/capacity certification. A malicious local account can also exhaust disk/resources |
+| Medium: remaining outbound clients | Public RSS/filing downloads pin validated IPv4/IPv6 destinations, verify TLS and reject redirects/compression. Some fixed-host SEC metadata, FRED and market-provider clients retain separate redirect/size policies; review these individually. FRED already caps JSON at 5 MB. Strict download rejection or choosing the first DNS address can reduce feed availability; failures stay visible, not cached as success |
+| Medium: browser policy and secrets | Basic CSP/frame/type/referrer protections are enabled, not a nonce-based strict script policy. Secret scanning is heuristic over the working tree, not a full-history or credential-revocation audit. No keys were printed or rotated. Legacy global OAuth storage is disabled, not a broker integration |
+| Medium: supply chain | Dependency scans passed on the audited date. Runtime/test requirements and Docker targets are now separate; CI audits the test manifest, which includes runtime requirements. Backend transitives are not hash-locked, actions/images are not all immutable digest pins, and no comprehensive container OS/SBOM scan was completed. New builds can resolve newer transitives; no fresh advisory audit was run October 10. Maintain update/rebuild/restore checks; scanners cannot establish exploitability or completeness |
+| AI and research integrity | Provider output and imported source text remain untrusted. Exact citations and review gates do not prevent misleading summaries or certify resistance to every prompt injection. Explicit scans disclose source-text transmission; no new external AI call or source approval was made by this security workstream |
 
 Local credential authentication and owner scoping reduce accidental cross-user
 access, but they do not make the application safe for the public internet. Public
@@ -90,13 +274,38 @@ deployment requires production identity, authorization review, HTTPS, CSRF and
 CORS hardening, rate limits, secret management, backups, privacy controls, and
 audit logging.
 
+## Architecture Follow-ups
+
+Documentation audit boundary: current references and archive navigation were
+reconciled with source and static checks. Historical archive bodies retain their
+original dated claims and may have obsolete links. External financial sources,
+provider licensing/freshness and every browser state were not re-certified.
+
+| Area | Remaining boundary and next safe increment |
+|---|---|
+| Backend contracts | Valuation, portfolio and shared envelopes are separated. Error handling and envelope-only routes no longer load the legacy schema/service graph. The common-contract extraction preserves all 274 OpenAPI paths, 486 component schemas and legacy/generic class identity. Legacy domain contracts still remain in the facade; extract by domain with behavior/ownership/compatibility tests |
+| Large workflow owners | Portfolio detail is separated into four server views with independent request ownership; Data Health presentation helpers are extracted. Server actions, the remaining Data Health orchestration, peer-set manager/service, Damodaran ingestion and autofill still mix responsibilities. Extract by workflow with behavioral coverage; moving files alone is not a fix |
+| Read-path performance | Automatic relationship cascades were removed from common reads, and SQL windows bound latest-price/run object loading. Query/row-budget regressions protect these paths. Normal-runtime read and page-response timings improved substantially, but no large-dataset load test, concurrent-user capacity claim or browser-interactivity benchmark is implied. Historical-risk series and large benchmark views still do legitimate heavier work |
+| Provider placement | Both price routes share one audited atomic ingestion service. Health now selects latest runs per normalized status and aggregates historical counts in SQL, without materializing full run histories. Adapter/factory/persistence files still span services/market_data and providers; keep the factory authoritative until a tested domain move removes that split |
+| Type synchronization | Frontend contracts still mirror backend types manually. Generated contracts need an approved handling strategy for aliases, envelopes and response-only reconciliation before replacing them |
+| Frontend test depth | Many integrity checks inspect source strings. New transport/boundary tests improve protection, but a component-level workflow harness remains useful for form preservation and request races |
+| Legacy request conventions | The compatibility facade intentionally retains data-only, metadata and default-client envelope behaviors, including distinct error handling. Do not silently switch consumers between them |
+| Scratch and historical files | Untracked root scripts, local agent configuration, generated maps and old plans were not deleted or relocated because their ownership/use is not established. Use the code map and maintained scripts, not these files as current workflow instructions |
+| Dependency hygiene | September 30 security updates refresh both manifests and the frontend lockfile and remove unused auth libraries. Remaining lockfile, image and CI hardening is tracked in the Security Boundary above; preserve clean-build and behavioral checks on future updates |
+| Restore coordination | Restore stops running/restarting Daily Brief and source-refresh workers along with the web app, then resumes only those previously active workers after verification/migration. Fake-Docker regressions cover ordering, active-state selection, disabled workers and failed verification. No destructive normal restore was run for this repair. Other writers/admin sessions must be quiesced manually; concurrent backup writes still need a quiet maintenance window |
+| Backup consistency | The current tool dumps before separately reading table counts and asset totals, so concurrent writes can make the manifest describe a different observation. Its asset summary covers document_assets but not brief_sources.pdf_bytes, although both stores are in PostgreSQL. W5 owns consistent manifest generation and both-store verification; October 5 inspection did not run a restore |
+| Parallel test isolation | Browser/release and restore tooling use fixed disposable project names. Different ports or Git worktrees alone do not isolate their container cleanup. Serialize these lanes through the coordinator while independent source edits/tests proceed; do not treat five file allocations as five isolated runtimes |
+| Documentation audit environment | October 5: system Git/Python required unavailable Apple developer tools; bundled Git was blocked, the project Python shared library was sandbox-blocked, and the Node REPL could not start. Shell ownership and fallback documentation checks ran. Two protected environment-example link targets were excluded. Full Git status, Python documentation/skill checks and product/runtime validation remain unverified for that session; previous product results retain their original dates |
+| October 10 toolchain and rollout | Host Git/Python/Perl and bundled Git/Python remain unavailable/blocked, but the new isolated tools image provides working Git and fake-Docker recovery checks. Scoped status confirms hundreds of pre-existing/untracked changes; protected environment paths were excluded and a source-only safety archive retained. This is not a committed parallel-worktree baseline or populated recovery proof. Normal app/worker images were not replaced; new build/worker configuration awaits controlled rollout. pgAdmin was stopped and automatic restart disabled. The source worker was already stopped and remains so; source-refresh automation/manual queued jobs cannot run while it is stopped. See the infrastructure checkpoint for exact checks and cleanup evidence |
+| Runtime evidence boundary | Current State owns the latest rollout and verification scope. Earlier performance-only fingerprint evidence and the later private-source backup proof are separate checkpoints, not one unchanged-database claim. Architecture/import refactors do not authorize reseeding, source promotion or rewriting saved models |
+
 ## Highest-Value Improvements
 
-1. Finish frontend/backend data-state parity.
-2. Expand real-issuer coverage beyond AAPL/APSEZ and improve official India providers.
-3. Turn separate modules into one daily evidence-to-decision workflow.
-4. Add marginal-risk and expected-return portfolio comparisons.
-5. Add compliant automated market-regime sources without hiding provenance.
+1. Review/normalize the imported issuer candidates and verify the chosen portfolio's daily workflow; do not substitute assumed activity for genuine-input certification.
+2. Add compliant provider adapters where licensing and stored-record provenance allow them.
+3. Add licensed comparable-company adapters before attempting deeper peer normalization or calibration.
+4. Expand real-issuer coverage beyond AAPL/APSEZ and improve official India providers.
+5. Turn separate modules into one daily evidence-to-decision workflow.
 6. Improve automatic exact-passage selection while retaining review gates.
 
 The former 2,450-line audit is preserved at

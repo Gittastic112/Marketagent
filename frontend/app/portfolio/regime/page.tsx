@@ -2,14 +2,27 @@ import { ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { RegimeInputForm } from "@/components/portfolio/RegimeInputForm";
-import type { MarketRegimeScoreRead } from "@/lib/api";
+import { FredMacroRegimePanel } from "@/components/portfolio/fred-macro-regime-panel";
+import type { MarketRegimeMacroProviderRead, MarketRegimeScoreRead } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
 export default async function MarketRegimePage() {
   try {
-    const regimeRes = await serverFetchApiResponse<MarketRegimeScoreRead>("/market-regime/current");
-    const score = regimeRes.data!;
+    const [regimeRes, macroProviderRes] = await Promise.all([
+      serverFetchApiResponse<MarketRegimeScoreRead>("/market-regime/current"),
+      serverFetchApiResponse<MarketRegimeMacroProviderRead>("/market-regime/providers/fred/macro/preview"),
+    ]);
+    const score = regimeRes.data;
+    if (!score) {
+      return (
+        <>
+          <PageHeader eyebrow="Portfolio" title="Market Regime" />
+          <DataStateNotices metas={[regimeRes.meta]} unavailableMessage="Market Regime is unavailable. No score is being shown." />
+          <ErrorState message="Could not load Market Regime data." />
+        </>
+      );
+    }
 
     return (
       <>
@@ -25,7 +38,7 @@ export default async function MarketRegimePage() {
           mockMessage="Market Regime data is simulated or incomplete. Please provide metric inputs."
         />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "1.5rem", marginTop: "1.5rem" }}>
+        <div className="regime-layout">
 
           {/* Left Column: Readiness Score */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
@@ -133,13 +146,14 @@ export default async function MarketRegimePage() {
             ) : (
               <div className="table-wrap">
                 <table>
-                  <thead><tr><th>Module</th><th>Type</th><th>Source</th><th>As Of</th><th>Freshness</th><th>Method</th></tr></thead>
+                  <thead><tr><th>Module</th><th>Type</th><th>Source</th><th>Record</th><th>As Of</th><th>Freshness</th><th>Method</th></tr></thead>
                   <tbody>
                     {score.input_sources.map((source) => (
                       <tr key={source.input_id}>
                         <td>{source.metric_name}</td>
-                        <td>{source.input_type === "manual" ? "User Assumption" : "Fact"}</td>
+                        <td>{source.claim_type}</td>
                         <td>{source.source_url ? <a href={source.source_url} rel="noreferrer" target="_blank">{source.source_name}</a> : source.source_name}</td>
+                        <td>{source.source_record_id ? `${source.source_record_type} #${source.source_record_id}` : source.evidence_state.replaceAll("_", " ")}</td>
                         <td>{source.as_of_date}</td>
                         <td>{source.age_days} days old, limit {source.freshness_threshold_days}</td>
                         <td>{source.methodology}</td>
@@ -154,6 +168,11 @@ export default async function MarketRegimePage() {
           <Panel title="Submit Metric Data">
              <RegimeInputForm />
           </Panel>
+
+          <FredMacroRegimePanel
+            meta={macroProviderRes.meta}
+            preview={macroProviderRes.data}
+          />
         </div>
       </div>
     </>

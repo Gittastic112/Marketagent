@@ -1,11 +1,9 @@
 import Link from "next/link";
-import { MockDataState, PageHeader, Panel } from "@/components/page";
+import { DataStateNotices, PageHeader, Panel } from "@/components/page";
 import { fetchRssFeed, fetchRecentSecFilings } from "@/app/actions";
 import { SelectField, TextField, CheckboxField } from "@/components/form-fields";
 import { SourceCapabilityMatrix } from "@/components/source-capability-matrix";
-import { StaleDataBanner } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
-import { summarizeApiMetas } from "@/lib/data-state-meta";
 import type { Company, Source, SourceCapability } from "@/lib/api";
 
 function sourceOptions(sources: Source[]) {
@@ -25,11 +23,9 @@ function companyOptions(companies: Company[]) {
 }
 
 export default async function DataPage() {
-  const [companiesRes, sourcesRes] = await Promise.all([
+  const [companiesRes, sourcesRes, usCapabilitiesRes, indiaCapabilitiesRes] = await Promise.all([
     serverFetchApiResponse<Company[]>("/companies").catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<Source[]>("/sources").catch(() => ({ data: [], meta: null }))
-  ]);
-  const [usCapabilitiesRes, indiaCapabilitiesRes] = await Promise.all([
+    serverFetchApiResponse<Source[]>("/sources").catch(() => ({ data: [], meta: null })),
     serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=US").catch(() => ({ data: [], meta: null })),
     serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=IN").catch(() => ({ data: [], meta: null }))
   ]);
@@ -44,32 +40,25 @@ export default async function DataPage() {
   );
   const usCapabilities = usCapabilitiesRes.data || [];
   const indiaCapabilities = indiaCapabilitiesRes.data || [];
-  const dataState = summarizeApiMetas([
-    companiesRes.meta,
-    sourcesRes.meta,
-    usCapabilitiesRes.meta,
-    indiaCapabilitiesRes.meta
-  ]);
-
   return (
     <>
       <PageHeader eyebrow="Data & APIs" title="Data Management" />
-      {dataState.someStale && <StaleDataBanner />}
-      {dataState.hasMock && <MockDataState message="One or more data management panels are using mock data. Configure real sources before relying on those workflows." />}
+      <DataStateNotices
+        metas={[companiesRes.meta, sourcesRes.meta, usCapabilitiesRes.meta, indiaCapabilitiesRes.meta]}
+        mockMessage="One or more data management panels are using mock data. Configure real sources before relying on those workflows."
+      />
 
       <Panel title="US / India Source Capability Matrix">
         <SourceCapabilityMatrix usCapabilities={usCapabilities} indiaCapabilities={indiaCapabilities} />
       </Panel>
 
-      <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "1rem", marginBottom: "2rem" }}>
+      <div className="metric-grid data-management-grid">
         <Panel title="Sources">
           <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
             Manage RSS feeds, SEC ingestion configs, and source reliability.
           </p>
           <div className="button-row">
-            <Link href="/sources" passHref>
-              <button>Manage Sources</button>
-            </Link>
+            <Link className="secondary-button" href="/sources">Manage Sources</Link>
           </div>
         </Panel>
 
@@ -78,9 +67,7 @@ export default async function DataPage() {
             View and manage manual or imported market prices.
           </p>
           <div className="button-row">
-            <Link href="/market-prices" passHref>
-              <button>Manage Prices</button>
-            </Link>
+            <Link className="secondary-button" href="/market-prices">Manage Prices</Link>
           </div>
         </Panel>
 
@@ -89,9 +76,7 @@ export default async function DataPage() {
             Track macroeconomic series, indicators, and CSV imports.
           </p>
           <div className="button-row">
-            <Link href="/macro" passHref>
-              <button>Manage Macro Data</button>
-            </Link>
+            <Link className="secondary-button" href="/macro">Manage Macro Data</Link>
           </div>
         </Panel>
       </div>

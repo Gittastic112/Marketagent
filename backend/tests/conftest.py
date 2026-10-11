@@ -46,6 +46,8 @@ def authenticated_test_user() -> Generator[None]:
     from app.api.dependencies import get_current_user
 
     app.dependency_overrides[get_current_user] = lambda: TEST_USER
+    # Each test gets a fresh rate window; throttling itself remains enabled.
+    app.state.limiter.reset()
     try:
         yield
     finally:

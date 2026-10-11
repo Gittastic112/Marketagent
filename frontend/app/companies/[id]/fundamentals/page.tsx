@@ -13,7 +13,7 @@ import type {
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
-import { PartialDataNotice } from "@/components/ui/data-states";
+import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
 import { ScreenerUpload } from "@/components/screener-upload";
@@ -68,7 +68,14 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   return (
     <div className="space-y-6">
       <DataHealthUpdater segment="fundamentals" isStale={dataState.someStale || dataState.allStale} />
-      {dataState.someStale && <PartialDataNotice message="Some fundamentals data is cached because the backend is unreachable." />}
+      <DataStateNotices metas={[
+        periodsRes.meta,
+        extractedCandidatesRes.meta,
+        normalizedSnapshotsRes.meta,
+        coverageResponse.meta,
+        reconciliationResponse.meta,
+        identityResponse.meta,
+      ]} />
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Fundamentals: {company.ticker}</h1>

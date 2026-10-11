@@ -1,21 +1,26 @@
 "use client";
 
-import { useState } from "react";
-import { DcfAssumptionSet, DcfOutput, ReverseDcfResponse, ValuationCompanyContext, ValuationModel } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import type { DcfAssumptionSet, ValuationCompanyContext, ValuationModel } from "@/lib/api/valuation";
+import { ReverseDcfPanel } from "@/components/valuation/reverse-dcf-panel";
 import { SelectField, TextField, TextAreaField } from "@/components/form-fields";
 import { buildCurrencyConsistencyCheck } from "@/lib/valuation-context";
 import { CurrencyConsistencyWarning } from "@/components/valuation/currency-consistency-warning";
 import { MacroSensitivityPanel } from "@/components/valuation/macro-sensitivity-panel";
 import { NarrativeToNumbersPanel } from "@/components/valuation/narrative-to-numbers-panel";
 import { ValuationMemoPanel } from "@/components/valuation/valuation-memo-panel";
-import { RelativeValuationPanel } from "@/components/valuation/relative-valuation-panel";
+import { SavedRelativeValuation } from "@/components/valuation/saved-relative-valuation";
+import { ImpliedPricingPanel } from "@/components/valuation/implied-pricing-panel";
 import { SensitivityTablesPanel } from "@/components/valuation/sensitivity-tables-panel";
 import { ScenarioRangePanel } from "@/components/valuation/scenario-range-panel";
 import { RealOptionsPanel } from "@/components/valuation/real-options-panel";
 import { ValuationChangeLogPanel } from "@/components/valuation/valuation-change-log-panel";
 import { DiagnosticPanel, DiagnosticWarning } from "@/components/valuation/diagnostic-panel";
 import { NotConfiguredState, DataFreshnessIndicator } from "@/components/ui/data-states";
-import { formatCurrency } from "@/lib/formatting";
+import { buildValuationOutputState, invalidDcfAssumptions } from "@/lib/valuation-output-state";
+import { SavedValuationOutputCard, MultiMethodValuationCard } from "@/components/valuation/saved-output-cards";
+import { SavedProjections } from "@/components/valuation/saved-projections";
 
 type Section =
   | "setup"
@@ -82,37 +87,6 @@ const SECTION_GROUPS: Array<{ label: string; sections: Array<{ id: Section; labe
 
 const SECTIONS = SECTION_GROUPS.flatMap((group) => group.sections);
 
-function invalidDcfAssumptions(assumptions?: DcfAssumptionSet): string[] {
-  if (!assumptions) return [];
-  const invalid: string[] = [];
-  const bounded: Array<[keyof DcfAssumptionSet, number, number]> = [
-    ["current_operating_margin", -1, 1],
-    ["target_operating_margin", -1, 1],
-    ["tax_rate", 0, 1],
-    ["risk_free_rate", 0, 1],
-    ["equity_risk_premium", 0, 1],
-    ["cost_of_equity", 0, 1],
-    ["pre_tax_cost_of_debt", 0, 1],
-    ["debt_to_capital", 0, 1],
-    ["equity_to_capital", 0, 1],
-    ["wacc_start", 0, 1],
-    ["wacc_terminal", 0, 1],
-    ["terminal_growth_rate", -0.2, 0.2],
-    ["terminal_roic", 0, 1],
-  ];
-  for (const [field, lower, upper] of bounded) {
-    const value = assumptions[field];
-    if (typeof value === "number" && (value < lower || value > upper)) invalid.push(String(field));
-  }
-  if (
-    typeof assumptions.debt_to_capital === "number"
-    && typeof assumptions.equity_to_capital === "number"
-    && Math.abs(assumptions.debt_to_capital + assumptions.equity_to_capital - 1) > 0.001
-  ) {
-    invalid.push("capital structure weights");
-  }
-  return [...new Set(invalid)];
-}
 
 export function AdvancedWorkspace({
   model,
@@ -127,15 +101,23 @@ export function AdvancedWorkspace({
   latestAssumptionSet?: DcfAssumptionSet;
   valuationContext?: ValuationCompanyContext;
 }) {
+  const router = useRouter();
   const [activeSection, setActiveSection] = useState<Section>("setup");
   const [isPending, setIsPending] = useState(false);
-  const [reverseDcfPending, setReverseDcfPending] = useState(false);
-  const [reverseDcfResponse, setReverseDcfResponse] = useState<ReverseDcfResponse | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [assumptionNotice, setAssumptionNotice] = useState<string | null>(null);
 
-  const [cashFlowCurrency, setCashFlowCurrency] = useState(valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD");
-  const [discountRateCurrency, setDiscountRateCurrency] = useState(valuationContext?.discount_rate_currency || valuationContext?.default_currency || "USD");
-  const [overrideNote, setOverrideNote] = useState("");
+  const [cashFlowCurrency, setCashFlowCurrency] = useState(latestAssumptionSet ? latestAssumptionSet.cash_flow_currency ?? "" : valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD");
+  const [discountRateCurrency, setDiscountRateCurrency] = useState(latestAssumptionSet ? latestAssumptionSet.discount_rate_currency ?? "" : valuationContext?.discount_rate_currency || valuationContext?.default_currency || "USD");
+  const [overrideNote, setOverrideNote] = useState(latestAssumptionSet?.currency_override_note || "");
+
+  useEffect(() => {
+    setCashFlowCurrency(latestAssumptionSet ? latestAssumptionSet.cash_flow_currency ?? "" : valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD");
+    setDiscountRateCurrency(latestAssumptionSet ? latestAssumptionSet.discount_rate_currency ?? "" : valuationContext?.discount_rate_currency || valuationContext?.default_currency || "USD");
+    setOverrideNote(latestAssumptionSet?.currency_override_note || "");
+    setAssumptionNotice(null);
+  }, [latestAssumptionSet, valuationContext]);
 
   const currencyCheck = buildCurrencyConsistencyCheck({
     companyMarket: valuationContext?.market,
@@ -147,74 +129,57 @@ export function AdvancedWorkspace({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!currencyCheck.canSave) {
+    if (!valuationContext || !currencyCheck.canSave) {
+      return;
+    }
+    setSaveError(null);
+    setSaveSuccess(null);
+    // Required controls can live in another section. Reveal the first invalid
+    // control instead of letting native validation fail on a hidden element.
+    const invalid = Array.from(e.currentTarget.elements).find(element =>
+      (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement || element instanceof HTMLSelectElement)
+      && !element.disabled && !element.validity.valid) as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement | undefined;
+    if (invalid) {
+      const section = invalid.closest<HTMLElement>("[data-valuation-section]")?.dataset.valuationSection;
+      if (section) setActiveSection(section as Section);
+      setSaveError(`${invalid.labels?.[0]?.textContent ?? invalid.name}: ${invalid.validationMessage}`);
+      requestAnimationFrame(() => invalid.focus());
       return;
     }
     setIsPending(true);
     try {
       const formData = new FormData(e.currentTarget);
-      const { createDcfAssumptionSet } = await import("@/app/actions");
-      await createDcfAssumptionSet(formData, modelId.toString(), companyId.toString());
+      if (latestAssumptionSet) {
+        formData.set("base_assumption_set_id", String(latestAssumptionSet.id));
+        formData.set("base_assumption_set_updated_at", latestAssumptionSet.updated_at);
+      }
+      const { createDcfAssumptionSetWithState } = await import("@/app/actions");
+      const result = await createDcfAssumptionSetWithState(formData, modelId.toString(), companyId.toString());
+      if (result.error) {
+        setSaveError(result.error);
+        return;
+      }
+      setSaveSuccess("Assumptions saved and valuation recalculated.");
+      router.refresh();
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : "Could not save and calculate the valuation.");
     } finally {
       setIsPending(false);
     }
   };
 
-  const handleReverseDcfSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!latestAssumptionSet) return;
-
-    setReverseDcfPending(true);
-    setReverseDcfResponse(null);
-    const formData = new FormData(e.currentTarget);
-    const target_parameter = formData.get("target_parameter") as string;
-    const current_market_price = parseFloat(formData.get("current_market_price") as string);
-    const diluted_shares = parseFloat(formData.get("diluted_shares") as string);
-
-    const { solveReverseDcf } = await import("@/lib/api");
-    try {
-      const response = await solveReverseDcf({
-        assumption_set_id: latestAssumptionSet.id,
-        target_parameter,
-        current_market_price,
-        diluted_shares: isNaN(diluted_shares) ? undefined : diluted_shares
-      });
-      setReverseDcfResponse(response);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setReverseDcfPending(false);
-    }
-  };
 
   const out = latestAssumptionSet?.outputs;
-  const warnings = out?.warnings_json || [];
-  const diagnosticWarnings: DiagnosticWarning[] = warnings
-    .filter((warning) => typeof warning === "object" && warning !== null)
-    .map((warning) => ({
-      severity: warning.severity,
-      module: warning.module,
-      message: warning.message,
-      affectedAssumptions: warning.affectedAssumptions,
-      suggestedFix: warning.suggestedFix ?? undefined,
-      formula: warning.formula ?? undefined,
-    }));
-  const invalidAssumptions = invalidDcfAssumptions(latestAssumptionSet);
-  const outputTrustBlocked = invalidAssumptions.length > 0 || diagnosticWarnings.some(
-    (warning) => warning.severity === "blocking" || warning.severity === "critical",
-  );
-  const fallbackScore = Math.max(0, 100 - diagnosticWarnings.reduce((total, warning) => {
-    if (warning.severity === "blocking") return total + 35;
-    if (warning.severity === "critical") return total + 25;
-    if (warning.severity === "warning") return total + 10;
-    return total + 5;
-  }, 0) - invalidAssumptions.length * 20);
-  const score = out?.model_quality_score ?? fallbackScore;
-  const outputCurrency = valuationContext?.default_currency || cashFlowCurrency || "USD";
-  const hasMarketPrice = typeof out?.current_market_price === "number" && out.current_market_price > 0;
-  const hasUpsideComparison = hasMarketPrice && typeof out?.upside_downside_pct === "number";
-  const fmt = (n: number | null | undefined, decimals=2) => n != null ? n.toLocaleString(undefined, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) : "—";
-  const fmtPct = (n: number | null | undefined) => n != null ? `${(n * 100).toFixed(1)}%` : "—";
+  const isEquityModel = model?.model_type === "financial_services";
+  const outputState = buildValuationOutputState(latestAssumptionSet, model?.model_type);
+  const diagnosticWarnings = outputState.diagnosticWarnings.map(warning => ({ ...warning,
+    suggestedFix: warning.suggestedFix ?? undefined, formula: warning.formula ?? undefined }));
+  const invalidAssumptions = invalidDcfAssumptions(latestAssumptionSet, model?.model_type);
+  const outputTrustBlocked = outputState.blocked;
+  const savedNumber = (field: keyof DcfAssumptionSet, initial: string = "") => {
+    const value = latestAssumptionSet?.[field];
+    return typeof value === "number" ? String(value) : latestAssumptionSet ? "" : initial;
+  };
 
   function applyNarrativeAssumptions(updates: Partial<DcfAssumptionSet>) {
     const form = document.getElementById("advanced-dcf-form") as HTMLFormElement | null;
@@ -263,20 +228,35 @@ export function AdvancedWorkspace({
       </nav>
 
       {/* MAIN CONTENT AREA */}
-      <form id="advanced-dcf-form" className="valuation-workspace-main" onSubmit={handleSubmit}>
+      <form key={latestAssumptionSet?.id ?? "new"} id="advanced-dcf-form" className="valuation-workspace-main" onSubmit={handleSubmit} noValidate
+        onChange={() => setSaveSuccess(null)}
+        style={{ display: activeSection === "real_options" || activeSection === "reverse_dcf" ? "none" : undefined }}>
         <input type="hidden" name="valuation_model_id" value={modelId} />
+        <input type="hidden" name="reinvestment_method" value={latestAssumptionSet?.reinvestment_method || "sales_to_capital"} />
 
         <div className="valuation-workspace-main-header">
           <h2>{SECTIONS.find(s => s.id === activeSection)?.label}</h2>
-          <button type="submit" disabled={isPending || !currencyCheck.canSave || invalidAssumptions.length > 0} style={{ padding: "0.5rem 1.5rem" }}>
+          <button type="submit" disabled={isPending || !valuationContext || !currencyCheck.canSave} style={{ padding: "0.5rem 1.5rem" }}>
             {isPending ? "Saving..." : "Save & Run Valuation"}
           </button>
         </div>
 
+        {saveError ? <div className="inline-error" role="alert">{saveError}</div> : null}
+        {saveSuccess ? <p role="status" style={{ color: "var(--success)", fontWeight: 600 }}>{saveSuccess}</p> : null}
+        <p className="notice" style={{ marginTop: 0 }}>
+          <strong>User Assumption</strong> inputs are versioned on save. Valuation outputs are deterministic <strong>Calculations</strong> and per-share values are <strong>Estimates</strong>, not recommendations.
+        </p>
+        {!valuationContext ? (
+          <div className="valuation-output-blocker" role="alert">
+            <strong>Saving is blocked because market context is unavailable.</strong>
+            <span>Restore the backend context response and verify company market, country, and currency first.</span>
+          </div>
+        ) : null}
+
         {invalidAssumptions.length > 0 ? (
           <div className="valuation-output-blocker" role="alert">
             <strong>Valuation output is blocked by invalid assumption units.</strong>
-            <span>Fix: {invalidAssumptions.join(", ")}. Percentages must be stored as decimals.</span>
+            <span>Fix: {invalidAssumptions.join(", ")}. Percentages must be stored as decimals. Correct the form and save a new calculation; the backend validates the submitted values.</span>
           </div>
         ) : null}
 
@@ -292,7 +272,7 @@ export function AdvancedWorkspace({
         <CurrencyConsistencyWarning check={currencyCheck} />
 
         {/* SECTION CONTENTS */}
-        <div style={{ display: activeSection === "setup" ? "block" : "none" }}>
+        <div data-valuation-section="setup" style={{ display: activeSection === "setup" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
             <SelectField id="scenario" label="Scenario Name" name="scenario" defaultValue={latestAssumptionSet?.scenario || "Base"} required>
               <option value="Base">Base Case</option>
@@ -300,7 +280,7 @@ export function AdvancedWorkspace({
               <option value="Bear">Bear Case</option>
               <option value="Custom">Custom Override</option>
             </SelectField>
-            <TextField id="projection_years" label="Projection Years" name="projection_years" type="number" defaultValue={latestAssumptionSet?.projection_years?.length?.toString() || "10"} required />
+            <TextField id="projection_years" label="Projection Years" name="projection_years" type="number" min="1" max="30" defaultValue={savedNumber("projection_years_count", "10")} required />
 
             <div style={{ borderTop: "1px solid var(--line)", paddingTop: "1.5rem", marginTop: "0.5rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               <h3 style={{ margin: 0, fontSize: "1rem" }}>Currency Settings</h3>
@@ -314,17 +294,17 @@ export function AdvancedWorkspace({
           </div>
         </div>
 
-        <div style={{ display: activeSection === "lifecycle" ? "block" : "none" }}>
+        <div data-valuation-section="lifecycle" style={{ display: activeSection === "lifecycle" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "600px" }}>
             {model?.model_type === "distressed" && (
               <div style={{ padding: "1.5rem", border: "1px solid var(--accent)", borderRadius: "8px", background: "var(--accent-light)" }}>
                 <h3 style={{ marginTop: 0, marginBottom: "1rem", color: "var(--accent)" }}>Distressed Company Assumptions</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                  <TextField id="probability_of_failure" label="Probability of Failure" name="probability_of_failure" type="number" step="0.01" defaultValue={latestAssumptionSet?.probability_of_failure?.toString() || "0.20"} required />
-                  <TextField id="distress_sale_proceeds" label="Distress Sale Proceeds" name="distress_sale_proceeds" type="number" step="0.01" defaultValue={latestAssumptionSet?.distress_sale_proceeds?.toString() || "0"} required />
+                  <TextField id="probability_of_failure" label="Probability of Failure (decimal, 0 to 1)" name="probability_of_failure" type="number" min="0" max="1" step="any" defaultValue={savedNumber("probability_of_failure")} required />
+                  <TextField id="distress_sale_proceeds" label={`Common-equity recovery on failure (${cashFlowCurrency}, total)`} name="distress_sale_proceeds" type="number" min="0" step="any" defaultValue={savedNumber("distress_sale_proceeds")} required />
                 </div>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "1rem", marginBottom: 0 }}>
-                  Adjusts the Base DCF Value by probability weighting it against failure proceeds.
+                  Enter explicit User Assumptions, including zero when intended. Recovery means the total amount left for common equity after senior claims, not enterprise sale proceeds or a per-share amount. Use the same currency and monetary scale as the saved equity value. No independent recovery verification is implied.
                 </p>
               </div>
             )}
@@ -333,12 +313,10 @@ export function AdvancedWorkspace({
               <div style={{ padding: "1.5rem", border: "1px solid var(--accent)", borderRadius: "8px", background: "var(--accent-light)" }}>
                 <h3 style={{ marginTop: 0, marginBottom: "1rem", color: "var(--accent)" }}>Financial Services (Excess Return) Assumptions</h3>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-                  <TextField id="book_value_of_equity" label="Book Value of Equity" name="book_value_of_equity" type="number" step="0.01" defaultValue={latestAssumptionSet?.book_value_of_equity?.toString() || "0"} required />
-                  <TextField id="target_roe" label="Target ROE" name="target_roe" type="number" step="0.001" defaultValue={latestAssumptionSet?.target_roe?.toString() || "0.10"} required />
-                  <TextField id="net_income" label="Starting Net Income" name="net_income" type="number" step="0.01" defaultValue={latestAssumptionSet?.net_income?.toString() || "0"} required />
+                  <TextField id="target_roe" label="Target ROE (decimal)" name="target_roe" type="number" min="-1" max="1" step="any" defaultValue={savedNumber("target_roe")} required />
                 </div>
                 <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "1rem", marginBottom: 0 }}>
-                  Values banks based on Book Equity + Present Value of (ROE - Cost of Equity) * Book Equity.
+                  Values banks based on book equity plus discounted excess returns. Review book equity and net income under Payouts & Cash Return, cost of equity under Cost of Capital, and growth under Terminal Value. The model uses constant book-equity growth and linear ROE fade, not a regulatory-capital or payout forecast. Operating-company fields are optional and are not used by this engine.
                 </p>
               </div>
             )}
@@ -356,83 +334,96 @@ export function AdvancedWorkspace({
              <TextAreaField id="story_text" label="Company Story" name="story_text" placeholder="What is the overall narrative for this company?" defaultValue={latestAssumptionSet?.story_text || ""} rows={4} />
              <TextAreaField id="growth_story" label="Growth Story" name="growth_story" placeholder="How will they grow revenues?" defaultValue={latestAssumptionSet?.growth_story || ""} rows={3} />
              <TextAreaField id="margin_story" label="Margin Story" name="margin_story" placeholder="What is the path to profitability or maintaining margins?" defaultValue={latestAssumptionSet?.margin_story || ""} rows={3} />
+             <TextAreaField id="reinvestment_story" label="Reinvestment Story" name="reinvestment_story" placeholder="What reinvestment is required to support the growth path?" defaultValue={latestAssumptionSet?.reinvestment_story || ""} rows={3} />
              <TextAreaField id="risk_story" label="Risk Story" name="risk_story" placeholder="What could break this thesis?" defaultValue={latestAssumptionSet?.risk_story || ""} rows={3} />
           </div>
         </div>
 
         <div style={{ display: activeSection === "market_intelligence" ? "block" : "none" }}>
-          {latestAssumptionSet && (
+          {latestAssumptionSet ? (
             <ValuationChangeLogPanel modelId={modelId} assumptionSetId={latestAssumptionSet.id} />
-          )}
+          ) : <NotConfiguredState title="Assumption ledger unavailable" description="Save the first reviewed assumption set to start the change ledger." />}
         </div>
 
-        <div style={{ display: activeSection === "revenue" ? "block" : "none" }}>
+        <div data-valuation-section="revenue" style={{ display: activeSection === "revenue" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "600px" }}>
-            <TextField id="starting_revenue" label="Starting Revenue (Base Year)" name="starting_revenue" type="number" step="0.01" defaultValue={latestAssumptionSet?.starting_revenue?.toString()} required />
-            <TextAreaField id="revenue_growth_years_json" label="Year-by-Year Revenue Growth (JSON)" name="revenue_growth_years_json" placeholder='{"1": 0.15, "2": 0.12, "3": 0.10}' defaultValue={latestAssumptionSet?.revenue_growth_years_json ? JSON.stringify(latestAssumptionSet.revenue_growth_years_json) : '{"1": 0.10, "2": 0.10, "3": 0.10, "4": 0.10, "5": 0.10}'} rows={4} required />
-            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Enter explicit growth rates for specific years. Remaining years will interpolate towards the terminal growth rate.</p>
+            <TextField id="starting_revenue" label="Starting Revenue (Base Year)" name="starting_revenue" type="number" step="0.01" defaultValue={latestAssumptionSet?.starting_revenue?.toString()} required={!isEquityModel} />
+            <TextAreaField id="revenue_growth_years_json" label="Year-by-Year Revenue Growth (JSON)" name="revenue_growth_years_json" placeholder='{"1": 0.15, "2": 0.12, "3": 0.10}' defaultValue={latestAssumptionSet?.revenue_growth_years_json ? JSON.stringify(latestAssumptionSet.revenue_growth_years_json) : ""} rows={4} required={!isEquityModel} />
+            <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Enter explicit decimal growth rates for each projection year. The current engine uses zero growth for omitted years; it does not interpolate them.</p>
           </div>
         </div>
 
-        <div style={{ display: activeSection === "margins" ? "block" : "none" }}>
+        <div data-valuation-section="margins" style={{ display: activeSection === "margins" ? "block" : "none" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", maxWidth: "500px" }}>
             <h3 style={{ margin: 0 }}>Operating Margins</h3>
             {latestAssumptionSet?.created_at && <DataFreshnessIndicator lastUpdated={new Date(latestAssumptionSet.created_at).toLocaleDateString()} source="Model Assumptions" />}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
-            <TextField id="current_operating_margin" label="Current Operating Margin" name="current_operating_margin" type="number" step="0.001" defaultValue={latestAssumptionSet?.current_operating_margin?.toString()} required />
-            <TextField id="target_operating_margin" label="Target Operating Margin" name="target_operating_margin" type="number" step="0.001" defaultValue={latestAssumptionSet?.target_operating_margin?.toString()} required />
+            <TextField id="current_operating_margin" label="Current Operating Margin" name="current_operating_margin" type="number" step="0.001" defaultValue={latestAssumptionSet?.current_operating_margin?.toString()} required={!isEquityModel} />
+            <TextField id="target_operating_margin" label="Target Operating Margin" name="target_operating_margin" type="number" step="0.001" defaultValue={latestAssumptionSet?.target_operating_margin?.toString()} required={!isEquityModel} />
             <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Margins will fade linearly from current to target over the projection period.</p>
           </div>
         </div>
 
-        <div style={{ display: activeSection === "reinvestment" ? "block" : "none" }}>
+        <div data-valuation-section="reinvestment" style={{ display: activeSection === "reinvestment" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
-            <TextField id="sales_to_capital_ratio" label="Sales to Capital Ratio" name="sales_to_capital_ratio" type="number" step="0.01" defaultValue={latestAssumptionSet?.sales_to_capital_ratio?.toString() || "1.5"} required />
-            <TextField id="starting_invested_capital" label="Starting Invested Capital" name="starting_invested_capital" type="number" step="0.01" defaultValue={latestAssumptionSet?.starting_invested_capital?.toString() || "0"} required />
-            <TextField id="tax_rate" label="Effective Tax Rate" name="tax_rate" type="number" step="0.001" defaultValue={latestAssumptionSet?.tax_rate?.toString() || "0.21"} required />
+            <TextField id="sales_to_capital_ratio" label="Sales to Capital Ratio" name="sales_to_capital_ratio" type="number" step="0.01" defaultValue={savedNumber("sales_to_capital_ratio")} required={!isEquityModel} />
+            <TextField id="starting_invested_capital" label="Starting Invested Capital" name="starting_invested_capital" type="number" step="0.01" defaultValue={savedNumber("starting_invested_capital")} required={!isEquityModel} />
+            <TextField id="tax_rate" label="Effective Tax Rate" name="tax_rate" type="number" step="0.001" defaultValue={savedNumber("tax_rate")} required={!isEquityModel} />
           </div>
         </div>
 
-        <div style={{ display: activeSection === "cost_of_capital" ? "block" : "none" }}>
+        <div data-valuation-section="cost_of_capital" style={{ display: activeSection === "cost_of_capital" ? "block" : "none" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1.5rem", maxWidth: "500px" }}>
             <h3 style={{ margin: 0 }}>Cost of Capital</h3>
             {latestAssumptionSet?.created_at && <DataFreshnessIndicator lastUpdated={new Date(latestAssumptionSet.created_at).toLocaleDateString()} source="Model Assumptions" />}
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
-            <TextField id="wacc_start" label="Initial WACC (Cost of Capital)" name="wacc_start" type="number" step="0.001" defaultValue={latestAssumptionSet?.wacc_start?.toString()} required />
-            <TextField id="wacc_terminal" label="Terminal WACC" name="wacc_terminal" type="number" step="0.001" defaultValue={latestAssumptionSet?.wacc_terminal?.toString()} required />
+            <TextField id="risk_free_rate" label="Risk-Free Rate" name="risk_free_rate" type="number" step="0.001" defaultValue={latestAssumptionSet?.risk_free_rate?.toString()} />
+            <TextField id="equity_risk_premium" label="Equity Risk Premium" name="equity_risk_premium" type="number" step="0.001" defaultValue={latestAssumptionSet?.equity_risk_premium?.toString()} />
+            <TextField id="beta" label="Beta" name="beta" type="number" step="0.01" defaultValue={latestAssumptionSet?.beta?.toString()} />
+            <TextField id="cost_of_equity" label="Cost of Equity" name="cost_of_equity" type="number" min="0" max="1" step="any" defaultValue={latestAssumptionSet?.cost_of_equity?.toString()} required={isEquityModel} />
+            <TextField id="pre_tax_cost_of_debt" label="Pre-Tax Cost of Debt" name="pre_tax_cost_of_debt" type="number" step="0.001" defaultValue={latestAssumptionSet?.pre_tax_cost_of_debt?.toString()} />
+            <TextField id="debt_to_capital" label="Debt to Capital" name="debt_to_capital" type="number" step="0.001" defaultValue={latestAssumptionSet?.debt_to_capital?.toString()} />
+            <TextField id="equity_to_capital" label="Equity to Capital" name="equity_to_capital" type="number" step="0.001" defaultValue={latestAssumptionSet?.equity_to_capital?.toString()} />
+            <TextField id="wacc_start" label="Initial WACC (Cost of Capital)" name="wacc_start" type="number" step="0.001" defaultValue={latestAssumptionSet?.wacc_start?.toString()} required={!isEquityModel} />
+            <TextField id="wacc_terminal" label="Terminal WACC" name="wacc_terminal" type="number" step="0.001" defaultValue={latestAssumptionSet?.wacc_terminal?.toString()} required={!isEquityModel} />
             <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>WACC will stay constant for half the projection period, then linearly fade to terminal WACC.</p>
           </div>
         </div>
 
-        <div style={{ display: activeSection === "terminal_value" ? "block" : "none" }}>
+        <div data-valuation-section="terminal_value" style={{ display: activeSection === "terminal_value" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
-            <TextField id="terminal_growth_rate" label="Terminal Growth Rate" name="terminal_growth_rate" type="number" step="0.001" defaultValue={latestAssumptionSet?.terminal_growth_rate?.toString()} required />
-            <TextField id="terminal_roic" label="Terminal Return on Capital (ROIC)" name="terminal_roic" type="number" step="0.001" defaultValue={latestAssumptionSet?.terminal_roic?.toString()} required />
+            <TextField id="terminal_growth_rate" label={isEquityModel ? "Book Equity Growth (decimal, forecast and terminal)" : "Terminal Growth Rate"} name="terminal_growth_rate" type="number" step="0.001" defaultValue={latestAssumptionSet?.terminal_growth_rate?.toString()} required />
+            <TextField id="terminal_roic" label="Terminal Return on Capital (ROIC)" name="terminal_roic" type="number" step="0.001" defaultValue={latestAssumptionSet?.terminal_roic?.toString()} required={!isEquityModel} />
           </div>
         </div>
 
-        <div style={{ display: activeSection === "payouts" ? "block" : "none" }}>
+        <div data-valuation-section="payouts" style={{ display: activeSection === "payouts" ? "block" : "none" }}>
           <h2>Payouts & Cash Return</h2>
           <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
-            Add Free Cash Flow to Equity (FCFE) and dividend fundamentals. This runs alternative valuation engines alongside the core FCFF model as a cross-check.
+            {isEquityModel
+              ? "Book equity and net income are required for the excess-return model. Optional cash-flow and payout fields are retained for context, not used to calculate this bank model."
+              : model?.model_type === "distressed"
+                ? "Cash-flow and payout inputs are retained for context. Unadjusted FCFE/DDM estimates are not displayed as probability-weighted distressed values."
+                : "Add Free Cash Flow to Equity (FCFE) and dividend fundamentals. Complete explicit inputs allow single-stage estimates alongside the core FCFF model as a cross-check."}
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               <h3 style={{ fontSize: "0.9rem", textTransform: "uppercase", color: "var(--text-muted)", margin: 0 }}>Earnings & Cash Flow</h3>
-              <TextField id="net_income" label="Net Income ($)" name="net_income" type="number" step="0.01" defaultValue={latestAssumptionSet?.net_income?.toString()} />
-              <TextField id="capex" label="Capital Expenditures ($)" name="capex" type="number" step="0.01" defaultValue={latestAssumptionSet?.capex?.toString()} />
-              <TextField id="depreciation" label="Depreciation & Amortization ($)" name="depreciation" type="number" step="0.01" defaultValue={latestAssumptionSet?.depreciation?.toString()} />
-              <TextField id="change_in_nwc" label="Change in Non-Cash WC ($)" name="change_in_nwc" type="number" step="0.01" defaultValue={latestAssumptionSet?.change_in_nwc?.toString()} />
+              <TextField id="book_value_of_equity" label={`Book Value of Equity (${cashFlowCurrency})`} name="book_value_of_equity" type="number" step="0.01" defaultValue={latestAssumptionSet?.book_value_of_equity?.toString() ?? ""} required={model?.model_type === "financial_services"} />
+              <TextField id="net_income" label={`Net Income (${cashFlowCurrency})`} name="net_income" type="number" step="0.01" defaultValue={latestAssumptionSet?.net_income?.toString()} required={isEquityModel} />
+              <TextField id="capex" label={`Capital Expenditures (${cashFlowCurrency})`} name="capex" type="number" step="0.01" defaultValue={latestAssumptionSet?.capex?.toString()} />
+              <TextField id="depreciation" label={`Depreciation (${cashFlowCurrency}; verify amortization separately)`} name="depreciation" type="number" step="0.01" defaultValue={latestAssumptionSet?.depreciation?.toString()} />
+              <TextField id="change_in_nwc" label={`Change in Non-Cash WC (${cashFlowCurrency})`} name="change_in_nwc" type="number" step="0.01" defaultValue={latestAssumptionSet?.change_in_nwc?.toString()} />
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               <h3 style={{ fontSize: "0.9rem", textTransform: "uppercase", color: "var(--text-muted)", margin: 0 }}>Payouts & Debt</h3>
-              <TextField id="dividends" label="Dividends Paid ($)" name="dividends" type="number" step="0.01" defaultValue={latestAssumptionSet?.dividends?.toString()} />
-              <TextField id="buybacks" label="Stock Buybacks ($)" name="buybacks" type="number" step="0.01" defaultValue={latestAssumptionSet?.buybacks?.toString()} />
-              <TextField id="stock_issuances" label="Stock Issuances ($)" name="stock_issuances" type="number" step="0.01" defaultValue={latestAssumptionSet?.stock_issuances?.toString()} />
-              <TextField id="new_debt_issued" label="New Debt Issued ($)" name="new_debt_issued" type="number" step="0.01" defaultValue={latestAssumptionSet?.new_debt_issued?.toString()} />
-              <TextField id="debt_repaid" label="Debt Repaid ($)" name="debt_repaid" type="number" step="0.01" defaultValue={latestAssumptionSet?.debt_repaid?.toString()} />
+              <TextField id="dividends" label={`Dividends Paid (${cashFlowCurrency})`} name="dividends" type="number" step="0.01" defaultValue={latestAssumptionSet?.dividends?.toString()} />
+              <TextField id="buybacks" label={`Stock Buybacks (${cashFlowCurrency})`} name="buybacks" type="number" step="0.01" defaultValue={latestAssumptionSet?.buybacks?.toString()} />
+              <TextField id="stock_issuances" label={`Stock Issuances (${cashFlowCurrency})`} name="stock_issuances" type="number" step="0.01" defaultValue={latestAssumptionSet?.stock_issuances?.toString()} />
+              <TextField id="new_debt_issued" label={`New Debt Issued (${cashFlowCurrency})`} name="new_debt_issued" type="number" step="0.01" defaultValue={latestAssumptionSet?.new_debt_issued?.toString()} />
+              <TextField id="debt_repaid" label={`Debt Repaid (${cashFlowCurrency})`} name="debt_repaid" type="number" step="0.01" defaultValue={latestAssumptionSet?.debt_repaid?.toString()} />
             </div>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem", marginTop: "2rem" }}>
@@ -443,15 +434,18 @@ export function AdvancedWorkspace({
           </div>
         </div>
 
-        <div style={{ display: activeSection === "equity_bridge" ? "block" : "none" }}>
+        <div data-valuation-section="equity_bridge" style={{ display: activeSection === "equity_bridge" ? "block" : "none" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px" }}>
-            <TextField id="cash" label="Cash & Equivalents" name="cash" type="number" step="0.01" defaultValue={latestAssumptionSet?.cash?.toString()} required />
-            <TextField id="debt" label="Total Debt" name="debt" type="number" step="0.01" defaultValue={latestAssumptionSet?.debt?.toString()} required />
+            <TextField id="cash" label="Cash & Equivalents" name="cash" type="number" step="0.01" defaultValue={latestAssumptionSet?.cash?.toString()} required={!isEquityModel} />
+            <TextField id="cross_holdings" label="Cross Holdings" name="cross_holdings" type="number" step="0.01" defaultValue={latestAssumptionSet?.cross_holdings?.toString()} />
+            <TextField id="debt" label="Total Debt" name="debt" type="number" step="0.01" defaultValue={latestAssumptionSet?.debt?.toString()} required={!isEquityModel} />
+            <TextField id="operating_leases" label="Operating Leases" name="operating_leases" type="number" step="0.01" defaultValue={latestAssumptionSet?.operating_leases?.toString()} />
             <TextField id="minority_interests" label="Minority Interests" name="minority_interests" type="number" step="0.01" defaultValue={latestAssumptionSet?.minority_interests?.toString()} />
-            <TextField id="preferred_stock" label="Preferred Stock" name="preferred_stock" type="number" step="0.01" defaultValue={latestAssumptionSet?.preferred_stock?.toString() || "0"} />
-            <TextField id="employee_options_value" label="Employee Options Value" name="employee_options_value" type="number" step="0.01" defaultValue={latestAssumptionSet?.employee_options_value?.toString() || "0"} />
+            <TextField id="preferred_stock" label="Preferred Stock" name="preferred_stock" type="number" step="0.01" defaultValue={savedNumber("preferred_stock")} />
+            <TextField id="employee_options_value" label="Employee Options Value" name="employee_options_value" type="number" step="0.01" defaultValue={savedNumber("employee_options_value")} />
             <TextField id="diluted_shares" label="Diluted Shares Outstanding" name="diluted_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.diluted_shares?.toString()} required />
-            <TextField id="current_market_price" label="Current Market Price" name="current_market_price" type="number" step="0.01" defaultValue={latestAssumptionSet?.current_market_price?.toString()} required />
+            <TextField id="basic_shares" label="Basic Shares Outstanding" name="basic_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.basic_shares?.toString()} />
+            <TextField id="current_market_price" label={`Comparison Price (${cashFlowCurrency}, User Assumption, optional)`} name="current_market_price" type="number" min="0.000001" step="any" defaultValue={latestAssumptionSet?.current_market_price?.toString()} />
           </div>
         </div>
 
@@ -476,214 +470,75 @@ export function AdvancedWorkspace({
             <SensitivityTablesPanel
               tables={latestAssumptionSet.sensitivity_tables || []}
               currentMarketPrice={latestAssumptionSet.current_market_price}
-              currency={valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD"}
+              currency={latestAssumptionSet.cash_flow_currency || valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD"}
             />
-          ) : null}
+          ) : <NotConfiguredState title="Sensitivity tables unavailable" description="Save and run the first valid assumption set to generate deterministic sensitivity tables." />}
         </div>
 
         <div style={{ display: activeSection === "scenario_range" ? "block" : "none", paddingBottom: "2rem" }}>
-          {latestAssumptionSet && (
-            <ScenarioRangePanel
-              modelId={modelId}
-              assumptionId={latestAssumptionSet.id}
-              currentMarketPrice={latestAssumptionSet.current_market_price}
-            />
-          )}
+          {latestAssumptionSet && <SavedProjections assumptions={latestAssumptionSet} modelType={model?.model_type} />}
+          {latestAssumptionSet && activeSection === "scenario_range" && !outputTrustBlocked ? (
+            <ScenarioRangePanel modelId={modelId} assumptions={latestAssumptionSet} modelType={model?.model_type} />
+          ) : <NotConfiguredState title="Scenario range unavailable" description="Review the saved output blockers and save a valid calculation before generating scenario ranges." />}
         </div>
 
         <div style={{ display: activeSection === "relative_valuation" ? "block" : "none" }}>
           <h2 style={{ borderBottom: "1px solid var(--line)", paddingBottom: "1rem", marginBottom: "2rem", marginTop: 0 }}>Relative Valuation</h2>
-          <RelativeValuationPanel
-            companyId={companyId.toString()}
-            financials={{
-              revenue: latestAssumptionSet?.starting_revenue || undefined,
-              ebitda: (latestAssumptionSet?.starting_revenue || 0) * (latestAssumptionSet?.current_operating_margin || 0), // Proxy for EBITDA
-              ebit: (latestAssumptionSet?.starting_revenue || 0) * (latestAssumptionSet?.current_operating_margin || 0),
-              netIncome: latestAssumptionSet?.net_income || undefined,
-              bookEquity: undefined,
-              investedCapital: latestAssumptionSet?.starting_invested_capital || undefined,
-              debt: latestAssumptionSet?.debt || undefined,
-              cash: latestAssumptionSet?.cash || undefined,
-              dilutedShares: latestAssumptionSet?.diluted_shares || undefined
-            }}
-          />
-        </div>
-
-        <div style={{ display: activeSection === "real_options" ? "block" : "none" }}>
-          <h2>Real Options Valuation</h2>
-          <p style={{ color: "var(--text-secondary)", marginBottom: "2rem" }}>
-            Add optionality value to your DCF using the Black-Scholes framework. Only use if the asset meets the eligibility criteria.
-          </p>
-          <RealOptionsPanel valuationId={modelId.toString()} baseDcfValue={out?.intrinsic_value_per_share || 0} />
+          {latestAssumptionSet && activeSection === "relative_valuation" ? <SavedRelativeValuation
+            assumptionId={latestAssumptionSet.id}
+          /> : !latestAssumptionSet ? <NotConfiguredState title="Relative valuation inputs unavailable" description="Save the first assumption set before applying benchmark multiples." /> : null}
         </div>
 
         <div style={{ display: activeSection === "narrative_to_numbers" ? "block" : "none" }}>
-          {latestAssumptionSet && (
+          {latestAssumptionSet ? (
             <NarrativeToNumbersPanel
               valuationId={modelId}
               scenario={latestAssumptionSet.scenario}
               currentAssumptions={latestAssumptionSet}
               onApplyAssumptions={applyNarrativeAssumptions}
             />
-          )}
+          ) : <NotConfiguredState title="Narrative mapping unavailable" description="Save the first assumption set before mapping narrative changes into model inputs." />}
           {assumptionNotice ? <p role="status">{assumptionNotice}</p> : null}
         </div>
 
         <div style={{ display: activeSection === "valuation_memo" ? "block" : "none" }}>
-          {latestAssumptionSet && (
+          {latestAssumptionSet ? (
             <ValuationMemoPanel
               valuationId={modelId}
               scenario={latestAssumptionSet.scenario}
             />
-          )}
+          ) : <NotConfiguredState title="Valuation memo unavailable" description="Save and calculate the first assumption set before generating a memo." />}
         </div>
       </form>
 
-      {/* REVERSE DCF FORM (Overlays Main Area When Active) */}
-      <div className="valuation-workspace-main valuation-reverse-dcf" style={{ display: activeSection === "reverse_dcf" ? "block" : "none" }}>
-        <h2 style={{ borderBottom: "1px solid var(--line)", paddingBottom: "1rem", marginBottom: "2rem", marginTop: 0 }}>Reverse DCF Engine</h2>
-        <p style={{ color: "var(--text-secondary)", marginBottom: "2rem", lineHeight: 1.5 }}>
-          Solve for what the market is currently pricing in. Select a parameter and provide the current market price, and the engine will iteratively find the assumption value that justifies the price.
-        </p>
+      <div className="valuation-workspace-main valuation-standalone-analysis" style={{ display: activeSection === "real_options" ? "block" : "none" }}>
+        {activeSection === "real_options" && latestAssumptionSet ? (
+          <RealOptionsPanel key={`${latestAssumptionSet.id}:${latestAssumptionSet.updated_at}:${model?.model_type}`}
+            assumptions={latestAssumptionSet} modelType={model?.model_type ?? "fcff_dcf"} />
+        ) : activeSection === "real_options" ? <NotConfiguredState title="Real Options unavailable" description="Save and calculate reviewed assumptions first." /> : null}
+      </div>
 
-        <form onSubmit={handleReverseDcfSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: "500px", marginBottom: "3rem" }}>
-          <SelectField id="target_parameter" label="Parameter to Solve For" name="target_parameter" required>
-            <option value="target_operating_margin">Target Operating Margin</option>
-            <option value="revenue_growth">Implied Revenue Growth (Flat)</option>
-            <option value="wacc_start">Implied WACC</option>
-            <option value="terminal_growth_rate">Implied Terminal Growth</option>
-          </SelectField>
-
-          <TextField id="reverse_current_market_price" label="Current Market Price ($)" name="current_market_price" type="number" step="0.01" defaultValue={latestAssumptionSet?.current_market_price?.toString() || "100.00"} required />
-          <TextField id="reverse_diluted_shares" label="Diluted Shares (Optional Override)" name="diluted_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.diluted_shares?.toString()} />
-
-          <button type="submit" disabled={reverseDcfPending || !latestAssumptionSet} style={{ padding: "0.75rem", marginTop: "1rem" }}>
-            {reverseDcfPending ? "Solving..." : "Solve Reverse DCF"}
-          </button>
-        </form>
-
-        {reverseDcfResponse && (
-          <div style={{ padding: "1.5rem", borderRadius: "8px", background: "var(--bg)", border: "1px solid var(--border-color)" }}>
-            <h3 style={{ margin: "0 0 1rem 0" }}>Results</h3>
-            <div style={{ display: "flex", gap: "2rem", marginBottom: "1.5rem" }}>
-              <div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Your Original Assumption</div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 600 }}>{fmt(reverseDcfResponse.original_value, 4)}</div>
-              </div>
-              <div>
-                <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Market Implied Assumption</div>
-                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--accent)" }}>{fmt(reverseDcfResponse.implied_value, 4)}</div>
-              </div>
-            </div>
-
-            {reverseDcfResponse.diagnostics?.map((w, idx) => (
-              <div key={idx} style={{ padding: "1rem", borderRadius: "6px", background: w.severity === "critical" || w.severity === "blocking" ? "rgba(220,38,38,0.1)" : "rgba(245,158,11,0.1)", borderLeft: `4px solid ${w.severity === "critical" || w.severity === "blocking" ? "var(--danger)" : "var(--warning)"}`, marginBottom: "0.5rem" }}>
-                <strong>{w.severity.toUpperCase()}</strong>: {w.message}
-                {w.suggestedFix && <div style={{ marginTop: "0.5rem", fontSize: "0.85rem" }}><em>Fix:</em> {w.suggestedFix}</div>}
-              </div>
-            ))}
-          </div>
-        )}
+      <div className="valuation-workspace-main valuation-standalone-analysis" style={{ display: activeSection === "reverse_dcf" ? "block" : "none" }}>
+        {activeSection === "reverse_dcf" && latestAssumptionSet ? (
+          <ReverseDcfPanel key={`${latestAssumptionSet.id}:${latestAssumptionSet.updated_at}:${model?.model_type}`}
+            assumptions={latestAssumptionSet} modelType={model?.model_type ?? "fcff_dcf"} />
+        ) : activeSection === "reverse_dcf" ? <NotConfiguredState title="Reverse DCF unavailable" description="Save and calculate reviewed assumptions first." /> : null}
       </div>
 
       {/* RIGHT SIDEBAR (Diagnostics & Output Context) */}
       <aside className="valuation-workspace-output">
 
-        {/* Output KPI Card */}
-        <div className={`valuation-output-card ${outputTrustBlocked ? "is-blocked" : ""}`}>
-          <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Valuation Output</div>
-          <div style={{ marginBottom: "1.5rem" }}>
-            <div style={{ fontSize: "0.9rem", color: "var(--text-secondary)", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              Intrinsic Value
-              <span className="badge" style={{ backgroundColor: "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "var(--font-size-xs)", color: "var(--text-muted)" }}>Estimate</span>
-            </div>
-            <div className="valuation-output-value">
-              {outputTrustBlocked ? "Not reliable" : formatCurrency(out?.intrinsic_value_per_share, outputCurrency)}
-            </div>
-            {outputTrustBlocked && out?.intrinsic_value_per_share != null ? (
-              <div className="valuation-stored-result">Stored calculation: {formatCurrency(out.intrinsic_value_per_share, outputCurrency)}</div>
-            ) : null}
-            {out?.base_dcf_value != null && (
-              <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.5rem" }}>
-                Base DCF Value: {formatCurrency(out.base_dcf_value, outputCurrency)}
-              </div>
-            )}
-            {out?.pv_of_excess_returns != null && (
-              <div style={{ fontSize: "0.85rem", color: "var(--text-secondary)", marginTop: "0.5rem" }}>
-                PV of Excess Returns: {formatCurrency(out.pv_of_excess_returns, outputCurrency)}
-              </div>
-            )}
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid var(--line)", marginBottom: "0.75rem", alignItems: "center" }}>
-            <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              Current Price
-              <span className="badge" style={{ backgroundColor: hasMarketPrice ? "var(--accent-light)" : "var(--surface-sunken)", padding: "2px 6px", borderRadius: "4px", fontSize: "var(--font-size-xs)", color: hasMarketPrice ? "var(--accent)" : "var(--text-muted)" }}>
-                {hasMarketPrice ? "Market Fact" : "Missing data"}
-              </span>
-            </span>
-            <span style={{ fontWeight: 600 }}>{hasMarketPrice ? formatCurrency(out?.current_market_price, outputCurrency) : "Not available"}</span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between", paddingBottom: "0.75rem", borderBottom: "1px solid var(--line)", marginBottom: "0.75rem" }}>
-            <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Upside</span>
-            <span style={{ fontWeight: 600, color: outputTrustBlocked ? "var(--danger)" : out?.upside_downside_pct && out.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
-              {outputTrustBlocked ? "Not shown" : hasUpsideComparison ? fmtPct(out?.upside_downside_pct) : "Not available"}
-            </span>
-          </div>
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span style={{ color: "var(--text-secondary)", fontSize: "0.9rem" }}>Model Quality</span>
-            <span style={{ fontWeight: 600, color: outputTrustBlocked ? "var(--danger)" : score >= 80 ? "var(--success)" : "var(--warning)" }}>{score}/100</span>
-          </div>
-        </div>
+        <SavedValuationOutputCard state={outputState} />
 
-        {/* Relative Pricing Context Card */}
-        <div style={{ background: "var(--panel-bg)", padding: "1.5rem", borderRadius: "8px", border: "1px solid var(--border-color)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-          <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Relative Pricing Context</div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-            <div style={{ display: "flex", flexDirection: "column", paddingBottom: "0.5rem", borderBottom: "1px solid var(--line)" }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Implied P/E</span>
-              <span style={{ fontWeight: 600 }}>{out?.implied_pe ? `${out.implied_pe.toFixed(1)}x` : "—"}</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", paddingBottom: "0.5rem", borderBottom: "1px solid var(--line)" }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Implied EV/EBITDA</span>
-              <span style={{ fontWeight: 600 }}>{out?.implied_ev_ebitda ? `${out.implied_ev_ebitda.toFixed(1)}x` : "—"}</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", paddingBottom: "0.5rem", borderBottom: "1px solid var(--line)" }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Implied EV/Sales</span>
-              <span style={{ fontWeight: 600 }}>{out?.implied_ev_sales ? `${out.implied_ev_sales.toFixed(1)}x` : "—"}</span>
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", paddingBottom: "0.5rem", borderBottom: "1px solid var(--line)" }}>
-              <span style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Implied EV/EBIT</span>
-              <span style={{ fontWeight: 600 }}>{out?.implied_ev_ebit ? `${out.implied_ev_ebit.toFixed(1)}x` : "—"}</span>
-            </div>
-          </div>
-          <p style={{ fontSize: "0.8rem", color: "var(--text-muted)", marginTop: "1rem", lineHeight: 1.4 }}>
-            These multiples are implied by your DCF assumptions. Compare them to industry averages to see if the market agrees with your growth/margin story.
-          </p>
-        </div>
+        <ImpliedPricingPanel basis={out?.implied_pricing_basis}
+          blocked={outputTrustBlocked || Boolean(latestAssumptionSet?.is_stale)} />
 
-        {/* Multi-Method Range Card */}
-        <div style={{ background: "var(--panel-bg)", padding: "1.5rem", borderRadius: "8px", border: "1px solid var(--border-color)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
-          <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Multi-Method Valuation</div>
-          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-               <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>FCFF (Core)</span>
-               <span style={{ fontWeight: 700 }}>{fmt(out?.intrinsic_value_per_share)}</span>
-             </div>
-             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-               <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>FCFE (Equity)</span>
-               <span style={{ fontWeight: 600 }}>{fmt(out?.fcfe_intrinsic_value_per_share)}</span>
-             </div>
-             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-               <span style={{ fontSize: "0.9rem", color: "var(--text-secondary)" }}>DDM (Dividends)</span>
-               <span style={{ fontWeight: 600 }}>{fmt(out?.ddm_intrinsic_value_per_share)}</span>
-             </div>
-          </div>
-        </div>
+        <MultiMethodValuationCard state={outputState} modelType={model?.model_type} />
 
         {/* Diagnostics Card */}
         <div style={{ background: "var(--panel-bg)", padding: "1.5rem", borderRadius: "8px", border: "1px solid var(--border-color)", boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}>
           <div style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "1rem" }}>Diagnostics & Warnings</div>
-          <DiagnosticPanel warnings={diagnosticWarnings} />
+          {out ? <DiagnosticPanel warnings={diagnosticWarnings} /> : <p>No saved diagnostics. Save and calculate a model first.</p>}
         </div>
 
       </aside>

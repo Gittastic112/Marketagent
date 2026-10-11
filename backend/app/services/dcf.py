@@ -1,19 +1,30 @@
 from app.models.dcf import DcfAssumptionSet, DcfOutput, DcfProjectionYear, DcfSensitivityTable
 from app.services.financial_services_engine import FinancialServicesEngine
 from app.services.distressed_engine import DistressedCompanyEngine
-from copy import deepcopy
+
+
+def _if_missing[T](value: T | None, default: T) -> T:
+    """Retain explicit zeros; legacy presets apply only to absent inputs."""
+    return default if value is None else value
+
+
+def _projection_count(assumption_set: DcfAssumptionSet) -> int:
+    count = _if_missing(assumption_set.projection_years_count, 10)
+    if not 1 <= count <= 30:
+        raise ValueError("projection_years_count must be between 1 and 30")
+    return count
 
 def build_fcff_forecast(assumption_set: DcfAssumptionSet) -> tuple[list[DcfProjectionYear], float, float, float]:
     starting_revenue = assumption_set.starting_revenue or 0.0
     current_operating_margin = assumption_set.current_operating_margin or 0.0
-    target_operating_margin = assumption_set.target_operating_margin or current_operating_margin
-    tax_rate = assumption_set.tax_rate or 0.21
-    sales_to_capital_ratio = assumption_set.sales_to_capital_ratio or 1.0
+    target_operating_margin = _if_missing(assumption_set.target_operating_margin, current_operating_margin)
+    tax_rate = _if_missing(assumption_set.tax_rate, 0.21)
+    sales_to_capital_ratio = _if_missing(assumption_set.sales_to_capital_ratio, 1.0)
     starting_invested_capital = assumption_set.starting_invested_capital or 0.0
     revenue_growth_years = assumption_set.revenue_growth_years_json or {}
-    wacc_start = assumption_set.wacc_start or 0.10
-    wacc_terminal = assumption_set.wacc_terminal or wacc_start
-    projection_years_count = assumption_set.projection_years_count or 10
+    wacc_start = _if_missing(assumption_set.wacc_start, 0.10)
+    wacc_terminal = _if_missing(assumption_set.wacc_terminal, wacc_start)
+    projection_years_count = _projection_count(assumption_set)
 
     projection_years = []
     last_revenue = starting_revenue
@@ -79,11 +90,11 @@ def build_fcff_forecast(assumption_set: DcfAssumptionSet) -> tuple[list[DcfProje
 
 
 def calculate_terminal_value(assumption_set: DcfAssumptionSet, last_revenue: float, cumulative_discount_factor: float) -> tuple[float, float, float]:
-    target_operating_margin = assumption_set.target_operating_margin or (assumption_set.current_operating_margin or 0.0)
-    tax_rate = assumption_set.tax_rate or 0.21
-    terminal_growth_rate = assumption_set.terminal_growth_rate or 0.02
-    terminal_roic = assumption_set.terminal_roic or (assumption_set.wacc_terminal or 0.10)
-    wacc_terminal = assumption_set.wacc_terminal or 0.10
+    target_operating_margin = _if_missing(assumption_set.target_operating_margin, assumption_set.current_operating_margin or 0.0)
+    tax_rate = _if_missing(assumption_set.tax_rate, 0.21)
+    terminal_growth_rate = _if_missing(assumption_set.terminal_growth_rate, 0.02)
+    wacc_terminal = _if_missing(assumption_set.wacc_terminal, 0.10)
+    terminal_roic = _if_missing(assumption_set.terminal_roic, wacc_terminal)
 
     terminal_reinvestment_rate = (terminal_growth_rate / terminal_roic) if terminal_roic > 0 else 0.0
 
@@ -109,7 +120,7 @@ def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: 
     employee_options_value = assumption_set.employee_options_value or 0.0
     cross_holdings = assumption_set.cross_holdings or 0.0
     operating_leases = assumption_set.operating_leases or 0.0
-    diluted_shares = assumption_set.diluted_shares or 1.0
+    diluted_shares = _if_missing(assumption_set.diluted_shares, 1.0)
     current_market_price = assumption_set.current_market_price or 0.0
 
     equity_value = enterprise_value + cash + cross_holdings - debt - operating_leases - minority_interests - preferred_stock - employee_options_value
@@ -130,27 +141,27 @@ def run_diagnostics(assumption_set: DcfAssumptionSet, output: DcfOutput, project
 
 def _calc_value_for_overrides(base_set: DcfAssumptionSet, overrides: dict[str, float]) -> float:
     # A lightweight runner for sensitivity that handles multiple overrides
-    wacc_terminal = overrides.get("wacc_terminal", base_set.wacc_terminal or 0.10)
-    wacc_start = overrides.get("wacc_start", base_set.wacc_start or 0.10)
-    terminal_growth_rate = overrides.get("terminal_growth_rate", base_set.terminal_growth_rate or 0.02)
-    terminal_roic = overrides.get("terminal_roic", base_set.terminal_roic or wacc_terminal)
+    wacc_terminal = overrides.get("wacc_terminal", _if_missing(base_set.wacc_terminal, 0.10))
+    wacc_start = overrides.get("wacc_start", _if_missing(base_set.wacc_start, 0.10))
+    terminal_growth_rate = overrides.get("terminal_growth_rate", _if_missing(base_set.terminal_growth_rate, 0.02))
+    terminal_roic = overrides.get("terminal_roic", _if_missing(base_set.terminal_roic, wacc_terminal))
 
-    target_operating_margin = overrides.get("target_operating_margin", base_set.target_operating_margin or (base_set.current_operating_margin or 0.0))
+    target_operating_margin = overrides.get("target_operating_margin", _if_missing(base_set.target_operating_margin, base_set.current_operating_margin or 0.0))
     current_operating_margin = base_set.current_operating_margin or 0.0
-    tax_rate = base_set.tax_rate or 0.21
-    sales_to_capital_ratio = overrides.get("sales_to_capital_ratio", base_set.sales_to_capital_ratio or 1.0)
+    tax_rate = _if_missing(base_set.tax_rate, 0.21)
+    sales_to_capital_ratio = overrides.get("sales_to_capital_ratio", _if_missing(base_set.sales_to_capital_ratio, 1.0))
     revenue_growth_modifier = overrides.get("revenue_growth_modifier", 0.0)
 
     # WACC recalculation if cost of equity / debt overrides are provided
     if any(k in overrides for k in ["beta", "equity_risk_premium", "cost_of_equity", "debt_to_capital", "pre_tax_cost_of_debt"]):
-        beta = overrides.get("beta", base_set.beta or 1.0)
-        erp = overrides.get("equity_risk_premium", base_set.equity_risk_premium or 0.05)
-        rfr = base_set.risk_free_rate or 0.04
+        beta = overrides.get("beta", _if_missing(base_set.beta, 1.0))
+        erp = overrides.get("equity_risk_premium", _if_missing(base_set.equity_risk_premium, 0.05))
+        rfr = _if_missing(base_set.risk_free_rate, 0.04)
 
         coe = overrides.get("cost_of_equity", rfr + beta * erp)
         dtc = overrides.get("debt_to_capital", base_set.debt_to_capital or 0.0)
         etc = 1.0 - dtc
-        cod = overrides.get("pre_tax_cost_of_debt", base_set.pre_tax_cost_of_debt or 0.05)
+        cod = overrides.get("pre_tax_cost_of_debt", _if_missing(base_set.pre_tax_cost_of_debt, 0.05))
 
         calculated_wacc = coe * etc + cod * (1 - tax_rate) * dtc
         wacc_start = calculated_wacc
@@ -163,7 +174,7 @@ def _calc_value_for_overrides(base_set: DcfAssumptionSet, overrides: dict[str, f
     last_revenue = base_set.starting_revenue or 0.0
 
     revenue_growth_years = base_set.revenue_growth_years_json or {}
-    projection_years_count = base_set.projection_years_count or 10
+    projection_years_count = _projection_count(base_set)
 
     for year in range(1, projection_years_count + 1):
         growth_rate_str = str(year)
@@ -211,7 +222,7 @@ def _calc_value_for_overrides(base_set: DcfAssumptionSet, overrides: dict[str, f
     employee_options_value = base_set.employee_options_value or 0.0
     cross_holdings = base_set.cross_holdings or 0.0
     operating_leases = base_set.operating_leases or 0.0
-    diluted_shares = base_set.diluted_shares or 1.0
+    diluted_shares = _if_missing(base_set.diluted_shares, 1.0)
 
     # Bridge to Equity
     equity_value = enterprise_value + cash + cross_holdings - debt - operating_leases - minority_interests - preferred_stock - employee_options_value
@@ -241,38 +252,38 @@ def generate_sensitivity_tables(assumption_set: DcfAssumptionSet) -> list[DcfSen
     tables = []
 
     # 1. WACC vs Terminal Growth
-    base_wacc = assumption_set.wacc_terminal or 0.10
-    base_tg = assumption_set.terminal_growth_rate or 0.02
+    base_wacc = _if_missing(assumption_set.wacc_terminal, 0.10)
+    base_tg = _if_missing(assumption_set.terminal_growth_rate, 0.02)
     wacc_steps = [base_wacc - 0.02, base_wacc - 0.01, base_wacc, base_wacc + 0.01, base_wacc + 0.02]
     tg_steps = [base_tg - 0.01, base_tg - 0.005, base_tg, base_tg + 0.005, base_tg + 0.01]
     tables.append(_build_table(assumption_set, "wacc_vs_terminal_growth", "Terminal Growth", "terminal_growth_rate", tg_steps, "WACC", "wacc_terminal", wacc_steps))
 
     # 2. Revenue Growth vs Target Margin
-    base_margin = assumption_set.target_operating_margin or (assumption_set.current_operating_margin or 0.10)
+    base_margin = _if_missing(assumption_set.target_operating_margin, _if_missing(assumption_set.current_operating_margin, 0.10))
     margin_steps = [base_margin - 0.04, base_margin - 0.02, base_margin, base_margin + 0.02, base_margin + 0.04]
     rg_steps = [-0.04, -0.02, 0.0, 0.02, 0.04] # Modifiers to base growth rates
     tables.append(_build_table(assumption_set, "revenue_growth_vs_target_margin", "Revenue Growth Offset", "revenue_growth_modifier", rg_steps, "Target Margin", "target_operating_margin", margin_steps))
 
     # 3. Sales-to-Capital vs Margin
-    base_stc = assumption_set.sales_to_capital_ratio or 1.0
+    base_stc = _if_missing(assumption_set.sales_to_capital_ratio, 1.0)
     stc_steps = [max(0.1, base_stc - 0.5), max(0.1, base_stc - 0.25), base_stc, base_stc + 0.25, base_stc + 0.5]
     tables.append(_build_table(assumption_set, "sales_to_capital_vs_margin", "Sales-to-Capital Ratio", "sales_to_capital_ratio", stc_steps, "Target Margin", "target_operating_margin", margin_steps))
 
     # 4. Terminal ROC vs Terminal Growth
-    base_troic = assumption_set.terminal_roic or base_wacc
+    base_troic = _if_missing(assumption_set.terminal_roic, base_wacc)
     troic_steps = [max(0.01, base_troic - 0.04), max(0.01, base_troic - 0.02), base_troic, base_troic + 0.02, base_troic + 0.04]
     tables.append(_build_table(assumption_set, "terminal_roc_vs_terminal_growth", "Terminal Growth", "terminal_growth_rate", tg_steps, "Terminal ROIC", "terminal_roic", troic_steps))
 
     # 5. Beta vs Equity Risk Premium
-    base_beta = assumption_set.beta or 1.0
-    base_erp = assumption_set.equity_risk_premium or 0.05
+    base_beta = _if_missing(assumption_set.beta, 1.0)
+    base_erp = _if_missing(assumption_set.equity_risk_premium, 0.05)
     beta_steps = [max(0.1, base_beta - 0.4), max(0.1, base_beta - 0.2), base_beta, base_beta + 0.2, base_beta + 0.4]
     erp_steps = [max(0.01, base_erp - 0.02), max(0.01, base_erp - 0.01), base_erp, base_erp + 0.01, base_erp + 0.02]
     tables.append(_build_table(assumption_set, "beta_vs_equity_risk_premium", "Equity Risk Premium", "equity_risk_premium", erp_steps, "Beta", "beta", beta_steps))
 
     # 6. Debt Ratio vs Pre-Tax Cost of Debt
     base_dtc = assumption_set.debt_to_capital or 0.0
-    base_cod = assumption_set.pre_tax_cost_of_debt or 0.05
+    base_cod = _if_missing(assumption_set.pre_tax_cost_of_debt, 0.05)
     dtc_steps = [max(0.0, base_dtc - 0.2), max(0.0, base_dtc - 0.1), base_dtc, min(1.0, base_dtc + 0.1), min(1.0, base_dtc + 0.2)]
     cod_steps = [max(0.01, base_cod - 0.02), max(0.01, base_cod - 0.01), base_cod, base_cod + 0.01, base_cod + 0.02]
     tables.append(_build_table(assumption_set, "debt_ratio_vs_cost_of_debt", "Pre-Tax Cost of Debt", "pre_tax_cost_of_debt", cod_steps, "Debt to Capital", "debt_to_capital", dtc_steps))
@@ -307,7 +318,7 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
         preferred_stock=assumption_set.preferred_stock or 0.0,
         employee_options_value=assumption_set.employee_options_value or 0.0,
         equity_value=equity_value,
-        diluted_shares=assumption_set.diluted_shares or 1.0,
+        diluted_shares=_if_missing(assumption_set.diluted_shares, 1.0),
         intrinsic_value_per_share=intrinsic_value_per_share,
         current_market_price=assumption_set.current_market_price or 0.0,
         upside_downside_pct=upside_downside_pct,
@@ -323,24 +334,25 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
 
     warnings = run_diagnostics(assumption_set, output, projection_years, terminal_fcff)
 
-    # Calculate implied multiples
-    RelativeValuationService.calculate_implied_multiples(output, assumption_set)
-
-    # Add relative pricing diagnostics
-    relative_warnings = RelativeValuationService.generate_relative_pricing_diagnostics(output)
-    warnings.extend([w.model_dump() for w in relative_warnings])
-
     # Apply Distressed Company logic if selected
     if model_type == "distressed":
         output = DistressedCompanyEngine.calculate_distressed_value(assumption_set, output)
+        warnings.extend(output.warnings_json or [])
 
     # Add payout diagnostics
     payout_warnings = PayoutPolicyDiagnosticService.run_diagnostics(assumption_set, fcfe, output)
     warnings.extend([w.model_dump() for w in payout_warnings])
 
+    # Ratios use the final DCF values and respect the completed trust diagnostics.
+    output.warnings_json = warnings
+    RelativeValuationService.calculate_implied_multiples(output, assumption_set)
+    relative_warnings = RelativeValuationService.generate_relative_pricing_diagnostics(output)
+    warnings.extend([w.model_dump() for w in relative_warnings])
+
     output.warnings_json = warnings
     output.model_quality_score = DiagnosticsEngine.quality_score(warnings)
 
-    sensitivity_tables = generate_sensitivity_tables(assumption_set)
+    # FCFF sensitivities do not include probability-weighted equity recovery.
+    sensitivity_tables = generate_sensitivity_tables(assumption_set) if model_type != "distressed" else []
 
     return output, projection_years, sensitivity_tables

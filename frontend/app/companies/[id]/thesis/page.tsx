@@ -4,7 +4,7 @@ import type { Company, ThesisNote } from "@/lib/api";
 import Link from "next/link";
 import { Suspense } from "react";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
-import { PartialDataNotice } from "@/components/ui/data-states";
+import { DataStateNotices } from "@/components/ui/data-states";
 
 export const dynamic = "force-dynamic";
 
@@ -28,7 +28,7 @@ export default async function ThesisEnginePage({ params }: { params: Promise<{ i
   return (
     <>
       <DataHealthUpdater segment="thesis" isStale={isStale} />
-      {isStale && <PartialDataNotice message="Showing cached thesis data because the backend is unreachable." />}
+      <DataStateNotices metas={[companyRes.meta, thesisRes.meta]} />
       <div style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "1rem" }}>
         <Link href={`/companies/${company.id}`} className="btn btn-outline" style={{ fontSize: "0.85rem", padding: "0.4rem 0.8rem" }}>
           ← Back to Overview

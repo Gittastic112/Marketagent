@@ -1,7 +1,7 @@
 # Superseded Plans
 
 These plans preserve useful rationale, formulas, and old sequencing. They are
-not an active queue. Use `../../../roadmaps/product-roadmap.md` for current work.
+not an active queue. Use [the roadmap](../../roadmaps/product-roadmap.md) for current work.
 
 The largest files accumulated shipped status updates alongside proposals. Search
 them for historical implementation context, then verify against current code.

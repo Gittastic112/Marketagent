@@ -1,35 +1,102 @@
-from datetime import date, datetime
-from typing import Any, Literal, Generic, TypeVar
+"""Legacy HTTP schema facade. New valuation contracts live in app.schemas.
+
+Keep re-exports compatible; add valuation fields in their owning contract module.
+"""
+from app.schemas.valuation_inputs import (
+    ValuationModelCreate,
+    ValuationModelUpdate,
+    ValuationCompanyContextRead,
+    DcfAssumptionSetCreate,
+    DcfAssumptionSetWrite,
+    DcfAssumptionVersionWrite,
+    DcfAssumptionSetUpdate,
+    ReverseDcfRequest,
+    QuickValuationAssumptionsRequest,
+    QuickValuationCalculateRequest,
+    ValuationSetupDraftUpdate,
+    ValuationSetupDraftCommand,
+    ValuationSetupDraftReset,
+    ValuationSetupDraftPromote,
+)
+from app.schemas.valuation_outputs import (
+    DiagnosticWarning,
+    DcfOutputCreate,
+    ReverseDcfResponse,
+    QuickValuationProjectionRead,
+    QuickValuationOutputRead,
+    DcfProjectionYearRead,
+    DcfSensitivityTableRead,
+    DcfDecisionLogRead,
+    ValuationAssumptionChangeLogCreate,
+    ValuationAssumptionChangeLogRead,
+)
+from app.schemas.valuation import (
+    DcfOutputRead,
+    QuickValuationAssumptionsRead,
+    DcfAssumptionSetRead,
+    ValuationModelRead,
+    ValuationModelSummaryRead,
+    ValuationSetupDraftRead,
+    DcfScenarioOutput,
+)
+
+from app.schemas.portfolio import (
+    PortfolioCreate,
+    PortfolioUpdate,
+    PortfolioRead,
+    PortfolioBenchmarkConfigCreate,
+    PortfolioBenchmarkConfigUpdate,
+    PortfolioBenchmarkConfigRead,
+    PortfolioHoldingCreate,
+    PortfolioHoldingUpdate,
+    PortfolioHoldingRead,
+    PortfolioTransactionType,
+    PortfolioTransactionCreate,
+    PortfolioTransactionUpdate,
+    PortfolioTransactionRead,
+    PortfolioCashBalanceCreate,
+    PortfolioCashBalanceUpdate,
+    PortfolioCashBalanceRead,
+    PortfolioSnapshotCreate,
+    PortfolioSnapshotUpdate,
+    PortfolioSnapshotRead,
+    PortfolioValuationHoldingRead,
+    PortfolioCashValuationRead,
+    PortfolioValuationRead,
+    PortfolioAttributionComponent,
+    PortfolioTransactionActivityRead,
+    PortfolioAttributionRead,
+    PortfolioReturnMetricRead,
+    PortfolioPerformanceRead,
+    PortfolioPeriodHoldingAttributionRead,
+    PortfolioPeriodAttributionRead,
+    PortfolioOpportunityCostRead,
+    PortfolioRiskReturnHoldingRead,
+    PortfolioRiskReturnRead,
+    PortfolioRealInputReadinessCheck,
+    PortfolioRealInputReadinessRead,
+    PortfolioAnalyticsRead,
+)
+
+from datetime import date, datetime, time
+from typing import Any, Literal
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl, field_validator, model_validator
 
-T = TypeVar("T")
+from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
-class ApiMeta(BaseModel):
-    status: str = "success"
-    last_updated: datetime | None = None
-    source: str = "internal"
-    is_stale: bool = False
-    is_mock: bool = False
-    warnings: list[str] = Field(default_factory=list)
-    confidence: str = "medium"
-    processing_time_ms: int | None = None
-    request_id: str | None = None
 
-class ApiErrorDetail(BaseModel):
-    code: str
-    message: str
-    target: str | None = None
-    retryable: bool = False
-    field: str | None = None
-    provider: str | None = None
-    processing_run_id: int | None = None
-
-class ApiResponse(BaseModel, Generic[T]):
-    model_config = ConfigDict(from_attributes=True, arbitrary_types_allowed=True)
-    data: T | None = None
-    meta: ApiMeta = Field(default_factory=ApiMeta)
-    errors: list[ApiErrorDetail] = Field(default_factory=list)
+class RuntimeReadinessRead(BaseModel):
+    status: Literal["ready", "blocked"]
+    database_status: Literal["ready", "unavailable"]
+    schema_status: Literal["ready", "blocked", "unknown"]
+    expected_migration_head: str
+    current_migration_heads: list[str] = Field(default_factory=list)
+    missing_tables: list[str] = Field(default_factory=list)
+    missing_columns: list[str] = Field(default_factory=list)
+    missing_constraints: list[str] = Field(default_factory=list)
+    recovery_steps: list[str] = Field(default_factory=list)
 
 
 class ScoringConfigUpdate(BaseModel):
@@ -39,12 +106,18 @@ class ScoringConfigUpdate(BaseModel):
     weight_speed: float | None = None
 
 class FredIngestionCreate(BaseModel):
-    series_id: str
+    series_id: str = Field(min_length=1, max_length=50)
 
 class FredIngestionRead(BaseModel):
     series_id: str
+    macro_series_id: int
+    processing_run_id: int
+    source_url: str
     observations_fetched: int
     observations_created: int
+    observations_skipped_duplicate: int
+    observations_skipped_missing: int
+    observations_rejected: int
 
 
 class ScoringConfigRead(BaseModel):
@@ -80,6 +153,8 @@ class MacroSeriesRead(BaseModel):
     description: str | None
     units: str | None
     frequency: str | None
+    provider_name: str | None = None
+    source_url: str | None = None
     observations: list[MacroObservationRead] = []
 
 class ExposureTagCreate(BaseModel):
@@ -628,12 +703,6 @@ class ThesisNoteRead(ThesisNoteCreate):
     changes: list[ThesisChangeRead] = Field(default_factory=list)
 
 
-class PortfolioCreate(BaseModel):
-    name: str
-    base_currency: str = "USD"
-    description: str | None = None
-
-
 class SocialPostCreate(BaseModel):
     platform: str
     source_url: str
@@ -736,71 +805,6 @@ class NarrativeMentionRead(NarrativeMentionCreate):
     created_at: datetime
 
 
-class PortfolioUpdate(BaseModel):
-    name: str | None = None
-    base_currency: str | None = None
-    description: str | None = None
-
-
-class PortfolioRead(PortfolioCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
-class PortfolioBenchmarkConfigCreate(BaseModel):
-    portfolio_id: int = Field(gt=0)
-    benchmark_company_id: int | None = Field(default=None, gt=0)
-    ticker: str = Field(min_length=1, max_length=40)
-    currency: str = Field(min_length=3, max_length=10)
-    provider_name: str = Field(default="manual", min_length=1, max_length=80)
-    provider_symbol: str | None = Field(default=None, max_length=80)
-    effective_from: date
-    active: bool = True
-    notes: str | None = Field(default=None, max_length=2000)
-
-    @field_validator("ticker", "currency")
-    @classmethod
-    def normalize_symbols(cls, value: str) -> str:
-        return value.strip().upper()
-
-    @field_validator("provider_name")
-    @classmethod
-    def normalize_provider(cls, value: str) -> str:
-        return value.strip()
-
-
-class PortfolioBenchmarkConfigUpdate(BaseModel):
-    benchmark_company_id: int | None = Field(default=None, gt=0)
-    ticker: str | None = Field(default=None, min_length=1, max_length=40)
-    currency: str | None = Field(default=None, min_length=3, max_length=10)
-    provider_name: str | None = Field(default=None, min_length=1, max_length=80)
-    provider_symbol: str | None = Field(default=None, max_length=80)
-    effective_from: date | None = None
-    active: bool | None = None
-    notes: str | None = Field(default=None, max_length=2000)
-
-    @field_validator("ticker", "currency")
-    @classmethod
-    def normalize_optional_symbols(cls, value: str | None) -> str | None:
-        return value.strip().upper() if value is not None else None
-
-    @field_validator("provider_name")
-    @classmethod
-    def normalize_optional_provider(cls, value: str | None) -> str | None:
-        return value.strip() if value is not None else None
-
-
-class PortfolioBenchmarkConfigRead(PortfolioBenchmarkConfigCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
 class FxRateObservationCreate(BaseModel):
     base_currency: str = Field(min_length=3, max_length=10)
     quote_currency: str = Field(min_length=3, max_length=10)
@@ -832,137 +836,9 @@ class FxRateObservationRead(FxRateObservationCreate):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
+    claim_type: str
+    import_run_id: int | None = None
     observed_at: datetime
-    created_at: datetime
-
-
-class PortfolioHoldingCreate(BaseModel):
-    portfolio_id: int
-    company_id: int | None = None
-    ticker: str
-    quantity: float = Field(ge=0)
-    average_cost: float = Field(default=0, ge=0)
-    currency: str = "USD"
-    as_of_date: date
-
-
-class PortfolioHoldingUpdate(BaseModel):
-    portfolio_id: int | None = None
-    company_id: int | None = None
-    ticker: str | None = None
-    quantity: float | None = Field(default=None, ge=0)
-    average_cost: float | None = Field(default=None, ge=0)
-    currency: str | None = None
-    as_of_date: date | None = None
-
-
-class PortfolioHoldingRead(PortfolioHoldingCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
-PortfolioTransactionType = Literal[
-    "buy",
-    "sell",
-    "dividend",
-    "split",
-    "bonus",
-    "deposit",
-    "withdrawal",
-    "fee",
-    "tax",
-    "manual_adjustment",
-]
-
-
-class PortfolioTransactionCreate(BaseModel):
-    portfolio_id: int
-    company_id: int | None = None
-    ticker: str
-    transaction_type: PortfolioTransactionType
-    quantity: float = Field(ge=0)
-    price: float = Field(default=0, ge=0)
-    fees: float = Field(default=0, ge=0)
-    currency: str = "USD"
-    transaction_date: date
-    notes: str | None = None
-
-
-class PortfolioTransactionUpdate(BaseModel):
-    portfolio_id: int | None = None
-    company_id: int | None = None
-    ticker: str | None = None
-    transaction_type: PortfolioTransactionType | None = None
-    quantity: float | None = Field(default=None, ge=0)
-    price: float | None = Field(default=None, ge=0)
-    fees: float | None = Field(default=None, ge=0)
-    currency: str | None = None
-    transaction_date: date | None = None
-    notes: str | None = None
-
-
-class PortfolioTransactionRead(PortfolioTransactionCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
-class PortfolioCashBalanceCreate(BaseModel):
-    portfolio_id: int
-    currency: str = "USD"
-    amount: float = Field(default=0)
-    as_of_date: date
-
-
-class PortfolioCashBalanceUpdate(BaseModel):
-    portfolio_id: int | None = None
-    currency: str | None = None
-    amount: float | None = Field(default=None)
-    as_of_date: date | None = None
-
-
-class PortfolioCashBalanceRead(PortfolioCashBalanceCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    created_at: datetime
-    updated_at: datetime
-
-
-class PortfolioSnapshotCreate(BaseModel):
-    portfolio_id: int
-    snapshot_date: date
-    total_market_value: float | None = Field(default=None, ge=0)
-    total_cost_basis: float | None = Field(default=None, ge=0)
-    total_cash: float | None = Field(default=None)
-    payload_json: dict[str, Any] | None = None
-
-
-class PortfolioSnapshotUpdate(BaseModel):
-    portfolio_id: int | None = None
-    snapshot_date: date | None = None
-    total_market_value: float | None = Field(default=None, ge=0)
-    total_cost_basis: float | None = Field(default=None, ge=0)
-    total_cash: float | None = Field(default=None, ge=0)
-    payload_json: dict[str, Any] | None = None
-
-
-class PortfolioSnapshotRead(PortfolioSnapshotCreate):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    total_portfolio_value: float | None = None
-    base_currency: str | None = None
-    calculation_status: Literal["complete", "partial", "not_available"] = "not_available"
-    holdings_count: int = 0
-    priced_holdings_count: int = 0
-    missing_price_tickers_json: list[str] = Field(default_factory=list)
-    missing_fx_pairs_json: list[str] = Field(default_factory=list)
     created_at: datetime
 
 
@@ -971,40 +847,132 @@ class BriefingFiling(BaseModel):
     form_type: str
     headline: str
     event_id: int
+    status: Literal["New", "Unresolved", "Stale", "Reviewed"] = "New"
+    raw_document_id: int | None = None
+    source_name: str | None = None
+    source_url: str | None = None
+    source_published_at: datetime | None = None
+    event_created_at: datetime | None = None
+    claim_type: Literal["Source Summary", "User Assumption"] = "User Assumption"
+    evidence_status: Literal["source_linked", "manual"] = "manual"
+
+
+class BriefingPortfolioExposure(BaseModel):
+    portfolio_id: int
+    portfolio_name: str
 
 class BriefingPortfolioMove(BaseModel):
     ticker: str
     event_headline: str
     event_id: int
-    move_percent: float
+    move_percent: float | None = None
+    calculation_status: Literal["complete", "stale", "not_available"] = "not_available"
+    claim_type: Literal["Calculation", "Unavailable"] = "Unavailable"
+    price_start_date: date | None = None
+    price_end_date: date | None = None
+    price_currency: str | None = None
+    price_provider: str | None = None
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    affected_portfolios: list[BriefingPortfolioExposure] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    contains_mock_data: bool = False
 
 class BriefingNewSinceReview(BaseModel):
-    filings: list[BriefingFiling]
-    portfolio_moves: list[BriefingPortfolioMove]
+    filings: list[BriefingFiling] = Field(default_factory=list)
+    portfolio_moves: list[BriefingPortfolioMove] = Field(default_factory=list)
 
 class BriefingHighMaterialityEvent(BaseModel):
     headline: str
     priority: str
     event_id: int
+    priority_score: int | None = None
+    ticker: str | None = None
+    event_type: str | None = None
+    status: Literal["New", "Unresolved", "Stale", "Reviewed"] = "New"
+    raw_document_id: int | None = None
+    source_name: str | None = None
+    source_url: str | None = None
+    source_published_at: datetime | None = None
+    event_created_at: datetime | None = None
+    claim_type: Literal["Source Summary", "User Assumption"] = "User Assumption"
+    evidence_status: Literal["source_linked", "manual"] = "manual"
 
 class BriefingThesisContradiction(BaseModel):
     assumption: str
     evidence: str | None = None
     alert_id: int
+    event_id: int | None = None
+    raw_document_id: int | None = None
+    review_status: str = "unreviewed"
+    claim_type: Literal["AI Interpretation"] = "AI Interpretation"
 
 class BriefingValuationRelevance(BaseModel):
     event_id: int
     headline: str
-    variable: str
-    direction: str
-    reasoning: str
+    variable: str | None = None
+    direction: str | None = None
+    reasoning: str | None = None
+    confidence: str | None = None
+    claim_type: Literal["AI Interpretation"] = "AI Interpretation"
+    ai_output_id: int | None = None
+    model_name: str | None = None
+    prompt_version: str | None = None
+    review_status: str = "pending"
+    raw_document_id: int | None = None
+
+class BriefingProcessingFailure(BaseModel):
+    processing_run_id: int
+    run_type: str
+    source_type: str | None = None
+    status: str
+    error_count: int
+    started_at: datetime
+    finished_at: datetime | None = None
+    claim_type: Literal["Fact"] = "Fact"
+
+class BriefingInspectionAction(BaseModel):
+    action_id: str
+    action_type: Literal[
+        "review_contradiction",
+        "inspect_processing_failure",
+        "add_market_prices",
+        "resolve_event_evidence",
+    ]
+    priority: Literal["high", "medium", "low"]
+    title: str
+    reason: str
+    href: str
+    claim_type: Literal["Calculation"] = "Calculation"
+    source_event_ids: list[int] = Field(default_factory=list)
+    source_raw_document_ids: list[int] = Field(default_factory=list)
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    source_alert_ids: list[int] = Field(default_factory=list)
+    processing_run_id: int | None = None
 
 class DailyBriefPayload(BaseModel):
-    new_since_last_review: BriefingNewSinceReview
-    high_materiality_events: list[BriefingHighMaterialityEvent]
-    thesis_contradictions: list[BriefingThesisContradiction]
+    summary: str = "Daily brief summary unavailable."
+    calculation_status: Literal["complete", "partial", "not_available"] = "not_available"
+    valuation_analysis_status: Literal[
+        "complete", "partial", "failed", "not_run", "not_required"
+    ] = "not_run"
+    contradiction_analysis_status: Literal[
+        "complete", "partial", "failed", "not_run", "not_required"
+    ] = "not_run"
+    last_reviewed_at: datetime | None = None
+    new_since_last_review: BriefingNewSinceReview = Field(default_factory=BriefingNewSinceReview)
+    high_materiality_events: list[BriefingHighMaterialityEvent] = Field(default_factory=list)
+    thesis_contradictions: list[BriefingThesisContradiction] = Field(default_factory=list)
     thesis_confirmations: list[Any] = Field(default_factory=list)
     valuation_relevance: list[BriefingValuationRelevance] = Field(default_factory=list)
+    processing_failures: list[BriefingProcessingFailure] = Field(default_factory=list)
+    inspection_queue: list[BriefingInspectionAction] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    contains_mock_data: bool = False
+    contains_stale_data: bool = False
+    source_event_ids: list[int] = Field(default_factory=list)
+    source_raw_document_ids: list[int] = Field(default_factory=list)
+    source_market_price_ids: list[int] = Field(default_factory=list)
+    source_alert_ids: list[int] = Field(default_factory=list)
 
 
 class DailyBriefRead(BaseModel):
@@ -1016,7 +984,62 @@ class DailyBriefRead(BaseModel):
     summary: str
     payload_json: DailyBriefPayload
     review_status: str
+    reviewed_at: datetime | None = None
     created_at: datetime
+
+
+class DailyBriefScheduleUpdate(BaseModel):
+    enabled: bool
+    timezone: str = "UTC"
+    local_time: time = time(7, 0)
+    days_of_week: list[int] = Field(default_factory=lambda: [0, 1, 2, 3, 4])
+
+    @field_validator("timezone")
+    @classmethod
+    def validate_timezone(cls, value: str) -> str:
+        try:
+            ZoneInfo(value)
+        except ZoneInfoNotFoundError:
+            raise ValueError("Timezone must be a valid IANA timezone") from None
+        return value
+
+    @field_validator("days_of_week")
+    @classmethod
+    def validate_days(cls, value: list[int]) -> list[int]:
+        if any(day < 0 or day > 6 for day in value):
+            raise ValueError("Schedule days must be integers from 0 (Monday) to 6 (Sunday)")
+        return sorted(set(value))
+
+    @model_validator(mode="after")
+    def validate_enabled_days(self):
+        if self.enabled and not self.days_of_week:
+            raise ValueError("At least one schedule day is required when scheduling is enabled")
+        return self
+
+
+class DailyBriefScheduleRead(BaseModel):
+    id: int
+    enabled: bool
+    timezone: str
+    local_time: time
+    days_of_week: list[int]
+    next_run_at: datetime | None = None
+    due_now: bool
+    last_attempted_at: datetime | None = None
+    last_succeeded_at: datetime | None = None
+    last_status: str
+    last_processing_run_id: int | None = None
+    last_brief_id: int | None = None
+    generation_mode: Literal["deterministic_no_external_ai"]
+    created_at: datetime
+    updated_at: datetime
+
+
+class DailyBriefScheduleRunResult(BaseModel):
+    schedules_checked: int
+    schedules_completed: int
+    briefs_created: int
+    failures: int
 
 
 class ProcessingRunRead(BaseModel):
@@ -1236,268 +1259,19 @@ class MarketPriceRead(MarketPriceCreate):
     id: int
     provider_name: str
     provider_symbol: str | None = None
+    source_url: str | None = None
     market: str | None = None
     exchange: str | None = None
     source_timestamp: datetime | None = None
     observed_at: datetime
     price_type: str
+    claim_type: str
+    import_run_id: int | None = None
     delay_minutes: int | None = None
     adjustment_state: str
     warnings: list[str] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
-
-
-class PortfolioValuationHoldingRead(BaseModel):
-    holding_id: int
-    ticker: str
-    company_id: int | None
-    quantity: float
-    average_cost: float
-    currency: str
-    market_price: float | None
-    market_price_id: int | None = None
-    market_price_provider: str | None = None
-    market_price_as_of: date | None
-    market_value: float | None
-    total_cost: float
-    unrealized_pnl: float | None
-    unrealized_pnl_percent: float | None
-    market_value_base: float | None = None
-    total_cost_base: float | None = None
-    unrealized_pnl_base: float | None = None
-    market_fx_rate_to_base: float | None = None
-    market_fx_rate_as_of: date | None = None
-    market_fx_observation_id: int | None = None
-    market_fx_is_stale: bool = False
-    cost_fx_rate_to_base: float | None = None
-    cost_fx_rate_as_of: date | None = None
-    cost_fx_observation_id: int | None = None
-    cost_fx_is_stale: bool = False
-    weight_percent: float | None
-    is_stale_price: bool
-    is_valuation_stale: bool | None = None
-    stale_valuation_reason: str | None = None
-    valuation_status: Literal["trusted", "stale", "untrusted", "unavailable"] = "unavailable"
-    valuation_status_reason: str | None = None
-    fx_impact: float | None = None
-    opportunity_cost: float | None = None
-    opportunity_cost_percent: float | None = None
-    intrinsic_value: float | None = None
-    dcf_output_id: int | None = None
-    expected_return: float | None = None
-    thesis_status: str | None = None
-    active_alerts_count: int | None = 0
-
-
-class PortfolioCashValuationRead(BaseModel):
-    cash_balance_id: int
-    currency: str
-    amount: float
-    as_of_date: date
-    value_base: float | None
-    fx_rate_to_base: float | None
-    fx_rate_as_of: date | None
-    fx_observation_id: int | None
-    fx_is_stale: bool = False
-
-
-class PortfolioValuationRead(BaseModel):
-    portfolio_id: int
-    as_of_date: date
-    base_currency: str
-    total_market_value: float | None
-    total_portfolio_value: float | None
-    total_cash_value: float | None
-    total_cost_basis: float | None
-    total_unrealized_pnl: float | None
-    total_unrealized_pnl_percent: float | None
-    missing_fx_pairs: list[str] = Field(default_factory=list)
-    cash_balances: list[PortfolioCashValuationRead] = Field(default_factory=list)
-    holdings: list[PortfolioValuationHoldingRead]
-class PortfolioAttributionComponent(BaseModel):
-    price_movement: float | None
-    fx_impact: float | None
-
-
-class PortfolioTransactionActivityRead(BaseModel):
-    purchases: float
-    sales: float
-    dividends: float
-    deposits: float
-    withdrawals: float
-    fees: float
-    taxes: float
-    net_position_cash_flow: float
-    net_external_cash_flow: float
-
-
-class PortfolioAttributionRead(BaseModel):
-    as_of_date: date
-    base_currency: str
-    calculation_status: Literal["partial", "not_available"]
-    total_unrealized_pnl: float | None
-    components: PortfolioAttributionComponent
-    opportunity_cost: float | None
-    activity_by_currency: dict[str, PortfolioTransactionActivityRead]
-    attribution_by_sector: dict[str, float]
-    attribution_by_geography: dict[str, float]
-    attribution_by_asset_type: dict[str, float]
-    warnings: list[str]
-
-
-class PortfolioReturnMetricRead(BaseModel):
-    calculation_status: Literal["complete", "partial", "not_available"]
-    return_decimal: float | None
-    start_date: date | None
-    end_date: date
-    warnings: list[str] = Field(default_factory=list)
-    source_snapshot_ids: list[int] = Field(default_factory=list)
-    source_transaction_ids: list[int] = Field(default_factory=list)
-
-
-class PortfolioPerformanceRead(BaseModel):
-    portfolio_id: int
-    requested_start_date: date
-    requested_end_date: date
-    time_weighted_return: PortfolioReturnMetricRead
-    money_weighted_return: PortfolioReturnMetricRead
-
-
-class PortfolioPeriodHoldingAttributionRead(BaseModel):
-    key: str
-    company_id: int | None = None
-    ticker: str | None = None
-    price_movement: float | None = None
-    fx_impact: float | None = None
-    position_change: float | None = None
-    total_contribution: float | None = None
-    calculation_status: Literal["complete", "partial", "not_available"]
-
-
-class PortfolioPeriodAttributionRead(BaseModel):
-    portfolio_id: int
-    start_date: date
-    end_date: date
-    base_currency: str | None
-    calculation_status: Literal["complete", "partial", "not_available"]
-    confidence: Literal["high", "medium", "low", "invalid"]
-    formula: str
-    total_change: float | None
-    price_movement: float | None
-    fx_impact: float | None
-    position_change: float | None
-    cash_change: float | None
-    external_cash_flow: float | None
-    internal_cash_change: float | None
-    unexplained_change: float | None
-    holdings: list[PortfolioPeriodHoldingAttributionRead] = Field(default_factory=list)
-    attribution_by_sector: dict[str, float] = Field(default_factory=dict)
-    attribution_by_geography: dict[str, float] = Field(default_factory=dict)
-    attribution_by_asset_type: dict[str, float] = Field(default_factory=dict)
-    attribution_by_tag: dict[str, float] = Field(default_factory=dict)
-    warnings: list[str] = Field(default_factory=list)
-    blockers: list[str] = Field(default_factory=list)
-    source_snapshot_ids: list[int] = Field(default_factory=list)
-    source_transaction_ids: list[int] = Field(default_factory=list)
-
-
-class PortfolioOpportunityCostRead(BaseModel):
-    calculation_status: Literal["complete", "not_available", "not_configured"]
-    portfolio_id: int
-    start_date: date
-    end_date: date
-    benchmark_ticker: str | None
-    benchmark_return: float | None
-    portfolio_return: float | None
-    return_spread: float | None
-    benchmark_ending_value: float | None
-    actual_ending_value: float | None
-    opportunity_cost: float | None
-    opportunity_cost_percent: float | None
-    warnings: list[str] = Field(default_factory=list)
-    source_snapshot_ids: list[int] = Field(default_factory=list)
-    source_market_price_ids: list[int] = Field(default_factory=list)
-    source_transaction_ids: list[int] = Field(default_factory=list)
-
-
-class PortfolioRiskReturnHoldingRead(BaseModel):
-    holding_id: int
-    company_id: int | None
-    ticker: str
-    portfolio_weight_decimal: float | None
-    risk_model_weight_decimal: float | None
-    current_market_value_base: float | None
-    observation_count: int
-    aligned_observation_count: int
-    return_start_date: date | None
-    return_end_date: date | None
-    historical_return_decimal: float | None
-    annualized_volatility: float | None
-    marginal_volatility: float | None
-    marginal_volatility_for_one_percent: float | None
-    component_risk: float | None
-    component_risk_percent: float | None
-    expected_return_decimal: float | None
-    expected_return_kind: Literal["dcf_valuation_gap_not_annualized", "unavailable"]
-    expected_return_claim_type: Literal["Estimate", "Unavailable"]
-    expected_return_contribution: float | None
-    source_dcf_output_id: int | None
-    source_market_price_ids: list[int] = Field(default_factory=list)
-    source_fx_observation_ids: list[int] = Field(default_factory=list)
-    warnings: list[str] = Field(default_factory=list)
-
-
-class PortfolioRiskReturnRead(BaseModel):
-    portfolio_id: int
-    as_of_date: date
-    lookback_start_date: date
-    lookback_days: int
-    min_observations: int
-    base_currency: str
-    calculation_status: Literal["complete", "partial", "not_available"]
-    risk_calculation_status: Literal["complete", "partial", "not_available"]
-    expected_return_calculation_status: Literal["complete", "partial", "not_available"]
-    portfolio_volatility_annualized: float | None
-    risk_covered_weight_percent: float
-    risk_reconciliation_error: float | None
-    portfolio_expected_return_decimal: float | None
-    expected_return_coverage_percent: float
-    risk_claim_type: Literal["Calculation", "Unavailable"]
-    expected_return_claim_type: Literal["Estimate", "Unavailable"]
-    risk_formula: str
-    expected_return_formula: str
-    holdings: list[PortfolioRiskReturnHoldingRead] = Field(default_factory=list)
-    warnings: list[str] = Field(default_factory=list)
-    blockers: list[str] = Field(default_factory=list)
-    source_market_price_ids: list[int] = Field(default_factory=list)
-    source_fx_observation_ids: list[int] = Field(default_factory=list)
-    source_dcf_output_ids: list[int] = Field(default_factory=list)
-
-
-class PortfolioAnalyticsRead(BaseModel):
-    portfolio_id: int
-    as_of_date: date
-    base_currency: str
-    total_portfolio_value: float | None
-    total_cash_value: float | None
-    total_invested_value: float | None
-    total_unrealized_pnl: float | None
-    total_unrealized_pnl_percent: float | None
-    top_positions: list[PortfolioValuationHoldingRead]
-    top_gainers: list[PortfolioValuationHoldingRead]
-    top_losers: list[PortfolioValuationHoldingRead]
-    sector_exposure: dict[str, float]
-    industry_exposure: dict[str, float]
-    country_exposure: dict[str, float]
-    currency_exposure: dict[str, float]
-    asset_type_exposure: dict[str, float]
-    concentration_score: float | None
-    diversification_warnings: list[str]
-    fx_impact: float | None = None
-    opportunity_cost: float | None = None
-    opportunity_cost_percent: float | None = None
-    missing_fx_pairs: list[str] = Field(default_factory=list)
 
 
 class DashboardOverviewRead(BaseModel):
@@ -1570,6 +1344,43 @@ class EvidenceIntegrityReportRead(BaseModel):
     is_truncated: bool
     checked_at: datetime
     issues: list[EvidenceIntegrityIssueRead]
+
+
+class PeerReviewReceiptHealthItemRead(BaseModel):
+    peer_set_id: int
+    company_id: int
+    name: str
+    version: int
+    review_status: Literal["reviewed"]
+    receipt_status: Literal["missing", "stale", "current"]
+    blockers: list[str]
+    usable_methods: list[str]
+    current_diagnostics_as_of: date
+    receipt_diagnostics_as_of: date | None = None
+    current_warning_codes: list[str]
+    acknowledged_warning_codes: list[str]
+    action: str
+
+
+class PeerReviewReceiptHealthRead(BaseModel):
+    status: Literal["healthy", "attention_required"]
+    scope: Literal["page"]
+    total_owned_set_count: int
+    after_id: int
+    limit: int
+    has_more: bool
+    next_after_id: int | None
+    checked_set_count: int
+    active_reviewed_set_count: int
+    ready_for_valuation_count: int
+    missing_receipt_count: int
+    stale_receipt_count: int
+    storage_blocked_count: int
+    coverage_blocked_count: int
+    draft_set_count: int
+    archived_set_count: int
+    sets_requiring_attention: list[PeerReviewReceiptHealthItemRead]
+    generated_at: datetime
 
 
 class DamodaranCoverageRowRead(BaseModel):
@@ -1718,8 +1529,21 @@ class SourceFactRevisionRead(BaseModel):
     created_at: datetime
 
 
-SearchResultType = Literal["document", "event", "alert", "thesis", "decision", "valuation"]
-SearchClaimType = Literal["Fact", "Source Summary", "User Assumption"]
+SearchResultType = Literal[
+    "document",
+    "event",
+    "alert",
+    "thesis",
+    "decision",
+    "valuation",
+    "narrative",
+    "research_session",
+    "research_message",
+    "ai_output",
+]
+SearchClaimType = Literal["Fact", "Source Summary", "User Assumption", "AI Interpretation"]
+SearchScope = Literal["shared", "private"]
+SearchReviewStatus = Literal["not_applicable", "approved"]
 
 
 class EvidenceSearchResultRead(BaseModel):
@@ -1730,6 +1554,9 @@ class EvidenceSearchResultRead(BaseModel):
     excerpt: str | None = None
     rank: float
     claim_type: SearchClaimType
+    scope: SearchScope
+    review_status: SearchReviewStatus = "not_applicable"
+    is_mock: bool = False
     source_name: str | None = None
     source_timestamp: datetime | None = None
     href: str
@@ -1791,7 +1618,7 @@ class FinancialMetricUpdate(BaseModel):
     unit: str | None = None
 
 
-class FinancialMetricRead(FinancialMetricCreate):
+class StoredFinancialMetricRead(FinancialMetricCreate):
     model_config = ConfigDict(from_attributes=True)
     id: int
     created_at: datetime
@@ -1803,7 +1630,7 @@ class FinancialStatementPeriodRead(FinancialStatementPeriodCreate):
     id: int
     created_at: datetime
     updated_at: datetime
-    metrics: list[FinancialMetricRead] = Field(default_factory=list)
+    metrics: list[StoredFinancialMetricRead] = Field(default_factory=list)
 
 
 CandidateReviewStatus = Literal["needs_review", "reviewed", "rejected", "overridden"]
@@ -1861,379 +1688,6 @@ class PdfFinancialExtractionResultRead(FinancialExtractionResultRead):
     scanned_pages: list[int] = Field(default_factory=list)
     table_count: int
     warnings: list[str] = Field(default_factory=list)
-
-
-class ValuationModelCreate(BaseModel):
-    company_id: int | None = None
-    name: str
-    description: str | None = None
-
-
-class ValuationModelUpdate(BaseModel):
-    company_id: int | None = None
-    name: str | None = None
-    description: str | None = None
-
-
-class ValuationCompanyContextRead(BaseModel):
-    company_id: int
-    market: str
-    country: str
-    default_currency: str
-    cash_flow_currency: str
-    discount_rate_currency: str
-    available_benchmark_countries: list[str]
-    recommended_benchmark_country: str
-    benchmark_source: str
-    warnings: list[str] = Field(default_factory=list)
-
-
-class DcfAssumptionSetCreate(BaseModel):
-    valuation_model_id: int | None = None
-    scenario: str = "Base"
-
-    # Story-based Valuation
-    story_text: str | None = None
-    growth_story: str | None = None
-    margin_story: str | None = None
-    reinvestment_story: str | None = None
-    risk_story: str | None = None
-
-    # Core Assumptions
-    projection_years_count: int = 10
-    starting_revenue: float | None = None
-    revenue_growth_years_json: dict[str, Any] | None = None
-    target_operating_margin: float | None = None
-    current_operating_margin: float | None = None
-    tax_rate: float | None = None
-    sales_to_capital_ratio: float | None = None
-    reinvestment_method: str = "sales_to_capital"
-    starting_invested_capital: float | None = None
-
-    # Cost of Capital
-    risk_free_rate: float | None = None
-    equity_risk_premium: float | None = None
-    beta: float | None = None
-    cost_of_equity: float | None = None
-    pre_tax_cost_of_debt: float | None = None
-    debt_to_capital: float | None = None
-    equity_to_capital: float | None = None
-    wacc_start: float | None = None
-    wacc_terminal: float | None = None
-
-    # Terminal Value
-    terminal_growth_rate: float | None = None
-    terminal_roic: float | None = None
-
-    # Bridge to Equity
-    cash: float | None = None
-    cross_holdings: float | None = None
-    minority_interests: float | None = None
-    preferred_stock: float | None = None
-    debt: float | None = None
-    operating_leases: float | None = None
-    employee_options_value: float | None = None
-    diluted_shares: float | None = None
-    basic_shares: float | None = None
-    current_market_price: float | None = None
-
-    # Phase 11 additions: FCFE, Dividends, Buybacks
-    net_income: float | None = None
-    capex: float | None = None
-    depreciation: float | None = None
-    change_in_nwc: float | None = None
-    new_debt_issued: float | None = None
-    debt_repaid: float | None = None
-    dividends: float | None = None
-    buybacks: float | None = None
-    stock_issuances: float | None = None
-    company_age: float | None = None
-
-    # Phase 18: Market Intelligence Integration
-    is_stale: bool = False
-    stale_reason: str | None = None
-    stale_event_id: int | None = None
-
-    # Phase 16: Lifecycle and Special Cases
-    probability_of_failure: float | None = None
-    distress_sale_proceeds: float | None = None
-    book_value_of_equity: float | None = None
-    target_roe: float | None = None
-
-class DcfAssumptionSetWrite(DcfAssumptionSetCreate):
-    @model_validator(mode="after")
-    def validate_dcf_input_units(self):
-        bounded = {
-            "current_operating_margin": (-1.0, 1.0),
-            "target_operating_margin": (-1.0, 1.0),
-            "tax_rate": (0.0, 1.0),
-            "risk_free_rate": (0.0, 1.0),
-            "equity_risk_premium": (0.0, 1.0),
-            "cost_of_equity": (0.0, 1.0),
-            "pre_tax_cost_of_debt": (0.0, 1.0),
-            "debt_to_capital": (0.0, 1.0),
-            "equity_to_capital": (0.0, 1.0),
-            "wacc_start": (0.0, 1.0),
-            "wacc_terminal": (0.0, 1.0),
-            "terminal_growth_rate": (-0.2, 0.2),
-            "terminal_roic": (0.0, 1.0),
-            "beta": (0.0, 5.0),
-        }
-        for field, (lower, upper) in bounded.items():
-            value = getattr(self, field)
-            if value is not None and not lower <= value <= upper:
-                raise ValueError(f"{field} must be between {lower} and {upper} using decimal units")
-        for field in ("starting_revenue", "sales_to_capital_ratio", "starting_invested_capital", "diluted_shares"):
-            value = getattr(self, field)
-            if value is not None and value <= 0:
-                raise ValueError(f"{field} must be greater than zero")
-        if self.projection_years_count < 1 or self.projection_years_count > 30:
-            raise ValueError("projection_years_count must be between 1 and 30")
-        if self.debt_to_capital is not None and self.equity_to_capital is not None:
-            if abs((self.debt_to_capital + self.equity_to_capital) - 1.0) > 0.001:
-                raise ValueError("Debt-to-capital and equity-to-capital must sum to 1.0")
-        return self
-
-class DcfAssumptionSetUpdate(DcfAssumptionSetCreate):
-    pass
-
-
-class DiagnosticWarning(BaseModel):
-    severity: str
-    module: str
-    message: str
-    affectedAssumptions: list[str] = []
-    suggestedFix: str | None = None
-    formula: str | None = None
-
-class DcfOutputCreate(BaseModel):
-    assumption_set_id: int
-    sum_pv_fcff: float | None = None
-    terminal_value: float | None = None
-    pv_terminal_value: float | None = None
-    enterprise_value: float | None = None
-    cash: float | None = None
-    cross_holdings: float | None = None
-    non_operating_assets: float | None = None
-    debt: float | None = None
-    operating_leases: float | None = None
-    minority_interests: float | None = None
-    preferred_stock: float | None = None
-    employee_options_value: float | None = None
-    equity_value: float | None = None
-    diluted_shares: float | None = None
-    intrinsic_value_per_share: float | None = None
-    current_market_price: float | None = None
-    upside_downside_pct: float | None = None
-    terminal_value_pct_of_ev: float | None = None
-    implied_exit_multiple: float | None = None
-    implied_terminal_roic: float | None = None
-    implied_pe: float | None = None
-    implied_ev_ebitda: float | None = None
-    implied_ev_sales: float | None = None
-    implied_ev_ebit: float | None = None
-    implied_pbv: float | None = None
-
-    # Phase 11
-    fcfe_intrinsic_value_per_share: float | None = None
-    ddm_intrinsic_value_per_share: float | None = None
-
-    # Phase 16
-    base_dcf_value: float | None = None
-    pv_of_excess_returns: float | None = None
-
-    model_quality_score: float | None = None
-    warnings_json: list[dict[str, Any]] | list[str] | None = None
-
-
-# --- Phase 10: Reverse DCF ---
-
-class ReverseDcfRequest(BaseModel):
-    assumption_set_id: int
-    target_parameter: str = Field(..., description="E.g., target_operating_margin, revenue_growth, wacc_start, terminal_growth_rate")
-    current_market_price: float
-    diluted_shares: float | None = None  # Needed if assumption set doesn't have it or user overrides
-
-class ReverseDcfResponse(BaseModel):
-    target_parameter: str
-    implied_value: float | None
-    original_value: float | None
-    intrinsic_value_at_implied: float | None
-    diagnostics: list[DiagnosticWarning] = []
-    error: str | None = None
-
-
-class DcfOutputRead(DcfOutputCreate):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    created_at: datetime
-
-
-class QuickValuationAssumptionsRequest(BaseModel):
-    company_id: int = Field(gt=0)
-
-
-class QuickValuationAssumptionsRead(BaseModel):
-    company_id: int
-    assumptions: DcfAssumptionSetCreate
-    provenance: dict[str, Any]
-    source_metadata: dict[str, Any]
-    warnings: list[str]
-
-
-class QuickValuationCalculateRequest(BaseModel):
-    company_id: int = Field(gt=0)
-    projection_years_count: int = Field(default=10, ge=1, le=20)
-    starting_revenue: float = Field(gt=0, allow_inf_nan=False)
-    revenue_growth_years_json: dict[str, float] = Field(min_length=1, max_length=20)
-    current_operating_margin: float = Field(ge=-1, le=1, allow_inf_nan=False)
-    target_operating_margin: float = Field(ge=-1, le=1, allow_inf_nan=False)
-    tax_rate: float = Field(ge=0, le=1, allow_inf_nan=False)
-    sales_to_capital_ratio: float = Field(gt=0, allow_inf_nan=False)
-    starting_invested_capital: float = Field(ge=0, allow_inf_nan=False)
-    wacc_start: float = Field(gt=0, le=1, allow_inf_nan=False)
-    wacc_terminal: float = Field(gt=0, le=1, allow_inf_nan=False)
-    terminal_growth_rate: float = Field(ge=-0.2, le=0.2, allow_inf_nan=False)
-    terminal_roic: float = Field(gt=0, le=1, allow_inf_nan=False)
-    cash: float = Field(default=0, ge=0, allow_inf_nan=False)
-    cross_holdings: float = Field(default=0, ge=0, allow_inf_nan=False)
-    debt: float = Field(default=0, ge=0, allow_inf_nan=False)
-    operating_leases: float = Field(default=0, ge=0, allow_inf_nan=False)
-    minority_interests: float = Field(default=0, ge=0, allow_inf_nan=False)
-    preferred_stock: float = Field(default=0, ge=0, allow_inf_nan=False)
-    employee_options_value: float = Field(default=0, ge=0, allow_inf_nan=False)
-    diluted_shares: float = Field(default=0, gt=0, allow_inf_nan=False)
-    current_market_price: float = Field(gt=0, allow_inf_nan=False)
-
-    @model_validator(mode="after")
-    def validate_quick_dcf(self):
-        normalized_years: dict[str, float] = {}
-        for key, value in self.revenue_growth_years_json.items():
-            try:
-                year = int(key)
-            except (TypeError, ValueError) as exc:
-                raise ValueError("Revenue growth keys must be projection year numbers") from exc
-            if str(year) != key or year < 1 or year > self.projection_years_count:
-                raise ValueError("Revenue growth years must be within the projection horizon")
-            if value <= -1 or value > 5:
-                raise ValueError("Revenue growth rates must be greater than -100% and no more than 500%")
-            normalized_years[str(year)] = value
-        if self.terminal_growth_rate >= self.wacc_terminal:
-            raise ValueError("terminal_growth_rate must be below wacc_terminal")
-        self.revenue_growth_years_json = normalized_years
-        return self
-
-
-class QuickValuationProjectionRead(BaseModel):
-    year_index: int
-    revenue: float
-    revenue_growth: float
-    ebit_margin: float
-    nopat: float
-    reinvestment: float
-    fcff: float
-    roic: float
-    wacc: float
-    pv_fcff: float
-
-
-class QuickValuationOutputRead(BaseModel):
-    company_id: int
-    currency: str | None
-    claim_type: Literal["Calculation"] = "Calculation"
-    is_persisted: Literal[False] = False
-    sum_pv_fcff: float
-    terminal_value: float
-    pv_terminal_value: float
-    enterprise_value: float
-    cash: float
-    cross_holdings: float
-    debt: float
-    operating_leases: float
-    minority_interests: float
-    preferred_stock: float
-    employee_options_value: float
-    equity_value: float
-    diluted_shares: float
-    intrinsic_value_per_share: float
-    current_market_price: float
-    upside_downside_pct: float
-    terminal_value_pct_of_ev: float
-    model_quality_score: float | None = None
-    warnings_json: list[dict[str, Any]]
-    projection_years: list[QuickValuationProjectionRead]
-    limitations: list[str]
-
-
-class DcfProjectionYearRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    assumption_set_id: int
-    year_index: int
-    calendar_year: int
-    revenue: float | None = None
-    revenue_growth: float | None = None
-    ebit_margin: float | None = None
-    ebit: float | None = None
-    tax_rate: float | None = None
-    nopat: float | None = None
-    reinvestment: float | None = None
-    fcff: float | None = None
-    invested_capital: float | None = None
-    roic: float | None = None
-    wacc: float | None = None
-    discount_factor: float | None = None
-    pv_fcff: float | None = None
-    created_at: datetime
-
-
-class DcfSensitivityTableRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    assumption_set_id: int
-    table_type: str
-    x_axis_json: dict[str, Any] | None = None
-    y_axis_json: dict[str, Any] | None = None
-    values_json: dict[str, Any] | None = None
-    created_at: datetime
-
-
-class DcfDecisionLogRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    valuation_model_id: int
-    assumption_set_id: int
-    decision_type: str
-    user_note: str | None = None
-    price_at_decision: float | None = None
-    intrinsic_value_at_decision: float | None = None
-    upside_downside_at_decision: float | None = None
-    confidence_label: str | None = None
-    created_at: datetime
-
-
-class ValuationAssumptionChangeLogCreate(BaseModel):
-    valuation_model_id: int
-    assumption_set_id: int
-    event_id: int | None = None
-    parameter_name: str
-    old_value: str | None = None
-    new_value: str | None = None
-    rationale: str | None = None
-    is_applied: bool = False
-
-class ValuationAssumptionChangeLogRead(ValuationAssumptionChangeLogCreate):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    valuation_model_id: int
-    assumption_set_id: int
-    event_id: int | None = None
-    parameter_name: str
-    old_value: str | None = None
-    new_value: str | None = None
-    rationale: str | None = None
-    is_applied: bool
-    created_at: datetime
 
 
 EvidenceClaimType = Literal[
@@ -2370,67 +1824,6 @@ class EvidenceTrailRead(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
 
-class DcfAssumptionSetRead(DcfAssumptionSetCreate):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    created_at: datetime
-    updated_at: datetime
-    outputs: DcfOutputRead | None = None
-    projection_years: list[DcfProjectionYearRead] = Field(default_factory=list)
-    sensitivity_tables: list[DcfSensitivityTableRead] = Field(default_factory=list)
-    change_logs: list[ValuationAssumptionChangeLogRead] = Field(default_factory=list)
-
-
-class ValuationModelRead(ValuationModelCreate):
-    model_config = ConfigDict(from_attributes=True)
-    id: int
-    model_type: str | None = None
-    created_at: datetime
-    updated_at: datetime
-    assumption_sets: list[DcfAssumptionSetRead] = Field(default_factory=list)
-    decision_logs: list[DcfDecisionLogRead] = Field(default_factory=list)
-
-
-class ValuationSetupDraftUpdate(BaseModel):
-    assumptions_patch: dict[str, Any] = Field(default_factory=dict)
-    reviewed_fields: list[str] = Field(default_factory=list)
-    expected_updated_at: datetime | None = None
-
-
-class ValuationSetupDraftCommand(BaseModel):
-    expected_updated_at: datetime | None = None
-
-
-class ValuationSetupDraftReset(ValuationSetupDraftCommand):
-    fields: list[str]
-
-
-class ValuationSetupDraftPromote(BaseModel):
-    name: str
-    description: str | None = None
-    model_type: str = "fcff_dcf"
-    expected_updated_at: datetime | None = None
-
-
-class ValuationSetupDraftRead(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
-
-    id: int
-    user_id: str
-    company_id: int
-    promoted_model_id: int | None = None
-    status: str
-    industry_name: str | None = None
-    assumptions_json: dict[str, Any]
-    provenance_json: dict[str, Any]
-    source_metadata_json: dict[str, Any]
-    warnings_json: list[str]
-    reviewed_fields_json: list[str]
-    edited_fields_json: list[str]
-    created_at: datetime
-    updated_at: datetime
-
-
 class FilingSectionDiffRead(BaseModel):
     id: int
     current_section_id: int
@@ -2510,6 +1903,34 @@ class AiCitationValidationRequest(BaseModel):
     citations: list[AiCitationCreate] = Field(min_length=1, max_length=50)
 
 
+class AiCitationSuggestionCandidate(BaseModel):
+    quote: str = Field(min_length=1, max_length=2_000)
+    start_char: int = Field(ge=0)
+    end_char: int = Field(gt=0)
+    score: float = Field(ge=0, le=1)
+    confidence: Literal["high", "medium", "low"]
+    matched_terms: list[str] = Field(default_factory=list)
+    claim_term_count: int = Field(ge=0)
+    matched_term_count: int = Field(ge=0)
+    internal_href: str
+
+
+class AiCitationSuggestionRead(BaseModel):
+    source_id: str
+    claim_text: str | None = None
+    source_title: str | None = None
+    status: Literal[
+        "ready",
+        "no_candidate",
+        "source_text_unavailable",
+        "unsupported_source",
+        "undeclared_source",
+        "claim_text_unavailable",
+    ]
+    candidates: list[AiCitationSuggestionCandidate] = Field(default_factory=list)
+    limitations: list[str] = Field(default_factory=list)
+
+
 class AiOutputReviewRequest(BaseModel):
     status: Literal["approved", "rejected", "needs_revision"]
     notes: str | None = Field(default=None, max_length=2_000)
@@ -2552,7 +1973,7 @@ class MarketDataIngestionRequest(BaseModel):
     market: str
     exchange: str | None = None
     ticker: str
-    days: int = 365
+    days: int = Field(default=365, ge=1, le=3650)
 
 
 class MarketHistoryPriceRead(BaseModel):
@@ -2717,10 +2138,6 @@ class EvidenceLedgerItemRead(EvidenceLedgerItemCreate):
 
     model_config = ConfigDict(from_attributes=True)
 
-class DcfScenarioOutput(BaseModel):
-    scenario_name: str
-    description: str
-    output: DcfOutputRead
 
 # --- Real Options ---
 
@@ -2955,6 +2372,8 @@ class MarketRegimeInputCreate(BaseModel):
 
 class MarketRegimeInputRead(MarketRegimeInputCreate):
     id: int
+    source_record_type: str | None = None
+    source_record_id: int | None = None
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
@@ -2982,3 +2401,25 @@ class MarketRegimeScoreRead(BaseModel):
     manual_modules: list[str] = Field(default_factory=list)
     simulated_modules: list[str] = Field(default_factory=list)
     created_at: datetime
+
+
+class MarketRegimeMacroProviderRead(BaseModel):
+    metric_name: Literal["macro"] = "macro"
+    series_id: Literal["NFCI"] = "NFCI"
+    macro_series_id: int | None = None
+    observation_id: int | None = None
+    observed_value: float | None = None
+    normalized_value: float | None = None
+    as_of_date: date | None = None
+    source_name: str
+    source_url: str
+    methodology: str
+    claim_type: Literal["Calculation"] = "Calculation"
+    freshness_threshold_days: int
+    age_days: int | None = None
+    is_stale: bool = False
+    can_apply: bool = False
+    blockers: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)
+    applied_input_id: int | None = None
+    created: bool = False

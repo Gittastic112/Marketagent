@@ -595,7 +595,7 @@ def test_autofill_uses_promoted_financial_metrics_for_company_actuals(client, db
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
     assert draft["provenance"]["starting_revenue"]["label"] == "Legacy Metrics (FY2026)"
-    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Capped at risk_free_rate"
+    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 
 def test_promote_candidates_creates_normalized_snapshot_for_autofill(client, db) -> None:
@@ -741,7 +741,7 @@ def test_autofill_prefers_latest_normalized_metrics_when_available(client, db) -
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
     assert draft["provenance"]["starting_revenue"]["label"] == "Normalized Financials (FY2026)"
-    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Capped at risk_free_rate"
+    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -> None:
     company = Company(
@@ -897,7 +897,7 @@ def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client,
             FinancialMetric(period_id=period.id, metric_name="change_in_working_capital", value=10, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="acquisitions", value=5, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="basic_shares", value=50, unit="million shares"),
-            FinancialMetric(period_id=period.id, metric_name="lease_liabilities", value=40, unit="INR million"),
+            FinancialMetric(period_id=period.id, metric_name="operating_leases", value=40, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="minority_interests", value=8, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="preferred_stock", value=3, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="employee_options_value", value=2, unit="INR million"),
@@ -955,6 +955,7 @@ def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client,
         "depreciation",
         "employee_options_value",
         "lease_liabilities",
+        "operating_leases",
         "minority_interests",
         "preferred_stock",
         "reinvestment",

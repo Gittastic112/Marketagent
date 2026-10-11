@@ -1,6 +1,5 @@
-import httpx
 from app.providers.base import BaseSECProvider
-from app.core.security import validate_safe_url
+from app.providers.safe_http import fetch_public_text
 
 class SECProvider(BaseSECProvider):
     """Real implementation for fetching SEC EDGAR data."""
@@ -10,10 +9,7 @@ class SECProvider(BaseSECProvider):
         self.headers = {"User-Agent": self.user_agent}
         
     def fetch_filing_text(self, url: str) -> str:
-        validate_safe_url(url)
-        response = httpx.get(url, headers=self.headers, timeout=20)
-        response.raise_for_status()
-        return response.text
+        return fetch_public_text(url, headers=self.headers, max_bytes=40 * 1024 * 1024)
         
     @property
     def provider_name(self) -> str:

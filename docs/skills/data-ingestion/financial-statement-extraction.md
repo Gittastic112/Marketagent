@@ -21,7 +21,8 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
 
 ## Prerequisites
 
-- Read `docs/HANDOFF.md`, `docs/00-current-state.md`, and `docs/04-data-sources-and-ingestion.md`.
+- Use the handoff/code map already read, then the relevant sections of
+  `docs/04-data-sources-and-ingestion.md`. Consult Current State for evidence dates.
 - Inspect `backend/app/services/financial_extraction.py`,
   `backend/app/services/pdf_financial_extraction.py`, and
   `backend/app/services/sec_xbrl_extractor.py`.
@@ -54,7 +55,10 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
 5. Handle overrides separately from raw extracted values.
 6. Promote only reviewed/overridden candidates.
 7. Decide canonical storage: legacy financial tables, normalized financial tables, or both.
-8. Feed valuation autofill only from the documented canonical reviewed-financials path.
+8. Feed trusted actuals through the canonical reviewed-financials path. The
+   separate SEC draft adapter may suggest unreviewed annual candidates only with
+   explicit candidate/source/period/unit/review labels. A suggestion is not a
+   normalized fact, approval or permission to overwrite saved assumptions.
 9. Block autofill from silently using placeholder actuals.
 10. For workbook uploads, enforce type/size limits, hash content, reject duplicates, delete temporary files, and persist a processing run.
 11. Read normalized coverage before backfill; distinguish normalized coverage from trust readiness and stop on currency conflicts.
@@ -70,6 +74,9 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
 17. Use representative fixtures only when they are explicitly labeled
     `Mock Data` and isolated to tests. Never load
     `normalized_financial_histories.json` into production research tables.
+18. Treat lexical passage matches and AI source suggestions as review
+    candidates. Only stored exact spans that pass the owning validator may be
+    described as exact evidence; neither state promotes a financial fact.
 
 ## Acceptance criteria
 
@@ -93,6 +100,7 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
   with zero reconciliation mismatches.
 - Synthetic US and India histories verify the normalization/autofill contract;
   they do not prove real-source parser coverage.
+- Citation assistance cannot bypass candidate review, reconciliation, or promotion.
 
 ## Common mistakes
 

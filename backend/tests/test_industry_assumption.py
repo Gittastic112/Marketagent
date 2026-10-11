@@ -48,7 +48,10 @@ def test_get_assumption_priors():
 
     assert "marginPriors" in priors
     assert priors["marginPriors"]["industryUnadjustedOperatingMargin"] == 0.25
-    assert priors["marginPriors"]["industryLeaseRdAdjustedMargin"] == 0.30
+    assert priors["marginPriors"]["suggestedTargetMargin"] == 0.25
+    # EBITDA and unadjusted EBIT do not establish lease/R&D-adjusted margins.
+    assert priors["marginPriors"]["industryLeaseAdjustedMargin"] is None
+    assert priors["marginPriors"]["industryLeaseRdAdjustedMargin"] is None
 
     assert "reinvestmentPriors" in priors
     assert priors["reinvestmentPriors"]["industrySalesToCapital"] == 1.5

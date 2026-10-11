@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from app.api.errors import PublicApiError
 from app.db.session import get_db
 from app.services.market_regime_engine import MarketRegimeEngine
 from app.api.dependencies import get_current_user
@@ -8,9 +9,14 @@ from app.api.schemas import (
     ApiResponse,
     MarketRegimeInputCreate,
     MarketRegimeInputRead,
+    MarketRegimeMacroProviderRead,
     MarketRegimeScoreRead,
 )
 from app.models.market_regime_input import MarketRegimeInput
+from app.services.market_regime_macro_provider import (
+    apply_nfci_macro_input,
+    preview_nfci_macro_input,
+)
 
 router = APIRouter(prefix="/market-regime", tags=["market-regime"])
 
@@ -25,8 +31,9 @@ def get_current_regime(
     return ApiResponse(
         data=score,
         meta=ApiMeta(
-            source="manual",
+            source="market_regime_inputs",
             last_updated=score.created_at,
+            is_stale=score.calculation_status == "stale",
             warnings=score.warnings,
             confidence=score.confidence,
         ),
@@ -55,8 +62,63 @@ def submit_market_regime_input(
     return ApiResponse(
         data=db_input,
         meta=ApiMeta(
-            source="manual",
+            source="manual" if db_input.input_type == "manual" else "declared_provider_input",
             last_updated=db_input.created_at,
             confidence="medium",
+        ),
+    )
+
+
+@router.get(
+    "/providers/fred/macro/preview",
+    response_model=ApiResponse[MarketRegimeMacroProviderRead],
+)
+def preview_fred_macro_regime_input(
+    db: Session = Depends(get_db),
+    _current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    preview = preview_nfci_macro_input(db)
+    return ApiResponse(
+        data=preview,
+        meta=ApiMeta(
+            source="FRED",
+            last_updated=None,
+            is_stale=preview["is_stale"],
+            warnings=[*preview["warnings"], *preview["blockers"]],
+            confidence=(
+                "none"
+                if preview["blockers"]
+                else "low"
+                if preview["is_stale"]
+                else "high"
+            ),
+        ),
+    )
+
+
+@router.post(
+    "/providers/fred/macro/apply",
+    response_model=ApiResponse[MarketRegimeMacroProviderRead],
+)
+def apply_fred_macro_regime_input(
+    db: Session = Depends(get_db),
+    _current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    try:
+        result = apply_nfci_macro_input(db)
+    except ValueError as exc:
+        raise PublicApiError(
+            status_code=409,
+            code="REGIME_PROVIDER_INPUT_BLOCKED",
+            message=str(exc),
+            provider="FRED",
+        ) from exc
+    return ApiResponse(
+        data=result,
+        meta=ApiMeta(
+            source="FRED",
+            is_stale=result["is_stale"],
+            warnings=result["warnings"],
+            confidence="low" if result["is_stale"] else "high",
         ),
     )

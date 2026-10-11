@@ -45,13 +45,31 @@ test("stored corpus search finds and filters owned research records", async ({ p
       description: `Base case for ${query}.`,
     },
   });
+  const narrative = await backendData<{ id: number }>(page, "/narrative-clusters", {
+    method: "POST",
+    data: {
+      name: `${query} narrative`,
+      description: `Shared interpretation for ${query}.`,
+    },
+  });
+  await backendData(page, "/narrative-claims", {
+    method: "POST",
+    data: {
+      cluster_id: narrative.id,
+      claim_text: `${query} still needs evidence review.`,
+    },
+  });
+  const researchSession = await backendData<{ id: number }>(page, "/research/sessions", {
+    method: "POST",
+    data: { title: `${query} private notebook` },
+  });
 
   const apiResults = await backendData<Array<{ result_type: string }>>(
     page,
     `/search/evidence?q=${query}`,
   );
   expect(new Set(apiResults.map((result) => result.result_type))).toEqual(
-    new Set(["alert", "decision", "thesis", "valuation"]),
+    new Set(["alert", "decision", "narrative", "research_session", "thesis", "valuation"]),
   );
 
   await page.goto(`/search?q=${query}`);
@@ -69,6 +87,16 @@ test("stored corpus search finds and filters owned research records", async ({ p
     "href",
     `/companies/${company.id}/valuation/${valuation.id}`,
   );
+  await expect(results.getByRole("link", { name: `${query} narrative` })).toHaveAttribute(
+    "href",
+    `/narratives#narrative-${narrative.id}`,
+  );
+  await expect(results.getByRole("link", { name: `${query} private notebook` })).toHaveAttribute(
+    "href",
+    `/research/sessions/${researchSession.id}`,
+  );
+  await expect(results.getByText("Shared", { exact: true }).first()).toBeVisible();
+  await expect(results.getByText("Private", { exact: true }).first()).toBeVisible();
 
   await page.getByRole("combobox", { name: "Record type" }).selectOption("thesis");
   await page.getByRole("button", { name: "Search" }).click();

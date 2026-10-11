@@ -10,7 +10,7 @@ from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
 from app.models.company import Company
-from app.models.dcf import ValuationModel, DcfAssumptionSet
+from app.models.dcf import DcfAssumptionSet, DcfOutput, ValuationModel
 from helpers import response_data
 
 @pytest.fixture
@@ -53,6 +53,78 @@ def test_create_valuation_model(client: TestClient, db: Session):
     assert response_data(response)["name"] == "Base Model"
 
 
+def test_get_and_update_owned_valuation_model(client: TestClient, db: Session):
+    company = Company(ticker="MODEL", name="Model Co")
+    db.add(company)
+    db.commit()
+    model = ValuationModel(
+        company_id=company.id,
+        name="Base Model",
+        description="Initial setup",
+        model_type="distressed",
+    )
+    db.add(model)
+    db.commit()
+
+    fetched = client.get(f"/valuation-models/{model.id}")
+    assert fetched.status_code == 200
+    assert response_data(fetched)["model_type"] == "distressed"
+
+    updated = client.patch(
+        f"/valuation-models/{model.id}",
+        json={"name": "Reviewed Base", "description": "Reviewed after filing"},
+    )
+    assert updated.status_code == 200
+    assert response_data(updated)["name"] == "Reviewed Base"
+    assert response_data(updated)["description"] == "Reviewed after filing"
+
+
+def test_valuation_model_create_persists_supported_model_type(client: TestClient, db: Session):
+    company = Company(ticker="TYPE", name="Type Co")
+    db.add(company)
+    db.commit()
+
+    response = client.post(
+        f"/companies/{company.id}/valuation-models",
+        json={"name": "Bank Model", "model_type": "financial_services"},
+    )
+
+    assert response.status_code == 201
+    assert response_data(response)["model_type"] == "financial_services"
+
+
+def test_company_valuation_summaries_return_readiness_without_projection_payloads(client: TestClient, db: Session):
+    company = Company(ticker="SUMMARY", name="Summary Co")
+    db.add(company)
+    db.commit()
+    model = ValuationModel(company_id=company.id, name="Summary Model")
+    db.add(model)
+    db.flush()
+    assumption = DcfAssumptionSet(
+        valuation_model_id=model.id,
+        scenario="Base",
+        cash_flow_currency="USD",
+    )
+    db.add(assumption)
+    db.flush()
+    db.add(DcfOutput(
+        assumption_set_id=assumption.id,
+        intrinsic_value_per_share=125,
+        model_quality_score=82,
+        warnings_json=[],
+    ))
+    db.commit()
+
+    response = client.get(f"/companies/{company.id}/valuation-model-summaries")
+
+    assert response.status_code == 200
+    summary = response_data(response)[0]
+    assert summary["assumption_set_count"] == 1
+    assert summary["readiness"] == "calculated"
+    assert summary["intrinsic_value_per_share"] == 125
+    assert "projection_years" not in summary
+
+
 def test_create_dcf_assumption_set(client: TestClient, db: Session):
     company = Company(ticker="TEST2", name="Test Co 2")
     db.add(company)
@@ -86,6 +158,8 @@ def test_create_dcf_assumption_set(client: TestClient, db: Session):
         "debt": 50.0,
         "diluted_shares": 10.0,
         "current_market_price": 100.0,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
     })
     assert response.status_code == 201
     data = response_data(response)
@@ -93,6 +167,80 @@ def test_create_dcf_assumption_set(client: TestClient, db: Session):
     # Outputs should be generated automatically
     assert data["outputs"] is not None
     assert data["outputs"]["enterprise_value"] > 0
+    assert data["cash_flow_currency"] == "INR"
+
+
+def test_assumption_creation_rolls_back_when_calculation_fails(
+    client: TestClient,
+    db: Session,
+    monkeypatch: pytest.MonkeyPatch,
+):
+    company = Company(ticker="ROLLBACK", name="Rollback Co")
+    db.add(company)
+    db.commit()
+    model = ValuationModel(company_id=company.id, name="Rollback Model")
+    db.add(model)
+    db.commit()
+
+    def fail_calculation(*_args, **_kwargs):
+        raise ValueError("calculation failed")
+
+    monkeypatch.setattr("app.services.assumption_versions.calculate_dcf", fail_calculation)
+    response = client.post(
+        f"/valuation-models/{model.id}/assumptions",
+        json={"scenario": "Base", "starting_revenue": 1000, "sales_to_capital_ratio": 2},
+    )
+
+    assert response.status_code == 422
+    db.expire_all()
+    assert db.query(DcfAssumptionSet).filter_by(valuation_model_id=model.id).count() == 0
+
+
+def test_assumption_write_rejects_unexplained_currency_mismatch(client: TestClient, db: Session):
+    company = Company(ticker="FXGATE", name="FX Gate Co")
+    db.add(company)
+    db.commit()
+    model = ValuationModel(company_id=company.id, name="FX Gate Model")
+    db.add(model)
+    db.commit()
+
+    response = client.post(
+        f"/valuation-models/{model.id}/assumptions",
+        json={
+            "scenario": "Base",
+            "cash_flow_currency": "USD",
+            "discount_rate_currency": "INR",
+        },
+    )
+
+    assert response.status_code == 422
+    assert db.query(DcfAssumptionSet).filter_by(valuation_model_id=model.id).count() == 0
+
+
+def test_delete_valuation_model_cascades_to_assumptions_and_outputs(client: TestClient, db: Session):
+    company = Company(ticker="DELETE", name="Delete Test Co")
+    db.add(company)
+    db.commit()
+
+    model = ValuationModel(company_id=company.id, name="Invalid model")
+    db.add(model)
+    db.commit()
+    assumption = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base")
+    db.add(assumption)
+    db.commit()
+    output = DcfOutput(assumption_set_id=assumption.id)
+    db.add(output)
+    db.commit()
+    model_id = model.id
+    assumption_id = assumption.id
+    output_id = output.id
+
+    response = client.delete(f"/valuation-models/{model_id}")
+
+    assert response.status_code == 204
+    assert db.get(ValuationModel, model_id) is None
+    assert db.get(DcfAssumptionSet, assumption_id) is None
+    assert db.get(DcfOutput, output_id) is None
 
 
 def test_create_financial_period(client: TestClient, db: Session):

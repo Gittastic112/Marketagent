@@ -2,6 +2,7 @@ from copy import deepcopy
 from typing import Any
 
 from sqlalchemy.orm import Session
+from app.models.damodaran import DamodaranDatasetFile
 from app.services.damodaran_dataset_versions import active_dataset_ids
 from app.models.damodaran_fundamentals import (
     DamodaranMarginBenchmark,
@@ -14,6 +15,33 @@ from app.models.damodaran_fundamentals import (
 
 
 class IndustryAssumptionService:
+    @staticmethod
+    def _source_summary(
+        db: Session,
+        module: str,
+        label: str,
+        record: Any | None,
+    ) -> dict[str, Any] | None:
+        if record is None:
+            return None
+        dataset_file_id = getattr(record, "dataset_file_id", None)
+        dataset = (
+            db.get(DamodaranDatasetFile, dataset_file_id)
+            if dataset_file_id is not None and hasattr(db, "get")
+            else None
+        )
+        return {
+            "module": module,
+            "source": label,
+            "dataset_file_id": dataset_file_id,
+            "source_file": dataset.uploaded_filename if dataset else None,
+            "source_sha256": dataset.source_sha256 if dataset else None,
+            "source_as_of": dataset.source_as_of if dataset else None,
+            "canonical_source_path": dataset.canonical_source_path if dataset else None,
+            "claim_type": "Estimate",
+            "requires_review": True,
+        }
+
     @staticmethod
     def get_assumption_priors(db: Session, country: str, industry: str) -> dict[str, Any]:
         """
@@ -62,24 +90,38 @@ class IndustryAssumptionService:
         growth = growth_query.order_by(DamodaranGrowthBenchmark.created_at.desc()).first()
         financing = financing_query.order_by(DamodaranFinancingFlowsBenchmark.created_at.desc()).first()
 
+        source_summary = [item for item in (
+            IndustryAssumptionService._source_summary(db, "margin", "Damodaran Industry Margin Benchmark", margin),
+            IndustryAssumptionService._source_summary(db, "reinvestment", "Damodaran Industry Capex Benchmark", capex),
+            IndustryAssumptionService._source_summary(db, "working_capital", "Damodaran Industry WC Benchmark", wc),
+            IndustryAssumptionService._source_summary(db, "return", "Damodaran Industry ROE Benchmark", roe),
+            IndustryAssumptionService._source_summary(db, "growth", "Damodaran Industry Growth Benchmark", growth),
+            IndustryAssumptionService._source_summary(db, "financing", "Damodaran Industry Financing Benchmark", financing),
+        ) if item is not None]
+        version_ids = sorted({
+            item["dataset_file_id"] for item in source_summary
+            if item["dataset_file_id"] is not None
+        })
+
         return {
             "country": country,
             "industry": industry,
-            "dataVersion": "Latest",
+            "dataVersion": {"activeDatasetFileIds": version_ids},
             "revenueGrowthPriors": {
                 "companyHistorical": None,
                 "industryHistorical5Y": growth.historical_revenue_growth if growth else None,
-                "industryExpected2Y": growth.expected_revenue_growth if growth else None,
-                "industryExpected5Y": growth.expected_revenue_growth if growth else None,
-                "suggestedYears1To2": growth.expected_revenue_growth if growth else None,
-                "suggestedYears3To5": growth.expected_revenue_growth if growth else None,
+                "industryExpected2Y": growth.expected_revenue_growth_2y if growth else None,
+                "industryExpected5Y": growth.expected_revenue_growth_5y if growth else None,
+                "suggestedYears1To2": growth.expected_revenue_growth_2y if growth else None,
+                "suggestedYears3To5": growth.expected_revenue_growth_5y if growth else None,
                 "stableGrowthAnchor": None
             },
             "marginPriors": {
                 "currentCompanyMargin": None,
                 "industryUnadjustedOperatingMargin": margin.ebit_margin if margin else None,
-                "industryLeaseAdjustedMargin": margin.ebit_margin if margin else None, # Needs refinement later
-                "industryLeaseRdAdjustedMargin": margin.ebitda_margin if margin else None,
+                # The typed dataset has no lease/R&D-adjusted margin contract.
+                "industryLeaseAdjustedMargin": None,
+                "industryLeaseRdAdjustedMargin": None,
                 "suggestedTargetMargin": margin.ebit_margin if margin else None
             },
             "reinvestmentPriors": {
@@ -96,18 +138,20 @@ class IndustryAssumptionService:
             },
             "capitalStructurePriors": {
                 "currentDebtRatio": None,
-                "industryDebtSignals": financing.debt_to_capital if financing else None,
+                "industryDebtSignals": None,
                 "regressionImpliedDebtRatio": None,
-                "suggestedTargetDebtRatio": financing.debt_to_capital if financing else None
+                "suggestedTargetDebtRatio": None
             },
-            "sourceSummary": [item for item in [
-                {"module": "margin", "source": "Damodaran Industry Margin Benchmark"} if margin else None,
-                {"module": "reinvestment", "source": "Damodaran Industry Capex Benchmark"} if capex else None,
-                {"module": "working_capital", "source": "Damodaran Industry WC Benchmark"} if wc else None,
-                {"module": "return", "source": "Damodaran Industry ROE Benchmark"} if roe else None,
-                {"module": "growth", "source": "Damodaran Industry Growth Benchmark"} if growth else None,
-                {"module": "financing", "source": "Damodaran Industry Financing Benchmark"} if financing else None
-            ] if item is not None]
+            "financingFlowPriors": {
+                "numberOfFirms": financing.number_of_firms if financing else None,
+                "dividendsUsdMillions": financing.dividends_usd_millions if financing else None,
+                "buybacksUsdMillions": financing.buybacks_usd_millions if financing else None,
+                "equityIssuanceUsdMillions": financing.equity_issuance_usd_millions if financing else None,
+                "debtRaisedUsdMillions": financing.debt_raised_usd_millions if financing else None,
+                "debtRepaidUsdMillions": financing.debt_repaid_usd_millions if financing else None,
+                "contextOnly": True,
+            },
+            "sourceSummary": source_summary,
         }
 
     @staticmethod
@@ -139,7 +183,13 @@ class IndustryAssumptionService:
             {
                 "country": country,
                 "industry": "Revenue-weighted industry blend",
-                "dataVersion": "Latest",
+                "dataVersion": {
+                    "activeDatasetFileIds": sorted({
+                        dataset_id
+                        for component in components
+                        for dataset_id in component["priors"].get("dataVersion", {}).get("activeDatasetFileIds", [])
+                    })
+                },
                 "industryMix": [
                     {
                         "segmentName": component["segment_name"],

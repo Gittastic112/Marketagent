@@ -11,11 +11,13 @@ from app.models.damodaran_fundamentals import (
     DamodaranWcBenchmark,
     DamodaranRoeBenchmark,
     DamodaranGrowthBenchmark,
+    DamodaranFinancingFlowsBenchmark,
     DamodaranDividendBenchmark,
     DamodaranFCFEBenchmark,
     DamodaranPricingBenchmark,
     CountryMarketStats,
 )
+from app.models.assumption_methodology import AssumptionMethodValue
 from app.models.real_options import IndustryVolatilityBenchmark
 from app.services.damodaran_dataset_versions import DamodaranDatasetVersionService
 
@@ -85,7 +87,7 @@ class DamodaranBenchmarkIngestionService:
             if math.isnan(f) or math.isinf(f):
                 return None
             return f
-        except ValueError:
+        except (TypeError, ValueError):
             return None
 
     @staticmethod
@@ -124,11 +126,540 @@ class DamodaranBenchmarkIngestionService:
         return int(cleaned) if cleaned is not None else None
 
     @staticmethod
+    def _source_date(dataset_file: DamodaranDatasetFile) -> datetime | None:
+        try:
+            return datetime.fromisoformat(dataset_file.source_as_of or "")
+        except ValueError:
+            return None
+
+    @staticmethod
+    def _method_record(
+        *,
+        dataset_file: DamodaranDatasetFile,
+        assumption_key: str,
+        method_key: str,
+        country: str,
+        value: float,
+        source_file: str,
+        source_column: str,
+        source_row: int | str,
+        source_sheet: str = "Industry Averages",
+        industry: str | None = None,
+        currency: str | None = None,
+        is_default: bool = False,
+        source_type: str = "damodaran",
+        notes: str | None = None,
+    ) -> AssumptionMethodValue:
+        return AssumptionMethodValue(
+            dataset_file_id=dataset_file.id,
+            assumption_key=assumption_key,
+            method_key=method_key,
+            country=country,
+            industry=industry,
+            currency=currency,
+            value=value,
+            unit="decimal",
+            source_type=source_type,
+            source_name="Damodaran January 2026 benchmark",
+            source_file=source_file,
+            source_sheet=source_sheet,
+            source_row=str(source_row),
+            source_column=source_column,
+            dataset_date=DamodaranBenchmarkIngestionService._source_date(dataset_file),
+            confidence="high",
+            is_default_candidate=is_default,
+            notes=notes,
+        )
+
+    @staticmethod
+    def ingest_beta_methods_file(db: Session, file_path: str, country: str) -> int:
+        path = Path(file_path)
+        frame = DamodaranBenchmarkIngestionService._prepare_industry_frame(path)
+        columns = DamodaranBenchmarkIngestionService._require_columns(
+            frame,
+            source_label="beta",
+            required={
+                "industry": "Industry Name",
+                "beta": "Beta",
+                "unlevered_beta": "Unlevered beta",
+                "cash_corrected_beta": "Unlevered beta corrected for cash",
+            },
+        )
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="beta_methods",
+            country=country,
+            benchmark_model=AssumptionMethodValue,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+
+        records: list[AssumptionMethodValue] = []
+        methods = (
+            ("industry_regression_beta", "beta", True),
+            ("bottom_up_unlevered_beta", "unlevered_beta", False),
+            ("cash_corrected_unlevered_beta", "cash_corrected_beta", False),
+        )
+        for index, row in frame.iterrows():
+            industry = str(row[columns["industry"]]).strip()
+            if not industry or industry == "nan" or "total" in industry.casefold():
+                continue
+            for method_key, column_key, is_default in methods:
+                value = DamodaranBenchmarkIngestionService._clean_value(
+                    row[columns[column_key]]
+                )
+                if value is None:
+                    continue
+                records.append(
+                    DamodaranBenchmarkIngestionService._method_record(
+                        dataset_file=version.dataset_file,
+                        assumption_key="beta",
+                        method_key=method_key,
+                        country=country,
+                        industry=industry,
+                        value=value,
+                        source_file=path.name,
+                        source_column=columns[column_key],
+                        source_row=index + 1,
+                        is_default=is_default,
+                        notes=(
+                            "Industry benchmark prior; review company leverage and business mix "
+                            "before use."
+                        ),
+                    )
+                )
+        if not records:
+            db.rollback()
+            raise ValueError(f"No industry beta method records found in {file_path}")
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
+    def ingest_wacc_methods_file(db: Session, file_path: str, country: str) -> int:
+        path = Path(file_path)
+        raw = DamodaranBenchmarkIngestionService._read_industry_averages(path)
+        is_us = country == "United States"
+        if is_us and str(raw.iloc[2, 5]).strip() != "US companies":
+            raise ValueError("US WACC requires an explicitly US-company source workbook")
+        header_row = DamodaranBenchmarkIngestionService._find_header_row(raw)
+        frame = raw.iloc[header_row + 1 :].copy()
+        frame.columns = [str(column).strip() for column in raw.iloc[header_row]]
+        columns = DamodaranBenchmarkIngestionService._require_columns(
+            frame,
+            source_label="WACC",
+            required={
+                "industry": "Industry Name",
+                "cost_of_equity": "Cost of Equity",
+                "equity_to_capital": "E/(D+E)",
+                "cost_of_debt": "Cost of Debt",
+                "debt_to_capital": "D/(D+E)",
+                "wacc_usd": "Cost of Capital",
+                "wacc_local": "Cost of Capital (Local Currency)",
+            },
+        )
+        usd_risk_free = DamodaranBenchmarkIngestionService._require_labeled_value(
+            raw,
+            source_label="WACC input",
+            row_label="Long Term Treasury bond rate =",
+            numeric_column=3,
+        )
+        equity_risk_premium = DamodaranBenchmarkIngestionService._require_labeled_value(
+            raw,
+            source_label="WACC input",
+            row_label="Risk Premium to Use for Equity =",
+            numeric_column=3,
+        )
+        country_default_spread = DamodaranBenchmarkIngestionService._require_labeled_value(
+            raw,
+            source_label="WACC input",
+            row_label="Global Default Spread to add to cost of debt =",
+            numeric_column=3,
+        )
+        local_inflation = DamodaranBenchmarkIngestionService._require_labeled_value(
+            raw,
+            source_label="WACC currency input",
+            row_label="Expected inflation rate in local currency =" if is_us else "Expected inflation rate in Rupees =",
+            numeric_column=2,
+        )
+        usd_inflation = DamodaranBenchmarkIngestionService._require_labeled_value(
+            raw,
+            source_label="WACC currency input",
+            row_label="Expected inflation rate in US $ =",
+            numeric_column=2,
+        )
+        local_risk_free = ((1 + usd_risk_free) * (1 + local_inflation) / (1 + usd_inflation)) - 1
+
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="wacc_methods",
+            country=country,
+            benchmark_model=AssumptionMethodValue,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+
+        records = [
+            DamodaranBenchmarkIngestionService._method_record(
+                dataset_file=version.dataset_file,
+                assumption_key="equity_risk_premium",
+                method_key="damodaran_us_workbook_erp" if is_us else "damodaran_country_erp",
+                country=country,
+                value=equity_risk_premium,
+                source_file=path.name,
+                source_column="Risk Premium to Use for Equity",
+                source_row=10,
+                is_default=True,
+                notes=("Dated US WACC workbook equity premium. Review geographic exposure and reconcile the risk-free/default-spread convention; not a live premium."
+                    if is_us else "Dated WACC workbook input; source labels it 'Global weighted average'. Review geographic exposure before use."),
+            ),
+            DamodaranBenchmarkIngestionService._method_record(
+                dataset_file=version.dataset_file,
+                assumption_key="risk_free_rate",
+                method_key="long_term_us_treasury",
+                country=country,
+                currency="USD",
+                value=usd_risk_free,
+                source_file=path.name,
+                source_column="Long Term Treasury bond rate",
+                source_row=9,
+                is_default=is_us,
+                notes="USD risk-free input; do not apply directly to INR cash flows.",
+            ),
+            DamodaranBenchmarkIngestionService._method_record(
+                dataset_file=version.dataset_file,
+                assumption_key="risk_free_rate",
+                method_key="inflation_parity_from_us_treasury",
+                country=country,
+                currency="INR",
+                value=local_risk_free,
+                source_file=path.name,
+                source_column="Rows 9, 16, and 17",
+                source_row="9,16,17",
+                is_default=True,
+                source_type="calculation",
+                notes=(
+                    "Calculation: (1 + USD Treasury rate) * (1 + INR inflation) / "
+                    "(1 + USD inflation) - 1."
+                ),
+            ),
+            DamodaranBenchmarkIngestionService._method_record(
+                dataset_file=version.dataset_file,
+                assumption_key="country_default_spread",
+                method_key="damodaran_sovereign_default_spread",
+                country=country,
+                value=country_default_spread,
+                source_file=path.name,
+                source_column="Global Default Spread to add to cost of debt",
+                source_row=11,
+                is_default=True,
+                notes=("Dated US WACC workbook default-spread input, not a company borrowing spread."
+                    if is_us else "Dated WACC workbook input labeled 'Global weighted average', not verified country-specific risk."),
+            ),
+        ]
+        if is_us:
+            # The US workbook's optional conversion block is not an INR assumption.
+            records = [record for record in records if record.currency != "INR"]
+        for index, row in frame.iterrows():
+            industry = str(row[columns["industry"]]).strip()
+            if not industry or industry == "nan" or "total" in industry.casefold():
+                continue
+            values = {
+                key: DamodaranBenchmarkIngestionService._clean_value(row[column])
+                for key, column in columns.items()
+                if key != "industry"
+            }
+            local_cost_of_debt = (
+                ((1 + values["cost_of_debt"]) * (1 + local_inflation) / (1 + usd_inflation)) - 1
+                if values["cost_of_debt"] is not None
+                else None
+            )
+            industry_methods = (
+                ("cost_of_equity", "industry_cost_of_equity_usd", values["cost_of_equity"], "USD", False, columns["cost_of_equity"], None),
+                ("pre_tax_cost_of_debt", "industry_cost_of_debt_usd", values["cost_of_debt"], "USD", False, columns["cost_of_debt"], None),
+                ("pre_tax_cost_of_debt", "industry_cost_of_debt_local", local_cost_of_debt, "INR", True, columns["cost_of_debt"], "Converted by the workbook inflation-parity inputs."),
+                ("debt_to_capital", "industry_market_debt_ratio", values["debt_to_capital"], None, True, columns["debt_to_capital"], None),
+                ("equity_to_capital", "industry_market_equity_ratio", values["equity_to_capital"], None, True, columns["equity_to_capital"], None),
+                ("wacc_start", "industry_cost_of_capital_usd", values["wacc_usd"], "USD", False, columns["wacc_usd"], None),
+                ("wacc_start", "industry_cost_of_capital_local", values["wacc_local"], "INR", True, columns["wacc_local"], "Local-currency WACC calculated in the source workbook."),
+            )
+            for assumption_key, method_key, value, currency, is_default, source_column, notes in industry_methods:
+                if value is None or (is_us and currency == "INR"):
+                    continue
+                records.append(
+                    DamodaranBenchmarkIngestionService._method_record(
+                        dataset_file=version.dataset_file,
+                        assumption_key=assumption_key,
+                        method_key=method_key,
+                        country=country,
+                        industry=industry,
+                        currency=currency,
+                        value=value,
+                        source_file=path.name,
+                        source_column=source_column,
+                        source_row=index + 1,
+                        is_default=is_default or (is_us and currency == "USD"),
+                        source_type="calculation" if method_key == "industry_cost_of_debt_local" else "damodaran",
+                        notes=notes,
+                    )
+                )
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
+    def ingest_industry_tax_methods_file(db: Session, file_path: str, country: str) -> int:
+        path = Path(file_path)
+        raw = DamodaranBenchmarkIngestionService._read_industry_averages(path)
+        header_row = DamodaranBenchmarkIngestionService._find_header_row(raw)
+        headers = [" ".join(str(value).split()) for value in raw.iloc[header_row].tolist()]
+        industry_index = next(i for i, value in enumerate(headers) if value.casefold() == "industry name")
+        tax_index = next(i for i, value in enumerate(headers) if value.casefold() == "average across all companies")
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="industry_tax_methods",
+            country=country,
+            benchmark_model=AssumptionMethodValue,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+        records: list[AssumptionMethodValue] = []
+        for index in range(header_row + 1, len(raw)):
+            industry = str(raw.iloc[index, industry_index]).strip()
+            if not industry or industry == "nan" or "total" in industry.casefold():
+                continue
+            value = DamodaranBenchmarkIngestionService._clean_value(raw.iloc[index, tax_index])
+            if value is None:
+                continue
+            records.append(
+                DamodaranBenchmarkIngestionService._method_record(
+                    dataset_file=version.dataset_file,
+                    assumption_key="tax_rate",
+                    method_key="industry_effective_tax_rate",
+                    country=country,
+                    industry=industry,
+                    value=value,
+                    source_file=path.name,
+                    source_column=headers[tax_index],
+                    source_row=index + 1,
+                    is_default=True,
+                    notes=(
+                        "Industry effective tax-rate prior. Do not substitute mechanically "
+                        "for a reviewed marginal terminal tax rate."
+                    ),
+                )
+            )
+        if not records:
+            db.rollback()
+            raise ValueError(f"No industry tax method records found in {file_path}")
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
+    def ingest_country_tax_methods_file(db: Session, file_path: str) -> int:
+        path = Path(file_path)
+        raw = DamodaranBenchmarkIngestionService._read_country_stats(path)
+        header_row = next(
+            (
+                index for index in range(min(20, len(raw)))
+                if "country" in {
+                    str(value).strip().casefold() for value in raw.iloc[index].tolist()
+                }
+            ),
+            -1,
+        )
+        if header_row < 0:
+            raise ValueError(f"Country tax header was not found in {file_path}")
+        frame = raw.iloc[header_row + 1 :].copy()
+        frame.columns = [str(column).strip() for column in raw.iloc[header_row]]
+        columns = DamodaranBenchmarkIngestionService._require_columns(
+            frame,
+            source_label="country tax",
+            required={"country": "Country", "tax_rate": "Corporate Tax Rate"},
+        )
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="country_tax_methods",
+            country="Global",
+            benchmark_model=AssumptionMethodValue,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+        records: list[AssumptionMethodValue] = []
+        for index, row in frame.iterrows():
+            country = str(row[columns["country"]]).strip()
+            value = DamodaranBenchmarkIngestionService._clean_value(row[columns["tax_rate"]])
+            if not country or country == "nan" or value is None:
+                continue
+            records.append(
+                DamodaranBenchmarkIngestionService._method_record(
+                    dataset_file=version.dataset_file,
+                    assumption_key="tax_rate",
+                    method_key="country_marginal_corporate_tax_rate",
+                    country=country,
+                    value=value,
+                    source_file=path.name,
+                    source_sheet=str(raw.columns.name or "Sheet1"),
+                    source_column=columns["tax_rate"],
+                    source_row=index + 1,
+                    is_default=True,
+                    notes="Country marginal corporate tax-rate benchmark.",
+                )
+            )
+        if not records:
+            db.rollback()
+            raise ValueError(f"No country tax method records found in {file_path}")
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
+    def ingest_growth_file(db: Session, file_path: str, country: str) -> int:
+        path = Path(file_path)
+        frame = DamodaranBenchmarkIngestionService._prepare_industry_frame(path)
+        columns = DamodaranBenchmarkIngestionService._require_columns(
+            frame,
+            source_label="growth",
+            required={
+                "industry": "Industry Name",
+                "historical_net_income_growth": "CAGR in Net Income- Last 5 years",
+                "historical_revenue_growth": "CAGR in Revenues- Last 5 years",
+                "expected_revenue_growth_2y": "Expected Growth in Revenues - Next 2 years",
+                "expected_revenue_growth_5y": "Expected Growth in Revenues - Next 5 years",
+                "expected_eps_growth": "Expected Growth in EPS - Next 5 years",
+            },
+        )
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="historical_growth",
+            country=country,
+            benchmark_model=DamodaranGrowthBenchmark,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+        records: list[DamodaranGrowthBenchmark] = []
+        for _, row in frame.iterrows():
+            industry = str(row[columns["industry"]]).strip()
+            if not industry or industry == "nan" or "total" in industry.casefold():
+                continue
+            records.append(
+                DamodaranGrowthBenchmark(
+                    dataset_file_id=version.dataset_file.id,
+                    industry_name=industry,
+                    country=country,
+                    historical_net_income_growth=DamodaranBenchmarkIngestionService._clean_value(row[columns["historical_net_income_growth"]]),
+                    historical_revenue_growth=DamodaranBenchmarkIngestionService._clean_value(row[columns["historical_revenue_growth"]]),
+                    expected_revenue_growth=DamodaranBenchmarkIngestionService._clean_value(row[columns["expected_revenue_growth_5y"]]),
+                    expected_revenue_growth_2y=DamodaranBenchmarkIngestionService._clean_value(row[columns["expected_revenue_growth_2y"]]),
+                    expected_revenue_growth_5y=DamodaranBenchmarkIngestionService._clean_value(row[columns["expected_revenue_growth_5y"]]),
+                    expected_eps_growth=DamodaranBenchmarkIngestionService._clean_value(row[columns["expected_eps_growth"]]),
+                )
+            )
+        if not records:
+            db.rollback()
+            raise ValueError(f"No industry growth records found in {file_path}")
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
+    def ingest_financing_flows_file(db: Session, file_path: str, country: str) -> int:
+        path = Path(file_path)
+        frame = DamodaranBenchmarkIngestionService._prepare_industry_frame(path)
+        columns = DamodaranBenchmarkIngestionService._require_columns(
+            frame,
+            source_label="financing flows",
+            required={
+                "industry": "Industry Name",
+                "firm_count": "Number of Firms",
+                "dividends": "Dividends in $ millions",
+                "buybacks": "Buybacks in $ millions",
+                "equity_issuance": "Equity Issuance in $ millions",
+                "net_equity_change": "Net Equity Change in $ millions",
+                "net_equity_change_ratio": "Net Equity Change as % of Book Equity",
+                "debt_repaid": "Debt Repaid in $ millions",
+                "debt_raised": "Debt Raised in $ millions",
+                "net_debt_change": "Net Debt Change in $ millions",
+                "net_debt_change_ratio": "Net Change in Debt as % of Total Debt",
+                "lease_debt_change": "Change in Lease Debt in $ millions",
+            },
+        )
+        version = DamodaranDatasetVersionService.begin_typed_import(
+            db,
+            path=path,
+            dataset_code="financing_flows",
+            country=country,
+            benchmark_model=DamodaranFinancingFlowsBenchmark,
+        )
+        if version.is_idempotent:
+            return version.row_count or 0
+        records: list[DamodaranFinancingFlowsBenchmark] = []
+        for _, row in frame.iterrows():
+            industry = str(row[columns["industry"]]).strip()
+            if not industry or industry == "nan" or "total" in industry.casefold():
+                continue
+            records.append(
+                DamodaranFinancingFlowsBenchmark(
+                    dataset_file_id=version.dataset_file.id,
+                    industry_name=industry,
+                    country=country,
+                    number_of_firms=DamodaranBenchmarkIngestionService._firm_count(row[columns["firm_count"]]),
+                    dividends_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["dividends"]]),
+                    buybacks_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["buybacks"]]),
+                    equity_issuance_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["equity_issuance"]]),
+                    net_equity_change_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["net_equity_change"]]),
+                    net_equity_change_to_book_equity=DamodaranBenchmarkIngestionService._clean_value(row[columns["net_equity_change_ratio"]]),
+                    debt_repaid_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["debt_repaid"]]),
+                    debt_raised_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["debt_raised"]]),
+                    net_debt_change_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["net_debt_change"]]),
+                    net_debt_change_to_total_debt=DamodaranBenchmarkIngestionService._clean_value(row[columns["net_debt_change_ratio"]]),
+                    lease_debt_change_usd_millions=DamodaranBenchmarkIngestionService._clean_value(row[columns["lease_debt_change"]]),
+                )
+            )
+        if not records:
+            db.rollback()
+            raise ValueError(f"No industry financing-flow records found in {file_path}")
+        db.bulk_save_objects(records)
+        DamodaranDatasetVersionService.complete_typed_import(
+            db,
+            dataset_file=version.dataset_file,
+            row_count=len(records),
+        )
+        return len(records)
+
+    @staticmethod
     def _require_labeled_value(
         raw: pd.DataFrame,
         *,
         source_label: str,
         row_label: str,
+        numeric_column: int | None = None,
     ) -> float:
         normalized_label = " ".join(row_label.split()).casefold()
         matching_rows = []
@@ -141,6 +672,15 @@ class DamodaranBenchmarkIngestionService:
                 f"Expected one {source_label} row labeled {row_label}; "
                 f"found {len(matching_rows)}"
             )
+        if numeric_column is not None:
+            cleaned = DamodaranBenchmarkIngestionService._clean_value(
+                raw.iloc[matching_rows[0], numeric_column]
+            )
+            if cleaned is None:
+                raise ValueError(
+                    f"Expected numeric {source_label} value for {row_label} in column {numeric_column}"
+                )
+            return cleaned
         values = [
             cleaned
             for value in raw.loc[matching_rows[0]].iloc[1:]

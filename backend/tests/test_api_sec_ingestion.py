@@ -139,7 +139,7 @@ def test_post_sec_ingestion_can_download_filing_text(client: TestClient, monkeyp
         assert url == "https://www.sec.gov/example/msft-20260331.htm"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.providers.sec_provider.fetch_public_text", lambda url, **kwargs: fake_get(url, **kwargs).text)
 
     response = client.post(
         "/ingest/sec-filings",
