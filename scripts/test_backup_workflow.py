@@ -1,4 +1,4 @@
-"""Exercise shell backup/count verification with a fake Docker executable only."""
+"""Exercise backup/restore orchestration without normal data or a Docker socket."""
 from hashlib import sha256
 import json
 import os
@@ -6,10 +6,10 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from scripts.test_recovery_metadata import inventory
 
 
 ROOT = Path(__file__).resolve().parents[1]
-COUNTS = "alpha\t2\nbeta\t0\ngamma\t3\n"
 FAKE_DOCKER = '''#!/usr/bin/env python3
 import json, os, sys
 from pathlib import Path
@@ -17,20 +17,35 @@ args = sys.argv[1:]
 with open(os.environ["FAKE_DOCKER_LOG"], "a") as log:
     log.write(json.dumps(args) + "\\n")
 if "pg_dump" in args:
+    if os.environ.get("FAKE_DUMP_INTERRUPTED"):
+        print("partial dump")
+        raise SystemExit(1)
     print("Mock Data database dump")
 elif "pg_restore" in args:
     sys.stdin.buffer.read()
+    if "--list" not in args and os.environ.get("FAKE_RESTORE_FAILED"):
+        raise SystemExit(1)
 elif "psql" in args:
-    query = args[args.index("-c") + 1]
-    if "pg_tables" in query:
-        print("alpha\\nbeta\\ngamma")
-    elif "octet_length" in query:
-        print("1\\t12")
-    else:
-        # Docker exec -T can consume the surrounding shell loop's stdin.
-        sys.stdin.buffer.read()
-        table = query.split('"')[1]
-        print({"alpha":2, "beta":int(os.environ.get("FAKE_BETA_COUNT", "0")), "gamma":3}[table])
+    sys.stdin.buffer.read()
+    rows = json.loads(os.environ["FAKE_INVENTORY"])
+    # The dump/scratch result is stable; live writes are deliberately different.
+    if "compose" in args and os.environ.get("FAKE_BETA_COUNT"):
+        for row in rows:
+            if row.get("kind") == "table" and row.get("name") == "beta":
+                row["rows"] = int(os.environ["FAKE_BETA_COUNT"])
+    if "compose" in args and os.environ.get("FAKE_CONTENT_CORRUPTED"):
+        rows[1]["sha256"] = "0" * 64
+    if os.environ.get("FAKE_PROOF_INTERRUPTED"):
+        os.kill(os.getppid(), 15)
+        raise SystemExit(1)
+    for row in rows:
+        print(json.dumps(row))
+elif "pg_isready" in args:
+    pass
+elif "run" in args and "--detach" in args:
+    print("a" * 64)
+elif "rm" in args:
+    pass
 elif "alembic" in args:
     print("mock_revision (head)")
 elif "ps" in args:
@@ -54,17 +69,31 @@ class BackupWorkflowTests(unittest.TestCase):
             "FAKE_DOCKER_LOG": str(self.directory / "calls.jsonl"),
             "BACKUP_ROOT": str(self.directory / "backups"), "BACKUP_PRUNE": "false",
             "COMPOSE_FILE": str(self.directory / "mock-compose.yml"),
-            "COMPOSE_PROJECT_NAME": "mock-backup-test", "POSTGRES_DB": "mock_database"}
+            "COMPOSE_PROJECT_NAME": "mock-backup-test", "POSTGRES_DB": "mock_database",
+            "DOCKER_BIN": str(docker), "RESTORE_ALLOW_LEGACY": "true", "RECOVERY_PYTHON_IMAGE": ""}
+        rows = inventory()
+        rows.extend({"kind": "table", "name": name, "rows": count, "sha256": sha256(name.encode()).hexdigest()}
+            for name, count in (("alpha", 2), ("beta", 0), ("gamma", 3)))
+        self.rows = rows
+        self.env["FAKE_INVENTORY"] = json.dumps(rows)
+        self.counts = "".join(f'{row["name"]}\t{row["rows"]}\n'
+            for row in sorted(rows, key=lambda row: row.get("name", "")) if row["kind"] == "table")
 
     def run_script(self, name, *args):
         return subprocess.run(["bash", str(ROOT / "scripts" / name), *map(str, args)],
             env=self.env, capture_output=True, text=True, timeout=30)
 
-    def restore_fixture(self, counts=COUNTS):
+    def test_recovery_shell_entrypoints_parse(self):
+        for name in ("backup_local.sh", "restore_local.sh", "drill_backup_restore.sh", "recovery_common.sh"):
+            with self.subTest(name=name):
+                result = subprocess.run(["bash", "-n", str(ROOT / "scripts" / name)], capture_output=True, text=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+
+    def restore_fixture(self, counts=None):
         directory = self.directory / "restore-fixture"
         directory.mkdir()
         (directory / "database.dump").write_text("Mock Data database dump\n")
-        (directory / "record_counts.tsv").write_text(counts)
+        (directory / "record_counts.tsv").write_text(self.counts if counts is None else counts)
         (directory / "manifest.json").write_text(json.dumps({"format_version": 1}))
         checksums = "".join(f"{sha256((directory / name).read_bytes()).hexdigest()}  {name}\n"
             for name in ("database.dump", "record_counts.tsv", "manifest.json"))
@@ -76,7 +105,71 @@ class BackupWorkflowTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         backups = list((self.directory / "backups").iterdir())
         self.assertEqual(len(backups), 1)
-        self.assertEqual((backups[0] / "record_counts.tsv").read_text(), COUNTS)
+        self.assertEqual((backups[0] / "record_counts.tsv").read_text(), self.counts)
+
+    def verified_backup(self):
+        result = self.run_script("backup_local.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return next((self.directory / "backups").glob("*-market-intelligence"))
+
+    def calls(self):
+        path = self.directory / "calls.jsonl"
+        return [json.loads(line) for line in path.read_text().splitlines()] if path.exists() else []
+
+    def test_live_writes_cannot_change_completed_dump_manifest(self):
+        self.env["FAKE_BETA_COUNT"] = "999"
+        directory = self.verified_backup()
+        self.assertIn("beta\t0\n", (directory / "record_counts.tsv").read_text())
+        self.assertFalse(any("compose" in call and "psql" in call for call in self.calls()))
+        scratch = next(call for call in self.calls() if "--detach" in call)
+        self.assertEqual(scratch[scratch.index("--network") + 1], "none")
+        self.assertNotIn("-p", scratch)
+        self.assertTrue(any("rm" in call and "a" * 64 in call for call in self.calls()))
+
+    def test_v2_restores_both_asset_stores_and_table_content(self):
+        directory = self.verified_backup()
+        self.env["RESTORE_ALLOW_LEGACY"] = "false"
+        result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("format 2", result.stdout)
+
+    def test_equal_count_content_corruption_keeps_writers_stopped(self):
+        directory = self.verified_backup()
+        self.env["FAKE_CONTENT_CORRUPTED"] = "true"
+        result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("up" in call for call in self.calls()))
+
+    def test_failed_dump_is_partial_and_cannot_be_restored(self):
+        self.env["FAKE_DUMP_INTERRUPTED"] = "true"
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        partial = next((self.directory / "backups").iterdir())
+        self.assertTrue(partial.name.endswith(".partial"))
+        result = self.run_script("restore_local.sh", partial, "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("dropdb" in call or "stop" in call for call in self.calls()))
+
+    def test_invalid_checksum_fails_before_stopping_services(self):
+        directory = self.verified_backup()
+        (directory / "database.dump").write_text("Corrupted Mock Data dump")
+        result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("dropdb" in call or "stop" in call for call in self.calls()))
+
+    def test_failed_restore_does_not_restart_writers(self):
+        directory = self.verified_backup()
+        self.env["FAKE_RESTORE_FAILED"] = "true"
+        result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("up" in call for call in self.calls()))
+
+    def test_interruption_removes_only_owned_scratch_and_retains_partial(self):
+        self.env["FAKE_PROOF_INTERRUPTED"] = "true"
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertTrue(any("rm" in call and "a" * 64 in call for call in self.calls()))
+        self.assertFalse(list((self.directory / "backups").glob("*-market-intelligence")))
 
     def test_restore_checks_every_manifest_table(self):
         result = self.run_script("restore_local.sh", self.restore_fixture(), "--yes-replace-database")

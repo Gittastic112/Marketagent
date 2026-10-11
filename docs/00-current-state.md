@@ -1,9 +1,9 @@
 # Current State
 
-Source tests: 2026-10-10. Scope: local-first, single-user equity research.
+Source tests: 2026-10-11. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest foundation: [M01 rollout and browser repair](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md). Prior feature delivery: [security and analyst reviews](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md).
+Latest source: [M02 ownership and browser proof](archive/checkpoints/2026/m02-ownership-2026-10-11.md); [M03 recovery in progress](archive/checkpoints/2026/m03-recovery-2026-10-11.md). Normal runtime remains M01.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -11,8 +11,8 @@ records the actual Apple scan, illustrative calculation and recovery verificatio
 
 This is a broad research, valuation, evidence and portfolio platform, not a
 finished daily-driver or trading system. Reviewed-source coverage, workflow
-integrity, and public-deployment security remain uneven. The tracker accepts M01
-at 10% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
+integrity, and public-deployment security remain uneven. The tracker accepts M01-M02
+at 20% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
 capability status; the [single limitation ledger](agent_capabilities_and_limitations.md)
 owns remaining gaps and the confirmed personal-research US/India, USD-base scope.
 
@@ -20,8 +20,8 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,294 passed October 10 in the network-disabled source test container, including request/DNS/upload/rate boundaries and immutable/stale/owned analyst reviews; five upstream deprecation warnings |
-| Frontend | 234 tests pass; TypeScript passes with final browser harness repairs. October 10 disposable functional workflows and normal desktop/mobile checks pass; the unchanged route-timing matrix passes on repeat after one slow local sample |
+| Backend | 1,310 passed October 11, including pure domain boundaries and critical frontend/backend contract manifest checks; five upstream deprecation warnings. M02 GitHub baseline passes after fixing normal registration of a test-only dynamic import |
+| Frontend | 259 tests, TypeScript, production build and all 21 GitHub browser workflows pass October 11. M02 extraction preserves legacy action exports, saved workflows and scoped request isolation; normal-runtime browser proof remains M01 |
 | API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |

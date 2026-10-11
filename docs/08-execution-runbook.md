@@ -80,7 +80,7 @@ as a side effect of refactoring.
 Documentation and repository static checks, from root:
 
 ~~~bash
-python3 -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow
+python3 -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata
 python3 scripts/check_docs.py
 python3 scripts/check_secrets.py
 python3 scripts/validate_project_skills.py
@@ -155,7 +155,7 @@ Each agent owns only its manifest paths and evidence tree. Contract changes,
 central docs, test infrastructure and migrations use the plan's coordinator
 procedure. A boundary failure does not authorize editing a neighbor's test.
 
-Browser, release and restore-drill runners use fixed Compose project names.
+Browser and release runners use fixed Compose project names; recovery allocates a unique project.
 Only the coordinator dispatches one such gate at a time; record the owner until
 cleanup is confirmed. Different ports or worktrees do not prevent destructive
 cross-run cleanup. Build shared images before parallel tests and avoid concurrent
@@ -354,10 +354,12 @@ remain review-required and do not alter saved models.
   the manual browser gate.
 - scripts/backup_local.sh and restore_local.sh own backup/restore. Inspect exact
   targets and get data-loss authorization before restore/reset/volume deletion.
-  Table-count commands must not consume the surrounding manifest loop's input;
-  the backup workflow tests reproduce this Docker behavior without accessing Docker.
-  Restore checks the actual restored table inventory, not only tables listed in
-  the manifest, and does not restart the app if legacy/incomplete counts differ.
+  Format 2 verifies the completed dump in a network-disabled, bounded scratch
+  PostgreSQL 16 container; normal writes can continue. Its manifest contains all
+  public table counts/content fingerprints and both PDF stores' byte hashes.
+  Paths, complete checksums, format and inventory are checked before replacement.
+  Restore refuses partial or linked folders; format 1 needs explicit
+  `RESTORE_ALLOW_LEGACY=true` and provides only count-based verification.
   It stops running/restarting `scheduler` and `source_scheduler` writers before database
   replacement and resumes only those that were running after verification.
   Custom worker names use `DAILY_BRIEF_SERVICE` and `SOURCE_REFRESH_SERVICE`;
@@ -365,8 +367,27 @@ remain review-required and do not alter saved models.
   manually. Worker lifecycle regressions use fake Docker, not the normal database.
   Verify a backup by restoring to a separate disposable database and comparing
   every table plus original asset bytes before normal-runtime maintenance.
-  Both `document_assets.content` and `brief_sources.pdf_bytes` are in the dump;
-  the legacy manifest's asset summary counts only the former.
+  Run `bash scripts/drill_backup_restore.sh` for the isolated concurrent-write
+  and original-byte drill. It builds `docker-compose.recovery.yml`, publishes no
+  ports, checks the actual tmpfs data directory and never adopts an existing project.
+  Fake-Docker and metadata tests cover corruption, failures, interruptions and
+  worker state. PostgreSQL 16 is the supported fingerprint basis.
+  `BACKUP_ROOT` selects a local folder. Directories/files use 0700/0600. Failed
+  backups keep a clearly incomplete `.partial` folder for inspection. Retention
+  defaults off; `BACKUP_PRUNE=true BACKUP_RETENTION_COUNT=7` deletes only older
+  verified format-2 folders owned by this script. It preserves invalid, unrelated,
+  legacy and linked folders. Never remove the only verified recovery copy.
+  The metadata helper uses host Python when available; set
+  `RECOVERY_PYTHON_IMAGE=market-intelligence-tools:local` after building the tools
+  target to use bounded, network-disabled Docker instead. `DOCKER_BIN` accepts
+  the Docker executable path; `COMPOSE_ENV_FILE=/dev/null` is mandatory for agent
+  drills. Operator restores must supply the same reviewed Compose environment
+  as the normal app, without printing or sharing its values.
+  Off-device procedure: choose an encrypted removable/off-device destination,
+  copy one complete verified folder, keep recovery keys/environment separately,
+  then restore the retrieved copy into the disposable environment and compare
+  every table/PDF hash. A same-disk folder or cloud sync alone is not that proof.
+  No transfer, credential rotation, pruning or scheduled job is performed by default.
 - Root legacy scripts are not maintained entry points unless explicitly verified.
 
 ## Completion and documentation

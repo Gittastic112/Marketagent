@@ -21,7 +21,7 @@ class LocalComposeTests(unittest.TestCase):
                     self.assertTrue(port.startswith("127.0.0.1:"), f"{name} exposes a non-loopback port")
 
     def test_dev_and_unit_test_overrides_do_not_publish_additional_ports(self):
-        for name in ("docker-compose.dev.yml", "docker-compose.test.yml", "docker-compose.tools.yml"):
+        for name in ("docker-compose.dev.yml", "docker-compose.test.yml", "docker-compose.tools.yml", "docker-compose.recovery.yml"):
             with self.subTest(compose=name):
                 self.assertNotRegex((ROOT / name).read_text(), r"(?m)^\s*ports:")
 

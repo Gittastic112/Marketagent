@@ -1,15 +1,16 @@
 # Agent Handoff
 
-M02 in progress: 2026-10-11. Broader product proof stays
+M02 accepted, M03 in progress: 2026-10-11. Broader product proof stays
 separately dated in [Current State](00-current-state.md). Latest work is recorded
-in the [ownership checkpoint](archive/checkpoints/2026/m02-ownership-2026-10-11.md).
+in the [ownership](archive/checkpoints/2026/m02-ownership-2026-10-11.md) and
+[recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) checkpoints.
 
 ## Next execution boundary
 
 Use the [completion tracker](roadmaps/completion-tracker.md) for percentage work.
-"Finish 10%" is satisfied; "finish the next 10%" means close M02, the earliest unfinished
+"Finish 10%" is satisfied; "finish the next 10%" means close M03, the earliest unfinished
 milestone. The ten gates are acceptance points, not estimates of engineering hours.
-M01 is accepted: 1/10 gates, or 10 acceptance points. M02 is being implemented.
+M01 and M02 are accepted: 2/10 gates, or 20 acceptance points.
 This is not an estimate of code completion or engineering hours.
 
 Read the nearest AGENTS.md, [code map](code-map.md) and the milestone's actual
@@ -17,8 +18,8 @@ owners before editing. For architecture work, also read
 [architecture](02-architecture.md). Preserve prior/untracked work.
 
 The user authorized sequential M02 through M09 work and conservative continuation
-when inputs are missing. Finish M02's pending build/browser/publication checks,
-then continue the independent tasks. Preserve open human-review, actual-trade and
+when inputs are missing. Complete M03's remaining independent security tasks,
+then continue through M09. Preserve open human-review, actual-trade and
 off-device recovery gates. M02 owns folder cleanup and module boundaries.
 Portable tooling provides Git and recovery-script checks despite blocked host
 runtimes. The private GitHub branch codex/m01-foundation preserves the tested
@@ -26,8 +27,9 @@ application/reference baseline and completion evidence in
 [draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1). Check its review/CI
 state before integration. The shared local index/branch and unclassified prior files
 remain preserved; do not infer a clean checkout or reset/stage everything.
-The new remote branch codex/m02-m09-completion starts at M01's verified head;
-M02 edits are still local. The checkpoint records current source/test evidence.
+Branch codex/m02-m09-completion is [PR #2](https://github.com/Gittastic112/Marketagent/pull/2).
+M02 head 9881f4113a2649f27c4c2a91833676311ed7a0ce passes every GitHub check,
+including 21 browser workflows. M03 recovery edits are local pending publication.
 
 ## Runtime and source changes
 
@@ -48,7 +50,9 @@ M02 edits are still local. The checkpoint records current source/test evidence.
   stopped with restart=no; pgAdmin is stopped and its 512 MiB limit is applied.
 - A separate tools target runs repository/fake-Docker recovery tests without
   network, normal credentials or a Docker socket. Current database restore and
-  all 109 table fingerprints pass; concurrent/off-device recovery still needs M03.
+  all 109 table fingerprints pass. M03 now passes a concurrent-write disposable
+  restore with both PDF stores and linked private/portfolio evidence. Off-device
+  recovery remains open; the normal runtime still runs M01 source/images.
 - Normal/source head remains s1s1s1s1s1s1. All 109 table fingerprints matched across
   rollout. Initial browser access generated one deterministic Daily Brief. A later
   normal quote ingestion changed three tables before the frontend security patch;
@@ -68,8 +72,8 @@ user requests delegation, establish a preserved common baseline and follow the
 [exclusive ownership manifest](workstreams/ownership.tsv). Unlisted/shared paths
 stay frozen during parallel edits; the coordinator reconciles central docs once.
 
-Browser/release/restore runners use fixed Compose project names. Serialize their
-use and cleanup; different ports/worktrees alone are not isolation. Commands and
+Browser/release runners use fixed Compose project names; serialize their use.
+Recovery now allocates a unique portless tmpfs project. Commands and
 validation belong in the [runbook](08-execution-runbook.md).
 
 ## Preserve product boundaries

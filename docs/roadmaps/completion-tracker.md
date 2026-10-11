@@ -1,6 +1,6 @@
 # Completion tracker: local research release v1
 
-Created October 10, 2026. **Accepted milestones: 1/10 (10%). Next: M02.**
+Created October 10, 2026. **Accepted milestones: 2/10 (20%). Next: M03.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
 Much of the implementation exists; historical tests do not close today's gates.
 
@@ -56,8 +56,8 @@ It is not a second progress counter or an instruction to dispatch agents.
 | Gate | Cumulative target | Deliverable | Depends on | State | Evidence |
 |---|---:|---|---|---|---|
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
-| M02 | 20% | Clear code and folder ownership | M01 | In progress | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
-| M03 | 30% | Reliable recovery and local security | M02 | Not started | None |
+| M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
+| M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery checkpoint](../archive/checkpoints/2026/m03-recovery-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Not started | None |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Not started | None |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | Not started | None |
@@ -109,28 +109,28 @@ gate does not certify genuine-input portfolio coverage or complete M03 recovery.
 
 Owners: [code map](../code-map.md), actual callers and contract tests.
 
-- [ ] M02-01 Classify every root script and generated directory using Git history,
+- [x] M02-01 Classify every root script and generated directory using Git history,
   caller searches and the runbook. Relocate retained one-off scripts under an
   explicitly retired tooling directory; preserve necessary compatibility entry
   points. Remove only proven generated/unused artifacts and record exact paths.
-- [ ] M02-02 Extract server actions from the 1,188-line frontend action collection
+- [x] M02-02 Extract server actions from the 1,188-line frontend action collection
   by company, evidence, portfolio and valuation workflow. Keep old named imports
   working; share only validation/error/revalidation helpers that have real callers.
   Test payloads, auth, redirects, errors and save behavior, not just source text.
-- [ ] M02-03 Extract remaining legacy backend contracts by domain, starting with
+- [x] M02-03 Extract remaining legacy backend contracts by domain, starting with
   brief contracts in W1 when needed. Keep identical legacy class exports and
   public OpenAPI compatibility. Pure contracts must not import HTTP or persistence.
-- [ ] M02-04 Split peer review, benchmark parsing and assumption autofill where
+- [x] M02-04 Split peer review, benchmark parsing and assumption autofill where
   responsibilities actually diverge. Inspect the 1,769/1,459/1,246-line owners;
   preserve atomic writes, receipt hashes and input provenance. File size alone
   does not justify a move. Keep one authoritative market-provider factory.
-- [ ] M02-05 Separate the largest UI orchestration from presentation, beginning
+- [x] M02-05 Separate the largest UI orchestration from presentation, beginning
   with Data Health, peer review and draft review. Retain loading/error/partial/
   stale/not-configured/Mock Data states and request identity isolation.
-- [ ] M02-06 Establish contract-drift verification for frontend/backend types
+- [x] M02-06 Establish contract-drift verification for frontend/backend types
   before any generated-client migration. Preserve aliases, envelopes and error
   identity. Retire an alias only after callers and compatibility tests allow it.
-- [ ] M02-07 Update the existing code map and add focused dependency/import guards.
+- [x] M02-07 Update the existing code map and add focused dependency/import guards.
   Verify public API equality, ownership, affected workflows and browser behavior.
 
 Gate: each changed workflow has one clear owner and no broken callers or source
@@ -142,11 +142,11 @@ a second provider factory or a catch-all utilities framework for folder tidiness
 Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consistent-backup-and-recoverable-evidence);
 [security reference](../06-security-threat-model.md).
 
-- [ ] M03-01 Make the backup manifest and dump describe the same database snapshot
+- [x] M03-01 Make the backup manifest and dump describe the same database snapshot
   during concurrent writes. Version the format and explicitly handle old backups.
-- [ ] M03-02 Verify both document_assets and private brief-source PDF bytes, full
+- [x] M03-02 Verify both document_assets and private brief-source PDF bytes, full
   table inventories and content fingerprints. A table-count match alone is insufficient.
-- [ ] M03-03 Restore a fresh backup into a separate disposable PostgreSQL instance,
+- [x] M03-03 Restore a fresh backup into a separate disposable PostgreSQL instance,
   verify the intact migration chain and asset bytes, and test failure recovery,
   worker stop/resume and interruption. Never replace the normal database for a test.
 - [ ] M03-04 Complete host/configuration checks with the operator where access is

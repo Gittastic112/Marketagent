@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-10-10 (M01 rollout, browser repairs and completion sequencing).
+**Updated:** 2026-10-11 (M02 acceptance and M03 local recovery implementation).
 Product validation dates remain in Current State.
 
 This document is the practical trust boundary for the product. It intentionally
@@ -75,6 +75,8 @@ these Indian companies; USD portfolio reporting requires dated, sourced FX.
 October 11 completion work: the user has no off-device backup destination or
 genuine trade records yet. Folder-based local recovery and labeled fixture tests
 may proceed. They do not prove off-device recovery or actual portfolio history;
+the October 11 normal format-2 dump also remains in a `.partial` folder because
+macOS blocked finalization. The earlier verified backup remains available;
 these gates stay open while independent milestone work continues.
 
 - Initial markets, coverage size and USD base are chosen above. Verify security
@@ -95,7 +97,7 @@ these gates stay open while independent milestone work continues.
 |---|---|
 | Public deployment security | Keep the app on localhost |
 | Local-only runtime boundary | Normal and E2E Compose bind published ports to 127.0.0.1, protected by regression checks. September 30 rollout verifies non-root backend/workers/frontend, dropped capabilities, no-new-privileges, memory/process limits and local port bindings. This does not establish public-deployment security or fully audit host forwarding rules |
-| Backup verification scope | Fresh backup `backups/20261001T015318Z-market-intelligence` restored all 108 r9 table fingerprints including the private Apple PDF and AI result. Rehearsed and normal s1 upgrades preserved all 107 pre-existing data tables exactly and added an empty review table. Older backups remain. Dump files now use mode 0600, directories 0700. The manifest's asset summary counts document_assets only; private PDF bytes are included. Off-device recovery remains unproven; concurrent writers must be quiesced |
+| Backup verification scope | October 11 format 2 derives table counts/content hashes and both PDF-store inventories from a restored completed dump, so concurrent normal writes do not invalidate the manifest. The disposable concurrent-write drill preserves original public/private PDF bytes and private review/portfolio relationships. Format 1 remains explicitly count-only. Same-disk folders are not encrypted off-device recovery; no destination or key-recovery plan exists yet. See the M03 checkpoint for exact evidence |
 | Disposable verification cleanup | September 30 `market-intel-security-review` and earlier test stacks are removed, including Mock Data and temporary restored databases. The normal persistent database, on-disk backups and evidence captures remain intact. All six previously running normal services are back; web/backend/database health checks pass |
 | Production India provider coverage | India workflows remain manual/partial |
 | Broker integration | Portfolio activity must be entered/imported manually |
@@ -297,7 +299,7 @@ provider licensing/freshness and every browser state were not re-certified.
 | Legacy request conventions | The compatibility facade intentionally retains data-only, metadata and default-client envelope behaviors, including distinct error handling. Do not silently switch consumers between them |
 | Scratch and historical files | Untracked root scripts, local agent configuration, generated maps and old plans were not deleted or relocated because their ownership/use is not established. Use the code map and maintained scripts, not these files as current workflow instructions |
 | Dependency hygiene | September 30 removed unused auth libraries; October 10 patches sharp/source-map-js and verifies fresh dependency audits, builds and browser behavior. Remaining lockfile, image and CI hardening is tracked in the Security Boundary above; preserve clean-build and behavioral checks on future updates |
-| Restore coordination | Restore stops running/restarting Daily Brief and source-refresh workers along with the web app, then resumes only those previously active workers after verification/migration. Fake-Docker regressions cover ordering, active-state selection, disabled workers and failed verification. No destructive normal restore was run for this repair. Other writers/admin sessions must be quiesced manually; concurrent backup writes still need a quiet maintenance window |
+| Restore coordination | Restore stops running/restarting Daily Brief and source-refresh workers along with the web app, then resumes only those previously active workers after content verification/migration. Failure leaves writers stopped. Regression tests cover disabled workers, equal-count corruption, interrupted/invalid backups and exact scratch cleanup. No destructive normal restore was run. Other writers/admin sessions must be quiesced for replacement; ordinary backup does not require a quiet window |
 | Backup consistency | The current tool dumps before separately reading table counts and asset totals, so concurrent writes can make the manifest describe a different observation. Its asset summary covers document_assets but not brief_sources.pdf_bytes, although both stores are in PostgreSQL. W5 owns consistent manifest generation and both-store verification; October 5 inspection did not run a restore |
 | Parallel test isolation | Browser/release and restore tooling use fixed disposable project names. Different ports or Git worktrees alone do not isolate their container cleanup. Serialize these lanes through the coordinator while independent source edits/tests proceed; do not treat five file allocations as five isolated runtimes |
 | Documentation audit environment | October 5: system Git/Python required unavailable Apple developer tools; bundled Git was blocked, the project Python shared library was sandbox-blocked, and the Node REPL could not start. Shell ownership and fallback documentation checks ran. Two protected environment-example link targets were excluded. Full Git status, Python documentation/skill checks and product/runtime validation remain unverified for that session; previous product results retain their original dates |
