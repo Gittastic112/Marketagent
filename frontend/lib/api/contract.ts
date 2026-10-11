@@ -25,7 +25,7 @@ export type ApiMeta = {
 export interface ApiErrorDetail {
   code: string;
   message: string;
-  target?: string;
+  target?: string | null;
   retryable?: boolean;
   field?: string | null;
   provider?: string | null;

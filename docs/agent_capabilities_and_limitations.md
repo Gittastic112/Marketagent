@@ -72,6 +72,11 @@ these Indian companies; USD portfolio reporting requires dated, sourced FX.
 
 ## What Still Requires the User
 
+October 11 completion work: the user has no off-device backup destination or
+genuine trade records yet. Folder-based local recovery and labeled fixture tests
+may proceed. They do not prove off-device recovery or actual portfolio history;
+these gates stay open while independent milestone work continues.
+
 - Initial markets, coverage size and USD base are chosen above. Verify security
   identity, issuer reporting currency and any later coverage changes.
 - Supply or approve source documents and provider keys.

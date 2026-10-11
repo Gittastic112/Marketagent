@@ -7,6 +7,7 @@
 !backend/**
 !scripts/
 !scripts/**
+scripts/retired/**
 
 # Apply these after the directory allowlist, including nested environments.
 **/.env

@@ -23,7 +23,7 @@ test("refresh endpoints enqueue without a long-lived provider request and retain
 
 test("draft refresh keeps source failure, dates, review and pending-edit boundaries visible", () => {
   const panel = readFileSync(new URL("../components/valuation/source-refresh-panel.tsx", import.meta.url), "utf8");
-  const draft = readFileSync(new URL("../components/valuation/autofill-draft-review.tsx", import.meta.url), "utf8");
+  const draft = readFileSync(new URL("../components/valuation/autofill-draft-view.tsx", import.meta.url), "utf8");
   assert.match(panel, /await beforeQueue\(\)/);
   assert.match(panel, /cancelled/);
   assert.match(panel, /Status unavailable/);

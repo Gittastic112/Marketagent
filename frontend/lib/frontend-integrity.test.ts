@@ -145,7 +145,7 @@ test("slow workspaces avoid sequential and per-record request waterfalls", () =>
 test("high-fanout and explicit diagnostic links do not prefetch expensive work", () => {
   const guardedFiles = [
     "components/topbar.tsx",
-    "app/data-health/page.tsx",
+    "components/data-health/health-overview.tsx",
     "app/companies/page.tsx",
     "app/portfolio/page.tsx",
     "app/valuation/page.tsx",
@@ -155,7 +155,7 @@ test("high-fanout and explicit diagnostic links do not prefetch expensive work",
   for (const file of guardedFiles) {
     assert.match(readFrontendFile(file), /prefetch=\{false\}/, file);
   }
-  const dataHealth = readFrontendFile("app/data-health/page.tsx");
+  const dataHealth = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
   assert.doesNotMatch(dataHealth, /<Link(?![^>]*prefetch=\{false\})[^>]*href="\/data-health\?audit=/);
 });
 
@@ -164,7 +164,8 @@ test("production workflows do not use blocking browser dialogs", () => {
   const workflowFiles = [
     "components/advanced-workspace.tsx",
     "components/financial-candidate-review.tsx",
-    "components/valuation/autofill-draft-review.tsx",
+    "components/valuation/autofill-draft-view.tsx",
+    "components/valuation/use-autofill-draft.ts",
     "components/valuation/valuation-change-log-panel.tsx",
     "app/admin/damodaran/page.tsx",
   ];
@@ -212,7 +213,7 @@ test("daily brief keeps portfolio moves nullable and every important claim sourc
   const page = readFrontendFile("app/daily-brief/page.tsx");
   const card = readFrontendFile("components/briefing-event-card.tsx");
   const api = readFrontendFile("lib/api/daily-brief.ts");
-  const actions = readFrontendFile("app/actions.ts");
+  const actions = readFrontendFile("app/actions/brief.ts");
   const styles = readFrontendFile("app/globals.css");
   const smoke = readFrontendFile("e2e/daily-brief-runtime-smoke.spec.ts");
   const packageJson = readFrontendFile("package.json");
@@ -250,7 +251,7 @@ test("daily brief keeps portfolio moves nullable and every important claim sourc
 
 test("daily brief scheduling is local, bounded, audited, and explicit", () => {
   const form = readFrontendFile("components/daily-brief-schedule-form.tsx");
-  const actions = readFrontendFile("app/actions.ts");
+  const actions = readFrontendFile("app/actions/brief.ts");
   const serverApi = readFrontendFile("lib/server-api.ts");
   const styles = readFrontendFile("app/globals.css");
   const compose = readRepositoryFile("docker-compose.yml");
@@ -327,7 +328,7 @@ test("portfolio performance uses owned setup, generated snapshots, and dated cal
   const detail = readFrontendFile("components/portfolio/setup.tsx") + readFrontendFile("components/portfolio/performance-view.tsx");
   const setup = readFrontendFile("components/portfolio-performance-setup.tsx");
   const panel = readFrontendFile("components/portfolio-performance-panel.tsx");
-  const actions = readFrontendFile("app/actions.ts");
+  const actions = readFrontendFile("app/actions/portfolio.ts");
   const api = readFrontendFile("lib/api/portfolio.ts");
 
   assert.match(detail, /PortfolioPerformanceSetup/);
@@ -452,7 +453,7 @@ test("market regime exposes bounded inputs and calculation provenance", () => {
   const page = readFrontendFile("app/portfolio/regime/page.tsx");
   const form = readFrontendFile("components/portfolio/RegimeInputForm.tsx");
   const fredPanel = readFrontendFile("components/portfolio/fred-macro-regime-panel.tsx");
-  const actions = readFrontendFile("app/actions.ts");
+  const actions = readFrontendFile("app/actions/macro.ts");
   const api = readFrontendFile("lib/api/market.ts");
 
   assert.match(page, /score\.calculation_status === "blocked"/);
@@ -527,7 +528,7 @@ test("AI research uses the same complete citation and human-review workflow", ()
 });
 
 test("data health exposes the authenticated evidence integrity report", () => {
-  const page = readFrontendFile("app/data-health/page.tsx") + readFrontendFile("components/peer-receipt-health-panel.tsx");
+  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts")) + readFrontendFile("components/peer-receipt-health-panel.tsx");
   const runtimePanel = readFrontendFile("components/runtime-readiness-panel.tsx");
   const api = readFrontendFile("lib/api/health.ts");
   const styles = readFrontendFile("app/globals.css");
@@ -595,7 +596,7 @@ test("navigation and AI provenance labels avoid sub-12px text", () => {
 });
 
 test("provider health exposes run classification, freshness, and owned coverage", () => {
-  const page = readFrontendFile("app/data-health/page.tsx");
+  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
   const api = readFrontendFile("lib/api/operations.ts");
 
   assert.match(page, /Latest Attempt/);
@@ -617,8 +618,8 @@ test("provider health exposes run classification, freshness, and owned coverage"
 
 
 test("data health exposes deterministic historical event evidence backfill", () => {
-  const page = readFrontendFile("app/data-health/page.tsx");
-  const actions = readFrontendFile("app/actions.ts");
+  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const actions = readFrontendFile("app/actions/evidence.ts");
   const api = readFrontendFile("lib/api/health.ts");
 
   assert.match(page, /Historical Event Evidence Backfill/);
@@ -632,7 +633,7 @@ test("data health exposes deterministic historical event evidence backfill", () 
 
 
 test("data health exposes typed Damodaran application coverage", () => {
-  const page = readFrontendFile("app/data-health/page.tsx");
+  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
   const api = readFrontendFile("lib/api/health.ts");
 
   assert.match(page, /serverFetchApiResponse<DamodaranCoverageReport>\("\/data-health\/damodaran-coverage"/);
@@ -750,7 +751,7 @@ test("valuation industry mapping supports persisted revenue-weighted segments", 
 
 test("valuation model deletion reports failures instead of silently submitting", () => {
   const page = readFrontendFile("app/companies/[id]/valuation/page.tsx");
-  const actions = readFrontendFile("app/actions.ts");
+  const actions = readFrontendFile("app/actions/valuation.ts");
 
   assert.match(page, /DeleteRecordForm/);
   assert.match(page, /deleteValuationModelWithState\.bind/);
@@ -759,7 +760,7 @@ test("valuation model deletion reports failures instead of silently submitting",
 });
 
 test("valuation drafts allow one explicit confirmation for valid current defaults", () => {
-  const review = readFrontendFile("components/valuation/autofill-draft-review.tsx");
+  const review = (readFrontendFile("components/valuation/autofill-draft-view.tsx") + readFrontendFile("components/valuation/use-autofill-draft.ts"));
 
   assert.match(review, /Use all current defaults/);
   assert.match(review, /acceptCurrentDefaults/);
@@ -806,7 +807,7 @@ test("valuation pages expose load and action failures instead of swallowing them
 
 test("relative valuation requires reviewed source-labeled peer sets", () => {
   const panel = readFrontendFile("components/valuation/relative-valuation-panel.tsx");
-  const manager = readFrontendFile("components/valuation/peer-set-manager.tsx");
+  const manager = (readFrontendFile("components/valuation/peer-set-view.tsx") + readFrontendFile("components/valuation/use-peer-set.ts") + readFrontendFile("components/valuation/peer-set-fields.ts"));
   const api = readFrontendFile("lib/api/relative-valuation.ts");
 
   assert.match(panel, /Source-backed industry aggregate/);
@@ -897,8 +898,8 @@ test("quick valuation uses typed non-persisting backend calculations", () => {
 test("historical events expose bounded exact-span evidence resolution", () => {
   const page = readFrontendFile("app/events/[id]/evidence-resolution/page.tsx");
   const form = readFrontendFile("components/event-evidence-resolution-form.tsx");
-  const actions = readFrontendFile("app/actions.ts");
-  const dataHealth = readFrontendFile("app/data-health/page.tsx");
+  const actions = readFrontendFile("app/actions/evidence.ts");
+  const dataHealth = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
   const api = readFrontendFile("lib/api/evidence.ts");
 
   assert.match(page, /evidence-resolution\/search/);

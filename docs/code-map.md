@@ -16,6 +16,7 @@ below locate code; they do not grant another agent permission to edit it.
 | Backend identity | [dependencies.py](../backend/app/api/dependencies.py), [route inventory](../backend/app/api/route_security.py) | Signed identity, owner scoping, intentional public exceptions |
 | Frontend entry | [layout.tsx](../frontend/app/layout.tsx), [page.tsx](../frontend/app/page.tsx), [proxy.ts](../frontend/proxy.ts) | App shell, dashboard, sign-in redirect |
 | Server requests | [server-api.ts](../frontend/lib/server-api.ts), [server-auth.ts](../frontend/lib/server-auth.ts) | Runtime connection boundary, verified cookies, signed backend identity |
+| Server actions | [domain actions](../frontend/app/actions/), [compatibility exports](../frontend/app/actions.ts) | Eight workflow owners; shared validation/error/revalidation helpers remain server-only; server-actions.test.ts verifies payloads, failures, redirects and versioned draft promotion |
 | Browser requests | [proxy route](../frontend/app/api/backend/[...path]/route.ts), [transport.ts](../frontend/lib/api/transport.ts) | Same-origin authentication; HTTP, multipart, binary and parsing behavior |
 | Shared response | [contract.ts](../frontend/lib/api/contract.ts), [common.py](../backend/app/schemas/common.py), [backend facade](../backend/app/api/schemas.py) | Pure envelopes, shared error identity, legacy compatibility exports |
 | Database | [session.py](../backend/app/db/session.py), [models](../backend/app/models/), [migrations](../backend/alembic/versions/) | SQLAlchemy unit of work, persistence, ordered schema changes |
@@ -64,7 +65,12 @@ a text search finds no import; extras, tooling and dynamic imports need checking
 | Private portfolio context | [portfolio valuation](../backend/app/services/portfolio_valuation.py), [valuation alerts](../backend/app/services/valuation_alert_service.py) | [ownership regressions](../backend/tests/test_private_portfolio_context.py); persisted-owner DCF/thesis/alerts, matching event/company/change-log relationships and owner-only portfolio impacts |
 | Gemini connectivity | [adapter](../backend/app/providers/ai_provider.py), [audited probe](../backend/app/services/ai_provider_probe.py), [CLI](../backend/scripts/check_ai_provider.py) | [probe tests](../backend/tests/test_ai_provider_probe.py), provider and health tests; configurable model, header-only key, fixed non-private prompt and model-matched health evidence |
 | Runtime/data health | [readiness](../backend/app/services/runtime_readiness.py), [health page](../frontend/app/data-health/page.tsx) | [health contracts](../frontend/lib/api/health.ts), route-security and readiness tests |
-| Data Health presentation | [health-ui](../frontend/components/data-health/health-ui.tsx) | Shared status/count/format components; page retains request orchestration and optional deep-audit selection |
+| Data Health | [request loader](../frontend/lib/server/data-health.ts), [overview](../frontend/components/data-health/health-overview.tsx), [health-ui](../frontend/components/data-health/health-ui.tsx) | Request-scoped reads and explicit audits, separate presentation and data-state notices |
+| Peer review UI | [controller](../frontend/components/valuation/use-peer-set.ts), [view](../frontend/components/valuation/peer-set-view.tsx), [fields](../frontend/components/valuation/peer-set-fields.ts) | Company-keyed state, late-response isolation, source-preserving form/CSV review |
+| Draft review UI | [controller](../frontend/components/valuation/use-autofill-draft.ts), [view](../frontend/components/valuation/autofill-draft-view.tsx), [fields](../frontend/components/valuation/autofill-draft-fields.ts) | Company/draft-keyed state, review/version checks and provenance display |
+| Peer calculation boundary | [contracts](../backend/app/schemas/peer_valuation.py), [diagnostics](../backend/app/services/peer_diagnostics.py), [persistence](../backend/app/services/peer_valuation_sets.py) | Pure inputs/calculation/receipt hashing separate from atomic owner-scoped mutations; legacy service imports stay compatible |
+| Autofill responsibilities | [workflow](../backend/app/services/assumption_autofill_engine.py), [financial inputs](../backend/app/services/assumption_financial_inputs.py), [provenance](../backend/app/services/assumption_provenance.py) | Reviewed input lookup, deterministic provenance/readiness, draft orchestration |
+| Workbook parsing | [pure parser](../backend/app/services/damodaran_workbook.py), [ingestion](../backend/app/services/damodaran_ingestion.py) | Workbook reading/header/value checks separate from dataset persistence |
 
 Find remaining tests with `rg --files backend/tests frontend/lib frontend/e2e`.
 Tests are indexed by behavior/domain, not by historical task number.
@@ -74,8 +80,9 @@ Tests are indexed by behavior/domain, not by historical task number.
 - Backend: input validation and pure output contracts -> saved response assembly
   -> HTTP facade. Calculation services import narrow input/output contracts.
   The saved-response adapter still invokes non-writing pricing reconciliation.
-  Portfolio contracts are also independent of HTTP/ORM; facade re-exports retain
-  exact class identity and wire compatibility.
+  All legacy contracts now live in [domain schema modules](../backend/app/schemas/).
+  The facade re-exports identical classes and literal aliases; pure contract
+  imports cannot load HTTP, service or persistence layers.
 - Shared backend envelopes live in schemas/common.py. Error handling and routes
   needing only envelope types import that module, not the legacy domain facade.
 - Frontend: domain modules -> transport -> shared contract. Cross-domain types
@@ -99,7 +106,10 @@ Tests are indexed by behavior/domain, not by historical task number.
 | [docs/skills](skills/) | Task-specific project workflow references, not installed application features |
 | [skills/security-review](../skills/security-review/) | Packaged repository skill; do not confuse with workflow-reference Markdown |
 | .codex | Host/agent configuration; not application runtime code or a source for secrets |
-| output, scratch, root debug scripts, repo_map.txt | Generated or legacy/manual material. Not a current task queue. Verify provenance before moving/deleting; many files are untracked user work |
+| [retired tooling](../scripts/retired/README.md) | 18 old root/frontend scripts preserved byte-for-byte as inactive local records; excluded from Git and Docker builds; inventory records hashes/history and no current callers |
+| output, scratch, repo_map.txt, .playwright-cli | Generated reports or historical/manual material; preserved as evidence, not a current task queue |
+| .pytest_cache, .pnpm-store, frontend/.next, frontend/tsconfig.tsbuildinfo | Reproducible generated caches; never confuse these with database volumes or source inputs |
+| .venv, .venv_test, venv, frontend/node_modules | Local dependency environments; current validation uses isolated Docker tooling. Retained because deleting them is unnecessary for module ownership |
 | [archive](archive/) | Dated evidence and superseded instructions, excluded from routine onboarding |
 
 ## Safe verification entry points
@@ -115,6 +125,10 @@ Tests are indexed by behavior/domain, not by historical task number.
   baseline, isolated browser quality gate.
 - [Schema boundaries](../backend/tests/test_schema_boundaries.py) and
   [API boundaries](../frontend/lib/api-boundaries.test.ts): import/compatibility rules.
+- [Contract manifest](../scripts/check_api_contracts.py), [backend check](../backend/tests/test_contract_manifest.py),
+  [frontend drift check](../frontend/lib/contract-drift.test.ts): 15 critical wire
+  contracts, including envelopes, aliases, nullable values and brief enums. New
+  domains must extend this explicit coverage before a generated-client migration.
 - [Documentation checker](../scripts/check_docs.py): links, nested instructions,
   retired plans, page-inventory completeness and context-size limits. No second
   generated code map to maintain.

@@ -46,6 +46,19 @@ also disposable SQLite inside the container; PostgreSQL-specific browser/migrati
 checks require the separate disposable runtime below. Inspect test setup before
 running an unfamiliar manual script. Do not collect root debug scripts as tests.
 
+Critical frontend/backend contracts are checked in both suites. For an intentional
+wire change, regenerate the manifest using the backend dependencies, review its
+diff, then run both suites. The normal check never rewrites the manifest:
+
+~~~bash
+PYTHONPATH=backend python3 scripts/check_api_contracts.py
+PYTHONPATH=backend python3 scripts/check_api_contracts.py --write
+~~~
+
+The maintained coverage list lives in that script. Retired one-off recipes and
+their local preservation inventory live under scripts/retired; they are excluded
+from Git/Docker runtime inputs and must not be used as operational commands.
+
 Frontend, from frontend:
 
 ~~~bash

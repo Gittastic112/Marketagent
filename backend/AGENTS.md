@@ -15,8 +15,8 @@ Read the [root rules](../AGENTS.md). This file adds backend-specific guidance.
 - app/schemas/portfolio.py owns pure portfolio request/response contracts.
 - app/schemas/common.py owns ApiResponse, ApiMeta and ApiErrorDetail. Import it
   directly when only the shared envelope is needed; do not load the legacy facade.
-- app/api/schemas.py remains the compatibility facade and unextracted contracts.
-  Add valuation/portfolio fields in their owning modules, not the facade.
+- app/api/schemas.py is a compatibility facade over the pure domain contracts.
+  Add fields in the owning app/schemas module, not the facade.
 - Pure calculation contracts must not load HTTP, services, or ORM. Services
   import their narrow contracts directly.
 - Providers mostly live in app/providers. The existing market-data factory,

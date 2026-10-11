@@ -56,7 +56,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | Gate | Cumulative target | Deliverable | Depends on | State | Evidence |
 |---|---:|---|---|---|---|
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
-| M02 | 20% | Clear code and folder ownership | M01 | Not started | None |
+| M02 | 20% | Clear code and folder ownership | M01 | In progress | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | Not started | None |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Not started | None |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Not started | None |

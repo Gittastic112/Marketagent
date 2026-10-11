@@ -6,7 +6,8 @@ components own UI; backend services own financial calculations.
 ## Navigation and dependency boundaries
 
 - app/page.tsx is the dashboard; app/companies/[id]/valuation contains the saved
-  model workflow. app/actions.ts remains a large server-action collection.
+  model workflow. app/actions/<domain>.ts owns server actions; app/actions.ts
+  only re-exports them for compatibility. Shared action helpers stay server-only.
 - lib/api/<domain>.ts contains domain contracts and browser endpoint helpers.
 - lib/api/transport.ts owns browser HTTP, multipart, binary and parsing behavior.
 - lib/api/contract.ts owns shared envelope types and ApiError identity.

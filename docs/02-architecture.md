@@ -1,8 +1,17 @@
 # Architecture
 
-**Updated:** 2026-10-10 (runtime/build boundaries). Product validation scope is in [Current State](00-current-state.md).
+**Updated:** 2026-10-11 (module ownership). Product validation scope is in [Current State](00-current-state.md).
 
 **Deployment boundary:** local Docker Compose only
+
+Domain schemas now own every legacy HTTP contract; the facade only re-exports
+identical classes and aliases. Server actions similarly have eight domain owners
+behind the original frontend import path. Peer calculations/receipts, autofill
+provenance and workbook parsing are separate from persistence workflows. Data
+Health, peer review and draft review separate request handling from presentation;
+company/draft identity changes invalidate the old UI request scope. See the
+[code map](code-map.md) for owners and compatibility/drift guards. No service or
+database split is introduced.
 
 ## System Shape
 

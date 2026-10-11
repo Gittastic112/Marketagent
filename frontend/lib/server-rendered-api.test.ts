@@ -139,7 +139,7 @@ test("portfolio management separates opening balances, security activity, and ca
 });
 
 test("financial extraction actions use registered backend routes", () => {
-  const actionsSource = readFileSync(path.resolve("app/actions.ts"), "utf8");
+  const actionsSource = readFileSync(path.resolve("app/actions/financials.ts"), "utf8");
   const adminSource = readFileSync(path.resolve("app/admin/damodaran/page.tsx"), "utf8");
 
   assert.match(actionsSource, /\/api\/filings\/\$\{filingId\}\/extract-financials/);

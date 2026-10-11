@@ -1,0 +1,4460 @@
+{
+  "contracts": {
+    "companies": {
+      "Company": {
+        "$defs": {
+          "ExposureTagRead": {
+            "properties": {
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Description"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "name": {
+                "title": "Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "description"
+            ],
+            "title": "ExposureTagRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "aliases_json": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Aliases Json"
+          },
+          "asset_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Asset Type"
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Cik"
+          },
+          "country": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Country"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Currency"
+          },
+          "damodaran_industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Damodaran Industry"
+          },
+          "etf_provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Etf Provider"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Exchange"
+          },
+          "exposure_tags": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/ExposureTagRead"
+            },
+            "title": "Exposure Tags",
+            "type": "array"
+          },
+          "figi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Figi"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Industry"
+          },
+          "is_etf": {
+            "default": false,
+            "title": "Is Etf",
+            "type": "boolean"
+          },
+          "isin": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Isin"
+          },
+          "local_symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Local Symbol"
+          },
+          "market": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Market"
+          },
+          "market_cap_category": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Market Cap Category"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "primary_exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Primary Exchange"
+          },
+          "region": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Region"
+          },
+          "regulatory_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Regulatory Id"
+          },
+          "regulatory_id_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Regulatory Id Type"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sector"
+          },
+          "security_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Security Type"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ticker",
+          "name",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "CompanyRead",
+        "type": "object"
+      },
+      "ExposureTag": {
+        "properties": {
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "title": "ExposureTagRead",
+        "type": "object"
+      },
+      "Source": {
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "base_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Base Url"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "reliability_score": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reliability Score"
+          },
+          "source_type": {
+            "title": "Source Type",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "source_type",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "SourceRead",
+        "type": "object"
+      }
+    },
+    "contract": {
+      "ApiErrorDetail": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Field"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Processing Run Id"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider"
+          },
+          "retryable": {
+            "default": false,
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Target"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ApiErrorDetail",
+        "type": "object"
+      },
+      "ApiMeta": {
+        "properties": {
+          "confidence": {
+            "default": "medium",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "is_mock": {
+            "default": false,
+            "title": "Is Mock",
+            "type": "boolean"
+          },
+          "is_stale": {
+            "default": false,
+            "title": "Is Stale",
+            "type": "boolean"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Updated"
+          },
+          "processing_time_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Processing Time Ms"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          },
+          "source": {
+            "default": "internal",
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "success",
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "title": "ApiMeta",
+        "type": "object"
+      },
+      "ApiResponse": {
+        "$defs": {
+          "ApiErrorDetail": {
+            "properties": {
+              "code": {
+                "title": "Code",
+                "type": "string"
+              },
+              "field": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Field"
+              },
+              "message": {
+                "title": "Message",
+                "type": "string"
+              },
+              "processing_run_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Processing Run Id"
+              },
+              "provider": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Provider"
+              },
+              "retryable": {
+                "default": false,
+                "title": "Retryable",
+                "type": "boolean"
+              },
+              "target": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Target"
+              }
+            },
+            "required": [
+              "code",
+              "message"
+            ],
+            "title": "ApiErrorDetail",
+            "type": "object"
+          },
+          "ApiMeta": {
+            "properties": {
+              "confidence": {
+                "default": "medium",
+                "title": "Confidence",
+                "type": "string"
+              },
+              "is_mock": {
+                "default": false,
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "is_stale": {
+                "default": false,
+                "title": "Is Stale",
+                "type": "boolean"
+              },
+              "last_updated": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Last Updated"
+              },
+              "processing_time_ms": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Processing Time Ms"
+              },
+              "request_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Request Id"
+              },
+              "source": {
+                "default": "internal",
+                "title": "Source",
+                "type": "string"
+              },
+              "status": {
+                "default": "success",
+                "title": "Status",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "title": "ApiMeta",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "data": {
+            "default": null,
+            "title": "Data"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/$defs/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/$defs/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[Any]",
+        "type": "object"
+      }
+    },
+    "daily-brief": {
+      "DailyBrief": {
+        "$defs": {
+          "BriefingFiling": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "form_type": {
+                "title": "Form Type",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ticker",
+              "form_type",
+              "headline",
+              "event_id"
+            ],
+            "title": "BriefingFiling",
+            "type": "object"
+          },
+          "BriefingHighMaterialityEvent": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "event_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Type"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "priority": {
+                "title": "Priority",
+                "type": "string"
+              },
+              "priority_score": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Priority Score"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ticker"
+              }
+            },
+            "required": [
+              "headline",
+              "priority",
+              "event_id"
+            ],
+            "title": "BriefingHighMaterialityEvent",
+            "type": "object"
+          },
+          "BriefingInspectionAction": {
+            "properties": {
+              "action_id": {
+                "title": "Action Id",
+                "type": "string"
+              },
+              "action_type": {
+                "enum": [
+                  "review_contradiction",
+                  "inspect_processing_failure",
+                  "add_market_prices",
+                  "resolve_event_evidence"
+                ],
+                "title": "Action Type",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "Calculation",
+                "default": "Calculation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "priority": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Priority",
+                "type": "string"
+              },
+              "processing_run_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Processing Run Id"
+              },
+              "reason": {
+                "title": "Reason",
+                "type": "string"
+              },
+              "source_alert_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Alert Ids",
+                "type": "array"
+              },
+              "source_event_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Event Ids",
+                "type": "array"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "source_raw_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Raw Document Ids",
+                "type": "array"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "action_id",
+              "action_type",
+              "priority",
+              "title",
+              "reason",
+              "href"
+            ],
+            "title": "BriefingInspectionAction",
+            "type": "object"
+          },
+          "BriefingNewSinceReview": {
+            "properties": {
+              "filings": {
+                "items": {
+                  "$ref": "#/$defs/BriefingFiling"
+                },
+                "title": "Filings",
+                "type": "array"
+              },
+              "portfolio_moves": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioMove"
+                },
+                "title": "Portfolio Moves",
+                "type": "array"
+              }
+            },
+            "title": "BriefingNewSinceReview",
+            "type": "object"
+          },
+          "BriefingPortfolioExposure": {
+            "properties": {
+              "portfolio_id": {
+                "title": "Portfolio Id",
+                "type": "integer"
+              },
+              "portfolio_name": {
+                "title": "Portfolio Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "portfolio_id",
+              "portfolio_name"
+            ],
+            "title": "BriefingPortfolioExposure",
+            "type": "object"
+          },
+          "BriefingPortfolioMove": {
+            "properties": {
+              "affected_portfolios": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioExposure"
+                },
+                "title": "Affected Portfolios",
+                "type": "array"
+              },
+              "calculation_status": {
+                "default": "not_available",
+                "enum": [
+                  "complete",
+                  "stale",
+                  "not_available"
+                ],
+                "title": "Calculation Status",
+                "type": "string"
+              },
+              "claim_type": {
+                "default": "Unavailable",
+                "enum": [
+                  "Calculation",
+                  "Unavailable"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "contains_mock_data": {
+                "default": false,
+                "title": "Contains Mock Data",
+                "type": "boolean"
+              },
+              "event_headline": {
+                "title": "Event Headline",
+                "type": "string"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "move_percent": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Move Percent"
+              },
+              "price_currency": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Currency"
+              },
+              "price_end_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price End Date"
+              },
+              "price_provider": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Provider"
+              },
+              "price_start_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Start Date"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "ticker",
+              "event_headline",
+              "event_id"
+            ],
+            "title": "BriefingPortfolioMove",
+            "type": "object"
+          },
+          "BriefingProcessingFailure": {
+            "properties": {
+              "claim_type": {
+                "const": "Fact",
+                "default": "Fact",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "error_count": {
+                "title": "Error Count",
+                "type": "integer"
+              },
+              "finished_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Finished At"
+              },
+              "processing_run_id": {
+                "title": "Processing Run Id",
+                "type": "integer"
+              },
+              "run_type": {
+                "title": "Run Type",
+                "type": "string"
+              },
+              "source_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Type"
+              },
+              "started_at": {
+                "format": "date-time",
+                "title": "Started At",
+                "type": "string"
+              },
+              "status": {
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "processing_run_id",
+              "run_type",
+              "status",
+              "error_count",
+              "started_at"
+            ],
+            "title": "BriefingProcessingFailure",
+            "type": "object"
+          },
+          "BriefingThesisContradiction": {
+            "properties": {
+              "alert_id": {
+                "title": "Alert Id",
+                "type": "integer"
+              },
+              "assumption": {
+                "title": "Assumption",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Id"
+              },
+              "evidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evidence"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "review_status": {
+                "default": "unreviewed",
+                "title": "Review Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "assumption",
+              "alert_id"
+            ],
+            "title": "BriefingThesisContradiction",
+            "type": "object"
+          },
+          "BriefingValuationRelevance": {
+            "properties": {
+              "ai_output_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ai Output Id"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "confidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Confidence"
+              },
+              "direction": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Direction"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "model_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Model Name"
+              },
+              "prompt_version": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Prompt Version"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reasoning": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reasoning"
+              },
+              "review_status": {
+                "default": "pending",
+                "title": "Review Status",
+                "type": "string"
+              },
+              "variable": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Variable"
+              }
+            },
+            "required": [
+              "event_id",
+              "headline"
+            ],
+            "title": "BriefingValuationRelevance",
+            "type": "object"
+          },
+          "DailyBriefPayload": {
+            "properties": {
+              "calculation_status": {
+                "default": "not_available",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "not_available"
+                ],
+                "title": "Calculation Status",
+                "type": "string"
+              },
+              "contains_mock_data": {
+                "default": false,
+                "title": "Contains Mock Data",
+                "type": "boolean"
+              },
+              "contains_stale_data": {
+                "default": false,
+                "title": "Contains Stale Data",
+                "type": "boolean"
+              },
+              "contradiction_analysis_status": {
+                "default": "not_run",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "failed",
+                  "not_run",
+                  "not_required"
+                ],
+                "title": "Contradiction Analysis Status",
+                "type": "string"
+              },
+              "high_materiality_events": {
+                "items": {
+                  "$ref": "#/$defs/BriefingHighMaterialityEvent"
+                },
+                "title": "High Materiality Events",
+                "type": "array"
+              },
+              "inspection_queue": {
+                "items": {
+                  "$ref": "#/$defs/BriefingInspectionAction"
+                },
+                "title": "Inspection Queue",
+                "type": "array"
+              },
+              "last_reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Last Reviewed At"
+              },
+              "new_since_last_review": {
+                "$ref": "#/$defs/BriefingNewSinceReview"
+              },
+              "processing_failures": {
+                "items": {
+                  "$ref": "#/$defs/BriefingProcessingFailure"
+                },
+                "title": "Processing Failures",
+                "type": "array"
+              },
+              "source_alert_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Alert Ids",
+                "type": "array"
+              },
+              "source_event_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Event Ids",
+                "type": "array"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "source_raw_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Raw Document Ids",
+                "type": "array"
+              },
+              "summary": {
+                "default": "Daily brief summary unavailable.",
+                "title": "Summary",
+                "type": "string"
+              },
+              "thesis_confirmations": {
+                "items": {},
+                "title": "Thesis Confirmations",
+                "type": "array"
+              },
+              "thesis_contradictions": {
+                "items": {
+                  "$ref": "#/$defs/BriefingThesisContradiction"
+                },
+                "title": "Thesis Contradictions",
+                "type": "array"
+              },
+              "valuation_analysis_status": {
+                "default": "not_run",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "failed",
+                  "not_run",
+                  "not_required"
+                ],
+                "title": "Valuation Analysis Status",
+                "type": "string"
+              },
+              "valuation_relevance": {
+                "items": {
+                  "$ref": "#/$defs/BriefingValuationRelevance"
+                },
+                "title": "Valuation Relevance",
+                "type": "array"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "title": "DailyBriefPayload",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "brief_date": {
+            "format": "date",
+            "title": "Brief Date",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "payload_json": {
+            "$ref": "#/$defs/DailyBriefPayload"
+          },
+          "review_status": {
+            "title": "Review Status",
+            "type": "string"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reviewed At"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "brief_date",
+          "title",
+          "summary",
+          "payload_json",
+          "review_status",
+          "created_at"
+        ],
+        "title": "DailyBriefRead",
+        "type": "object"
+      },
+      "DailyBriefPayload": {
+        "$defs": {
+          "BriefingFiling": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "form_type": {
+                "title": "Form Type",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ticker",
+              "form_type",
+              "headline",
+              "event_id"
+            ],
+            "title": "BriefingFiling",
+            "type": "object"
+          },
+          "BriefingHighMaterialityEvent": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "event_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Type"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "priority": {
+                "title": "Priority",
+                "type": "string"
+              },
+              "priority_score": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Priority Score"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ticker"
+              }
+            },
+            "required": [
+              "headline",
+              "priority",
+              "event_id"
+            ],
+            "title": "BriefingHighMaterialityEvent",
+            "type": "object"
+          },
+          "BriefingInspectionAction": {
+            "properties": {
+              "action_id": {
+                "title": "Action Id",
+                "type": "string"
+              },
+              "action_type": {
+                "enum": [
+                  "review_contradiction",
+                  "inspect_processing_failure",
+                  "add_market_prices",
+                  "resolve_event_evidence"
+                ],
+                "title": "Action Type",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "Calculation",
+                "default": "Calculation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "priority": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Priority",
+                "type": "string"
+              },
+              "processing_run_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Processing Run Id"
+              },
+              "reason": {
+                "title": "Reason",
+                "type": "string"
+              },
+              "source_alert_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Alert Ids",
+                "type": "array"
+              },
+              "source_event_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Event Ids",
+                "type": "array"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "source_raw_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Raw Document Ids",
+                "type": "array"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "action_id",
+              "action_type",
+              "priority",
+              "title",
+              "reason",
+              "href"
+            ],
+            "title": "BriefingInspectionAction",
+            "type": "object"
+          },
+          "BriefingNewSinceReview": {
+            "properties": {
+              "filings": {
+                "items": {
+                  "$ref": "#/$defs/BriefingFiling"
+                },
+                "title": "Filings",
+                "type": "array"
+              },
+              "portfolio_moves": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioMove"
+                },
+                "title": "Portfolio Moves",
+                "type": "array"
+              }
+            },
+            "title": "BriefingNewSinceReview",
+            "type": "object"
+          },
+          "BriefingPortfolioExposure": {
+            "properties": {
+              "portfolio_id": {
+                "title": "Portfolio Id",
+                "type": "integer"
+              },
+              "portfolio_name": {
+                "title": "Portfolio Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "portfolio_id",
+              "portfolio_name"
+            ],
+            "title": "BriefingPortfolioExposure",
+            "type": "object"
+          },
+          "BriefingPortfolioMove": {
+            "properties": {
+              "affected_portfolios": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioExposure"
+                },
+                "title": "Affected Portfolios",
+                "type": "array"
+              },
+              "calculation_status": {
+                "default": "not_available",
+                "enum": [
+                  "complete",
+                  "stale",
+                  "not_available"
+                ],
+                "title": "Calculation Status",
+                "type": "string"
+              },
+              "claim_type": {
+                "default": "Unavailable",
+                "enum": [
+                  "Calculation",
+                  "Unavailable"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "contains_mock_data": {
+                "default": false,
+                "title": "Contains Mock Data",
+                "type": "boolean"
+              },
+              "event_headline": {
+                "title": "Event Headline",
+                "type": "string"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "move_percent": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Move Percent"
+              },
+              "price_currency": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Currency"
+              },
+              "price_end_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price End Date"
+              },
+              "price_provider": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Provider"
+              },
+              "price_start_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Start Date"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "ticker",
+              "event_headline",
+              "event_id"
+            ],
+            "title": "BriefingPortfolioMove",
+            "type": "object"
+          },
+          "BriefingProcessingFailure": {
+            "properties": {
+              "claim_type": {
+                "const": "Fact",
+                "default": "Fact",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "error_count": {
+                "title": "Error Count",
+                "type": "integer"
+              },
+              "finished_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Finished At"
+              },
+              "processing_run_id": {
+                "title": "Processing Run Id",
+                "type": "integer"
+              },
+              "run_type": {
+                "title": "Run Type",
+                "type": "string"
+              },
+              "source_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Type"
+              },
+              "started_at": {
+                "format": "date-time",
+                "title": "Started At",
+                "type": "string"
+              },
+              "status": {
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "processing_run_id",
+              "run_type",
+              "status",
+              "error_count",
+              "started_at"
+            ],
+            "title": "BriefingProcessingFailure",
+            "type": "object"
+          },
+          "BriefingThesisContradiction": {
+            "properties": {
+              "alert_id": {
+                "title": "Alert Id",
+                "type": "integer"
+              },
+              "assumption": {
+                "title": "Assumption",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Id"
+              },
+              "evidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evidence"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "review_status": {
+                "default": "unreviewed",
+                "title": "Review Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "assumption",
+              "alert_id"
+            ],
+            "title": "BriefingThesisContradiction",
+            "type": "object"
+          },
+          "BriefingValuationRelevance": {
+            "properties": {
+              "ai_output_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ai Output Id"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "confidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Confidence"
+              },
+              "direction": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Direction"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "model_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Model Name"
+              },
+              "prompt_version": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Prompt Version"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reasoning": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reasoning"
+              },
+              "review_status": {
+                "default": "pending",
+                "title": "Review Status",
+                "type": "string"
+              },
+              "variable": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Variable"
+              }
+            },
+            "required": [
+              "event_id",
+              "headline"
+            ],
+            "title": "BriefingValuationRelevance",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "calculation_status": {
+            "default": "not_available",
+            "enum": [
+              "complete",
+              "partial",
+              "not_available"
+            ],
+            "title": "Calculation Status",
+            "type": "string"
+          },
+          "contains_mock_data": {
+            "default": false,
+            "title": "Contains Mock Data",
+            "type": "boolean"
+          },
+          "contains_stale_data": {
+            "default": false,
+            "title": "Contains Stale Data",
+            "type": "boolean"
+          },
+          "contradiction_analysis_status": {
+            "default": "not_run",
+            "enum": [
+              "complete",
+              "partial",
+              "failed",
+              "not_run",
+              "not_required"
+            ],
+            "title": "Contradiction Analysis Status",
+            "type": "string"
+          },
+          "high_materiality_events": {
+            "items": {
+              "$ref": "#/$defs/BriefingHighMaterialityEvent"
+            },
+            "title": "High Materiality Events",
+            "type": "array"
+          },
+          "inspection_queue": {
+            "items": {
+              "$ref": "#/$defs/BriefingInspectionAction"
+            },
+            "title": "Inspection Queue",
+            "type": "array"
+          },
+          "last_reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Reviewed At"
+          },
+          "new_since_last_review": {
+            "$ref": "#/$defs/BriefingNewSinceReview"
+          },
+          "processing_failures": {
+            "items": {
+              "$ref": "#/$defs/BriefingProcessingFailure"
+            },
+            "title": "Processing Failures",
+            "type": "array"
+          },
+          "source_alert_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Alert Ids",
+            "type": "array"
+          },
+          "source_event_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Event Ids",
+            "type": "array"
+          },
+          "source_market_price_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Market Price Ids",
+            "type": "array"
+          },
+          "source_raw_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Raw Document Ids",
+            "type": "array"
+          },
+          "summary": {
+            "default": "Daily brief summary unavailable.",
+            "title": "Summary",
+            "type": "string"
+          },
+          "thesis_confirmations": {
+            "items": {},
+            "title": "Thesis Confirmations",
+            "type": "array"
+          },
+          "thesis_contradictions": {
+            "items": {
+              "$ref": "#/$defs/BriefingThesisContradiction"
+            },
+            "title": "Thesis Contradictions",
+            "type": "array"
+          },
+          "valuation_analysis_status": {
+            "default": "not_run",
+            "enum": [
+              "complete",
+              "partial",
+              "failed",
+              "not_run",
+              "not_required"
+            ],
+            "title": "Valuation Analysis Status",
+            "type": "string"
+          },
+          "valuation_relevance": {
+            "items": {
+              "$ref": "#/$defs/BriefingValuationRelevance"
+            },
+            "title": "Valuation Relevance",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "title": "DailyBriefPayload",
+        "type": "object"
+      },
+      "DailyBriefSchedule": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "days_of_week": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Days Of Week",
+            "type": "array"
+          },
+          "due_now": {
+            "title": "Due Now",
+            "type": "boolean"
+          },
+          "enabled": {
+            "title": "Enabled",
+            "type": "boolean"
+          },
+          "generation_mode": {
+            "const": "deterministic_no_external_ai",
+            "title": "Generation Mode",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "last_attempted_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Attempted At"
+          },
+          "last_brief_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Brief Id"
+          },
+          "last_processing_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Processing Run Id"
+          },
+          "last_status": {
+            "title": "Last Status",
+            "type": "string"
+          },
+          "last_succeeded_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Last Succeeded At"
+          },
+          "local_time": {
+            "format": "time",
+            "title": "Local Time",
+            "type": "string"
+          },
+          "next_run_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Next Run At"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "enabled",
+          "timezone",
+          "local_time",
+          "days_of_week",
+          "due_now",
+          "last_status",
+          "generation_mode",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DailyBriefScheduleRead",
+        "type": "object"
+      },
+      "DailyBriefScheduleRunResult": {
+        "properties": {
+          "briefs_created": {
+            "title": "Briefs Created",
+            "type": "integer"
+          },
+          "failures": {
+            "title": "Failures",
+            "type": "integer"
+          },
+          "schedules_checked": {
+            "title": "Schedules Checked",
+            "type": "integer"
+          },
+          "schedules_completed": {
+            "title": "Schedules Completed",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "schedules_checked",
+          "schedules_completed",
+          "briefs_created",
+          "failures"
+        ],
+        "title": "DailyBriefScheduleRunResult",
+        "type": "object"
+      },
+      "SavedDailyBrief": {
+        "$defs": {
+          "BriefingFiling": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "form_type": {
+                "title": "Form Type",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ticker",
+              "form_type",
+              "headline",
+              "event_id"
+            ],
+            "title": "BriefingFiling",
+            "type": "object"
+          },
+          "BriefingHighMaterialityEvent": {
+            "properties": {
+              "claim_type": {
+                "default": "User Assumption",
+                "enum": [
+                  "Source Summary",
+                  "User Assumption"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_created_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Created At"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "event_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Type"
+              },
+              "evidence_status": {
+                "default": "manual",
+                "enum": [
+                  "source_linked",
+                  "manual"
+                ],
+                "title": "Evidence Status",
+                "type": "string"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "priority": {
+                "title": "Priority",
+                "type": "string"
+              },
+              "priority_score": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Priority Score"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "source_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Name"
+              },
+              "source_published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Published At"
+              },
+              "source_url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Url"
+              },
+              "status": {
+                "default": "New",
+                "enum": [
+                  "New",
+                  "Unresolved",
+                  "Stale",
+                  "Reviewed"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "ticker": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ticker"
+              }
+            },
+            "required": [
+              "headline",
+              "priority",
+              "event_id"
+            ],
+            "title": "BriefingHighMaterialityEvent",
+            "type": "object"
+          },
+          "BriefingInspectionAction": {
+            "properties": {
+              "action_id": {
+                "title": "Action Id",
+                "type": "string"
+              },
+              "action_type": {
+                "enum": [
+                  "review_contradiction",
+                  "inspect_processing_failure",
+                  "add_market_prices",
+                  "resolve_event_evidence"
+                ],
+                "title": "Action Type",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "Calculation",
+                "default": "Calculation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "priority": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Priority",
+                "type": "string"
+              },
+              "processing_run_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Processing Run Id"
+              },
+              "reason": {
+                "title": "Reason",
+                "type": "string"
+              },
+              "source_alert_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Alert Ids",
+                "type": "array"
+              },
+              "source_event_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Event Ids",
+                "type": "array"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "source_raw_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Raw Document Ids",
+                "type": "array"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              }
+            },
+            "required": [
+              "action_id",
+              "action_type",
+              "priority",
+              "title",
+              "reason",
+              "href"
+            ],
+            "title": "BriefingInspectionAction",
+            "type": "object"
+          },
+          "BriefingNewSinceReview": {
+            "properties": {
+              "filings": {
+                "items": {
+                  "$ref": "#/$defs/BriefingFiling"
+                },
+                "title": "Filings",
+                "type": "array"
+              },
+              "portfolio_moves": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioMove"
+                },
+                "title": "Portfolio Moves",
+                "type": "array"
+              }
+            },
+            "title": "BriefingNewSinceReview",
+            "type": "object"
+          },
+          "BriefingPortfolioExposure": {
+            "properties": {
+              "portfolio_id": {
+                "title": "Portfolio Id",
+                "type": "integer"
+              },
+              "portfolio_name": {
+                "title": "Portfolio Name",
+                "type": "string"
+              }
+            },
+            "required": [
+              "portfolio_id",
+              "portfolio_name"
+            ],
+            "title": "BriefingPortfolioExposure",
+            "type": "object"
+          },
+          "BriefingPortfolioMove": {
+            "properties": {
+              "affected_portfolios": {
+                "items": {
+                  "$ref": "#/$defs/BriefingPortfolioExposure"
+                },
+                "title": "Affected Portfolios",
+                "type": "array"
+              },
+              "calculation_status": {
+                "default": "not_available",
+                "enum": [
+                  "complete",
+                  "stale",
+                  "not_available"
+                ],
+                "title": "Calculation Status",
+                "type": "string"
+              },
+              "claim_type": {
+                "default": "Unavailable",
+                "enum": [
+                  "Calculation",
+                  "Unavailable"
+                ],
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "contains_mock_data": {
+                "default": false,
+                "title": "Contains Mock Data",
+                "type": "boolean"
+              },
+              "event_headline": {
+                "title": "Event Headline",
+                "type": "string"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "move_percent": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Move Percent"
+              },
+              "price_currency": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Currency"
+              },
+              "price_end_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price End Date"
+              },
+              "price_provider": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Provider"
+              },
+              "price_start_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Price Start Date"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "ticker",
+              "event_headline",
+              "event_id"
+            ],
+            "title": "BriefingPortfolioMove",
+            "type": "object"
+          },
+          "BriefingProcessingFailure": {
+            "properties": {
+              "claim_type": {
+                "const": "Fact",
+                "default": "Fact",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "error_count": {
+                "title": "Error Count",
+                "type": "integer"
+              },
+              "finished_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Finished At"
+              },
+              "processing_run_id": {
+                "title": "Processing Run Id",
+                "type": "integer"
+              },
+              "run_type": {
+                "title": "Run Type",
+                "type": "string"
+              },
+              "source_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Type"
+              },
+              "started_at": {
+                "format": "date-time",
+                "title": "Started At",
+                "type": "string"
+              },
+              "status": {
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "processing_run_id",
+              "run_type",
+              "status",
+              "error_count",
+              "started_at"
+            ],
+            "title": "BriefingProcessingFailure",
+            "type": "object"
+          },
+          "BriefingThesisContradiction": {
+            "properties": {
+              "alert_id": {
+                "title": "Alert Id",
+                "type": "integer"
+              },
+              "assumption": {
+                "title": "Assumption",
+                "type": "string"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "event_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Event Id"
+              },
+              "evidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evidence"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "review_status": {
+                "default": "unreviewed",
+                "title": "Review Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "assumption",
+              "alert_id"
+            ],
+            "title": "BriefingThesisContradiction",
+            "type": "object"
+          },
+          "BriefingValuationRelevance": {
+            "properties": {
+              "ai_output_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ai Output Id"
+              },
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "confidence": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Confidence"
+              },
+              "direction": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Direction"
+              },
+              "event_id": {
+                "title": "Event Id",
+                "type": "integer"
+              },
+              "headline": {
+                "title": "Headline",
+                "type": "string"
+              },
+              "model_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Model Name"
+              },
+              "prompt_version": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Prompt Version"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reasoning": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reasoning"
+              },
+              "review_status": {
+                "default": "pending",
+                "title": "Review Status",
+                "type": "string"
+              },
+              "variable": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Variable"
+              }
+            },
+            "required": [
+              "event_id",
+              "headline"
+            ],
+            "title": "BriefingValuationRelevance",
+            "type": "object"
+          },
+          "DailyBriefPayload": {
+            "properties": {
+              "calculation_status": {
+                "default": "not_available",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "not_available"
+                ],
+                "title": "Calculation Status",
+                "type": "string"
+              },
+              "contains_mock_data": {
+                "default": false,
+                "title": "Contains Mock Data",
+                "type": "boolean"
+              },
+              "contains_stale_data": {
+                "default": false,
+                "title": "Contains Stale Data",
+                "type": "boolean"
+              },
+              "contradiction_analysis_status": {
+                "default": "not_run",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "failed",
+                  "not_run",
+                  "not_required"
+                ],
+                "title": "Contradiction Analysis Status",
+                "type": "string"
+              },
+              "high_materiality_events": {
+                "items": {
+                  "$ref": "#/$defs/BriefingHighMaterialityEvent"
+                },
+                "title": "High Materiality Events",
+                "type": "array"
+              },
+              "inspection_queue": {
+                "items": {
+                  "$ref": "#/$defs/BriefingInspectionAction"
+                },
+                "title": "Inspection Queue",
+                "type": "array"
+              },
+              "last_reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Last Reviewed At"
+              },
+              "new_since_last_review": {
+                "$ref": "#/$defs/BriefingNewSinceReview"
+              },
+              "processing_failures": {
+                "items": {
+                  "$ref": "#/$defs/BriefingProcessingFailure"
+                },
+                "title": "Processing Failures",
+                "type": "array"
+              },
+              "source_alert_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Alert Ids",
+                "type": "array"
+              },
+              "source_event_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Event Ids",
+                "type": "array"
+              },
+              "source_market_price_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Market Price Ids",
+                "type": "array"
+              },
+              "source_raw_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Raw Document Ids",
+                "type": "array"
+              },
+              "summary": {
+                "default": "Daily brief summary unavailable.",
+                "title": "Summary",
+                "type": "string"
+              },
+              "thesis_confirmations": {
+                "items": {},
+                "title": "Thesis Confirmations",
+                "type": "array"
+              },
+              "thesis_contradictions": {
+                "items": {
+                  "$ref": "#/$defs/BriefingThesisContradiction"
+                },
+                "title": "Thesis Contradictions",
+                "type": "array"
+              },
+              "valuation_analysis_status": {
+                "default": "not_run",
+                "enum": [
+                  "complete",
+                  "partial",
+                  "failed",
+                  "not_run",
+                  "not_required"
+                ],
+                "title": "Valuation Analysis Status",
+                "type": "string"
+              },
+              "valuation_relevance": {
+                "items": {
+                  "$ref": "#/$defs/BriefingValuationRelevance"
+                },
+                "title": "Valuation Relevance",
+                "type": "array"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "title": "DailyBriefPayload",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "brief_date": {
+            "format": "date",
+            "title": "Brief Date",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "payload_json": {
+            "$ref": "#/$defs/DailyBriefPayload"
+          },
+          "review_status": {
+            "title": "Review Status",
+            "type": "string"
+          },
+          "reviewed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reviewed At"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "brief_date",
+          "title",
+          "summary",
+          "payload_json",
+          "review_status",
+          "created_at"
+        ],
+        "title": "DailyBriefRead",
+        "type": "object"
+      }
+    },
+    "market": {
+      "CompanyMarketData": {
+        "properties": {
+          "adjustment_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Adjustment State"
+          },
+          "change_percent": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Change Percent"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Currency"
+          },
+          "current_price": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Current Price"
+          },
+          "delay_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Delay Minutes"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Exchange"
+          },
+          "fifty_two_week_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fifty Two Week High"
+          },
+          "fifty_two_week_low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fifty Two Week Low"
+          },
+          "last_updated": {
+            "format": "date-time",
+            "title": "Last Updated",
+            "type": "string"
+          },
+          "market": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Market"
+          },
+          "market_cap": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Market Cap"
+          },
+          "observed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Observed At"
+          },
+          "pe_ratio": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Pe Ratio"
+          },
+          "price_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price Type"
+          },
+          "provider_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Name"
+          },
+          "provider_symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Symbol"
+          },
+          "source_timestamp": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Timestamp"
+          },
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ticker"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Volume"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "last_updated"
+        ],
+        "title": "CompanyMarketDataRead",
+        "type": "object"
+      },
+      "MarketPrice": {
+        "properties": {
+          "adjustment_state": {
+            "title": "Adjustment State",
+            "type": "string"
+          },
+          "as_of_date": {
+            "format": "date",
+            "title": "As Of Date",
+            "type": "string"
+          },
+          "claim_type": {
+            "title": "Claim Type",
+            "type": "string"
+          },
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Company Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "currency": {
+            "default": "USD",
+            "title": "Currency",
+            "type": "string"
+          },
+          "delay_minutes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Delay Minutes"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Exchange"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "import_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Import Run Id"
+          },
+          "market": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Market"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "price": {
+            "minimum": 0,
+            "title": "Price",
+            "type": "number"
+          },
+          "price_type": {
+            "title": "Price Type",
+            "type": "string"
+          },
+          "provider_name": {
+            "title": "Provider Name",
+            "type": "string"
+          },
+          "provider_symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Provider Symbol"
+          },
+          "source_timestamp": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Timestamp"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Url"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "ticker",
+          "price",
+          "as_of_date",
+          "id",
+          "provider_name",
+          "observed_at",
+          "price_type",
+          "claim_type",
+          "adjustment_state",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "MarketPriceRead",
+        "type": "object"
+      }
+    },
+    "operations": {
+      "ProcessingRun": {
+        "properties": {
+          "company_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Company Id"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "created_count": {
+            "title": "Created Count",
+            "type": "integer"
+          },
+          "error_count": {
+            "title": "Error Count",
+            "type": "integer"
+          },
+          "error_details_json": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Error Details Json"
+          },
+          "fetched_count": {
+            "title": "Fetched Count",
+            "type": "integer"
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "metadata_json": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Metadata Json"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Request Id"
+          },
+          "run_type": {
+            "title": "Run Type",
+            "type": "string"
+          },
+          "skipped_duplicate_count": {
+            "title": "Skipped Duplicate Count",
+            "type": "integer"
+          },
+          "source_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Id"
+          },
+          "source_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Type"
+          },
+          "started_at": {
+            "format": "date-time",
+            "title": "Started At",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "run_type",
+          "source_type",
+          "source_id",
+          "company_id",
+          "started_at",
+          "finished_at",
+          "status",
+          "fetched_count",
+          "created_count",
+          "skipped_duplicate_count",
+          "error_count",
+          "created_at"
+        ],
+        "title": "ProcessingRunRead",
+        "type": "object"
+      },
+      "RuntimeReadiness": {
+        "properties": {
+          "current_migration_heads": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Current Migration Heads",
+            "type": "array"
+          },
+          "database_status": {
+            "enum": [
+              "ready",
+              "unavailable"
+            ],
+            "title": "Database Status",
+            "type": "string"
+          },
+          "expected_migration_head": {
+            "title": "Expected Migration Head",
+            "type": "string"
+          },
+          "missing_columns": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Columns",
+            "type": "array"
+          },
+          "missing_constraints": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Constraints",
+            "type": "array"
+          },
+          "missing_tables": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing Tables",
+            "type": "array"
+          },
+          "recovery_steps": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Recovery Steps",
+            "type": "array"
+          },
+          "schema_status": {
+            "enum": [
+              "ready",
+              "blocked",
+              "unknown"
+            ],
+            "title": "Schema Status",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "ready",
+              "blocked"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "database_status",
+          "schema_status",
+          "expected_migration_head"
+        ],
+        "title": "RuntimeReadinessRead",
+        "type": "object"
+      }
+    }
+  },
+  "format_version": 1
+}

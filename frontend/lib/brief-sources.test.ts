@@ -70,7 +70,7 @@ test("research UI preserves disclosure, source inspection and independent valuat
   const inbox = readFileSync(new URL("../components/brief-source-inbox.tsx", import.meta.url), "utf8");
   const library = readFileSync(new URL("../components/brief-source-library.tsx", import.meta.url), "utf8");
   const findings = readFileSync(new URL("../components/brief-source-findings.tsx", import.meta.url), "utf8");
-  const draft = readFileSync(new URL("../components/valuation/autofill-draft-review.tsx", import.meta.url), "utf8");
+  const draft = readFileSync(new URL("../components/valuation/use-autofill-draft.ts", import.meta.url), "utf8");
   assert.match(library, /disabled=\{!consent \|\| busy !== null\}/);
   assert.match(inbox, /does not send stored holdings, thesis notes or valuation values/);
   assert.match(library, /Inspect source text/);

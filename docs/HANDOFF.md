@@ -1,28 +1,33 @@
 # Agent Handoff
 
-M01 accepted: 2026-10-10. Broader product proof stays
+M02 in progress: 2026-10-11. Broader product proof stays
 separately dated in [Current State](00-current-state.md). Latest work is recorded
-in the [rollout/browser checkpoint](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md).
+in the [ownership checkpoint](archive/checkpoints/2026/m02-ownership-2026-10-11.md).
 
 ## Next execution boundary
 
 Use the [completion tracker](roadmaps/completion-tracker.md) for percentage work.
 "Finish 10%" is satisfied; "finish the next 10%" means close M02, the earliest unfinished
 milestone. The ten gates are acceptance points, not estimates of engineering hours.
-M01 is accepted: 1/10 gates, or 10 acceptance points. M02 is next.
+M01 is accepted: 1/10 gates, or 10 acceptance points. M02 is being implemented.
 This is not an estimate of code completion or engineering hours.
 
 Read the nearest AGENTS.md, [code map](code-map.md) and the milestone's actual
 owners before editing. For architecture work, also read
 [architecture](02-architecture.md). Preserve prior/untracked work.
 
-M02 owns legacy source classification, safe folder cleanup and module boundaries.
+The user authorized sequential M02 through M09 work and conservative continuation
+when inputs are missing. Finish M02's pending build/browser/publication checks,
+then continue the independent tasks. Preserve open human-review, actual-trade and
+off-device recovery gates. M02 owns folder cleanup and module boundaries.
 Portable tooling provides Git and recovery-script checks despite blocked host
 runtimes. The private GitHub branch codex/m01-foundation preserves the tested
 application/reference baseline and completion evidence in
 [draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1). Check its review/CI
 state before integration. The shared local index/branch and unclassified prior files
 remain preserved; do not infer a clean checkout or reset/stage everything.
+The new remote branch codex/m02-m09-completion starts at M01's verified head;
+M02 edits are still local. The checkpoint records current source/test evidence.
 
 ## Runtime and source changes
 
