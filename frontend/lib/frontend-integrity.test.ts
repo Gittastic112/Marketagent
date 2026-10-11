@@ -5,13 +5,14 @@ import path from "node:path";
 import test from "node:test";
 
 const frontendRoot = fileURLToPath(new URL("../", import.meta.url));
+const repositoryRoot = process.env.REPOSITORY_ROOT || path.join(frontendRoot, "..");
 
 function readFrontendFile(filePath: string): string {
   return readFileSync(path.join(frontendRoot, filePath), "utf8");
 }
 
 function readRepositoryFile(filePath: string): string {
-  return readFileSync(path.join(frontendRoot, "..", filePath), "utf8");
+  return readFileSync(path.join(repositoryRoot, filePath), "utf8");
 }
 
 test("frontend utility compiler and project tokens are wired", () => {

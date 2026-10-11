@@ -3,7 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_NAME="market-intel-release-check"
-COMPOSE=(docker compose -p "$PROJECT_NAME" -f "$ROOT_DIR/docker-compose.e2e.yml")
+COMPOSE=(docker compose --env-file /dev/null -p "$PROJECT_NAME" -f "$ROOT_DIR/docker-compose.e2e.yml")
+TEST_COMPOSE=(docker compose --env-file /dev/null -f "$ROOT_DIR/docker-compose.test.yml")
 
 cleanup() {
   "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
@@ -39,8 +40,12 @@ curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/
 curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null
 "${COMPOSE[@]}" exec -T backend-e2e alembic heads
 "${COMPOSE[@]}" exec -T backend-e2e alembic current
-"${COMPOSE[@]}" exec -T backend-e2e pytest -q backend/tests
-"${COMPOSE[@]}" exec -T frontend-e2e npm test
+# Unit tests need the approved reference files without baking them into runtime images.
+"${TEST_COMPOSE[@]}" run --rm --build backend-tests
+# Source guards inspect repository configuration outside the frontend build context.
+"${COMPOSE[@]}" run --rm --no-deps \
+  --volume "$ROOT_DIR:/repository:ro" --env REPOSITORY_ROOT=/repository \
+  frontend-e2e npm test
 "${COMPOSE[@]}" exec -T frontend-e2e npm run typecheck
 
 printf 'Release baseline verification passed.\n'
