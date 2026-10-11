@@ -58,7 +58,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
-| M04 | 40% | Dependable identities, prices and ingestion | M03 | Not started | None |
+| M04 | 40% | Dependable identities, prices and ingestion | M03 | In progress | [Identity and ingestion checkpoint](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Not started | None |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | Not started | None |
 | M07 | 70% | Correct portfolio history and performance | M06 | Not started | None |
@@ -155,7 +155,7 @@ Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consi
 - [ ] M03-05 Bound expensive PDF parsing and review remaining fixed-host outbound
   clients, uploads, CSV exports and owner access. Test malicious/oversized input,
   cross-owner resources, request forgery and sanitized failure messages.
-- [ ] M03-06 Lock/reproduce the supported dependency environment, scan runtime and
+- [x] M03-06 Lock/reproduce the supported dependency environment, scan runtime and
   test dependencies plus container OS packages, and document update/rollback steps.
   Evaluate image/action pins without silently upgrading dependencies.
 - [ ] M03-07 Demonstrate off-device recovery and document backup retention and
@@ -168,7 +168,7 @@ Public deployment remains outside scope even after this gate passes.
 
 Owners: providers, market-data ingestion, source worker, Processing Runs and Data Health.
 
-- [ ] M04-01 Verify all ten scoped companies plus the separately selected GOOGL
+- [x] M04-01 Verify all ten scoped companies plus the separately selected GOOGL
   holding identity, exchange, currency, share class and issuer mapping. Do not
   silently replace an NSE security with an ADR or GOOG with GOOGL.
 - [ ] M04-02 Verify configured SEC, personal-use price, FRED and AI connectivity

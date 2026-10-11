@@ -52,6 +52,23 @@ AI is not the primary ingestion layer. Current ingestion and scoring should rema
   `clamp(-NFCI × 50, -100, 100)`. It does not make a network request. Stale,
   missing, future-only, unverified, or malformed evidence remains explicit.
 
+### Price boundaries and explicit connectivity
+
+The fixed scope and official identity sources live in
+[research-scope.json](../data/research-scope.json); this is a dated selection,
+not an automatically refreshed market-cap ranking. US/India history excludes the
+current market-local date using America/New_York/Asia/Kolkata, bounded to 1-3650
+calendar days. Prior-date bars are provider data, not independently certified
+exchange closes. Current quote source timestamps/delay may remain unknown.
+
+The personal-use SDK runs in a one-use resource-limited Linux child, terminated
+on deadline or cancellation. No app secrets or proxy environment are inherited.
+FRED/Alpha Vantage share a fixed-host, no-redirect/no-proxy bounded JSON transport;
+required query keys stay out of HTTPX URL logs. No fallback is introduced.
+Price writes validate the selected security and serialize after fetching. Failures
+and cancellations are audited without partial writes. Separate explicit public
+connectivity probes create Processing Runs, never price or financial coverage.
+
 ### Review-required valuation drafts
 
 `POST /api/companies/{company_id}/valuation-source-refresh` queues an owned job
@@ -76,7 +93,8 @@ a model; no canonical financial approval or saved-model overwrite is performed.
 Edited draft fields survive refresh. Changed evidence or newly stale sources
 clear the affected review, while an ordinary daily age increment does not.
 Weekday 07:00 America/New_York scheduling is opt-in and requires the local worker.
-Interrupted jobs are marked failed on the next cycle; retry is explicit, with
+Interrupted jobs and their running child attempts are marked failed on the next
+cycle; already completed children remain intact. Retry is explicit, with
 no missed-date backfill. Setup and commands belong in the
 [execution runbook](08-execution-runbook.md#valuation-source-refresh).
 

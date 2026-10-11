@@ -130,7 +130,7 @@ def execute_refresh(db: Session, run: ProcessingRun) -> ProcessingRun:
             progress({"name": "SEC annual facts", "company_id": company_id, "status": "not_available",
                 "warnings": ["No supported SEC issuer identity. Upload and review annual statements for this company."]})
         try:
-            result = asyncio.run(ingest_company_prices(db, company=company, user_id=owner, days=7))
+            result = asyncio.run(ingest_company_prices(db, company=company, user_id=owner, days=7, parent_run_id=run.id))
             progress({"name": "Prices", "company_id": company_id, "status": "success",
                 "run_id": result.processing_run_id, "created_count": result.created_count, "warnings": []})
         except Exception as exc:
@@ -172,6 +172,11 @@ def run_refresh_cycle(db: Session, *, now: datetime | None = None) -> dict:
         interrupted = db.scalars(select(ProcessingRun).where(ProcessingRun.run_type == RUN_TYPE,
             ProcessingRun.status == "running")).all()
         for run in interrupted:
+            children = db.scalars(select(ProcessingRun).where(ProcessingRun.status == "running",
+                ProcessingRun.metadata_json["parent_run_id"].as_integer() == run.id)).all()
+            for child in children:
+                fail_processing_run(db, child, error_type="worker_interrupted",
+                    message="Source worker stopped before this attempt completed; retry explicitly.")
             fail_processing_run(db, run, error_type="worker_interrupted", message="Refresh worker stopped before completion; retry explicitly.")
         local = now.astimezone(ZoneInfo(ZONE))
         if settings.valuation_refresh_enabled and local.weekday() in WEEKDAYS and local.time() >= LOCAL_TIME:

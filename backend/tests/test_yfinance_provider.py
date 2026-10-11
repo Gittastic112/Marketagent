@@ -42,7 +42,7 @@ def test_history_excludes_unfinished_and_future_daily_bars(monkeypatch):
     assert result[0].provider_symbol == "RELIANCE.NS"
     assert result[0].price_type == "end_of_day"
     assert result[0].adjustment_state == "unadjusted"
-    assert any("current UTC date" in warning for warning in result[0].warnings)
+    assert any("current market-local date (Asia/Kolkata)" in warning for warning in result[0].warnings)
 
 
 def test_history_with_only_todays_bar_is_unavailable(monkeypatch):

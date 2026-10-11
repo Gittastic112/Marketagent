@@ -41,6 +41,7 @@ def _validate_identity(
     company: Company,
     *,
     provider: str,
+    ticker: str,
     market: str,
     exchange: str | None,
     currency: str,
@@ -48,6 +49,13 @@ def _validate_identity(
     expected_market = (company.market or "").upper()
     expected_exchange = (company.primary_exchange or "").upper()
     expected_currency = (company.currency or "").upper()
+    expected_ticker = (company.local_symbol or company.ticker or "").upper()
+    if expected_ticker and ticker.upper() != expected_ticker:
+        raise MarketDataProviderError(
+            code="PROVIDER_IDENTITY_MISMATCH",
+            message="The provider returned a different security than the company identity.",
+            provider=provider, status_code=502, retryable=False,
+        )
     if expected_market and market.upper() != expected_market:
         raise MarketDataProviderError(
             code="PROVIDER_IDENTITY_MISMATCH",
@@ -83,6 +91,7 @@ def persist_quote(
     _validate_identity(
         company,
         provider=quote.provider_name,
+        ticker=quote.ticker,
         market=quote.market,
         exchange=quote.exchange,
         currency=quote.currency,
@@ -148,6 +157,7 @@ def persist_history_point(
     _validate_identity(
         company,
         provider=point.provider_name,
+        ticker=point.ticker,
         market=point.market,
         exchange=point.exchange,
         currency=point.currency,

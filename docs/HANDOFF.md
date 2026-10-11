@@ -1,9 +1,10 @@
 # Agent Handoff
 
-M02 accepted, M03 in progress: 2026-10-11. Broader product proof stays
+M02 accepted, M03/M04 in progress: 2026-10-11. Broader product proof stays
 separately dated in [Current State](00-current-state.md). Latest work is recorded
 in the [ownership](archive/checkpoints/2026/m02-ownership-2026-10-11.md) and
-[recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) checkpoints.
+[recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) and
+[ingestion](archive/checkpoints/2026/m04-ingestion-2026-10-11.md) checkpoints.
 
 ## Next execution boundary
 
@@ -18,7 +19,7 @@ owners before editing. For architecture work, also read
 [architecture](02-architecture.md). Preserve prior/untracked work.
 
 The user authorized sequential M02 through M09 work and conservative continuation
-when inputs are missing. Complete M03's remaining independent security tasks,
+when inputs are missing. Finish M04's remaining independent ingestion tasks,
 then continue through M09. Preserve open human-review, actual-trade and
 off-device recovery gates. M02 owns folder cleanup and module boundaries.
 Portable tooling provides Git and recovery-script checks despite blocked host
@@ -30,11 +31,17 @@ remain preserved; do not infer a clean checkout or reset/stage everything.
 Branch codex/m02-m09-completion is [PR #2](https://github.com/Gittastic112/Marketagent/pull/2).
 M02 head 9881f4113a2649f27c4c2a91833676311ed7a0ce passes every GitHub check,
 including 21 browser workflows. M03 recovery head b5c737bc8dd3af17aef401991cc7e39489a6314e
-passes all eight GitHub checks. PDF/transport/security-build work is under validation;
+passes all eight GitHub checks. M03 security head de26630bb33aa0de41ada023a4acaf04a9d7a3b3
+passes all ten push/PR checks. M04 provider/identity work is under validation;
 see the [security checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md).
 
 ## Runtime and source changes
 
+- M04 source passes 1,384 backend tests. Runs 5-18 record successful SEC/FRED/Gemini
+  connectivity and quotes/history for all 11 scoped securities. Probe success is
+  not financial/price coverage. Run 19 adds nine absent catalog identities and fills
+  missing AAPL/NVDA fields, preserving PLTR, share classes and existing records.
+  No normal financial review or trade data was invented; source worker stays stopped.
 - Docker's initial high CPU settled during idle samples. Old build cache and the
   local frontend generated cache were cleaned; temporary test images were removed.
   Volumes, rollback images, databases, backups and the immutable corpus were preserved.

@@ -3,7 +3,7 @@
 Source tests: 2026-10-11. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source: [M02 ownership and browser proof](archive/checkpoints/2026/m02-ownership-2026-10-11.md); [M03 recovery in progress](archive/checkpoints/2026/m03-recovery-2026-10-11.md). Normal runtime remains M01.
+Latest source: [M03 security proof](archive/checkpoints/2026/m03-security-2026-10-11.md); [M04 identity/ingestion in progress](archive/checkpoints/2026/m04-ingestion-2026-10-11.md). Normal images remain M01; M04 audit/identity rows are separately recorded.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,12 +20,12 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,350 passed October 11 on locked dependencies and patched OS, including PDF child limits, bounded outbound clients, pure contracts and critical wire manifests; five upstream deprecation warnings. M03 source validation, normal runtime remains M01 |
+| Backend | 1,384 passed October 11 on locked dependencies and patched OS, including bounded PDF/market children, market-local history, cancellation/identity guards and interrupted-worker audit; five upstream deprecation warnings. M04 source validation, normal images remain M01 |
 | Frontend | 259 tests, TypeScript, production build and all 21 GitHub browser workflows pass October 11. M02 extraction preserves legacy action exports, saved workflows and scoped request isolation; normal-runtime browser proof remains M01 |
 | API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
-| Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass; 109-table concurrent-write recovery repeats on PostgreSQL 16.15. M03 security checkpoint records OS inventories and five focused browser workflows; GitHub publication is pending. Protected environment paths remain excluded |
+| Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass; 109-table recovery repeats on PostgreSQL 16.15. M03 security passes all ten GitHub checks, including 21 browser workflows. M04's 14 genuine probes pass; run 19 reconciles 11 scoped identities. Protected environment paths remain excluded |
 | Production / browser | October 10 patched standalone frontend passes five normal routes, 1440px/390px dashboard inspection and missing/foreign-Origin 403. All functional browser workflows pass locally; timing scope is in the M01 checkpoint. Fresh frontend and resolved backend/test advisory audits pass; broader security certification is not implied |
 | PostgreSQL concurrency | Five competing analyst-review pairs each returned 201/409, adding exactly five versions while the original receipt stayed unchanged. Visible stale forms did not write. Reviews remain User Assumption, not AI approval or financial edits |
 | Runtime evidence | September 22: existing 11 drafts, 694 unreviewed SEC candidates and 196 FRED observations retained. Added public annual filings/business sections for AAPL/GOOGL and private Apple PDF source 1 with five real Gemini findings, pending review. Two models, four assumption sets, two holdings and three transactions have identical fingerprints to the pre-inbox backup. Non-saving AAPL illustration is USD106.01/share, not an approved current valuation |

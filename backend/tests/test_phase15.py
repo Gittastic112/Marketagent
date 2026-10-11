@@ -48,10 +48,8 @@ def test_yfinance_quote_returns_contract_without_database_write(monkeypatch: pyt
         lambda symbol: FakeTicker(),
     )
 
-    result = asyncio.run(
-        YFinanceMarketProvider().get_quote(
-            MarketDataRequest(market="IN", exchange="NSE", ticker="ADANIPORTS", currency="INR")
-        )
+    result = YFinanceMarketProvider()._fetch_quote(
+        MarketDataRequest(market="IN", exchange="NSE", ticker="ADANIPORTS", currency="INR")
     )
 
     assert isinstance(result, MarketQuoteResult)

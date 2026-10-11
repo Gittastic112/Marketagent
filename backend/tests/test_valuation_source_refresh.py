@@ -89,3 +89,23 @@ def test_interrupted_job_is_visible_and_requires_explicit_retry(db, monkeypatch)
     assert run.status == "failed"
     assert run.error_details_json["error_type"] == "worker_interrupted"
     assert refresh.enqueue_company_refresh(db, company.id, "owner").id != run.id
+
+
+def test_restart_finishes_only_interrupted_parents_running_children(db, monkeypatch):
+    monkeypatch.setenv("VALUATION_REFRESH_ENABLED", "false")
+    get_settings.cache_clear()
+    company = configured_company(db)
+    parent = refresh.enqueue_company_refresh(db, company.id, "owner")
+    parent.status = "running"
+    children = [ProcessingRun(run_type="market_data_ingestion", status=status, started_at=datetime.now(UTC),
+        metadata_json={"parent_run_id": parent_id}) for parent_id, status in
+        [(parent.id, "running"), (parent.id, "success"), (parent.id + 99, "running")]]
+    db.add_all(children)
+    db.commit()
+    refresh.run_refresh_cycle(db)
+    for child in children:
+        db.refresh(child)
+    assert children[0].status == "failed" and children[0].finished_at
+    assert children[0].error_details_json["error_type"] == "worker_interrupted"
+    assert children[1].status == "success"
+    assert children[2].status == "running"

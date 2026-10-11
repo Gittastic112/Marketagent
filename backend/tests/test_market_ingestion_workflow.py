@@ -75,3 +75,32 @@ def test_quote_only_compatibility_uses_same_service_without_history(db, monkeypa
         user_id="admin_user_id_fallback", include_history=False))
     assert result.fetched_count == 1
     assert db.scalar(select(ProcessingRun)).run_type == "market_quote_ingestion"
+
+
+def test_cancelled_fetch_is_a_finished_failure_without_partial_prices(db, monkeypatch):
+    company, ingestion = setup(db, monkeypatch)
+    async def cancelled(*args, **kwargs):
+        raise asyncio.CancelledError()
+    monkeypatch.setattr(Provider, "get_quote", cancelled)
+    with pytest.raises(asyncio.CancelledError):
+        asyncio.run(ingestion.ingest_company_prices(db, company=company, user_id="owner", parent_run_id=12))
+    run = db.scalar(select(ProcessingRun))
+    assert run.status == "failed" and run.finished_at
+    assert run.error_details_json["code"] == "MARKET_DATA_CANCELLED"
+    assert run.metadata_json["parent_run_id"] == 12
+    assert run.source_type == "fixture"
+    assert db.query(MarketPrice).count() == 0
+
+
+def test_provider_cannot_store_another_security_under_the_selected_company(db, monkeypatch):
+    company, ingestion = setup(db, monkeypatch)
+    original = Provider.get_quote
+    async def wrong_security(self, request):
+        result = await original(self, request)
+        return result.model_copy(update={"ticker": "OTHER"})
+    monkeypatch.setattr(Provider, "get_quote", wrong_security)
+    with pytest.raises(MarketDataProviderError) as error:
+        asyncio.run(ingestion.ingest_company_prices(db, company=company, user_id="owner"))
+    assert error.value.code == "PROVIDER_IDENTITY_MISMATCH"
+    assert db.query(MarketPrice).count() == 0
+    assert db.scalar(select(ProcessingRun)).status == "failed"

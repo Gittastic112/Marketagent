@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "selection_date": "2026-09-21",
+  "identity_checked_date": "2026-10-11",
+  "selection_basis": "User-confirmed fixed research scope; not a live market-cap ranking or investment recommendation.",
+  "identity_claim_type": "Fact",
+  "limitations": "Security identity does not certify financial statements, live prices, industry mappings, model suitability or portfolio activity.",
+  "sources": {
+    "sec_tickers": "https://www.sec.gov/files/company_tickers_exchange.json",
+    "nvda_class": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/R1.htm",
+    "aapl_class": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000020/aapl-20260627.htm",
+    "msft_class": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+    "amzn_class": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000026/amzn-20260630.htm",
+    "alphabet_classes": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm",
+    "reliance": "https://nsearchives.nseindia.com/corporate/ixbrl/INTEGRATED_FILING_INDAS_104032_18072025201517_iXBRL_WEB.html",
+    "hdfc": "https://nsearchives.nseindia.com/corporate/ixbrl/INTEGRATED_FILING_BANKING_175753_18072026160136_iXBRL_WEB.html",
+    "bharti": "https://nsearchives.nseindia.com/content/circulars/CML66152.pdf",
+    "icici": "https://nsearchives.nseindia.com/content/circulars/CML66751.pdf",
+    "sbi": "https://nsearchives.nseindia.com/corporate/SBIN_16052026162539_VR_16052026.pdf"
+  },
+  "securities": [
+    {"ticker":"NVDA","name":"NVIDIA Corporation","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Common stock","issuer_cik":"0001045810","research_universe":true,"source_ids":["sec_tickers","nvda_class"]},
+    {"ticker":"AAPL","name":"Apple Inc.","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Common stock","issuer_cik":"0000320193","research_universe":true,"source_ids":["sec_tickers","aapl_class"]},
+    {"ticker":"GOOG","name":"Alphabet Inc. Class C","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Class C capital stock","issuer_cik":"0001652044","research_universe":true,"source_ids":["sec_tickers","alphabet_classes"]},
+    {"ticker":"MSFT","name":"Microsoft Corporation","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Common stock","issuer_cik":"0000789019","research_universe":true,"source_ids":["sec_tickers","msft_class"]},
+    {"ticker":"AMZN","name":"Amazon.com, Inc.","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Common stock","issuer_cik":"0001018724","research_universe":true,"source_ids":["sec_tickers","amzn_class"]},
+    {"ticker":"RELIANCE","name":"Reliance Industries Limited","market":"IN","exchange":"NSE","currency":"INR","security_type":"Equity","isin":"INE002A01018","research_universe":true,"source_ids":["reliance"]},
+    {"ticker":"HDFCBANK","name":"HDFC Bank Limited","market":"IN","exchange":"NSE","currency":"INR","security_type":"Equity","isin":"INE040A01034","research_universe":true,"source_ids":["hdfc"]},
+    {"ticker":"BHARTIARTL","name":"Bharti Airtel Limited","market":"IN","exchange":"NSE","currency":"INR","security_type":"Equity","isin":"INE397D01024","research_universe":true,"source_ids":["bharti"]},
+    {"ticker":"ICICIBANK","name":"ICICI Bank Limited","market":"IN","exchange":"NSE","currency":"INR","security_type":"Equity","isin":"INE090A01021","research_universe":true,"source_ids":["icici"]},
+    {"ticker":"SBIN","name":"State Bank of India","market":"IN","exchange":"NSE","currency":"INR","security_type":"Equity","isin":"INE062A01020","research_universe":true,"source_ids":["sbi"]},
+    {"ticker":"GOOGL","name":"Alphabet Inc. Class A","market":"US","exchange":"NASDAQ","currency":"USD","security_type":"Class A common stock","issuer_cik":"0001652044","research_universe":false,"additional_scope":"Separately selected security for the User Assumption portfolio, not a verified trade.","source_ids":["sec_tickers","alphabet_classes"]}
+  ]
+}
