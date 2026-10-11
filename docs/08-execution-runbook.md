@@ -168,6 +168,11 @@ From root, with local test credentials configured:
 
 These launch separate disposable projects. Read their cleanup targets before
 running. Browser ports default to 13000/18000, not the normal 3000/8000 stack.
+Fixture mutations send the signed-in page's Origin. A container browser base URL
+must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
+host/Origin guards intact. If shared filesystem trace folders fail, write artifacts
+inside the test container and copy completed results to output/playwright. Use
+explicit disposable credentials and staged source; do not read protected env files.
 Use E2E_FRONTEND_PORT and E2E_BACKEND_PORT only when those ports are occupied.
 Do not run two invocations against the same disposable project concurrently.
 The browser script runs a production Next.js build with `npm run start` from

@@ -59,7 +59,7 @@ Use the roadmap when selecting work, not as evidence that a feature is finished.
   documented source migration head. Historical archive bodies remain
   excluded so their dated wording is not silently rewritten.
 
-Latest infrastructure/planning review: [October 10 architecture and completion audit](archive/checkpoints/2026/architecture-and-completion-2026-10-10.md).
-Latest product verification remains separately dated in Current State.
+Latest foundation verification: [October 10 M01 rollout and browser proof](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md).
+Broader product verification remains separately dated in Current State.
 
 [Archive](archive/) contains older instructions, checkpoints, research and plans.

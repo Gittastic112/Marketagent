@@ -1,6 +1,6 @@
 # Completion tracker: local research release v1
 
-Created October 10, 2026. **Accepted milestones: 0/10. Current: M01, in progress.**
+Created October 10, 2026. **Accepted milestones: 1/10 (10%). Next: M02.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
 Much of the implementation exists; historical tests do not close today's gates.
 
@@ -55,7 +55,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 
 | Gate | Cumulative target | Deliverable | Depends on | State | Evidence |
 |---|---:|---|---|---|---|
-| M01 | 10% | Measured, lean, reproducible local foundation | None | In progress | [October 10 audit](../archive/checkpoints/2026/architecture-and-completion-2026-10-10.md) |
+| M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
 | M02 | 20% | Clear code and folder ownership | M01 | Not started | None |
 | M03 | 30% | Reliable recovery and local security | M02 | Not started | None |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Not started | None |
@@ -81,14 +81,14 @@ Owners: Compose files, backend Dockerfile/requirements, repository tooling.
   constrain development watching and align the dev heap with its memory limit.
 - [x] M01-05 Obtain working Git, inventory tracked/untracked/prior changes, and
   preserve a source baseline with HEAD/status and a verified source-only safety
-  archive. Protected environment paths are excluded; no broad commit was made.
-  A common committed baseline is still required before parallel worktrees.
-- [ ] M01-06 Rebuild and apply the validated configuration to the normal app in
+  archive. Protected environment paths are excluded; prior work is preserved.
+  The checkpoint records the published source baseline for later integration.
+- [x] M01-06 Rebuild and apply the validated configuration to the normal app in
   a controlled maintenance window after M03's current-backup preflight. Verify
   source/image identity, worker commands, readiness and idle resources; retain
   the existing source-worker stopped state unless its external-fetch operation
   is explicitly resumed. Do not read protected environment files through tools.
-- [ ] M01-07 Complete the existing full backend/frontend/type baseline, API/schema
+- [x] M01-07 Complete the existing full backend/frontend/type baseline, API/schema
   boundary checks and representative disposable browser smoke; record inherited
   failures separately. The October 10 infrastructure checks alone do not close this.
 
@@ -96,6 +96,12 @@ Gate: a preserved source baseline, passing gates and a normal runtime known to
 match it. M03's backup preflight is reusable existing tooling, not a dependency
 on finishing M03; fix/verify it first if current recovery cannot be trusted.
 No database reset, volume removal or new provider call is needed for cleanup.
+
+Accepted October 10: [dated evidence](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md)
+includes a 109-table backup/restore comparison, identical post-rollout fingerprints,
+source/image checks, three disposable browser workflows and authenticated normal
+desktop/mobile checks. Existing normal screens show **Mock Data**; this foundation
+gate does not certify genuine-input portfolio coverage or complete M03 recovery.
 
 ## M02: clear code and folder ownership
 

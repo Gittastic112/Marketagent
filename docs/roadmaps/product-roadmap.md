@@ -5,8 +5,8 @@ Completion sequencing reviewed: 2026-10-10.
 
 **Completion requests:** use the [ten-milestone tracker](completion-tracker.md).
 It defines ten acceptance gates for the remaining local release, not an estimate
-of engineering hours or the amount of code already built. M01 is in progress;
-no full milestone is accepted yet.
+of engineering hours or the amount of code already built. M01 is accepted at 10%;
+M02 is the next unfinished gate. See the tracker for dated rollout/browser evidence.
 
 ## Planning Rule
 

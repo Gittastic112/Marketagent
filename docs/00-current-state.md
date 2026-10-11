@@ -1,7 +1,7 @@
 # Current State
 
 Source tests: 2026-10-10. Scope: local-first, single-user equity research.
-Infrastructure/plan review: [2026-10-10](archive/checkpoints/2026/architecture-and-completion-2026-10-10.md); product/browser claims below retain their dates.
+M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
 Latest delivery: [security hardening and analyst review receipts](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md).
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
@@ -11,8 +11,8 @@ records the actual Apple scan, illustrative calculation and recovery verificatio
 
 This is a broad research, valuation, evidence and portfolio platform, not a
 finished daily-driver or trading system. Reviewed-source coverage, workflow
-integrity, and public-deployment security remain uneven. No completion percentage
-is asserted. The [feature register](roadmaps/feature-register.md) owns detailed
+integrity, and public-deployment security remain uneven. The tracker accepts M01
+at 10% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
 capability status; the [single limitation ledger](agent_capabilities_and_limitations.md)
 owns remaining gaps and the confirmed personal-research US/India, USD-base scope.
 
@@ -21,22 +21,22 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 | Check | Evidence |
 |---|---|
 | Backend | 1,294 passed October 10 in the network-disabled source test container, including request/DNS/upload/rate boundaries and immutable/stale/owned analyst reviews; five upstream deprecation warnings |
-| Frontend | 234 tests and TypeScript pass October 10, including the updated build-context guard. Production-built desktop/mobile browser evidence remains September 30 with disposable Mock Data |
+| Frontend | 234 tests pass; TypeScript passes again after Origin/navigation repairs in the browser harness. October 10 representative disposable workflows and normal desktop/mobile checks pass |
 | API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
 | Documentation / operations | October 10: 28 documentation/secret-scanner-fixture/Compose/backup-workflow tests pass in isolated tooling; scoped Git whitespace passes. Active links/workflow checks are recorded in the infrastructure checkpoint. Full secret scan and knowledge-base audit retain their older dates; no corpus changes |
-| Production / browser | September 30 production builds pass; normal app deployed. Disposable browser verifies explicit confirmation, persisted reviews, stale-version/evidence conflicts, immutable receipts/history, lost-response blocking/refresh recovery and missing/foreign-Origin 403. Desktop 1440px/mobile 390px inspected without overflow. Both package advisory scans report zero known vulnerabilities, not security certification |
+| Production / browser | October 10 rebuilt normal runtime passes five authenticated routes, 1440px/390px dashboard inspection and missing/foreign-Origin 403. Disposable Daily Brief, portfolio and valuation workflows pass. Broader analyst-review/browser and package advisory evidence remains September 30, not renewed security certification |
 | PostgreSQL concurrency | Five competing analyst-review pairs each returned 201/409, adding exactly five versions while the original receipt stayed unchanged. Visible stale forms did not write. Reviews remain User Assumption, not AI approval or financial edits |
 | Runtime evidence | September 22: existing 11 drafts, 694 unreviewed SEC candidates and 196 FRED observations retained. Added public annual filings/business sections for AAPL/GOOGL and private Apple PDF source 1 with five real Gemini findings, pending review. Two models, four assumption sets, two holdings and three transactions have identical fingerprints to the pre-inbox backup. Non-saving AAPL illustration is USD106.01/share, not an approved current valuation |
 | Migrations / recovery | Normal head s1s1s1s1s1s1 adds only an empty review table. Backup 20261001T015318Z restores all 108 r9 table fingerprints including private PDF/AI evidence. Rehearsed and normal s1 upgrades preserve all 107 prior data tables exactly; only migration metadata changes and an empty table is added (109 total). Dump mode 0600, directory 0700. Off-device recovery remains unproven |
 | Performance | Same-data local authenticated checks: portfolio overview full server response 8,897 ms before vs 45/127 ms in two after samples; companies 890 vs 65/59 ms; Data Health 3,501 vs 193/152 ms. Valuation read queries 168 to 11; risk 204 to 12. Dashboard was already small and did not improve. These are not browser-interactivity or load-test guarantees; [measurement checkpoint](archive/checkpoints/2026/frontend-performance-2026-09-21.md) includes all results |
 | Provider evidence | September 22 FRED DGS10/NFCI and SEC imports succeeded; six US securities have annual candidates. US/NSE personal-provider quotes have unknown timing. Real gemini-3.5-flash-lite scanned the public Apple PDF in the isolated browser and normal app with valid exact quotes, retained provenance and pending review. No stored portfolio/model values sent. This is workflow proof, not interpretation-quality certification |
 
-The October 10 infrastructure checkpoint records fresh tests, resource measurements,
-cleanup and separate backend builds, not new provider/portfolio/browser certification.
-Normal application images were not replaced; pgAdmin is now stopped. Tooling Git
-confirms a large dirty tree. The ten-milestone tracker has no fully accepted gate yet.
+October 10 accepts M01 after a 109-table restore/fingerprint comparison and normal
+rollout. Current screens contain existing Mock Data; the backup has no document
+assets, so September inventories above are historical. Browser access added one
+deterministic brief; all prior rows remain intact. GitHub holds the review baseline.
 
 [Refactor checkpoint](archive/checkpoints/2026/repository-architecture-refactor-2026-09-09.md)
 records the older production/browser scope. The
