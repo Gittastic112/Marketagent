@@ -8,6 +8,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 from fastapi import HTTPException
+from pydantic import TypeAdapter, ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -20,6 +21,7 @@ from app.models import (
     RawDocument,
     Source,
 )
+from app.services.pdf_jobs import PdfJobError, run_pdf_job
 
 
 MAX_PDF_BYTES = 40 * 1024 * 1024
@@ -208,6 +210,21 @@ def parse_pdf_page_ranges(
 
 
 def parse_pdf_financial_tables(
+    content: bytes,
+    *,
+    page_numbers: tuple[int, ...] | None = None,
+    period_type: str = "annual",
+) -> ParsedPdf:
+    try:
+        payload = run_pdf_job("financial", content, {"page_numbers": page_numbers, "period_type": period_type})
+        return TypeAdapter(ParsedPdf).validate_python(payload)
+    except PdfJobError as error:
+        raise HTTPException(error.status_code, str(error)) from None
+    except ValidationError:
+        raise HTTPException(422, "PDF parser returned an invalid result.") from None
+
+
+def _parse_pdf_financial_tables(
     content: bytes,
     *,
     page_numbers: tuple[int, ...] | None = None,

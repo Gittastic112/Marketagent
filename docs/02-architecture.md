@@ -321,6 +321,13 @@ a receipt historical immediately after saving; receipts are not permanent truth.
 Security boundary helpers have separate owners: frontend `request-security.ts`
 checks trusted host/same-origin mutations, forwards only allowed headers and
 bounds bodies; `local-login.ts` throttles attempts and compares hashed credentials.
+
+PDF services delegate resource-heavy parsing, geometry and rendering to
+`pdf_jobs.py` and a single-use `workers/pdf_parse_worker.py`. Linux child limits
+bound CPU, memory and output; the parent bounds wall time and concurrency, strips
+credentials, validates results and reaps failed children. This is resource isolation,
+not a malware sandbox. `providers/safe_http.py` owns shared bounded HTTP responses
+and DNS-pinned public downloads; fixed-host FRED/Gemini have explicit transport limits.
 Backend `request_limits.py` bounds bodies before parsing; `rate_limits.py` applies
 per-path defaults without relying on lazy router traversal. Public-source downloads
 use `providers/safe_http.py` for validated pinned DNS, TLS and byte limits.

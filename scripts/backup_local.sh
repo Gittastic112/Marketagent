@@ -45,7 +45,7 @@ scratch_id="$("$DOCKER_BIN" run --detach --rm --pull never \
   --network none --memory 1g --cpus 1 --pids-limit 128 \
   --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=2g \
   -e POSTGRES_USER=proof -e POSTGRES_DB=proof -e POSTGRES_HOST_AUTH_METHOD=trust \
-  "${RECOVERY_POSTGRES_IMAGE:-postgres:16}")"
+  "${RECOVERY_POSTGRES_IMAGE:-postgres:16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d}")"
 if [[ ! "$scratch_id" =~ ^[a-f0-9]{64}$ ]]; then
   scratch_id=""
   printf 'Recovery verifier did not return a container identity.\n' >&2

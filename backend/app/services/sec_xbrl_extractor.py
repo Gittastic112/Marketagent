@@ -3,18 +3,16 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-import time
 from datetime import UTC, date, datetime
 from typing import Any, Callable
 
-import httpx
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models import Company, FinancialExtractionCandidate, RawDocument, Source
 from app.models.company_setup import CompanySetupWorkflow
-from app.core.security import validate_safe_url
+from app.providers.safe_http import fetch_public_json
 from app.services.sec_ingestion import _normalize_cik, _sec_headers
 
 
@@ -26,7 +24,6 @@ FLOW_METRICS = {"revenue", "ebit", "net_income", "capex", "diluted_shares", "bas
 CORE_METRICS = {"revenue", "ebit", "net_income", "cash", "debt", "diluted_shares"}
 DEFAULT_ANNUAL_PERIODS = 5
 MAX_COMPANY_FACTS_BYTES = 32 * 1024 * 1024
-COMPANY_FACTS_DEADLINE_SECONDS = 60
 
 # Prefer the latest filing, then this concept order. Components keep explicit
 # names: a long-term balance or cash flow is not total debt or total borrowing.
@@ -195,28 +192,7 @@ def get_or_create_sec_source(db: Session) -> Source:
 
 
 def _download_company_facts(url: str, headers: dict[str, str]) -> Any:
-    deadline = time.monotonic() + COMPANY_FACTS_DEADLINE_SECONDS
-    payload = bytearray()
-    with httpx.stream("GET", validate_safe_url(url), headers=headers,
-                      timeout=20, follow_redirects=False) as response:
-        response.raise_for_status()
-        try:
-            declared_size = int(response.headers.get("content-length", "0"))
-        except ValueError:
-            declared_size = 0
-        if declared_size > MAX_COMPANY_FACTS_BYTES:
-            raise ValueError("SEC company facts exceeded the response size limit")
-        # Count decoded bytes as well, including chunked/compressed responses.
-        for chunk in response.iter_bytes():
-            if time.monotonic() > deadline:
-                raise ValueError("SEC company facts exceeded the download time limit")
-            if len(payload) + len(chunk) > MAX_COMPANY_FACTS_BYTES:
-                raise ValueError("SEC company facts exceeded the response size limit")
-            payload.extend(chunk)
-    try:
-        return json.loads(payload)
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-        raise ValueError("SEC returned invalid company facts JSON") from exc
+    return fetch_public_json(url, headers=headers, max_bytes=MAX_COMPANY_FACTS_BYTES)
 
 
 def fetch_company_facts(

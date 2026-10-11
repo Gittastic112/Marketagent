@@ -11,6 +11,7 @@ from app.models import Company, DocumentAsset, FinancialExtractionCandidate, Pro
 from app.services.pdf_financial_extraction import (
     _consolidate_candidates,
     _statement_line_candidates,
+    _parse_pdf_financial_tables,
     parse_pdf_financial_tables,
     parse_pdf_page_ranges,
     validate_pdf_upload,
@@ -108,7 +109,9 @@ def test_targeted_pdf_scan_preserves_full_physical_page_count() -> None:
 
     with pdfplumber.open(BytesIO(FIXTURE.read_bytes())) as source_pdf:
         with patch("pdfplumber.open", return_value=TwoPagePdf(source_pdf.pages[0])):
-            parsed = parse_pdf_financial_tables(FIXTURE.read_bytes(), page_numbers=(2,))
+            # This unit stub targets the parser itself. Public calls exercise
+            # the isolated worker using the real PDF fixture above.
+            parsed = _parse_pdf_financial_tables(FIXTURE.read_bytes(), page_numbers=(2,))
 
     assert parsed.page_count == 2
     assert parsed.scanned_pages == (2,)

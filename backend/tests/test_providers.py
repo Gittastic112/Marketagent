@@ -1,7 +1,20 @@
 import pytest
 import httpx
+from contextlib import contextmanager
 from app.providers.mock_provider import MockAIProvider
 from app.providers.ai_provider import GeminiAIProvider
+
+def stub_stream(monkeypatch, post):
+    class Client:
+        def __init__(self, **kwargs): self.options = kwargs
+        def __enter__(self): return self
+        def __exit__(self, *_args): pass
+        @contextmanager
+        def stream(self, method, url, **kwargs):
+            assert method == "POST"
+            assert not self.options["trust_env"] and not self.options["follow_redirects"]
+            yield post(url, timeout=self.options["timeout"], **kwargs)
+    monkeypatch.setattr("app.providers.ai_provider.httpx.Client", Client)
 
 def test_mock_provider():
     provider = MockAIProvider()
@@ -19,14 +32,8 @@ def test_gemini_provider_init():
 
 
 def test_gemini_provider_rejects_empty_provider_response(monkeypatch):
-    class EmptyResponse:
-        def raise_for_status(self):
-            return None
-
-        def json(self):
-            return {"candidates": []}
-
-    monkeypatch.setattr("app.providers.ai_provider.httpx.post", lambda *args, **kwargs: EmptyResponse())
+    stub_stream(monkeypatch, lambda url, **kwargs: httpx.Response(200,
+        request=httpx.Request("POST", url), json={"candidates": []}))
 
     with pytest.raises(RuntimeError, match="AI summary request failed"):
         GeminiAIProvider(api_key="test-key").generate_summary("private text")
@@ -42,7 +49,7 @@ def test_gemini_uses_header_auth_and_configured_model(monkeypatch, operation):
             "candidates": [{"finishReason": "STOP", "content": {"parts": [{"text": "answer"}]}}],
         })
 
-    monkeypatch.setattr("app.providers.ai_provider.httpx.post", post)
+    stub_stream(monkeypatch, post)
     provider = GeminiAIProvider(api_key="test-key", model_name="gemini-test-flash")
     if operation == "summary":
         result = provider.generate_summary("document")
@@ -55,7 +62,7 @@ def test_gemini_uses_header_auth_and_configured_model(monkeypatch, operation):
     assert url.endswith("/models/gemini-test-flash:generateContent")
     assert "test-key" not in url and "?" not in url
     assert kwargs["headers"]["x-goog-api-key"] == "test-key"
-    assert kwargs["timeout"] == 30.0
+    assert kwargs["timeout"] == 20.0
 
 
 @pytest.mark.parametrize("model", ["../escape", "gemini-a?key=bad", "https://elsewhere/model", ""])
@@ -71,7 +78,7 @@ def test_gemini_reads_all_public_text_parts_without_thoughts(monkeypatch):
             {"text": "first "}, {"text": "second"},
         ]}}],
     })
-    monkeypatch.setattr("app.providers.ai_provider.httpx.post", lambda *a, **k: response)
+    stub_stream(monkeypatch, lambda *a, **k: response)
     assert GeminiAIProvider("test-key").generate_summary("document").output_text == "first second"
 
 
@@ -79,7 +86,7 @@ def test_gemini_rejects_truncated_text(monkeypatch):
     response = httpx.Response(200, request=httpx.Request("POST", "https://example.invalid"), json={
         "candidates": [{"finishReason": "MAX_TOKENS", "content": {"parts": [{"text": "partial"}]}}],
     })
-    monkeypatch.setattr("app.providers.ai_provider.httpx.post", lambda *a, **k: response)
+    stub_stream(monkeypatch, lambda *a, **k: response)
     with pytest.raises(RuntimeError):
         GeminiAIProvider("test-key").generate_summary("document")
 
@@ -87,7 +94,7 @@ def test_gemini_rejects_truncated_text(monkeypatch):
 def test_gemini_failures_do_not_retain_secret_exception_context(monkeypatch, caplog):
     def fail(*a, **k):
         raise RuntimeError("test-key private document")
-    monkeypatch.setattr("app.providers.ai_provider.httpx.post", fail)
+    stub_stream(monkeypatch, fail)
     with pytest.raises(RuntimeError) as error:
         GeminiAIProvider("test-key").generate_summary("private document")
     assert "test-key" not in str(error.value)

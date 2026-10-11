@@ -4,13 +4,13 @@ from hashlib import sha256
 import logging
 from typing import Any, Callable
 
-import httpx
 from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import get_settings
 from app.models import Company, RawDocument, Source
+from app.providers.safe_http import fetch_public_json
 
 SEC_SUBMISSIONS_URL = "https://data.sec.gov/submissions/CIK{cik}.json"
 SEC_COMPANY_TICKERS_URL = "https://www.sec.gov/files/company_tickers.json"
@@ -266,14 +266,14 @@ def fetch_recent_sec_filing_metadata(
     user_agent: str | None = None,
 ) -> list[SecFilingMetadata]:
     normalized_cik = _normalize_cik(cik)
-    http_get = http_get or httpx.get
-    response = http_get(
-        SEC_SUBMISSIONS_URL.format(cik=normalized_cik),
-        headers=_sec_headers(user_agent),
-        timeout=20,
-    )
-    response.raise_for_status()
-    recent = response.json().get("filings", {}).get("recent", {})
+    url, headers = SEC_SUBMISSIONS_URL.format(cik=normalized_cik), _sec_headers(user_agent)
+    if http_get is not None:
+        response = http_get(url, headers=headers, timeout=20)
+        response.raise_for_status()
+        data = response.json()
+    else:
+        data = fetch_public_json(url, headers=headers, max_bytes=16 * 1024 * 1024)
+    recent = data.get("filings", {}).get("recent", {})
 
     filings: list[SecFilingMetadata] = []
     accepted_forms = set(form_types)
@@ -311,15 +311,15 @@ def fetch_recent_sec_filing_metadata(
 
 
 def lookup_company_profile_for_ticker(ticker: str, http_get: Callable[..., Any] | None = None, user_agent: str | None = None) -> SecCompanyProfile | None:
-    http_get = http_get or httpx.get
-    response = http_get(
-        SEC_COMPANY_TICKERS_URL,
-        headers=_sec_headers(user_agent),
-        timeout=20,
-    )
-    response.raise_for_status()
+    headers = _sec_headers(user_agent)
+    if http_get is not None:
+        response = http_get(SEC_COMPANY_TICKERS_URL, headers=headers, timeout=20)
+        response.raise_for_status()
+        data = response.json()
+    else:
+        data = fetch_public_json(SEC_COMPANY_TICKERS_URL, headers=headers, max_bytes=8 * 1024 * 1024)
     wanted = ticker.upper()
-    for company in response.json().values():
+    for company in data.values():
         if str(company.get("ticker", "")).upper() == wanted:
             return SecCompanyProfile(
                 ticker=wanted,

@@ -47,7 +47,7 @@ def test_us_company_lookup_routes_to_sec_provider(monkeypatch) -> None:
         assert url == "https://www.sec.gov/files/company_tickers.json"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.services.sec_ingestion.fetch_public_json", lambda url, **kwargs: fake_get(url, **kwargs).json())
 
     with _client_with_db() as (client, _db):
         response = client.get("/companies/lookup?market=US&ticker=AAPL")

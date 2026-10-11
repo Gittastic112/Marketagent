@@ -57,7 +57,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 |---|---:|---|---|---|---|
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
-| M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery checkpoint](../archive/checkpoints/2026/m03-recovery-2026-10-11.md) |
+| M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Not started | None |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Not started | None |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | Not started | None |

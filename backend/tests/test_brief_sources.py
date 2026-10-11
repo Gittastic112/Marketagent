@@ -205,13 +205,13 @@ def test_pdf_indirect_content_streams_are_resolved(monkeypatch):
     from types import SimpleNamespace
     import pdfplumber
     from pdfminer.pdftypes import PDFObjRef, resolve1
-    from app.services.brief_source_extraction import extract_brief_pdf
+    from app.services.brief_source_extraction import _extract_brief_pdf
     original = (Path(__file__).parent / "fixtures" / "financial_statement_table.pdf").read_bytes()
     pdf = pdfplumber.open(BytesIO(original))
     stream = resolve1(pdf.pages[0].page_obj.contents[0])
     pdf.pages[0].page_obj.contents = [PDFObjRef(SimpleNamespace(getobj=lambda _: stream), 1)]
     monkeypatch.setattr(pdfplumber, "open", lambda *args, **kwargs: pdf)
-    text, evidence = extract_brief_pdf("indirect.pdf", "application/pdf", original, None)
+    text, evidence = _extract_brief_pdf("indirect.pdf", "application/pdf", original, None)
     assert len(text) > 40 and evidence["page_count"] == 1
 
 

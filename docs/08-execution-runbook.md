@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-10-10. This document owns commands, not historical phase records.
+Updated: 2026-10-11. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -26,8 +26,49 @@ The normal backend image does not mount source. Running pytest in an existing
 container can test old code. The frontend production image has no compiler or
 test runner. Building images alone does not replace running containers.
 The backend runtime target now also excludes pytest and backend/tests. Unit/E2E
-Compose explicitly select the test target. For host test environments install
-backend/requirements-test.txt; requirements.txt is runtime-only.
+Compose explicitly select the test target. Supported Linux/Python 3.14 environments
+install backend/requirements-test.lock with `--require-hashes`; requirements.lock
+is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
+
+## Dependency and container updates
+
+Edit direct requirements intentionally, then regenerate locks with Python 3.14,
+pip 25.3 and pip-tools 7.5.2 in a disposable environment. Existing locks preserve
+versions unless the requested change requires one; review every version/hash diff.
+From backend:
+
+~~~bash
+pip-compile --generate-hashes --strip-extras --no-emit-index-url --no-emit-trusted-host --no-header --no-annotate -o requirements.lock requirements.txt
+pip-compile --generate-hashes --strip-extras --no-emit-index-url --no-emit-trusted-host --no-header --no-annotate -c requirements.lock -o requirements-test.lock requirements-test.txt
+~~~
+
+From the root, run `python3 scripts/check_dependency_locks.py`, the backend suite,
+dependency audits and affected browser workflows. Frontend uses `npm ci` with its
+existing lockfile. CI action SHAs and Python/Node/PostgreSQL image digests are pinned;
+review updated official references rather than replacing them with floating tags.
+The Dockerfiles also freeze signed Debian security packages to a dated snapshot.
+Advance both snapshots together, retain signature checking, fail incomplete updates,
+and rebuild both images before claiming the fixes are installed.
+
+Scan explicitly selected built runtime images, with Python 3 and Docker available:
+
+~~~bash
+bash scripts/scan_container_images.sh backend-image:tag frontend-image:tag postgres-image:tag
+~~~
+
+The pinned scanner receives only exported images, not the source directory or
+Docker socket. Complete JSON package inventories stay in output/security/container-scan;
+CI uploads them. The gate rejects missing OS inventories and available HIGH/CRITICAL
+fixes. Unfixed findings remain visible and require review, including vendor severity
+differences. The optional stopped admin image and host Docker are separate checks.
+
+Before normal rollout, keep the current application/PostgreSQL image IDs as rollback
+tags and obtain a verified database backup. Rehearse migration/restore on a disposable
+database with the selected PostgreSQL major version. Recreate only intended services,
+preserving the stopped source worker and persistent volumes; verify readiness, browser
+behavior and idle use. Application rollback selects the retained image. Database
+rollback must respect migration and PostgreSQL compatibility; never attach a data
+directory to an older incompatible major or overwrite normal data for a test.
 
 ## Focused and full source verification
 
@@ -80,7 +121,8 @@ as a side effect of refactoring.
 Documentation and repository static checks, from root:
 
 ~~~bash
-python3 -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata
+python3 -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata scripts.test_dependency_locks scripts.test_container_scan
+python3 scripts/check_dependency_locks.py
 python3 scripts/check_docs.py
 python3 scripts/check_secrets.py
 python3 scripts/validate_project_skills.py

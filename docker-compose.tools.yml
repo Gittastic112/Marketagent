@@ -23,4 +23,4 @@ services:
       - /tmp:exec,mode=1777
     volumes:
       - .:/workspace:ro
-    command: python -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata
+    command: python -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata scripts.test_dependency_locks scripts.test_container_scan

@@ -2,7 +2,8 @@
 
 ## Overview
 
-Implemented controls were reviewed September 30, 2026. The dated
+Implemented controls were reviewed September 30, 2026, with October 11 source
+hardening recorded in the [M03 checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md). The dated
 [security checkpoint](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md)
 records evidence; prioritized residual work lives only in the
 [limitation ledger](agent_capabilities_and_limitations.md#security-boundary).
@@ -260,9 +261,10 @@ Security requirements:
   omitted body cannot erase stored filing evidence.
 - Treat extracted PDF text, table labels, filenames, and parser metadata as
   untrusted. Do not render extracted HTML or expose local paths/tracebacks.
-- PDF parsing is synchronous and can consume CPU. The current size/page caps
-  reduce risk but do not replace worker isolation, timeouts, malware scanning,
-  or content-disarm controls required for public deployment.
+- PDF extraction, geometry and rendering run in limited Linux child processes.
+  CPU, memory, output, wall-time and concurrent-job caps bound resource consumption;
+  children receive no credential environment. This is not a filesystem/native-code
+  sandbox, malware scanner or content-disarm control for public deployment.
 - Render evidence images only from stored authenticated assets. Restrict scale
   to `0.5`-`2.0`, reject nonexistent pages, cap output at 16 million pixels, and
   return PNG bytes with `private, no-store`, inline disposition, and `nosniff`.

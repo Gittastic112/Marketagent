@@ -7,6 +7,7 @@ import pdfplumber
 from pdfminer.pdftypes import resolve1
 
 from app.services.pdf_financial_extraction import parse_pdf_page_ranges, validate_pdf_upload
+from app.services.pdf_jobs import PdfJobError, run_pdf_job
 
 MAX_BRIEF_PDF_BYTES = 12 * 1024 * 1024
 MAX_BRIEF_TEXT = 60_000
@@ -14,6 +15,22 @@ MAX_BRIEF_PAGES = 20
 
 
 def extract_brief_pdf(filename: str, content_type: str | None, content: bytes, page_ranges: str | None) -> tuple[str, dict]:
+    if len(content) > MAX_BRIEF_PDF_BYTES:
+        raise HTTPException(413, "PDF must be at most 12 MB.")
+    validate_pdf_upload(filename=filename, content_type=content_type, content=content)
+    # Invalid/huge ranges are rejected before allocating a parser process.
+    parse_pdf_page_ranges(page_ranges, max_targeted_pages=MAX_BRIEF_PAGES)
+    try:
+        result = run_pdf_job("brief", content, {"page_ranges": page_ranges})
+    except PdfJobError as error:
+        raise HTTPException(error.status_code, str(error)) from None
+    if (not isinstance(result, list) or len(result) != 2 or not isinstance(result[0], str)
+        or not isinstance(result[1], dict) or not 40 <= len(result[0]) <= MAX_BRIEF_TEXT):
+        raise HTTPException(422, "PDF parser returned an invalid result.")
+    return result[0], result[1]
+
+
+def _extract_brief_pdf(filename: str, content_type: str | None, content: bytes, page_ranges: str | None) -> tuple[str, dict]:
     if len(content) > MAX_BRIEF_PDF_BYTES:
         raise HTTPException(413, "PDF must be at most 12 MB.")
     validate_pdf_upload(filename=filename, content_type=content_type, content=content)

@@ -29,7 +29,9 @@ state before integration. The shared local index/branch and unclassified prior f
 remain preserved; do not infer a clean checkout or reset/stage everything.
 Branch codex/m02-m09-completion is [PR #2](https://github.com/Gittastic112/Marketagent/pull/2).
 M02 head 9881f4113a2649f27c4c2a91833676311ed7a0ce passes every GitHub check,
-including 21 browser workflows. M03 recovery edits are local pending publication.
+including 21 browser workflows. M03 recovery head b5c737bc8dd3af17aef401991cc7e39489a6314e
+passes all eight GitHub checks. PDF/transport/security-build work is under validation;
+see the [security checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md).
 
 ## Runtime and source changes
 

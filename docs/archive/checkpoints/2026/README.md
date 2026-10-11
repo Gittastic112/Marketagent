@@ -2,6 +2,10 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [M03 security implementation, October 11](m03-security-2026-10-11.md)
+- [M03 consistent recovery, October 11](m03-recovery-2026-10-11.md)
+- [M02 ownership and validation, October 11](m02-ownership-2026-10-11.md)
+
 - [Documentation structure and five-workstream plan, October 5](documentation-and-parallel-plan-2026-10-05.md)
 
 - [Security hardening and evidence-linked analyst reviews](security-and-comparison-reviews-2026-09-30.md)

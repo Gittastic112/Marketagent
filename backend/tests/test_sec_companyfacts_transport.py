@@ -4,6 +4,7 @@ import json
 import pytest
 
 from app.services import sec_xbrl_extractor as extractor
+from app.providers import safe_http
 
 
 def install_stream(monkeypatch, chunks, headers=None):
@@ -11,10 +12,11 @@ def install_stream(monkeypatch, chunks, headers=None):
     state = {"closed": False, "read": 0}
 
     class Response:
+        encoding = "utf-8"
         def raise_for_status(self):
             pass
 
-        def iter_bytes(self):
+        def iter_bytes(self, chunk_size):
             for chunk in chunks:
                 state["read"] += 1
                 yield chunk
@@ -30,8 +32,13 @@ def install_stream(monkeypatch, chunks, headers=None):
         finally:
             state["closed"] = True
 
-    monkeypatch.setattr(extractor.httpx, "stream", stream)
-    monkeypatch.setattr(extractor, "validate_safe_url", lambda url: url)
+    class Client:
+        def __init__(self, **options): self.options = options
+        def __enter__(self): return self
+        def __exit__(self, *_args): pass
+        def stream(self, *args, **kwargs): return stream(*args, **self.options, **kwargs)
+    monkeypatch.setattr(safe_http.httpx, "Client", Client)
+    monkeypatch.setattr(safe_http, "public_url_addresses", lambda url: ("93.184.216.34",))
     return calls, state
 
 
@@ -40,9 +47,13 @@ def test_companyfacts_stream_uses_fixed_host_timeout_and_no_redirects(monkeypatc
     calls, state = install_stream(monkeypatch, [raw[:10], raw[10:]])
     assert extractor.fetch_company_facts("320193", user_agent="Test test@example.com")["cik"] == 320193
     args, options = calls[0]
-    assert args == ("GET", "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json")
+    assert args[0] == "GET"
+    assert str(args[1]) == "https://93.184.216.34/api/xbrl/companyfacts/CIK0000320193.json"
+    assert options["headers"]["Host"] == "data.sec.gov"
+    assert options["extensions"]["sni_hostname"] == "data.sec.gov"
     assert options["timeout"] == 20
     assert options["follow_redirects"] is False
+    assert options["trust_env"] is False
     assert state["closed"] is True
 
 
@@ -54,14 +65,14 @@ def test_companyfacts_size_limit_checks_headers_and_decoded_chunks(monkeypatch, 
     with pytest.raises(ValueError, match="size limit"):
         extractor.fetch_company_facts("320193", user_agent="Test test@example.com")
     assert state["closed"] is True
-    assert state["read"] == (0 if declared_length == "1000" else 2)
+    assert state["read"] == (2 if declared_length is None else 0)
 
 
 def test_companyfacts_stream_enforces_elapsed_deadline(monkeypatch):
     _, state = install_stream(monkeypatch, [b"{}"])
     clock = iter([0, 61])
-    monkeypatch.setattr(extractor.time, "monotonic", lambda: next(clock))
-    with pytest.raises(ValueError, match="time limit"):
+    monkeypatch.setattr(safe_http.time, "monotonic", lambda: next(clock))
+    with pytest.raises(ValueError, match="time or size limit"):
         extractor.fetch_company_facts("320193", user_agent="Test test@example.com")
     assert state["closed"] is True
 
