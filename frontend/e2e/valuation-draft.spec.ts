@@ -1,6 +1,6 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
-import { backendData, createCompany, signIn } from "./helpers";
+import { backendData, createCompany, expandDraftSections, signIn } from "./helpers";
 
 const ASSUMPTIONS: Record<string, string> = {
   starting_revenue: "1000",
@@ -28,13 +28,6 @@ const ASSUMPTIONS: Record<string, string> = {
   diluted_shares: "100",
   current_market_price: "10",
 };
-
-async function expandDraftSections(page: Page) {
-  const closedSections = page.locator("details.valuation-draft-group:not([open]) > summary");
-  while (await closedSections.count()) {
-    await closedSections.first().click();
-  }
-}
 
 test("valuation draft save, reset, refresh, archive, and promotion", async ({ page }) => {
   await signIn(page);

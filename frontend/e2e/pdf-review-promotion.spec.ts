@@ -35,7 +35,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByLabel("Title", { exact: true }).fill("Mock Integration Financial Statements");
   await uploadPanel.getByLabel("Published date").fill("2026-05-31");
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
-  await expect(uploadPanel.getByRole("status")).toContainText("1 pages, 1 tables, 12 candidates");
+  await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
 
   await page.getByRole("link", { name: "Financials" }).click();
   await expect(page.getByRole("heading", { name: "Extracted Financial Candidates" })).toBeVisible();
@@ -61,7 +61,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
 
   await expect(page.getByRole("heading", { name: "Review Required" })).toHaveCount(0);
   await page.getByRole("button", { name: "Promote Reviewed Candidates" }).click();
-  await expect(page.getByRole("status")).toContainText("Successfully promoted 12 candidates");
+  await expect(page.getByRole("main").getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
   await expect(page.getByText("No extracted candidates yet")).toBeVisible();
   await expect(page.getByText("2 of 2 periods normalized")).toBeVisible();
   await expect(page.getByText(/exact matches, 0 mismatches/)).toBeVisible();

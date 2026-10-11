@@ -44,7 +44,16 @@ export async function backendData<T>(
     `Backend ${options.method || "GET"} ${path} failed: ${JSON.stringify(body)}`,
   ).toBeTruthy();
   expect(body?.errors || []).toEqual([]);
+  if (response.status() === 204) return undefined as T;
   return body.data as T;
+}
+
+export async function expandDraftSections(page: Page): Promise<void> {
+  await page.locator("details.valuation-draft-group").first().waitFor({ state: "visible" });
+  const closedSections = page.locator("details.valuation-draft-group:not([open]) > summary");
+  while (await closedSections.count()) {
+    await closedSections.first().click();
+  }
 }
 
 export async function createCompany(

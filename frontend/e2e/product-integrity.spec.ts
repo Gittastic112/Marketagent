@@ -8,6 +8,7 @@ test("company setup creates an authenticated company with an industry mapping", 
   const unique = Date.now().toString().slice(-7);
   const ticker = `C${unique}`;
   await page.goto("/companies");
+  await page.getByRole("link", { name: "Add company", exact: true }).click();
   const wizard = page
     .getByRole("heading", { name: "Company Setup Wizard" })
     .locator("xpath=..");
@@ -27,7 +28,7 @@ test("company setup creates an authenticated company with an industry mapping", 
   await wizard.getByRole("button", { name: "Create Company" }).click();
 
   await expect(page).toHaveURL(/\/companies\/\d+$/);
-  await expect(page.getByRole("heading", { name: `${ticker} | Company Setup E2E Fixture` })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: `${ticker} Company Setup E2E Fixture`, exact: true })).toBeVisible();
   const companies = await backendData<Array<{ ticker: string; damodaran_industry: string | null }>>(page, "/companies");
   expect(companies).toContainEqual(expect.objectContaining({
     ticker,
@@ -62,7 +63,8 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   });
 
   await page.goto(`/companies/${company.id}/valuation`);
-  const mix = page.getByRole("heading", { name: "Revenue-Weighted Industry Mix" }).locator("xpath=ancestor::div[contains(@class, 'rounded-lg')][1]");
+  const mix = page.locator("section.industry-mix-card");
+  await expect(mix.getByRole("heading", { name: "Revenue-Weighted Industry Mix" })).toBeVisible();
   await mix.getByLabel("Segment name").fill("Software");
   await mix.getByLabel("Industry for Software").selectOption({ label: "Software (System & Application)" });
   await mix.getByLabel("Revenue weight for Software").fill("60");
