@@ -51,7 +51,11 @@ def test_timeout_kills_and_reaps_child_and_releases_capacity(monkeypatch, tmp_pa
 
 def test_async_cancellation_stops_the_sdk_instead_of_leaving_retries_running(monkeypatch, tmp_path):
     pid_file = tmp_path / "pid"
-    worker(monkeypatch, tmp_path, f"import os,time\nopen({str(pid_file)!r},'w').write(str(os.getpid()))\ntime.sleep(60)\n")
+    # Publish readiness atomically: existence must mean the PID is fully written
+    # before the parent deliberately kills the worker under test.
+    worker(monkeypatch, tmp_path, "import os,time\nfrom pathlib import Path\n"
+        f"pid_file=Path({str(pid_file)!r})\npending=pid_file.with_suffix('.pending')\n"
+        "pending.write_text(str(os.getpid()))\npending.replace(pid_file)\ntime.sleep(60)\n")
     async def cancel():
         task = asyncio.create_task(jobs.run_yfinance_job("quote", REQUEST))
         async with asyncio.timeout(5):

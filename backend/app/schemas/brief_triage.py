@@ -19,6 +19,7 @@ class BriefTriageSource(BaseModel):
     source_kind: str
     as_of_date: date | None
     source_sha256: str
+    content_sha256: str | None = None
     created_at: datetime
     ai_output_id: int
     provider: str
@@ -43,6 +44,12 @@ class BriefSuggestionRef(BriefFindingRef):
     suggestion_index: int
 
 
+class BriefComparisonDimension(BaseModel):
+    labels: list[str]
+    missing_count: int
+    status: Literal["same", "unknown", "incompatible"]
+
+
 class BriefTriageGroup(BaseModel):
     field: ValuationField
     label: str
@@ -53,6 +60,8 @@ class BriefTriageGroup(BaseModel):
     distinct_content_count: int
     highest_importance: Literal["high", "medium", "low"]
     items: list[BriefSuggestionRef]
+    comparability_status: Literal["same", "unknown", "incompatible"] = "unknown"
+    comparability: dict[str, BriefComparisonDimension] = Field(default_factory=dict)
 
 
 class BriefTriageCoverage(BaseModel):
@@ -129,7 +138,7 @@ class BriefTriageRead(BaseModel):
     company_name: str
     ticker: str
     claim_type: Literal["Calculation"] = "Calculation"
-    methodology: str = "private-source-direction-comparison-v1"
+    methodology: str = "private-source-direction-comparison-v2"
     computed_at: datetime
     include_mock: bool
     evidence_hash: str = ""

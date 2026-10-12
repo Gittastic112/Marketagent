@@ -44,7 +44,8 @@ def test_benchmark_opportunity_cost_uses_dated_prices_and_snapshots(db):
 
     result = calculate_benchmark_opportunity_cost(db, portfolio.id, start.snapshot_date, end.snapshot_date)
 
-    assert result["calculation_status"] == "complete"
+    assert result["calculation_status"] == "partial"
+    assert any("Legacy snapshot" in warning for warning in result["warnings"])
     assert result["benchmark_return"] == pytest.approx(0.2)
     assert result["portfolio_return"] == pytest.approx(0.1)
     assert result["return_spread"] == pytest.approx(-0.1)

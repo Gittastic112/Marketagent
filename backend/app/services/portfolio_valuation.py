@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from typing import Any
 
 from sqlalchemy import case, func, or_, select
@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, selectinload
 
 from app.models import Alert, DcfAssumptionSet, DcfOutput, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding, ThesisNote, ValuationModel
 from app.services.fx_rates import FxRateUnavailable, convert_amount
+from app.services.portfolio_replay import replay_portfolio
 
 
 def get_latest_price(
@@ -42,12 +43,18 @@ def calculate_portfolio_valuation(
     # use this portfolio's private context, never global latest research records.
     user_id = portfolio.user_id
 
-    holdings = list(db.scalars(
+    replayed_holdings, replayed_cash, replay_basis = (None, None, {
+        "method": "current-declared-balances-v1", "status": "not_assessed", "claim_type": "User Assumption",
+        "blockers": [], "limitations": ["Current declared balances do not establish historical ownership or activity."]})
+    if as_of_date is not None:
+        replayed_holdings, replayed_cash, replay_basis = replay_portfolio(db, portfolio, target_date)
+    holdings = replayed_holdings if replayed_holdings is not None else list(db.scalars(
         select(PortfolioHolding)
         .options(selectinload(PortfolioHolding.company))
         .where(
             PortfolioHolding.portfolio_id == portfolio_id,
             PortfolioHolding.quantity > 0,
+            PortfolioHolding.as_of_date <= target_date,
         )
         .order_by(PortfolioHolding.id)
     ))
@@ -111,6 +118,10 @@ def calculate_portfolio_valuation(
         )
         if user_id is not None:
             valuation_query = valuation_query.where(ValuationModel.user_id == user_id)
+        if as_of_date is not None:
+            cutoff = datetime.combine(target_date, time.max, tzinfo=UTC)
+            valuation_query = valuation_query.where(DcfAssumptionSet.created_at <= cutoff,
+                or_(DcfOutput.id.is_(None), DcfOutput.created_at <= cutoff))
         for company_id, assumption_set, output in db.execute(valuation_query):
             latest_valuation_by_company.setdefault(company_id, (assumption_set, output))
 
@@ -147,13 +158,12 @@ def calculate_portfolio_valuation(
 
     total_market_value = 0.0
     total_cost_basis = 0.0
-    missing_fx_pairs: set[str] = set()
+    missing_fx_pairs: set[str] = set(replay_basis.get("missing_cost_fx_pairs", []))
     stale_threshold = timedelta(days=5)
 
     holdings_valuation = []
 
     for holding in holdings:
-        # Ignore holding as_of_date for current valuation, use target_date
         qty = float(holding.quantity)
         avg_cost = float(holding.average_cost)
         total_cost = qty * avg_cost
@@ -163,6 +173,10 @@ def calculate_portfolio_valuation(
             if holding.company_id is not None
             else latest_price_by_ticker.get(holding.ticker.upper())
         )
+        if replayed_holdings is not None and latest_price and latest_price.adjustment_state not in {"not_applicable", "unadjusted"}:
+            replay_basis["status"] = "partial"
+            replay_basis["blockers"] = sorted(set(replay_basis["blockers"]) | {"PRICE_ADJUSTMENT_BASIS_UNSUPPORTED"})
+            latest_price = None
 
         market_price = None
         market_price_as_of = None
@@ -176,17 +190,14 @@ def calculate_portfolio_valuation(
         cost_fx = None
         is_stale = True
 
-        try:
-            converted_cost, cost_fx = convert_amount(
-                db,
-                total_cost,
-                holding.currency,
-                portfolio.base_currency,
-                holding.as_of_date,
-            )
-            total_cost_base = float(converted_cost)
-        except FxRateUnavailable:
-            missing_fx_pairs.add(f"{holding.currency.upper()}/{portfolio.base_currency.upper()}")
+        if getattr(holding, "is_replayed", False):
+            total_cost_base = float(holding.cost_basis_base) if holding.cost_basis_base is not None else None
+        else:
+            try:
+                converted_cost, cost_fx = convert_amount(db, total_cost, holding.currency, portfolio.base_currency, holding.as_of_date)
+                total_cost_base = float(converted_cost)
+            except FxRateUnavailable:
+                missing_fx_pairs.add(f"{holding.currency.upper()}/{portfolio.base_currency.upper()}")
 
         if latest_price:
             market_price = float(latest_price.price)
@@ -291,7 +302,9 @@ def calculate_portfolio_valuation(
             "cost_fx_rate_to_base": float(cost_fx.rate) if cost_fx else None,
             "cost_fx_rate_as_of": cost_fx.as_of_date if cost_fx else None,
             "cost_fx_observation_id": cost_fx.observation_id if cost_fx else None,
-            "cost_fx_is_stale": cost_fx.is_stale if cost_fx else False,
+            "cost_fx_is_stale": cost_fx.is_stale if cost_fx else getattr(holding, "cost_fx_is_stale", False),
+            "cost_fx_observation_ids": sorted(getattr(holding, "cost_fx_ids", [])),
+            "source_transaction_ids": getattr(holding, "transaction_ids", []),
             "weight_percent": None,  # Will calculate after total_market_value is known
             "is_stale_price": is_stale,
             "is_valuation_stale": is_valuation_stale,
@@ -337,7 +350,7 @@ def calculate_portfolio_valuation(
     # Sort holdings by weight descending
     holdings_valuation.sort(key=lambda x: x["weight_percent"] or 0, reverse=True)
 
-    cash_records = list(db.scalars(
+    cash_records = replayed_cash if replayed_cash is not None else list(db.scalars(
         select(PortfolioCashBalance)
         .where(PortfolioCashBalance.portfolio_id == portfolio_id)
         .where(PortfolioCashBalance.as_of_date <= target_date)
@@ -388,6 +401,12 @@ def calculate_portfolio_valuation(
     elif not has_holdings and latest_cash_by_currency and cash_complete:
         total_portfolio_value = total_cash_value
 
+    if replayed_holdings is not None and replay_basis["status"] != "complete":
+        total_portfolio_value = total_cash_value = total_unrealized_pnl = total_unrealized_pnl_percent = None
+        has_complete_market_value = has_complete_cost_basis = False
+    elif replayed_holdings == [] and replay_basis["status"] == "complete":
+        has_complete_market_value = has_complete_cost_basis = True
+
     return {
         "portfolio_id": portfolio.id,
         "as_of_date": target_date,
@@ -401,4 +420,5 @@ def calculate_portfolio_valuation(
         "missing_fx_pairs": sorted(missing_fx_pairs),
         "cash_balances": cash_valuations,
         "holdings": holdings_valuation,
+        "replay_basis": replay_basis,
     }

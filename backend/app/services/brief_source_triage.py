@@ -95,6 +95,7 @@ def compare_sources(db: Session, user_id: str, company_id: int, *, include_mock:
             warnings.append("Historical source, not a current-data timestamp.")
         sources.append(BriefTriageSource(id=source.id, title=source.title, source_kind=source.source_kind,
             as_of_date=source.as_of_date, source_sha256=source.source_sha256, created_at=source.created_at,
+            content_sha256=source.extraction_json.get("text_sha256"),
             ai_output_id=output.id, provider=output.provider_name, model=output.model_name,
             prompt_version=output.prompt_version, input_hash=output.input_hash, generated_at=output.created_at,
             is_mock=output.is_mock, review_status=output.human_review_status, reviewed_at=output.reviewed_at,
@@ -111,12 +112,22 @@ def compare_sources(db: Session, user_id: str, company_id: int, *, include_mock:
         # Never interpret Mock Data and non-mock opposition as a real conflict.
         directions = {False: defaultdict(set), True: defaultdict(set)}
         importance = []
+        contexts = []
         for item in items:
             source = by_id[item["source_id"]]
             finding = source.findings[item["finding_index"]]
             suggestion = finding.valuation_inputs[item["suggestion_index"]]
             directions[source.is_mock][suggestion.direction].add(hashes[source.id])
             importance.append(finding.importance)
+            contexts.append(suggestion.comparison_context)
+        comparability = {}
+        for dimension in ("period", "currency", "economic_scope"):
+            labels = sorted({getattr(context, dimension) for context in contexts if getattr(context, dimension)})
+            missing = sum(not getattr(context, dimension) for context in contexts)
+            comparability[dimension] = {"labels": labels, "missing_count": missing,
+                "status": "incompatible" if len(labels) > 1 else "unknown" if missing or len(contexts) < 2 else "same"}
+        states = {item["status"] for item in comparability.values()}
+        comparability_status = "incompatible" if "incompatible" in states else "unknown" if "unknown" in states else "same"
         opposing, mixed = [], False
         for mock, lane in directions.items():
             if lane["increase"] and lane["decrease"]:
@@ -130,7 +141,8 @@ def compare_sources(db: Session, user_id: str, company_id: int, *, include_mock:
             status="opposing_directions" if opposing else "mixed_within_content" if mixed else "no_opposition_detected",
             opposition_basis=opposing, source_count=len({item["source_id"] for item in items}),
             distinct_content_count=len({hashes[item["source_id"]] for item in items}),
-            highest_importance=min(importance, key=IMPORTANCE.get), items=items))
+            highest_importance=min(importance, key=IMPORTANCE.get), items=items,
+            comparability=comparability, comparability_status=comparability_status))
     order = list(FIELD_LABELS)
     groups.sort(key=lambda group: (group.status != "opposing_directions", IMPORTANCE[group.highest_importance], order.index(group.field)))
     not_examined = max(0, counts.get(False, 0) - len(rows))
@@ -139,6 +151,7 @@ def compare_sources(db: Session, user_id: str, company_id: int, *, include_mock:
         "No detected opposition is not agreement or complete coverage. Review-only suggestions have no inferred direction.",
         "Source counts are not independent corroboration. Exact text copies share a content hash when available; syndicated or paraphrased copies may not.",
         "This local comparison makes no AI calls and changes no review status, valuation input or saved model.",
+        "Comparability uses literal labels in cited quotes, selected by AI. Matching labels do not verify economic equivalence or corroboration; absent labels stay unknown. Source dates are not forecast periods.",
     ]
     if include_mock:
         warnings.append("Mock Data is included explicitly and compared only with other Mock Data, never against non-mock sources.")

@@ -31,7 +31,8 @@ def test_time_weighted_return_compounds_complete_snapshot_subperiods(db):
 
     result = calculate_time_weighted_return(db, portfolio.id, date(2026, 8, 1), date(2026, 8, 3))
 
-    assert result.calculation_status == "complete"
+    assert result.calculation_status == "partial"
+    assert any("Legacy snapshot" in warning for warning in result.warnings)
     assert result.return_decimal == pytest.approx(0.21)
 
 

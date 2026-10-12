@@ -34,10 +34,12 @@ def record_daily_snapshot(db: Session, portfolio_id: int, as_of_date: date | Non
             if valuation["total_portfolio_value"] is not None
             and not missing_price_tickers
             and not missing_fx_pairs
+            and valuation.get("replay_basis", {}).get("status") == "complete"
             else "partial"
         )
 
     payload = {
+        "replay_basis": valuation.get("replay_basis"),
         "valuation_summary": {
             "portfolio_id": valuation["portfolio_id"],
             "as_of_date": valuation["as_of_date"].isoformat(),
@@ -75,6 +77,8 @@ def record_daily_snapshot(db: Session, portfolio_id: int, as_of_date: date | Non
                     "cost_fx_rate_as_of",
                     "cost_fx_observation_id",
                     "cost_fx_is_stale",
+                    "cost_fx_observation_ids",
+                    "source_transaction_ids",
                 )
             }
             for holding in holdings

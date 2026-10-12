@@ -74,6 +74,7 @@ def db_session() -> Generator[Session]:
         yield db
     finally:
         db.close()
+        engine.dispose()
 
 
 @pytest.fixture

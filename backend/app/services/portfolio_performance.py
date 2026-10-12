@@ -8,6 +8,9 @@ from sqlalchemy.orm import Session
 
 from app.models import PortfolioSnapshot
 from app.services.portfolio_cash_flows import normalize_external_cash_flows
+from app.services.portfolio_replay import snapshot_replay_is_verified
+
+LEGACY_WARNING = "Legacy snapshot history or subsequently changed activity is unverified for transaction replay; this return is provisional."
 
 
 @dataclass
@@ -109,12 +112,15 @@ def calculate_money_weighted_return(
 
     result = _solve_xirr(investor_cash_flows)
     warnings = []
+    verified = snapshot_replay_is_verified(snapshot, db)
+    if not verified:
+        warnings.append(LEGACY_WARNING)
     if any(flow.fx_is_stale for flow in report.flows):
         warnings.append("One or more cash-flow FX observations were stale on the transaction date.")
     if result is None:
         warnings.append("The recorded cash-flow pattern does not produce a unique solvable XIRR.")
     return ReturnMetric(
-        calculation_status="complete" if result is not None else "not_available",
+        calculation_status=("complete" if verified else "partial") if result is not None else "not_available",
         return_decimal=result,
         start_date=investor_cash_flows[0][0],
         end_date=as_of_date,
@@ -165,6 +171,9 @@ def calculate_time_weighted_return(
     source_transactions: list[int] = []
     warnings: list[str] = []
     timing_is_partial = False
+    replay_is_partial = not all(snapshot_replay_is_verified(snapshot, db) for snapshot in snapshots)
+    if replay_is_partial:
+        warnings.append(LEGACY_WARNING)
     for previous, current in zip(snapshots, snapshots[1:]):
         starting_value = float(previous.total_portfolio_value)
         if starting_value <= 0:
@@ -219,7 +228,7 @@ def calculate_time_weighted_return(
             "External cash flows use an end-of-subperiod adjustment because intraday pre-flow valuations are unavailable."
         )
     return ReturnMetric(
-        calculation_status="partial" if timing_is_partial else "complete",
+        calculation_status="partial" if timing_is_partial or replay_is_partial else "complete",
         return_decimal=compounded - 1.0,
         start_date=start_date,
         end_date=end_date,

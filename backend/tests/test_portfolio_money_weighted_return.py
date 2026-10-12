@@ -32,7 +32,8 @@ def test_money_weighted_return_uses_external_flows_and_complete_snapshot(db):
 
     result = calculate_money_weighted_return(db, portfolio.id, date(2026, 8, 9))
 
-    assert result.calculation_status == "complete"
+    assert result.calculation_status == "partial"
+    assert any("Legacy snapshot" in warning for warning in result.warnings)
     assert result.return_decimal is not None
     assert result.return_decimal == pytest.approx(0.1, abs=0.001)
     assert result.source_snapshot_ids == [snapshot.id]

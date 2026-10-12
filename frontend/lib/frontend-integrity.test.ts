@@ -116,7 +116,9 @@ test("company workspace typography and layout do not force page-level horizontal
 });
 
 test("responsive route matrix enforces readable typography", () => {
-  const spec = readFrontendFile("e2e/accessibility-responsive.spec.ts");
+  const spec = readFrontendFile("e2e/route-checks.ts");
+  assert.match(readFrontendFile("e2e/accessibility-responsive.spec.ts"), /verifyRoute/);
+  assert.match(readFrontendFile("e2e/route-details.spec.ts"), /verifyRoute/);
   const timeline = readFrontendFile("components/events-timeline.tsx");
   const workspace = readFrontendFile("components/advanced-workspace.tsx");
   const diagnostics = readFrontendFile("components/valuation/diagnostic-panel.tsx");
@@ -431,7 +433,9 @@ test("portfolio runtime smoke covers multi-currency risk, benchmark, snapshots, 
   assert.match(seed, /Mock Data Multi-Currency Portfolio/);
   assert.match(seed, /range\(22\)/);
   assert.match(seed, /PortfolioBenchmarkConfig/);
-  assert.match(seed, /PortfolioSnapshot/);
+  assert.match(seed, /record_daily_snapshot/);
+  assert.match(seed, /PortfolioTransaction/);
+  assert.match(seed, /PortfolioCashBalance/);
   assert.match(seed, /e2e_mock_fixture/);
   assert.match(readFrontendFile("components/portfolio-risk-return-panel.tsx"), /MockDataBadge/);
   assert.match(packageJson, /test:e2e:portfolio/);

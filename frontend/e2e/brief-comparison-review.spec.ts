@@ -1,0 +1,46 @@
+import { expect, test } from "@playwright/test";
+import { backendData, signIn } from "./helpers";
+
+test("incompatible source periods retain review receipts and Mock Data stays outside brief context", async ({ page }, testInfo) => {
+  await signIn(page);
+  const companies = await backendData<Array<{ id: number; ticker: string }>>(page, "/companies");
+  const company = companies.find(item => item.ticker === "BRIEFCMP");
+  expect(company).toBeTruthy();
+  let scans = 0;
+  page.on("request", request => { if (/brief-sources\/\d+\/analyze/.test(request.url())) scans++; });
+  const content = page.getByRole("main");
+  await page.goto(`/daily-brief/triage?company_id=${company!.id}`);
+  await expect(content.getByRole("heading", { name: "No eligible findings yet" })).toBeVisible();
+  await content.getByRole("checkbox", { name: "Include clearly labeled Mock Data" }).check();
+  await expect(content.getByText(/Comparison basis: incompatible/)).toBeVisible();
+  await expect(content.getByText("incompatible: FY2025; FY2026", { exact: true })).toBeVisible();
+  await expect(content.getByText("same: USD", { exact: true })).toBeVisible();
+  const review = content.getByRole("region", { name: "Base-year revenue analyst review" });
+  await review.getByLabel("Rationale for Base-year revenue").fill("Mock Data: Different fiscal periods require investigation before any input changes.");
+  await review.getByLabel(/I reviewed the displayed passages/).check();
+  await review.getByRole("button", { name: "Save analyst review" }).click();
+  await expect(content.getByText(/Analyst review recorded/)).toBeVisible();
+  await review.getByRole("button", { name: "Show review history" }).click();
+  await expect(review.getByRole("link", { name: "Version 1 · Investigate further" })).toBeVisible();
+  const receipt = await review.getByRole("link", { name: "Open saved evidence receipt · version 1" }).getAttribute("href");
+  expect(receipt).toBeTruthy();
+
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: testInfo.outputPath("mobile-comparison-periods.png"), fullPage: true });
+  await content.getByRole("link", { name: "Mock Data FY2025 comparison source", exact: true }).click();
+  await content.getByRole("button", { name: "Archive source", exact: true }).click();
+  await expect(content.getByRole("button", { name: "Restore source", exact: true })).toBeVisible();
+  await page.goto(receipt!);
+  await expect(content.getByText(/^Evidence has changed\. This decision/)).toBeVisible();
+  await expect(content.getByRole("heading", { name: "Mock Data FY2025 hypothesis" })).toBeVisible();
+  await expect(content.getByRole("heading", { name: "Mock Data FY2026 hypothesis" })).toBeVisible();
+  await expect(content.getByText("Mock-inclusive comparison scope", { exact: true })).toBeVisible();
+  await content.getByRole("link", { name: "Mock Data FY2025 comparison source", exact: true }).click();
+  await content.getByRole("button", { name: "Restore source", exact: true }).click();
+  await expect(content.getByRole("button", { name: "Archive source", exact: true })).toBeVisible();
+  const brief = await backendData<{ payload_json: { private_research: { excluded: Record<string, number>; sources: unknown[] } } }>(page, "/daily-brief", { method: "POST", data: {} });
+  expect(brief.payload_json.private_research.excluded.mock).toBeGreaterThanOrEqual(2);
+  expect(brief.payload_json.private_research.sources).toEqual([]);
+  expect(scans).toBe(0);
+});

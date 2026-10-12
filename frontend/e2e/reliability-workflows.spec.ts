@@ -51,7 +51,7 @@ test("dashboard exposes a partial stored snapshot and its portfolio price gaps",
     name: "Partial Dashboard E2E Fixture",
   });
   // The dashboard reads the first owned portfolio's latest stored snapshot.
-  // Add a temporary missing-price holding to that fixture, then restore it.
+  // Record funding and a purchase for a temporary missing-price holding, then restore it.
   const overview = await backendData<{
     default_portfolio: { id: number };
     default_portfolio_snapshot: { snapshot_date: string } | null;
@@ -75,7 +75,18 @@ test("dashboard exposes a partial stored snapshot and its portfolio price gaps",
   });
 
   let snapshotId: number | undefined;
+  const transactionIds: number[] = [];
   try {
+    for (const activity of [
+      { company_id: null, ticker: "CASH", transaction_type: "deposit", quantity: 500, price: 0 },
+      { company_id: company.id, ticker, transaction_type: "buy", quantity: 5, price: 100 },
+    ]) {
+      const transaction = await backendData<{ id: number }>(page, "/portfolio-transactions", {
+        method: "POST", data: { ...activity, portfolio_id: portfolio.id, fees: 0, currency: "USD",
+          transaction_date: asOfDate, notes: "Mock Data temporary purchase for missing-price browser verification." },
+      });
+      transactionIds.push(transaction.id);
+    }
     const snapshot = await backendData<{
       id: number;
       calculation_status: string;
@@ -99,7 +110,11 @@ test("dashboard exposes a partial stored snapshot and its portfolio price gaps",
     try {
       if (snapshotId !== undefined) await backendData(page, `/portfolio-snapshots/${snapshotId}`, { method: "DELETE" });
     } finally {
-      await backendData(page, `/portfolio-holdings/${holding.id}`, { method: "DELETE" });
+      try {
+        for (const id of transactionIds) await backendData(page, `/portfolio-transactions/${id}`, { method: "DELETE" });
+      } finally {
+        await backendData(page, `/portfolio-holdings/${holding.id}`, { method: "DELETE" });
+      }
     }
   }
 });

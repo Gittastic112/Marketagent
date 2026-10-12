@@ -28,6 +28,6 @@ export default async function BriefSourcePage({ params }: { params: Promise<{ id
       <ul className="compact-list muted">{source.warnings.map(warning => <li key={warning}>{warning}</li>)}</ul>
       <details open><summary>Stored source text</summary><pre className="brief-source-text">{source.text}</pre></details>
     </Panel>
-    {source.analysis && <Panel title="Ranked findings and valuation review"><BriefSourceFindings source={source} /></Panel>}
+    {source.analysis && <Panel title="Ranked findings and valuation review"><BriefSourceFindings source={source} includeAnchors /></Panel>}
   </>;
 }

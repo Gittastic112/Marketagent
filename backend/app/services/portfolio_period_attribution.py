@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Company, PortfolioSnapshot
 from app.services.portfolio_cash_flows import normalize_external_cash_flows
+from app.services.portfolio_replay import snapshot_replay_is_verified
 
 
 def _snapshot(
@@ -310,7 +311,11 @@ def calculate_period_attribution(
         tags = company.exposure_tags if company else []
         for tag in tags:
             tag_attribution[tag.name] = tag_attribution.get(tag.name, 0.0) + contribution
-    calculation_status = "complete" if component_complete and price_complete and fx_complete else "partial"
+    replay_verified = snapshot_replay_is_verified(start, db) and snapshot_replay_is_verified(end, db)
+    if not replay_verified:
+        warnings.append("Legacy snapshot history or subsequently changed activity is unverified for transaction replay; attribution is provisional.")
+        blockers.append("legacy_unverified_replay")
+    calculation_status = "complete" if component_complete and price_complete and fx_complete and replay_verified else "partial"
     confidence = "high" if calculation_status == "complete" and not stale_inputs else "medium"
     if calculation_status == "partial":
         confidence = "low"

@@ -1,4 +1,5 @@
 """Brief API contracts, independent of HTTP and persistence."""
+from app.schemas.brief_context import BriefResearchContext
 
 from datetime import (
     date,
@@ -141,6 +142,7 @@ class BriefingInspectionAction(BaseModel):
 
 
 class DailyBriefPayload(BaseModel):
+    private_research: BriefResearchContext | None = None
     summary: str = "Daily brief summary unavailable."
     calculation_status: Literal["complete", "partial", "not_available"] = "not_available"
     valuation_analysis_status: Literal[

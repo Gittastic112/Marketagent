@@ -125,6 +125,11 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(page.locator(".sensitivity-card:visible")).toHaveCount(6);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  const matrix = page.getByRole("region", { name: /sensitivity table$/ }).first();
+  await matrix.focus();
+  await expect(matrix).toBeFocused();
+  await matrix.press("ArrowRight");
+  await expect.poll(() => matrix.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await page.screenshot({ path: test.info().outputPath("sensitivity-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
 

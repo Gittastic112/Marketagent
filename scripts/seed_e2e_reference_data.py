@@ -1,9 +1,14 @@
 """Seed deterministic Mock Data used only by the isolated browser test stack."""
 
 from datetime import UTC, date, datetime, timedelta
+from copy import deepcopy
+from hashlib import sha256
+import json
 
 from app.db.session import SessionLocal
 from app.models import (
+    AiOutput,
+    BriefSource,
     Company,
     DamodaranDatasetFile,
     DamodaranMarginBenchmark,
@@ -14,11 +19,12 @@ from app.models import (
     Portfolio,
     PortfolioBenchmarkConfig,
     PortfolioHolding,
-    PortfolioSnapshot,
+    PortfolioCashBalance,
     PortfolioTransaction,
     User,
     ValuationModel,
 )
+from app.services.portfolio_analytics import record_daily_snapshot
 
 
 DATASET_CODE = "e2e_margin_fixture"
@@ -162,31 +168,6 @@ def _trusted_mock_dcf(db, company: Company, intrinsic_value: float) -> DcfOutput
     return output
 
 
-def _snapshot_holding(
-    holding: PortfolioHolding,
-    company: Company,
-    price: MarketPrice,
-    fx_rate: float,
-) -> dict:
-    market_value_local = float(holding.quantity) * float(price.price)
-    return {
-        "holding_id": holding.id,
-        "company_id": company.id,
-        "ticker": company.ticker,
-        "quantity": float(holding.quantity),
-        "currency": holding.currency,
-        "market_price": float(price.price),
-        "market_price_id": price.id,
-        "market_price_date": price.as_of_date.isoformat(),
-        "market_fx_rate_to_base": fx_rate,
-        "market_value_local": market_value_local,
-        "market_value_base": market_value_local * fx_rate,
-        "is_stale_price": False,
-        "market_fx_is_stale": False,
-        "cost_fx_is_stale": False,
-    }
-
-
 def _ensure_portfolio_fixture(db) -> None:
     if db.get(User, E2E_USER_ID) is None:
         db.add(User(id=E2E_USER_ID, email="local-user@local.invalid", name="E2E Local User"))
@@ -283,56 +264,68 @@ def _ensure_portfolio_fixture(db) -> None:
         notes="Mock Data used only for isolated browser workflow verification.",
         active=True,
     ))
-    db.add(PortfolioTransaction(
-        portfolio_id=portfolio.id,
-        ticker="CASH",
-        transaction_type="deposit",
-        quantity=1500,
-        price=0,
-        fees=0,
-        currency="USD",
-        transaction_date=START_DATE - timedelta(days=1),
-        notes="Mock Data initial funding for isolated browser workflow verification.",
-    ))
+    # Explicit opening funding and purchases reconcile to both current balances.
+    # Historical snapshots must be produced by the same replay path as the UI.
+    for company, kind, quantity, price in [(usd_company, "deposit", 1010, 0),
+        (usd_company, "buy", 10, 95), (eur_company, "deposit", 375, 0), (eur_company, "buy", 5, 75)]:
+        db.add(PortfolioTransaction(portfolio_id=portfolio.id, company_id=company.id if kind == "buy" else None,
+            ticker=company.ticker if kind == "buy" else "CASH", transaction_type=kind, quantity=quantity,
+            price=price, fees=0, currency=company.currency, transaction_date=START_DATE,
+            notes="Mock Data recorded activity for isolated browser workflow verification."))
+    db.add_all([PortfolioCashBalance(portfolio_id=portfolio.id, currency="USD", amount=60, as_of_date=START_DATE),
+        PortfolioCashBalance(portfolio_id=portfolio.id, currency="EUR", amount=0, as_of_date=START_DATE)])
 
     _trusted_mock_dcf(db, usd_company, 125)
     _trusted_mock_dcf(db, eur_company, 105)
 
-    for snapshot_date, price_index in ((START_DATE, 0), (END_DATE, 21)):
-        eur_fx = float(fx_rows[price_index].rate)
-        holdings = [
-            _snapshot_holding(usd_holding, usd_company, usd_prices[price_index], 1.0),
-            _snapshot_holding(eur_holding, eur_company, eur_prices[price_index], eur_fx),
-        ]
-        market_value = sum(item["market_value_base"] for item in holdings)
-        cash = 60.0
-        db.add(PortfolioSnapshot(
-            portfolio_id=portfolio.id,
-            snapshot_date=snapshot_date,
-            total_market_value=market_value,
-            total_cost_basis=1325,
-            total_cash=cash,
-            total_portfolio_value=market_value + cash,
-            base_currency="USD",
-            calculation_status="complete",
-            holdings_count=2,
-            priced_holdings_count=2,
-            missing_price_tickers_json=[],
-            missing_fx_pairs_json=[],
-            payload_json={
-                "claim_type": "Mock Data",
-                "holdings": holdings,
-                "source_market_price_ids": [item["market_price_id"] for item in holdings],
-                "source_fx_observation_ids": [fx_rows[price_index].id],
-                "benchmark_market_price_id": benchmark_prices[price_index].id,
-            },
-        ))
+    db.flush()
+    for snapshot_date in (START_DATE, END_DATE):
+        snapshot = record_daily_snapshot(db, portfolio.id, snapshot_date)
+        assert snapshot.calculation_status == "complete", snapshot.payload_json["replay_basis"]
+        snapshot.payload_json = {**snapshot.payload_json, "claim_type": "Mock Data"}
+
+
+def _ensure_private_comparison_fixture(db) -> None:
+    company = _company(db, ticker="BRIEFCMP", market="US", exchange="NASDAQ", currency="USD", country="United States")
+    for period, direction in [("FY2025", "increase"), ("FY2026", "decrease")]:
+        text = f"Mock Data {period} USD consolidated revenue has an {direction} hypothesis for browser testing."
+        digest = sha256(text.encode()).hexdigest()
+        if db.query(BriefSource).filter_by(user_id=E2E_USER_ID, identity_hash=digest).first():
+            continue
+        source = BriefSource(user_id=E2E_USER_ID, company_id=company.id,
+            title=f"Mock Data {period} comparison source", source_kind="text", content_text=text,
+            source_sha256=digest, identity_hash=digest, as_of_date=START_DATE, analysis_status="complete",
+            extraction_json={"text_sha256": digest, "character_count": len(text), "warnings": ["Mock Data browser fixture"]})
+        db.add(source)
+        db.flush()
+        marker = f"brief_source:{source.id}"
+        analysis = {"source_marker": f"[source_id:{marker}]", "summary": "Mock Data comparison only.",
+            "findings": [{"title": f"Mock Data {period} hypothesis", "importance": "high", "confidence": "low",
+                "importance_reason": "Inspect the stated reporting period before interpreting the direction.", "quote": text,
+                "valuation_inputs": [{"field": "starting_revenue", "direction": direction,
+                    "reason": "Mock Data hypothesis, not a numeric input.",
+                    "comparison_context": {"period": period, "currency": "USD", "economic_scope": "consolidated"}}]}]}
+        output = AiOutput(user_id=E2E_USER_ID, reference_type="brief_source", reference_id=source.id,
+            provider_name="e2e_mock_fixture", model_name="fixture-model", prompt_version="brief-source-v3",
+            input_hash=digest, source_ids_json=[marker], output_text=json.dumps(analysis), confidence_label="low",
+            is_mock=True, human_review_status="pending", citation_validation_status="valid",
+            citations_json=[{"source_id": marker, "status": "valid", "quote": text, "start_char": 0, "end_char": len(text)}])
+        db.add(output)
+        db.flush()
+        source.ai_output_id = output.id
+        display = deepcopy(analysis)
+        finding = display["findings"][0]
+        finding.update(start_char=0, end_char=len(text), page=None)
+        finding["valuation_inputs"][0].update(label="Base-year revenue",
+            review_href=f"/companies/{company.id}/valuation/draft#starting_revenue")
+        source.analysis_json = display
 
 
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
         _ensure_portfolio_fixture(db)
+        _ensure_private_comparison_fixture(db)
         db.commit()
 
 

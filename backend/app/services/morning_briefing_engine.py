@@ -19,6 +19,7 @@ from app.models import (
 )
 from app.services.contradiction_detector import detect_thesis_contradiction
 from app.services.dcf_variable_mapper import map_event_to_dcf_variables
+from app.services.brief_private_context import snapshot_private_research
 
 
 PRICE_LOOKBACK_DAYS = 14
@@ -484,6 +485,7 @@ class MorningBriefingEngine:
         )
         return {
             "summary": summary,
+            "private_research": snapshot_private_research(db, user_id, target_date),
             "calculation_status": "partial" if warnings else "complete",
             "valuation_analysis_status": valuation_status,
             "contradiction_analysis_status": contradiction_status,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { generateDailyBrief, markDailyBriefReviewed } from "@/app/actions";
 import { BriefingEventCard } from "@/components/briefing-event-card";
 import { BriefSourceInbox } from "@/components/brief-source-inbox";
+import { BriefPrivateResearch } from "@/components/brief-private-research";
 import { DailyBriefScheduleForm } from "@/components/daily-brief-schedule-form";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices, MockDataBadge } from "@/components/ui/data-states";
@@ -114,6 +115,8 @@ export default async function DailyBriefPage() {
             <DailyBriefScheduleForm schedule={scheduleRes.data} />
           )}
         </Panel>
+
+        <BriefPrivateResearch context={payload.private_research} />
 
         <Panel title="Inspection Queue">
           {payload.inspection_queue.length === 0 ? (

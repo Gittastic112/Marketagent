@@ -3,7 +3,7 @@
 Source tests: 2026-10-11. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source: [M05 financial evidence](archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) and [M06 sensitivity](archive/checkpoints/2026/m06-sensitivity-2026-10-11.md). Normal images remain M01; M04 source/candidate/price intake is separately audited.
+Latest source: [M07 portfolio replay](archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [M08 private brief context](archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) and [M09 browser validation](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md). Normal images remain M01; M04 source/candidate/price intake is separately audited.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,12 +20,12 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,427 passed October 11 on locked dependencies and patched OS; three PostgreSQL tests skipped in SQLite pass separately against real row/advisory locks. Includes evidence hash/unit/locator guards and canonical saved-basis sensitivity; five upstream warnings. Normal images remain M01 |
-| Frontend | 263 tests, production build and all 22 isolated browser workflows pass, including mobile sensitivity and manual filing/PDF review. Phase-one M04 passes all GitHub checks. Normal-runtime browser proof remains M01 |
-| API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
+| Backend | 1,448 full-suite tests pass; three PostgreSQL-only skips pass separately against actual row/advisory locks. All 13 replay tests also pass after adding an independent covariance reference. Five upstream warnings; exact scope in M09. Normal images remain M01 |
+| Frontend | 264 tests, production build/TypeScript and all 26 isolated browser workflows pass. The matrix covers all 50 pages on desktop/mobile; screenshots/timings retained. Normal-runtime browser proof remains M01 |
+| API compatibility | 279 paths, 510 schemas and 381 inventoried application operations including hidden compatibility routes. Private-brief context and replay provenance are additive; legacy receipts remain readable. No M07-M09 migration; OAuth writes remain disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
-| Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass; 109-table recovery repeats on PostgreSQL 16.15. M03 security passes all ten GitHub checks, including 21 browser workflows. M04's 14 genuine probes pass; run 19 reconciles 11 scoped identities. Protected environment paths remain excluded |
+| Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. M03's 109-table disposable recovery passes, but normal backup finalization and off-device recovery remain open. M04's 14 genuine probes and identity/intake evidence remain separate. Protected environment paths stay excluded |
 | Production / browser | October 10 patched standalone frontend passes five normal routes, 1440px/390px dashboard inspection and missing/foreign-Origin 403. All functional browser workflows pass locally; timing scope is in the M01 checkpoint. Fresh frontend and resolved backend/test advisory audits pass; broader security certification is not implied |
 | PostgreSQL concurrency | Five competing analyst-review pairs each returned 201/409, adding exactly five versions while the original receipt stayed unchanged. Visible stale forms did not write. Reviews remain User Assumption, not AI approval or financial edits |
 | Runtime evidence | September 22: existing 11 drafts, 694 unreviewed SEC candidates and 196 FRED observations retained. Added public annual filings/business sections for AAPL/GOOGL and private Apple PDF source 1 with five real Gemini findings, pending review. Two models, four assumption sets, two holdings and three transactions have identical fingerprints to the pre-inbox backup. Non-saving AAPL illustration is USD106.01/share, not an approved current valuation |
@@ -74,8 +74,8 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 - Queued public-source refreshes run in a separately locked local worker. SEC
   annual candidates, USD FRED proxies and dated quotes feed review-required drafts,
   not canonical financial facts or saved models. Explicit edits survive refresh.
-- Private sources have bounded intake, explicit AI triage, paged search and owned
-  versioned archiving, grouped comparison and append-only analyst receipts. No automatic resolution.
+- Private sources have bounded intake, explicit AI triage and append-only receipts. Comparison v2 discloses quoted period/currency/scope compatibility.
+  Manual/scheduled briefs snapshot bounded private evidence with separate reviewed and pending queues.
 - Portfolio detail streams only its selected server view. Dashboard uses one
   consolidated read; company editing renders one selected form. Shared layout,
   table readability and keyboard navigation are improved. Risk price-age warnings
@@ -110,8 +110,8 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
   hashes are required; scores do not certify PDF/XBRL/AI or company facts.
 - Nested agent instructions describe real entry points. The handoff is bounded;
   task routing lives in the [code map](code-map.md), not cumulative history.
-- Remaining legacy schemas, large action/UI/service files and split provider
-  placement remain deliberate follow-up boundaries, not claimed solved problems.
+- Legacy schemas/actions are compatibility facades over domain owners. Recorded portfolio replay checks cash/positions and purchase-date FX.
+  Corrected activity makes old snapshots provisional without rewriting them. No trades are inferred.
 
 ## Capability summary
 
@@ -124,8 +124,8 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 | Saved outputs | Stale/invalid/critical, identity/currency and finite-value gates; saved prices are User Assumptions, quality scores are historical |
 | Scenarios | Owned model dispatch, zero-preserving shocks, on-demand request isolation, saved currency and backend gaps; deterministic shocks are not probabilities |
 | Relative pricing | Source-separated active industry benchmarks and owner-reviewed peers; exact input hashes, diagnostic receipts, normalized immutable revisions and bounded CSV workflows |
-| Portfolio | Holdings/activity, FX, benchmarks, snapshots, TWR/MWR and marginal/component risk. Confirmed AAPL/GOOGL User Assumption case has sourced prices and checked calculations; broad genuine-input smoke is still pending |
-| Evidence and briefing | Source-linked events/alerts/theses, deterministic briefs, private paste/PDF inbox, bounded comparison and exact-evidence analyst receipts. AAPL still shows five pending non-mock findings across five inputs; no normal review was invented. Direction flags are not verified contradictions or numerical edits |
+| Portfolio | Recorded dated replay, purchase-date FX, benchmarks, snapshots, TWR/MWR and fixed-weight price risk. Legacy/manual or corrected-activity snapshots remain provisional. Genuine multi-currency records and reviewed-input smoke are still required |
+| Evidence and briefing | Source-linked events/alerts/theses, deterministic briefs and bounded private source/receipt snapshots with separate review queues. Saved evidence remains as generated; quoted labels and exact citations do not certify interpretation or numeric edits. Normal reviews were not invented |
 | AI and research | Provenance, exact-span review, bounded local passage suggestions, human approval, owner-scoped stored search; no semantic truth guarantee |
 | Provider health | Observable runs/configuration/freshness; FRED NFCI exact-record macro application; unsupported regime provider modules remain manual |
 | Runtime | Production-built Compose services, liveness/readiness, local credential login, signed internal identity; not public-deployment security |
@@ -158,10 +158,10 @@ added; three existing originals were reused. All pre-existing raw hashes remain 
 
 ## Prior verification scope
 
-The preceding valuation task passed production builds and focused disposable
-browser checks for saved output and scenario integrity. The latest September 21
-28-route desktop/mobile matrix extends the older August 25 checks using isolated
-fixtures. Neither replaces the pending genuine-input portfolio proof.
+Prior valuation builds and disposable browser checks retain their dated scope.
+The [M09 checkpoint](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
+owns the current 50-page desktop/mobile matrix and functional workflow evidence.
+These isolated fixtures do not replace genuine-input portfolio proof.
 
 The normal runtime is s1s1s1s1s1s1 after fresh and populated restore/migration
 preflights. Legacy evaluation ownership/report fields remain null.

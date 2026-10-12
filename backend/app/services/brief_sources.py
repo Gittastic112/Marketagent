@@ -21,7 +21,7 @@ from app.services.brief_source_extraction import extract_brief_pdf
 from app.services.pdf_financial_extraction import validate_pdf_source_url
 from app.services.processing_runs import complete_processing_run, fail_processing_run, start_processing_run
 
-PROMPT_VERSION = "brief-source-v2"
+PROMPT_VERSION = "brief-source-v3"
 REVIEW_WARNING = "AI Interpretation, pending review. Importance and suggested directions are not verified facts. No valuation inputs were changed."
 
 
@@ -191,6 +191,9 @@ def analyze_source(db: Session, user_id: str, source_id: int, disclosure_version
         "when there is no supported link. Directions are hypotheses to review, never numerical edits. "
         "Use only low, medium or high for confidence and importance. Use only increase, decrease or review "
         "for direction, with at most four valuation_inputs per finding. Field must exactly match a catalog key. "
+        "Each suggestion may include comparison_context with period, currency and economic_scope labels. "
+        "Copy each label literally from that finding's quote. Use an empty string when missing or uncertain; "
+        "never infer a forecast period from the document date or a currency from company identity. "
         "Summary must be 10-1200 characters, titles 5-160, and each reason 10-600 characters. "
         "Do not infer company exposure from a generic article. No buy/sell advice. "
         f"Set source_marker exactly to [source_id:{source_id_marker}].\n"

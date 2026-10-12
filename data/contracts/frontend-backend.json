@@ -743,6 +743,523 @@
     "daily-brief": {
       "DailyBrief": {
         "$defs": {
+          "BriefResearchContext": {
+            "properties": {
+              "as_of_date": {
+                "format": "date",
+                "title": "As Of Date",
+                "type": "string"
+              },
+              "basis": {
+                "const": "as_generated",
+                "default": "as_generated",
+                "title": "Basis",
+                "type": "string"
+              },
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "company_count": {
+                "title": "Company Count",
+                "type": "integer"
+              },
+              "company_limit": {
+                "title": "Company Limit",
+                "type": "integer"
+              },
+              "decision_limit": {
+                "title": "Decision Limit",
+                "type": "integer"
+              },
+              "excluded": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Excluded",
+                "type": "object"
+              },
+              "input_sha256": {
+                "title": "Input Sha256",
+                "type": "string"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "review_queue": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Review Queue",
+                "type": "array"
+              },
+              "reviewed": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Reviewed",
+                "type": "array"
+              },
+              "source_limit": {
+                "title": "Source Limit",
+                "type": "integer"
+              },
+              "sources": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchSource"
+                },
+                "title": "Sources",
+                "type": "array"
+              },
+              "status": {
+                "enum": [
+                  "empty",
+                  "partial",
+                  "complete"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "private-research-snapshot-v1",
+                "default": "private-research-snapshot-v1",
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "captured_at",
+              "as_of_date",
+              "status",
+              "input_sha256",
+              "company_count",
+              "company_limit",
+              "source_limit",
+              "decision_limit"
+            ],
+            "title": "BriefResearchContext",
+            "type": "object"
+          },
+          "BriefResearchDecision": {
+            "properties": {
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "comparability_status": {
+                "enum": [
+                  "same",
+                  "unknown",
+                  "incompatible"
+                ],
+                "title": "Comparability Status",
+                "type": "string"
+              },
+              "comparison_hash": {
+                "title": "Comparison Hash",
+                "type": "string"
+              },
+              "field": {
+                "title": "Field",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "receipt": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefReviewRead"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "source_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Ids",
+                "type": "array"
+              },
+              "state": {
+                "enum": [
+                  "reviewed",
+                  "pending_ai_review",
+                  "missing_receipt",
+                  "stale_receipt",
+                  "incompatible_basis",
+                  "incomplete_source_snapshot"
+                ],
+                "title": "State",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "company_id",
+              "ticker",
+              "field",
+              "comparison_hash",
+              "comparability_status",
+              "source_ids",
+              "state",
+              "href"
+            ],
+            "title": "BriefResearchDecision",
+            "type": "object"
+          },
+          "BriefResearchSource": {
+            "properties": {
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "content_hash": {
+                "title": "Content Hash",
+                "type": "string"
+              },
+              "freshness": {
+                "enum": [
+                  "historical",
+                  "dated_today",
+                  "unknown"
+                ],
+                "title": "Freshness",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "source": {
+                "$ref": "#/$defs/BriefTriageSource"
+              }
+            },
+            "required": [
+              "source",
+              "content_hash",
+              "freshness",
+              "href"
+            ],
+            "title": "BriefResearchSource",
+            "type": "object"
+          },
+          "BriefReviewRead": {
+            "properties": {
+              "claim_type": {
+                "const": "User Assumption",
+                "default": "User Assumption",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disposition": {
+                "enum": [
+                  "investigate",
+                  "keep_input",
+                  "revisit_input",
+                  "not_relevant"
+                ],
+                "title": "Disposition",
+                "type": "string"
+              },
+              "evidence_hash": {
+                "title": "Evidence Hash",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "include_mock": {
+                "title": "Include Mock",
+                "type": "boolean"
+              },
+              "is_current": {
+                "title": "Is Current",
+                "type": "boolean"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "version": {
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "company_id",
+              "field",
+              "include_mock",
+              "version",
+              "evidence_hash",
+              "disposition",
+              "notes",
+              "created_at",
+              "is_current"
+            ],
+            "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefTriageFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "title": "Confidence",
+                "type": "string"
+              },
+              "end_char": {
+                "title": "End Char",
+                "type": "integer"
+              },
+              "importance": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Importance",
+                "type": "string"
+              },
+              "importance_reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Importance Reason",
+                "type": "string"
+              },
+              "page": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Page"
+              },
+              "quote": {
+                "maxLength": 800,
+                "minLength": 12,
+                "title": "Quote",
+                "type": "string"
+              },
+              "start_char": {
+                "title": "Start Char",
+                "type": "integer"
+              },
+              "title": {
+                "maxLength": 160,
+                "minLength": 5,
+                "title": "Title",
+                "type": "string"
+              },
+              "valuation_inputs": {
+                "items": {
+                  "$ref": "#/$defs/ValuationSuggestion"
+                },
+                "maxItems": 4,
+                "title": "Valuation Inputs",
+                "type": "array"
+              }
+            },
+            "required": [
+              "title",
+              "importance",
+              "importance_reason",
+              "quote",
+              "confidence",
+              "valuation_inputs",
+              "start_char",
+              "end_char",
+              "page"
+            ],
+            "title": "BriefTriageFinding",
+            "type": "object"
+          },
+          "BriefTriageSource": {
+            "properties": {
+              "ai_output_id": {
+                "title": "Ai Output Id",
+                "type": "integer"
+              },
+              "as_of_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "As Of Date"
+              },
+              "content_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Content Sha256"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "findings": {
+                "items": {
+                  "$ref": "#/$defs/BriefTriageFinding"
+                },
+                "title": "Findings",
+                "type": "array"
+              },
+              "generated_at": {
+                "format": "date-time",
+                "title": "Generated At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "lifecycle_version": {
+                "title": "Lifecycle Version",
+                "type": "integer"
+              },
+              "model": {
+                "title": "Model",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider": {
+                "title": "Provider",
+                "type": "string"
+              },
+              "review_status": {
+                "title": "Review Status",
+                "type": "string"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Reviewed At"
+              },
+              "source_kind": {
+                "title": "Source Kind",
+                "type": "string"
+              },
+              "source_sha256": {
+                "title": "Source Sha256",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "source_kind",
+              "as_of_date",
+              "source_sha256",
+              "created_at",
+              "ai_output_id",
+              "provider",
+              "model",
+              "prompt_version",
+              "input_hash",
+              "generated_at",
+              "is_mock",
+              "review_status",
+              "reviewed_at",
+              "lifecycle_version",
+              "warnings",
+              "findings"
+            ],
+            "title": "BriefTriageSource",
+            "type": "object"
+          },
           "BriefingFiling": {
             "properties": {
               "claim_type": {
@@ -1594,6 +2111,17 @@
               "new_since_last_review": {
                 "$ref": "#/$defs/BriefingNewSinceReview"
               },
+              "private_research": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefResearchContext"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
               "processing_failures": {
                 "items": {
                   "$ref": "#/$defs/BriefingProcessingFailure"
@@ -1675,6 +2203,81 @@
             },
             "title": "DailyBriefPayload",
             "type": "object"
+          },
+          "QuotedComparisonContext": {
+            "additionalProperties": false,
+            "properties": {
+              "currency": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Currency",
+                "type": "string"
+              },
+              "economic_scope": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Economic Scope",
+                "type": "string"
+              },
+              "period": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Period",
+                "type": "string"
+              }
+            },
+            "title": "QuotedComparisonContext",
+            "type": "object"
+          },
+          "ValuationSuggestion": {
+            "additionalProperties": false,
+            "properties": {
+              "comparison_context": {
+                "$ref": "#/$defs/QuotedComparisonContext"
+              },
+              "direction": {
+                "enum": [
+                  "increase",
+                  "decrease",
+                  "review"
+                ],
+                "title": "Direction",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "direction",
+              "reason"
+            ],
+            "title": "ValuationSuggestion",
+            "type": "object"
           }
         },
         "properties": {
@@ -1735,6 +2338,523 @@
       },
       "DailyBriefPayload": {
         "$defs": {
+          "BriefResearchContext": {
+            "properties": {
+              "as_of_date": {
+                "format": "date",
+                "title": "As Of Date",
+                "type": "string"
+              },
+              "basis": {
+                "const": "as_generated",
+                "default": "as_generated",
+                "title": "Basis",
+                "type": "string"
+              },
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "company_count": {
+                "title": "Company Count",
+                "type": "integer"
+              },
+              "company_limit": {
+                "title": "Company Limit",
+                "type": "integer"
+              },
+              "decision_limit": {
+                "title": "Decision Limit",
+                "type": "integer"
+              },
+              "excluded": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Excluded",
+                "type": "object"
+              },
+              "input_sha256": {
+                "title": "Input Sha256",
+                "type": "string"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "review_queue": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Review Queue",
+                "type": "array"
+              },
+              "reviewed": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Reviewed",
+                "type": "array"
+              },
+              "source_limit": {
+                "title": "Source Limit",
+                "type": "integer"
+              },
+              "sources": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchSource"
+                },
+                "title": "Sources",
+                "type": "array"
+              },
+              "status": {
+                "enum": [
+                  "empty",
+                  "partial",
+                  "complete"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "private-research-snapshot-v1",
+                "default": "private-research-snapshot-v1",
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "captured_at",
+              "as_of_date",
+              "status",
+              "input_sha256",
+              "company_count",
+              "company_limit",
+              "source_limit",
+              "decision_limit"
+            ],
+            "title": "BriefResearchContext",
+            "type": "object"
+          },
+          "BriefResearchDecision": {
+            "properties": {
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "comparability_status": {
+                "enum": [
+                  "same",
+                  "unknown",
+                  "incompatible"
+                ],
+                "title": "Comparability Status",
+                "type": "string"
+              },
+              "comparison_hash": {
+                "title": "Comparison Hash",
+                "type": "string"
+              },
+              "field": {
+                "title": "Field",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "receipt": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefReviewRead"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "source_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Ids",
+                "type": "array"
+              },
+              "state": {
+                "enum": [
+                  "reviewed",
+                  "pending_ai_review",
+                  "missing_receipt",
+                  "stale_receipt",
+                  "incompatible_basis",
+                  "incomplete_source_snapshot"
+                ],
+                "title": "State",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "company_id",
+              "ticker",
+              "field",
+              "comparison_hash",
+              "comparability_status",
+              "source_ids",
+              "state",
+              "href"
+            ],
+            "title": "BriefResearchDecision",
+            "type": "object"
+          },
+          "BriefResearchSource": {
+            "properties": {
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "content_hash": {
+                "title": "Content Hash",
+                "type": "string"
+              },
+              "freshness": {
+                "enum": [
+                  "historical",
+                  "dated_today",
+                  "unknown"
+                ],
+                "title": "Freshness",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "source": {
+                "$ref": "#/$defs/BriefTriageSource"
+              }
+            },
+            "required": [
+              "source",
+              "content_hash",
+              "freshness",
+              "href"
+            ],
+            "title": "BriefResearchSource",
+            "type": "object"
+          },
+          "BriefReviewRead": {
+            "properties": {
+              "claim_type": {
+                "const": "User Assumption",
+                "default": "User Assumption",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disposition": {
+                "enum": [
+                  "investigate",
+                  "keep_input",
+                  "revisit_input",
+                  "not_relevant"
+                ],
+                "title": "Disposition",
+                "type": "string"
+              },
+              "evidence_hash": {
+                "title": "Evidence Hash",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "include_mock": {
+                "title": "Include Mock",
+                "type": "boolean"
+              },
+              "is_current": {
+                "title": "Is Current",
+                "type": "boolean"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "version": {
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "company_id",
+              "field",
+              "include_mock",
+              "version",
+              "evidence_hash",
+              "disposition",
+              "notes",
+              "created_at",
+              "is_current"
+            ],
+            "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefTriageFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "title": "Confidence",
+                "type": "string"
+              },
+              "end_char": {
+                "title": "End Char",
+                "type": "integer"
+              },
+              "importance": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Importance",
+                "type": "string"
+              },
+              "importance_reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Importance Reason",
+                "type": "string"
+              },
+              "page": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Page"
+              },
+              "quote": {
+                "maxLength": 800,
+                "minLength": 12,
+                "title": "Quote",
+                "type": "string"
+              },
+              "start_char": {
+                "title": "Start Char",
+                "type": "integer"
+              },
+              "title": {
+                "maxLength": 160,
+                "minLength": 5,
+                "title": "Title",
+                "type": "string"
+              },
+              "valuation_inputs": {
+                "items": {
+                  "$ref": "#/$defs/ValuationSuggestion"
+                },
+                "maxItems": 4,
+                "title": "Valuation Inputs",
+                "type": "array"
+              }
+            },
+            "required": [
+              "title",
+              "importance",
+              "importance_reason",
+              "quote",
+              "confidence",
+              "valuation_inputs",
+              "start_char",
+              "end_char",
+              "page"
+            ],
+            "title": "BriefTriageFinding",
+            "type": "object"
+          },
+          "BriefTriageSource": {
+            "properties": {
+              "ai_output_id": {
+                "title": "Ai Output Id",
+                "type": "integer"
+              },
+              "as_of_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "As Of Date"
+              },
+              "content_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Content Sha256"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "findings": {
+                "items": {
+                  "$ref": "#/$defs/BriefTriageFinding"
+                },
+                "title": "Findings",
+                "type": "array"
+              },
+              "generated_at": {
+                "format": "date-time",
+                "title": "Generated At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "lifecycle_version": {
+                "title": "Lifecycle Version",
+                "type": "integer"
+              },
+              "model": {
+                "title": "Model",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider": {
+                "title": "Provider",
+                "type": "string"
+              },
+              "review_status": {
+                "title": "Review Status",
+                "type": "string"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Reviewed At"
+              },
+              "source_kind": {
+                "title": "Source Kind",
+                "type": "string"
+              },
+              "source_sha256": {
+                "title": "Source Sha256",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "source_kind",
+              "as_of_date",
+              "source_sha256",
+              "created_at",
+              "ai_output_id",
+              "provider",
+              "model",
+              "prompt_version",
+              "input_hash",
+              "generated_at",
+              "is_mock",
+              "review_status",
+              "reviewed_at",
+              "lifecycle_version",
+              "warnings",
+              "findings"
+            ],
+            "title": "BriefTriageSource",
+            "type": "object"
+          },
           "BriefingFiling": {
             "properties": {
               "claim_type": {
@@ -2521,6 +3641,81 @@
             ],
             "title": "BriefingValuationRelevance",
             "type": "object"
+          },
+          "QuotedComparisonContext": {
+            "additionalProperties": false,
+            "properties": {
+              "currency": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Currency",
+                "type": "string"
+              },
+              "economic_scope": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Economic Scope",
+                "type": "string"
+              },
+              "period": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Period",
+                "type": "string"
+              }
+            },
+            "title": "QuotedComparisonContext",
+            "type": "object"
+          },
+          "ValuationSuggestion": {
+            "additionalProperties": false,
+            "properties": {
+              "comparison_context": {
+                "$ref": "#/$defs/QuotedComparisonContext"
+              },
+              "direction": {
+                "enum": [
+                  "increase",
+                  "decrease",
+                  "review"
+                ],
+                "title": "Direction",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "direction",
+              "reason"
+            ],
+            "title": "ValuationSuggestion",
+            "type": "object"
           }
         },
         "properties": {
@@ -2585,6 +3780,17 @@
           },
           "new_since_last_review": {
             "$ref": "#/$defs/BriefingNewSinceReview"
+          },
+          "private_research": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/BriefResearchContext"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
           },
           "processing_failures": {
             "items": {
@@ -2826,6 +4032,523 @@
       },
       "SavedDailyBrief": {
         "$defs": {
+          "BriefResearchContext": {
+            "properties": {
+              "as_of_date": {
+                "format": "date",
+                "title": "As Of Date",
+                "type": "string"
+              },
+              "basis": {
+                "const": "as_generated",
+                "default": "as_generated",
+                "title": "Basis",
+                "type": "string"
+              },
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "company_count": {
+                "title": "Company Count",
+                "type": "integer"
+              },
+              "company_limit": {
+                "title": "Company Limit",
+                "type": "integer"
+              },
+              "decision_limit": {
+                "title": "Decision Limit",
+                "type": "integer"
+              },
+              "excluded": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Excluded",
+                "type": "object"
+              },
+              "input_sha256": {
+                "title": "Input Sha256",
+                "type": "string"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "review_queue": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Review Queue",
+                "type": "array"
+              },
+              "reviewed": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchDecision"
+                },
+                "title": "Reviewed",
+                "type": "array"
+              },
+              "source_limit": {
+                "title": "Source Limit",
+                "type": "integer"
+              },
+              "sources": {
+                "items": {
+                  "$ref": "#/$defs/BriefResearchSource"
+                },
+                "title": "Sources",
+                "type": "array"
+              },
+              "status": {
+                "enum": [
+                  "empty",
+                  "partial",
+                  "complete"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "private-research-snapshot-v1",
+                "default": "private-research-snapshot-v1",
+                "title": "Version",
+                "type": "string"
+              }
+            },
+            "required": [
+              "captured_at",
+              "as_of_date",
+              "status",
+              "input_sha256",
+              "company_count",
+              "company_limit",
+              "source_limit",
+              "decision_limit"
+            ],
+            "title": "BriefResearchContext",
+            "type": "object"
+          },
+          "BriefResearchDecision": {
+            "properties": {
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "comparability_status": {
+                "enum": [
+                  "same",
+                  "unknown",
+                  "incompatible"
+                ],
+                "title": "Comparability Status",
+                "type": "string"
+              },
+              "comparison_hash": {
+                "title": "Comparison Hash",
+                "type": "string"
+              },
+              "field": {
+                "title": "Field",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "receipt": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefReviewRead"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "source_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Ids",
+                "type": "array"
+              },
+              "state": {
+                "enum": [
+                  "reviewed",
+                  "pending_ai_review",
+                  "missing_receipt",
+                  "stale_receipt",
+                  "incompatible_basis",
+                  "incomplete_source_snapshot"
+                ],
+                "title": "State",
+                "type": "string"
+              },
+              "ticker": {
+                "title": "Ticker",
+                "type": "string"
+              }
+            },
+            "required": [
+              "company_id",
+              "ticker",
+              "field",
+              "comparison_hash",
+              "comparability_status",
+              "source_ids",
+              "state",
+              "href"
+            ],
+            "title": "BriefResearchDecision",
+            "type": "object"
+          },
+          "BriefResearchSource": {
+            "properties": {
+              "claim_type": {
+                "const": "AI Interpretation",
+                "default": "AI Interpretation",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "content_hash": {
+                "title": "Content Hash",
+                "type": "string"
+              },
+              "freshness": {
+                "enum": [
+                  "historical",
+                  "dated_today",
+                  "unknown"
+                ],
+                "title": "Freshness",
+                "type": "string"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "source": {
+                "$ref": "#/$defs/BriefTriageSource"
+              }
+            },
+            "required": [
+              "source",
+              "content_hash",
+              "freshness",
+              "href"
+            ],
+            "title": "BriefResearchSource",
+            "type": "object"
+          },
+          "BriefReviewRead": {
+            "properties": {
+              "claim_type": {
+                "const": "User Assumption",
+                "default": "User Assumption",
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disposition": {
+                "enum": [
+                  "investigate",
+                  "keep_input",
+                  "revisit_input",
+                  "not_relevant"
+                ],
+                "title": "Disposition",
+                "type": "string"
+              },
+              "evidence_hash": {
+                "title": "Evidence Hash",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "include_mock": {
+                "title": "Include Mock",
+                "type": "boolean"
+              },
+              "is_current": {
+                "title": "Is Current",
+                "type": "boolean"
+              },
+              "notes": {
+                "title": "Notes",
+                "type": "string"
+              },
+              "version": {
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "company_id",
+              "field",
+              "include_mock",
+              "version",
+              "evidence_hash",
+              "disposition",
+              "notes",
+              "created_at",
+              "is_current"
+            ],
+            "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefTriageFinding": {
+            "additionalProperties": false,
+            "properties": {
+              "confidence": {
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ],
+                "title": "Confidence",
+                "type": "string"
+              },
+              "end_char": {
+                "title": "End Char",
+                "type": "integer"
+              },
+              "importance": {
+                "enum": [
+                  "high",
+                  "medium",
+                  "low"
+                ],
+                "title": "Importance",
+                "type": "string"
+              },
+              "importance_reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Importance Reason",
+                "type": "string"
+              },
+              "page": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Page"
+              },
+              "quote": {
+                "maxLength": 800,
+                "minLength": 12,
+                "title": "Quote",
+                "type": "string"
+              },
+              "start_char": {
+                "title": "Start Char",
+                "type": "integer"
+              },
+              "title": {
+                "maxLength": 160,
+                "minLength": 5,
+                "title": "Title",
+                "type": "string"
+              },
+              "valuation_inputs": {
+                "items": {
+                  "$ref": "#/$defs/ValuationSuggestion"
+                },
+                "maxItems": 4,
+                "title": "Valuation Inputs",
+                "type": "array"
+              }
+            },
+            "required": [
+              "title",
+              "importance",
+              "importance_reason",
+              "quote",
+              "confidence",
+              "valuation_inputs",
+              "start_char",
+              "end_char",
+              "page"
+            ],
+            "title": "BriefTriageFinding",
+            "type": "object"
+          },
+          "BriefTriageSource": {
+            "properties": {
+              "ai_output_id": {
+                "title": "Ai Output Id",
+                "type": "integer"
+              },
+              "as_of_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "As Of Date"
+              },
+              "content_sha256": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Content Sha256"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "findings": {
+                "items": {
+                  "$ref": "#/$defs/BriefTriageFinding"
+                },
+                "title": "Findings",
+                "type": "array"
+              },
+              "generated_at": {
+                "format": "date-time",
+                "title": "Generated At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "lifecycle_version": {
+                "title": "Lifecycle Version",
+                "type": "integer"
+              },
+              "model": {
+                "title": "Model",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider": {
+                "title": "Provider",
+                "type": "string"
+              },
+              "review_status": {
+                "title": "Review Status",
+                "type": "string"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Reviewed At"
+              },
+              "source_kind": {
+                "title": "Source Kind",
+                "type": "string"
+              },
+              "source_sha256": {
+                "title": "Source Sha256",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "warnings": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Warnings",
+                "type": "array"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "source_kind",
+              "as_of_date",
+              "source_sha256",
+              "created_at",
+              "ai_output_id",
+              "provider",
+              "model",
+              "prompt_version",
+              "input_hash",
+              "generated_at",
+              "is_mock",
+              "review_status",
+              "reviewed_at",
+              "lifecycle_version",
+              "warnings",
+              "findings"
+            ],
+            "title": "BriefTriageSource",
+            "type": "object"
+          },
           "BriefingFiling": {
             "properties": {
               "claim_type": {
@@ -3677,6 +5400,17 @@
               "new_since_last_review": {
                 "$ref": "#/$defs/BriefingNewSinceReview"
               },
+              "private_research": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefResearchContext"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
               "processing_failures": {
                 "items": {
                   "$ref": "#/$defs/BriefingProcessingFailure"
@@ -3757,6 +5491,81 @@
               }
             },
             "title": "DailyBriefPayload",
+            "type": "object"
+          },
+          "QuotedComparisonContext": {
+            "additionalProperties": false,
+            "properties": {
+              "currency": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Currency",
+                "type": "string"
+              },
+              "economic_scope": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Economic Scope",
+                "type": "string"
+              },
+              "period": {
+                "default": "",
+                "maxLength": 80,
+                "title": "Period",
+                "type": "string"
+              }
+            },
+            "title": "QuotedComparisonContext",
+            "type": "object"
+          },
+          "ValuationSuggestion": {
+            "additionalProperties": false,
+            "properties": {
+              "comparison_context": {
+                "$ref": "#/$defs/QuotedComparisonContext"
+              },
+              "direction": {
+                "enum": [
+                  "increase",
+                  "decrease",
+                  "review"
+                ],
+                "title": "Direction",
+                "type": "string"
+              },
+              "field": {
+                "enum": [
+                  "starting_revenue",
+                  "revenue_growth_years_json",
+                  "current_operating_margin",
+                  "target_operating_margin",
+                  "tax_rate",
+                  "sales_to_capital_ratio",
+                  "starting_invested_capital",
+                  "wacc_start",
+                  "wacc_terminal",
+                  "terminal_growth_rate",
+                  "terminal_roic",
+                  "cash",
+                  "debt",
+                  "diluted_shares"
+                ],
+                "title": "Field",
+                "type": "string"
+              },
+              "reason": {
+                "maxLength": 600,
+                "minLength": 10,
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "field",
+              "direction",
+              "reason"
+            ],
+            "title": "ValuationSuggestion",
             "type": "object"
           }
         },

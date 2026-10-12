@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { PageHeader, ErrorState, EmptyState } from "@/components/page";
+import { ErrorState, EmptyState } from "@/components/page";
 import api from "@/lib/api";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 import { AiOutputMetadata } from "@/components/ai-metadata";
@@ -39,7 +39,9 @@ export default function SessionDetailPage() {
   }, [sessionId]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (session?.messages?.length) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
   }, [session?.messages]);
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -82,11 +84,11 @@ export default function SessionDetailPage() {
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 4rem)" }}>
       <div style={{ padding: "1.5rem", borderBottom: "1px solid var(--border-color)", display: "flex", alignItems: "center", gap: "1rem" }}>
-        <button onClick={() => router.push("/research/sessions")} className="secondary-button" style={{ padding: "0.5rem" }}>
+        <button onClick={() => router.push("/research/sessions")} aria-label="Back to research sessions" className="secondary-button" style={{ padding: "0.5rem" }}>
           ←
         </button>
         <div>
-          <h1 style={{ margin: 0, fontSize: "1.25rem", fontWeight: 600 }}>{session.title}</h1>
+          <h1 style={{ margin: 0, fontSize: "1.75rem", fontWeight: 600 }}>{session.title}</h1>
           <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>Source-backed AI Research</p>
         </div>
       </div>
@@ -144,8 +146,9 @@ export default function SessionDetailPage() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask about companies, events, or market trends..."
+            aria-label="Research question"
             style={{
-              flex: 1, padding: "0.75rem 1rem", borderRadius: "0.5rem",
+              flex: 1, minWidth: 0, padding: "0.75rem 1rem", borderRadius: "0.5rem",
               border: "1px solid var(--border-color)", backgroundColor: "var(--bg-secondary)"
             }}
             disabled={sending}

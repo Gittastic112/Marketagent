@@ -1,5 +1,5 @@
 import pytest
-from datetime import date
+from datetime import date, datetime, UTC
 from sqlalchemy.orm import Session
 from collections.abc import Generator
 from sqlalchemy import create_engine
@@ -189,13 +189,14 @@ def test_portfolio_valuation_uses_owned_trusted_dcf_output(db: Session) -> None:
     other_model = ValuationModel(user_id="other-user", company_id=company.id, name="Other")
     db.add_all([owner_model, other_model])
     db.flush()
-    owner_assumptions = DcfAssumptionSet(valuation_model_id=owner_model.id, scenario="Base", is_stale=False)
-    other_assumptions = DcfAssumptionSet(valuation_model_id=other_model.id, scenario="Base", is_stale=False)
+    recorded_at = datetime(2026, 5, 28, tzinfo=UTC)
+    owner_assumptions = DcfAssumptionSet(valuation_model_id=owner_model.id, scenario="Base", is_stale=False, created_at=recorded_at)
+    other_assumptions = DcfAssumptionSet(valuation_model_id=other_model.id, scenario="Base", is_stale=False, created_at=recorded_at)
     db.add_all([owner_assumptions, other_assumptions])
     db.flush()
     db.add_all([
-        DcfOutput(assumption_set_id=owner_assumptions.id, intrinsic_value_per_share=120, model_quality_score=80, warnings_json=[]),
-        DcfOutput(assumption_set_id=other_assumptions.id, intrinsic_value_per_share=999, model_quality_score=100, warnings_json=[]),
+        DcfOutput(assumption_set_id=owner_assumptions.id, intrinsic_value_per_share=120, model_quality_score=80, warnings_json=[], created_at=recorded_at),
+        DcfOutput(assumption_set_id=other_assumptions.id, intrinsic_value_per_share=999, model_quality_score=100, warnings_json=[], created_at=recorded_at),
     ])
     db.commit()
 
@@ -236,7 +237,7 @@ def test_portfolio_valuation_hides_untrusted_intrinsic_value(db: Session) -> Non
     model = ValuationModel(user_id="owner-user", company_id=company.id, name="Invalid")
     db.add(model)
     db.flush()
-    assumptions = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base", is_stale=False)
+    assumptions = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base", is_stale=False, created_at=datetime(2026, 5, 28, tzinfo=UTC))
     db.add(assumptions)
     db.flush()
     output = DcfOutput(
@@ -244,6 +245,7 @@ def test_portfolio_valuation_hides_untrusted_intrinsic_value(db: Session) -> Non
         intrinsic_value_per_share=999,
         model_quality_score=100,
         warnings_json=["Percent inputs are outside supported bounds."],
+        created_at=datetime(2026, 5, 28, tzinfo=UTC),
     )
     db.add(output)
     db.commit()

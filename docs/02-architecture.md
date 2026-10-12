@@ -1,6 +1,6 @@
 # Architecture
 
-**Updated:** 2026-10-11 (module ownership). Product validation scope is in [Current State](00-current-state.md).
+**Updated:** 2026-10-11 (module ownership, dated replay and saved brief context). Product validation scope is in [Current State](00-current-state.md).
 
 **Deployment boundary:** local Docker Compose only
 
@@ -81,7 +81,7 @@ reconstruct a proposed folder tree from old agent instructions.
 | `backend/app/providers` | External-source contracts and provider-specific behavior | Cross-domain application policy |
 | `backend/app/models` | Persistence structure and relationships | API response shape |
 | `backend/app/schemas` | Shared envelope plus extracted valuation, portfolio, research, evaluation and macro contracts; saved valuation response assembly | Database lifecycle logic or HTTP dependencies in pure contracts |
-| `backend/app/api/schemas.py` | Remaining legacy contracts and extracted-contract compatibility exports | New valuation/portfolio implementation or duplicate class names |
+| `backend/app/api/schemas.py` | Compatibility re-exports from pure domain contracts | New implementation or duplicate class names |
 | `backend/alembic/versions` | Ordered schema evolution | Runtime data repair without explicit migration logic |
 | `damodaran_knowledge_base_v1` | Valuation doctrine, source catalog, immutable raw corpus | Live application state |
 
@@ -190,8 +190,17 @@ without remounting the workspace's save confirmation.
 
 Risk comparison exposes each latest price date and age. Prices older than five
 calendar days make the result partial and withhold the current DCF price gap;
-historical risk can still be shown with the stale-price warning. This is not
-historical transaction replay or a guarantee of live pricing.
+historical risk can still be shown with the stale-price warning. This is not a
+guarantee of live pricing or a realized total-return series.
+
+Explicit dated portfolio reads and snapshot capture use `portfolio_replay` to
+reconstruct recorded positions/cash and reconcile the full ledger to current
+declared balances. Purchase-date FX preserves the remaining average cost basis.
+Missing opening history and unsupported actions cannot become inferred activity.
+Snapshot JSON retains a versioned activity hash and source IDs. Downstream
+performance checks that hash against current dated records; corrections make old
+results provisional, without rewriting them. Legacy/manual snapshots remain
+unverified. Ordinary current-position views still expose declared User Assumptions.
 
 The saved DCF relative-valuation workflow uses read-only
 `GET /api/valuation/relative/assumptions/{assumption_id}/inputs` and
@@ -280,7 +289,12 @@ Mock Data. The source list excludes full text/PDF bytes; detail and binary route
 require ownership and use private/no-store responses. Normal reads do not scan.
 The proxy permits 45 seconds only for explicit source scans; ordinary requests
 retain their short timeout. Source parsing, AI orchestration and presentation
-have separate owners. The inbox is not yet part of scheduled brief snapshots.
+have separate owners. `brief_private_context` saves bounded owner-scoped evidence
+in manual and scheduled deterministic briefs: ten companies, twenty distinct source
+contents and thirty decisions, with exclusions and input hashes. Reviewed analyst
+context requires current receipts and approved interpretations; other eligible
+findings remain in a separate review queue. Saved context is immutable as generated,
+including after later source lifecycle changes. This path never invokes external AI.
 
 Private-source search filters stored title/text, company, format, scan state and
 active/archived state before a bounded ID cursor page. Collections default to
@@ -300,7 +314,9 @@ blocked, rejected, revision-required or mismatched output. Groups reference the
 shared source findings instead of duplicating evidence for every field. Draft
 links are rebuilt from the field catalog, not trusted from stored AI/UI strings.
 Opposing increase/decrease suggestions across distinct content are review flags,
-not verified contradictions. Exact text hashes prevent copied records from
+not verified contradictions. V2 uses literal quote labels for period, currency and
+economic scope, exposing same/unknown/incompatible bases without inferring missing
+labels. V1 analyst receipts remain readable but stale against V2. Exact text hashes prevent copied records from
 becoming cross-content corroboration; Mock Data is opt-in and never compared
 against non-mock evidence. Counts, exclusions, source dates, provenance and the
 50-source window remain visible. The frontend owns filters/display only, clears

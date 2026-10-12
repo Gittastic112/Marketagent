@@ -14,6 +14,13 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   expect(portfolio, "The isolated E2E seed must create the portfolio runtime fixture").toBeTruthy();
   expect(portfolio?.base_currency).toBe("USD");
   const portfolioId = portfolio!.id;
+  const snapshots = await backendData<Array<{ calculation_status: string; payload_json: { replay_basis: { method: string; status: string; source_transaction_ids: number[] } } }>>(page, `/portfolio-snapshots?portfolio_id=${portfolioId}`);
+  expect(snapshots).toHaveLength(2);
+  for (const snapshot of snapshots) {
+    expect(snapshot.payload_json.replay_basis.method).toBe("recorded-portfolio-replay-v1");
+    expect(snapshot.payload_json.replay_basis.status).toBe("complete");
+    expect(snapshot.payload_json.replay_basis.source_transaction_ids).toHaveLength(4);
+  }
 
   const comparison = await backendData<{
     calculation_status: string;
@@ -98,4 +105,9 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   await expect(comparisonPanel.getByText("100.0% covered")).toHaveCount(2);
   await expect(comparisonPanel.getByText("Estimate", { exact: true })).toHaveCount(2);
   await expect(comparisonPanel.getByText(/not an annualized forecast/i)).toBeVisible();
+  await page.setViewportSize({ width: 390, height: 844 });
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.goto(`/portfolio/${portfolioId}?tab=setup`);
+  await expect(page.getByText("Recorded activity reconciled", { exact: true })).toHaveCount(2);
+  await page.screenshot({ path: test.info().outputPath("replayed-history-mobile.png"), fullPage: true });
 });

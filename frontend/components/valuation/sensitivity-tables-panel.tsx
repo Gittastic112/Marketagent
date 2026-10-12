@@ -68,7 +68,7 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice, currency = 
           {method && Array.isArray(method.defaulted_fields) && method.defaulted_fields.length > 0 && <p className="text-xs text-muted-foreground">Some absent inputs use documented legacy defaults; review the saved assumptions before relying on these results.</p>}
         </CardHeader>
         <CardContent className="p-0">
-          <div className="sensitivity-table-wrap">
+          <div className="sensitivity-table-wrap" role="region" aria-label={`${yName} versus ${xName} sensitivity table`} tabIndex={0}>
             <table className="sensitivity-matrix w-full text-xs text-right border-collapse">
               <caption className="sr-only">{yName} versus {xName}, calculated {currency} per share from saved assumptions</caption>
               <thead>

@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, defer
 
 from app.models.brief_review import BriefComparisonReview as Review
 from app.models.user import User
@@ -19,7 +19,7 @@ def _read(row: Review, current_hash: str) -> BriefReviewRead:
 def latest_reviews(db: Session, user_id: str, company_id: int, include_mock: bool, current_hash: str) -> list[BriefReviewRead]:
     scope = (Review.user_id == user_id, Review.company_id == company_id, Review.include_mock == include_mock)
     latest = select(func.max(Review.id)).where(*scope).group_by(Review.field)
-    rows = db.scalars(select(Review).where(Review.id.in_(latest)).order_by(Review.field)).all()
+    rows = db.scalars(select(Review).options(defer(Review.evidence_json)).where(Review.id.in_(latest)).order_by(Review.field)).all()
     return [_read(row, current_hash) for row in rows]
 
 

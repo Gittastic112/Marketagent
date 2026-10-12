@@ -83,7 +83,8 @@ def test_risk_model_reconciles_component_risk_to_portfolio_volatility(db):
 
     result = calculate_portfolio_risk_return(db, portfolio.id, AS_OF, lookback_days=30, min_observations=3)
 
-    assert result["risk_calculation_status"] == "complete"
+    assert result["risk_calculation_status"] == "partial"
+    assert "NO_RECORDED_ACTIVITY" in result["blockers"]
     assert result["portfolio_volatility_annualized"] > 0
     components = [row["component_risk"] for row in result["holdings"]]
     assert sum(value for value in components if value is not None) == pytest.approx(
@@ -122,7 +123,7 @@ def test_risk_model_uses_dated_fx_and_exposes_source_ids(db):
 
     result = calculate_portfolio_risk_return(db, portfolio.id, AS_OF, lookback_days=30, min_observations=3)
 
-    assert result["risk_calculation_status"] == "complete"
+    assert result["risk_calculation_status"] == "partial"
     assert len(result["source_fx_observation_ids"]) == 5
     assert len(result["holdings"][0]["source_fx_observation_ids"]) == 5
 
@@ -159,7 +160,7 @@ def test_expected_return_is_a_trust_gated_dcf_valuation_gap(db):
     assert row["expected_return_claim_type"] == "Estimate"
     assert row["source_dcf_output_id"] == output.id
     assert result["portfolio_expected_return_decimal"] == pytest.approx(0.20)
-    assert result["expected_return_calculation_status"] == "complete"
+    assert result["expected_return_calculation_status"] == "partial"
 
     stale = calculate_portfolio_risk_return(db, portfolio.id, AS_OF + timedelta(days=6), lookback_days=30, min_observations=3)
     assert stale["risk_calculation_status"] == "partial"
@@ -347,9 +348,10 @@ def test_multicurrency_runtime_gate_has_complete_risk_and_dcf_coverage(db):
         min_observations=20,
     )
 
-    assert result["calculation_status"] == "complete"
-    assert result["risk_calculation_status"] == "complete"
-    assert result["expected_return_calculation_status"] == "complete"
+    assert result["calculation_status"] == "partial"
+    assert result["risk_calculation_status"] == "partial"
+    assert result["expected_return_calculation_status"] == "partial"
+    assert "NO_RECORDED_ACTIVITY" in result["blockers"]
     assert result["risk_covered_weight_percent"] == pytest.approx(100)
     assert result["expected_return_coverage_percent"] == pytest.approx(100)
     assert result["risk_reconciliation_error"] == pytest.approx(0, abs=1e-12)

@@ -1,4 +1,5 @@
 from datetime import date
+from app.services.portfolio_replay import manual_snapshot_basis
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
@@ -492,6 +493,7 @@ def delete_portfolio_cash_balance(cash_balance_id: int, db: Session = Depends(ge
 def create_portfolio_snapshot(payload: PortfolioSnapshotCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> PortfolioSnapshot:
     require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_snapshot_refs(db, payload)
+    payload = payload.model_copy(update={"payload_json": manual_snapshot_basis(payload.payload_json)})
     return ApiResponse(data=create_record(db, PortfolioSnapshot, payload))
 
 
@@ -537,6 +539,9 @@ def update_portfolio_snapshot(
     )
     require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_snapshot_refs(db, payload)
+    source_payload = payload.payload_json if "payload_json" in payload.model_fields_set else snapshot.payload_json
+    payload = payload.model_copy(update={"payload_json": manual_snapshot_basis(source_payload)})
+    snapshot.calculation_status = "partial"
     return ApiResponse(data=update_record(db, snapshot, payload))
 
 

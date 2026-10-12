@@ -1,6 +1,6 @@
 # Frontend Route Inventory
 
-Source inventory reviewed: 2026-09-30. 50 App Router pages.
+Source inventory reviewed: 2026-10-11. 50 App Router pages.
 
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's
@@ -10,6 +10,9 @@ Use [Current State](00-current-state.md) for dated verification and the
 
 The [August state matrix](archive/assessments/route-state-inventory-2026-08-09.md)
 is historical and is not a current all-route acceptance gate.
+The [M09 matrix](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
+enumerates these 50 pages at desktop/mobile sizes using isolated Mock Data;
+its checks and remaining state/control coverage are recorded separately.
 
 Regenerate the inventory from `rg --files frontend/app -g 'page.tsx'` after route
 changes, then inspect behavior separately. The documentation checker verifies every

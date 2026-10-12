@@ -1,6 +1,8 @@
 /** Contracts and endpoint helpers for daily-brief. Import transport directly, never the compatibility facade. */
+import type { BriefResearchContext } from "./brief-context";
 
 export type DailyBriefPayload = {
+  private_research?: BriefResearchContext | null;
   summary: string;
   calculation_status: "complete" | "partial" | "not_available";
   valuation_analysis_status: "complete" | "partial" | "failed" | "not_run" | "not_required";

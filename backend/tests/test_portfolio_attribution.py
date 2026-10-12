@@ -154,8 +154,9 @@ def test_attribution_reports_recorded_activity_by_currency() -> None:
         )
 
         assert attribution["calculation_status"] == "partial"
-        assert attribution["total_unrealized_pnl"] == 200
-        assert attribution["components"]["price_movement"] == 200
+        # This fixture's opening positions/cash are not recorded or reconciled.
+        assert attribution["total_unrealized_pnl"] is None
+        assert attribution["components"]["price_movement"] is None
         assert attribution["components"]["fx_impact"] is None
         assert attribution["opportunity_cost"] is None
 
@@ -163,7 +164,7 @@ def test_attribution_reports_recorded_activity_by_currency() -> None:
         assert activity == {
             "purchases": 400,
             "sales": 125,
-            "dividends": 20,
+            "dividends": 10,
             "deposits": 500,
             "withdrawals": 75,
             "fees": 8,

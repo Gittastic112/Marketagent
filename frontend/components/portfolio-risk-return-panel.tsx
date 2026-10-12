@@ -77,7 +77,7 @@ export function PortfolioRiskReturnPanel({ comparison }: { comparison: Portfolio
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 330px), 1fr))", gap: "0.75rem", marginTop: "1rem" }}>
             {comparison.holdings.map((holding) => (
-              <article key={holding.holding_id} style={{ minWidth: 0, padding: "1rem", border: "1px solid var(--border)", borderRadius: "8px", background: "var(--surface)" }}>
+              <article key={holding.holding_id ?? `${holding.company_id}:${holding.ticker}`} style={{ minWidth: 0, padding: "1rem", border: "1px solid var(--border)", borderRadius: "8px", background: "var(--surface)" }}>
                 <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "0.75rem", flexWrap: "wrap" }}>
                   <strong style={{ fontSize: "1rem" }}>{holding.ticker}</strong>
                   <div style={{ display: "flex", gap: "0.35rem", flexWrap: "wrap" }}>

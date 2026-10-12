@@ -14,6 +14,7 @@ export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio })
   return <>
     <DataStateNotices metas={[response.meta]} />
     <div className="section-intro"><span className="badge">Calculation</span><span>Valued as of {value.as_of_date} using stored prices. Individual price dates are shown below; not a live quote.</span></div>
+    <p className="basis-note">Current declared balances are User Assumptions. They do not establish historical ownership or broker-verified returns.</p>
     <section className="metric-grid portfolio-metrics" aria-label="Portfolio summary">
       <div className="metric metric-featured"><div className="metric-label">Portfolio value</div><div className="metric-value">{money(value.total_portfolio_value)}</div><div className="metric-detail">Positions and cash · {value.base_currency}</div></div>
       <div className="metric"><div className="metric-label">Cost basis</div><div className="metric-value">{money(value.total_cost_basis)}</div><div className="metric-detail">Recorded average costs</div></div>
@@ -25,7 +26,7 @@ export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio })
       {value.holdings.length === 0 ? <EmptyState label="No active holdings. Add positions from Manage holdings." /> : <div className="table-wrap"><table>
         <caption className="sr-only">Holdings valued in {value.base_currency}; each price retains its own date and source.</caption>
         <thead><tr><th>Company</th><th className="numeric">Shares</th><th className="numeric">Price</th><th className="numeric">Value ({value.base_currency})</th><th className="numeric">Weight</th><th className="numeric">Unrealized change</th><th>Price evidence</th></tr></thead>
-        <tbody>{value.holdings.map(holding => <tr key={holding.holding_id}>
+        <tbody>{value.holdings.map(holding => <tr key={holding.holding_id ?? `${holding.company_id}:${holding.ticker}:${holding.currency}`}>
           <td>{holding.company_id ? <Link href={`/companies/${holding.company_id}`}>{holding.ticker}</Link> : <strong>{holding.ticker}</strong>}</td>
           <td className="numeric">{formatNumber(holding.quantity, 6)}</td>
           <td className="numeric">{holding.market_price == null ? "Not available" : formatCurrency(holding.market_price, holding.currency)}</td>

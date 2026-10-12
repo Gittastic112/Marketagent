@@ -1,4 +1,5 @@
 import { EmptyState, Panel } from "@/components/page";
+import { snapshotReplayLabel } from "@/lib/portfolio-replay";
 import type {
   PortfolioOpportunityCost,
   PortfolioPerformance,
@@ -43,6 +44,7 @@ export function PortfolioPerformancePanel({
   const completeSnapshots = snapshots.filter((snapshot) => snapshot.calculation_status === "complete");
   return (
     <Panel title="Period Performance & Attribution">
+      {completeSnapshots.some(snapshot => snapshotReplayLabel(snapshot) !== "Recorded activity reconciled") && <p className="basis-note">Legacy history: replay unverified. Returns from these stored snapshots remain provisional until recorded activity is reconciled.</p>}
       {completeSnapshots.length < 2 ? (
         <EmptyState label="Capture at least two complete snapshots on different dates before calculating period performance." />
       ) : (

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { BriefSource } from "@/lib/api/brief-sources";
 
-export function BriefSourceFindings({ source }: { source: BriefSource }) {
+export function BriefSourceFindings({ source, includeAnchors = false }: { source: BriefSource; includeAnchors?: boolean }) {
   if (!source.analysis) return null;
   return <div className="brief-findings">
     <div className="section-intro"><span className="badge">AI Interpretation</span>
@@ -10,7 +10,7 @@ export function BriefSourceFindings({ source }: { source: BriefSource }) {
     </div>
     <p>{source.analysis.summary}</p>
     <p className="muted">Importance is the model&apos;s judgment, not a verified materiality score. Suggested directions need your review, not automatic numerical edits.</p>
-    {source.analysis.findings.map((finding, index) => <article className="brief-finding" id={`finding-${index}`} key={index}>
+    {source.analysis.findings.map((finding, index) => <article className="brief-finding" id={includeAnchors ? `finding-${index}` : undefined} key={index}>
       <div className="brief-finding-heading"><span className={`badge ${finding.importance === "high" ? "badge-warn" : "badge-outline"}`}>{finding.importance} importance</span><h3>{finding.title}</h3></div>
       <p>{finding.importance_reason}</p>
       <details><summary>Exact source passage{finding.page ? ` · PDF page ${finding.page}` : ""}</summary>

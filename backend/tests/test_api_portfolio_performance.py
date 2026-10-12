@@ -39,13 +39,14 @@ def test_owned_performance_and_period_attribution_endpoints(client, db):
     performance = client.get(f"/portfolios/{portfolio.id}/performance?{query}")
     assert performance.status_code == 200, performance.text
     data = performance.json()["data"]
-    assert data["time_weighted_return"]["calculation_status"] == "complete"
-    assert data["money_weighted_return"]["calculation_status"] == "complete"
+    assert data["time_weighted_return"]["calculation_status"] == "partial"
+    assert data["money_weighted_return"]["calculation_status"] == "partial"
+    assert any("Legacy snapshot" in warning for warning in data["time_weighted_return"]["warnings"])
 
     attribution = client.get(f"/portfolios/{portfolio.id}/period-attribution?{query}")
     assert attribution.status_code == 200, attribution.text
     attribution_data = attribution.json()["data"]
-    assert attribution_data["calculation_status"] == "complete"
+    assert attribution_data["calculation_status"] == "partial"
     assert attribution_data["external_cash_flow"] == 0
     assert attribution_data["formula"].startswith("Total change")
 
@@ -84,7 +85,8 @@ def test_snapshot_capture_endpoint_is_idempotent_and_source_labeled(client, db):
     assert first.status_code == 200, first.text
     assert second.status_code == 200, second.text
     assert first.json()["data"]["id"] == second.json()["data"]["id"]
-    assert second.json()["data"]["calculation_status"] == "complete"
+    assert second.json()["data"]["calculation_status"] == "partial"
+    assert second.json()["data"]["payload_json"]["replay_basis"]["status"] == "not_available"
     assert second.json()["meta"]["source"] == "point_in_time_portfolio_capture"
 
 
@@ -162,7 +164,8 @@ def test_risk_return_endpoint_is_owner_scoped_and_source_labeled(client, db):
     )
 
     assert response.status_code == 200, response.text
-    assert response.json()["data"]["risk_calculation_status"] == "complete"
+    assert response.json()["data"]["risk_calculation_status"] == "partial"
+    assert "NO_RECORDED_ACTIVITY" in response.json()["data"]["blockers"]
     assert response.json()["data"]["contains_mock_data"] is False
     assert response.json()["meta"]["source"] == "historical_market_prices_fx_and_trust_gated_dcf"
     assert response.json()["meta"]["is_mock"] is False

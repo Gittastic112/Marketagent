@@ -9,11 +9,14 @@ from app.models import (
     Portfolio,
     PortfolioBenchmarkConfig,
     PortfolioHolding,
+    PortfolioCashBalance,
+    PortfolioTransaction,
     PortfolioSnapshot,
     User,
     ValuationModel,
 )
 from app.services.portfolio_real_input_readiness import audit_portfolio_real_input_readiness
+from app.services.portfolio_analytics import record_daily_snapshot
 
 
 START = date(2026, 7, 20)
@@ -147,8 +150,9 @@ def _real_input_portfolio(db) -> tuple[Portfolio, list[MarketPrice]]:
                 active=True,
                 notes="User-selected price-return benchmark.",
             ),
-            _complete_snapshot(portfolio.id, holding.id, START, prices[0].id, fx_rows[0].id),
-            _complete_snapshot(portfolio.id, holding.id, END, prices[-1].id, fx_rows[-1].id),
+            PortfolioTransaction(portfolio_id=portfolio.id, ticker="CASH", transaction_type="deposit", quantity=425, price=0, fees=0, currency="EUR", transaction_date=START),
+            PortfolioTransaction(portfolio_id=portfolio.id, company_id=holding_company.id, ticker=holding_company.ticker, transaction_type="buy", quantity=5, price=75, fees=0, currency="EUR", transaction_date=START),
+            PortfolioCashBalance(portfolio_id=portfolio.id, currency="EUR", amount=50, as_of_date=START),
         ]
     )
 
@@ -177,6 +181,9 @@ def _real_input_portfolio(db) -> tuple[Portfolio, list[MarketPrice]]:
         )
     )
     db.commit()
+    # Isolated simulated inputs exercise the readiness contract, not genuine-input acceptance.
+    record_daily_snapshot(db, portfolio.id, START)
+    record_daily_snapshot(db, portfolio.id, END)
     return portfolio, prices
 
 

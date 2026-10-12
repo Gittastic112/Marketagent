@@ -207,7 +207,7 @@ class PortfolioSnapshotRead(PortfolioSnapshotCreate):
 
 
 class PortfolioValuationHoldingRead(BaseModel):
-    holding_id: int
+    holding_id: int | None
     ticker: str
     company_id: int | None
     quantity: float
@@ -232,6 +232,8 @@ class PortfolioValuationHoldingRead(BaseModel):
     cost_fx_rate_as_of: date | None = None
     cost_fx_observation_id: int | None = None
     cost_fx_is_stale: bool = False
+    cost_fx_observation_ids: list[int] = Field(default_factory=list)
+    source_transaction_ids: list[int] = Field(default_factory=list)
     weight_percent: float | None
     is_stale_price: bool
     is_valuation_stale: bool | None = None
@@ -249,7 +251,7 @@ class PortfolioValuationHoldingRead(BaseModel):
 
 
 class PortfolioCashValuationRead(BaseModel):
-    cash_balance_id: int
+    cash_balance_id: int | None
     currency: str
     amount: float
     as_of_date: date
@@ -273,6 +275,7 @@ class PortfolioValuationRead(BaseModel):
     missing_fx_pairs: list[str] = Field(default_factory=list)
     cash_balances: list[PortfolioCashValuationRead] = Field(default_factory=list)
     holdings: list[PortfolioValuationHoldingRead]
+    replay_basis: dict[str, Any] | None = None
 
 
 class PortfolioAttributionComponent(BaseModel):
@@ -363,7 +366,7 @@ class PortfolioPeriodAttributionRead(BaseModel):
 
 
 class PortfolioOpportunityCostRead(BaseModel):
-    calculation_status: Literal["complete", "not_available", "not_configured"]
+    calculation_status: Literal["complete", "partial", "not_available", "not_configured"]
     portfolio_id: int
     start_date: date
     end_date: date
@@ -382,7 +385,7 @@ class PortfolioOpportunityCostRead(BaseModel):
 
 
 class PortfolioRiskReturnHoldingRead(BaseModel):
-    holding_id: int
+    holding_id: int | None
     company_id: int | None
     ticker: str
     portfolio_weight_decimal: float | None
@@ -412,6 +415,7 @@ class PortfolioRiskReturnHoldingRead(BaseModel):
 
 
 class PortfolioRiskReturnRead(BaseModel):
+    replay_basis: dict[str, Any] | None = None
     portfolio_id: int
     as_of_date: date
     lookback_start_date: date

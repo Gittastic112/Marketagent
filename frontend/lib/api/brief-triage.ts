@@ -1,6 +1,7 @@
 import { fetchApi, postApi } from "./transport.ts";
 
-export type TriageSuggestion = { field: string; direction: "increase" | "decrease" | "review"; reason: string };
+export type TriageSuggestion = { field: string; direction: "increase" | "decrease" | "review"; reason: string;
+  comparison_context?: { period: string; currency: string; economic_scope: string } };
 export type TriageFinding = {
   title: string; importance: "high" | "medium" | "low"; importance_reason: string;
   quote: string; confidence: string; start_char: number; end_char: number; page: number | null;
@@ -20,6 +21,8 @@ export type TriageGroup = {
   opposition_basis: Array<"stored_sources" | "mock_data">;
   source_count: number; distinct_content_count: number; highest_importance: string;
   items: Array<TriageFindingRef & { suggestion_index: number }>;
+  comparability_status?: "same" | "unknown" | "incompatible";
+  comparability?: Record<string, { labels: string[]; missing_count: number; status: "same" | "unknown" | "incompatible" }>;
 };
 export type BriefTriage = {
   company_id: number; company_name: string; ticker: string; claim_type: "Calculation";

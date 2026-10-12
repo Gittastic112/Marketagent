@@ -2,7 +2,7 @@
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
 ValuationField = Literal[
@@ -73,11 +73,19 @@ class BriefSourceQuery(BaseModel):
         return value
 
 
+class QuotedComparisonContext(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    period: str = Field(default="", max_length=80)
+    currency: str = Field(default="", max_length=80)
+    economic_scope: str = Field(default="", max_length=80)
+
+
 class ValuationSuggestion(BaseModel):
     model_config = ConfigDict(extra="forbid")
     field: ValuationField
     direction: Literal["increase", "decrease", "review"]
     reason: str = Field(min_length=10, max_length=600)
+    comparison_context: QuotedComparisonContext = Field(default_factory=QuotedComparisonContext)
 
 
 class BriefFinding(BaseModel):
@@ -88,6 +96,14 @@ class BriefFinding(BaseModel):
     quote: str = Field(min_length=12, max_length=800)
     confidence: Literal["low", "medium", "high"]
     valuation_inputs: list[ValuationSuggestion] = Field(max_length=4)
+
+    @model_validator(mode="after")
+    def context_is_quoted(self):
+        for suggestion in self.valuation_inputs:
+            for label in suggestion.comparison_context.model_dump().values():
+                if label and (not label.strip() or label != label.strip() or label not in self.quote):
+                    raise ValueError("Comparison labels must be literal text within this finding's quote")
+        return self
 
 
 class BriefAnalysis(BaseModel):

@@ -1,4 +1,5 @@
 import { capturePortfolioSnapshot, createPortfolioCashBalance, deletePortfolioCashBalanceWithState, deletePortfolioSnapshotWithState, updatePortfolioCashBalance } from "@/app/actions";
+import { snapshotReplayLabel } from "@/lib/portfolio-replay";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextField } from "@/components/form-fields";
 import { DataStateNotices, EmptyState, ErrorState, Panel } from "@/components/page";
@@ -98,7 +99,7 @@ export async function PortfolioSetup({ portfolio }: { portfolio: Portfolio }) {
         <section id="snapshots">
           <Panel title="Point-in-Time Snapshots">
             <p style={{ color: "var(--text-secondary)", marginTop: 0 }}>
-              Capture derives totals from stored holdings, prices, cash, and historical FX. Incomplete captures remain visible but are blocked from precise performance calculations.
+              Capture replays recorded activity through the selected date and uses dated prices and FX. Stored status describes the capture time; later activity corrections make dependent performance provisional until recaptured. Missing history remains visibly unverified.
             </p>
             <form action={capturePortfolioSnapshot} className="form-grid" style={{ marginBottom: "1rem" }}>
               <input name="portfolio_id" type="hidden" value={portfolio.id} />
@@ -128,14 +129,14 @@ export async function PortfolioSetup({ portfolio }: { portfolio: Portfolio }) {
                     {[...snapshots].sort((a, b) => b.snapshot_date.localeCompare(a.snapshot_date)).map((snap) => (
                       <tr key={snap.id}>
                         <td>{snap.snapshot_date}</td>
-                        <td><strong>{snap.calculation_status.replaceAll("_", " ")}</strong></td>
+                        <td><strong>{snap.calculation_status.replaceAll("_", " ")}</strong><span className="cell-secondary">{snapshotReplayLabel(snap)}</span></td>
                         <td>{snap.total_portfolio_value != null ? `${snap.base_currency || portfolio.base_currency} ${numberText(snap.total_portfolio_value)}` : "Not available"}</td>
                         <td>{snap.total_market_value != null ? numberText(snap.total_market_value) : "-"}</td>
                         <td>{snap.total_cost_basis != null ? numberText(snap.total_cost_basis) : "-"}</td>
                         <td>{snap.total_cash != null ? numberText(snap.total_cash) : "-"}</td>
                         <td>{snap.priced_holdings_count}/{snap.holdings_count} holdings priced</td>
                         <td>
-                          {[...snap.missing_price_tickers_json.map((ticker) => `Price: ${ticker}`), ...snap.missing_fx_pairs_json.map((pair) => `FX: ${pair}`)].join(", ") || "None"}
+                          {[...snap.missing_price_tickers_json.map((ticker) => `Price: ${ticker}`), ...snap.missing_fx_pairs_json.map((pair) => `FX: ${pair}`)].join(", ") || (snapshotReplayLabel(snap) === "Recorded activity reconciled" ? "None" : "Review activity coverage")}
                         </td>
                         <td>
                           <DeleteRecordForm action={deletePortfolioSnapshotWithState} recordId={snap.id} />

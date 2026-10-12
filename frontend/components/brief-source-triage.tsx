@@ -100,6 +100,8 @@ function Comparison({ companyId, includeMock }: { companyId: number; includeMock
           <div className="triage-group-body">
             {group.opposition_basis.length > 0 && <p className="basis-note">Potential increase and decrease suggestions occur across distinct content within {group.opposition_basis.map(basis => basis === "mock_data" ? "Mock Data" : "non-mock sources").join(" and ")}. This is not a verified contradiction.</p>}
             {group.status === "mixed_within_content" && <p className="basis-note">The same content carries opposing suggestions. Inspect the interpretation and reporting periods; duplicate records are not independent evidence.</p>}
+            <p className="basis-note">Comparison basis: {group.comparability_status || "unknown"}. Matching quoted labels do not verify a contradiction or corroboration.</p>
+            {group.comparability && <dl>{Object.entries(group.comparability).map(([dimension, basis]) => <div className="key-value" key={dimension}><dt>{dimension.replaceAll("_", " ")}</dt><dd>{basis.status}: {basis.labels.join("; ") || "Not supplied"}{basis.missing_count > 0 ? ` · ${basis.missing_count} missing` : ""}</dd></div>)}</dl>}
             <div className="triage-evidence-grid">{group.items.map(item => {
               const source = sources.get(item.source_id)!;
               const finding = source.findings[item.finding_index];

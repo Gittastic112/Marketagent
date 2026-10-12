@@ -61,9 +61,9 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | In progress | [Identity and ingestion checkpoint](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Evidence inventory and certification](../archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
-| M07 | 70% | Correct portfolio history and performance | M06 | Not started | None |
-| M08 | 80% | Connected daily research and review | M07 | Not started | None |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Not started | None |
+| M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
+| M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | In progress | [Integrated browser validation](../archive/checkpoints/2026/m09-browser-validation-2026-10-11.md) |
 | M10 | 100% | Proven local daily-driver release | M09 | Not started | None |
 
 ## M01: measured, lean, reproducible foundation
@@ -254,15 +254,15 @@ saved basis; unsupported inputs/methods withhold results with useful diagnostics
 Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
 [Knull W3](../../Knull%28readme%29.md#7-w3-historical-positions-cash-and-portfolio-proof).
 
-- [ ] M07-01 Replay dated transactions/cash into historical positions instead of
+- [x] M07-01 Replay dated transactions/cash into historical positions instead of
   applying today's holdings to older dates. Cover purchases, sales, deposits,
   withdrawals, fees, partial history and zero holdings without retroactive guessing.
-- [ ] M07-02 Define corporate-action/dividend/adjusted-price handling for supported
+- [x] M07-02 Define corporate-action/dividend/adjusted-price handling for supported
   return modes. Keep the confirmed price-only AAPL/GOOGL assumptions explicit;
   do not silently relabel them as broker history or total return.
-- [ ] M07-03 Version replay provenance/coverage in new snapshots, keep legacy
+- [x] M07-03 Version replay provenance/coverage in new snapshots, keep legacy
   snapshots visibly unverified for replay, and enforce owner/as-of price and FX scope.
-- [ ] M07-04 Reconcile cash, position, price and FX contributions; TWR/MWR,
+- [x] M07-04 Reconcile cash, position, price and FX contributions; TWR/MWR,
   dimensions, benchmark opportunity cost and residuals must agree with independent
   reference cases. Missing aligned history must reduce availability/confidence.
 - [ ] M07-05 Verify marginal/component risk and current valuation gaps with complete
@@ -282,10 +282,10 @@ the genuine-input smoke passes without fixture data in the normal database.
 Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 [Knull W1](../../Knull%28readme%29.md#5-w1-reviewed-private-evidence-in-daily-brief).
 
-- [ ] M08-01 Distinguish same/unknown/incompatible period, currency and economic
+- [x] M08-01 Distinguish same/unknown/incompatible period, currency and economic
   scope in comparisons. Copied content and opposing arrows cannot certify a
   contradiction. Version semantics without rewriting historical analyst receipts.
-- [ ] M08-02 Include bounded owner-scoped private evidence and current analyst
+- [x] M08-02 Include bounded owner-scoped private evidence and current analyst
   dispositions in manual and scheduled deterministic brief snapshots. Retain exact
   source/hash/receipt IDs, exclusions and freshness; isolate pending findings.
 - [ ] M08-03 Connect event -> evidence -> held company -> thesis review -> relevant
@@ -294,7 +294,7 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 - [ ] M08-04 Build a reviewed AI evaluation set with unsupported claims, numeric
   errors, contradictory periods and source-text prompt injection. Report citation
   validity and interpretation quality separately; exact quotes do not prove meaning.
-- [ ] M08-05 Verify explicit consent, model/prompt/input/source provenance, owner
+- [x] M08-05 Verify explicit consent, model/prompt/input/source provenance, owner
   access and review approval for AI. Failed/pending/rejected output stays outside
   trusted search/brief evidence. No provider call during an ordinary read.
 - [ ] M08-06 Exercise scan timeouts, late responses, edits/archive/restore, duplicate
@@ -325,7 +325,7 @@ transport/state helpers and query-budget tests.
 - [ ] M09-06 Verify read-only previews, bounded exports/imports, source links and
   useful recovery paths. A build is not browser proof and a fast response is not
   a guarantee that the rendered workflow is responsive.
-- [ ] M09-07 Run the complete isolated production browser matrix and full source/
+- [x] M09-07 Run the complete isolated production browser matrix and full source/
   type/contract suites after integration; record screenshot/trace and source identity.
 
 Gate: all scoped workflows are usable and truthful across supported viewports,

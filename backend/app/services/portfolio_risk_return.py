@@ -17,6 +17,7 @@ from app.models import (
     ValuationModel,
 )
 from app.services.fx_rates import FxRateUnavailable, convert_amount
+from app.services.portfolio_replay import replay_portfolio
 
 
 TRADING_DAYS_PER_YEAR = 252
@@ -167,13 +168,15 @@ def calculate_portfolio_risk_return(
     if portfolio is None:
         raise ValueError(f"Portfolio {portfolio_id} not found")
     user_id = portfolio.user_id
-    holdings = list(
+    replayed, _, replay_basis = replay_portfolio(db, portfolio, target_date) if as_of_date is not None else (None, None, None)
+    holdings = replayed if replayed is not None else list(
         db.scalars(
             select(PortfolioHolding)
             .options(selectinload(PortfolioHolding.company))
             .where(
                 PortfolioHolding.portfolio_id == portfolio_id,
                 PortfolioHolding.quantity > 0,
+                PortfolioHolding.as_of_date <= target_date,
             )
             .order_by(PortfolioHolding.id)
         )
@@ -181,6 +184,9 @@ def calculate_portfolio_risk_return(
 
     blockers: list[str] = []
     warnings: list[str] = []
+    if replay_basis is not None and replay_basis["status"] != "complete":
+        warnings.append("Historical positions are not fully reconciled to recorded activity; fixed-position risk is provisional.")
+        blockers.extend(replay_basis["blockers"])
     rows: list[dict[str, Any]] = []
     source_market_price_ids: set[int] = set()
     source_fx_observation_ids: set[int] = set()
@@ -192,9 +198,17 @@ def calculate_portfolio_risk_return(
     if not holdings:
         blockers.append("The portfolio has no positive-quantity holdings.")
 
-    for holding in holdings:
+    for position_key, holding in enumerate(holdings):
         row_warnings: list[str] = []
         prices = _price_history(db, holding, start_date, target_date)
+        actions = (replay_basis or {}).get("corporate_actions", [])
+        if any(item["company_id"] == holding.company_id and item["ticker"].upper() == holding.ticker.upper()
+            and start_date.isoformat() <= item["date"] <= target_date.isoformat() for item in actions):
+            row_warnings.append("Price-only risk across a recorded corporate action is unavailable until the historical price adjustment basis is reconciled.")
+            prices = []
+        elif len({price.adjustment_state for price in prices}) > 1:
+            row_warnings.append("Price adjustment bases differ within the history window; risk is unavailable.")
+            prices = []
         converted_prices: list[tuple[date, float]] = []
         holding_price_ids: set[int] = set()
         holding_fx_ids: set[int] = set()
@@ -232,9 +246,12 @@ def calculate_portfolio_risk_return(
         for previous, current in zip(converted_prices, converted_prices[1:]):
             if previous[1] > 0:
                 returns[current[0]] = (current[1] / previous[1]) - 1
-        return_series[holding.id] = returns
+        return_series[position_key] = returns
 
         latest = _latest_price(db, holding, target_date)
+        if replayed is not None and latest is not None and latest.adjustment_state not in {"not_applicable", "unadjusted"}:
+            row_warnings.append("Adjusted prices cannot value explicitly replayed corporate-action quantities.")
+            latest = None
         current_price = float(latest.price) if latest else None
         price_age_days = (target_date - latest.as_of_date).days if latest else None
         stale_price = price_age_days is not None and price_age_days > CURRENT_PRICE_MAX_AGE_DAYS
@@ -258,7 +275,7 @@ def calculate_portfolio_risk_return(
                     latest.as_of_date,
                 )
                 current_value = float(converted_latest)
-                current_values[holding.id] = current_value
+                current_values[position_key] = current_value
                 if latest_fx.observation_id is not None:
                     holding_fx_ids.add(latest_fx.observation_id)
                     source_fx_observation_ids.add(latest_fx.observation_id)
@@ -302,6 +319,7 @@ def calculate_portfolio_risk_return(
         rows.append(
             {
                 "holding_id": holding.id,
+                "_position_key": position_key,
                 "company_id": holding.company_id,
                 "ticker": holding.ticker,
                 "portfolio_weight_decimal": None,
@@ -337,7 +355,7 @@ def calculate_portfolio_risk_return(
     if holdings and total_current_value <= 0:
         blockers.append("No holdings have a current base-currency market value.")
     for row in rows:
-        current_value = current_values.get(row["holding_id"])
+        current_value = current_values.get(row["_position_key"])
         if current_value is not None and total_current_value > 0:
             row["portfolio_weight_decimal"] = current_value / total_current_value
 
@@ -350,9 +368,9 @@ def calculate_portfolio_risk_return(
     risk_covered_weight = sum(row["portfolio_weight_decimal"] for row in eligible_rows)
     common_dates: set[date] = set()
     if eligible_rows:
-        common_dates = set(return_series[eligible_rows[0]["holding_id"]])
+        common_dates = set(return_series[eligible_rows[0]["_position_key"]])
         for row in eligible_rows[1:]:
-            common_dates &= set(return_series[row["holding_id"]])
+            common_dates &= set(return_series[row["_position_key"]])
     aligned_dates = sorted(common_dates)
     portfolio_volatility = None
     reconciliation_error = None
@@ -360,7 +378,7 @@ def calculate_portfolio_risk_return(
     if eligible_rows and len(aligned_dates) >= min_observations and risk_covered_weight > 0:
         weights = [row["portfolio_weight_decimal"] / risk_covered_weight for row in eligible_rows]
         aligned_series = [
-            [return_series[row["holding_id"]][day] for day in aligned_dates]
+            [return_series[row["_position_key"]][day] for day in aligned_dates]
             for row in eligible_rows
         ]
         covariance = [
@@ -421,6 +439,19 @@ def calculate_portfolio_risk_return(
             portfolio_expected_return += contribution
         expected_status = "complete" if len(expected_rows) == len(holdings) else "partial"
 
+    if replay_basis is not None and replay_basis["status"] != "complete":
+        risk_status = "partial" if risk_status == "complete" else risk_status
+        expected_status = "partial" if expected_status == "complete" else expected_status
+        if replayed is not None:
+            portfolio_volatility = portfolio_expected_return = reconciliation_error = None
+            risk_status = expected_status = "not_available"
+            risk_covered_weight = expected_covered_weight = 0.0
+            for row in rows:
+                for field in ("portfolio_weight_decimal", "risk_model_weight_decimal", "marginal_volatility",
+                    "marginal_volatility_for_one_percent", "component_risk", "component_risk_percent", "expected_return_contribution"):
+                    row[field] = None
+    for row in rows:
+        row.pop("_position_key")
     if len(current_values) != len(holdings):
         warnings.append(
             "Portfolio weights cover only holdings with an available base-currency market value."
@@ -444,6 +475,7 @@ def calculate_portfolio_risk_return(
         "lookback_days": lookback_days,
         "min_observations": min_observations,
         "base_currency": portfolio.base_currency,
+        "replay_basis": replay_basis,
         "calculation_status": calculation_status,
         "risk_calculation_status": risk_status,
         "expected_return_calculation_status": expected_status,
@@ -455,7 +487,7 @@ def calculate_portfolio_risk_return(
         "risk_claim_type": "Calculation" if portfolio_volatility is not None else "Unavailable",
         "expected_return_claim_type": "Estimate" if portfolio_expected_return is not None else "Unavailable",
         "contains_mock_data": contains_mock_data,
-        "risk_formula": "Sample covariance of aligned daily base-currency returns, annualized with 252 trading days; component risk sums to portfolio volatility.",
+        "risk_formula": "Sample covariance of aligned daily base-currency price returns, annualized with 252 trading days and fixed weights on the requested date; not realized portfolio total return. Component risk sums to portfolio volatility.",
         "expected_return_formula": "Current portfolio weight multiplied by the latest trusted Base DCF valuation gap. This is not an annualized return forecast.",
         "holdings": rows,
         "warnings": sorted(set(warnings)),

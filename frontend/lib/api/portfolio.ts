@@ -99,7 +99,7 @@ export interface PortfolioCashBalance {
 }
 
 export interface PortfolioValuationHolding {
-  holding_id: number;
+  holding_id: number | null;
   ticker: string;
   company_id: number | null;
   quantity: number;
@@ -124,6 +124,8 @@ export interface PortfolioValuationHolding {
   cost_fx_rate_as_of?: string | null;
   cost_fx_observation_id?: number | null;
   cost_fx_is_stale?: boolean;
+  cost_fx_observation_ids?: number[];
+  source_transaction_ids?: number[];
   weight_percent: number | null;
   is_stale_price: boolean;
   is_valuation_stale?: boolean;
@@ -137,6 +139,7 @@ export interface PortfolioValuationHolding {
 }
 
 export interface PortfolioValuation {
+  replay_basis?: { method: string; status: string; claim_type: string; blockers: string[]; limitations: string[] } | null;
   portfolio_id: number;
   as_of_date: string;
   base_currency: string;
@@ -232,7 +235,7 @@ export type PortfolioPeriodAttribution = {
 };
 
 export type PortfolioOpportunityCost = {
-  calculation_status: "complete" | "not_available" | "not_configured";
+  calculation_status: "complete" | "partial" | "not_available" | "not_configured";
   portfolio_id: number;
   start_date: string;
   end_date: string;
@@ -251,7 +254,7 @@ export type PortfolioOpportunityCost = {
 };
 
 export type PortfolioRiskReturnHolding = {
-  holding_id: number;
+  holding_id: number | null;
   company_id: number | null;
   ticker: string;
   portfolio_weight_decimal: number | null;

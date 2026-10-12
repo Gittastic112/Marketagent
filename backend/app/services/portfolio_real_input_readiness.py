@@ -19,6 +19,7 @@ from app.models import (
 )
 from app.services.portfolio_benchmark import calculate_benchmark_opportunity_cost
 from app.services.portfolio_risk_return import calculate_portfolio_risk_return
+from app.services.portfolio_replay import snapshot_replay_is_verified
 
 
 DEFAULT_MIN_OBSERVATIONS = 20
@@ -43,7 +44,9 @@ def _payload_has_mock_marker(value: object) -> bool:
     return _has_mock_marker(value)
 
 
-def _snapshot_is_source_labeled(snapshot: PortfolioSnapshot, foreign_holding_ids: set[int]) -> bool:
+def _snapshot_is_source_labeled(snapshot: PortfolioSnapshot, foreign_holding_ids: set[int], db: Session) -> bool:
+    if not snapshot_replay_is_verified(snapshot, db):
+        return False
     payload = snapshot.payload_json or {}
     holdings = payload.get("holdings")
     if not isinstance(holdings, list) or not holdings:
@@ -330,7 +333,7 @@ def audit_portfolio_real_input_readiness(
     ) and benchmark is not None and bool(
         benchmark.provider_name and (benchmark.provider_symbol or benchmark.notes)
     ) and bool(complete_snapshots) and all(
-        _snapshot_is_source_labeled(snapshot, foreign_holding_ids)
+        _snapshot_is_source_labeled(snapshot, foreign_holding_ids, db)
         for snapshot in complete_snapshots
     )
     add_check(

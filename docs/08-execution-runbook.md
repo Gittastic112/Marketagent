@@ -225,6 +225,7 @@ From root, with local test credentials configured:
 ./scripts/run_browser_workflows.sh valuation-draft.spec.ts
 ./scripts/run_browser_workflows.sh daily-brief-runtime-smoke.spec.ts
 ./scripts/run_browser_workflows.sh portfolio-runtime-smoke.spec.ts
+./scripts/run_browser_workflows.sh accessibility-responsive.spec.ts route-details.spec.ts
 ./scripts/verify_release_baseline.sh
 ~~~
 
@@ -244,6 +245,14 @@ The browser script runs a production Next.js build with `npm run start` from
 the builder image. Separately build the normal standalone production image.
 Both Compose definitions bind published ports to 127.0.0.1. Check the actual
 runtime bindings; previously created containers retain their old configuration.
+
+The page matrix covers 50 routes at 1440px and 390px. It saves screenshots and
+route-measurements.json under each test's output directory, including failures.
+CI retains passing and failing browser evidence for seven days. This is rendered
+page/selected-workflow proof, not every control/state or cold-start/load certification.
+On small Docker VMs, finish image builds before backend PDF tests or browser runs;
+resource-limit failures remain failures, and must pass a serial rerun without
+raising the parser or route budgets.
 
 The release script builds, migrates a fresh PostgreSQL database, checks readiness,
 and runs backend/frontend/type/static checks. Backend unit tests use the separate

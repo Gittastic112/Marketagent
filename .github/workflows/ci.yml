@@ -107,11 +107,12 @@ jobs:
         run: npm ci
       - name: Run isolated browser workflows
         run: ./scripts/run_browser_workflows.sh
-      - name: Upload browser artifacts on failure
-        if: failure()
+      - name: Retain browser evidence
+        if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: browser-quality-artifacts
+          retention-days: 7
           path: |
             output/playwright/test-results
             frontend/playwright-report
