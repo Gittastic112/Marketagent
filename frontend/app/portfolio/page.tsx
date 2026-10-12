@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
+import { loadPortfolioValuations } from "@/lib/server-portfolio";
 import { PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
-import type { Company, Portfolio, PortfolioHolding, PortfolioValuation } from "@/lib/api";
+import type { Company, Portfolio, PortfolioHolding } from "@/lib/api";
 import { formatCurrency } from "@/lib/formatting";
 
 export default async function PortfolioPage() {
@@ -31,11 +32,7 @@ export default async function PortfolioPage() {
     const portfoliosById = new Map(portfolios.map((portfolio) => [portfolio.id, portfolio]));
     const companiesById = new Map(companies.map((company) => [company.id, company]));
 
-    const valuationsRes = await Promise.all(
-      portfolios.map((portfolio) =>
-        serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => null)
-      )
-    );
+    const valuationsRes = await loadPortfolioValuations(portfolios);
     const valuations = valuationsRes.map(res => res?.data);
     const valuationsById = new Map(
       valuations.filter(Boolean).map((v) => [v!.portfolio_id, v!])
@@ -135,7 +132,7 @@ export default async function PortfolioPage() {
                 {sortedTags.length === 0 && untaggedValue === 0 ? (
                   <p className="text-sm text-gray-500">No exposure data calculated.</p>
                 ) : (
-                  <div className="table-wrap">
+                  <div tabIndex={0} className="table-wrap">
                     <table>
                       <thead>
                         <tr>
@@ -175,7 +172,7 @@ export default async function PortfolioPage() {
           {missingHoldings ? <ErrorState message="Holdings could not be loaded." errors={holdingsRes?.errors} /> : holdings.length === 0 ? (
             <EmptyState label="No holdings yet." />
           ) : (
-            <div className="table-wrap">
+            <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
                   <tr>

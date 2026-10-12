@@ -72,6 +72,11 @@ async function detailRoutes(page: Page): Promise<Array<[string, string]>> {
     ["thesis-detail", `/thesis-notes/${thesis.id}`],
     ["private-source", `/daily-brief/sources/${comparison.sources[0].id}`],
     ["private-receipt", `/daily-brief/triage/reviews/${receipt.id}`],
+    // These core pages now contain the events, notes and partial brief produced
+    // by the workflows above. Empty-page accessibility alone misses their states.
+    ["populated-dashboard", "/"],
+    ["populated-brief", "/daily-brief"],
+    ["populated-thesis-notes", "/thesis-notes"],
   ];
 }
 
@@ -80,5 +85,8 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
     await signIn(page);
     const routes = await detailRoutes(page);
     await verifyRoutes(page, testInfo, routes, viewport, "Isolated Mock Data detail records");
+    const note = page.getByRole("row").filter({ has: page.getByRole("link", { name:"Mock Data route audit thesis", exact:true }) }).first();
+    await expect(note.getByText("unreviewed", { exact:true })).toBeVisible();
+    await expect(note.getByText("reviewed", { exact:true })).toHaveCount(0);
   });
 }

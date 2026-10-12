@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { uploadScreenerExport } from "@/lib/api";
 
 export function ScreenerUpload({ companyId }: { companyId: number }) {
+  const inputId = useId();
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,8 +33,9 @@ export function ScreenerUpload({ companyId }: { companyId: number }) {
   return (
     <form onSubmit={handleUpload} className="mt-4 flex flex-col gap-2 p-4 border rounded-md bg-gray-50">
       <div className="flex flex-col gap-1">
-        <label className="text-sm font-medium text-gray-700">Upload Screener.in Export (.xlsx)</label>
+        <label htmlFor={inputId} className="text-sm font-medium text-gray-700">Upload Screener.in Export (.xlsx)</label>
         <input
+          id={inputId}
           type="file"
           accept=".xlsx"
           onChange={(e) => setFile(e.target.files?.[0] || null)}

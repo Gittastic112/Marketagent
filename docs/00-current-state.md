@@ -3,7 +3,7 @@
 Source tests and normal rollout: 2026-10-12. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source and normal runtime: [October 12 recovery and M03-M09 follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md). Source/candidate/price intake remains separately audited and review-required.
+Latest source and normal runtime: [October 12 consuming-page, risk and accessibility follow-up](archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md). Source/candidate/price intake remains separately audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,22 +20,22 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,502 tests pass; four PostgreSQL-only checks pass separately. Five upstream deprecation warnings. No formula or migration was changed in the October 12 follow-up |
-| Frontend | 264 tests, production build/TypeScript and all 33 isolated browser workflows pass. The matrix covers all 50 pages at 1440px and 390px; screenshots/timings retained |
+| Backend | 1,517 tests pass; four PostgreSQL-only checks pass separately. Five upstream deprecation warnings. Risk matches both return interval endpoints and gates saved currency/finite values; no migration change |
+| Frontend | 271 tests, production build/TypeScript and 39 isolated browser workflows pass, with focused assertion/India reruns documented. The 50-page matrix adds populated/India states for 108 views at 1440px/390px; automatic scans, screenshots and timings are retained |
 | API compatibility | 279 public paths, 511 schemas and 381 inventoried operations. Official manual filing guidance is additive. Legacy custom-options routes remain compatible but are deprecated/experimental. Pure contracts, facade identity, ownership and wire-manifest guards pass |
 | Operations | 54 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion/interruption/retention and format-2 compatibility are covered. Protected environment files remain excluded |
 | PostgreSQL | Four real concurrency checks pass, including competing saved valuation versions: one succeeds, one conflicts, and the original output stays unchanged. Fresh schema reaches s1s1s1s1s1s1 |
 | Normal runtime | Final backend/frontend/worker images are installed. PostgreSQL retains its named volume and s1s1s1s1s1s1 schema; all 109 table fingerprints match across replacement. Settings are preserved in memory, ports stay localhost-only, and Compose selects current services |
-| Normal browser | 12 routes at desktop/mobile sizes, 24 views, no browser errors or page overflow, two forbidden-Origin checks pass. Maximum sampled readiness 628 ms. India source guidance and provider configuration disclaimers are visible. No normal test seeding or AI call |
+| Normal browser | 13 routes at desktop/mobile sizes, 26 views, no browser errors, overflow or automatic accessibility violations, two forbidden-Origin checks pass. Maximum sampled readiness 746 ms. A prior final-step failure did not recur with diagnostic logging and remains recorded. No normal test seeding or AI call |
 | Recovery | Complete format-3 normal backups and an isolated concurrent-write restore pass. Both original public/private PDF bytes and all 109 table inventories are verified in the drill. Restore verification took 10 seconds, complete drill 35 seconds. Same-disk copies do not prove encrypted off-device recovery |
-| Performance | Final isolated matrix: desktop/mobile median 534.5/490 ms, p95 1,189/1,253 ms, maxima 1,896/2,315 ms. Separate small-fixture first-visit/warm sampling has 24 responses at most 389 ms and an 886 ms tab interaction. Authentication warms shared code; database/OS caches are not cold and this is not load proof |
+| Performance | Final isolated samples: desktop/mobile median 558/562.5 ms, p95 2,328/1,630 ms, maxima 2,874/2,839 ms. Portfolio lists bound each page to four concurrent valuation calls; repeated checks cover 43 portfolios. Earlier 24-sample first-visit/warm and 886 ms interaction evidence remains dated separately. These small fixtures and warmed caches are not cold-machine or load proof |
 | Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Intake adds unreviewed candidates and dated prices, not approved financial histories. Five official India source links were rechecked October 12. Provider availability does not certify interpretation, coverage or future quota |
 
 Normal screens still contain labeled Mock Data. The final rollout has no stored
 PDF assets, so September's private-PDF/source inventories below remain historical.
-Normal browser reads add one missing FRED capability row and two audited SEC
-discovery runs; the other 107 table fingerprints remain identical. The checkpoint
-records those changes separately from the quiesced rollout comparison.
+Earlier browser reads add one FRED capability, two SEC discovery runs and one blocked
+new-day regime score. The checkpoint separates these from the final rollout and
+browser pass, each of which preserves all 109 table fingerprints.
 
 [Refactor checkpoint](archive/checkpoints/2026/repository-architecture-refactor-2026-09-09.md)
 records the older production/browser scope. The

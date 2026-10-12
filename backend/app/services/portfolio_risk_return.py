@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime, time, timedelta
-from math import sqrt
+from math import isfinite, sqrt
 from statistics import fmean
 from typing import Any
 
@@ -114,8 +114,8 @@ def _dcf_valuation_gap(
     if assumption_set.is_stale:
         reason = f" Reason: {assumption_set.stale_reason}." if assumption_set.stale_reason else ""
         warnings.append(f"The Base DCF assumption set is stale.{reason}")
-    if output.model_quality_score is None:
-        warnings.append("The DCF output has no model quality score.")
+    if output.model_quality_score is None or not isfinite(float(output.model_quality_score)):
+        warnings.append("The DCF output has no finite model quality score.")
     elif float(output.model_quality_score) < MINIMUM_DCF_QUALITY_SCORE:
         warnings.append(
             f"The DCF model quality score is below {MINIMUM_DCF_QUALITY_SCORE:.0f}/100."
@@ -128,12 +128,12 @@ def _dcf_valuation_gap(
         if output.intrinsic_value_per_share is not None
         else None
     )
-    if intrinsic_value is None or intrinsic_value <= 0:
-        warnings.append("The DCF output has no positive intrinsic value per share.")
-    if market_price is None or market_price <= 0:
+    if intrinsic_value is None or not isfinite(intrinsic_value) or intrinsic_value <= 0:
+        warnings.append("The DCF output has no finite positive intrinsic value per share.")
+    if market_price is None or not isfinite(market_price) or market_price <= 0:
         warnings.append("No positive source-backed market price is available for comparison.")
     elif not valuation_currency:
-        warnings.append("The company has no valuation currency, so the DCF output cannot be compared safely.")
+        warnings.append("The saved DCF has no cash-flow currency, so its output cannot be compared safely.")
     elif not market_price_currency:
         warnings.append("The market price has no currency, so the DCF output cannot be compared safely.")
     elif valuation_currency.upper() != market_price_currency.upper():
@@ -193,13 +193,14 @@ def calculate_portfolio_risk_return(
     source_dcf_output_ids: set[int] = set()
     contains_mock_data = False
     current_values: dict[int, float] = {}
-    return_series: dict[int, dict[date, float]] = {}
+    return_series: dict[int, dict[tuple[date, date], float]] = {}
 
     if not holdings:
         blockers.append("The portfolio has no positive-quantity holdings.")
 
     for position_key, holding in enumerate(holdings):
         row_warnings: list[str] = []
+        stale_fx = False
         prices = _price_history(db, holding, start_date, target_date)
         actions = (replay_basis or {}).get("corporate_actions", [])
         if any(item["company_id"] == holding.company_id and item["ticker"].upper() == holding.ticker.upper()
@@ -233,19 +234,32 @@ def calculate_portfolio_risk_return(
                     f"Missing FX rate for {(price.currency or holding.currency).upper()}/{portfolio.base_currency.upper()} on {price.as_of_date}."
                 )
                 continue
+            if not isfinite(float(converted)) or converted < 0:
+                row_warnings.append(f"Invalid converted price on {price.as_of_date}; its return intervals are unavailable.")
+                continue
             converted_prices.append((price.as_of_date, float(converted)))
             if fx.observation_id is not None:
                 holding_fx_ids.add(fx.observation_id)
                 source_fx_observation_ids.add(fx.observation_id)
             if fx.is_stale:
+                stale_fx = True
                 row_warnings.append(
                     f"FX observation {fx.observation_id} was {fx.age_days} days old on {price.as_of_date}."
                 )
 
-        returns: dict[date, float] = {}
-        for previous, current in zip(converted_prices, converted_prices[1:]):
-            if previous[1] > 0:
-                returns[current[0]] = (current[1] / previous[1]) - 1
+        returns: dict[tuple[date, date], float] = {}
+        converted_by_date = dict(converted_prices)
+        # Preserve the original observation boundaries. Dropping an unavailable
+        # FX conversion must not turn a multi-period change into a daily return.
+        for previous, current in zip(prices, prices[1:]):
+            left = converted_by_date.get(previous.as_of_date)
+            right = converted_by_date.get(current.as_of_date)
+            if left is not None and right is not None and left > 0:
+                change = (right / left) - 1
+                if isfinite(change):
+                    returns[(previous.as_of_date, current.as_of_date)] = change
+                else:
+                    row_warnings.append("A nonfinite historical return is unavailable.")
         return_series[position_key] = returns
 
         latest = _latest_price(db, holding, target_date)
@@ -253,6 +267,10 @@ def calculate_portfolio_risk_return(
             row_warnings.append("Adjusted prices cannot value explicitly replayed corporate-action quantities.")
             latest = None
         current_price = float(latest.price) if latest else None
+        if current_price is not None and not isfinite(current_price):
+            row_warnings.append("The latest stored price is nonfinite and cannot value this holding.")
+            latest = None
+            current_price = None
         price_age_days = (target_date - latest.as_of_date).days if latest else None
         stale_price = price_age_days is not None and price_age_days > CURRENT_PRICE_MAX_AGE_DAYS
         if stale_price:
@@ -279,6 +297,9 @@ def calculate_portfolio_risk_return(
                 if latest_fx.observation_id is not None:
                     holding_fx_ids.add(latest_fx.observation_id)
                     source_fx_observation_ids.add(latest_fx.observation_id)
+                if latest_fx.is_stale:
+                    stale_fx = True
+                    row_warnings.append(f"Current weights use an FX observation {latest_fx.age_days} days old.")
             except FxRateUnavailable:
                 row_warnings.append(
                     f"The current holding value cannot be converted from {(latest.currency or holding.currency).upper()} to {portfolio.base_currency.upper()}."
@@ -302,14 +323,13 @@ def calculate_portfolio_risk_return(
         dcf_pair = _latest_dcf_output(
             db, holding.company_id, target_date, user_id
         )
-        company = holding.company if holding.company_id is not None else None
         assumption_set = dcf_pair[0] if dcf_pair else None
         dcf_output = dcf_pair[1] if dcf_pair else None
         expected_return, dcf_warnings = _dcf_valuation_gap(
             assumption_set,
             dcf_output,
             None if stale_price else current_price,
-            company.currency if company else None,
+            assumption_set.cash_flow_currency if assumption_set else None,
             (latest.currency or holding.currency) if latest else None,
         )
         row_warnings.extend(dcf_warnings)
@@ -320,6 +340,7 @@ def calculate_portfolio_risk_return(
             {
                 "holding_id": holding.id,
                 "_position_key": position_key,
+                "_stale_fx": stale_fx,
                 "company_id": holding.company_id,
                 "ticker": holding.ticker,
                 "portfolio_weight_decimal": None,
@@ -366,12 +387,14 @@ def calculate_portfolio_risk_return(
         and row["observation_count"] >= min_observations
     ]
     risk_covered_weight = sum(row["portfolio_weight_decimal"] for row in eligible_rows)
-    common_dates: set[date] = set()
+    common_dates: set[tuple[date, date]] = set()
     if eligible_rows:
         common_dates = set(return_series[eligible_rows[0]["_position_key"]])
         for row in eligible_rows[1:]:
             common_dates &= set(return_series[row["_position_key"]])
     aligned_dates = sorted(common_dates)
+    if eligible_rows and any(len(aligned_dates) < row["observation_count"] for row in eligible_rows):
+        warnings.append("Returns with different start or end dates are excluded from the aligned risk calculation.")
     portfolio_volatility = None
     reconciliation_error = None
     risk_status = "not_available"
@@ -416,7 +439,10 @@ def calculate_portfolio_risk_return(
                 component / portfolio_volatility if portfolio_volatility > 0 else 0.0
             )
         reconciliation_error = sum(components) - portfolio_volatility
-        risk_status = "complete" if len(eligible_rows) == len(holdings) and not any(row["is_stale_price"] for row in eligible_rows) else "partial"
+        risk_status = "complete" if len(eligible_rows) == len(holdings) and not any(
+            row["is_stale_price"] or row["_stale_fx"] or len(aligned_dates) < row["observation_count"]
+            for row in eligible_rows
+        ) else "partial"
     elif eligible_rows:
         blockers.append(
             f"Only {len(aligned_dates)} aligned return observations are available; {min_observations} are required."
@@ -437,7 +463,9 @@ def calculate_portfolio_risk_return(
             contribution = row["portfolio_weight_decimal"] * row["expected_return_decimal"]
             row["expected_return_contribution"] = contribution
             portfolio_expected_return += contribution
-        expected_status = "complete" if len(expected_rows) == len(holdings) else "partial"
+        expected_status = "complete" if len(expected_rows) == len(holdings) and not any(
+            row["_stale_fx"] for row in expected_rows
+        ) else "partial"
 
     if replay_basis is not None and replay_basis["status"] != "complete":
         risk_status = "partial" if risk_status == "complete" else risk_status
@@ -452,12 +480,13 @@ def calculate_portfolio_risk_return(
                     row[field] = None
     for row in rows:
         row.pop("_position_key")
+        row.pop("_stale_fx")
     if len(current_values) != len(holdings):
         warnings.append(
             "Portfolio weights cover only holdings with an available base-currency market value."
         )
     if risk_status == "partial":
-        warnings.append("Historical risk has incomplete history coverage or stale current-price weights; inspect holding warnings.")
+        warnings.append("Historical risk has incomplete interval coverage or stale price/FX inputs; inspect holding warnings.")
     if expected_status != "complete":
         warnings.append("DCF valuation-gap coverage is incomplete; unavailable holdings contribute zero to the aggregate rather than an invented estimate.")
 
@@ -487,7 +516,7 @@ def calculate_portfolio_risk_return(
         "risk_claim_type": "Calculation" if portfolio_volatility is not None else "Unavailable",
         "expected_return_claim_type": "Estimate" if portfolio_expected_return is not None else "Unavailable",
         "contains_mock_data": contains_mock_data,
-        "risk_formula": "Sample covariance of aligned daily base-currency price returns, annualized with 252 trading days and fixed weights on the requested date; not realized portfolio total return. Component risk sums to portfolio volatility.",
+        "risk_formula": "Sample covariance of base-currency price returns with matching start and end dates, annualized using an assumed 252 trading periods and fixed weights on the requested date; not realized portfolio total return. Missing observations are not filled and exchange calendars are not verified. Component risk sums to portfolio volatility.",
         "expected_return_formula": "Current portfolio weight multiplied by the latest trusted Base DCF valuation gap. This is not an annualized return forecast.",
         "holdings": rows,
         "warnings": sorted(set(warnings)),

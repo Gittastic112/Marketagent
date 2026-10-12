@@ -11,8 +11,8 @@ import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
 import { ManualDataBadge } from "@/components/ui/data-states";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
-import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialPeriod } from "@/lib/api";
-import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialStatementPeriod } from "@/lib/api";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import { buildCompanyDetail } from "@/lib/company-detail";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
@@ -123,6 +123,10 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     const company = companies.find((item) => item.id === companyId);
 
     if (!company) {
+      if (companiesRes.errors.length || companiesRes.meta.status !== "success") {
+        return <><PageHeader eyebrow="Company" title="Company unavailable" />
+          <ErrorState message="Company records could not be loaded." errors={companiesRes.errors} /></>;
+      }
       return (
         <>
         <PageHeader eyebrow="Company" title="Not found" />
@@ -136,8 +140,8 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
     if (company.currency) quoteParams.set("currency", company.currency);
     const [marketQuote, financialTrends] = await Promise.all([
-      serverFetchApi<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`).catch(() => null),
-      serverFetchApi<FinancialPeriod[]>(`/fundamentals/${encodeURIComponent(company.ticker)}/trends`).catch(() => [])
+      serverFetchApiResponse<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`),
+      serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`)
     ]);
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
@@ -187,7 +191,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 <span>{company.name}</span>
               </h1>
               <div className="company-market-row">
-                <CompanyMarketHeader data={marketQuote} />
+                <CompanyMarketHeader response={marketQuote} />
                 <SyncPriceButton companyId={company.id} market={company.market} />
               </div>
               <div className="company-badge-row">
@@ -207,12 +211,12 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
         {/* Metric Cards */}
         <section className="metric-grid company-metric-grid">
           <div className="metric">
-            <div className="metric-label">Activity Score</div>
+            <div className="metric-label">Recorded activity</div>
             <div className="metric-value">{detail.counts.events + detail.counts.alerts}</div>
           </div>
           <div className="metric">
-            <div className="metric-label">Risk Status</div>
-            <div className="metric-value">{detail.counts.alerts > 0 ? "Elevated" : "Normal"}</div>
+            <div className="metric-label">Recorded alerts</div>
+            <div className="metric-value">{detail.counts.alerts}</div>
           </div>
           <div className="metric">
             <div className="metric-label">Documents</div>
@@ -276,7 +280,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               </div>
             </Panel>
 
-            <FinancialTrends trends={financialTrends} />
+            <FinancialTrends response={financialTrends} companyId={company.id} />
 
             <Panel title={company.market === "IN" ? "Filing Source" : "SEC Filing Picker"}>
               <div className="brief-list">
@@ -365,7 +369,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               {detail.documents.length === 0 ? (
                 <EmptyState label="No linked documents." />
               ) : (
-                <div className="table-wrap">
+                <div tabIndex={0} className="table-wrap">
                   <table>
                     <thead>
                       <tr>
@@ -438,7 +442,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               {detail.alerts.length === 0 ? (
                 <EmptyState label="No active alerts." />
               ) : (
-                <div className="table-wrap">
+                <div tabIndex={0} className="table-wrap">
                   <table>
                     <thead>
                       <tr>

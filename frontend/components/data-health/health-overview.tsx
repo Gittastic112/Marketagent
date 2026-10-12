@@ -102,7 +102,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         {unreviewedContradictions.length === 0 ? (
           <EmptyState label="No unreviewed contradictions found." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>
@@ -163,7 +163,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
               </div>
             ) : null}
 
-            <div className="table-wrap">
+            <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
                   <tr>
@@ -258,7 +258,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         ) : evidenceIntegrity.financial_histories.length === 0 ? (
           <EmptyState label="No promoted financial histories are available for certification." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>
@@ -337,7 +337,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
                 Only the first {evidenceIntegrity.reported_issue_count} issues are shown. Resolve them and run the report again.
               </div>
             )}
-            <div className="table-wrap">
+            <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
                   <tr>
@@ -398,7 +398,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
             <div className="notice notice-warning" style={{ marginBottom: "1rem" }}>
               Apply creates evidence references only after the backend repeats the exact-match and duplicate checks. Ambiguous and unmatched events remain manual review work.
             </div>
-            <div className="table-wrap">
+            <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
                   <tr>
@@ -455,7 +455,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         {providerHealth.length === 0 ? (
           <EmptyState label="No provider health information available." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>
@@ -531,7 +531,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         {byType.size === 0 ? (
           <EmptyState label="No processing runs recorded yet." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>
@@ -573,7 +573,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         {sources.length === 0 ? (
           <EmptyState label="No sources configured." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>
@@ -621,7 +621,7 @@ export function HealthOverview({ auditMode, runtimeReadinessRes, peerReceiptHeal
         {processingRuns.length === 0 ? (
           <EmptyState label="No processing runs recorded." />
         ) : (
-          <div className="table-wrap">
+          <div tabIndex={0} className="table-wrap">
             <table>
               <thead>
                 <tr>

@@ -160,7 +160,7 @@ export default function AdminDamodaranPage() {
         ) : files.length === 0 ? (
           <p className="text-sm text-gray-500 italic p-4">No datasets have been imported yet.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div tabIndex={0} className="overflow-x-auto">
             <table className="w-full text-sm text-left border-collapse">
               <thead className="bg-gray-50 text-gray-700">
                 <tr>

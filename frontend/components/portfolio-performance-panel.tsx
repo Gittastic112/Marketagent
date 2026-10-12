@@ -1,4 +1,4 @@
-import { EmptyState, Panel } from "@/components/page";
+import { EmptyState, ErrorState, Panel } from "@/components/page";
 import { snapshotReplayLabel } from "@/lib/portfolio-replay";
 import type {
   PortfolioOpportunityCost,
@@ -33,6 +33,7 @@ export function PortfolioPerformancePanel({
   performance,
   attribution,
   opportunityCost,
+  requestFailed = false,
 }: {
   snapshots: PortfolioSnapshot[];
   startDate: string | null;
@@ -40,6 +41,7 @@ export function PortfolioPerformancePanel({
   performance: PortfolioPerformance | null;
   attribution: PortfolioPeriodAttribution | null;
   opportunityCost: PortfolioOpportunityCost | null;
+  requestFailed?: boolean;
 }) {
   const completeSnapshots = snapshots.filter((snapshot) => snapshot.calculation_status === "complete");
   return (
@@ -56,7 +58,7 @@ export function PortfolioPerformancePanel({
             <div className="button-row"><button type="submit">Calculate Period</button></div>
           </form>
 
-          {!performance || !attribution ? (
+          {requestFailed ? <ErrorState message="Performance data could not be loaded. Retry Calculate Period." /> : !performance || !attribution ? (
             <EmptyState label="The selected period is unavailable. Choose two complete snapshot dates with the end date after the start date." />
           ) : (
             <>

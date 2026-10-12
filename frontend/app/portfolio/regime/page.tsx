@@ -30,6 +30,7 @@ export default async function MarketRegimePage() {
           eyebrow="Portfolio"
           title="Market Regime"
           status="Macro & Liquidity conditions"
+          description="Automatic options, liquidity, volume and breadth feeds are not available yet. This page uses dated manual inputs and, when available, stored FRED observations."
           badge={<span className="badge badge-outline">{score.mode}</span>}
         />
 
@@ -42,7 +43,7 @@ export default async function MarketRegimePage() {
 
           {/* Left Column: Readiness Score */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <Panel title="Entry Timing Readiness">
+            <Panel title="Market context score">
               <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "2rem 0" }}>
                 <div style={{
                   width: "140px",

@@ -168,6 +168,7 @@ def _real_input_portfolio(db) -> tuple[Portfolio, list[MarketPrice]]:
         valuation_model_id=model.id,
         scenario="Base",
         is_stale=False,
+        cash_flow_currency=holding_company.currency,
     )
     db.add(assumptions)
     db.flush()

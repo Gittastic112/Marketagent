@@ -190,7 +190,7 @@ def test_portfolio_valuation_uses_owned_trusted_dcf_output(db: Session) -> None:
     db.add_all([owner_model, other_model])
     db.flush()
     recorded_at = datetime(2026, 5, 28, tzinfo=UTC)
-    owner_assumptions = DcfAssumptionSet(valuation_model_id=owner_model.id, scenario="Base", is_stale=False, created_at=recorded_at)
+    owner_assumptions = DcfAssumptionSet(valuation_model_id=owner_model.id, scenario="Base", is_stale=False, created_at=recorded_at, cash_flow_currency="USD")
     other_assumptions = DcfAssumptionSet(valuation_model_id=other_model.id, scenario="Base", is_stale=False, created_at=recorded_at)
     db.add_all([owner_assumptions, other_assumptions])
     db.flush()

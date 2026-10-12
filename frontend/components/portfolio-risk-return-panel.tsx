@@ -1,4 +1,4 @@
-import { EmptyState, Panel } from "@/components/page";
+import { EmptyState, ErrorState, Panel } from "@/components/page";
 import { MockDataBadge, PartialDataNotice } from "@/components/ui/data-states";
 import type { PortfolioRiskReturn } from "@/lib/api";
 
@@ -29,10 +29,10 @@ function ClaimBadge({ children }: { children: string }) {
   );
 }
 
-export function PortfolioRiskReturnPanel({ comparison }: { comparison: PortfolioRiskReturn | null }) {
+export function PortfolioRiskReturnPanel({ comparison, requestFailed = false }: { comparison: PortfolioRiskReturn | null; requestFailed?: boolean }) {
   return (
     <Panel title="Marginal Risk & DCF Valuation Gap">
-      {!comparison ? (
+      {requestFailed ? <ErrorState message="Risk comparison could not be loaded. Reload this page to retry." /> : !comparison ? (
         <EmptyState label="Risk and valuation-gap comparison is unavailable. Add dated market prices, then retry." />
       ) : (
         <>

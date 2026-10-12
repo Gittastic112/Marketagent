@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { signIn } from "./helpers";
+import { backendData, signIn } from "./helpers";
 import { verifyRoutes } from "./route-checks";
 
 
@@ -57,4 +57,48 @@ test("mobile navigation exposes and restores keyboard focus", async ({ page }) =
   await page.keyboard.press("Escape");
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).not.toBeVisible();
   await expect(trigger).toBeFocused();
+});
+
+test("a mobile table can be reached and scrolled with the keyboard", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
+  await page.goto("/data");
+  const region = page.getByRole("main").locator(".table-wrap");
+  await expect(region).toBeVisible();
+  expect(await region.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  for (let attempt = 0; attempt < 40 && !await region.evaluate(element => element === document.activeElement); attempt++) {
+    await page.keyboard.press("Tab");
+  }
+  await expect(region).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => region.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+});
+
+test("mobile decision fields remain inside their panels and can be edited", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
+  const companies = await backendData<Array<{ id: number; ticker: string }>>(page, "/companies");
+  const company = companies.find(row => row.ticker === "E2EUSD");
+  expect(company).toBeTruthy();
+  await page.goto(`/companies/${company!.id}/decisions`);
+  const content = page.getByRole("main");
+  await expect(content.getByLabel("New Evidence", { exact: true })).toBeVisible();
+  const fields = content.locator("input:not([type=hidden]), textarea, select, button[type=submit]");
+  for (const field of await fields.all()) {
+    if (!await field.isVisible()) continue;
+    await field.scrollIntoViewIfNeeded();
+    const bounds = await field.evaluate(element => {
+      const field = element.getBoundingClientRect();
+      const panel = element.closest(".panel")!.getBoundingClientRect();
+      return { left:field.left, right:field.right, panelLeft:panel.left, panelRight:panel.right,
+        width:innerWidth, label:element.getAttribute("name") || element.textContent };
+    });
+    expect(bounds.left, `${bounds.label} left edge`).toBeGreaterThanOrEqual(Math.max(0, bounds.panelLeft));
+    expect(bounds.right, `${bounds.label} right edge`).toBeLessThanOrEqual(Math.min(bounds.width, bounds.panelRight));
+  }
+  await content.getByLabel("New Evidence", { exact: true }).fill("Mock Data: editable mobile evidence field.");
+  await content.getByLabel("Price at Time", { exact: true }).fill("0");
+  await content.getByLabel("Rationale", { exact: true }).fill("Mock Data: keyboard entry stays visible.");
+  await expect(content.getByLabel("Price at Time", { exact: true })).toHaveValue("0");
+  await page.screenshot({ path:testInfo.outputPath("mobile-decision-fields.png"), fullPage:true });
 });

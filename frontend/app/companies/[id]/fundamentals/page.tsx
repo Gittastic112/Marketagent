@@ -115,7 +115,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           ) : null}
         </div>
         {coverage && coverage.status !== "complete" && coverage.status !== "no_data" ? (
-          <div className="mt-4 overflow-x-auto">
+          <div className="mt-4 overflow-x-auto" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -226,7 +226,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           ) : null}
         </div>
         {identityReport && identityReport.periods.length > 0 ? (
-          <div className="mt-4 overflow-x-auto">
+          <div className="mt-4 overflow-x-auto" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">

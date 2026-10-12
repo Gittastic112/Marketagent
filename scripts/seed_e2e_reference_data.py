@@ -27,6 +27,8 @@ from app.models import (
     ValuationModel,
 )
 from app.services.portfolio_analytics import record_daily_snapshot
+from app.models.market_price import CompanyMarketData
+from app.models.financial import FinancialMetric, FinancialStatementPeriod
 
 
 DATASET_CODE = "e2e_margin_fixture"
@@ -153,6 +155,7 @@ def _trusted_mock_dcf(db, company: Company, intrinsic_value: float) -> DcfOutput
             valuation_model_id=model.id,
             scenario="Base",
             is_stale=False,
+            cash_flow_currency=company.currency,
         )
         db.add(assumptions)
         db.flush()
@@ -345,12 +348,32 @@ def _ensure_ai_review_fixture(db) -> None:
         limitations="Mock Data adversarial output: the number and fiscal period are deliberately incorrect."))
 
 
+def _ensure_company_currency_fixture(db) -> None:
+    company = _company(db, ticker="E2EINR", market="IN", exchange="NSE", currency="INR", country="India")
+    if db.query(CompanyMarketData).filter_by(company_id=company.id).first() is None:
+        db.add(CompanyMarketData(company_id=company.id, currency="INR", current_price=1250,
+            change_percent=0, market_cap=1250000000, pe_ratio=0, provider_name="Mock Data provider",
+            provider_symbol="E2EINR.NS", price_type="quote", delay_minutes=None,
+            source_timestamp=datetime(2026, 9, 30, 10, tzinfo=UTC),
+            observed_at=datetime(2026, 10, 1, 10, tzinfo=UTC),
+            warnings_json=["Mock Data used only for isolated browser verification."]))
+    if db.query(FinancialStatementPeriod).filter_by(company_id=company.id).first() is None:
+        period = FinancialStatementPeriod(company_id=company.id, period_type="annual", year=2026,
+            report_date=date(2026, 5, 31), currency="INR", currency_source="manual", currency_confidence="user_asserted")
+        db.add(period)
+        db.flush()
+        db.add_all([FinancialMetric(period_id=period.id, metric_name=name, value=value, unit=unit)
+            for name, value, unit in [("Revenue", 1250, "INR million"), ("Net Income", 0, "INR million"),
+                ("EPS (Basic)", 3.5, "INR/share"), ("Total Assets", 600, None)]])
+
+
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
         _ensure_portfolio_fixture(db)
         _ensure_private_comparison_fixture(db)
         _ensure_ai_review_fixture(db)
+        _ensure_company_currency_fixture(db)
         db.commit()
 
 

@@ -1,4 +1,5 @@
 from datetime import UTC, date, datetime, time, timedelta
+from math import isfinite
 from typing import Any
 
 from sqlalchemy import case, func, or_, select
@@ -245,7 +246,7 @@ def calculate_portfolio_valuation(
             unrealized_pnl_base = market_value_base - total_cost_base
 
         expected_return = None
-        valuation_currency = holding.company.currency if holding.company else None
+        valuation_currency = assumption_set.cash_flow_currency if assumption_set else None
         market_currency = (latest_price.currency or holding.currency) if latest_price else None
         valuation_status = "trusted"
         valuation_status_reason = None
@@ -255,18 +256,20 @@ def calculate_portfolio_valuation(
         elif assumption_set.is_stale:
             valuation_status = "stale"
             valuation_status_reason = assumption_set.stale_reason or "Base DCF assumptions are stale."
-        elif dcf_output.model_quality_score is None or float(dcf_output.model_quality_score) < 60:
+        elif (dcf_output.model_quality_score is None
+              or not isfinite(float(dcf_output.model_quality_score))
+              or float(dcf_output.model_quality_score) < 60):
             valuation_status = "untrusted"
             valuation_status_reason = "The latest Base DCF output does not meet the 60/100 quality gate."
         elif dcf_output.warnings_json:
             valuation_status = "untrusted"
             valuation_status_reason = "The latest Base DCF output has unresolved diagnostic warnings."
-        elif raw_intrinsic_value is None or raw_intrinsic_value <= 0:
+        elif raw_intrinsic_value is None or not isfinite(raw_intrinsic_value) or raw_intrinsic_value <= 0:
             valuation_status = "untrusted"
-            valuation_status_reason = "The latest Base DCF output has no positive intrinsic value per share."
+            valuation_status_reason = "The latest Base DCF output has no finite positive intrinsic value per share."
         elif not valuation_currency or not market_currency:
             valuation_status = "untrusted"
-            valuation_status_reason = "Valuation and market-price currencies are required for a safe comparison."
+            valuation_status_reason = "Saved cash-flow and market-price currencies are required for a safe comparison."
         elif valuation_currency.upper() != market_currency.upper():
             valuation_status = "untrusted"
             valuation_status_reason = (
@@ -274,7 +277,7 @@ def calculate_portfolio_valuation(
             )
         dcf_is_trusted = valuation_status == "trusted"
         intrinsic_value = raw_intrinsic_value if dcf_is_trusted else None
-        if intrinsic_value is not None and market_price is not None and market_price > 0:
+        if intrinsic_value is not None and market_price is not None and isfinite(market_price) and market_price > 0 and not is_stale:
             expected_return = (intrinsic_value - market_price) / market_price
 
         holdings_valuation.append({

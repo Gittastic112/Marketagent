@@ -138,7 +138,7 @@ def test_expected_return_is_a_trust_gated_dcf_valuation_gap(db):
     model = ValuationModel(company_id=company.id, name="DCF", model_type="fcff_dcf")
     db.add(model)
     db.flush()
-    assumptions = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base", is_stale=False)
+    assumptions = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base", is_stale=False, cash_flow_currency="USD")
     db.add(assumptions)
     db.flush()
     output = DcfOutput(
@@ -328,6 +328,7 @@ def test_multicurrency_runtime_gate_has_complete_risk_and_dcf_coverage(db):
             valuation_model_id=model.id,
             scenario="Base",
             is_stale=False,
+            cash_flow_currency=company.currency,
         )
         db.add(assumptions)
         db.flush()

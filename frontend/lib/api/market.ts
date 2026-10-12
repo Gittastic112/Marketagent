@@ -26,6 +26,12 @@ export interface MarketPrice {
 }
 
 export type CompanyMarketData = {
+  market?: string | null;
+  exchange?: string | null;
+  ticker?: string | null;
+  currency?: string | null;
+  provider_name?: string | null;
+  provider_symbol?: string | null;
   current_price: number | null;
   change_percent: number | null;
   volume: number | null;
@@ -33,6 +39,12 @@ export type CompanyMarketData = {
   pe_ratio: number | null;
   fifty_two_week_high: number | null;
   fifty_two_week_low: number | null;
+  source_timestamp?: string | null;
+  observed_at?: string | null;
+  price_type?: string | null;
+  delay_minutes?: number | null;
+  adjustment_state?: string | null;
+  warnings?: string[];
   last_updated: string;
 };
 

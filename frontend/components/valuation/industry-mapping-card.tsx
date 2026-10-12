@@ -273,7 +273,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
                     {Object.keys(row.benchmarkAvailability).length} modules
                   </span>
                 ) : (
-                  <span className="text-slate-400">Save to check</span>
+                  <span className="text-slate-600">Save to check</span>
                 )}
               </div>
               <Button

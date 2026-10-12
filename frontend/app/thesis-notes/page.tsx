@@ -83,7 +83,7 @@ export default async function ThesisNotesPage() {
                           <span className={driftBadge}>{note.thesis_drift_score.toFixed(2)}</span>
                         </td>
                         <td>
-                          <ReviewStateBadge state={note.thesis_drift_score > 0.5 ? "needs_review" : "reviewed"} />
+                          <ReviewStateBadge state={note.thesis_drift_score > 0.5 ? "needs_review" : "unreviewed"} />
                         </td>
                         <td style={{ maxWidth: "260px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {note.thesis_text}

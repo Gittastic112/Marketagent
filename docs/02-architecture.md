@@ -179,6 +179,11 @@ normalized status/provider and aggregates counts in SQL, retaining the last
 success and consecutive-failure count without loading all historical run objects.
 No cross-user response cache or stale-data substitution is introduced.
 
+The two portfolio list pages use a shared server-only loader with at most four
+valuation requests in flight per page. Management no longer requests analytics
+that it never renders. Failure envelopes and input order are retained; this bound
+does not establish concurrent-user capacity or cache financial data.
+
 The portfolio detail route first resolves the owned portfolio, then streams only
 the selected server view: Overview, Performance & risk, Activity, or Data & setup.
 Each view owns its requests and metadata handling. A legacy URL with only period
@@ -192,6 +197,13 @@ Risk comparison exposes each latest price date and age. Prices older than five
 calendar days make the result partial and withhold the current DCF price gap;
 historical risk can still be shown with the stale-price warning. This is not a
 guarantee of live pricing or a realized total-return series.
+
+Risk returns align both start and end dates. Missing FX never joins nonadjacent
+observations into one return, and stale FX keeps coverage partial. Annualization
+assumes 252 observed trading periods; exchange calendars are not verified. Both
+portfolio valuation consumers compare the explicit saved cash-flow currency and
+require finite output/quality values. Missing currencies and stale current prices
+withhold comparison gaps without rewriting historical assumptions or outputs.
 
 Explicit dated portfolio reads and snapshot capture use `portfolio_replay` to
 reconstruct recorded positions/cash and reconcile the full ledger to current

@@ -22,7 +22,7 @@ Protected environment files must not be read directly or indirectly.
 
 ## Current evidence
 
-The [October 12 checkpoint](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
+The [October 12 follow-up](archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md)
 owns source, recovery, rollout, browser, resource and publication evidence.
 
 - M02 has domain-owned schemas/actions/workflows, compatibility exports and
@@ -32,7 +32,8 @@ owns source, recovery, rollout, browser, resource and publication evidence.
   remains readable. The 109-table concurrent-write drill and both PDF stores pass.
 - M04 adds identity-bound, dated official source guidance for the five scoped
   Indian issuers. Capabilities reflect the selected adapter/configuration,
-  including FRED, without implying coverage or freshness. No facts were approved.
+  including FRED. Consuming pages expose currency, units, dates and missing/failed
+  coverage. M04 checks are verified; its M03 prerequisite remains open. No facts were approved.
 - M05 retains per-company evidence inventory and strict review/certification
   gates. All scoped companies still need reviewed normalized input coverage.
 - M06 canonical saved FCFF sensitivity, method regressions and real PostgreSQL
@@ -40,23 +41,26 @@ owns source, recovery, rollout, browser, resource and publication evidence.
   legacy custom routes are deprecated and warn about their unchecked basis.
 - M07 recorded replay, purchase-date FX and immutable snapshot provenance remain.
   Browser tests cover exact-hash imports, duplicates, conflicts, late navigation
-  and corrections making historical returns provisional.
+  and corrections making historical returns provisional. Risk now matches both
+  interval endpoints; saved currency, finite values and freshness gate DCF gaps.
 - M08 private-source context stays bounded and owner-scoped. Citation evaluation
   v3 explicitly does not assess interpretation quality. Adversarial Mock Data and
   browser checks separate exact quotation from human approval. Review metadata
   refreshes after decisions; late requests cannot change another view.
-- M09 passes 1,502 offline backend tests, four separate PostgreSQL tests, 264
-  frontend tests, production builds and all 33 isolated browser workflows.
-  The 50-route desktop/mobile matrix retains screenshots and unchanged budgets.
+- M09 passes 1,517 offline backend tests, four separate PostgreSQL tests, 271
+  frontend tests, production builds and 39 isolated browser workflows, with focused
+  assertion/India reruns documented. The 50-page matrix adds populated/India states
+  for 108 views, automatic accessibility scans and unchanged timing budgets.
   These checks do not certify every control/state, AI quality or genuine inputs.
 
 ## Normal runtime and recovery
 
-The normal app runs October 12 M03-M09 follow-up images, with schema
+The normal app runs October 12 risk/accessibility follow-up images, with schema
 s1s1s1s1s1s1, the original database volume and localhost-only ports.
 All 109 table fingerprints match across rollout. Authenticated browser checks
-cover 12 normal routes at desktop/mobile sizes, including official India guidance.
-Expected read-side capability catalog/SEC discovery changes are recorded separately.
+cover 13 normal routes at desktop/mobile sizes, with no automatic accessibility
+violation. All 109 fingerprints also match after the final browser run. Earlier
+read-side catalog/discovery/regime changes are recorded separately.
 No normal fixture seed, portfolio rewrite, financial approval or AI scan was run.
 
 Daily Brief scheduling is running. The source worker and pgAdmin remain disabled

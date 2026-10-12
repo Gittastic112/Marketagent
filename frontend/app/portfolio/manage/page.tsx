@@ -15,8 +15,8 @@ import { SelectField, TextAreaField, TextField } from "@/components/form-fields"
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices, DataFreshnessIndicator } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
-import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction, PortfolioValuation, PortfolioAnalytics } from "@/lib/api";
-import { PortfolioAnalyticsDashboard } from "@/components/portfolio-analytics";
+import { loadPortfolioValuations } from "@/lib/server-portfolio";
+import type { Company, Portfolio, PortfolioHolding, PortfolioTransaction } from "@/lib/api";
 import { CsvImporter } from "@/components/csv-importer";
 
 const securityTransactionTypes = [
@@ -108,11 +108,7 @@ export default async function PortfolioPage() {
     const portfoliosById = new Map(portfolios.map((portfolio) => [portfolio.id, portfolio]));
     const companiesById = new Map(companies.map((company) => [company.id, company]));
 
-    const valuationsRes = await Promise.all(
-      portfolios.map((portfolio) =>
-        serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`).catch(() => ({ data: null, meta: null }))
-      )
-    );
+    const valuationsRes = await loadPortfolioValuations(portfolios);
     const valuations = valuationsRes.map(res => res.data);
     const valuationsById = new Map(
       valuations.filter(Boolean).map((v) => [v!.portfolio_id, v!])
@@ -124,20 +120,12 @@ export default async function PortfolioPage() {
       return val.holdings.find(h => h.holding_id === holdingId) || null;
     };
 
-    const analyticsRes = await Promise.all(
-      portfolios.map((portfolio) =>
-        serverFetchApiResponse<PortfolioAnalytics>(`/portfolios/${portfolio.id}/analytics`).catch(() => ({ data: null, meta: null }))
-      )
-    );
-    const analyticsResults = analyticsRes.map(res => res.data);
-    const validAnalytics = analyticsResults.filter((a): a is PortfolioAnalytics => a !== null);
     const dataStateMetas = [
       portfoliosRes.meta,
       holdingsRes.meta,
       transactionsRes.meta,
       companiesRes.meta,
-      ...valuationsRes.map((res) => res.meta),
-      ...analyticsRes.map((res) => res.meta)
+      ...valuationsRes.map((res) => res.meta)
     ];
 
     return (

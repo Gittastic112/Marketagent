@@ -58,7 +58,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
-| M04 | 40% | Dependable identities, prices and ingestion | M03 | In progress | [Identity and ingestion checkpoint](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md) |
+| M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Evidence inventory and certification](../archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
@@ -66,15 +66,17 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | In progress | [Integrated browser validation](../archive/checkpoints/2026/m09-browser-validation-2026-10-11.md) |
 | M10 | 100% | Proven local daily-driver release | M09 | Not started | None |
 
-October 12 [follow-up evidence](../archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
-closes M04-05, M06-03/M06-06 and M07-07. It also resolves normal backup
-finalization, deploys the integrated source and repeats M09-07 with 33 passing
-workflows and 24 authenticated normal views. M08-04 has adversarial fixtures and
-separate citation/interpretation scope, but still lacks a reviewed quality set.
-M09-02/03/05/06 have additional session, race, import, correction and timing proof;
-those broader checks stay open where coverage is incomplete. Cumulative acceptance
-remains 20 points because M03's host/off-device gates are open. Remaining inputs
-and technical boundaries stay in the [ledger](../agent_capabilities_and_limitations.md).
+October 12 [recovery/workflow evidence](../archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
+closes M04-05, M06-03/M06-06 and M07-07 and resolves macOS backup finalization.
+The [consuming-page/risk/accessibility follow-up](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md)
+closes M04-06, bounds portfolio requests, repairs return-interval/currency gates,
+and extends M09-07 to 39 workflows and 108 isolated desktop/mobile views.
+M07-05 still needs complete genuine series and reviewed models. M08-04 still needs
+reviewed interpretation-quality evidence. M09-01 through M09-06 retain their wider
+control, adverse-state, manual-accessibility and load limits; automatic scans and
+small fixtures do not close them. M04's checks are verified but its M03 prerequisite
+is open, so cumulative acceptance remains 20 points. The [ledger](../agent_capabilities_and_limitations.md)
+owns missing inputs and remaining technical boundaries.
 
 ## M01: measured, lean, reproducible foundation
 
@@ -193,7 +195,7 @@ Owners: providers, market-data ingestion, source worker, Processing Runs and Dat
 - [x] M04-05 Finish a reliable official India source selection/manual intake path
   with identity, dates and evidence locators. Add automation only if access is
   compliant and tested; otherwise label the manual step clearly.
-- [ ] M04-06 Surface missing price/FX/financial coverage and provider health at the
+- [x] M04-06 Surface missing price/FX/financial coverage and provider health at the
   consuming page. Keep unsupported FMP/market-regime/Sheets paths visibly unavailable
   or out of normal navigation rather than suggesting they are live services.
 - [x] M04-07 Run recorded genuine-source checks plus deterministic failure/duplicate/

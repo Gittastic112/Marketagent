@@ -388,7 +388,7 @@ export default async function DailyBriefPage() {
           {savedBriefs.length === 0 ? (
             <EmptyState label="No saved briefs yet." />
           ) : (
-            <div className="table-wrap">
+            <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
                   <tr><th>Date</th><th>Summary</th><th>Status</th><th>Saved</th></tr>

@@ -1,5 +1,6 @@
 import { writeFile } from "node:fs/promises";
 import { expect, type Page, type TestInfo } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 export const ROUTE_READY_BUDGET_MS = 15_000;
 
@@ -132,6 +133,24 @@ export async function verifyRoute(
   expect(await collectSemanticFailures(page), `${label} semantic failures`).toEqual([]);
   expect(await collectTypographyFailures(page), `${label} typography failures`).toEqual([]);
 
+  const accessibility = await new AxeBuilder({ page })
+    .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+    .analyze();
+  const accessibilityPath = testInfo.outputPath(`${label}-${viewport.width}-accessibility.json`);
+  await writeFile(accessibilityPath, JSON.stringify({
+    engine: accessibility.testEngine,
+    violations: accessibility.violations,
+    incomplete: accessibility.incomplete,
+    passed_rules: accessibility.passes.map(rule => rule.id),
+  }, null, 2));
+  await testInfo.attach(`${label}-${viewport.width}-accessibility`, {
+    path: accessibilityPath, contentType: "application/json",
+  });
+  expect(accessibility.violations.map(violation => ({
+    rule: violation.id, impact: violation.impact,
+    targets: violation.nodes.map(node => ({ target: node.target, reason: node.failureSummary })),
+  })), `${label} automatically detectable accessibility failures`).toEqual([]);
+
   await page.keyboard.press("Tab");
   await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
   await page.screenshot({
@@ -140,6 +159,8 @@ export async function verifyRoute(
     animations: "disabled",
   });
   return { label, path, viewport, route_ready_ms: routeReadyMs, overflow,
+    accessibility_passed_rules: accessibility.passes.length,
+    accessibility_incomplete_rules: accessibility.incomplete.length,
     controls: await page.locator("main button, main input, main select, main textarea").count() };
 }
 

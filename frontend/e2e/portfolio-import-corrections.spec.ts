@@ -78,7 +78,9 @@ test("late evidence preview cannot follow navigation into another portfolio", as
   try {
     await page.goto(`/portfolio/${first.portfolio.id}?tab=setup`);
     await page.getByRole("main").getByText("Import evidence bundle", {exact:true}).click();
-    await page.getByLabel("Evidence CSV").setInputFiles(fixtureFile(headers));
+    // React streams hidden replacement markup outside main during navigation.
+    // Operate on the mounted workflow, never a pending server-rendered copy.
+    await page.getByRole("main").getByLabel("Evidence CSV").setInputFiles(fixtureFile(headers));
     await page.getByRole("button", {name:"Preview evidence", exact:true}).click();
     await started;
     await expect(page.getByRole("button", {name:"Validating...", exact:true})).toBeVisible();
@@ -115,18 +117,18 @@ test("correcting recorded activity makes selected historical returns provisional
   }
   const before = await backendData(page, `/portfolio-snapshots?portfolio_id=${portfolio.id}`);
   await page.goto(`/portfolio/${portfolio.id}?tab=performance`);
-  await page.getByLabel("Start Date", {exact:true}).fill("2026-05-02");
-  await page.getByLabel("End Date", {exact:true}).fill("2026-05-06");
+  await page.getByRole("main").getByLabel("Start Date", {exact:true}).fill("2026-05-02");
+  await page.getByRole("main").getByLabel("End Date", {exact:true}).fill("2026-05-06");
   await page.getByRole("button", {name:"Calculate Period", exact:true}).click();
-  await expect(page.getByText("TWR (complete)", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("TWR (complete)", {exact:true})).toBeVisible();
   await page.goto("/portfolio/manage");
-  const form = page.locator(`form:has(input[name="id"][value="${purchaseId}"])`).filter({has:page.getByLabel("Fees", {exact:true})});
+  const form = page.getByRole("main").locator(`form:has(input[name="id"][value="${purchaseId}"])`).filter({has:page.getByLabel("Fees", {exact:true})});
   await form.locator("..").getByText("Edit", {exact:true}).click();
   await form.getByLabel("Fees", {exact:true}).fill("1");
   await form.getByRole("button", {name:"Save", exact:true}).click();
   await expect.poll(async () => (await backendData<{fees:number}>(page, `/portfolio-transactions/${purchaseId}`)).fees).toBe(1);
   await page.goto(`/portfolio/${portfolio.id}?tab=performance&start_date=2026-05-02&end_date=2026-05-06`);
-  await expect(page.getByText("TWR (partial)", {exact:true})).toBeVisible();
-  await expect(page.getByText(/changed activity/).first()).toBeVisible();
+  await expect(page.getByRole("main").getByText("TWR (partial)", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText(/changed activity/).first()).toBeVisible();
   expect(await backendData(page, `/portfolio-snapshots?portfolio_id=${portfolio.id}`)).toEqual(before);
 });

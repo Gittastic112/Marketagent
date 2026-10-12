@@ -133,7 +133,7 @@ export function SourceCapabilityMatrix({
   ];
 
   return (
-    <div className="table-wrap">
+    <div tabIndex={0} className="table-wrap">
       <table>
         <thead>
           <tr>

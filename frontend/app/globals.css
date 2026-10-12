@@ -161,6 +161,11 @@ a:hover {
   color: var(--accent-strong);
 }
 
+:where(p, li, .empty, .basis-note) a:not(.btn, .primary-button, .secondary-button) {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
 .app-shell {
   min-height: 100vh;
   display: grid;
@@ -867,7 +872,7 @@ button,
   font-size: 14px;
   min-height: 40px;
   padding: 8px 20px;
-  transition: var(--transition);
+  transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
   box-shadow: var(--shadow-sm);
   display: inline-flex;
   align-items: center;
@@ -1689,7 +1694,7 @@ input[type="checkbox"] {
 .basis-disclosure { font-size: var(--font-size-sm); background: var(--surface-muted); }
 .skip-link { position: fixed; left: 12px; top: 8px; z-index: 100; padding: 12px 18px; background: var(--accent-strong); color: white; border-radius: var(--radius); transform: translateY(-200%); }
 .skip-link:focus { transform: translateY(0); color: white; }
-:where(a, button, summary, input, select, textarea):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+:where(a, button, summary, input, select, textarea, [tabindex="0"]):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 main:focus { outline: none; }
 
 .topbar-actions,

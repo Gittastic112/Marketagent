@@ -19,7 +19,7 @@ export function ImpliedPricingPanel({ basis, blocked }: {
       <dl>
         {rows.map((method) => <div key={method.field} style={{ padding: "0.75rem 0", borderBottom: "1px solid var(--line)" }}>
           <dt>{method.label}</dt>
-          <dd style={{ margin: 0, fontWeight: 600 }}>{method.display}</dd>
+          <dd style={{ margin: 0 }}><strong>{method.display}</strong>
           {method.reason && <p style={{ ...secondary, margin: "0.25rem 0" }}>{method.reason}</p>}
           <details>
             <summary>Formula and input basis</summary>
@@ -27,6 +27,7 @@ export function ImpliedPricingPanel({ basis, blocked }: {
             <p>Numerator: {method.numerator ?? "Not available"}<br />Denominator: {method.denominator ?? "Not available"}</p>
             <p style={secondary}>Source fields: {method.sourceFields.join(", ")}</p>
           </details>
+          </dd>
         </div>)}
       </dl>
       <p style={secondary}>{basis?.note}</p>

@@ -30,8 +30,9 @@ export async function PortfolioPerformanceView({ portfolio, query }: {
   return <>
     <DataStateNotices metas={[snapshotsRes.meta, performanceRes?.meta, attributionRes?.meta, opportunityRes?.meta, riskRes.meta, analyticsRes.meta]} />
     <PortfolioPerformancePanel snapshots={snapshots} startDate={startDate} endDate={endDate}
+      requestFailed={[performanceRes, attributionRes].some(result => result && (result.errors.length > 0 || result.meta.status !== "success"))}
       performance={performanceRes?.data ?? null} attribution={attributionRes?.data ?? null} opportunityCost={opportunityRes?.data ?? null} />
-    <PortfolioRiskReturnPanel comparison={riskRes.data} />
+    <PortfolioRiskReturnPanel comparison={riskRes.data} requestFailed={riskRes.errors.length > 0 || riskRes.meta.status !== "success"} />
     {analytics && <Panel title="Current concentration & exposure">
       <p className="muted">Calculation as of {analytics.as_of_date}. Current holdings, separate from the selected return period.</p>
       <p>Concentration (HHI): <strong>{formatNumber(analytics.concentration_score, 3)}</strong></p>

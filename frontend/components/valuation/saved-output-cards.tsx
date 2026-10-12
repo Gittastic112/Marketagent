@@ -22,15 +22,16 @@ export function SavedValuationOutputCard({ state }: { state: ValuationOutputStat
       {out?.pv_of_excess_returns != null && <div style={row}><dt>PV of excess returns <small>(Calculation, total equity)</small></dt>
         <dd style={{ margin: 0 }}>{outputMoney(out.pv_of_excess_returns, state)}</dd></div>}
       <div style={row}><dt>Saved comparison price <small>(User Assumption)</small></dt>
-        <dd style={{ margin: 0 }}>{savedPrice}</dd>
-        <p style={secondary}>This is not a live quote. Its source and market as-of time are not established by this saved output.</p></div>
+        <dd style={{ margin: 0 }}>{savedPrice}
+        <p style={secondary}>This is not a live quote. Its source and market as-of time are not established by this saved output.</p></dd></div>
       <div style={row}><dt>Gap to saved price <small>(Calculation)</small></dt>
-        <dd style={{ margin: 0 }}>{outputGap(state)}</dd>
-        <p style={secondary}>Stored intrinsic value / saved comparison price − 1. Not a forecast return.</p></div>
+        <dd style={{ margin: 0 }}>{outputGap(state)}
+        <p style={secondary}>Stored intrinsic value / saved comparison price − 1. Not a forecast return.</p></dd></div>
       <div style={row}><dt>Stored diagnostic score <small>(Calculation)</small></dt>
-        <dd style={{ margin: 0 }}>{out && state.blocked ? "Not current" : state.score == null ? "Not available" : `${state.score}/100`}</dd>
+        <dd style={{ margin: 0 }}>{out && state.blocked ? "Not current" : state.score == null ? "Not available" : `${state.score}/100`}
         <p style={secondary}>Historical score, not recalculated on read and not a confidence rating. Review current diagnostics; a missing score is not replaced.</p>
         {state.blocked && state.score != null && <details><summary>Historical score, not current</summary><p>{state.score}/100 recorded with this output. It does not override the blockers above.</p></details>}
+        </dd>
       </div>
     </dl>
     <details><summary>Saved output identity and time</summary>

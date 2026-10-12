@@ -42,7 +42,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2rem" }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "2rem" }}>
         <PageHeader
           eyebrow={company.ticker}
           title="Decision Intelligence"
@@ -66,10 +66,10 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
           {perceptions.length === 0 ? (
             <EmptyState label="No variant perception defined." />
           ) : (
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+            <div className="responsive-field-row" style={{ gap: "1.5rem" }}>
               {perceptions.map(vp => (
                 <div key={vp.id} style={{ border: "1px solid var(--border-color)", borderRadius: "8px", padding: "1.5rem", background: "var(--surface)" }}>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem", marginBottom: "1rem" }}>
+                  <div className="responsive-field-row" style={{ marginBottom: "1rem" }}>
                     <div>
                       <h4 style={{ fontSize: "0.8rem", color: "var(--text-muted)", textTransform: "uppercase", marginBottom: "0.5rem" }}>Market Belief</h4>
                       <p style={{ margin: 0, fontSize: "0.95rem" }}>{vp.market_belief}</p>
@@ -96,9 +96,9 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               "use server";
               const { createVariantPerception } = await import("@/app/actions");
               await createVariantPerception(data, companyId.toString());
-            }} className="form-grid">
+            }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
               <input type="hidden" name="company_id" value={companyId} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="responsive-field-row">
                 <TextAreaField id="market_belief" name="market_belief" label="Market Belief" required rows={3} placeholder="What is the consensus view?" />
                 <TextAreaField id="my_belief" name="my_belief" label="My Belief" required rows={3} placeholder="What is your divergent view?" />
               </div>
@@ -115,7 +115,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
           </div>
         </Panel>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+        <div className="responsive-field-row" style={{ gap: "2rem" }}>
 
           {/* EVIDENCE LEDGER */}
           <Panel title="Evidence Ledger">
@@ -150,10 +150,10 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               "use server";
               const { createEvidenceLedgerItem } = await import("@/app/actions");
               await createEvidenceLedgerItem(data, companyId.toString());
-            }} className="form-grid" style={{ background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
+            }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)", background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
               <input type="hidden" name="company_id" value={companyId} />
               <TextAreaField id="evidence_text" name="evidence_text" label="New Evidence" required rows={2} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="responsive-field-row">
                 <SelectField id="effect" name="effect" label="Effect on Thesis" defaultValue="Supports">
                   <option value="Supports">Supports</option>
                   <option value="Weakens">Weakens</option>
@@ -219,7 +219,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                               await createOutcomeReview(data, d.id.toString(), companyId.toString());
                             }} style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem", padding: "1rem", border: "1px solid var(--border-color)", borderRadius: "6px" }}>
                               <TextAreaField id={`what_happened_${d.id}`} name="what_happened" label="What Happened?" required rows={2} />
-                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem", fontSize: "0.85rem" }}>
+                              <div className="responsive-field-row" style={{ gap: "0.5rem", fontSize: "0.85rem" }}>
                                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><input type="checkbox" name="thesis_wrong" /> Thesis was wrong</label>
                                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><input type="checkbox" name="valuation_wrong" /> Valuation was wrong</label>
                                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><input type="checkbox" name="timing_wrong" /> Timing was wrong</label>
@@ -241,9 +241,9 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               "use server";
               const { createDecisionLogItem } = await import("@/app/actions");
               await createDecisionLogItem(data, companyId.toString());
-            }} className="form-grid" style={{ background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
+            }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)", background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
               <input type="hidden" name="company_id" value={companyId} />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="responsive-field-row">
                 <SelectField id="decision_type" name="decision_type" label="Decision" defaultValue="Hold">
                   <option value="Buy">Buy</option>
                   <option value="Sell">Sell</option>
@@ -254,7 +254,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                 <TextField id="price_at_time" name="price_at_time" label="Price at Time" type="number" step="0.01" />
               </div>
               <TextAreaField id="rationale" name="rationale" label="Rationale" required rows={2} placeholder="Why are you making this decision right now?" />
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="responsive-field-row">
                 <TextField id="emotional_state" name="emotional_state" label="Emotional State" placeholder="e.g. FOMO, Convicted, Fearful" />
                 <TextField id="alternatives_considered" name="alternatives_considered" label="Alternatives" placeholder="What else could you do?" />
               </div>
