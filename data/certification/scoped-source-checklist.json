@@ -1,6 +1,7 @@
 {
   "version": "scoped-source-checklist-v1",
   "checked_date": "2026-10-11",
+  "manual_sources_checked_date": "2026-10-12",
   "scope_manifest": "data/research-scope.json",
   "basis": "Source selection and review checklist, not certified financials or model approval.",
   "common_review_requirements": [

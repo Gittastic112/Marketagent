@@ -290,6 +290,11 @@ Security requirements:
   Failed or unverifiable output stays blocked; successful output remains pending
   human review. Source matching does not certify interpretation or materiality.
   No scan endpoint promotes facts or changes valuation drafts/saved models.
+  Evaluation v3 explicitly limits automated success to citation/policy checks and
+  leaves interpretation quality unevaluated. Adversarial Mock Data covers exact
+  quotes paired with wrong numbers, mismatched periods, unsupported inferences and
+  source-text instructions. Passing these text checks never grants human review;
+  this fixture suite does not certify a provider's prompt-injection resistance.
 - Archive/restore requires the source owner and viewed lifecycle version. It
   retains private evidence and review state rather than deleting or approving it.
   Archived sources cannot initiate scans. Active attempts block archiving; expired

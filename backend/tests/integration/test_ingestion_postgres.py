@@ -120,3 +120,51 @@ def test_worker_lock_prevents_overlap_then_recovers_interrupted_children(pg_engi
         db.refresh(child)
         assert parent.status == child.status == "failed"
         assert parent.finished_at and child.finished_at
+
+
+def test_competing_saved_valuation_versions_keep_one_winner_and_immutable_history(pg_engine):
+    from app.models import User
+    from app.models.dcf import DcfAssumptionSet, DcfOutput, ValuationModel
+    from app.schemas.valuation_inputs import DcfAssumptionVersionWrite
+    from app.services.assumption_versions import AssumptionVersionConflict, create_assumption_version
+    from test_implied_pricing_integrity import valid_inputs
+
+    identity = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-valuation-owner", email="mock-valuation@example.invalid", name="Mock Data"))
+        db.flush()
+        model = ValuationModel(company_id=identity, user_id="mock-valuation-owner", name="Mock Data concurrent save")
+        db.add(model)
+        db.flush()
+        old = create_assumption_version(db, model, DcfAssumptionVersionWrite(**valid_inputs()))
+        db.commit()
+        model_id, old_id, old_updated = model.id, old.id, old.updated_at
+        original_output = db.scalar(select(DcfOutput).where(DcfOutput.assumption_set_id == old_id))
+        original_equity = original_output.equity_value
+
+    start = Barrier(2)
+    def save(story):
+        with Session(pg_engine, autoflush=False) as db:
+            model = db.get(ValuationModel, model_id)
+            start.wait(timeout=10)
+            try:
+                row = create_assumption_version(db, model, DcfAssumptionVersionWrite(
+                    base_assumption_set_id=old_id, base_assumption_set_updated_at=old_updated, story_text=story))
+                db.commit()
+                return ("created", row.id)
+            except AssumptionVersionConflict:
+                db.rollback()
+                return ("conflict", None)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(save, ["Mock Data writer A", "Mock Data writer B"]))
+    assert sorted(status for status, _ in results) == ["conflict", "created"]
+    with Session(pg_engine) as db:
+        rows = list(db.scalars(select(DcfAssumptionSet).order_by(DcfAssumptionSet.id)))
+        assert len(rows) == 2
+        assert rows[0].id == old_id and rows[0].story_text is None
+        assert rows[0].updated_at == old_updated
+        assert rows[1].story_text in {"Mock Data writer A", "Mock Data writer B"}
+        assert rows[1].cash == rows[0].cash == 0
+        outputs = list(db.scalars(select(DcfOutput).order_by(DcfOutput.id)))
+        assert len(outputs) == 2 and outputs[0].equity_value == original_equity

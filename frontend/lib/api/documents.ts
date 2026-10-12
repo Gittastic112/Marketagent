@@ -51,6 +51,13 @@ export type FilingDiscovery = {
   manual_required: boolean;
   filings: SecFilingMetadata[];
   next_action: string;
+  official_manual_source?: {
+    url: string;
+    checked_on: string;
+    security_isin: string;
+    target_years: number[];
+    required_documents: string[];
+  } | null;
 };
 
 export type FilingSectionDiff = {

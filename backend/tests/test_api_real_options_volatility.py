@@ -126,6 +126,17 @@ def test_real_option_canonical_routes_and_legacy_volatility_alias(client, db) ->
         },
     )
     assert calculation.status_code == 200
+    assert calculation.json()["meta"]["source"] == "experimental_legacy_custom_option"
+    assert calculation.json()["meta"]["confidence"] == "low"
+    assert any("Experimental" in note for note in response_data(calculation)["warnings"])
+    assert any("not verified" in note for note in response_data(eligibility)["warnings"])
+
+    alias = client.post("/calculate", json={
+        "option_type": "call", "underlying_asset_value": 100, "exercise_price": 100,
+        "option_life_years": 1, "risk_free_rate": .05, "volatility": .20,
+    })
+    assert response_data(alias) == response_data(calculation)
+    assert alias.json()["meta"]["source"] == calculation.json()["meta"]["source"]
 
     documented_paths = client.get("/openapi.json").json()["paths"]
     assert "/api/valuation/options/volatility" in documented_paths
@@ -134,3 +145,4 @@ def test_real_option_canonical_routes_and_legacy_volatility_alias(client, db) ->
     assert "/volatility" not in documented_paths
     assert "/eligibility" not in documented_paths
     assert "/calculate" not in documented_paths
+    assert documented_paths["/api/valuation/options/calculate"]["post"]["deprecated"]

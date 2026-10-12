@@ -133,6 +133,11 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await page.screenshot({ path: test.info().outputPath("sensitivity-mobile.png"), fullPage: true });
   await page.setViewportSize({ width: 1440, height: 1000 });
 
+  await page.getByRole("navigation", { name: "Valuation model sections" })
+    .getByRole("button", { name: "Real Options", exact: true }).click();
+  await expect(page.getByText(/^Experimental supplemental analysis/)).toBeVisible();
+  await expect(page.getByRole("button", { name: "Calculate Real Option Value", exact: true })).toBeDisabled();
+
   await page.goto(`/companies/${company.id}/valuation`);
   await expect(page.getByRole("columnheader", { name: "Model readiness" })).toBeVisible();
   const savedModelRow = page.getByRole("row").filter({

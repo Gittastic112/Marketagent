@@ -54,7 +54,7 @@ function marketPriceCell(capabilities: SourceCapability[]): CapabilityCell {
   return capabilityCell(
     capabilities,
     (capability) => capability.capability === "market_prices",
-    notConfiguredCell("Alpha Vantage/FMP", "Provider-backed prices require a configured API key."),
+    notConfiguredCell("Selected price provider", "Price capability was not returned. Check Data Health and stored price coverage."),
   );
 }
 
@@ -68,11 +68,8 @@ export function SourceCapabilityMatrix({
   const rows: CapabilityRow[] = [
     {
       label: "Company lookup",
-      us: {
-        status: "available",
-        provider: "SEC EDGAR",
-        notes: "US company lookup routes through SEC EDGAR when SEC configuration is valid.",
-      },
+      us: capabilityCell(usCapabilities, (capability) => capability.capability === "sec_filings",
+        notConfiguredCell("SEC EDGAR", "SEC configuration was not returned by the backend.")),
       india: notConfiguredCell(
         "Local records",
         "India lookup returns existing local companies. Automated security master lookup is not configured.",
@@ -111,7 +108,8 @@ export function SourceCapabilityMatrix({
     },
     {
       label: "Macro and rates",
-      us: manualCell("Manual context", "US risk-free and macro context can be entered manually. FRED is not wired yet."),
+      us: capabilityCell(usCapabilities, (capability) => capability.capability === "fred_macro",
+        notConfiguredCell("FRED", "FRED capability was not returned. Manual macro context remains available.")),
       india: capabilityCell(
         indiaCapabilities,
         (capability) => capability.capability === "macro_sensitivity",

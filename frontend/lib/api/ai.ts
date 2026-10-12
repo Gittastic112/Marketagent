@@ -30,6 +30,9 @@ export type AiOutput = {
     version: string;
     passed: boolean;
     checks: Record<string, boolean>;
+    evaluation_scope?: "citation_and_policy_checks_only";
+    interpretation_quality?: "not_evaluated";
+    limitations?: string[];
   } | null;
   privacy_disclosure_version: string;
   external_data_classes_json: string[];

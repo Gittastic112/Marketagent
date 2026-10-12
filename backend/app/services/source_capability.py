@@ -2,16 +2,24 @@ from datetime import datetime
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import Settings
 from app.models.market_source import MarketSourceCapability
+from app.services.sec_ingestion import get_valid_sec_user_agent
 
 
 SUPPORTED_MARKETS = {"US", "IN"}
 
 
 DEFAULT_SOURCE_CAPABILITIES = [
+    {
+        "market": "US", "source_type": "macro", "provider_name": "FRED",
+        "capability": "fred_macro", "status": "not_configured", "requires_api_key": True,
+        "freshness_expected_seconds": 86_400,
+        "notes": "Configured FRED ingestion; stored series coverage and freshness require separate checks.",
+    },
     {
         "market": "US",
         "source_type": "filings",
@@ -122,12 +130,21 @@ def normalize_market(market: str | None) -> str | None:
 
 
 def ensure_default_source_capabilities(db: Session) -> None:
-    existing_id = db.scalar(select(MarketSourceCapability.id).limit(1))
-    if existing_id is not None:
-        return
-
-    db.add_all(MarketSourceCapability(**item) for item in DEFAULT_SOURCE_CAPABILITIES)
-    db.commit()
+    existing = set(db.execute(select(MarketSourceCapability.market, MarketSourceCapability.capability)).all())
+    changed = False
+    for item in DEFAULT_SOURCE_CAPABILITIES:
+        if (item["market"], item["capability"]) in existing:
+            continue
+        try:
+            with db.begin_nested():
+                db.add(MarketSourceCapability(**item))
+                db.flush()
+            changed = True
+        except IntegrityError:
+            # Concurrent US/India page reads may initialize the same defaults.
+            pass
+    if changed:
+        db.commit()
 
 
 def list_source_capabilities(
@@ -152,21 +169,44 @@ def list_source_capabilities(
 def _with_effective_status(row: MarketSourceCapability, settings: Settings) -> SourceCapabilityDTO:
     status = row.status
     notes = row.notes
+    provider_name = row.provider_name
+    requires_api_key = row.requires_api_key
 
-    if row.capability == "market_prices" and row.requires_api_key:
-        if settings.alpha_vantage_api_key or settings.fmp_api_key:
-            status = "available"
+    if row.capability == "market_prices":
+        selected = settings.market_data_provider.strip().lower()
+        requires_api_key = selected in {"alphavantage", "alpha_vantage", "fmp"}
+        if selected in {"alphavantage", "alpha_vantage"}:
+            provider_name = "Alpha Vantage"
+            status = "available" if settings.alpha_vantage_api_key else "not_configured"
+            notes = "Selected price adapter. Requires its own API key; symbol coverage, stored dates and failures are separate."
+        elif selected == "yfinance_personal":
+            provider_name, status = "yfinance personal-use", "available"
+            notes = "Explicitly selected personal-use adapter. No API key; timing and delay may be unknown. Check stored coverage and Data Health."
+        elif selected == "fmp":
+            provider_name, status = "FMP", "not_supported"
+            notes = "Not available yet: the FMP adapter is not implemented, even with a key. No provider coverage is implied."
         else:
-            status = "not_configured"
+            provider_name, status = "Unsupported provider", "not_supported"
+            notes = "The selected price adapter is unsupported. No provider coverage or automatic fallback is available."
+    elif row.capability in {"sec_filings", "sec_fundamentals"}:
+        try:
+            configured = bool(settings.sec_user_agent and get_valid_sec_user_agent(settings.sec_user_agent))
+        except ValueError:
+            configured = False
+        status = "available" if configured else "not_configured"
+        notes = "SEC ingestion requires a configured contact. Availability does not certify successful fetches, reviewed financials or current coverage."
+    elif row.capability == "fred_macro":
+        status = "available" if settings.fred_api_key else "not_configured"
+        notes = "FRED ingestion is implemented and requires its API key. Check stored series coverage, observation dates and Data Health; these are US proxies."
 
     return SourceCapabilityDTO(
         id=row.id,
         market=row.market,
         source_type=row.source_type,
-        provider_name=row.provider_name,
+        provider_name=provider_name,
         capability=row.capability,
         status=status,
-        requires_api_key=row.requires_api_key,
+        requires_api_key=requires_api_key,
         freshness_expected_seconds=row.freshness_expected_seconds,
         notes=notes,
         updated_at=row.updated_at,

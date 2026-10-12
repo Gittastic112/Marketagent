@@ -81,6 +81,13 @@ def test_ai_citation_fixture_cases(
 
     assert data["citation_validation_status"] == case["expected_status"]
     assert data["evaluation_json"]["passed"] is case["expected_passed"]
+    assert data["evaluation_json"]["evaluation_scope"] == "citation_and_policy_checks_only"
+    assert data["evaluation_json"]["interpretation_quality"] == "not_evaluated"
+    assert data["human_review_status"] == "pending"
+    if case.get("semantic_review_issue"):
+        # These deliberately incorrect Mock Data claims pass text matching, never semantic review.
+        assert data["citation_validation_status"] == "valid"
+        assert data["reviewer_id"] is None and data["reviewed_at"] is None
 
 
 def test_ai_citation_validation_requires_output_source_markers(

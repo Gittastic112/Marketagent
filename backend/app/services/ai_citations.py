@@ -168,7 +168,13 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
         if key != "citations_required"
     )
     return {
-        "version": "ai-output-eval-v2",
+        "version": "ai-output-eval-v3",
+        "evaluation_scope": "citation_and_policy_checks_only",
+        "interpretation_quality": "not_evaluated",
+        "limitations": [
+            "Exact source spans and recommendation-language checks do not validate numeric accuracy, period alignment, causal claims or source-text instructions.",
+            "Human review of interpretation is separate and is never granted by these automated checks.",
+        ],
         "passed": passed,
         "checks": checks,
         "recommendation_pattern_matches": recommendation_matches,

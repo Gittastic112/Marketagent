@@ -98,6 +98,14 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
                   </div>
                 </div>
                 <p className="muted" style={{ margin: 0 }}>{discovery.next_action}</p>
+                {discovery.official_manual_source && sourceLink(discovery.official_manual_source.url) && (
+                  <div style={{ marginTop: "1rem" }}>
+                    <a href={sourceLink(discovery.official_manual_source.url)!} target="_blank" rel="noopener noreferrer">Official issuer reports</a>
+                    <p className="muted">Source selection checked {discovery.official_manual_source.checked_on}. Matched NSE ISIN {discovery.official_manual_source.security_isin}. Target annual years: {discovery.official_manual_source.target_years.join(", ")}.</p>
+                    <ul>{discovery.official_manual_source.required_documents.map((requirement) => <li key={requirement}>{requirement}</li>)}</ul>
+                    <p className="muted">Manual step: download the issuer report, then upload the original PDF or add a source excerpt with its exact page link below. Keep reporting period, currency, scale and standalone/consolidated basis explicit. Source selection does not approve any financial value.</p>
+                  </div>
+                )}
               </>
             ) : (
               <ErrorState message="Could not discover filing candidates." errors={discoveryRes.errors} />

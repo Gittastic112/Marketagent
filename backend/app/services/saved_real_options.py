@@ -54,6 +54,7 @@ def calculate_saved_real_option(row: DcfAssumptionSet, request: SavedRealOptionR
     if not all(math.isfinite(v) for v in (combined, per_share, option_per_share)):
         raise ValueError("The supplied scale does not produce finite option values.")
     notes = [
+        "Experimental supplemental analysis. A passing calculation does not certify company or project option value.",
         "Calculation from User Assumptions, not verified company facts or a live market quote.",
         "Eligibility and incremental common-equity scope are user confirmations, not independent verification.",
         "Black-Scholes and the exclusivity multiplier are simplified assumptions; results are not saved.",

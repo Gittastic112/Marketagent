@@ -3,6 +3,7 @@ from datetime import date
 from app.models.company import Company
 from app.services.sec_ingestion import SecFilingMetadata
 from helpers import response_data
+import pytest
 
 
 def test_us_filing_discovery_returns_sec_candidates(client, db, monkeypatch) -> None:
@@ -70,6 +71,33 @@ def test_india_filing_discovery_is_manual_only(client, db) -> None:
     assert data["manual_required"] is True
     assert data["filings"] == []
     assert "manual" in data["next_action"].lower()
+    assert data["official_manual_source"] is None
+
+
+@pytest.mark.parametrize("ticker,isin,host", [
+    ("RELIANCE", "INE002A01018", "www.ril.com"),
+    ("HDFCBANK", "INE040A01034", "www.hdfc.bank.in"),
+    ("BHARTIARTL", "INE397D01024", "www.airtel.in"),
+    ("ICICIBANK", "INE090A01021", "www.icici.bank.in"),
+    ("SBIN", "INE062A01020", "sbi.bank.in"),
+])
+def test_scoped_india_sources_have_dated_official_identity_links(client, db, ticker, isin, host):
+    from urllib.parse import urlsplit
+    company = Company(ticker=ticker, local_symbol=ticker, name="Mock Data identity fixture",
+        market="IN", primary_exchange="NSE", currency="INR", isin=isin)
+    db.add(company)
+    db.commit()
+    data = response_data(client.get(f"/api/companies/{company.id}/filings/discover"))
+    source = data["official_manual_source"]
+    assert source["security_isin"] == isin
+    assert source["checked_on"] == "2026-10-12"
+    assert urlsplit(source["url"]).hostname == host
+    assert source["target_years"] == [2024, 2025, 2026]
+    assert source["required_documents"]
+    assert data["manual_required"] and data["filings"] == []
+    company.isin = "UNVERIFIED"
+    db.commit()
+    assert response_data(client.get(f"/api/companies/{company.id}/filings/discover"))["official_manual_source"] is None
 
 
 def test_manual_filing_link_creates_traceable_document_and_updates_setup(client, db) -> None:

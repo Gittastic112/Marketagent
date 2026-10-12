@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createRequestGate } from "@/lib/latest-request";
 
 import {
   applyCitationCandidate,
@@ -22,6 +24,9 @@ type Props = {
 };
 
 export function AiOutputReviewControls({ initialOutput }: Props) {
+  const router = useRouter();
+  const requests = useMemo(() => createRequestGate(), [initialOutput.id]);
+  useEffect(() => () => requests.invalidate(), [requests]);
   const [output, setOutput] = useState(initialOutput);
   const [drafts, setDrafts] = useState(() => initialCitationDrafts(initialOutput));
   const [suggestions, setSuggestions] = useState<AiCitationSuggestion[] | null>(null);
@@ -36,21 +41,24 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
   const citationPayload = buildCitationValidationPayload(citedSourceIds, drafts);
 
   async function loadSuggestions() {
+    const isCurrent = requests.begin();
     setBusy(true);
     setSuggestionError(null);
     try {
-      setSuggestions(await fetchAiCitationSuggestions(output.id));
+      const matches = await fetchAiCitationSuggestions(output.id);
+      if (isCurrent()) setSuggestions(matches);
     } catch (error) {
-      setSuggestionError(
+      if (isCurrent()) setSuggestionError(
         error instanceof Error ? error.message : "Exact-passage suggestions are unavailable.",
       );
     } finally {
-      setBusy(false);
+      if (isCurrent()) setBusy(false);
     }
   }
 
   async function validateCitation() {
     if (!citationPayload) return;
+    const isCurrent = requests.begin();
     setBusy(true);
     setMessage(null);
     try {
@@ -58,16 +66,18 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         `/ai-outputs/${output.id}/citations/validate`,
         citationPayload,
       );
+      if (!isCurrent()) return;
       setOutput(updated);
       setMessage(updated.citation_validation_status === "valid" ? "Exact citation verified." : "Citation could not be verified.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Citation validation failed.");
+      if (isCurrent()) setMessage(error instanceof Error ? error.message : "Citation validation failed.");
     } finally {
-      setBusy(false);
+      if (isCurrent()) setBusy(false);
     }
   }
 
   async function review(status: "approved" | "rejected" | "needs_revision") {
+    const isCurrent = requests.begin();
     setBusy(true);
     setMessage(null);
     try {
@@ -75,12 +85,14 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         status,
         notes: notes.trim() || null,
       });
+      if (!isCurrent()) return;
       setOutput(updated);
       setMessage(`Review saved as ${status.replace("_", " ")}.`);
+      router.refresh();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Review could not be saved.");
+      if (isCurrent()) setMessage(error instanceof Error ? error.message : "Review could not be saved.");
     } finally {
-      setBusy(false);
+      if (isCurrent()) setBusy(false);
     }
   }
 
@@ -193,6 +205,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Human review</h4>
         <p><strong>Status:</strong> {output.human_review_status.replace("_", " ")}</p>
         <p><strong>Automated checks:</strong> {output.evaluation_json?.passed ? "passed" : "not passed"}</p>
+        <p className="muted">Automated scope: source citations and policy checks only. Interpretation quality is not evaluated. Review numbers, periods, causal claims and source-text instructions before approving; an exact quote does not prove the claim.</p>
         {output.evaluation_json && !output.evaluation_json.passed ? (
           <ul>
             {Object.entries(output.evaluation_json.checks)

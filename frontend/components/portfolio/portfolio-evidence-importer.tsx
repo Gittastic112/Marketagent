@@ -1,11 +1,12 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { EmptyState, Panel } from "@/components/page";
 import { LoadingState } from "@/components/ui/data-states";
 import type { ApiResponse } from "@/lib/api";
+import { createRequestGate } from "@/lib/latest-request";
 
 
 type EvidenceRowError = {
@@ -76,7 +77,13 @@ function actionBadge(action: EvidencePreviewRow["action"]) {
 }
 
 export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number }) {
+  return <PortfolioEvidenceImportSession key={portfolioId} portfolioId={portfolioId} />;
+}
+
+function PortfolioEvidenceImportSession({ portfolioId }: { portfolioId: number }) {
   const router = useRouter();
+  const requests = useRef(createRequestGate());
+  useEffect(() => () => requests.current.invalidate(), []);
   const inputId = useId();
   const fileInput = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -100,6 +107,7 @@ export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number
   async function previewFile(event: React.FormEvent) {
     event.preventDefault();
     if (!file) return;
+    const isCurrent = requests.current.begin();
     setPhase("previewing");
     setPreview(null);
     setResult(null);
@@ -115,16 +123,17 @@ export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number
       if (!response.ok || !payload?.data) {
         throw new Error(responseError(payload, "The evidence bundle could not be previewed."));
       }
-      setPreview(payload.data);
+      if (isCurrent()) setPreview(payload.data);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The evidence bundle could not be previewed.");
+      if (isCurrent()) setError(caught instanceof Error ? caught.message : "The evidence bundle could not be previewed.");
     } finally {
-      setPhase("idle");
+      if (isCurrent()) setPhase("idle");
     }
   }
 
   async function applyFile() {
     if (!file || !preview?.can_apply) return;
+    const isCurrent = requests.current.begin();
     setPhase("applying");
     setError(null);
     const formData = new FormData();
@@ -139,15 +148,16 @@ export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number
       if (!response.ok || !payload?.data) {
         throw new Error(responseError(payload, "The evidence bundle could not be applied."));
       }
+      if (!isCurrent()) return;
       setResult(payload.data);
       setFile(null);
       setPreview(null);
       if (fileInput.current) fileInput.current.value = "";
       router.refresh();
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The evidence bundle could not be applied.");
+      if (isCurrent()) setError(caught instanceof Error ? caught.message : "The evidence bundle could not be applied.");
     } finally {
-      setPhase("idle");
+      if (isCurrent()) setPhase("idle");
     }
   }
 
@@ -215,8 +225,8 @@ export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number
                 {preview.filename}, {preview.byte_size.toLocaleString()} bytes, SHA-256 {preview.content_sha256}
               </p>
             </div>
-            <span className={`badge ${preview.can_apply ? "badge-success" : "badge-danger"}`}>
-              {preview.can_apply ? "Ready to apply" : "Blocked"}
+            <span className={`badge ${preview.error_count ? "badge-danger" : "badge-success"}`}>
+              {preview.can_apply ? "Ready to apply" : preview.error_count ? "Blocked" : "Already imported"}
             </span>
           </div>
 
@@ -265,6 +275,7 @@ export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number
               Apply is disabled. Correct every error and preview the revised file.
             </p>
           ) : null}
+          {!preview.error_count && !preview.create_count ? <p role="status">Every row is an exact stored duplicate. No new facts need to be applied.</p> : null}
           <div className="button-row">
             <button disabled={!preview.can_apply || busy} onClick={applyFile} type="button">
               {phase === "applying" ? "Applying atomically..." : `Apply ${preview.create_count} fact(s)`}

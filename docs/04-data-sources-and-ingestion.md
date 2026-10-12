@@ -44,6 +44,10 @@ AI is not the primary ingestion layer. Current ingestion and scoring should rema
   fixed-prompt probes for the currently configured GEMINI_MODEL. An unrelated
   model's success or a configured unsupported provider key is not working proof.
 - **Source Capability Matrix:** `GET /api/source-capabilities?market=US|IN` reports whether each source class is available, manual-only, not configured, or unsupported for the selected market.
+  Price status follows the selected adapter and its own configuration. FMP remains
+  unsupported even with a key; personal-use prices need no key. SEC requires a
+  valid contact and implemented FRED ingestion requires its key. Configuration is
+  separate from fetch success, coverage, freshness and reviewed facts.
 - **Daily Brief:** Automatically pulls the highest-priority scored events and latest alerts when requested.
 - **FRED to Market Regime:** Authenticated FRED import persists the provider name,
   official series URL, dated observations, and an audited Processing Run. The
@@ -53,6 +57,13 @@ AI is not the primary ingestion layer. Current ingestion and scoring should rema
   missing, future-only, unverified, or malformed evidence remains explicit.
 
 ### Price boundaries and explicit connectivity
+
+India discovery exposes a dated official issuer source only when the company's
+NSE symbol and ISIN match the fixed research scope. The source checklist supplies
+report years and required notes; it neither downloads nor approves financial values.
+Upload the report or paste the exact excerpt with source date, page, currency,
+scale and consolidated/standalone basis, then use candidate review. Unknown or
+mismatched identities retain the generic manual-only path without a guessed link.
 
 The fixed scope and official identity sources live in
 [research-scope.json](../data/research-scope.json); this is a dated selection,

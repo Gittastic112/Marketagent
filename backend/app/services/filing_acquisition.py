@@ -10,6 +10,7 @@ from app.api.errors import PublicApiError
 from app.models import Company, RawDocument
 from app.providers.filings import ManualFilingCreate, get_filing_provider
 from app.services.filing_manual import create_manual_filing
+from app.services.manual_filing_sources import official_manual_source
 from app.services.processing_runs import start_processing_run, complete_processing_run, fail_processing_run
 
 
@@ -67,6 +68,7 @@ def discover_company_filings(
             manual_required=True,
             filings=[],
             next_action="Add a reviewed annual report, quarterly result, or exchange announcement manually.",
+            official_manual_source=official_manual_source(company),
         )
 
     try:

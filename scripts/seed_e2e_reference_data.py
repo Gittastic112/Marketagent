@@ -21,6 +21,8 @@ from app.models import (
     PortfolioHolding,
     PortfolioCashBalance,
     PortfolioTransaction,
+    RawDocument,
+    Source,
     User,
     ValuationModel,
 )
@@ -321,11 +323,34 @@ def _ensure_private_comparison_fixture(db) -> None:
         source.analysis_json = display
 
 
+def _ensure_ai_review_fixture(db) -> None:
+    digest = sha256(b"Mock Data citation-versus-interpretation browser fixture").hexdigest()
+    if db.query(RawDocument).filter_by(content_hash=digest).first():
+        return
+    source = Source(name="Mock Data interpretation fixture", source_type="manual")
+    db.add(source)
+    db.flush()
+    document = RawDocument(source_id=source.id, document_type="manual_note",
+        title="Mock Data citation does not prove interpretation", content_hash=digest,
+        raw_text="Mock Data: Revenue increased 12% in FY2025.")
+    db.add(document)
+    db.flush()
+    marker = f"raw_document:{document.id}"
+    db.add(AiOutput(user_id=E2E_USER_ID, raw_document_id=document.id,
+        reference_type="raw_document", reference_id=document.id, provider_name="e2e_mock_fixture",
+        model_name="Mock Data fixture", prompt_version="fixture-v1", input_hash=digest,
+        source_scope="raw_document_text", transmission_scope="none", source_ids_json=[marker],
+        output_text=f"Revenue increased 21% in FY2026. [source_id:{marker}]", is_mock=True,
+        confidence_label="test_fixture", human_review_status="pending",
+        limitations="Mock Data adversarial output: the number and fiscal period are deliberately incorrect."))
+
+
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
         _ensure_portfolio_fixture(db)
         _ensure_private_comparison_fixture(db)
+        _ensure_ai_review_fixture(db)
         db.commit()
 
 

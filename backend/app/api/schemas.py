@@ -248,6 +248,7 @@ from app.schemas.ingestion import (
     RssIngestionRead,
     RssBatchIngestionRead,
     SecFilingMetadataCreate,
+    ManualFilingSourceRead,
     FilingDiscoveryRead,
     SecFilingIngestionCreate,
     SecFilingIngestionRead,

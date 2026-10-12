@@ -38,6 +38,7 @@ def test_saved_option_uses_owned_total_equity_and_shares_without_writes(client, 
     assert result["assumption_set_id"] == row["id"]
     assert result["currency"] == "USD" and len(result["input_sha256"]) == 64
     assert result["calculated_at"] and result["warnings"]
+    assert any("Experimental" in note for note in result["warnings"])
     assert db_session.scalar(select(func.count()).select_from(DcfAssumptionSet)) == count
 
 

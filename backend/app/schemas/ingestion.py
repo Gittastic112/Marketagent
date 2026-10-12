@@ -52,6 +52,14 @@ class SecFilingMetadataCreate(BaseModel):
     filing_url: str | None = None
 
 
+class ManualFilingSourceRead(BaseModel):
+    url: str
+    checked_on: date
+    security_isin: str
+    target_years: list[int]
+    required_documents: list[str]
+
+
 class FilingDiscoveryRead(BaseModel):
     company_id: int
     market: str
@@ -60,6 +68,7 @@ class FilingDiscoveryRead(BaseModel):
     manual_required: bool
     filings: list[SecFilingMetadataCreate] = Field(default_factory=list)
     next_action: str
+    official_manual_source: ManualFilingSourceRead | None = None
 
 
 class SecFilingIngestionCreate(BaseModel):

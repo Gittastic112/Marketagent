@@ -64,6 +64,7 @@ export function RealOptionsPanel({ assumptions, modelType }: { assumptions: DcfA
   const money = (value: number) => `${value.toLocaleString(undefined, { maximumFractionDigits: 6 })} ${state.currency}`;
   return <section aria-label="Real Options analysis">
     <h2>Real Options</h2>
+    <p role="note">Experimental supplemental analysis. A passing calculation does not certify company or project option value.</p>
     <p>Calculation from saved User Assumptions, not a live quote or verified company fact. Unsaved DCF edits are excluded. Results are not saved.</p>
     <p>Saved assumption #{assumptions.id}. Currency: {state.currency ?? "Not configured"}. Diluted shares: {assumptions.diluted_shares ?? "Not configured"}. Updated: {assumptions.updated_at}.</p>
     {state.reasons.map(reason => <p role="alert" key={reason}>{reason}</p>)}

@@ -112,6 +112,7 @@ def get_volatility_benchmark(
 @router.post(
     "/api/valuation/options/eligibility",
     response_model=ApiResponse[OptionEligibilityTestResponse],
+    deprecated=True,
 )
 @router.post(
     "/eligibility",
@@ -135,14 +136,17 @@ def run_eligibility_test(request: OptionEligibilityTestRequest):
         eligibilityPassed=result["eligibilityPassed"],
         eligibilityScore=result["eligibilityScore"],
         recommendation=result["recommendation"],
-        warnings=result["warnings"]
+        warnings=[*result["warnings"],
+            "Experimental legacy checklist: weighted scores are not verified suitability or evidence approval."]
     )
 
-    return ApiResponse(data=data)
+    return ApiResponse(data=data, meta={"source": "experimental_legacy_option_checklist",
+        "confidence": "low", "warnings": data.warnings})
 
 @router.post(
     "/api/valuation/options/calculate",
     response_model=ApiResponse[RealOptionCalculateResponse],
+    deprecated=True,
 )
 @router.post(
     "/calculate",
@@ -183,7 +187,10 @@ def calculate_real_option(request: RealOptionCalculateRequest):
         adjusted_option_value=calc_result["adjusted_option_value"],
         option_delta=calc_result["option_delta"],
         option_adjusted_intrinsic_value=integration_result["option_adjusted_intrinsic_value"],
-        warnings=integration_result["warnings"]
+        warnings=[*integration_result["warnings"],
+            "Experimental legacy calculation from custom User Assumptions. The base value, currency, monetary scale and eligibility are not verified against a saved model.",
+            "Use the owned saved-assumption endpoint for version, currency, total-equity and diluted-share checks. No result is saved or approved here."]
     )
 
-    return ApiResponse(data=data)
+    return ApiResponse(data=data, meta={"source": "experimental_legacy_custom_option",
+        "confidence": "low", "warnings": data.warnings})

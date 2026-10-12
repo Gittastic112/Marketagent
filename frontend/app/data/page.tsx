@@ -24,10 +24,10 @@ function companyOptions(companies: Company[]) {
 
 export default async function DataPage() {
   const [companiesRes, sourcesRes, usCapabilitiesRes, indiaCapabilitiesRes] = await Promise.all([
-    serverFetchApiResponse<Company[]>("/companies").catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<Source[]>("/sources").catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=US").catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=IN").catch(() => ({ data: [], meta: null }))
+    serverFetchApiResponse<Company[]>("/companies"),
+    serverFetchApiResponse<Source[]>("/sources"),
+    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=US"),
+    serverFetchApiResponse<SourceCapability[]>("/api/source-capabilities?market=IN")
   ]);
   const companies = companiesRes.data || [];
   const sources = sourcesRes.data || [];
@@ -49,6 +49,7 @@ export default async function DataPage() {
       />
 
       <Panel title="US / India Source Capability Matrix">
+        <p className="muted">Adapter support and configuration only. Check Data Health for recent failures and each company or portfolio for missing prices, FX and reviewed financials.</p>
         <SourceCapabilityMatrix usCapabilities={usCapabilities} indiaCapabilities={indiaCapabilities} />
       </Panel>
 

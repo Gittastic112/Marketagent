@@ -23,7 +23,9 @@ jobs:
 - Owned saved-DCF relative input mapping, per-field source basis, currency/scale
   disclosure, exact preview-hash confirmation, and stale/invalid-input gating.
 - WACC with source-backed synthetic ratings.
-- Macro sensitivity and real-options workflows.
+- Macro sensitivity and experimental supplemental real-options workflows. The
+  mounted option panel uses saved FCFF currency/equity/share checks; deprecated
+  custom-base routes remain labeled compatibility calculations, not certified values.
 - Durable setup drafts, assumption provenance, change logs, and review states.
 - Revenue-weighted industry mixes persist through the authenticated frontend
   proxy. Draft creation supports one explicit acknowledgement for all valid

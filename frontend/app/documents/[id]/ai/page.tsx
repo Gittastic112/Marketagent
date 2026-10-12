@@ -75,7 +75,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
                   <p><strong>Provider:</strong> {output.provider_name}</p>
                   <p><strong>Source scope:</strong> {output.source_scope}</p>
                   <p><strong>Transmission:</strong> {output.transmission_scope}</p>
-                  <p><strong>Review Status:</strong> <span style={{ textTransform: "capitalize" }}>{output.human_review_status}</span></p>
+                  <p><strong>Review Status:</strong> <span style={{ textTransform: "capitalize" }}>{output.human_review_status.replaceAll("_", " ")}</span></p>
                   <p><strong>Input Hash:</strong> {output.input_hash.substring(0, 12)}...</p>
                 </div>
 
