@@ -24,6 +24,11 @@ services:
       APP_NAME: Market Intelligence Engine E2E
       NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:-}
       SEC_USER_AGENT: Market Intelligence Engine E2E test-suite@example.invalid
+    # Official guidance reads the checked-in identity and source catalog only.
+    # Keep these inputs out of the image and read-only in the disposable runtime.
+    volumes:
+      - ./data/research-scope.json:/workspace/data/research-scope.json:ro
+      - ./data/certification/scoped-source-checklist.json:/workspace/data/certification/scoped-source-checklist.json:ro
     command: sh -c "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000"
     ports:
       - "127.0.0.1:${E2E_BACKEND_PORT:-18000}:8000"

@@ -190,6 +190,16 @@ traceability and accessibility coverage is still explicit in the
 [single ledger](../../../agent_capabilities_and_limitations.md).
 
 Git publication follows implementation, rollout and documentation, as requested.
+During clean-checkout CI review, the disposable browser Compose was found to lack
+the two checked-in catalogs used by official India guidance. The normal runtime
+already mounts them. Browser Compose now mounts only research-scope.json and
+scoped-source-checklist.json read-only, preserving the image/data boundary.
+Compose validation and all seven infrastructure checks pass. All three focused
+filing/provider browser cases pass in 6.9 seconds using those two files rather
+than a whole-data-directory mount. At ac601ef7, both GitHub browser runs passed
+32 cases and failed only the missing-catalog guide; release, dependency, container
+and recovery checks all passed. The [failed run and artifacts](https://github.com/Gittastic112/Marketagent/actions/runs/38262665999/job/114856874208)
+are retained, and the resulting head reruns the complete clean-checkout suite.
 The [draft PR](https://github.com/Gittastic112/Marketagent/pull/2) owns the resulting
 head and fresh checks. An explicit-path isolated snapshot preserves the shared
 checkout/index; no merge, force push, secret publication or broad staging is done.
