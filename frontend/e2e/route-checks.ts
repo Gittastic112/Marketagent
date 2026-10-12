@@ -107,6 +107,12 @@ export async function verifyRoute(
     () => page.locator('body > div[hidden][id^="S:"]').count(),
     { message: `${label} must finish applying its React server stream`, timeout: 30_000 },
   ).toBe(0);
+  if (path === "/auth/signin") {
+    // This client Suspense boundary can show an empty main before hydration.
+    // Require the usable form within the same route budget before keyboard checks.
+    await expect(page.getByLabel("Username", { exact: true })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
+  }
   const routeReadyMs = Date.now() - routeStartedAt;
   expect(
     routeReadyMs,

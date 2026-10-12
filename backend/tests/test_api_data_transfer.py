@@ -2,6 +2,8 @@ import csv
 from datetime import date, datetime, timezone
 from io import StringIO
 
+import pytest
+
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -293,3 +295,53 @@ def test_market_price_import_uses_supported_fields_and_detects_duplicates(
     stored = db_session.query(MarketPrice).one()
     assert stored.ticker == "SAFE"
     assert not hasattr(stored, "source_name")
+
+
+@pytest.mark.parametrize("content", [
+    "ticker,price,currency,as_of_date,price\nSAFE,1,USD,2026-07-25,2\n",
+    "ticker,price,currency,as_of_date,\nSAFE,1,USD,2026-07-25,extra\n",
+    "ticker,price,currency,as_of_date\nSAFE,1,USD,2026-07-25,extra\n",
+    "ticker,price,currency,as_of_date\nSAFE,1,USD\n",
+    'ticker,price,currency,as_of_date\n"private-input,1,USD,2026-07-25\n',
+    "ticker,price,currency,as_of_date\n" + "private-input" * 12000 + ",1,USD,2026-07-25\n",
+], ids=["duplicate-header", "empty-header", "extra-cell", "missing-cell", "unclosed-quote", "oversized-field"])
+@pytest.mark.parametrize("preview", [True, False])
+def test_ambiguous_or_malformed_csv_is_rejected_before_writes(client, db_session, content, preview):
+    response = upload_csv(client, "/import/market-prices", content, preview=preview)
+    assert response.status_code == 400
+    assert "private-input" not in response.text
+    assert db_session.query(MarketPrice).count() == 0
+
+
+@pytest.mark.parametrize("kind", ["market-prices", "portfolio-transactions", "portfolio-holdings"])
+def test_csv_write_failure_does_not_log_private_cells(client, db_session, monkeypatch, caplog, kind):
+    portfolio = Portfolio(name="Mock Data", user_id="admin_user_id_fallback", base_currency="USD")
+    db_session.add(portfolio)
+    db_session.commit()
+    bodies = {
+        "market-prices": "ticker,price,currency,as_of_date\nSAFE,1,USD,2026-07-25\n",
+        "portfolio-transactions": "portfolio_id,ticker,transaction_type,quantity,price,currency,transaction_date\n"
+            f"{portfolio.id},SAFE,buy,1,1,USD,2026-07-25\n",
+        "portfolio-holdings": "portfolio_id,ticker,quantity,average_cost,currency,as_of_date\n"
+            f"{portfolio.id},SAFE,1,1,USD,2026-07-25\n",
+    }
+    def fail():
+        raise RuntimeError("private-database-parameters-should-not-leak")
+    monkeypatch.setattr(db_session, "commit", fail)
+    response = upload_csv(client, f"/import/{kind}", bodies[kind])
+    assert response.status_code == 400
+    assert "private-database-parameters" not in response.text + caplog.text
+    assert db_session.query(MarketPrice).count() == 0
+    assert db_session.query(PortfolioTransaction).count() == 0
+    assert db_session.query(PortfolioHolding).count() == 0
+
+
+@pytest.mark.parametrize("value", ["1e9999", "1e999999999", "100000000000000", "1.0000001", "1e-9999"])
+def test_csv_preview_rejects_values_that_cannot_be_stored_exactly(client, db_session, value):
+    content = f"ticker,price,currency,as_of_date\nSAFE,{value},USD,2026-07-25\n"
+    preview = upload_csv(client, "/import/market-prices", content, preview=True)
+    assert preview.status_code == 200
+    assert preview.json()["data"]["error_count"] == 1
+    assert preview.json()["data"]["valid_count"] == 0
+    assert upload_csv(client, "/import/market-prices", content).status_code == 400
+    assert db_session.query(MarketPrice).count() == 0

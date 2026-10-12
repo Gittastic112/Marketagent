@@ -20,9 +20,9 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | GitHub d9ffa73f passes all 1,449 tests, including the independent covariance reference. The local full run passes 1,448 before that added case; all 13 replay tests then pass. Three PostgreSQL-only skips pass separately; five upstream warnings. Exact scope in M09; normal images remain M01 |
+| Backend | Final source passes 1,486 tests after the SEC/CSV boundary follow-up; three PostgreSQL-only skips pass separately. Five upstream warnings. GitHub d9ffa73f verifies the preceding 1,449-test source. The M09 checkpoint and resulting PR head own integrated evidence; normal images remain M01 |
 | Frontend | 264 tests, production build/TypeScript and all 26 isolated browser workflows pass. The matrix covers all 50 pages on desktop/mobile; screenshots/timings retained. Normal-runtime browser proof remains M01 |
-| API compatibility | 279 paths, 510 schemas and 381 inventoried application operations including hidden compatibility routes. Private-brief context and replay provenance are additive; legacy receipts remain readable. No M07-M09 migration; OAuth writes remain disabled |
+| API compatibility | 279 paths, 510 schemas and 381 inventoried operations. Private-brief/replay fields are additive; legacy receipts remain readable. Legacy SEC intake now creates review candidates only, retaining its URL/envelope and a truthful zero periods_updated. No migration; OAuth writes remain disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
 | Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. M03's 109-table disposable recovery passes, but normal backup finalization and off-device recovery remain open. M04's 14 genuine probes and identity/intake evidence remain separate. Protected environment paths stay excluded |

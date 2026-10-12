@@ -50,21 +50,25 @@ def read_csv(
     except UnicodeDecodeError:
         raise HTTPException(status_code=400, detail="CSV must use UTF-8 encoding") from None
 
-    reader = csv.DictReader(StringIO(decoded))
-    fieldnames = set(reader.fieldnames or [])
-    missing_fields = sorted(required_fields - fieldnames)
-    if missing_fields:
-        raise HTTPException(
-            status_code=400,
-            detail=f"CSV is missing required columns: {', '.join(missing_fields)}",
-        )
-
-    rows: list[dict[str, str]] = []
-    for row in reader:
-        if len(rows) >= MAX_CSV_ROWS:
-            raise HTTPException(status_code=400, detail="CSV exceeds the row limit")
-        rows.append({key: value or "" for key, value in row.items() if key is not None})
-    return rows
+    try:
+        reader = csv.DictReader(StringIO(decoded), strict=True)
+        headers = reader.fieldnames or []
+        if not headers or any(not field.strip() for field in headers) or len(set(headers)) != len(headers):
+            raise HTTPException(status_code=400, detail="CSV requires unique, nonempty column names")
+        missing_fields = sorted(required_fields - set(headers))
+        if missing_fields:
+            raise HTTPException(status_code=400,
+                detail=f"CSV is missing required columns: {', '.join(missing_fields)}")
+        rows: list[dict[str, str]] = []
+        for row in reader:
+            if len(rows) >= MAX_CSV_ROWS:
+                raise HTTPException(status_code=400, detail="CSV exceeds the row limit")
+            if None in row or any(value is None for value in row.values()):
+                raise HTTPException(status_code=400, detail="CSV rows must match the column count")
+            rows.append(row)
+        return rows
+    except csv.Error:
+        raise HTTPException(status_code=400, detail="CSV is malformed or contains an oversized field") from None
 
 
 def preview_payload(
@@ -157,6 +161,11 @@ def _parse_decimal(
         return None
     if not parsed.is_finite():
         errors.append(_row_error(row_index, field, "Decimal must be finite"))
+        return None
+    # Every numeric column written by these imports is Numeric(20, 6).
+    # Reject overflow/rounding during preview, before PostgreSQL can alter or reject it.
+    if parsed.copy_abs() >= Decimal("1e14") or parsed != parsed.quantize(Decimal("0.000001")):
+        errors.append(_row_error(row_index, field, "Value must fit 14 integer and 6 fractional digits"))
         return None
     if strictly_positive and parsed <= 0:
         errors.append(_row_error(row_index, field, "Must be greater than zero"))

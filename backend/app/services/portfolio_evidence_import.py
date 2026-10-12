@@ -128,7 +128,10 @@ def read_evidence_file(file: UploadFile) -> EvidenceFile:
         raise HTTPException(status_code=400, detail="Evidence bundle must use UTF-8 encoding") from None
 
     reader = csv.DictReader(StringIO(decoded), strict=True)
-    headers = reader.fieldnames or []
+    try:
+        headers = reader.fieldnames or []
+    except csv.Error:
+        raise HTTPException(status_code=400, detail="Evidence bundle contains malformed CSV") from None
     if len(headers) != len(set(headers)):
         raise HTTPException(status_code=400, detail="Evidence bundle contains duplicate column names")
     missing = [column for column in EVIDENCE_COLUMNS if column not in headers]
@@ -138,7 +141,7 @@ def read_evidence_file(file: UploadFile) -> EvidenceFile:
         if missing:
             parts.append(f"missing columns: {', '.join(missing)}")
         if unexpected:
-            parts.append(f"unexpected columns: {', '.join(unexpected)}")
+            parts.append("unexpected columns; use the published template")
         raise HTTPException(status_code=400, detail="Evidence bundle has invalid headers; " + "; ".join(parts))
 
     rows: list[dict[str, str]] = []
@@ -146,6 +149,8 @@ def read_evidence_file(file: UploadFile) -> EvidenceFile:
         for row in reader:
             if len(rows) >= MAX_EVIDENCE_ROWS:
                 raise HTTPException(status_code=400, detail="Evidence bundle exceeds the 5000 row limit")
+            if None in row or any(value is None for value in row.values()):
+                raise HTTPException(status_code=400, detail="Evidence bundle rows must match the column count")
             normalized = {column: (row.get(column) or "").strip() for column in EVIDENCE_COLUMNS}
             if not any(normalized.values()):
                 continue
@@ -254,6 +259,11 @@ def _parse_positive_decimal(value: str, *, row_index: int, field: str, errors: l
         return None
     if not parsed.is_finite() or parsed <= 0:
         errors.append(_error(row_index, field, "Must be a finite value greater than zero"))
+        return None
+    # Prices use Numeric(20, 6); FX uses Numeric(24, 10). Do not silently round evidence.
+    scale = 10 if field == "rate" else 6
+    if parsed >= Decimal("1e14") or parsed != parsed.quantize(Decimal(1).scaleb(-scale)):
+        errors.append(_error(row_index, field, f"Value must fit 14 integer and {scale} fractional digits"))
         return None
     return parsed
 

@@ -31,7 +31,9 @@ Protected environment files are excluded and must not be read indirectly.
 - [M03 recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) and
   [security](archive/checkpoints/2026/m03-security-2026-10-11.md): consistent format-2
   dump/asset fingerprints, disposable concurrent-write restore, bounded parsers
-  and outbound clients, locked dependencies and container/security CI.
+  and outbound clients, locked dependencies and container/security CI. Final review
+  routes legacy SEC intake through candidate review and hardens CSV shape/precision
+  validation and failure logging. See the security checkpoint for compatibility limits.
 - [M04](archive/checkpoints/2026/m04-ingestion-2026-10-11.md): scoped identities,
   bounded/idempotent ingestion, dated price coverage and truthful Processing Runs.
   Runs 20-40 added 667 unreviewed SEC candidates, 196 FRED observations and 2,739

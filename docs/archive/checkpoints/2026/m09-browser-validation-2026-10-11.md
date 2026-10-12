@@ -9,7 +9,7 @@ Normal application images and data remain on the M01 rollout boundary.
 
 | Check | Result |
 |---|---|
-| Backend | 1,448 local full-suite tests pass; GitHub head d9ffa73f passes all 1,449 including the added independent risk case. Three PostgreSQL-only skips and five upstream deprecation warnings |
+| Backend | Final SEC/CSV follow-up passes 1,486 tests in 133 seconds. Three PostgreSQL-only skips and five upstream deprecation warnings. Earlier GitHub d9ffa73f passes 1,449, including the independent risk case |
 | Additional risk reference | All 13 replay tests pass after adding an independent covariance case; one new test was added after the full suite had collected |
 | PostgreSQL | Three real row/advisory-lock tests pass separately; fresh migration chain reaches s1s1s1s1s1s1 |
 | Frontend | 264 tests pass; supported Linux production build and TypeScript pass |
@@ -17,11 +17,14 @@ Normal application images and data remain on the M01 rollout boundary.
 | Operations | 49 documentation-fixture, secret-fixture, Compose, recovery, dependency-lock and container-scan tests pass |
 | Contracts | 279 public paths, 510 schemas and 381 inventoried application operations; pure-schema, compatibility, domain/import, ownership and wire-manifest guards pass |
 
-The complete local backend pass precedes the additional risk assertion. GitHub's
+The original local 1,448-test pass precedes the additional risk assertion. GitHub's
 [release baseline](https://github.com/Gittastic112/Marketagent/actions/runs/38199420778/job/114649272105)
-passes the full final backend source including that assertion. The
+passes that complete backend source including the assertion. The
 [PR](https://github.com/Gittastic112/Marketagent/pull/2) owns its exact resulting head
 and CI results. A draft PR and passing tests do not imply a normal-runtime rollout.
+The later `m03-final-backend.log` records the 1,486-test source-mounted run after
+37 added import/compatibility regressions. M03-05 closes the source input-boundary
+check; host credentials, backup finalization and off-device recovery remain open.
 
 The test API uses backend image
 `043aaa1b42cfef27725dcfd3e28232fab704b14687c02afbb2762e609641b4a9`.
@@ -73,6 +76,23 @@ the original visibility assertion. The failed run and trace remain retained in
 The follow-up checks remain associated with the resulting PR head.
 The corrected Daily Brief workflow passes locally on a fresh isolated database
 in 7.2 seconds; its artifacts are retained in `output/milestones/m09/ci-repair-browser`.
+
+The next PR run passes all 26 workflows, while its push run finds a sign-in focus
+race: the client Suspense fallback exposes an empty main before the form hydrates.
+The matrix now requires the visible username input and enabled sign-in button
+before its existing keyboard check, inside the unchanged route-ready budget.
+The [failed run](https://github.com/Gittastic112/Marketagent/actions/runs/38200187219/job/114651653031)
+retains the failure; no focus assertion, route or timing threshold was removed.
+The final SEC/CSV boundary changes are detailed in the
+[M03 security follow-up](m03-security-2026-10-11.md#final-input-boundary-follow-up).
+All 26 workflows pass again in 4.9 minutes after those fixes, with no retries.
+The final local API uses the recorded M08 dependency image with an environment-free
+snapshot of current application source mounted read-only; the frontend production
+image is unchanged. Three PostgreSQL concurrency tests also pass in 1.53 seconds.
+Evidence is under `output/milestones/m09/boundary-browser`; the mobile sign-in
+screenshot visibly confirms keyboard focus. These additional 100 route views have
+desktop/mobile medians of 632/637 ms, p95 of 2,824/1,830 ms and maxima of
+4,281/2,953 ms. This does not convert repeated navigation into controlled load proof.
 
 An early full backend run hit a bounded PDF worker under concurrent build pressure;
 18 PDF tests passed serially and the complete serial suite subsequently passed.

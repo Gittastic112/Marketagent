@@ -232,8 +232,8 @@ def apply_portfolio_evidence_bundle(
             status_code=409,
             detail="A conflicting evidence record was written after preview. Preview the bundle again.",
         ) from None
-    except Exception:
-        logger.exception("Portfolio evidence bundle import failed")
+    except Exception as exc:
+        logger.error("Portfolio evidence bundle import failed", extra={"exception_type": type(exc).__name__})
         _finish_failed_evidence_run(db, run.id, code="EVIDENCE_IMPORT_FAILED")
         raise HTTPException(
             status_code=400,
@@ -439,9 +439,9 @@ def import_market_prices(
     try:
         db.add_all(records)
         db.commit()
-    except Exception:
+    except Exception as exc:
         db.rollback()
-        logger.exception("Market price CSV import failed")
+        logger.error("Market price CSV import failed", extra={"exception_type": type(exc).__name__})
         raise HTTPException(
             status_code=400,
             detail="Market price import could not be applied",
@@ -486,9 +486,9 @@ def import_portfolio_transactions(
     except HTTPException:
         db.rollback()
         raise
-    except Exception:
+    except Exception as exc:
         db.rollback()
-        logger.exception("Portfolio transaction CSV import failed")
+        logger.error("Portfolio transaction CSV import failed", extra={"exception_type": type(exc).__name__})
         raise HTTPException(
             status_code=400,
             detail="Portfolio transaction import could not be applied",
@@ -525,9 +525,9 @@ def import_portfolio_holdings(
     try:
         db.add_all(records)
         db.commit()
-    except Exception:
+    except Exception as exc:
         db.rollback()
-        logger.exception("Portfolio holding CSV import failed")
+        logger.error("Portfolio holding CSV import failed", extra={"exception_type": type(exc).__name__})
         raise HTTPException(
             status_code=400,
             detail="Portfolio holding import could not be applied",

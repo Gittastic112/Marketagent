@@ -231,6 +231,10 @@ Security requirements:
 - Resolve every imported or exported portfolio row through the current user's
   portfolio.
 - Enforce finite UTF-8 file-size and row-count limits before applying records.
+- Reject ambiguous headers/cell counts and malformed parser input; preview must
+  reject values outside the stored numeric range/precision instead of rounding them.
+- General and evidence-bundle import failures log only exception type, never
+  exception bodies that can contain uploaded values or SQL parameters.
 - Keep preview read-only and roll back the full apply transaction when any
   blocking row or downstream portfolio update fails.
 - Do not execute formulas or scripts from uploaded spreadsheets.
@@ -247,6 +251,8 @@ Security requirements:
   `finally` path.
 - Persist source, raw-document metadata, content hash, and processing-run
   outcome. Do not persist temporary file paths or workbook bytes.
+- Current and legacy SEC companyfacts HTTP intake use the bounded issuer-checked
+  transport and create review candidates only. Ingestion is not financial approval.
 - Accept PDF uploads only through authenticated routes. Require `.pdf`, an
   allowlisted MIME type, `%PDF-` magic bytes, a 40MB size cap, a 1,000-page hard
   cap, a sanitized basename, a SHA-256 digest, company-scoped duplicate

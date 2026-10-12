@@ -3,6 +3,8 @@ from __future__ import annotations
 import hashlib
 from datetime import date
 
+import pytest
+
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
@@ -121,6 +123,21 @@ def test_template_is_owned_and_contains_no_real_or_mock_values(client: TestClien
     assert response.text.startswith(HEADERS)
     assert "HELD_TICKER" in response.text
     assert "Mock Data" not in response.text
+
+
+def test_unexpected_apply_failure_is_sanitized_and_audited(client, db, monkeypatch, caplog):
+    portfolio = build_portfolio(db)
+    content = HEADERS + price_row()
+    def fail(*_a, **_k):
+        raise RuntimeError("private-evidence-content-should-not-leak")
+    monkeypatch.setattr("app.api.routers.data_transfer.materialize_evidence_rows", fail)
+    response = upload(client, f"/portfolios/{portfolio.id}/evidence-bundle/apply", content,
+        expected_hash=bundle_hash(content))
+    assert response.status_code == 400
+    run = db.query(ProcessingRun).one()
+    assert run.status == "failed"
+    assert "private-evidence-content" not in response.text + caplog.text + str(run.error_details_json)
+    assert db.query(MarketPrice).count() == 0
 
 
 def test_template_rejects_cross_owner_access(client: TestClient, db: Session) -> None:
@@ -351,3 +368,33 @@ def test_reader_rejects_duplicate_headers_bad_encoding_size_and_row_limit(
     monkeypatch.setattr(evidence_service, "MAX_EVIDENCE_BYTES", 20_000)
     monkeypatch.setattr(evidence_service, "MAX_EVIDENCE_ROWS", 1)
     assert upload(client, path, HEADERS + price_row() + fx_row()).status_code == 400
+
+
+@pytest.mark.parametrize("case", ["extra-cell", "missing-cell", "malformed-header", "long-header"])
+def test_reader_rejects_ambiguous_columns_and_header_parser_errors(client, db, case):
+    portfolio = build_portfolio(db)
+    content = {
+        "extra-cell": HEADERS + price_row().rstrip() + ",private-extra-cell\n",
+        "missing-cell": HEADERS + price_row().rsplit(",", 1)[0] + "\n",
+        "malformed-header": '"private-input-header',
+        "long-header": "private-input-header" * 7000,
+    }[case]
+    response = upload(client, f"/portfolios/{portfolio.id}/evidence-bundle/preview", content)
+    assert response.status_code == 400
+    assert "private-input-header" not in response.text
+    assert db.query(MarketPrice).count() == 0
+
+
+@pytest.mark.parametrize("kind,value", [
+    ("price", "1e9999"), ("price", "1.0000001"), ("price", "1e-9999"),
+    ("rate", "1e9999"), ("rate", "1.00000000001"), ("rate", "1e-9999"),
+])
+def test_evidence_preview_blocks_numeric_overflow_and_rounding(client, db, kind, value):
+    portfolio = build_portfolio(db)
+    content = HEADERS + (price_row(price=value) if kind == "price" else fx_row(rate=value))
+    response = upload(client, f"/portfolios/{portfolio.id}/evidence-bundle/preview", content)
+    assert response.status_code == 200
+    assert response.json()["data"]["can_apply"] is False
+    assert response.json()["data"]["rows"][0]["errors"][0]["field"] == kind
+    assert db.query(MarketPrice).count() == 0
+    assert db.query(FxRateObservation).count() == 0

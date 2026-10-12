@@ -152,7 +152,7 @@ Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consi
 - [ ] M03-04 Complete host/configuration checks with the operator where access is
   required: least-privilege local administration, DB/admin credential rotation
   with persisted roles, disk encryption and encrypted off-device key/backup recovery.
-- [ ] M03-05 Bound expensive PDF parsing and review remaining fixed-host outbound
+- [x] M03-05 Bound expensive PDF parsing and review remaining fixed-host outbound
   clients, uploads, CSV exports and owner access. Test malicious/oversized input,
   cross-owner resources, request forgery and sanitized failure messages.
 - [x] M03-06 Lock/reproduce the supported dependency environment, scan runtime and

@@ -347,6 +347,10 @@ and DNS-pinned public downloads; fixed-host FRED/Gemini have explicit transport 
 Backend `request_limits.py` bounds bodies before parsing; `rate_limits.py` applies
 per-path defaults without relying on lazy router traversal. Public-source downloads
 use `providers/safe_http.py` for validated pinned DNS, TLS and byte limits.
+`sec_xbrl_ingestion.py` owns audited candidate-only intake for current and legacy
+SEC routes. The legacy URL preserves its envelope but cannot write unreviewed
+financial metrics. CSV readers reject ambiguous column shapes and values outside
+stored decimal precision; import failures omit raw exceptions/database parameters.
 Normal backend/workers are non-root; web/workers drop capabilities, prevent
 privilege escalation and bound processes/memory. These are local hardening,
 not a public-deployment authorization or comprehensive sandbox.

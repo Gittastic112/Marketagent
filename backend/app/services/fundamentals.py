@@ -1,14 +1,14 @@
+import asyncio
 import logging
 import re
 from typing import Any
-import httpx
 from datetime import datetime, date
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 
 from app.models.company import Company
 from app.models.financial import FinancialStatementPeriod, FinancialMetric
-from app.core.config import get_settings
+from app.services.sec_xbrl_extractor import fetch_company_facts
 
 logger = logging.getLogger(__name__)
 
@@ -23,31 +23,14 @@ WHITELISTED_METRICS = {
     "StockholdersEquity": "Stockholders Equity"
 }
 
-async def fetch_sec_company_facts(cik: str) -> dict[str, Any] | None:
-    settings = get_settings()
-    user_agent = settings.sec_user_agent
-    if not user_agent or user_agent == "Market Intelligence Engine local research app":
-        logger.warning("SEC_USER_AGENT is not properly configured. SEC API requires a valid user agent with an email.")
-        return None
-
-    cik_padded = cik.zfill(10)
-    url = SEC_FACTS_URL.format(cik=cik_padded)
-    headers = {"User-Agent": user_agent}
-
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.get(url, headers=headers)
-            response.raise_for_status()
-            return response.json()
-    except Exception as exc:
-        logger.error(
-            "SEC company facts request failed",
-            extra={"provider": "SEC", "cik": cik, "exception_type": type(exc).__name__},
-        )
-        return None
+async def fetch_sec_company_facts(cik: str) -> dict[str, Any]:
+    """Compatibility import; share bounded transport and propagate explicit failure."""
+    return await asyncio.to_thread(fetch_company_facts, cik)
 
 def process_sec_facts(db: Session, company_id: int, facts_data: dict[str, Any]) -> tuple[int, int]:
     """
+    Legacy internal writer, retained for import compatibility only. HTTP intake
+    uses sec_xbrl_ingestion and never calls this unreviewed write path.
     Processes raw SEC facts JSON and populates FinancialStatementPeriod and FinancialMetric tables.
     Returns (periods_created, metrics_created).
     """

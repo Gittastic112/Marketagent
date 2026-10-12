@@ -21,7 +21,7 @@ from app.models.company import Company
 from app.models.processing_run import ProcessingRun
 from app.models.raw_document import RawDocument
 from app.models.source import Source
-from app.api.schemas import ApiResponse, ApiErrorDetail, FinancialExtractionCandidateRead, FinancialExtractionResultRead, FinancialPeriodRead
+from app.api.schemas import ApiResponse, FinancialExtractionCandidateRead, FinancialExtractionResultRead, FinancialPeriodRead
 from app.api.errors import PublicApiError
 from app.services.financial_extraction import (
     extract_financial_candidates_from_filing,
@@ -30,13 +30,12 @@ from app.services.financial_extraction import (
     override_candidate_value,
     promote_reviewed_candidates,
 )
-from app.services.fundamentals import fetch_sec_company_facts, process_sec_facts
 from app.services.accounting_normalization import (
     FinancialReconciliationService,
     MetricNormalizationEngine,
     NormalizedSnapshotBackfillService,
 )
-from app.services.sec_xbrl_extractor import extract_xbrl_candidates
+from app.services.sec_xbrl_ingestion import XbrlIngestionError, ingest_xbrl_candidates
 from app.services.financial_statement_identity import FinancialStatementIdentityService
 from app.services.processing_runs import complete_processing_run, fail_processing_run, start_processing_run
 from app.providers.fundamentals.screener import ScreenerExcelParser
@@ -91,41 +90,25 @@ def extract_financials_from_filing(filing_id: int, db: Session = Depends(get_db)
     status_code=status.HTTP_201_CREATED,
 )
 def extract_financials_from_xbrl(company_id: int, db: Session = Depends(get_db)):
-    run = start_processing_run(
-        db,
-        run_type="sec_xbrl_extraction",
-        source_type="sec",
-        company_id=company_id,
-        metadata={"provider": "SEC companyfacts"},
-    )
+    return _xbrl_response(db, company_id)
+
+
+def _xbrl_response(db: Session, company_id: int, *, legacy: bool = False):
     try:
-        result = extract_xbrl_candidates(db, company_id)
-    except HTTPException as exc:
-        db.rollback()
-        fail_processing_run(db, run, error_type="request_error", message=str(exc.detail))
-        raise
-    except Exception as exc:
-        db.rollback()
-        fail_processing_run(db, run, error_type=type(exc).__name__)
-        raise
-    complete_processing_run(
-        db,
-        run,
-        fetched_count=result.get("fetched_count", 0),
-        created_count=result.get("created_count", 0),
-        skipped_duplicate_count=result.get("skipped_existing_count", 0),
-        metadata_patch={
-            "warnings": result.get("warnings", []),
-            "selected_fiscal_years": result.get("selected_fiscal_years", []),
-            "missing_core_metrics_by_year": result.get("missing_core_metrics_by_year", {}),
-        },
-    )
+        result = ingest_xbrl_candidates(db, company_id,
+            run_type="fundamentals_ingestion" if legacy else "sec_xbrl_extraction")
+    except XbrlIngestionError as exc:
+        raise PublicApiError(status_code=502, code="SEC_FACTS_INGESTION_FAILED",
+            message="SEC company facts ingestion failed.", retryable=True,
+            provider="SEC", processing_run_id=exc.processing_run_id) from None
     response = ApiResponse(data={"status": "success", **result})
-
-    warnings = result.get("warnings", [])
-    if warnings:
-        response.meta.warnings.extend(warnings)
-
+    response.meta.warnings.extend(result.get("warnings", []))
+    if legacy:
+        # Preserve the old response field without claiming candidate intake updated facts.
+        response.data.update(periods_updated=0, review_required=True)
+        response.meta.warnings.append(
+            "SEC intake creates review candidates only. Review and promote candidates before financial values change."
+        )
     return response
 
 
@@ -399,50 +382,12 @@ def get_financial_trends(ticker: str, limit: int = 8, db: Session = Depends(get_
 
 
 @router.post("/fundamentals/ingest/{ticker}", response_model=ApiResponse[dict])
-async def ingest_fundamentals(ticker: str, db: Session = Depends(get_db)):
+def ingest_fundamentals(ticker: str, db: Session = Depends(get_db)):
     company = db.execute(select(Company).where(Company.ticker == ticker)).scalar_one_or_none()
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
 
-    if not company.cik:
-        return ApiResponse(data=None, errors=[ApiErrorDetail(code="missing_cik", message="Company does not have a CIK configured.")])
-
-    run = ProcessingRun(
-        run_type="fundamentals_ingestion",
-        company_id=company.id,
-        started_at=datetime.now(timezone.utc),
-        status="running"
-    )
-    db.add(run)
-    db.commit()
-
-    try:
-        facts_data = await fetch_sec_company_facts(company.cik)
-        if facts_data:
-            periods_created, metrics_created = process_sec_facts(db, company.id, facts_data)
-            run.created_count = periods_created + metrics_created
-
-        run.status = "completed"
-        run.finished_at = datetime.now(timezone.utc)
-        db.commit()
-        return ApiResponse(data={"status": "success", "periods_updated": run.created_count})
-    except Exception as exc:
-        run.status = "failed"
-        run.error_count += 1
-        run.error_details_json = {
-            "code": "SEC_FACTS_INGESTION_FAILED",
-            "exception_type": type(exc).__name__,
-        }
-        run.finished_at = datetime.now(timezone.utc)
-        db.commit()
-        raise PublicApiError(
-            status_code=502,
-            code="SEC_FACTS_INGESTION_FAILED",
-            message="SEC company facts ingestion failed.",
-            retryable=True,
-            provider="SEC",
-            processing_run_id=run.id,
-        ) from exc
+    return _xbrl_response(db, company.id, legacy=True)
 
 @router.post(
     "/api/companies/{company_id}/financial-statements/{period_id}/normalize",
