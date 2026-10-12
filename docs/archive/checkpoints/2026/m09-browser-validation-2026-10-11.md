@@ -9,7 +9,7 @@ Normal application images and data remain on the M01 rollout boundary.
 
 | Check | Result |
 |---|---|
-| Backend | 1,448 passed, three PostgreSQL-only tests skipped, five upstream deprecation warnings; serial source-mounted run, exit 0 |
+| Backend | 1,448 local full-suite tests pass; GitHub head d9ffa73f passes all 1,449 including the added independent risk case. Three PostgreSQL-only skips and five upstream deprecation warnings |
 | Additional risk reference | All 13 replay tests pass after adding an independent covariance case; one new test was added after the full suite had collected |
 | PostgreSQL | Three real row/advisory-lock tests pass separately; fresh migration chain reaches s1s1s1s1s1s1 |
 | Frontend | 264 tests pass; supported Linux production build and TypeScript pass |
@@ -17,8 +17,9 @@ Normal application images and data remain on the M01 rollout boundary.
 | Operations | 49 documentation-fixture, secret-fixture, Compose, recovery, dependency-lock and container-scan tests pass |
 | Contracts | 279 public paths, 510 schemas and 381 inventoried application operations; pure-schema, compatibility, domain/import, ownership and wire-manifest guards pass |
 
-The complete backend pass precedes the additional risk assertion. GitHub runs the
-full final source, including that assertion, when the branch is published. The
+The complete local backend pass precedes the additional risk assertion. GitHub's
+[release baseline](https://github.com/Gittastic112/Marketagent/actions/runs/38199420778/job/114649272105)
+passes the full final backend source including that assertion. The
 [PR](https://github.com/Gittastic112/Marketagent/pull/2) owns its exact resulting head
 and CI results. A draft PR and passing tests do not imply a normal-runtime rollout.
 
@@ -63,6 +64,15 @@ needed canonical field-review links, missing-price fixtures needed recorded fund
 and purchases, PDF evidence needed valid geometry and duplicate-safe reuse, and
 selectors needed to target the visible main content instead of hidden React stream
 copies. Application trust guards and authentication throttles remain intact.
+
+At d9ffa73f, the push-triggered GitHub browser run passed all 26 workflows while
+the PR-triggered run hit another hidden-stream copy of the new "Saved as generated"
+label. The assertion now scopes that label to the visible main region, preserving
+the original visibility assertion. The failed run and trace remain retained in
+[CI evidence](https://github.com/Gittastic112/Marketagent/actions/runs/38199423604/job/114649280568).
+The follow-up checks remain associated with the resulting PR head.
+The corrected Daily Brief workflow passes locally on a fresh isolated database
+in 7.2 seconds; its artifacts are retained in `output/milestones/m09/ci-repair-browser`.
 
 An early full backend run hit a bounded PDF worker under concurrent build pressure;
 18 PDF tests passed serially and the complete serial suite subsequently passed.

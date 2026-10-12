@@ -177,7 +177,7 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await expect(page.getByText("Reviewed", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Local Brief Schedule" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Private research as generated" })).toBeVisible();
-  await expect(page.getByText(/^Saved as generated \d{4}-/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Saved as generated \d{4}-/)).toBeVisible();
   const scheduleStatus = page
     .getByRole("main")
     .getByRole("complementary", { name: "Daily Brief schedule status" });

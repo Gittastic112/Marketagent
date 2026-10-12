@@ -20,7 +20,7 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,448 full-suite tests pass; three PostgreSQL-only skips pass separately against actual row/advisory locks. All 13 replay tests also pass after adding an independent covariance reference. Five upstream warnings; exact scope in M09. Normal images remain M01 |
+| Backend | GitHub d9ffa73f passes all 1,449 tests, including the independent covariance reference. The local full run passes 1,448 before that added case; all 13 replay tests then pass. Three PostgreSQL-only skips pass separately; five upstream warnings. Exact scope in M09; normal images remain M01 |
 | Frontend | 264 tests, production build/TypeScript and all 26 isolated browser workflows pass. The matrix covers all 50 pages on desktop/mobile; screenshots/timings retained. Normal-runtime browser proof remains M01 |
 | API compatibility | 279 paths, 510 schemas and 381 inventoried application operations including hidden compatibility routes. Private-brief context and replay provenance are additive; legacy receipts remain readable. No M07-M09 migration; OAuth writes remain disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
