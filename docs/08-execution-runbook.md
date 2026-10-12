@@ -87,6 +87,13 @@ also disposable SQLite inside the container; PostgreSQL-specific browser/migrati
 checks require the separate disposable runtime below. Inspect test setup before
 running an unfamiliar manual script. Do not collect root debug scripts as tests.
 
+The browser runner also executes `backend/tests/integration/test_ingestion_postgres.py`
+against its disposable PostgreSQL database. It proves row/advisory locking that
+SQLite cannot exercise. The test requires `INGESTION_TEST_DATABASE_URL`, rejects
+database names without the `_e2e` suffix, and allocates/removes only its own random
+schema. The default offline backend suite skips these three tests; a skip is not
+concurrency proof. Never point this variable at the normal database.
+
 Critical frontend/backend contracts are checked in both suites. For an intentional
 wire change, regenerate the manifest using the backend dependencies, review its
 diff, then run both suites. The normal check never rewrites the manifest:

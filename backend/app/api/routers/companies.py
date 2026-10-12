@@ -28,6 +28,8 @@ from app.services.sec_ingestion import (
 from app.services.company_lookup import lookup_company
 from app.providers.filings import ManualFilingCreate, get_filing_provider
 from app.services.filing_manual import create_manual_filing
+from app.services.filing_acquisition import audited_filing_preview
+from app.services.sec_xbrl_extractor import company_sec_cik
 
 
 router = APIRouter()
@@ -257,12 +259,9 @@ def preview_company_filings(
     company = get_or_404(db, Company, company_id)
     provider = get_filing_provider(company, source=source)
     try:
-        filings = provider.preview_filings(
-            company,
-            form_type=form_type,
-            filing_year=filing_year,
-            limit=limit,
-        )
+        filings = audited_filing_preview(db, company, provider.provider_name,
+            lambda: provider.preview_filings(company, form_type=form_type, filing_year=filing_year, limit=limit),
+            form_type=form_type, filing_year=filing_year, limit=limit)
     except HTTPException:
         raise
     except Exception as exc:
@@ -303,15 +302,15 @@ def preview_company_sec_filings(
     db: Session = Depends(get_db),
 ) -> list[SecFilingMetadata]:
     company = get_or_404(db, Company, company_id)
-    if not company.cik:
+    cik = company_sec_cik(company)
+    if not cik:
         raise HTTPException(status_code=409, detail="Company needs a CIK before SEC filing preview")
     try:
-        return ApiResponse(data=fetch_recent_sec_filing_metadata(
-            company.cik,
-            form_types=(form_type,),
-            filing_year=filing_year,
-            limit=limit,
-        ))
+        return ApiResponse(data=audited_filing_preview(db, company, "SEC EDGAR",
+            lambda: fetch_recent_sec_filing_metadata(cik, form_types=(form_type,), filing_year=filing_year, limit=limit),
+            form_type=form_type, filing_year=filing_year, limit=limit))
+    except HTTPException:
+        raise
     except Exception as exc:
         logger.error(
             "SEC filing preview failed",

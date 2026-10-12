@@ -11,6 +11,31 @@ def _provider_by_name(items: list[dict], provider_name: str) -> dict:
     return next(item for item in items if item["provider_name"] == provider_name)
 
 
+def test_market_health_matches_selected_provider_and_surfaces_error_code(client, db, monkeypatch):
+    monkeypatch.setenv("MARKET_DATA_PROVIDER", "yfinance_personal")
+    db.add(ProcessingRun(run_type="market_data_ingestion", source_type="alpha_vantage",
+        started_at=datetime.now(timezone.utc), status="success"))
+    db.commit()
+    provider = _provider_by_name(client.get("/api/providers/health").json()["data"], "yfinance (personal/unofficial)")
+    assert provider["status"] == "configured" and provider["last_success_at"] is None
+    db.add(ProcessingRun(run_type="market_data_ingestion", source_type="yfinance_personal",
+        started_at=datetime.now(timezone.utc), status="failed", error_count=1,
+        error_details_json={"code": "PROVIDER_RATE_LIMITED"}))
+    db.commit()
+    provider = _provider_by_name(client.get("/api/providers/health").json()["data"], "yfinance (personal/unofficial)")
+    assert provider["status"] == "failing"
+    assert provider["failure_reason"] == "PROVIDER_RATE_LIMITED"
+    assert provider["recent_run_count"] == 1
+
+
+def test_fmp_key_does_not_make_unimplemented_adapter_available(client, monkeypatch):
+    monkeypatch.setenv("MARKET_DATA_PROVIDER", "fmp")
+    monkeypatch.setenv("FMP_API_KEY", "mock-key")
+    provider = _provider_by_name(client.get("/api/providers/health").json()["data"], "Financial Modeling Prep")
+    assert provider["configured"] is False and provider["status"] == "not_configured"
+    assert "not available" in provider["action_required"].lower()
+
+
 def test_ai_health_does_not_claim_unimplemented_providers_are_configured(client, monkeypatch):
     monkeypatch.delenv("GEMINI_API_KEY", raising=False)
     monkeypatch.delenv("AI_DEMO_MODE", raising=False)

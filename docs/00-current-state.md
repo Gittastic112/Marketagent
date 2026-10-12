@@ -3,7 +3,7 @@
 Source tests: 2026-10-11. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source: [M03 security proof](archive/checkpoints/2026/m03-security-2026-10-11.md); [M04 identity/ingestion in progress](archive/checkpoints/2026/m04-ingestion-2026-10-11.md). Normal images remain M01; M04 audit/identity rows are separately recorded.
+Latest source: [M03 security proof](archive/checkpoints/2026/m03-security-2026-10-11.md); [M04 identity/ingestion in progress](archive/checkpoints/2026/m04-ingestion-2026-10-11.md). Normal images remain M01; M04 source/candidate/price intake is separately audited.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,8 +20,8 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,384 passed October 11 on locked dependencies and patched OS, including bounded PDF/market children, market-local history, cancellation/identity guards and interrupted-worker audit; five upstream deprecation warnings. M04 source validation, normal images remain M01 |
-| Frontend | 259 tests, TypeScript, production build and all 21 GitHub browser workflows pass October 11. M02 extraction preserves legacy action exports, saved workflows and scoped request isolation; normal-runtime browser proof remains M01 |
+| Backend | 1,402 passed October 11 on locked dependencies and patched OS; three PostgreSQL tests skipped in SQLite pass separately against real row/advisory locks. Includes bounded children, market-local dates, manual retry/review preservation and provider-specific health; five upstream warnings. Normal images remain M01 |
+| Frontend | 260 tests and production build pass. Phase-one M04 passes all 21 GitHub browser workflows; follow-up mobile manual intake and PDF review/promotion pass locally. Normal-runtime browser proof remains M01 |
 | API compatibility | 279 paths, 505 schemas and 381 inventoried application operations including hidden compatibility routes. Reviews add narrow write/history/detail contracts and migration s1. Financial contracts remain unchanged; OAuth writes are deliberately disabled |
 | Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
 | Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |

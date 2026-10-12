@@ -32,16 +32,20 @@ Branch codex/m02-m09-completion is [PR #2](https://github.com/Gittastic112/Marke
 M02 head 9881f4113a2649f27c4c2a91833676311ed7a0ce passes every GitHub check,
 including 21 browser workflows. M03 recovery head b5c737bc8dd3af17aef401991cc7e39489a6314e
 passes all eight GitHub checks. M03 security head de26630bb33aa0de41ada023a4acaf04a9d7a3b3
-passes all ten push/PR checks. M04 provider/identity work is under validation;
+passes all ten push/PR checks. M04 head 44b93869 passes all ten checks;
 see the [security checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md).
 
 ## Runtime and source changes
 
-- M04 source passes 1,384 backend tests. Runs 5-18 record successful SEC/FRED/Gemini
+- M04 source passes 1,402 backend tests. Runs 5-18 record successful SEC/FRED/Gemini
   connectivity and quotes/history for all 11 scoped securities. Probe success is
   not financial/price coverage. Run 19 adds nine absent catalog identities and fills
   missing AAPL/NVDA fields, preserving PLTR, share classes and existing records.
   No normal financial review or trade data was invented; source worker stays stopped.
+- M04 follow-up passes manual mobile/PDF browser flows, 260 frontend tests, a
+  production build, 69 focused backend tests and three PostgreSQL concurrency checks.
+  Runs 20-40 add 667 unreviewed SEC candidates, 196 FRED observations and 2,739
+  quote/history rows across all 11 securities. GOOGL's failed fetch remains audited.
 - Docker's initial high CPU settled during idle samples. Old build cache and the
   local frontend generated cache were cleaned; temporary test images were removed.
   Volumes, rollback images, databases, backups and the immutable corpus were preserved.

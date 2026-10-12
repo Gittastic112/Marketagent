@@ -2,10 +2,10 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timezone
 
-from sqlalchemy import case, func, select
+from sqlalchemy import case, func, select, or_
 from sqlalchemy.orm import Session
 
-from app.api.schemas import ProviderHealthRead
+from app.schemas.operations import ProviderHealthRead
 from app.models.damodaran import DamodaranDatasetFile
 from app.models.processing_run import ProcessingRun
 from app.models.source import Source
@@ -69,6 +69,7 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             run_summary=latest_runs.get("market_data_ingestion"),
             missing_action=_market_data_missing_action(market_provider),
             configured_notes=_market_data_provider_notes(market_provider),
+            unconfigured_status="not_configured" if market_provider != "Alpha Vantage" else "missing_key",
             rate_limit_status="5 requests/minute (Free)" if market_provider == "Alpha Vantage" else "Unknown",
             coverage_state="US & Select Global Equities",
             freshness_threshold_hours=24,
@@ -154,6 +155,8 @@ def _market_data_key_name(provider_name: str) -> str | None:
 
 
 def _market_data_key_configured(provider_name: str) -> bool:
+    if provider_name == "Financial Modeling Prep":
+        return False  # Adapter is a stub, even when a key exists.
     if provider_name == "yfinance (personal/unofficial)":
         return True
     if provider_name.startswith("Unsupported"):
@@ -163,8 +166,10 @@ def _market_data_key_configured(provider_name: str) -> bool:
 
 
 def _market_data_missing_action(provider_name: str) -> str:
+    if provider_name == "Financial Modeling Prep":
+        return "Not available yet: FMP ingestion is not implemented. Select an implemented provider."
     if provider_name.startswith("Unsupported"):
-        return "Set MARKET_DATA_PROVIDER to alphavantage, fmp, or yfinance_personal."
+        return "Set MARKET_DATA_PROVIDER to alphavantage or yfinance_personal."
     key_name = _market_data_key_name(provider_name)
     return f"Set {key_name} to enable provider-backed market prices."
 
@@ -338,9 +343,11 @@ def _action_for_provider(
 
 
 def _latest_run_summaries(db: Session) -> dict[str, RunSummary]:
+    provider = (_env("MARKET_DATA_PROVIDER") or "alphavantage").lower()
+    provider = "alpha_vantage" if provider == "alphavantage" else provider
     return _run_summaries(db, ProcessingRun.run_type.in_(
         ("sec_ingestion", "fred_ingestion", "market_data_ingestion", "rss_ingestion")
-    ))
+    ), or_(ProcessingRun.run_type != "market_data_ingestion", ProcessingRun.source_type == provider))
 
 
 def _run_summaries(db: Session, *conditions) -> dict[str, RunSummary]:
@@ -387,7 +394,7 @@ def _run_summaries(db: Session, *conditions) -> dict[str, RunSummary]:
 def _failure_reason(run: ProcessingRun) -> str | None:
     details = run.error_details_json or {}
     if isinstance(details, dict):
-        value = details.get("error") or details.get("message") or details.get("detail")
+        value = details.get("error") or details.get("message") or details.get("detail") or details.get("code") or details.get("error_type")
         if not value and isinstance(details.get("errors"), list) and details["errors"]:
             value = details["errors"][0]
         return str(value) if value else None

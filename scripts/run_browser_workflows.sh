@@ -53,5 +53,11 @@ fi
 
 "${COMPOSE[@]}" exec -T backend-e2e python scripts/seed_e2e_reference_data.py
 
+# Real row/advisory locking cannot be proven by the default SQLite suite.
+# The test allocates its own random schema inside this disposable database.
+"${COMPOSE[@]}" exec -T \
+  -e INGESTION_TEST_DATABASE_URL=postgresql+psycopg://marketintel:marketintel_password@postgres-e2e:5432/marketintel_e2e \
+  backend-e2e pytest -q -p no:cacheprovider backend/tests/integration/test_ingestion_postgres.py
+
 cd "$ROOT_DIR/frontend"
 E2E_BASE_URL="http://127.0.0.1:${E2E_FRONTEND_PORT}" npx playwright test "$@"

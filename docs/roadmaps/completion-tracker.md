@@ -171,13 +171,13 @@ Owners: providers, market-data ingestion, source worker, Processing Runs and Dat
 - [x] M04-01 Verify all ten scoped companies plus the separately selected GOOGL
   holding identity, exchange, currency, share class and issuer mapping. Do not
   silently replace an NSE security with an ADR or GOOG with GOOGL.
-- [ ] M04-02 Verify configured SEC, personal-use price, FRED and AI connectivity
+- [x] M04-02 Verify configured SEC, personal-use price, FRED and AI connectivity
   using explicit audited probes. Separate configured, last success, stale,
   failed, rate-limited and unavailable; no implicit provider fallback.
-- [ ] M04-03 Make daily-close cutoffs/timezones explicit for US/India markets,
+- [x] M04-03 Make daily-close cutoffs/timezones explicit for US/India markets,
   distinguish final history from quotes, and verify bounded/idempotent history
   updates. Document provider timestamps/delay when unknown.
-- [ ] M04-04 Exercise queue restart, failure/retry, weekday/DST scheduling, overlap
+- [x] M04-04 Exercise queue restart, failure/retry, weekday/DST scheduling, overlap
   prevention and source-worker stopped/disabled states. Every external attempt
   needs a truthful Processing Run. Preserve manual draft edits.
 - [ ] M04-05 Finish a reliable official India source selection/manual intake path
@@ -186,7 +186,7 @@ Owners: providers, market-data ingestion, source worker, Processing Runs and Dat
 - [ ] M04-06 Surface missing price/FX/financial coverage and provider health at the
   consuming page. Keep unsupported FMP/market-regime/Sheets paths visibly unavailable
   or out of normal navigation rather than suggesting they are live services.
-- [ ] M04-07 Run recorded genuine-source checks plus deterministic failure/duplicate/
+- [x] M04-07 Run recorded genuine-source checks plus deterministic failure/duplicate/
   freshness tests. External source failure blocks that coverage claim, not all development.
 
 Gate: daily source inputs and their gaps are reproducible and visible across the

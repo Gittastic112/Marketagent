@@ -7,6 +7,7 @@ import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { PdfFilingUpload } from "@/components/pdf-filing-upload";
 import type { Company, FilingDiscovery, RawDocument } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import { sourceLink } from "@/lib/source-link";
 
 
 function formatDate(value: string | null | undefined) {
@@ -69,7 +70,7 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
         <Link className="secondary-button" href={`/companies/${company.id}/setup`}>Setup</Link>
         <Link className="secondary-button" href={`/companies/${company.id}/fundamentals`}>Financials</Link>
         <Link className="secondary-button" href={`/companies/${company.id}/valuation`}>Valuation</Link>
-        {company.cik && (
+        {(company.market === "US" && (company.cik || (company.regulatory_id_type === "CIK" && company.regulatory_id))) && (
           <form action={extractXbrlFromCompany} style={{ display: "inline-block" }}>
             <input name="company_id" type="hidden" value={company.id} />
             <button type="submit" className="primary-button">Extract via SEC XBRL</button>
@@ -77,7 +78,7 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
         )}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 360px", gap: "1.5rem", alignItems: "start" }}>
+      <div className="dashboard-content-grid">
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
           <Panel title="Discovery Status">
             {discovery ? (
@@ -124,8 +125,8 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
                         <td>{formatDate(filing.report_date)}</td>
                         <td><code>{filing.accession_number}</code></td>
                         <td>
-                          {filing.filing_url ? (
-                            <a href={filing.filing_url} target="_blank" rel="noopener noreferrer">Open filing</a>
+                          {sourceLink(filing.filing_url) ? (
+                            <a href={sourceLink(filing.filing_url)!} target="_blank" rel="noopener noreferrer">Open filing</a>
                           ) : (
                             <span className="muted">No URL</span>
                           )}
@@ -175,8 +176,8 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
                             >
                               Open PDF
                             </a>
-                          ) : filing.url ? (
-                            <a href={filing.url} target="_blank" rel="noopener noreferrer">Open source</a>
+                          ) : sourceLink(filing.url) ? (
+                            <a href={sourceLink(filing.url)!} target="_blank" rel="noopener noreferrer">Open source</a>
                           ) : (
                             <span className="muted">Text only</span>
                           )}
@@ -226,10 +227,10 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
             <TextAreaField
               className="field field-full"
               id="raw_text"
-              label="Reviewed source text"
+              label="Source text for review"
               name="raw_text"
               rows={8}
-              placeholder="Paste reviewed filing text or a short excerpt. Do not paste unreviewed HTML."
+              placeholder="Paste filing text or a short excerpt. Review is required before financial promotion."
             />
             <div className="button-row field-full">
               <button type="submit">Add filing source</button>
