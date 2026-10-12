@@ -70,7 +70,8 @@ October 12 [recovery/workflow evidence](../archive/checkpoints/2026/m03-m09-runt
 closes M04-05, M06-03/M06-06 and M07-07 and resolves macOS backup finalization.
 The [consuming-page/risk/accessibility follow-up](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md)
 closes M04-06, bounds portfolio requests, repairs return-interval/currency gates,
-and extends M09-07 to 39 workflows and 108 isolated desktop/mobile views.
+and extends M09-07 to 41 workflows and 110 isolated desktop/mobile views, including
+the pending industry-allocation state exposed by the subsequent GitHub run.
 M07-05 still needs complete genuine series and reviewed models. M08-04 still needs
 reviewed interpretation-quality evidence. M09-01 through M09-06 retain their wider
 control, adverse-state, manual-accessibility and load limits; automatic scans and

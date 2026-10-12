@@ -48,9 +48,9 @@ owns source, recovery, rollout, browser, resource and publication evidence.
   browser checks separate exact quotation from human approval. Review metadata
   refreshes after decisions; late requests cannot change another view.
 - M09 passes 1,517 offline backend tests, four separate PostgreSQL tests, 271
-  frontend tests, production builds and 39 isolated browser workflows, with focused
-  assertion/India reruns documented. The 50-page matrix adds populated/India states
-  for 108 views, automatic accessibility scans and unchanged timing budgets.
+  frontend tests, production builds and 41 isolated browser workflows in one run.
+  The 50-page matrix adds populated/India/pending-request states for 110 views,
+  automatic accessibility scans and unchanged timing budgets.
   These checks do not certify every control/state, AI quality or genuine inputs.
 
 ## Normal runtime and recovery
@@ -58,8 +58,9 @@ owns source, recovery, rollout, browser, resource and publication evidence.
 The normal app runs October 12 risk/accessibility follow-up images, with schema
 s1s1s1s1s1s1, the original database volume and localhost-only ports.
 All 109 table fingerprints match across rollout. Authenticated browser checks
-cover 13 normal routes at desktop/mobile sizes, with no automatic accessibility
-violation. All 109 fingerprints also match after the final browser run. Earlier
+cover 13 normal routes at desktop/mobile sizes, plus four valuation loading/loaded
+views, with no automatic accessibility violation. All 109 fingerprints also match
+after the final browser run. Earlier
 read-side catalog/discovery/regime changes are recorded separately.
 No normal fixture seed, portfolio rewrite, financial approval or AI scan was run.
 

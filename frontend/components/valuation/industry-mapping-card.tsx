@@ -178,7 +178,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-500">
+      <div className="flex items-center gap-2 text-sm text-slate-600">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span>Loading industry allocations...</span>
       </div>
