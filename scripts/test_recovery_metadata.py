@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from scripts import recovery_metadata as recovery
 
@@ -31,15 +32,50 @@ class RecoveryMetadataTests(unittest.TestCase):
         (self.root / "database.dump").write_bytes(b"Mock Data custom dump")
         (self.root / "inventory.raw.jsonl").write_text("\n".join(json.dumps(row) for row in inventory()))
         recovery.create(self.root, "20261011T000000Z")
+        recovery.finalize(self.root)
         return self.root
 
-    def test_v2_binds_dump_all_tables_and_both_asset_stores(self):
+    def test_v3_binds_dump_all_tables_and_both_asset_stores(self):
         root = self.backup()
         result = recovery.validate(root)
-        self.assertEqual(result["format_version"], 2)
+        self.assertEqual(result["format_version"], 3)
         self.assertEqual(result["verification_basis"], "restored_dump")
         self.assertEqual(result["asset_stores"]["brief_sources"]["content_bytes"], 7)
         self.assertEqual(result["table_count"], 3)
+
+    def test_missing_or_interrupted_completion_is_not_a_backup(self):
+        root = self.backup()
+        (root / "COMPLETE").unlink()
+        with self.assertRaisesRegex(ValueError, "completion"):
+            recovery.validate(root)
+        with patch.object(recovery.os, "replace", side_effect=PermissionError("Mock denial")):
+            with self.assertRaises(PermissionError):
+                recovery.finalize(root)
+        self.assertFalse((root / "COMPLETE").exists())
+        with self.assertRaisesRegex(ValueError, "completion"):
+            recovery.validate(root)
+        recovery.finalize(root)
+        self.assertEqual(recovery.validate(root)["format_version"], 3)
+
+    def test_completion_is_bound_to_exact_manifest_and_cannot_be_linked(self):
+        root = self.backup()
+        marker = root / "COMPLETE"
+        marker.write_text(json.dumps({"format_version": 3, "manifest_sha256": "0" * 64}))
+        with self.assertRaisesRegex(ValueError, "completion"):
+            recovery.validate(root)
+        marker.unlink()
+        marker.symlink_to(root / "unread-target")
+        with self.assertRaisesRegex(ValueError, "completion"):
+            recovery.validate(root)
+
+    def test_completed_format_two_remains_readable_without_a_marker(self):
+        root = self.backup()
+        manifest = json.loads((root / "manifest.json").read_text())
+        manifest["format_version"] = 2
+        (root / "manifest.json").write_text(json.dumps(manifest))
+        (root / "COMPLETE").unlink()
+        recovery.write_checksums(root, recovery.V2_FILES)
+        self.assertEqual(recovery.validate(root)["format_version"], 2)
 
     def test_equal_counts_different_content_fails(self):
         root = self.backup()
@@ -108,10 +144,17 @@ class RecoveryMetadataTests(unittest.TestCase):
             (folder / "database.dump").write_bytes(b"Mock Data")
             (folder / "inventory.raw.jsonl").write_text("\n".join(json.dumps(row) for row in inventory()))
             recovery.create(folder, "20261011T000000Z")
+            recovery.finalize(folder)
+        incomplete = self.root / "20261003T000000Z-3-market-intelligence"
+        incomplete.mkdir()
+        (incomplete / "database.dump").write_bytes(b"Mock Data")
+        (incomplete / "inventory.raw.jsonl").write_text("\n".join(json.dumps(row) for row in inventory()))
+        recovery.create(incomplete, "20261011T000000Z")
         for name in ("personal-market-intelligence", "20260901T000000Z-1-market-intelligence.partial", "20260902T000000Z-1-market-intelligence"):
             (self.root / name).mkdir()
         self.assertEqual(recovery.prune(self.root, 1), 1)
-        self.assertEqual(len(list(self.root.iterdir())), 4)
+        self.assertEqual(len(list(self.root.iterdir())), 5)
+        self.assertTrue(incomplete.exists())
         with self.assertRaises(ValueError):
             recovery.prune(self.root, 0)
 

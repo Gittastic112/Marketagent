@@ -126,12 +126,26 @@ class BackupWorkflowTests(unittest.TestCase):
         self.assertNotIn("-p", scratch)
         self.assertTrue(any("rm" in call and "a" * 64 in call for call in self.calls()))
 
-    def test_v2_restores_both_asset_stores_and_table_content(self):
+    def test_v3_restores_both_asset_stores_and_table_content(self):
         directory = self.verified_backup()
         self.env["RESTORE_ALLOW_LEGACY"] = "false"
         result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("format 2", result.stdout)
+        self.assertIn("format 3", result.stdout)
+
+    def test_missing_completion_fails_before_stopping_services(self):
+        directory = self.verified_backup()
+        (directory / "COMPLETE").unlink()
+        result = self.run_script("restore_local.sh", directory, "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(any("dropdb" in call or "stop" in call for call in self.calls()))
+
+    def test_backup_does_not_require_directory_rename_permission(self):
+        blocked_mv = self.directory / "mv"
+        blocked_mv.write_text('#!/usr/bin/env bash\nprintf "directory renames are denied\\n" >&2\nexit 1\n')
+        blocked_mv.chmod(0o755)
+        directory = self.verified_backup()
+        self.assertTrue((directory / "COMPLETE").is_file())
 
     def test_equal_count_content_corruption_keeps_writers_stopped(self):
         directory = self.verified_backup()
@@ -145,7 +159,7 @@ class BackupWorkflowTests(unittest.TestCase):
         result = self.run_script("backup_local.sh")
         self.assertNotEqual(result.returncode, 0)
         partial = next((self.directory / "backups").iterdir())
-        self.assertTrue(partial.name.endswith(".partial"))
+        self.assertFalse((partial / "COMPLETE").exists())
         result = self.run_script("restore_local.sh", partial, "--yes-replace-database")
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(any("dropdb" in call or "stop" in call for call in self.calls()))
@@ -169,7 +183,7 @@ class BackupWorkflowTests(unittest.TestCase):
         result = self.run_script("backup_local.sh")
         self.assertNotEqual(result.returncode, 0)
         self.assertTrue(any("rm" in call and "a" * 64 in call for call in self.calls()))
-        self.assertFalse(list((self.directory / "backups").glob("*-market-intelligence")))
+        self.assertFalse(list((self.directory / "backups").glob("*/COMPLETE")))
 
     def test_restore_checks_every_manifest_table(self):
         result = self.run_script("restore_local.sh", self.restore_fixture(), "--yes-replace-database")

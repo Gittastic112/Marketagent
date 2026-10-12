@@ -29,7 +29,7 @@ fi
 # Validate paths, complete checksum coverage, format and content inventory before
 # stopping any service or replacing any data. Only operator-trusted dumps belong here.
 format_version="$(recovery_python "$backup_dir" "${validation_args[@]}")"
-if [[ "$format_version" != 1 && "$format_version" != 2 ]]; then
+if [[ "$format_version" != 1 && "$format_version" != 2 && "$format_version" != 3 ]]; then
   printf 'Unknown recovery format.\n' >&2
   exit 2
 fi
@@ -44,7 +44,7 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 cp "$backup_dir/record_counts.tsv" "$verification_dir/expected_counts.tsv"
-if [[ "$format_version" == 2 ]]; then
+if [[ "$format_version" == 2 || "$format_version" == 3 ]]; then
   cp "$backup_dir/content_inventory.json" "$verification_dir/expected_content_inventory.json"
 fi
 

@@ -20,12 +20,15 @@ timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$BACKUP_ROOT"
 BACKUP_ROOT="$(cd "$BACKUP_ROOT" && pwd)"
 backup_dir="$BACKUP_ROOT/${timestamp}-$RANDOM-market-intelligence"
-partial="$backup_dir.partial"
-mkdir -m 700 "$partial"
+mkdir -m 700 "$backup_dir"
+complete=false
 scratch_id=""
 cleanup() {
   if [[ -n "$scratch_id" ]]; then
     "$DOCKER_BIN" rm --force "$scratch_id" >/dev/null 2>&1 || true
+  fi
+  if [[ "$complete" != true ]]; then
+    printf 'Backup incomplete; no valid COMPLETE marker. Folder retained: %s\n' "$backup_dir" >&2
   fi
 }
 trap cleanup EXIT
@@ -35,7 +38,7 @@ trap 'exit 143' TERM
 # pg_dump provides a consistent MVCC snapshot without pausing normal writers.
 "${compose[@]}" exec -T "$POSTGRES_SERVICE" pg_dump \
   -U "$POSTGRES_USER" -d "$POSTGRES_DB" --format=custom --compress=6 \
-  --no-owner --no-privileges > "$partial/database.dump"
+  --no-owner --no-privileges > "$backup_dir/database.dump"
 
 # All manifest evidence comes from this completed dump, never from later live
 # counts. This container has no network, published ports or persistent volume.
@@ -60,18 +63,19 @@ for _ in {1..60}; do
   sleep 1
 done
 if [[ "$ready" != true ]]; then
-  printf 'Recovery verifier did not become ready. Partial backup retained.\n' >&2
+  printf 'Recovery verifier did not become ready. Incomplete backup retained.\n' >&2
   exit 1
 fi
-"$DOCKER_BIN" exec -i "$scratch_id" pg_restore --list < "$partial/database.dump" >/dev/null
+"$DOCKER_BIN" exec -i "$scratch_id" pg_restore --list < "$backup_dir/database.dump" >/dev/null
 "$DOCKER_BIN" exec -i "$scratch_id" pg_restore -U proof -d proof \
-  --no-owner --no-privileges --exit-on-error < "$partial/database.dump"
+  --no-owner --no-privileges --exit-on-error < "$backup_dir/database.dump"
 "$DOCKER_BIN" exec -i "$scratch_id" psql -X -qAt -v ON_ERROR_STOP=1 \
-  -U proof -d proof -f - < "$ROOT_DIR/scripts/recovery_inventory.sql" > "$partial/inventory.raw.jsonl"
-recovery_python "$partial" create "$timestamp"
-# Completion is atomic within the backup root. Interrupted .partial directories
-# are never accepted by restore or retention.
-mv "$partial" "$backup_dir"
+  -U proof -d proof -f - < "$ROOT_DIR/scripts/recovery_inventory.sql" > "$backup_dir/inventory.raw.jsonl"
+recovery_python "$backup_dir" create "$timestamp"
+# Format 3 publishes an atomic file marker instead of renaming a directory tree.
+# Restore and retention reject it until that exact manifest is marked complete.
+recovery_python "$backup_dir" finalize
+complete=true
 if [[ "$BACKUP_PRUNE" == true ]]; then
   recovery_python "$BACKUP_ROOT" prune "$BACKUP_RETENTION_COUNT"
 fi

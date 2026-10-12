@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-10-11. This document owns commands, not historical phase records.
+Updated: 2026-10-12. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -66,7 +66,12 @@ Before normal rollout, keep the current application/PostgreSQL image IDs as roll
 tags and obtain a verified database backup. Rehearse migration/restore on a disposable
 database with the selected PostgreSQL major version. Recreate only intended services,
 preserving the stopped source worker and persistent volumes; verify readiness, browser
-behavior and idle use. Application rollback selects the retained image. Database
+behavior and idle use. Also verify `docker compose ps --all` and ordinary backup
+commands select the actual current containers. Compose discovery requires its
+configuration label; a healthy manually created container alone is insufficient.
+Keep rollback containers outside active Compose registration to avoid ambiguous
+service selection. Preserve rollback images and persistent volumes.
+Application rollback selects the retained image. Database
 rollback must respect migration and PostgreSQL compatibility; never attach a data
 directory to an older incompatible major or overwrite normal data for a test.
 
@@ -91,7 +96,8 @@ The browser runner also executes `backend/tests/integration/test_ingestion_postg
 against its disposable PostgreSQL database. It proves row/advisory locking that
 SQLite cannot exercise. The test requires `INGESTION_TEST_DATABASE_URL`, rejects
 database names without the `_e2e` suffix, and allocates/removes only its own random
-schema. The default offline backend suite skips these three tests; a skip is not
+schema. Four checks cover ingestion locks, review writers and competing saved
+valuation versions. The default offline backend suite skips them; a skip is not
 concurrency proof. Never point this variable at the normal database.
 
 Critical frontend/backend contracts are checked in both suites. For an intentional
@@ -412,11 +418,18 @@ remain review-required and do not alter saved models.
   the manual browser gate.
 - scripts/backup_local.sh and restore_local.sh own backup/restore. Inspect exact
   targets and get data-loss authorization before restore/reset/volume deletion.
-  Format 2 verifies the completed dump in a network-disabled, bounded scratch
+  Format 3 verifies the completed dump in a network-disabled, bounded scratch
   PostgreSQL 16 container; normal writes can continue. Its manifest contains all
   public table counts/content fingerprints and both PDF stores' byte hashes.
   Paths, complete checksums, format and inventory are checked before replacement.
-  Restore refuses partial or linked folders; format 1 needs explicit
+  A format-3 backup becomes complete only when its atomic `COMPLETE` file matches
+  the manifest hash. Payload/checksum files are flushed before publishing that
+  marker; finalization does not rename the containing directory. This works with
+  the observed macOS managed-workspace directory-rename restriction. No broad
+  filesystem permission change is needed. This is not a power-loss guarantee.
+  Restore rejects missing, changed or linked markers before touching the database.
+  Existing verified format-2 folders remain readable. Restore refuses `.partial`
+  or linked folders; format 1 needs explicit
   `RESTORE_ALLOW_LEGACY=true` and provides only count-based verification.
   It stops running/restarting `scheduler` and `source_scheduler` writers before database
   replacement and resumes only those that were running after verification.
@@ -431,9 +444,10 @@ remain review-required and do not alter saved models.
   Fake-Docker and metadata tests cover corruption, failures, interruptions and
   worker state. PostgreSQL 16 is the supported fingerprint basis.
   `BACKUP_ROOT` selects a local folder. Directories/files use 0700/0600. Failed
-  backups keep a clearly incomplete `.partial` folder for inspection. Retention
+  backups retain a folder without a valid `COMPLETE` marker for inspection. Old
+  `.partial` backups remain incomplete. Retention
   defaults off; `BACKUP_PRUNE=true BACKUP_RETENTION_COUNT=7` deletes only older
-  verified format-2 folders owned by this script. It preserves invalid, unrelated,
+  verified format-2/3 folders owned by this script. It preserves invalid, unrelated,
   legacy and linked folders. Never remove the only verified recovery copy.
   The metadata helper uses host Python when available; set
   `RECOVERY_PYTHON_IMAGE=market-intelligence-tools:local` after building the tools

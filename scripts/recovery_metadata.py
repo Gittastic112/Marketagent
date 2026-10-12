@@ -4,10 +4,12 @@ from __future__ import annotations
 import argparse
 from hashlib import sha256
 import json
+import os
 from pathlib import Path
 import re
 import shutil
 import sys
+import tempfile
 
 ALGORITHM = "postgres16-jsonb-sorted-row-sha256-v1"
 V1_FILES = ("database.dump", "record_counts.tsv", "manifest.json")
@@ -114,7 +116,7 @@ def create(root: Path, timestamp: str) -> dict:
     (root / "record_counts.tsv").write_text(counts(rows))
     database = next(row for row in rows if row["kind"] == "database")
     manifest = {
-        "application": "market-intelligence", "format_version": 2,
+        "application": "market-intelligence", "format_version": 3,
         "created_at_utc": timestamp, "database_format": "postgresql_custom",
         "verification_basis": "restored_dump", "fingerprint_algorithm": ALGORITHM,
         "postgres_major": database["postgres_major"], "alembic_revisions": database["revisions"],
@@ -127,20 +129,31 @@ def create(root: Path, timestamp: str) -> dict:
     }
     (root / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     write_checksums(root, V2_FILES)
-    validate(root)
+    _validate(root, require_complete=False)
     return manifest
 
 
 def validate(root: Path, allow_legacy: bool = False) -> dict:
+    return _validate(root, allow_legacy=allow_legacy, require_complete=True)
+
+
+def _validate(root: Path, *, allow_legacy: bool = False, require_complete: bool) -> dict:
     if root.is_symlink():
         raise ValueError("Backup must be a regular directory")
     manifest = json.loads(read_text(root / "manifest.json"))
     version = manifest.get("format_version") if isinstance(manifest, dict) else None
-    if type(version) is not int or version not in (1, 2):
+    if type(version) is not int or version not in (1, 2, 3):
         raise ValueError("Unsupported backup format version")
+    if version == 3 and require_complete:
+        try:
+            marker = json.loads(read_text(root / "COMPLETE", 1024))
+        except (OSError, ValueError) as exc:
+            raise ValueError("Backup completion marker is missing or invalid") from exc
+        if marker != {"format_version": 3, "manifest_sha256": digest(root / "manifest.json")}:
+            raise ValueError("Backup completion marker does not match the manifest")
     if version == 1 and not allow_legacy:
         raise ValueError("A legacy backup requires RESTORE_ALLOW_LEGACY=true; only row counts can be verified")
-    names = V2_FILES if version == 2 else V1_FILES
+    names = V2_FILES if version >= 2 else V1_FILES
     supplied = {}
     for line in read_text(root / "checksums.sha256").splitlines():
         match = re.fullmatch(r"([0-9a-f]{64})  ([a-z_.]+)", line)
@@ -184,6 +197,32 @@ def validate(root: Path, allow_legacy: bool = False) -> dict:
     return manifest
 
 
+def finalize(root: Path) -> None:
+    """Publish only a verified format-3 backup, atomically, without moving its folder."""
+    manifest = _validate(root, require_complete=False)
+    if manifest["format_version"] != 3:
+        raise ValueError("Only format-3 backups use completion markers")
+    marker = {"format_version": 3, "manifest_sha256": digest(root / "manifest.json")}
+    # Flush the payload before publishing completion. A file rename works on
+    # restricted macOS workspaces where moving a directory tree is forbidden.
+    for name in (*V2_FILES, "checksums.sha256"):
+        with regular(root / name).open("rb") as handle:
+            os.fsync(handle.fileno())
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=root,
+                                         prefix=".complete-", delete=False) as handle:
+            temporary = Path(handle.name)
+            handle.write(json.dumps(marker, sort_keys=True) + "\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, root / "COMPLETE")
+    finally:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+    validate(root)
+
+
 def compare(actual: list[dict], expected: list[dict]) -> None:
     if normalize(actual) != normalize(expected):
         raise ValueError("Restored content inventory does not match the backup (tables, bytes, or migration basis)")
@@ -207,8 +246,9 @@ def prune(root: Path, retain: int) -> int:
 
 
 def main() -> None:
+    os.umask(0o077)
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("create", "validate", "compare", "prune"))
+    parser.add_argument("command", choices=("create", "finalize", "validate", "compare", "prune"))
     parser.add_argument("value", nargs="?")
     parser.add_argument("--allow-legacy", action="store_true")
     args = parser.parse_args()
@@ -218,9 +258,11 @@ def main() -> None:
         print(f'Manifest verifies {manifest["table_count"]} tables and both PDF-store inventories.')
     elif args.command == "validate":
         print(validate(root, args.allow_legacy)["format_version"])
+    elif args.command == "finalize":
+        finalize(root)
     elif args.command == "compare":
         rows = raw_inventory(root)
-        if args.value == "2":
+        if args.value in ("2", "3"):
             compare(rows, json.loads(read_text(root / "expected_content_inventory.json", 64 * 1024 * 1024)))
         elif counts(rows) != read_text(root / "expected_counts.tsv"):
             raise ValueError("Restored record counts do not match the legacy backup")

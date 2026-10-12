@@ -1,6 +1,6 @@
 # Local Development
 
-Reviewed against checked-in configuration: 2026-10-10.
+Reviewed against checked-in configuration: 2026-10-12.
 
 This guide owns setup and troubleshooting. The [runbook](08-execution-runbook.md)
 owns test, build, migration and operational commands. Historical company IDs and
@@ -103,6 +103,12 @@ Inspect exact targets and obtain explicit data-loss authorization before
 destructive operations. The [schema map](03-database-schema.md) owns migration
 head guidance. Backups/restores have separate runbook scripts; local backup
 alone does not establish off-device recovery.
+
+If macOS permits ordinary file writes but rejects renaming a completed backup
+directory, use the current format-3 backup script. It publishes a checked `COMPLETE`
+file inside the folder instead. Restore validates the marker and all checksums;
+do not rename an old `.partial` folder or create the marker by hand. The October 12
+normal backup and disposable restore passed without changing macOS permissions.
 
 ## Providers, uploads and reference data
 
