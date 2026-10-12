@@ -106,6 +106,28 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   expect(assumptionSets[0].depreciation).toBe(80);
   expect(assumptionSets[0].buybacks).toBe(15);
 
+  await page.getByRole("navigation", { name: "Valuation model sections" })
+    .getByRole("button", { name: "Sensitivity Tables", exact: true }).click();
+  await expect(page.locator(".sensitivity-card:visible")).toHaveCount(6);
+  await expect(page.locator(".sensitivity-card:visible").first().getByText(/Canonical FCFF sensitivity v2/)).toBeVisible();
+  await expect(page.getByText(/Colors compare calculated values with the saved assumed market price/)).toBeVisible();
+  const saved = await backendData<Array<{
+    id: number; outputs: { intrinsic_value_per_share: number };
+    sensitivity_tables: Array<{ x_axis_json: { values: number[] }; y_axis_json: { values: number[] }; values_json: Record<string, Record<string, number | null>> }>;
+  }>>(page, `/valuation-models/${modelId}/assumptions`);
+  for (const table of saved[0].sensitivity_tables) {
+    const x = Number(table.x_axis_json.values[2].toFixed(4));
+    const y = Number(table.y_axis_json.values[2].toFixed(4));
+    const row = Object.entries(table.values_json).find(([key]) => Number(key) === y)![1];
+    const center = Object.entries(row).find(([key]) => Number(key) === x)![1];
+    expect(center).toBeCloseTo(saved[0].outputs.intrinsic_value_per_share, 8);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await expect(page.locator(".sensitivity-card:visible")).toHaveCount(6);
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("sensitivity-mobile.png"), fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+
   await page.goto(`/companies/${company.id}/valuation`);
   await expect(page.getByRole("columnheader", { name: "Model readiness" })).toBeVisible();
   const savedModelRow = page.getByRole("row").filter({

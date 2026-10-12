@@ -74,7 +74,12 @@ def test_invalid_zero_is_not_hidden_by_defaults(field, module):
 def test_sensitivity_without_overrides_matches_core_with_zero(field):
     row = inputs(**{field: 0})
     output, _, _ = calculate_dcf(row)
-    assert _calc_value_for_overrides(row, {}) == pytest.approx(output.intrinsic_value_per_share)
+    if field in {"wacc_terminal", "terminal_roic", "sales_to_capital_ratio", "diluted_shares"}:
+        # Core historical behavior is retained; v2 grids withhold invalid cells.
+        with pytest.raises(ValueError):
+            _calc_value_for_overrides(row, {})
+    else:
+        assert _calc_value_for_overrides(row, {}) == pytest.approx(output.intrinsic_value_per_share)
 
 
 @pytest.mark.parametrize("field", ["beta", "equity_risk_premium", "risk_free_rate", "pre_tax_cost_of_debt", "tax_rate"])
@@ -83,11 +88,9 @@ def test_funding_sensitivity_uses_explicit_zero_inputs(field):
                   pre_tax_cost_of_debt=.05, debt_to_capital=.4, tax_rate=.25)
     values[field] = 0
     row = inputs(**values)
-    wacc = (values["risk_free_rate"] + values["beta"] * values["equity_risk_premium"]) * .6
-    wacc += values["pre_tax_cost_of_debt"] * (1 - values["tax_rate"]) * .4
-    # Funding sensitivity currently sets terminal ROIC to recalculated WACC.
-    reference = inputs(**(values | dict(wacc_start=wacc, wacc_terminal=wacc, terminal_roic=wacc)))
-    expected, _, _ = calculate_dcf(reference)
+    # The unshocked funding point preserves saved WACCs and terminal ROIC, even
+    # when a saved funding component is explicitly zero.
+    expected, _, _ = calculate_dcf(row)
     assert _calc_value_for_overrides(row, {"debt_to_capital": .4}) == pytest.approx(expected.intrinsic_value_per_share)
 
 
@@ -114,7 +117,9 @@ def test_missing_values_keep_legacy_defaults():
     actual, _, _ = calculate_dcf(missing)
     expected, _, _ = calculate_dcf(explicit)
     assert actual.enterprise_value == pytest.approx(expected.enterprise_value)
-    assert _calc_value_for_overrides(missing, {}) == pytest.approx(expected.intrinsic_value_per_share)
+    with pytest.raises(ValueError, match="MISSING_INPUT"):
+        _calc_value_for_overrides(missing, {})
+    assert _calc_value_for_overrides(explicit, {}) == pytest.approx(expected.intrinsic_value_per_share)
 
 
 def test_missing_target_falls_back_to_explicit_zero_current_margin():

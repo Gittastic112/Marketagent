@@ -19,7 +19,7 @@ class ScenarioEngine:
             return new_set
 
         def add_scenario(name: str, desc: str, modified_set: DcfAssumptionSet):
-            output, _, _ = calculate_dcf(modified_set, model_type=model_type)
+            output, _, _ = calculate_dcf(modified_set, model_type=model_type, include_sensitivity=False)
 
             # Since these are transient and not committed to DB, provide dummy values for schema validation
             output.id = -1

@@ -3,6 +3,12 @@
 **Updated:** 2026-10-11 (M02 acceptance, M03 security proof and M04 identity/ingestion work).
 Product validation dates remain in Current State.
 
+October 11 M06 source introduces versioned canonical FCFF sensitivities with
+saved funding/terminal assumptions and per-cell unavailability. Legacy grids are
+visibly unverified; normal saved models are not recalculated. The 22-workflow
+isolated browser proof uses Mock Data and does not close genuine valuation review.
+[Method and evidence](archive/checkpoints/2026/m06-sensitivity-2026-10-11.md).
+
 This document is the practical trust boundary for the product. It intentionally
 summarizes capabilities instead of duplicating route-by-route implementation.
 
@@ -44,6 +50,15 @@ SEC/FRED/Gemini and 11-security price connectivity. Later runs 20-40 add 667
 unreviewed SEC candidates, 196 FRED observations and 2,739 quote/history rows.
 GOOGL's failed first price intake remains audited; retry 40 succeeded. The September imports remain historical;
 normal application images still run M01. [M04 evidence](archive/checkpoints/2026/m04-ingestion-2026-10-11.md).
+
+The October 11 [M05 inventory](archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md)
+records required annual sources and actual coverage for all 11 securities. All 667
+SEC candidates remain unreviewed; all 11 lack normalized histories and confirmed
+industry mappings in this database. India annual reports still need local intake
+and review. Certification v3 checks retained hashes, units, annual XBRL periods
+and bounded PDF locators; these checks do not approve numeric interpretation,
+bank model suitability or class-specific shares. Historical AAPL/APSEZ proof is
+not proof of this normal database's current coverage.
 
 | Needed | Current decision and remaining action |
 |---|---|

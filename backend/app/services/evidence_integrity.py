@@ -423,11 +423,12 @@ def build_evidence_integrity_report(
 
     promoted_documents_by_company: dict[int, set[int]] = {}
     exact_financial_candidate_ids: set[int] = set()
+    source_hashes: dict[tuple[str, int], str] = {}
     for candidate in promoted_financial_candidates:
         promoted_documents_by_company.setdefault(candidate.company_id, set()).add(
             candidate.raw_document_id
         )
-        if not _candidate_has_exact_locator(candidate):
+        if not _candidate_has_exact_locator(candidate, source_hashes=source_hashes):
             add_issue(
                 "FINANCIAL_EVIDENCE_LOCATOR_INEXACT",
                 "error",

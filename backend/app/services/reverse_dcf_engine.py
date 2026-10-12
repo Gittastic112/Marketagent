@@ -71,7 +71,7 @@ class MarketImpliedAssumptionSolver:
             }
         else:
             setattr(test_set, target_parameter, value)
-        return calculate_dcf(test_set, model_type=model_type)[0]
+        return calculate_dcf(test_set, model_type=model_type, include_sensitivity=False)[0]
 
     @classmethod
     def solve(cls, assumption_set: DcfAssumptionSet, target_parameter: str, current_market_price: float, diluted_shares: float, model_type: str = "fcff_dcf") -> tuple[float | None, float | None, list[DiagnosticWarning]]:

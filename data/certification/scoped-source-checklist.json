@@ -1,0 +1,28 @@
+{
+  "version": "scoped-source-checklist-v1",
+  "checked_date": "2026-10-11",
+  "scope_manifest": "data/research-scope.json",
+  "basis": "Source selection and review checklist, not certified financials or model approval.",
+  "common_review_requirements": [
+    "At least three completed annual periods; quarter and TTM values stay separate",
+    "Original source bytes/hash and exact statement/page or XBRL accession locator",
+    "Explicit reporting currency, scale, fiscal dates and consolidated/standalone basis",
+    "Human review of revisions and accounting reconciliation before promotion",
+    "Security-specific diluted shares and corporate-action basis; issuer facts are not class shares",
+    "Cash, total borrowing components, leases, minority interests and cross-holdings reviewed separately",
+    "Weighted industry mapping, country/currency priors and forecasts require their own approval"
+  ],
+  "securities": [
+    {"ticker":"NVDA","target_years":[2024,2025,2026],"review_track":"operating_company","source":"https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/R1.htm","required_documents":["Annual consolidated statements and borrowing/share-split notes","SEC companyfacts with retained original payload"]},
+    {"ticker":"AAPL","target_years":[2023,2024,2025],"review_track":"operating_company","source":"https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json","required_documents":["Annual consolidated statements, debt notes and diluted-share history","Existing AAPL reference originals required to reproduce historical certification"]},
+    {"ticker":"GOOG","target_years":[2023,2024,2025],"review_track":"operating_company","source":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json","required_documents":["Alphabet consolidated annual statements","Class C versus total issuer shares, diluted-share and debt notes"]},
+    {"ticker":"MSFT","target_years":[2024,2025,2026],"review_track":"operating_company","source":"https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm","required_documents":["Annual consolidated statements with debt and lease notes","Independent reference for additional US parser proof"]},
+    {"ticker":"AMZN","target_years":[2023,2024,2025],"review_track":"operating_company","source":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json","required_documents":["Annual consolidated statements and debt/finance-lease notes","Review cash capex versus financed asset additions"]},
+    {"ticker":"RELIANCE","target_years":[2024,2025,2026],"review_track":"operating_company","source":"https://www.ril.com/investors/financial-reporting","required_documents":["FY2025-26 consolidated financial statements and comparative annual reports","Segment weights, subsidiaries/minority interests, leases and total borrowings"]},
+    {"ticker":"HDFCBANK","target_years":[2024,2025,2026],"review_track":"bank_equity","source":"https://www.hdfc.bank.in/about-us/investor-relations/annual-reports","required_documents":["FY2025-26 annual report and comparative bank statements","Common equity, attributable earnings, diluted NSE shares, regulatory capital and payout notes","Review merger comparability; deposits are not industrial financing debt"]},
+    {"ticker":"BHARTIARTL","target_years":[2024,2025,2026],"review_track":"operating_company","source":"https://www.airtel.in/about-bharti/equity/results/annual-results","required_documents":["FY2025-26 consolidated financial statements and comparative annual reports","Lease/spectrum liabilities, Africa currency scope, minority interests and partly paid share changes"]},
+    {"ticker":"ICICIBANK","target_years":[2024,2025,2026],"review_track":"bank_equity","source":"https://www.icici.bank.in/about-us/annual/2026","required_documents":["FY2026 financial statements PDF plus FY2025 comparative report","Common equity, attributable earnings, regulatory capital, payout and NSE diluted-share basis","Independent bank-layout reference; distinguish Indian statements from ADR share units"]},
+    {"ticker":"SBIN","target_years":[2024,2025,2026],"review_track":"bank_equity","source":"https://sbi.bank.in/web/corporate-governance/annual-report","required_documents":["FY2025-26 annual report and comparative bank statements","Common equity, attributable earnings, regulatory capital, pension and payout disclosures","Choose and retain standalone/consolidated basis; deposits are not industrial financing debt"]},
+    {"ticker":"GOOGL","target_years":[2023,2024,2025],"review_track":"operating_company","source":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json","required_documents":["Same Alphabet issuer statements with separate Class A security evidence","Class A versus total issuer shares; never substitute the GOOG market price"]}
+  ]
+}

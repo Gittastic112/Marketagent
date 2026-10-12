@@ -59,8 +59,8 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | In progress | [Identity and ingestion checkpoint](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Not started | None |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | Not started | None |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Evidence inventory and certification](../archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Correct portfolio history and performance | M06 | Not started | None |
 | M08 | 80% | Connected daily research and review | M07 | Not started | None |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Not started | None |
@@ -196,7 +196,7 @@ scoped universe, without silent fabrication, source promotion or external AI rea
 
 Owners: extraction, normalization, source certification; [Knull W2](../../Knull%28readme%29.md#6-w2-reviewed-usindia-financial-source-coverage).
 
-- [ ] M05-01 Build an issuer/period/source checklist for the scoped US/India
+- [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
   required source documents and human-review dependencies before execution.
 - [ ] M05-02 Verify parser coverage against independent reviewed references,
@@ -213,7 +213,7 @@ Owners: extraction, normalization, source certification; [Knull W2](../../Knull%
   a reviewed prior, and each forecast remains an assumption.
 - [ ] M05-06 Complete the source -> candidate -> review -> normalized financial ->
   draft browser path, including corrections, stale evidence and rejected promotion.
-- [ ] M05-07 Produce a per-company evidence matrix with supported statements,
+- [x] M05-07 Produce a per-company evidence matrix with supported statements,
   dates, missing fields and model suitability. No unaudited row earns certification.
 
 Gate: every scoped company has a usable reviewed input basis for its supported
@@ -225,10 +225,10 @@ not permission to invent it. Human source/assumption review remains required.
 Owners: deterministic engines, saved-input contracts and valuation panels;
 [Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
 
-- [ ] M06-01 Repair sensitivity to reuse the canonical forecast/bridge behavior,
+- [x] M06-01 Repair sensitivity to reuse the canonical forecast/bridge behavior,
   preserve saved funding/terminal assumptions, and expose per-cell validity and
   method/version basis. Invalid convergence must not become zero terminal value.
-- [ ] M06-02 Verify sensitivity center equals the saved base with independent
+- [x] M06-02 Verify sensitivity center equals the saved base with independent
   expected calculations. Cover missing versus zero, negative values, currency,
   funding overrides, terminal ROIC, shares and critical diagnostics.
 - [ ] M06-03 Audit supported FCFF, bank, distress, FCFE/DDM, scenario and reverse

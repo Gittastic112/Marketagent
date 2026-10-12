@@ -1,6 +1,6 @@
 # Agent Handoff
 
-M02 accepted, M03/M04 in progress: 2026-10-11. Broader product proof stays
+M02 accepted, M03-M06 in progress: 2026-10-11. Broader product proof stays
 separately dated in [Current State](00-current-state.md). Latest work is recorded
 in the [ownership](archive/checkpoints/2026/m02-ownership-2026-10-11.md) and
 [recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) and
@@ -19,8 +19,8 @@ owners before editing. For architecture work, also read
 [architecture](02-architecture.md). Preserve prior/untracked work.
 
 The user authorized sequential M02 through M09 work and conservative continuation
-when inputs are missing. Finish M04's remaining independent ingestion tasks,
-then continue through M09. Preserve open human-review, actual-trade and
+when inputs are missing. Continue M07-M09 while preserving M04/M05 source-review
+gaps. The [M05 checkpoint](archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) records 52 focused passing tests. Preserve human-review, actual-trade and
 off-device recovery gates. M02 owns folder cleanup and module boundaries.
 Portable tooling provides Git and recovery-script checks despite blocked host
 runtimes. The private GitHub branch codex/m01-foundation preserves the tested
@@ -34,6 +34,10 @@ including 21 browser workflows. M03 recovery head b5c737bc8dd3af17aef401991cc7e3
 passes all eight GitHub checks. M03 security head de26630bb33aa0de41ada023a4acaf04a9d7a3b3
 passes all ten push/PR checks. M04 head 44b93869 passes all ten checks;
 see the [security checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md).
+M04 phase two is published at 678068b5. Smaller tree writes resolved the stalled
+publication. GitHub remains Allow all actions; other permission settings are unchanged.
+The [M06 checkpoint](archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) records 1,427 backend, three PostgreSQL,
+263 frontend and 22 production browser tests passing, including mobile sensitivity.
 
 ## Runtime and source changes
 

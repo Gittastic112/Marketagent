@@ -39,7 +39,7 @@ def calculate_quick_valuation(
         reinvestment_method="sales_to_capital",
         **assumption_values,
     )
-    output, projection_years, _ = calculate_dcf(assumption_set)
+    output, projection_years, _ = calculate_dcf(assumption_set, include_sensitivity=False)
     supplied_growth_years = set(payload.revenue_growth_years_json)
     missing_growth_years = [
         year
