@@ -1,9 +1,9 @@
 # Current State
 
-Source tests: 2026-10-11. Scope: local-first, single-user equity research.
+Source tests and normal rollout: 2026-10-12. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source: [M07 portfolio replay](archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [M08 private brief context](archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) and [M09 browser validation](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md). Normal images remain M01; M04 source/candidate/price intake is separately audited.
+Latest source and normal runtime: [October 12 recovery and M03-M09 follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md). Source/candidate/price intake remains separately audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,23 +20,22 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | Final source passes 1,486 tests after the SEC/CSV boundary follow-up; three PostgreSQL-only skips pass separately. Five upstream warnings. GitHub d9ffa73f verifies the preceding 1,449-test source. The M09 checkpoint and resulting PR head own integrated evidence; normal images remain M01 |
-| Frontend | 264 tests, production build/TypeScript and all 26 isolated browser workflows pass. The matrix covers all 50 pages on desktop/mobile; screenshots/timings retained. Normal-runtime browser proof remains M01 |
-| API compatibility | 279 paths, 510 schemas and 381 inventoried operations. Private-brief/replay fields are additive; legacy receipts remain readable. Legacy SEC intake now creates review candidates only, retaining its URL/envelope and a truthful zero periods_updated. No migration; OAuth writes remain disabled |
-| Schema boundaries | Compatibility identity, pure contract imports, engine dependency direction, unique class names and distinct metric fields covered |
-| Frontend boundaries | Exact legacy runtime exports, domain/transport import rules, module limits, payload/error/404/binary behavior covered |
-| Documentation / operations | October 11: 49 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. M03's 109-table disposable recovery passes, but normal backup finalization and off-device recovery remain open. M04's 14 genuine probes and identity/intake evidence remain separate. Protected environment paths stay excluded |
-| Production / browser | October 10 patched standalone frontend passes five normal routes, 1440px/390px dashboard inspection and missing/foreign-Origin 403. All functional browser workflows pass locally; timing scope is in the M01 checkpoint. Fresh frontend and resolved backend/test advisory audits pass; broader security certification is not implied |
-| PostgreSQL concurrency | Five competing analyst-review pairs each returned 201/409, adding exactly five versions while the original receipt stayed unchanged. Visible stale forms did not write. Reviews remain User Assumption, not AI approval or financial edits |
-| Runtime evidence | September 22: existing 11 drafts, 694 unreviewed SEC candidates and 196 FRED observations retained. Added public annual filings/business sections for AAPL/GOOGL and private Apple PDF source 1 with five real Gemini findings, pending review. Two models, four assumption sets, two holdings and three transactions have identical fingerprints to the pre-inbox backup. Non-saving AAPL illustration is USD106.01/share, not an approved current valuation |
-| Migrations / recovery | Normal head s1s1s1s1s1s1 adds only an empty review table. Backup 20261001T015318Z restores all 108 r9 table fingerprints including private PDF/AI evidence. Rehearsed and normal s1 upgrades preserve all 107 prior data tables exactly; only migration metadata changes and an empty table is added (109 total). Dump mode 0600, directory 0700. Off-device recovery remains unproven |
-| Performance | Same-data local authenticated checks: portfolio overview full server response 8,897 ms before vs 45/127 ms in two after samples; companies 890 vs 65/59 ms; Data Health 3,501 vs 193/152 ms. Valuation read queries 168 to 11; risk 204 to 12. Dashboard was already small and did not improve. These are not browser-interactivity or load-test guarantees; [measurement checkpoint](archive/checkpoints/2026/frontend-performance-2026-09-21.md) includes all results |
-| Provider evidence | September 22 FRED DGS10/NFCI and SEC imports succeeded; six US securities have annual candidates. US/NSE personal-provider quotes have unknown timing. Real gemini-3.5-flash-lite scanned the public Apple PDF in the isolated browser and normal app with valid exact quotes, retained provenance and pending review. No stored portfolio/model values sent. This is workflow proof, not interpretation-quality certification |
+| Backend | 1,502 tests pass; four PostgreSQL-only checks pass separately. Five upstream deprecation warnings. No formula or migration was changed in the October 12 follow-up |
+| Frontend | 264 tests, production build/TypeScript and all 33 isolated browser workflows pass. The matrix covers all 50 pages at 1440px and 390px; screenshots/timings retained |
+| API compatibility | 279 public paths, 511 schemas and 381 inventoried operations. Official manual filing guidance is additive. Legacy custom-options routes remain compatible but are deprecated/experimental. Pure contracts, facade identity, ownership and wire-manifest guards pass |
+| Operations | 54 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion/interruption/retention and format-2 compatibility are covered. Protected environment files remain excluded |
+| PostgreSQL | Four real concurrency checks pass, including competing saved valuation versions: one succeeds, one conflicts, and the original output stays unchanged. Fresh schema reaches s1s1s1s1s1s1 |
+| Normal runtime | Final backend/frontend/worker images are installed. PostgreSQL retains its named volume and s1s1s1s1s1s1 schema; all 109 table fingerprints match across replacement. Settings are preserved in memory, ports stay localhost-only, and Compose selects current services |
+| Normal browser | 12 routes at desktop/mobile sizes, 24 views, no browser errors or page overflow, two forbidden-Origin checks pass. Maximum sampled readiness 628 ms. India source guidance and provider configuration disclaimers are visible. No normal test seeding or AI call |
+| Recovery | Complete format-3 normal backups and an isolated concurrent-write restore pass. Both original public/private PDF bytes and all 109 table inventories are verified in the drill. Restore verification took 10 seconds, complete drill 35 seconds. Same-disk copies do not prove encrypted off-device recovery |
+| Performance | Final isolated matrix: desktop/mobile median 534.5/490 ms, p95 1,189/1,253 ms, maxima 1,896/2,315 ms. Separate small-fixture first-visit/warm sampling has 24 responses at most 389 ms and an 886 ms tab interaction. Authentication warms shared code; database/OS caches are not cold and this is not load proof |
+| Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Intake adds unreviewed candidates and dated prices, not approved financial histories. Five official India source links were rechecked October 12. Provider availability does not certify interpretation, coverage or future quota |
 
-October 10 accepts M01 after a 109-table restore/fingerprint comparison and normal
-rollout. Current screens contain existing Mock Data; the backup has no document
-assets, so September inventories above are historical. Initial browser access added
-one deterministic brief; later normal quote activity is separately recorded in M01.
+Normal screens still contain labeled Mock Data. The final rollout has no stored
+PDF assets, so September's private-PDF/source inventories below remain historical.
+Normal browser reads add one missing FRED capability row and two audited SEC
+discovery runs; the other 107 table fingerprints remain identical. The checkpoint
+records those changes separately from the quiesced rollout comparison.
 
 [Refactor checkpoint](archive/checkpoints/2026/repository-architecture-refactor-2026-09-09.md)
 records the older production/browser scope. The
@@ -99,7 +98,7 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 - Reverse DCF uses a non-writing validation service, supported model dispatch,
   bracketed convergence and saved-result identity checks in an on-demand panel.
   Focused PostgreSQL/browser verification passed with disposable Mock Data.
-- Real Options uses pure contracts and an owned saved-FCFF validation service.
+- Experimental Real Options uses pure contracts and an owned saved-FCFF validation service.
   Backend total-equity integration precedes per-share conversion; saved currency,
   seven eligibility confirmations, explicit equity-basis review, fingerprints
   and independent-form request invalidation replace the old panel's custom base.
@@ -145,7 +144,7 @@ debt scope, share-class reconciliation and India statements remain explicit.
 US industry priors are loaded but mappings require review. Workbook inspection
 corrected global-input labels and a US country-tax alias without rewriting old rows.
 
-Portfolio 1 models 200 AAPL and 200 GOOGL at January 2, 2024 unadjusted closes,
+The September 22 reference portfolio modeled 200 AAPL and 200 GOOGL at January 2, 2024 unadjusted closes,
 rounded to USD185.64/USD138.17. The confirmed USD64,762 deposit, zero fees,
 no later trades and dividend exclusion are User Assumptions, not verified trades.
 Two snapshots (January 2, 2024 and September 18, 2026), returns, attribution and
@@ -160,7 +159,7 @@ added; three existing originals were reused. All pre-existing raw hashes remain 
 
 Prior valuation builds and disposable browser checks retain their dated scope.
 The [M09 checkpoint](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
-owns the current 50-page desktop/mobile matrix and functional workflow evidence.
+owns the earlier matrix; the October 12 follow-up above owns current workflow evidence.
 These isolated fixtures do not replace genuine-input portfolio proof.
 
 The normal runtime is s1s1s1s1s1s1 after fresh and populated restore/migration

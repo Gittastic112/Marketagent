@@ -66,6 +66,16 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | In progress | [Integrated browser validation](../archive/checkpoints/2026/m09-browser-validation-2026-10-11.md) |
 | M10 | 100% | Proven local daily-driver release | M09 | Not started | None |
 
+October 12 [follow-up evidence](../archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
+closes M04-05, M06-03/M06-06 and M07-07. It also resolves normal backup
+finalization, deploys the integrated source and repeats M09-07 with 33 passing
+workflows and 24 authenticated normal views. M08-04 has adversarial fixtures and
+separate citation/interpretation scope, but still lacks a reviewed quality set.
+M09-02/03/05/06 have additional session, race, import, correction and timing proof;
+those broader checks stay open where coverage is incomplete. Cumulative acceptance
+remains 20 points because M03's host/off-device gates are open. Remaining inputs
+and technical boundaries stay in the [ledger](../agent_capabilities_and_limitations.md).
+
 ## M01: measured, lean, reproducible foundation
 
 Owners: Compose files, backend Dockerfile/requirements, repository tooling.
@@ -180,7 +190,7 @@ Owners: providers, market-data ingestion, source worker, Processing Runs and Dat
 - [x] M04-04 Exercise queue restart, failure/retry, weekday/DST scheduling, overlap
   prevention and source-worker stopped/disabled states. Every external attempt
   needs a truthful Processing Run. Preserve manual draft edits.
-- [ ] M04-05 Finish a reliable official India source selection/manual intake path
+- [x] M04-05 Finish a reliable official India source selection/manual intake path
   with identity, dates and evidence locators. Add automation only if access is
   compliant and tested; otherwise label the manual step clearly.
 - [ ] M04-06 Surface missing price/FX/financial coverage and provider health at the
@@ -231,7 +241,7 @@ Owners: deterministic engines, saved-input contracts and valuation panels;
 - [x] M06-02 Verify sensitivity center equals the saved base with independent
   expected calculations. Cover missing versus zero, negative values, currency,
   funding overrides, terminal ROIC, shares and critical diagnostics.
-- [ ] M06-03 Audit supported FCFF, bank, distress, FCFE/DDM, scenario and reverse
+- [x] M06-03 Audit supported FCFF, bank, distress, FCFE/DDM, scenario and reverse
   paths as separate method boundaries. Preserve finite-value/convergence gates,
   currency, input identity, optimistic versions and unchanged historical outputs.
 - [ ] M06-04 Complete supported accounting/equity bridges and exact peer input
@@ -240,7 +250,7 @@ Owners: deterministic engines, saved-input contracts and valuation panels;
 - [ ] M06-05 Verify narrative -> assumption -> saved calculation -> sensitivity ->
   reverse -> memo/export traceability. Expose formulas, dates, claim type and
   uncertainty. Keep unsaved edits and stored calculations distinct.
-- [ ] M06-06 Restrict experimental/legacy custom-options and unsupported specialized
+- [x] M06-06 Restrict experimental/legacy custom-options and unsupported specialized
   analyses in the normal product; verify compatibility routes separately if retained.
   No unvalidated method may appear as a certified number or trade instruction.
 - [ ] M06-07 Run deterministic reference calculations, contract/ownership tests,
@@ -271,7 +281,7 @@ Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
 - [ ] M07-06 Finish the genuine-input readiness checklist and a real multi-currency
   manual smoke using sourced history and reviewed user activity. The existing assumed
   AAPL/GOOGL case is useful separate evidence, not a replacement for that proof.
-- [ ] M07-07 Exercise import preview/hash/atomic apply, duplicate/conflict handling,
+- [x] M07-07 Exercise import preview/hash/atomic apply, duplicate/conflict handling,
   historical-date selection, corrections and browser states on disposable fixtures.
 
 Gate: present and historical portfolio views reconcile to their dated inputs and

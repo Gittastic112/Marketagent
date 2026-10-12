@@ -1,87 +1,84 @@
 # Agent Handoff
 
-October 11, 2026: M01-M02 accepted; M03-M09 have source work and open gates.
+October 12, 2026: M01-M02 accepted; M03-M09 have implemented work and open gates.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
-Two of ten gates means 20 acceptance points, not 20% of engineering hours.
-"Next 10%" means M03, the earliest unfinished milestone. Do not report 90% complete.
+Two accepted gates means 20 acceptance points, not 20% of engineering hours.
+"Next 10%" means M03. Do not report 90% complete or waive genuine-input gates.
 
-## Current execution boundary
+## Execution boundary
 
-The user authorized sequential M02-M09, conservative continuation when inputs are
-missing, refactors/worktrees, Git/GitHub publication and fixing browser/CI failures.
-GitHub is Allow all actions; other app permissions remain unchanged. No parallel
-agents were launched. Public deployment, broker integration and M10 acceptance
-are outside this task. Follow the nearest AGENTS.md and actual owning code.
+The user authorized sequential work through M09, conservative continuation while
+away, refactors/worktrees and Git/GitHub publication. Do implementation, validation,
+normal rollout and documentation before Git publication. No parallel agents were
+launched. GitHub is Allow all actions; other app permissions remain unchanged.
+Public deployment, broker integration and M10 acceptance remain outside this task.
 
-Private [draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1) preserves
-the M01 source baseline. [Draft PR #2](https://github.com/Gittastic112/Marketagent/pull/2)
-on codex/m02-m09-completion holds subsequent work, based on the M01 branch.
-Consult the PR for the latest published head and checks; the
-[M09 checkpoint](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
-owns integrated source/browser evidence and its exact limits.
-The shared local branch/index contains extensive prior changes. Publication uses
-an explicit-path isolated Git snapshot; never reset, clean or stage everything.
-Protected environment files are excluded and must not be read indirectly.
+[Draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1) preserves M01.
+[Draft PR #2](https://github.com/Gittastic112/Marketagent/pull/2), based on M01,
+holds subsequent source work. Consult it for the latest published head/checks.
+The shared local checkout/index has extensive prior changes. Publish only explicit
+paths through an isolated Git snapshot. Never reset, clean or stage everything.
+Protected environment files must not be read directly or indirectly.
 
-## Implemented source work
+## Current evidence
 
-- [M02](archive/checkpoints/2026/m02-ownership-2026-10-11.md): domain-owned contracts,
-  server actions, provider workflows and UI orchestration, compatibility facades,
-  contract-drift guards and classified retired tooling.
-- [M03 recovery](archive/checkpoints/2026/m03-recovery-2026-10-11.md) and
-  [security](archive/checkpoints/2026/m03-security-2026-10-11.md): consistent format-2
-  dump/asset fingerprints, disposable concurrent-write restore, bounded parsers
-  and outbound clients, locked dependencies and container/security CI. Final review
-  routes legacy SEC intake through candidate review and hardens CSV shape/precision
-  validation and failure logging. See the security checkpoint for compatibility limits.
-- [M04](archive/checkpoints/2026/m04-ingestion-2026-10-11.md): scoped identities,
-  bounded/idempotent ingestion, dated price coverage and truthful Processing Runs.
-  Runs 20-40 added 667 unreviewed SEC candidates, 196 FRED observations and 2,739
-  price/history rows across eleven securities. Failed fetches remain audited.
-- [M05](archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md): per-company
-  evidence inventory and review/certification guards. No normal facts were approved.
-- [M06](archive/checkpoints/2026/m06-sensitivity-2026-10-11.md): canonical saved-FCFF
-  sensitivity, explicit validity/basis and keyboard/mobile table access.
-- [M07](archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md): dated recorded
-  positions/cash, purchase-date FX, reconciliation and snapshot activity hashes.
-  Legacy/manual snapshots and corrected activity remain provisional. No trades
-  are inferred and historical risk remains a fixed-weight price-return calculation.
-- [M08](archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md): explicit
-  quoted period/currency/scope comparison and bounded owner-scoped private context
-  in manual/scheduled briefs. Reviewed and pending queues remain separate, saved
-  as generated, with no automatic external AI or numeric assumption changes.
-- [M09](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md): production
-  browser coverage for all 50 page routes at desktop/mobile sizes plus functional
-  workflows. Semantic fixes retain standalone finding links and label research input.
-  Mock Data, route layout checks and builds do not certify all controls or real inputs.
+The [October 12 checkpoint](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
+owns source, recovery, rollout, browser, resource and publication evidence.
+
+- M02 has domain-owned schemas/actions/workflows, compatibility exports and
+  contract/import guards. Retired one-off tools remain preserved and classified.
+- M03 format 3 fixes macOS backup finalization with an atomic manifest-bound
+  COMPLETE file. Missing/corrupt/linked markers fail before restore; format 2
+  remains readable. The 109-table concurrent-write drill and both PDF stores pass.
+- M04 adds identity-bound, dated official source guidance for the five scoped
+  Indian issuers. Capabilities reflect the selected adapter/configuration,
+  including FRED, without implying coverage or freshness. No facts were approved.
+- M05 retains per-company evidence inventory and strict review/certification
+  gates. All scoped companies still need reviewed normalized input coverage.
+- M06 canonical saved FCFF sensitivity, method regressions and real PostgreSQL
+  competing-version tests pass. Options are explicitly experimental; retained
+  legacy custom routes are deprecated and warn about their unchecked basis.
+- M07 recorded replay, purchase-date FX and immutable snapshot provenance remain.
+  Browser tests cover exact-hash imports, duplicates, conflicts, late navigation
+  and corrections making historical returns provisional.
+- M08 private-source context stays bounded and owner-scoped. Citation evaluation
+  v3 explicitly does not assess interpretation quality. Adversarial Mock Data and
+  browser checks separate exact quotation from human approval. Review metadata
+  refreshes after decisions; late requests cannot change another view.
+- M09 passes 1,502 offline backend tests, four separate PostgreSQL tests, 264
+  frontend tests, production builds and all 33 isolated browser workflows.
+  The 50-route desktop/mobile matrix retains screenshots and unchanged budgets.
+  These checks do not certify every control/state, AI quality or genuine inputs.
 
 ## Normal runtime and recovery
 
-Normal frontend/backend/Daily Brief worker remain on the validated M01 images,
-with PostgreSQL schema s1s1s1s1s1s1 and localhost ports. The source worker and
-pgAdmin stay stopped with restart=no. Do not infer a rollout from a successful build.
-Disposable browser databases use separate tmpfs projects and explicit test settings.
-Do not remove normal volumes, backups, rollback images or the immutable corpus.
+The normal app runs October 12 M03-M09 follow-up images, with schema
+s1s1s1s1s1s1, the original database volume and localhost-only ports.
+All 109 table fingerprints match across rollout. Authenticated browser checks
+cover 12 normal routes at desktop/mobile sizes, including official India guidance.
+Expected read-side capability catalog/SEC discovery changes are recorded separately.
+No normal fixture seed, portfolio rewrite, financial approval or AI scan was run.
 
-M03's current-backup preflight produced a verified 109-table dump/manifest but
-macOS rejected final atomic directory rename, including an escalated retry.
-The `.partial` backup remains explicitly incomplete; do not bypass that denial
-or call it a finalized backup. The earlier verified M01 backup is preserved.
-Normal rollout requires resolving that preflight and rechecking source/image/data
-identity. The exact paths and failure are in the M03 recovery checkpoint.
+Daily Brief scheduling is running. The source worker and pgAdmin remain disabled
+with restart=no. Queued external source jobs cannot execute while that worker is
+stopped. Backup and Compose service selection now target the actual stack.
+Redundant stopped registrations were removed after preserving rollback images,
+settings in current services, verified backups and all persistent volumes.
 
-The user has no off-device backup destination or genuine trade records yet.
-Continue independent work, retain the explicit open gates, and never manufacture
-records, review approvals, recovery credentials or user acceptance. Host security,
-reviewed source/valuation coverage, actual multi-currency portfolio proof, AI quality,
-full adverse-state/control coverage and recovery remain in the
-[single limitation ledger](agent_capabilities_and_limitations.md).
+No broad macOS permission change is needed for backup finalization. Older partial
+folders stay incomplete and retained. Folder backup/restore works, but same-disk
+copies are not encrypted off-device recovery. The user has no off-device
+destination or genuine trade records yet. Do not manufacture them or acceptance.
 
-## Next work
+## Remaining work
 
-Close the remaining stable task IDs in the tracker using dated evidence, beginning
-with M03. Reconcile source/CI evidence after every publication; preserve failed-run
-artifacts. Browser/release projects and heavy PDF/build tests must run sequentially
-on the small Docker VM. Commands belong in the [runbook](08-execution-runbook.md).
-[Knull](../Knull%28readme%29.md) and the [ownership manifest](workstreams/ownership.tsv)
-apply if the user explicitly requests a parallel batch; they do not launch one.
+Use stable task IDs in the tracker. The [single limitation ledger](agent_capabilities_and_limitations.md)
+owns host settings/credential rotation, off-device recovery, reviewed source/model
+inputs, actual portfolio history, AI quality and incomplete control/adverse-state
+coverage. Exact operator settings and remaining evidence are linked there.
+Continue independent work when an input is missing without marking its gate done.
+
+Commands belong in the [runbook](08-execution-runbook.md). Keep heavy PDF tests,
+builds and browser projects sequential on the small Docker VM. Preserve failed
+artifacts, normal volumes, backups, rollback images and the immutable corpus.
+[Knull](../Knull%28readme%29.md) applies only to an explicitly assigned parallel batch.
