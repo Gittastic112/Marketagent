@@ -102,6 +102,7 @@ class AIProvenance:
     source_ids: tuple[str, ...] = ()
     source_scope: str = "unspecified"
     external_data_classes: tuple[str, ...] = ()
+    valuation_basis: dict | None = None
 
 
 def persist_ai_output(
@@ -142,6 +143,7 @@ def persist_ai_output(
         limitations=limitations,
         confidence_label=confidence_label,
         human_review_status="pending",
+        evaluation_json={"valuation_basis": provenance.valuation_basis} if provenance.valuation_basis else None,
     )
     db.add(output)
     db.commit()

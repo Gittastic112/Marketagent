@@ -5626,6 +5626,216 @@
         "type": "object"
       }
     },
+    "financials": {
+      "FinancialExtractionCandidate": {
+        "properties": {
+          "company_id": {
+            "title": "Company Id",
+            "type": "integer"
+          },
+          "confidence_label": {
+            "title": "Confidence Label",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "extraction_method": {
+            "title": "Extraction Method",
+            "type": "string"
+          },
+          "extraction_warnings": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Extraction Warnings"
+          },
+          "fiscal_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Fiscal Year"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "metric_code": {
+            "title": "Metric Code",
+            "type": "string"
+          },
+          "period_type": {
+            "title": "Period Type",
+            "type": "string"
+          },
+          "raw_document_id": {
+            "title": "Raw Document Id",
+            "type": "integer"
+          },
+          "reported_label": {
+            "title": "Reported Label",
+            "type": "string"
+          },
+          "review_status": {
+            "title": "Review Status",
+            "type": "string"
+          },
+          "source_cell_reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Cell Reference"
+          },
+          "source_column_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Column Label"
+          },
+          "source_line_number": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Line Number"
+          },
+          "source_locator_json": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Locator Json"
+          },
+          "source_page": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Page"
+          },
+          "source_row_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Row Label"
+          },
+          "source_section": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Section"
+          },
+          "source_table_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Table Name"
+          },
+          "source_text": {
+            "title": "Source Text",
+            "type": "string"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Unit"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "company_id",
+          "raw_document_id",
+          "metric_code",
+          "reported_label",
+          "value",
+          "period_type",
+          "source_text",
+          "extraction_method",
+          "confidence_label",
+          "review_status",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "FinancialExtractionCandidateRead",
+        "type": "object"
+      }
+    },
     "market": {
       "CompanyMarketData": {
         "properties": {
@@ -6261,6 +6471,975 @@
           "expected_migration_head"
         ],
         "title": "RuntimeReadinessRead",
+        "type": "object"
+      }
+    },
+    "research": {
+      "DecisionLog": {
+        "$defs": {
+          "OutcomeReviewRead": {
+            "properties": {
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "information_unavailable_or_misinterpreted": {
+                "title": "Information Unavailable Or Misinterpreted",
+                "type": "boolean"
+              },
+              "sizing_wrong": {
+                "title": "Sizing Wrong",
+                "type": "boolean"
+              },
+              "thesis_wrong": {
+                "title": "Thesis Wrong",
+                "type": "boolean"
+              },
+              "timing_wrong": {
+                "title": "Timing Wrong",
+                "type": "boolean"
+              },
+              "valuation_wrong": {
+                "title": "Valuation Wrong",
+                "type": "boolean"
+              },
+              "what_happened": {
+                "title": "What Happened",
+                "type": "string"
+              },
+              "wrong_assumption": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Wrong Assumption"
+              }
+            },
+            "required": [
+              "id",
+              "what_happened",
+              "information_unavailable_or_misinterpreted",
+              "valuation_wrong",
+              "thesis_wrong",
+              "timing_wrong",
+              "sizing_wrong",
+              "created_at"
+            ],
+            "title": "OutcomeReviewRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "alternatives_considered": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Alternatives Considered"
+          },
+          "company_id": {
+            "title": "Company Id",
+            "type": "integer"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "decision_type": {
+            "title": "Decision Type",
+            "type": "string"
+          },
+          "emotional_state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Emotional State"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "outcome_review": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/OutcomeReviewRead"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "price_at_time": {
+            "anyOf": [
+              {
+                "minimum": 0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Price At Time"
+          },
+          "rationale": {
+            "title": "Rationale",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "company_id",
+          "decision_type",
+          "rationale",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "DecisionLogRead",
+        "type": "object"
+      },
+      "EvidenceLedgerItem": {
+        "properties": {
+          "company_id": {
+            "title": "Company Id",
+            "type": "integer"
+          },
+          "confidence": {
+            "default": "medium",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "date_discovered": {
+            "format": "date-time",
+            "title": "Date Discovered",
+            "type": "string"
+          },
+          "effect": {
+            "title": "Effect",
+            "type": "string"
+          },
+          "evidence_text": {
+            "title": "Evidence Text",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "source_link": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Source Link"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "company_id",
+          "evidence_text",
+          "effect",
+          "date_discovered",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "EvidenceLedgerItemRead",
+        "type": "object"
+      },
+      "OutcomeReview": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "information_unavailable_or_misinterpreted": {
+            "title": "Information Unavailable Or Misinterpreted",
+            "type": "boolean"
+          },
+          "sizing_wrong": {
+            "title": "Sizing Wrong",
+            "type": "boolean"
+          },
+          "thesis_wrong": {
+            "title": "Thesis Wrong",
+            "type": "boolean"
+          },
+          "timing_wrong": {
+            "title": "Timing Wrong",
+            "type": "boolean"
+          },
+          "valuation_wrong": {
+            "title": "Valuation Wrong",
+            "type": "boolean"
+          },
+          "what_happened": {
+            "title": "What Happened",
+            "type": "string"
+          },
+          "wrong_assumption": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Wrong Assumption"
+          }
+        },
+        "required": [
+          "id",
+          "what_happened",
+          "information_unavailable_or_misinterpreted",
+          "valuation_wrong",
+          "thesis_wrong",
+          "timing_wrong",
+          "sizing_wrong",
+          "created_at"
+        ],
+        "title": "OutcomeReviewRead",
+        "type": "object"
+      },
+      "ResearchMessage": {
+        "$defs": {
+          "ResearchAiOutputRead": {
+            "description": "Full review contract so research responses use the same approval gates as document AI.",
+            "properties": {
+              "citation_validation_status": {
+                "title": "Citation Validation Status",
+                "type": "string"
+              },
+              "citations_json": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Citations Json",
+                "type": "array"
+              },
+              "confidence_label": {
+                "title": "Confidence Label",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "evaluation_json": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evaluation Json"
+              },
+              "execution_status": {
+                "title": "Execution Status",
+                "type": "string"
+              },
+              "external_data_classes_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes Json",
+                "type": "array"
+              },
+              "failure_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Failure Code"
+              },
+              "human_review_status": {
+                "title": "Human Review Status",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_blocked": {
+                "title": "Is Blocked",
+                "type": "boolean"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "limitations": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Limitations"
+              },
+              "model_name": {
+                "title": "Model Name",
+                "type": "string"
+              },
+              "output_text": {
+                "title": "Output Text",
+                "type": "string"
+              },
+              "privacy_disclosure_version": {
+                "title": "Privacy Disclosure Version",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reference_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Id"
+              },
+              "reference_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Type"
+              },
+              "review_notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Review Notes"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewed At"
+              },
+              "reviewer_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewer Id"
+              },
+              "source_ids_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Source Ids Json",
+                "type": "array"
+              },
+              "source_scope": {
+                "title": "Source Scope",
+                "type": "string"
+              },
+              "transmission_scope": {
+                "title": "Transmission Scope",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "model_name",
+              "provider_name",
+              "is_mock",
+              "prompt_version",
+              "input_hash",
+              "source_scope",
+              "citation_validation_status",
+              "privacy_disclosure_version",
+              "transmission_scope",
+              "execution_status",
+              "is_blocked",
+              "output_text",
+              "confidence_label",
+              "human_review_status",
+              "created_at"
+            ],
+            "title": "ResearchAiOutputRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "ai_output": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/ResearchAiOutputRead"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "ai_output_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Ai Output Id"
+          },
+          "content": {
+            "title": "Content",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "role": {
+            "title": "Role",
+            "type": "string"
+          },
+          "session_id": {
+            "title": "Session Id",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "session_id",
+          "role",
+          "content",
+          "created_at"
+        ],
+        "title": "ResearchMessageRead",
+        "type": "object"
+      },
+      "ResearchSession": {
+        "$defs": {
+          "ResearchAiOutputRead": {
+            "description": "Full review contract so research responses use the same approval gates as document AI.",
+            "properties": {
+              "citation_validation_status": {
+                "title": "Citation Validation Status",
+                "type": "string"
+              },
+              "citations_json": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Citations Json",
+                "type": "array"
+              },
+              "confidence_label": {
+                "title": "Confidence Label",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "evaluation_json": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evaluation Json"
+              },
+              "execution_status": {
+                "title": "Execution Status",
+                "type": "string"
+              },
+              "external_data_classes_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes Json",
+                "type": "array"
+              },
+              "failure_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Failure Code"
+              },
+              "human_review_status": {
+                "title": "Human Review Status",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_blocked": {
+                "title": "Is Blocked",
+                "type": "boolean"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "limitations": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Limitations"
+              },
+              "model_name": {
+                "title": "Model Name",
+                "type": "string"
+              },
+              "output_text": {
+                "title": "Output Text",
+                "type": "string"
+              },
+              "privacy_disclosure_version": {
+                "title": "Privacy Disclosure Version",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reference_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Id"
+              },
+              "reference_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Type"
+              },
+              "review_notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Review Notes"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewed At"
+              },
+              "reviewer_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewer Id"
+              },
+              "source_ids_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Source Ids Json",
+                "type": "array"
+              },
+              "source_scope": {
+                "title": "Source Scope",
+                "type": "string"
+              },
+              "transmission_scope": {
+                "title": "Transmission Scope",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "model_name",
+              "provider_name",
+              "is_mock",
+              "prompt_version",
+              "input_hash",
+              "source_scope",
+              "citation_validation_status",
+              "privacy_disclosure_version",
+              "transmission_scope",
+              "execution_status",
+              "is_blocked",
+              "output_text",
+              "confidence_label",
+              "human_review_status",
+              "created_at"
+            ],
+            "title": "ResearchAiOutputRead",
+            "type": "object"
+          },
+          "ResearchMessageRead": {
+            "properties": {
+              "ai_output": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ResearchAiOutputRead"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "ai_output_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Ai Output Id"
+              },
+              "content": {
+                "title": "Content",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "role": {
+                "title": "Role",
+                "type": "string"
+              },
+              "session_id": {
+                "title": "Session Id",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "session_id",
+              "role",
+              "content",
+              "created_at"
+            ],
+            "title": "ResearchMessageRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "messages": {
+            "items": {
+              "$ref": "#/$defs/ResearchMessageRead"
+            },
+            "title": "Messages",
+            "type": "array"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ResearchSessionDetail",
+        "type": "object"
+      },
+      "VariantPerception": {
+        "properties": {
+          "company_id": {
+            "title": "Company Id",
+            "type": "integer"
+          },
+          "confidence": {
+            "default": "medium",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "evidence_against_my_belief": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Evidence Against My Belief"
+          },
+          "evidence_for_my_belief": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Evidence For My Belief"
+          },
+          "how_price_reflects_market_belief": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "How Price Reflects Market Belief"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "market_belief": {
+            "title": "Market Belief",
+            "type": "string"
+          },
+          "my_belief": {
+            "title": "My Belief",
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          },
+          "what_would_close_the_gap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "What Would Close The Gap"
+          }
+        },
+        "required": [
+          "company_id",
+          "market_belief",
+          "my_belief",
+          "id",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "VariantPerceptionRead",
         "type": "object"
       }
     }

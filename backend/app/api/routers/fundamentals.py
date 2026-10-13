@@ -23,6 +23,7 @@ from app.models.raw_document import RawDocument
 from app.models.source import Source
 from app.api.schemas import ApiResponse, FinancialExtractionCandidateRead, FinancialExtractionResultRead, FinancialPeriodRead
 from app.api.errors import PublicApiError
+from app.schemas.financials import FinancialCandidatePromotion
 from app.services.financial_extraction import (
     extract_financial_candidates_from_filing,
     list_extracted_financial_candidates,
@@ -291,7 +292,7 @@ def get_financial_candidate(
     response_model=ApiResponse[FinancialExtractionCandidateRead],
 )
 def review_financial_candidate(candidate_id: int, update: schemas.FinancialCandidateReviewUpdate, db: Session = Depends(get_db)):
-    return ApiResponse(data=update_candidate_review_status(db, candidate_id, update.review_status))
+    return ApiResponse(data=update_candidate_review_status(db, candidate_id, update.review_status, update.expected_updated_at))
 
 
 @router.patch(
@@ -299,18 +300,18 @@ def review_financial_candidate(candidate_id: int, update: schemas.FinancialCandi
     response_model=ApiResponse[FinancialExtractionCandidateRead],
 )
 def override_financial_candidate(candidate_id: int, override: schemas.FinancialCandidateOverride, db: Session = Depends(get_db)):
-    return ApiResponse(data=override_candidate_value(db, candidate_id, override.value, override.unit))
+    return ApiResponse(data=override_candidate_value(db, candidate_id, override.value, override.unit, override.expected_updated_at))
 
 
 @router.post(
     "/api/companies/{company_id}/financial-statements/mark-reviewed",
     response_model=ApiResponse[dict],
 )
-def promote_financial_candidates(company_id: int, db: Session = Depends(get_db)):
+def promote_financial_candidates(company_id: int, request: FinancialCandidatePromotion | None = None, db: Session = Depends(get_db)):
     company = db.get(Company, company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    promoted_count = promote_reviewed_candidates(db, company_id)
+    promoted_count = promote_reviewed_candidates(db, company_id, request.expected_candidates if request else None)
     return ApiResponse(data={"status": "success", "promoted_count": promoted_count})
 
 

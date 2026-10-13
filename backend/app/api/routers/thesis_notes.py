@@ -59,8 +59,11 @@ def create_thesis_note(payload: ThesisNoteCreate, db: Session = Depends(get_db),
 
 
 @router.get("/thesis-notes", response_model=ApiResponse[list[ThesisNoteRead]])
-def list_thesis_notes(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> list[ThesisNote]:
-    return ApiResponse(data=list(db.scalars(select(ThesisNote).where(ThesisNote.user_id == current_user["id"]).order_by(ThesisNote.id))))
+def list_thesis_notes(company_id: int | None = None, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> list[ThesisNote]:
+    query = select(ThesisNote).where(ThesisNote.user_id == current_user["id"])
+    if company_id is not None:
+        query = query.where(ThesisNote.company_id == company_id)
+    return ApiResponse(data=list(db.scalars(query.order_by(ThesisNote.id))))
 
 
 @router.get("/thesis-notes/{thesis_note_id}", response_model=ApiResponse[ThesisNoteRead])

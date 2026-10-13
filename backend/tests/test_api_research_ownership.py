@@ -30,6 +30,18 @@ def create_company(client: TestClient) -> dict:
     )
 
 
+def test_company_thesis_filter_keeps_company_and_owner_scope(client: TestClient) -> None:
+    company = create_company(client)
+    other = response_data(client.post("/companies", json={"ticker": "OTHER", "name": "Mock Data other company"}))
+    for identity in [company["id"], other["id"]]:
+        response_data(client.post("/thesis-notes", json={"company_id": identity,
+            "title": "Mock Data scoped thesis", "thesis_text": "Keep company and owner scope"}))
+    notes = response_data(client.get("/thesis-notes", params={"company_id": company["id"]}))
+    assert len(notes) == 1 and notes[0]["company_id"] == company["id"]
+    use_user("other-user")
+    assert response_data(client.get("/thesis-notes", params={"company_id": company["id"]})) == []
+
+
 def test_thesis_child_routes_enforce_parent_ownership(client: TestClient) -> None:
     company = create_company(client)
     event = response_data(

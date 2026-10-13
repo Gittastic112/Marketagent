@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -49,6 +49,8 @@ async def fetch_latest_market_price(
 def list_market_prices(
     ticker: str | None = None,
     company_id: int | None = None,
+    limit: int | None = Query(default=None, ge=1, le=200),
+    offset: int = Query(default=0, ge=0, le=100000),
     db: Session = Depends(get_db),
 ) -> list[MarketPrice]:
     query = select(MarketPrice).order_by(MarketPrice.as_of_date.desc(), MarketPrice.id.desc())
@@ -56,6 +58,12 @@ def list_market_prices(
         query = query.where(MarketPrice.ticker == ticker.upper())
     if company_id:
         query = query.where(MarketPrice.company_id == company_id)
+    # Omitted limit preserves full-history clients; paged UI reads stay bounded
+    # in SQL, before ORM rows and their corresponding edit forms are created.
+    if limit is not None:
+        query = query.limit(limit)
+    if offset:
+        query = query.offset(offset)
     return ApiResponse(data=list(db.scalars(query)))
 
 

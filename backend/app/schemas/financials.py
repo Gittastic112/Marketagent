@@ -77,11 +77,22 @@ CandidateReviewStatus = Literal["needs_review", "reviewed", "rejected", "overrid
 
 class FinancialCandidateReviewUpdate(BaseModel):
     review_status: CandidateReviewStatus
+    expected_updated_at: datetime | None = None
 
 
 class FinancialCandidateOverride(BaseModel):
-    value: float
+    value: float = Field(allow_inf_nan=False)
     unit: str | None = None
+    expected_updated_at: datetime | None = None
+
+
+class FinancialCandidateVersion(BaseModel):
+    id: int = Field(gt=0)
+    updated_at: datetime
+
+
+class FinancialCandidatePromotion(BaseModel):
+    expected_candidates: list[FinancialCandidateVersion] | None = Field(default=None, max_length=5000)
 
 
 class FinancialExtractionCandidateRead(BaseModel):

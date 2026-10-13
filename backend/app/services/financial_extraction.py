@@ -1,6 +1,6 @@
 import re
 from dataclasses import dataclass
-from datetime import date
+from datetime import UTC, date, datetime
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -205,10 +205,25 @@ def list_extracted_financial_candidates(db: Session, company_id: int) -> list[Fi
     )
 
 
-def update_candidate_review_status(db: Session, candidate_id: int, status: str) -> FinancialExtractionCandidate:
-    candidate = db.get(FinancialExtractionCandidate, candidate_id)
+def _review_candidate(db: Session, candidate_id: int, expected_updated_at: datetime | None) -> FinancialExtractionCandidate:
+    candidate = db.scalar(select(FinancialExtractionCandidate).where(FinancialExtractionCandidate.id == candidate_id)
+                          .with_for_update().execution_options(populate_existing=True))
     if not candidate:
         raise HTTPException(status_code=404, detail="Candidate not found")
+    if candidate.review_status == "promoted":
+        raise HTTPException(status_code=409, detail="Candidate was already promoted. Reload candidates before continuing.")
+    if expected_updated_at is not None and _utc(candidate.updated_at) != _utc(expected_updated_at):
+        raise HTTPException(status_code=409, detail="Candidate changed since it was loaded. Reload candidates and review the current evidence before saving.")
+    return candidate
+
+
+def _utc(value: datetime) -> datetime:
+    return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
+
+
+def update_candidate_review_status(db: Session, candidate_id: int, status: str,
+                                  expected_updated_at: datetime | None = None) -> FinancialExtractionCandidate:
+    candidate = _review_candidate(db, candidate_id, expected_updated_at)
     if status == "reviewed" and not (candidate.unit and candidate.unit.strip()):
         raise HTTPException(
             status_code=422,
@@ -220,10 +235,9 @@ def update_candidate_review_status(db: Session, candidate_id: int, status: str) 
     return candidate
 
 
-def override_candidate_value(db: Session, candidate_id: int, value: float, unit: str | None) -> FinancialExtractionCandidate:
-    candidate = db.get(FinancialExtractionCandidate, candidate_id)
-    if not candidate:
-        raise HTTPException(status_code=404, detail="Candidate not found")
+def override_candidate_value(db: Session, candidate_id: int, value: float, unit: str | None,
+                             expected_updated_at: datetime | None = None) -> FinancialExtractionCandidate:
+    candidate = _review_candidate(db, candidate_id, expected_updated_at)
     effective_unit = unit.strip() if unit and unit.strip() else candidate.unit
     if not effective_unit:
         raise HTTPException(
@@ -238,7 +252,7 @@ def override_candidate_value(db: Session, candidate_id: int, value: float, unit:
     return candidate
 
 
-def promote_reviewed_candidates(db: Session, company_id: int) -> int:
+def promote_reviewed_candidates(db: Session, company_id: int, expected_candidates: list | None = None) -> int:
     company = db.get(Company, company_id)
     if company is None:
         raise HTTPException(status_code=404, detail="Company not found")
@@ -247,7 +261,15 @@ def promote_reviewed_candidates(db: Session, company_id: int) -> int:
         select(FinancialExtractionCandidate)
         .where(FinancialExtractionCandidate.company_id == company_id)
         .where(FinancialExtractionCandidate.review_status.in_(["reviewed", "overridden"]))
+        .order_by(FinancialExtractionCandidate.id)
+        .with_for_update().execution_options(populate_existing=True)
     ).all()
+
+    if expected_candidates is not None:
+        expected = {item.id: _utc(item.updated_at) for item in expected_candidates}
+        actual = {item.id: _utc(item.updated_at) for item in candidates}
+        if len(expected) != len(expected_candidates) or actual != expected:
+            raise HTTPException(status_code=409, detail="Reviewed candidates changed. Reload candidates and inspect the current values before promotion. No financial values were written.")
 
     if not candidates:
         return 0

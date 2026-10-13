@@ -21,6 +21,60 @@ from app.services.market_data.base import MarketQuoteResult, MarketHistoryResult
 from app.services import valuation_source_refresh as refresh
 
 
+def test_competing_financial_candidate_reviews_reject_the_outdated_writer(pg_engine):
+    from fastapi import HTTPException
+    from app.models import FinancialExtractionCandidate, Source
+    from app.services.financial_extraction import override_candidate_value
+    identity = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        source = Source(name="Mock Data concurrent financial review", source_type="manual", active=True)
+        db.add(source); db.flush()
+        document = RawDocument(company_id=identity, source_id=source.id, document_type="annual_report", title="Mock Data candidate concurrency",
+                               raw_text="Revenue 100", content_hash="mock-candidate-concurrency")
+        db.add(document); db.flush()
+        candidate = FinancialExtractionCandidate(company_id=identity, raw_document_id=document.id, metric_code="revenue",
+            reported_label="Revenue", value=100, unit="USD million", fiscal_year=2025, source_text="Revenue 100")
+        db.add(candidate); db.commit()
+        candidate_id, inspected_at = candidate.id, candidate.updated_at
+    start = Barrier(2)
+    def write(value):
+        with Session(pg_engine) as db:
+            start.wait(timeout=10)
+            try:
+                override_candidate_value(db, candidate_id, value, "USD million", inspected_at)
+                return 200, value
+            except HTTPException as error:
+                return error.status_code, value
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(write, [200, 300]))
+    assert sorted(status for status, _ in results) == [200, 409]
+    with Session(pg_engine) as db:
+        assert db.get(FinancialExtractionCandidate, candidate_id).value == next(value for status, value in results if status == 200)
+
+
+def test_due_brief_cycle_on_postgres_records_one_audited_snapshot(pg_engine):
+    from datetime import time, timedelta
+    from app.models import DailyBrief, DailyBriefSchedule, User
+    from app.services.daily_brief_schedule import configure_daily_brief_schedule, run_due_daily_brief_schedules
+    now = datetime.now(UTC)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-due-cycle", email="mock-due@example.invalid", name="Mock Data scheduler"))
+        db.commit()
+        schedule = configure_daily_brief_schedule(db, user_id="mock-due-cycle", enabled=True,
+            timezone_name="UTC", local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+        schedule.next_run_at = now - timedelta(minutes=1)
+        db.commit()
+        first = run_due_daily_brief_schedules(db, user_id="mock-due-cycle", now=now)
+        second = run_due_daily_brief_schedules(db, user_id="mock-due-cycle", now=now)
+        assert first["briefs_created"] == 1 and second["briefs_created"] == 0
+        assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
+        stored = db.scalar(select(DailyBriefSchedule))
+        assert stored.last_status == "success" and stored.next_run_at > now
+        run = db.scalar(select(ProcessingRun).where(ProcessingRun.run_type == "daily_brief_schedule"))
+        assert run.status == "success" and run.finished_at is not None
+        assert run.metadata_json["generation_mode"] == "deterministic_no_external_ai"
+
+
 @pytest.fixture
 def pg_engine():
     url = os.getenv("INGESTION_TEST_DATABASE_URL")

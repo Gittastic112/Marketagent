@@ -2,13 +2,14 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.helpers import create_record, delete_record, get_or_404, update_record
+from app.api.helpers import create_record, delete_record, get_or_404, require_reference, update_record
 from app.api.schemas import (
     ApiResponse,
     VariantPerceptionCreate, VariantPerceptionRead, VariantPerceptionUpdate
 )
 from app.db.session import get_db
 from app.models.variant_perception import VariantPerception
+from app.models.company import Company
 
 
 router = APIRouter()
@@ -16,6 +17,7 @@ router = APIRouter()
 
 @router.post("/variant-perceptions", response_model=ApiResponse[VariantPerceptionRead], status_code=status.HTTP_201_CREATED)
 def create_variant_perception(payload: VariantPerceptionCreate, db: Session = Depends(get_db)) -> VariantPerception:
+    require_reference(db, Company, payload.company_id, "Company")
     return ApiResponse(data=create_record(db, VariantPerception, payload))
 
 

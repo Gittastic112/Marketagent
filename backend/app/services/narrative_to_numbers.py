@@ -4,10 +4,11 @@ from typing import Any
 from sqlalchemy.orm import Session
 
 from app.models.ai import AiOutput
+from app.schemas.valuation_ai import NarrativeEstimates
 from app.services.ai_contract import AIProvenance, execute_ai_generation
 
 
-PROMPT_VERSION = "v1.1.0-narrative-to-numbers-contract"
+PROMPT_VERSION = "v1.2.0-narrative-to-numbers-contract"
 
 NARRATIVE_SCHEMA = {
     "type": "OBJECT",
@@ -53,6 +54,7 @@ class NarrativeToNumbersAgent:
         assumption_set_id: int,
         narrative_text: str,
         current_assumptions: dict[str, Any],
+        saved_basis: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         prompt = f"""
 Translate the user's qualitative company narrative into reviewable DCF estimates.
@@ -65,11 +67,16 @@ User narrative:
 
 Current assumptions:
 {json.dumps(current_assumptions, indent=2)}
+
+Saved basis (unsaved numerical edits are excluded):
+{json.dumps(saved_basis, indent=2)}
 """
 
         def generate(provider):
             result = provider.generate_structured_response(prompt, NARRATIVE_SCHEMA)
-            json.loads(result.output_text)
+            # Fail inside the generation callback so malformed provider content
+            # receives the existing sanitized failed audit, never a success row.
+            NarrativeEstimates.model_validate_json(result.output_text)
             return result
 
         self.last_ai_output = execute_ai_generation(
@@ -87,6 +94,7 @@ Current assumptions:
                 ),
                 source_scope="user_narrative_and_current_assumptions",
                 external_data_classes=("user_narrative", "valuation_assumptions"),
+                valuation_basis=saved_basis,
             ),
             generate=generate,
         )

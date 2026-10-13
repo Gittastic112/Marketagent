@@ -367,10 +367,60 @@ def _ensure_company_currency_fixture(db) -> None:
                 ("EPS (Basic)", 3.5, "INR/share"), ("Total Assets", 600, None)]])
 
 
+def _ensure_peer_receipt_recovery_fixtures(db) -> None:
+    from sqlalchemy import select
+    from app.models import PeerValuationSet
+    from app.schemas.peer_valuation import PeerValuationSetCreate, PeerValuationSetReview
+    from app.services.peer_valuation_sets import (
+        PeerValuationSetService, calculate_peer_diagnostics,
+        peer_set_members, peer_set_response, peer_set_target_context,
+    )
+
+    # Existing seed module supplies date, timedelta, Company and E2E_USER_ID.
+    if db.get_bind().url.database != "marketintel_e2e":
+        raise RuntimeError("Receipt recovery fixtures require the isolated marketintel_e2e database")
+    company = db.scalar(select(Company).where(Company.ticker == "E2EUSD"))
+    if company is None or "Mock Data" not in company.name:
+        raise RuntimeError("Receipt recovery requires the isolated Mock Data company fixture")
+    for state in ("missing", "stale"):
+        name = f"Mock Data {state} receipt recovery"
+        existing = db.scalar(select(PeerValuationSet).where(
+            PeerValuationSet.user_id == E2E_USER_ID, PeerValuationSet.name == name))
+        if existing is not None:
+            continue  # Never overwrite completed review evidence during a repeated seed.
+        payload = PeerValuationSetCreate.model_validate({
+            "companyId": company.id, "name": name,
+            "notes": "Mock Data: synthetic disposable browser fixture, not genuine reviewed company evidence.",
+            "members": [{"identifier": f"RECOVERY{state.upper()}{index}", "included": True,
+                "multiples": {"pe": 10 + index}, "sourceName": "Synthetic browser test source",
+                "sourceUrl": f"https://example.invalid/receipt-fixture/{state}/{index}",
+                "sourceAsOf": date.today().isoformat(), "currency": "USD", "claimType": "Source Summary",
+                "notes": "Mock Data only; no external source was fetched."} for index in (1, 2, 3)],
+        })
+        created = PeerValuationSetService.create_set(db, user_id=E2E_USER_ID, payload=payload)
+        view = peer_set_response(created)
+        reviewed = PeerValuationSetService.review_set(db, peer_set_id=created.id, user_id=E2E_USER_ID,
+            payload=PeerValuationSetReview(acknowledged=True,expectedVersion=created.version,
+                expectedDiagnosticsSha256=view["diagnostics"]["acknowledgementSha256"],
+                acknowledgedWarningCodes=view["diagnostics"]["warningCodes"]))
+        if state == "missing":
+            reviewed.review_diagnostics_sha256 = None
+            reviewed.review_warning_codes_json = None
+            reviewed.review_diagnostics_as_of = None
+        else:
+            past = calculate_peer_diagnostics(peer_set_members(reviewed),
+                target_context=peer_set_target_context(reviewed),as_of=date.today()-timedelta(days=1))
+            reviewed.review_diagnostics_sha256 = past["acknowledgementSha256"]
+            reviewed.review_warning_codes_json = past["warningCodes"]
+            reviewed.review_diagnostics_as_of = date.fromisoformat(past["asOf"])
+        db.commit()
+
+
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
         _ensure_portfolio_fixture(db)
+        _ensure_peer_receipt_recovery_fixtures(db)
         _ensure_private_comparison_fixture(db)
         _ensure_ai_review_fixture(db)
         _ensure_company_currency_fixture(db)

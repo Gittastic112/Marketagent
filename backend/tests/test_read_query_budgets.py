@@ -40,7 +40,7 @@ def read_graph(db_session):
     ("/portfolios/{portfolio}/risk-return-comparison", 20),
     ("/api/providers/health", 8),
 ])
-def test_flat_reads_do_not_expand_unrelated_graphs(client, db_session, read_graph, path, budget):
+def test_flat_reads_do_not_expand_unrelated_graphs(client, db_session, read_graph, path, budget, record_property):
     company, portfolio = read_graph
     statements = []
 
@@ -54,6 +54,9 @@ def test_flat_reads_do_not_expand_unrelated_graphs(client, db_session, read_grap
     finally:
         event.remove(engine, "before_cursor_execute", record)
     assert response.status_code == 200, response.text
+    record_property("path", path)
+    record_property("statement_count", len(statements))
+    record_property("statement_budget", budget)
     assert len(statements) <= budget, f"{len(statements)} queries exceed {budget}"
     if path == "/companies":
         assert response.json()["data"][0]["exposure_tags"][0]["name"] == "Technology"
@@ -70,7 +73,7 @@ def test_relationships_remain_available_on_explicit_access(db_session, read_grap
     assert portfolio.holdings[0].company.id == company_id
 
 
-def test_valuation_loads_only_the_latest_price_not_the_entire_history(client, db_session, read_graph):
+def test_valuation_loads_only_the_latest_price_not_the_entire_history(client, db_session, read_graph, record_property):
     company, portfolio = read_graph
     db_session.add_all([MarketPrice(company_id=company, ticker="BUDGET", price=10,
                                    as_of_date=date.today() - timedelta(days=offset))
@@ -88,5 +91,7 @@ def test_valuation_loads_only_the_latest_price_not_the_entire_history(client, db
     finally:
         event.remove(MarketPrice, "load", record)
     assert response.status_code == 200
+    record_property("stored_price_rows", 101)
+    record_property("loaded_price_rows", len(loaded))
     assert response.json()["data"]["holdings"][0]["market_price"] == 12
     assert len(loaded) == 1

@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.schemas import brief, companies, evidence, market, operations
+from app.schemas import brief, companies, evidence, financials, market, operations, research
 from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 CONTRACTS = {
@@ -21,6 +21,10 @@ CONTRACTS = {
     },
     "operations": {"ProcessingRun": operations.ProcessingRunRead, "RuntimeReadiness": operations.RuntimeReadinessRead},
     "market": {"MarketPrice": market.MarketPriceRead, "CompanyMarketData": market.CompanyMarketDataRead},
+    "research": {"ResearchSession": research.ResearchSessionDetail, "ResearchMessage": research.ResearchMessageRead,
+                 "DecisionLog": research.DecisionLogRead, "OutcomeReview": research.OutcomeReviewRead,
+                 "EvidenceLedgerItem": research.EvidenceLedgerItemRead, "VariantPerception": research.VariantPerceptionRead},
+    "financials": {"FinancialExtractionCandidate": financials.FinancialExtractionCandidateRead},
 }
 MANIFEST = Path(__file__).resolve().parents[1] / "data/contracts/frontend-backend.json"
 

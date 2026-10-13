@@ -2,13 +2,14 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.api.helpers import create_record, delete_record, get_or_404, update_record
+from app.api.helpers import create_record, delete_record, get_or_404, require_reference, update_record
 from app.api.schemas import (
     ApiResponse,
     EvidenceLedgerItemCreate, EvidenceLedgerItemRead, EvidenceLedgerItemUpdate
 )
 from app.db.session import get_db
 from app.models.evidence import EvidenceLedgerItem
+from app.models.company import Company
 
 
 router = APIRouter()
@@ -16,6 +17,7 @@ router = APIRouter()
 
 @router.post("/evidence", response_model=ApiResponse[EvidenceLedgerItemRead], status_code=status.HTTP_201_CREATED)
 def create_evidence(payload: EvidenceLedgerItemCreate, db: Session = Depends(get_db)) -> EvidenceLedgerItem:
+    require_reference(db, Company, payload.company_id, "Company")
     return ApiResponse(data=create_record(db, EvidenceLedgerItem, payload))
 
 

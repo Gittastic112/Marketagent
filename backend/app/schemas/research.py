@@ -20,6 +20,24 @@ from typing import (
 )
 
 
+class SummarizeRequest(BaseModel):
+    document_id: int = Field(gt=0)
+    user_task: str = Field(min_length=1, max_length=20000)
+    privacy_disclosure_version: str | None = None
+
+
+class QuestionRequest(BaseModel):
+    document_id: int = Field(gt=0)
+    user_question: str = Field(min_length=1, max_length=20000)
+    privacy_disclosure_version: str | None = None
+
+
+class MapEventRequest(BaseModel):
+    event_text: str = Field(min_length=1, max_length=20000)
+    event_id: int | None = Field(default=None, gt=0)
+    privacy_disclosure_version: str | None = None
+
+
 class ThesisNoteCreate(BaseModel):
     company_id: int
     title: str
@@ -247,6 +265,7 @@ class ResearchSessionDetail(ResearchSessionRead):
 
 
 class VariantPerceptionCreate(BaseModel):
+    company_id: int = Field(gt=0)
     market_belief: str
     my_belief: str
     evidence_for_my_belief: str | None = None
@@ -279,7 +298,7 @@ class DecisionLogCreate(BaseModel):
     company_id: int
     decision_type: str
     rationale: str
-    price_at_time: float | None = None
+    price_at_time: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     emotional_state: str | None = None
     alternatives_considered: str | None = None
 
@@ -287,7 +306,7 @@ class DecisionLogCreate(BaseModel):
 class DecisionLogUpdate(BaseModel):
     decision_type: str | None = None
     rationale: str | None = None
-    price_at_time: float | None = None
+    price_at_time: float | None = Field(default=None, ge=0, allow_inf_nan=False)
     emotional_state: str | None = None
     alternatives_considered: str | None = None
 
@@ -317,10 +336,12 @@ class DecisionLogRead(DecisionLogCreate):
 
 
 class EvidenceLedgerItemCreate(BaseModel):
+    company_id: int = Field(gt=0)
     evidence_text: str
     effect: str
     source_link: str | None = None
     confidence: str = "medium"
+    date_discovered: datetime | None = None
 
 
 class EvidenceLedgerItemUpdate(BaseModel):

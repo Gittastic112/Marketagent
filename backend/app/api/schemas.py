@@ -182,6 +182,9 @@ from app.schemas.evidence import (
 )
 
 from app.schemas.research import (
+    SummarizeRequest,
+    QuestionRequest,
+    MapEventRequest,
     ThesisNoteCreate,
     ThesisNoteUpdate,
     ThesisAssumptionCreate,
@@ -281,6 +284,8 @@ from app.schemas.financials import (
     CandidateReviewStatus,
     FinancialCandidateReviewUpdate,
     FinancialCandidateOverride,
+    FinancialCandidateVersion,
+    FinancialCandidatePromotion,
     FinancialExtractionCandidateRead,
     FinancialExtractionResultRead,
     PdfFinancialExtractionResultRead,
