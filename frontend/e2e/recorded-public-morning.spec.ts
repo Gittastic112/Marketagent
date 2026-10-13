@@ -55,7 +55,12 @@ test("recorded official evidence remains dated and linked through a morning revi
   await briefPanel.getByRole("link",{name:/Recorded public evidence: Apple FY2025 Q4 revenue/}).click();
   const eventPath = `/events/${event.id}/evidence-resolution`;
   await expect(page).toHaveURL(eventPath);
-  await expect(page.getByText(quote,{exact:true})).toBeVisible();
+  // A streamed route can temporarily repeat text outside the visible page.
+  // Wait for the destination's source panel, not any matching quote in the body.
+  const sourceContext = page.getByRole("main").locator("section.panel").filter({
+    has:page.getByRole("heading",{name:"Source Context",exact:true}),
+  });
+  await expect(sourceContext.getByText(quote,{exact:true})).toBeVisible();
   const stored = await backendData<{url:string;published_at:string;content_hash:string;raw_text:string;raw_payload_json:Record<string,unknown>}>(page,`/raw-documents/${document.id}`);
   expect(stored.url).toBe(sourceUrl);
   expect(stored.published_at.slice(0,10)).toBe(sourceDate);

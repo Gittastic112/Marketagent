@@ -129,6 +129,24 @@ layout-region extraction, unit/number parsing and explicit accounting-scope
 handling, followed by real-source previews and the existing review/browser gates.
 No source-code fix or runtime rollout is claimed in this preparation checkpoint.
 
+## Publication browser follow-up
+
+The initial publication `d7f1be70e0bb55782cc2dfb6b76d28c224165d04` passed all
+five pull-request checks. Its separate branch run passed four checks but failed
+one of 64 browser workflows: the recorded-public morning review used a page-wide
+exact-text locator, which matched the quote twice during streamed navigation.
+The retained failure shows one match outside the visible main content.
+
+`frontend/e2e/recorded-public-morning.spec.ts` now waits for the exact quote inside
+the destination page's Source Context panel under its main landmark. It keeps
+the same evidence assertion without choosing an arbitrary first match or
+extending the timeout. The affected real-browser workflow passes against a
+fresh disposable PostgreSQL/backend/frontend stack. No application behavior,
+normal runtime image or financial data changed. Temporary test containers and
+their non-persistent database were removed after verification. Exact-head
+GitHub results are recorded on draft PR #2 and in the local packet's publication
+receipt; the original failure remains in its diagnostics.
+
 ## Validation and state boundary
 
 - All 36 retained original hashes verify. Reference IDs and preferred
