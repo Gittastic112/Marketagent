@@ -6,5 +6,6 @@ export const AI_DISCLOSURES = {
   narrativeToNumbers: "An external AI provider may receive your company narrative and current valuation assumptions.",
   valuationMemo: "An external AI provider may receive company metadata, valuation assumptions, and calculated DCF outputs.",
   narrativeExtraction: "An external AI provider may receive event titles and descriptions.",
+  eventMapping: "An external AI provider may receive this event title and description. No portfolio, thesis, or valuation inputs are included.",
   thesisImpact: "An external AI provider may receive the event text and your private active thesis assumptions. Results remain proposals until you apply them.",
 } as const;
