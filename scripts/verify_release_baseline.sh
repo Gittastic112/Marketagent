@@ -20,7 +20,7 @@ export E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-18000}"
 python3 -m unittest scripts.test_check_secrets
 python3 -m unittest scripts.test_check_docs
 python3 -m unittest scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata
-python3 -m unittest scripts.test_dependency_locks scripts.test_container_scan
+python3 -m unittest scripts.test_dependency_locks scripts.test_container_scan scripts.test_legacy_financial_evaluator
 python3 "$ROOT_DIR/scripts/check_dependency_locks.py"
 python3 "$ROOT_DIR/scripts/check_docs.py"
 python3 "$ROOT_DIR/scripts/check_secrets.py" "$ROOT_DIR"

@@ -399,6 +399,14 @@ remain review-required and do not alter saved models.
 
 ### Other tools
 
+- The old `scripts/evaluate_financial_extraction.py` command is unavailable and
+  exits nonzero. It never compared actual extraction with independent answers;
+  its historical percentage output is not validation evidence. Use **Evaluation
+  Lab** at `/evaluations` with a complete, separately reviewed reference and the
+  exact stored text hash. This evaluates local text only, not PDF/XBRL parsing,
+  financial approval or AI interpretation. The compatibility notice and its
+  regression run in repository/release checks; older built images can retain
+  the retired script until rebuilt.
 - backend/scripts/check_ai_provider.py is an explicit external Gemini check, not
   a deterministic test. It sends only the fixed prompt `Reply exactly OK.`, uses
   GEMINI_API_KEY/GEMINI_MODEL from the backend environment and persists a sanitized
@@ -468,6 +476,24 @@ remain review-required and do not alter saved models.
   every table/PDF hash. A same-disk folder or cloud sync alone is not that proof.
   No transfer, credential rotation, pruning or scheduled job is performed by default.
 - Root legacy scripts are not maintained entry points unless explicitly verified.
+
+### Backup maintenance cadence
+
+For the local release, make a verified backup after a day of meaningful edits
+and immediately before migrations, credential rotation or upgrades. Once an
+encrypted off-device destination exists, retain a weekly copy there and rehearse
+retrieval/restore monthly and after recovery-tool changes. Keep the latest seven
+verified local copies and four weekly off-device copies as the initial retention
+target, adjusting for measured storage and recovery needs. Until the off-device
+restore has passed and exact deletion targets have been approved, retain existing
+copies and leave automatic pruning off. Never delete the only verified copy.
+
+This is an operating procedure, not a configured schedule. No recurring task,
+transfer, secret export, encryption-key storage or deletion is authorized merely
+by this paragraph. Use a separate explicit scheduling request for automation.
+The [operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
+records the missing destination and privately retained recovery method; same-disk
+folders cannot complete M03-07.
 
 ## Completion and documentation
 

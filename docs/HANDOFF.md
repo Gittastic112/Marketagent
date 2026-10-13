@@ -69,6 +69,14 @@ for exact operator settings, recovery destination, reviewed source/model inputs,
 genuine activity/dated coverage and interpretation-quality evidence. Continue safe
 independent work when possible without marking missing-input gates complete.
 
+The ledger's [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
+owns the October 13 input sequence. A local read-only review packet holds target-year
+financial candidates and proposed Mock Data AI labels; none is independently
+approved. Public-source gathering and accounting comparison remain agent work.
+The repository's old self-scoring extraction CLI now fails unavailable; its
+regression and repository checks pass. This host-tooling follow-up does not change
+the installed application images; inherited copies of that retired CLI are not evidence.
+
 Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds,
 PDF tests and browser projects sequential on the small Docker VM. Browser tests
 use baked runtime source and local-container artifacts to reduce Mac folder I/O;

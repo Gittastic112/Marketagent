@@ -105,17 +105,44 @@ incomplete and preserved. Local folders and Mock Data tests cannot prove encrypt
 off-device recovery, actual portfolio history, financial review or user acceptance.
 The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md) records the evidence.
 
-- Initial markets, coverage size and USD base are chosen above. Verify security
-  identity, issuer reporting currency and any later coverage changes.
-- Supply or approve source documents and provider keys.
-- Review extracted financial candidates and reconciliation results.
-- Confirm weighted industry mappings.
-- Review valuation model choice, assumptions, and source age.
-- Supply and review target-company comparability facts when target-relative peer
-  diagnostics are required.
-- Interpret thesis impact and approve AI-assisted output.
-- Enter or validate prices when provider data is missing or stale.
-- Review source-specific personal-use restrictions before enabling providers.
+### Ordered operator handoff
+
+October 13: the user requested exact remaining inputs and continued independent
+work. The existing US/India scope and USD reporting decision remain in force;
+no new subscriptions, broker login or secret values in chat are required.
+
+| Order / open checks | What the operator supplies or does | What the agent handles |
+|---|---|---|
+| 1. M03-04: Mac protection | System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Recheck observable status and localhost bindings. Do not infer encryption from hardware or change unrelated host settings |
+| 2. M03-07 and recovery part of M03-04 | Identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Copy a complete verified backup, retrieve it and restore to a disposable database; compare every table and both PDF stores. Record destination, restore result and the runbook maintenance cadence |
+| 3. M03-04: local credentials | Enter and retain unique database/admin credentials privately during the coordinated rotation. Supply no values in chat. Keep pgAdmin disabled until configured | Prepare the configuration and persisted-role change together, stop/resume the correct clients and verify authentication/recovery. Current Compose embeds development defaults, so editing only the protected environment file cannot complete this task; changing only one side can break access |
+| 4. M05-02/03/04/05: financial review | Review source-backed batches, approve/correct values and accounting scope, confirm weighted industry mappings and model suitability. An appropriately qualified human may perform this review. Supply private or otherwise inaccessible reports only if needed | Gather accessible official reports, prepare independent reference comparisons and reconciliation exceptions, then apply only approved versioned candidates. Suggested first cases: AAPL, MSFT, RELIANCE and HDFCBANK, followed by the remaining scoped securities; no company is silently removed |
+| 5. M06-04/07: valuation basis | Approve growth, margins, reinvestment, discount/terminal assumptions, equity/share bridges and any peer-selection/comparability judgments after seeing their basis | Prepare explanations, source/date/units and unsupported-input warnings; verify saved calculation, sensitivity, reverse and export against approved inputs. Do not turn a missing input into zero or an unreviewed prior into a company fact |
+| 6. M07-05/06: real activity | Provide a broker export or manually verified ledger with opening positions/cash, dated trades, deposits/withdrawals, dividends, fees/taxes, corporate actions and currencies, plus an ending statement for reconciliation. Redact account numbers; no broker passwords. Choose history start and comparison benchmark | Map the records, preview imports, flag gaps/duplicates, source dated prices/FX, reconcile to the statement, and run the genuine-input browser/risk checks. If genuine records or foreign exposure do not exist, keep that original gate open; a narrower research-only/USD-only release requires an explicit scope change, not invented trades |
+| 7. M08-04: interpretation review | Review proposed labels for unsupported claims, wrong numbers/periods, source instructions and representative actual AI outputs, recording corrections and reviewer/date | Prepare the bounded evaluation batch, keep citation checks separate from interpretation judgments, record reviewed labels and rerun the applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
+
+M04 and M09 have no additional operator-input request: their technical checks
+already pass, and their acceptance depends on the preceding gates. Five actual
+business days of daily use and final release acceptance belong to M10, outside
+the current request. A gate closes on recorded evidence, not a general "looks good."
+
+Independent preparation is retained locally in
+`output/milestones/operator-review-20261013/review-packet.html` and its hashed JSON
+manifest. The refreshed inventory still has 667 unreviewed candidates and no
+normalized histories or confirmed industry mappings for the 11 securities.
+The packet selects 402 stored SEC annual candidates for target years and includes
+seven **Mock Data** AI cases with proposed, unapproved labels. Candidate rows are
+not independent reference answers; the packet cannot authorize promotion and
+must be refreshed after source/candidate changes. No provider call, normal write
+or human approval occurred. Public-source acquisition and independent accounting
+comparisons remain agent work, not an instruction for the user to type 402 rows.
+
+The legacy `scripts/evaluate_financial_extraction.py` entry point previously
+compared reference values with themselves. Its repository version now exits
+unavailable and directs users to the actual Evaluation Lab; one regression test
+first failed on the stub, then all 57 repository checks passed. This is a host
+tooling correction, not a new normal-runtime rollout. Do not run inherited copies
+of the retired command in older images or use its historical scores as evidence.
 
 ## What Is Not Product-Ready
 

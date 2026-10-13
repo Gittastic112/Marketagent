@@ -76,6 +76,12 @@ review and recovery/host gates remain open in the [single ledger](../agent_capab
 M04 and M09 have verified checks but open prerequisites. Cumulative acceptance
 remains 20 points; the next milestone is M03.
 
+The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
+maps every open M03-M09 check to the exact operator input and agent-owned work.
+October 13 follow-up prepares a read-only financial/AI review packet and disables
+the legacy self-scoring extraction command; neither preparation confers approval
+or changes the acceptance total.
+
 ## M01: measured, lean, reproducible foundation
 
 Owners: Compose files, backend Dockerfile/requirements, repository tooling.
