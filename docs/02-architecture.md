@@ -1,6 +1,6 @@
 # Architecture
 
-**Updated:** 2026-10-11 (module ownership, dated replay and saved brief context). Product validation scope is in [Current State](00-current-state.md).
+**Updated:** 2026-10-13 (saved explanation identity and form recovery). Product validation scope is in [Current State](00-current-state.md).
 
 **Deployment boundary:** local Docker Compose only
 
@@ -12,6 +12,24 @@ Health, peer review and draft review separate request handling from presentation
 company/draft identity changes invalidate the old UI request scope. See the
 [code map](code-map.md) for owners and compatibility/drift guards. No service or
 database split is introduced.
+
+Basic server-action forms share a small client recovery component. Domain actions
+still validate and authorize; the component retains entries after failure, blocks
+duplicate pending submissions and displays completion only after confirmation.
+Research messages separately verify whether a failed AI request actually saved
+the user's text. An uncertain transport result cannot claim a successful save.
+
+Financial review and promotion carry the viewed candidate timestamps and lock
+the affected rows. Conflicting edits require reload before promotion. Valuation AI
+requests carry the exact saved assumption ID/time; explanation provenance also
+records the calculation hash. A later version or changed output makes an earlier
+memo historical. Reviewing or copying an AI estimate never saves a valuation.
+Generic AI evaluation, citation validation and human review preserve that saved
+valuation provenance. Event interpretation separately requires disclosure and the
+current recorded event text; structured-response and recommendation-language
+checks reject invalid output while retaining a failed audit record. Successful
+interpretations remain pending review, disclose missing citation verification,
+and never update valuation assumptions.
 
 ## System Shape
 

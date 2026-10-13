@@ -1,89 +1,76 @@
 # Agent Handoff
 
-October 12, 2026: M01-M02 accepted; M03-M09 have implemented work and open gates.
+October 13, 2026: M01-M02 accepted; M09 technical checks verified with prerequisites open.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
-Two accepted gates means 20 acceptance points, not 20% of engineering hours.
+Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. Do not report 90% complete or waive genuine-input gates.
 
 ## Execution boundary
 
-The user authorized sequential work through M09, conservative continuation while
-away, refactors/worktrees and Git/GitHub publication. Do implementation, validation,
-normal rollout and documentation before Git publication. No parallel agents were
-launched. GitHub is Allow all actions; other app permissions remain unchanged.
-Public deployment, broker integration and M10 acceptance remain outside this task.
+The user authorized conservative continuation through M09, refactors/worktrees and
+Git/GitHub publication last. Bounded parallel source review used explicit file
+ownership; central docs are reconciled once after integration. GitHub is Allow all
+actions; other app permissions remain unchanged. Public deployment, broker work
+and M10 acceptance remain outside this task.
 
 [Draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1) preserves M01.
 [Draft PR #2](https://github.com/Gittastic112/Marketagent/pull/2), based on M01,
-holds subsequent source work. Consult it for the latest published head/checks.
-The shared local checkout/index has extensive prior changes. Publish only explicit
-paths through an isolated Git snapshot. Never reset, clean or stage everything.
+holds subsequent work and owns the latest published head/check results. Publish
+only explicit paths through an isolated Git snapshot: the shared checkout/index
+contains extensive prior changes. Never reset, clean or stage everything.
 Protected environment files must not be read directly or indirectly.
 
 ## Current evidence
 
-The [October 12 follow-up](archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md)
-owns source, recovery, rollout, browser, resource and publication evidence.
+The [October 13 checkpoint](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
+owns connected-workflow repairs, full source/browser validation, final return-label
+follow-up, query/route profiles, normal rollout and source/image identity.
 
-- M02 has domain-owned schemas/actions/workflows, compatibility exports and
-  contract/import guards. Retired one-off tools remain preserved and classified.
-- M03 format 3 fixes macOS backup finalization with an atomic manifest-bound
-  COMPLETE file. Missing/corrupt/linked markers fail before restore; format 2
-  remains readable. The 109-table concurrent-write drill and both PDF stores pass.
-- M04 adds identity-bound, dated official source guidance for the five scoped
-  Indian issuers. Capabilities reflect the selected adapter/configuration,
-  including FRED. Consuming pages expose currency, units, dates and missing/failed
-  coverage. M04 checks are verified; its M03 prerequisite remains open. No facts were approved.
-- M05 retains per-company evidence inventory and strict review/certification
-  gates. All scoped companies still need reviewed normalized input coverage.
-- M06 canonical saved FCFF sensitivity, method regressions and real PostgreSQL
-  competing-version tests pass. Options are explicitly experimental; retained
-  legacy custom routes are deprecated and warn about their unchecked basis.
-- M07 recorded replay, purchase-date FX and immutable snapshot provenance remain.
-  Browser tests cover exact-hash imports, duplicates, conflicts, late navigation
-  and corrections making historical returns provisional. Risk now matches both
-  interval endpoints; saved currency, finite values and freshness gate DCF gaps.
-- M08 private-source context stays bounded and owner-scoped. Citation evaluation
-  v3 explicitly does not assess interpretation quality. Adversarial Mock Data and
-  browser checks separate exact quotation from human approval. Review metadata
-  refreshes after decisions; late requests cannot change another view.
-- M09 passes 1,517 offline backend tests, four separate PostgreSQL tests, 271
-  frontend tests, production builds and 41 isolated browser workflows in one run.
-  The 50-page matrix adds populated/India/pending-request states for 110 views,
-  automatic accessibility scans and unchanged timing budgets.
-  These checks do not certify every control/state, AI quality or genuine inputs.
+- Financial review preserves inspected versions and retains failed corrections;
+  source-to-candidate-to-normalized-draft browser proof closes M05-06 only.
+- Narrative estimates use bounded typed output before successful audit. Saved
+  calculations, sensitivity/reverse and memo/export keep their immutable basis.
+- Event interpretation has explicit disclosure, strict provider-compatible schema
+  and exact provenance. Field suggestions cannot silently edit numeric assumptions.
+- Exact evidence, held-company/thesis links, source recovery and recorded-public
+  morning review pass. Separate PostgreSQL due-cycle evidence saves one audited
+  snapshot. Exact citations do not certify interpretation quality.
+- Retained manual forms preserve edits and confirmations. Static endpoint/control
+  review, adverse-state cases, keyboard checks and manual desktop/mobile review
+  repaired identified issues. TWR and annualized MWR show their separate bases/dates.
+- Full integration and final affected-browser follow-up pass. Earlier timing and
+  selector failures remain recorded. Application-process cold/warm profiles pass
+  on a fingerprinted dataset; database/OS caches remain warm. No load-test claim.
 
 ## Normal runtime and recovery
 
-The normal app runs October 12 risk/accessibility follow-up images, with schema
-s1s1s1s1s1s1, the original database volume and localhost-only ports.
-All 109 table fingerprints match across rollout. Authenticated browser checks
-cover 13 normal routes at desktop/mobile sizes, plus four valuation loading/loaded
-views, with no automatic accessibility violation. All 109 fingerprints also match
-after the final browser run. Earlier
-read-side catalog/discovery/regime changes are recorded separately.
-No normal fixture seed, portfolio rewrite, financial approval or AI scan was run.
+The normal app runs October 13 workflow images after a verified format-3 backup.
+Original PostgreSQL volume and s1s1s1s1s1s1 remain. All 109 table fingerprints match
+across rollout and authenticated browser verification. Ports remain localhost-only.
+No normal fixture seed, financial approval, portfolio rewrite or AI scan was run.
+Settings are forwarded only in memory. Old registrations remain until browser/data
+acceptance; failure restores them and only previously active services resume.
 
-Daily Brief scheduling is running. The source worker and pgAdmin remain disabled
-with restart=no. Queued external source jobs cannot execute while that worker is
-stopped. Backup and Compose service selection now target the actual stack.
-Redundant stopped registrations were removed after preserving rollback images,
-settings in current services, verified backups and all persistent volumes.
+Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no;
+queued external jobs cannot run while their worker is stopped. The completed
+disposable browser stack is stopped. Preserve rollback images, backups, all
+persistent volumes and failed artifacts. Resource/cache evidence is in the checkpoint.
 
-No broad macOS permission change is needed for backup finalization. Older partial
-folders stay incomplete and retained. Folder backup/restore works, but same-disk
-copies are not encrypted off-device recovery. The user has no off-device
-destination or genuine trade records yet. Do not manufacture them or acceptance.
+M03's macOS backup finalization is fixed; no broad filesystem permission change
+is needed. Completed format-3 recovery and both PDF stores were rehearsed on
+October 12. Same-disk folders do not prove encrypted off-device recovery. Old partial
+folders remain incomplete and retained. Do not manufacture missing records or acceptance.
 
 ## Remaining work
 
-Use stable task IDs in the tracker. The [single limitation ledger](agent_capabilities_and_limitations.md)
-owns host settings/credential rotation, off-device recovery, reviewed source/model
-inputs, actual portfolio history, AI quality and incomplete control/adverse-state
-coverage. Exact operator settings and remaining evidence are linked there.
-Continue independent work when an input is missing without marking its gate done.
+All independent workflow work through M09 is verified. Its M08 prerequisite stays
+open. Use stable tracker IDs and the [single limitation ledger](agent_capabilities_and_limitations.md)
+for exact operator settings, recovery destination, reviewed source/model inputs,
+genuine activity/dated coverage and interpretation-quality evidence. Continue safe
+independent work when possible without marking missing-input gates complete.
 
-Commands belong in the [runbook](08-execution-runbook.md). Keep heavy PDF tests,
-builds and browser projects sequential on the small Docker VM. Preserve failed
-artifacts, normal volumes, backups, rollback images and the immutable corpus.
-[Knull](../Knull%28readme%29.md) applies only to an explicitly assigned parallel batch.
+Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds,
+PDF tests and browser projects sequential on the small Docker VM. Browser tests
+use baked runtime source and local-container artifacts to reduce Mac folder I/O;
+do not relax timing gates to hide a failure. Preserve the immutable corpus.
+[Knull](../Knull%28readme%29.md) governs its assigned parallel batches only.

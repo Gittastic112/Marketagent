@@ -110,6 +110,11 @@ file inside the folder instead. Restore validates the marker and all checksums;
 do not rename an old `.partial` folder or create the marker by hand. The October 12
 normal backup and disposable restore passed without changing macOS permissions.
 
+The verifier must also wait for its actual `proof` database over TCP. A temporary
+PostgreSQL initialization server can answer `pg_isready` before that database
+exists. The backup script now requires a successful bounded query before restore;
+failed startup retains an incomplete backup and removes only its own verifier.
+
 ## Providers, uploads and reference data
 
 Provider availability depends on the adapter, configuration and stored evidence,
@@ -141,7 +146,8 @@ is retained as historical evidence only.
 | Provider failure | Safe Processing Run error, configuration, access, timeout and DNS evidence |
 | Gemini model unavailable | A working key can still receive a model-not-found response; choose an accessible GEMINI_MODEL, recreate backend and rerun the fixed-prompt probe |
 | Native frontend build failure | Supported Docker build gate; do not alter lockfiles blindly |
-| Tests use old code | Use source-mounted test Compose, not a stale production container |
+| Tests use old code | Use source-mounted unit-test Compose or a fresh browser-test image with recorded source identity |
+| Browser tests slow under Docker Desktop | Finish other validation jobs first; inspect CPU/memory pressure and shared-folder overhead. Copy browser tests/artifacts into the runner during execution and retain failed timing evidence |
 
 A failed fetch is unavailable, not successful stale data. A previous stored
 observation may separately be old. Never replace failure with mock success.

@@ -242,6 +242,10 @@ must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
 host/Origin guards intact. If shared filesystem trace folders fail, write artifacts
 inside the test container and copy completed results to output/playwright. Use
 explicit disposable credentials and staged source; do not read protected env files.
+On macOS, source bindings and artifact writes can also add validation overhead.
+Use a backend image built from the verified source, copy the browser tests into
+the runner, and export artifacts after execution. Record the image/source identity
+and retain earlier failures; this does not justify increasing route time budgets.
 The browser helper signs in once per worker and reuses cookies in fresh contexts;
 it does not disable or raise the normal sign-in throttle. Seed a fresh disposable
 database before each full run, because some workflow fixtures use fixed identities.
@@ -421,6 +425,9 @@ remain review-required and do not alter saved models.
   Format 3 verifies the completed dump in a network-disabled, bounded scratch
   PostgreSQL 16 container; normal writes can continue. Its manifest contains all
   public table counts/content fingerprints and both PDF stores' byte hashes.
+  Scratch readiness requires a successful TCP query to its `proof` database,
+  with bounded connection/retry waits; socket readiness during initialization
+  alone does not authorize restore. Startup failure retains an incomplete folder.
   Paths, complete checksums, format and inventory are checked before replacement.
   A format-3 backup becomes complete only when its atomic `COMPLETE` file matches
   the manifest hash. Payload/checksum files are flushed before publishing that

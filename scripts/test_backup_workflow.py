@@ -23,8 +23,21 @@ if "pg_dump" in args:
     print("Mock Data database dump")
 elif "pg_restore" in args:
     sys.stdin.buffer.read()
+    if "a" * 64 in args and not Path(os.environ["FAKE_DOCKER_LOG"] + ".ready").exists():
+        raise SystemExit('Mock Data: database "proof" does not exist yet')
     if "--list" not in args and os.environ.get("FAKE_RESTORE_FAILED"):
         raise SystemExit(1)
+elif "psql" in args and "-c" in args and args[args.index("-c") + 1] == "SELECT 1":
+    assert args[args.index("-h") + 1] == "127.0.0.1"
+    assert args[args.index("-U") + 1] == "proof"
+    assert args[args.index("-d") + 1] == "proof"
+    attempts = Path(os.environ["FAKE_DOCKER_LOG"] + ".attempts")
+    attempt = int(attempts.read_text()) + 1 if attempts.exists() else 1
+    attempts.write_text(str(attempt))
+    if os.environ.get("FAKE_PROOF_UNAVAILABLE") or attempt < int(os.environ.get("FAKE_PROOF_READY_AFTER", "1")):
+        raise SystemExit(1)
+    Path(os.environ["FAKE_DOCKER_LOG"] + ".ready").write_text("Mock Data TCP proof database ready")
+    print("1")
 elif "psql" in args:
     sys.stdin.buffer.read()
     rows = json.loads(os.environ["FAKE_INVENTORY"])
@@ -41,6 +54,7 @@ elif "psql" in args:
     for row in rows:
         print(json.dumps(row))
 elif "pg_isready" in args:
+    # Model the entrypoint's temporary socket server accepting early probes.
     pass
 elif "run" in args and "--detach" in args:
     print("a" * 64)
@@ -106,6 +120,43 @@ class BackupWorkflowTests(unittest.TestCase):
         backups = list((self.directory / "backups").iterdir())
         self.assertEqual(len(backups), 1)
         self.assertEqual((backups[0] / "record_counts.tsv").read_text(), self.counts)
+
+    def fake_sleep(self):
+        sleep = self.directory / "sleep"
+        sleep.write_text("#!/usr/bin/env bash\nexit 0\n")
+        sleep.chmod(0o755)
+
+    def test_backup_waits_for_tcp_query_on_intended_proof_database(self):
+        self.fake_sleep()
+        self.env["FAKE_PROOF_READY_AFTER"] = "3"
+        directory = self.verified_backup()
+        calls = self.calls()
+        queries = [call for call in calls if "psql" in call and "SELECT 1" in call]
+        self.assertEqual(len(queries), 3)
+        for query in queries:
+            self.assertEqual(query[query.index("-h") + 1], "127.0.0.1")
+            self.assertEqual(query[query.index("-U") + 1], "proof")
+            self.assertEqual(query[query.index("-d") + 1], "proof")
+            self.assertIn("ON_ERROR_STOP=1", query)
+            self.assertIn("PGCONNECT_TIMEOUT=1", query)
+        first_restore = next(i for i, call in enumerate(calls) if "pg_restore" in call)
+        last_query = max(i for i, call in enumerate(calls) if "SELECT 1" in call)
+        self.assertLess(last_query, first_restore)
+        self.assertTrue((directory / "COMPLETE").is_file())
+
+    def test_backup_readiness_timeout_retains_partial_and_removes_only_owned_scratch(self):
+        self.fake_sleep()
+        self.env["FAKE_PROOF_UNAVAILABLE"] = "true"
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Recovery verifier did not become ready", result.stderr)
+        calls = self.calls()
+        self.assertEqual(sum("SELECT 1" in call for call in calls), 60)
+        self.assertFalse(any("pg_restore" in call for call in calls))
+        self.assertEqual([call for call in calls if "rm" in call], [["rm", "--force", "a" * 64]])
+        self.assertFalse(list((self.directory / "backups").glob("*/COMPLETE")))
+        self.assertTrue(list((self.directory / "backups").glob("*/database.dump")))
+        self.assertFalse(any(command in call for call in calls for command in ("stop", "dropdb", "up")))
 
     def verified_backup(self):
         result = self.run_script("backup_local.sh")

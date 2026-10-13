@@ -63,21 +63,18 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
 | M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | In progress | [Integrated browser validation](../archive/checkpoints/2026/m09-browser-validation-2026-10-11.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Checks verified; M08 prerequisite open | [Connected workflow verification](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md) |
 | M10 | 100% | Proven local daily-driver release | M09 | Not started | None |
 
-October 12 [recovery/workflow evidence](../archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md)
-closes M04-05, M06-03/M06-06 and M07-07 and resolves macOS backup finalization.
-The [consuming-page/risk/accessibility follow-up](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md)
-closes M04-06, bounds portfolio requests, repairs return-interval/currency gates,
-and extends M09-07 to 41 workflows and 110 isolated desktop/mobile views, including
-the pending industry-allocation state exposed by the subsequent GitHub run.
-M07-05 still needs complete genuine series and reviewed models. M08-04 still needs
-reviewed interpretation-quality evidence. M09-01 through M09-06 retain their wider
-control, adverse-state, manual-accessibility and load limits; automatic scans and
-small fixtures do not close them. M04's checks are verified but its M03 prerequisite
-is open, so cumulative acceptance remains 20 points. The [ledger](../agent_capabilities_and_limitations.md)
-owns missing inputs and remaining technical boundaries.
+October 12 recovery and coverage evidence remains linked in the preceding
+checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
+closes M05-06, M06-05, M08-03/06/07 and verifies all M09 technical checks. Its recorded
+official-source morning flow and separate due-cycle test preserve their distinct
+source/fixture boundaries. Final return labels, affected browser flows, measured
+process-cold/warm profiles and normal rollout are verified. Genuine-input, human
+review and recovery/host gates remain open in the [single ledger](../agent_capabilities_and_limitations.md).
+M04 and M09 have verified checks but open prerequisites. Cumulative acceptance
+remains 20 points; the next milestone is M03.
 
 ## M01: measured, lean, reproducible foundation
 
@@ -224,7 +221,7 @@ Owners: extraction, normalization, source certification; [Knull W2](../../Knull%
 - [ ] M05-05 Confirm weighted industry mappings and country/currency conventions.
   Inspect the loaded benchmark versions/unsupported columns; each prior remains
   a reviewed prior, and each forecast remains an assumption.
-- [ ] M05-06 Complete the source -> candidate -> review -> normalized financial ->
+- [x] M05-06 Complete the source -> candidate -> review -> normalized financial ->
   draft browser path, including corrections, stale evidence and rejected promotion.
 - [x] M05-07 Produce a per-company evidence matrix with supported statements,
   dates, missing fields and model suitability. No unaudited row earns certification.
@@ -250,7 +247,7 @@ Owners: deterministic engines, saved-input contracts and valuation panels;
 - [ ] M06-04 Complete supported accounting/equity bridges and exact peer input
   provenance. Lease, D&A, options, dilution and cross-currency peer gaps require
   reviewed explicit inputs or an unavailable result, never proxy company facts.
-- [ ] M06-05 Verify narrative -> assumption -> saved calculation -> sensitivity ->
+- [x] M06-05 Verify narrative -> assumption -> saved calculation -> sensitivity ->
   reverse -> memo/export traceability. Expose formulas, dates, claim type and
   uncertainty. Keep unsaved edits and stored calculations distinct.
 - [x] M06-06 Restrict experimental/legacy custom-options and unsupported specialized
@@ -301,7 +298,7 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 - [x] M08-02 Include bounded owner-scoped private evidence and current analyst
   dispositions in manual and scheduled deterministic brief snapshots. Retain exact
   source/hash/receipt IDs, exclusions and freshness; isolate pending findings.
-- [ ] M08-03 Connect event -> evidence -> held company -> thesis review -> relevant
+- [x] M08-03 Connect event -> evidence -> held company -> thesis review -> relevant
   valuation field -> next review action. Preserve source access and stale-review
   guards. A suggested field link never approves or changes its numeric assumption.
 - [ ] M08-04 Build a reviewed AI evaluation set with unsupported claims, numeric
@@ -310,9 +307,9 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 - [x] M08-05 Verify explicit consent, model/prompt/input/source provenance, owner
   access and review approval for AI. Failed/pending/rejected output stays outside
   trusted search/brief evidence. No provider call during an ordinary read.
-- [ ] M08-06 Exercise scan timeouts, late responses, edits/archive/restore, duplicate
+- [x] M08-06 Exercise scan timeouts, late responses, edits/archive/restore, duplicate
   sources, stale review receipts, source comparison and complete review history.
-- [ ] M08-07 Run the complete morning-review browser workflow with public genuine
+- [x] M08-07 Run the complete morning-review browser workflow with public genuine
   source evidence, and a due scheduler cycle with safe scoped test inputs.
 
 Gate: a user can explain what changed, which evidence supports it and what needs
@@ -323,19 +320,19 @@ review from one repeatable workflow, without implying universal news/AI coverage
 Owners: every active route in [route inventory](../09-route-inventory.md), domain UI,
 transport/state helpers and query-budget tests.
 
-- [ ] M09-01 Audit every active route/control against actual endpoints and source
+- [x] M09-01 Audit every active route/control against actual endpoints and source
   status. Complete the intended path or visibly retire an unsupported surface.
   Do not create fake demo results to make a route appear complete.
-- [ ] M09-02 Verify loading, empty, unavailable, stale, partial, not-configured,
+- [x] M09-02 Verify loading, empty, unavailable, stale, partial, not-configured,
   Mock Data and success states where applicable, including expired/foreign sessions.
-- [ ] M09-03 Test save/retry/navigation/delayed-response races with behavior-based
+- [x] M09-03 Test save/retry/navigation/delayed-response races with behavior-based
   browser/component checks for the extracted forms. Preserve edits and saved confirmations.
-- [ ] M09-04 Inspect desktop/mobile, keyboard focus, labels, contrast, table overflow
+- [x] M09-04 Inspect desktop/mobile, keyboard focus, labels, contrast, table overflow
   and charts with source/date/units. Cover adverse states as well as the populated page.
-- [ ] M09-05 Measure warm/cold route, query/row, browser-interaction and idle resource
+- [x] M09-05 Measure warm/cold route, query/row, browser-interaction and idle resource
   budgets on a recorded dataset/hardware profile. Set thresholds from the measured
   baseline, then repair the measured slowest paths without a cross-user data cache.
-- [ ] M09-06 Verify read-only previews, bounded exports/imports, source links and
+- [x] M09-06 Verify read-only previews, bounded exports/imports, source links and
   useful recovery paths. A build is not browser proof and a fast response is not
   a guarantee that the rendered workflow is responsive.
 - [x] M09-07 Run the complete isolated production browser matrix and full source/

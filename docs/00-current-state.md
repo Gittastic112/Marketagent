@@ -1,9 +1,9 @@
 # Current State
 
-Source tests and normal rollout: 2026-10-12. Scope: local-first, single-user equity research.
+Source tests and normal rollout: 2026-10-13. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source and normal runtime: [October 12 consuming-page, risk and accessibility follow-up](archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md). Source/candidate/price intake remains separately audited and review-required.
+Latest source and normal runtime: [October 13 workflow verification](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Source/candidate/price intake remains separately audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,15 +20,15 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | 1,517 tests pass; four PostgreSQL-only checks pass separately. Five upstream deprecation warnings. Risk matches both return interval endpoints and gates saved currency/finite values; no migration change |
-| Frontend | 271 tests and production build/TypeScript pass. The final 41 isolated browser workflows pass in one run. The 50-page matrix adds populated/India/pending-request states for 110 views at 1440px/390px; automatic scans, screenshots and timings are retained |
-| API compatibility | 279 public paths, 511 schemas and 381 inventoried operations. Official manual filing guidance is additive. Legacy custom-options routes remain compatible but are deprecated/experimental. Pure contracts, facade identity, ownership and wire-manifest guards pass |
-| Operations | 54 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion/interruption/retention and format-2 compatibility are covered. Protected environment files remain excluded |
-| PostgreSQL | Four real concurrency checks pass, including competing saved valuation versions: one succeeds, one conflicts, and the original output stays unchanged. Fresh schema reaches s1s1s1s1s1s1 |
-| Normal runtime | Final backend/frontend/worker images are installed. PostgreSQL retains its named volume and s1s1s1s1s1s1 schema; all 109 table fingerprints match across replacement. Settings are preserved in memory, ports stay localhost-only, and Compose selects current services |
-| Normal browser | 13 routes at desktop/mobile sizes, 26 views, plus four valuation loading/loaded views pass without browser errors, overflow or automatic accessibility violations. Two forbidden-Origin checks pass; the earlier 26-view maximum readiness is 746 ms. A prior final-step failure did not recur with diagnostic logging and remains recorded. No normal test seeding or AI call |
+| Backend | 1,594 tests pass; six opt-in PostgreSQL checks pass separately. Five upstream deprecation warnings. Strict narrative output/provider schema, saved AI basis, candidate versions and SQL-bounded price pages are covered; no migration change |
+| Frontend | 302 tests, TypeScript and production build pass. Final v10: 64 isolated browser workflows, 110 desktop/mobile route/state views covering all 50 pages plus populated price-history paging and keyboard scrolling. Screenshots, failures and automatic accessibility results remain retained |
+| API compatibility | 279 public paths, 513 schemas and 373 public operations. Audit covers 380 static HTTP callers, ten reviewed dynamic entries and 227 controls with no unwired-button candidates. Pure contracts, facade identity and wire guards pass; counts alone are not behavioral proof |
+| Operations | 56 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion, bounded proof-database readiness, timeout cleanup, retention and format-2 compatibility are covered. Protected environment files remain excluded |
+| PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Fresh schema reaches s1s1s1s1s1s1 |
+| Normal runtime | October 13 backend/frontend/worker images installed after a verified format-3 backup. Original database volume/schema and all 109 fingerprints preserved through rollout and browser reads; settings remain in memory and ports stay localhost-only |
+| Normal browser | 25 routes, 50 desktop/mobile views pass: 48 rollout-gated plus two empty valuation-setup views. Zero browser errors, overflow or automatic accessibility violations; four forbidden-Origin checks. Maximum readiness 468.0 ms. No saved normal AAPL model, fixture seeding or provider/AI call |
 | Recovery | Complete format-3 normal backups and an isolated concurrent-write restore pass. Both original public/private PDF bytes and all 109 table inventories are verified in the drill. Restore verification took 10 seconds, complete drill 35 seconds. Same-disk copies do not prove encrypted off-device recovery |
-| Performance | Final isolated samples: desktop/mobile median 619/640 ms, p95 2,163/2,686 ms, maxima 2,721/4,735 ms. Portfolio lists bound each page to four concurrent valuation calls; repeated checks cover 43 portfolios. Earlier 24-sample first-visit/warm and 886 ms interaction evidence remains dated separately. These small fixtures and warmed caches are not cold-machine or load proof |
+| Performance | Final profile: six process-cold and 30 warm samples over 774 rows/109 tables, nine query-budget regressions and eight section interactions pass. Market Prices fetches 51 rows and renders 50 forms, retaining filtering/history/export access. Database fingerprints remain unchanged; database/OS caches remain warm. Dataset and hardware are recorded without a concurrent-user/load claim |
 | Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Intake adds unreviewed candidates and dated prices, not approved financial histories. Five official India source links were rechecked October 12. Provider availability does not certify interpretation, coverage or future quota |
 
 Normal screens still contain labeled Mock Data. The final rollout has no stored
@@ -123,7 +123,7 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 | Saved outputs | Stale/invalid/critical, identity/currency and finite-value gates; saved prices are User Assumptions, quality scores are historical |
 | Scenarios | Owned model dispatch, zero-preserving shocks, on-demand request isolation, saved currency and backend gaps; deterministic shocks are not probabilities |
 | Relative pricing | Source-separated active industry benchmarks and owner-reviewed peers; exact input hashes, diagnostic receipts, normalized immutable revisions and bounded CSV workflows |
-| Portfolio | Recorded dated replay, purchase-date FX, benchmarks, snapshots, TWR/MWR and fixed-weight price risk. Legacy/manual or corrected-activity snapshots remain provisional. Genuine multi-currency records and reviewed-input smoke are still required |
+| Portfolio | Recorded dated replay, purchase-date FX, benchmarks, snapshots, selected-period TWR, annualized MWR since first cash flow and fixed-weight price risk. Legacy/manual or corrected-activity snapshots remain provisional. Genuine multi-currency records and reviewed-input smoke are still required |
 | Evidence and briefing | Source-linked events/alerts/theses, deterministic briefs and bounded private source/receipt snapshots with separate review queues. Saved evidence remains as generated; quoted labels and exact citations do not certify interpretation or numeric edits. Normal reviews were not invented |
 | AI and research | Provenance, exact-span review, bounded local passage suggestions, human approval, owner-scoped stored search; no semantic truth guarantee |
 | Provider health | Observable runs/configuration/freshness; FRED NFCI exact-record macro application; unsupported regime provider modules remain manual |
@@ -159,7 +159,7 @@ added; three existing originals were reused. All pre-existing raw hashes remain 
 
 Prior valuation builds and disposable browser checks retain their dated scope.
 The [M09 checkpoint](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
-owns the earlier matrix; the October 12 follow-up above owns current workflow evidence.
+owns the earlier matrix; the October 13 follow-up above owns current workflow evidence.
 These isolated fixtures do not replace genuine-input portfolio proof.
 
 The normal runtime is s1s1s1s1s1s1 after fresh and populated restore/migration

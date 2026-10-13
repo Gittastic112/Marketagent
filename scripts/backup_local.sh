@@ -56,7 +56,10 @@ if [[ ! "$scratch_id" =~ ^[a-f0-9]{64}$ ]]; then
 fi
 ready=false
 for _ in {1..60}; do
-  if "$DOCKER_BIN" exec "$scratch_id" pg_isready -U proof -d proof >/dev/null 2>&1; then
+  # The entrypoint temporarily serves Unix sockets before creating proof. TCP
+  # plus a real query verifies the final server and the intended database.
+  if "$DOCKER_BIN" exec -e PGCONNECT_TIMEOUT=1 "$scratch_id" psql \
+    -h 127.0.0.1 -U proof -d proof -X -qAt -v ON_ERROR_STOP=1 -c "SELECT 1" >/dev/null 2>&1; then
     ready=true
     break
   fi
