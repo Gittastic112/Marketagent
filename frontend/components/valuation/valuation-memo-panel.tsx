@@ -1,115 +1,72 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { ApiError, generateValuationMemo, fetchValuationMemo, ValuationMemoResponse } from "@/lib/api";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { generateValuationMemo, fetchValuationMemo, type ValuationMemoResponse } from "@/lib/api/ai";
+import type { DcfAssumptionSet } from "@/lib/api/valuation";
 import { AI_DISCLOSURES } from "@/lib/ai-privacy";
+import { createRequestGate } from "@/lib/latest-request";
+import { useLatestResource } from "@/lib/use-latest-resource";
+import { AIExplanationEvidence } from "./ai-explanation-evidence";
 
-interface ValuationMemoPanelProps {
-  valuationId: number;
-  scenario: string;
-}
+export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
+  valuationId: number; assumptions: DcfAssumptionSet; blocked: boolean;
+}) {
+  const loader = useCallback(() => fetchValuationMemo(valuationId, assumptions.scenario, assumptions.id),
+    [valuationId, assumptions.scenario, assumptions.id]);
+  const stored = useLatestResource(loader);
+  const [generated, setGenerated] = useState<ValuationMemoResponse | null>(null);
+  const [attempted, setAttempted] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState("");
+  const [consent, setConsent] = useState(false);
+  const gate = useMemo(createRequestGate, []);
+  useEffect(() => () => gate.invalidate(), [gate]);
+  const memo = attempted ? generated : stored.data;
 
-export function ValuationMemoPanel({ valuationId, scenario }: ValuationMemoPanelProps) {
-  const [memo, setMemo] = useState<ValuationMemoResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
-
-  useEffect(() => {
-    loadMemo();
-  }, [valuationId, scenario]);
-
-  const loadMemo = async () => {
-    setIsLoading(true);
-    setError(null);
+  async function generate() {
+    if (!consent || generating || blocked) return;
+    const current = gate.begin();
+    setGenerating(true); setAttempted(true); setGenerated(null); setError("");
     try {
-      const data = await fetchValuationMemo(valuationId, scenario);
-      setMemo(data);
-    } catch (err: unknown) {
-      if (!(err instanceof ApiError && err.status === 404)) {
-        setError(err instanceof Error ? err.message : "Could not load the stored valuation memo.");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleGenerate = async () => {
-    if (!privacyAcknowledged) return;
-    setIsGenerating(true);
-    setError(null);
-    try {
-      const data = await generateValuationMemo(valuationId, scenario);
-      setMemo(data);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to generate memo. Ensure you have calculated the DCF first.");
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
-  if (isLoading) {
-    return <div className="p-4 text-slate-500">Loading memo...</div>;
+      const result = await generateValuationMemo(valuationId, assumptions.scenario, {
+        assumption_set_id: assumptions.id, assumptions_updated_at: assumptions.updated_at,
+      });
+      if (current()) setGenerated(result);
+    } catch (failure) {
+      if (current()) setError(failure instanceof Error ? failure.message : "Memo generation unavailable. Reload stored memo before retrying.");
+    } finally { if (current()) setGenerating(false); }
   }
 
-  return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-start">
-        <div>
-          <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100">
-            Valuation Memo
-          </h3>
-          <p className="text-sm text-slate-500">
-            Synthesizes your quantitative assumptions and DCF outputs into an analyst report.
-          </p>
-        </div>
-        <button
-          onClick={handleGenerate}
-          disabled={isGenerating || !privacyAcknowledged}
-          className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 text-sm"
-        >
-          {isGenerating ? "Writing..." : memo?.memo_markdown ? "Regenerate Memo" : "Generate Memo"}
-        </button>
-      </div>
+  function download() {
+    if (!memo?.memo_markdown) return;
+    const content = `AI Interpretation${memo.is_mock ? " · Mock Data" : ""}\nInterpretation quality is not evaluated.\n\nEvidence:\n${JSON.stringify(memo.evidence ?? {status: "legacy_unverified"}, null, 2)}\n\n${memo.memo_markdown}`;
+    const url = URL.createObjectURL(new Blob([content], {type: "text/plain;charset=utf-8"}));
+    const link = document.createElement("a");
+    link.href = url; link.download = `valuation-${valuationId}-assumptions-${assumptions.id}-memo.txt`;
+    link.click(); URL.revokeObjectURL(url);
+  }
 
-      <label className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-300">
-        <input
-          type="checkbox"
-          checked={privacyAcknowledged}
-          onChange={(event) => setPrivacyAcknowledged(event.target.checked)}
-        />
-        <span>{AI_DISCLOSURES.valuationMemo}</span>
-      </label>
-
-      {error && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-md text-sm">
-          {error}
-        </div>
-      )}
-
-      {memo && memo.memo_markdown ? (
-        <div className="border border-slate-200 dark:border-slate-700 rounded-md overflow-hidden bg-white dark:bg-slate-900">
-          <div className="bg-slate-50 dark:bg-slate-800 p-3 border-b border-slate-200 dark:border-slate-700 text-xs text-slate-500 flex justify-between">
-            <span>
-              {memo.is_mock ? "Mock Data" : `Generated using ${memo.provider_name || "AI"}`} | {memo.confidence_label || "Medium Confidence"}
-            </span>
-            {memo.created_at && <span>{new Date(memo.created_at).toLocaleString()}</span>}
-          </div>
-          <div className="p-6 prose dark:prose-invert max-w-none text-sm">
-            {/* Extremely simple markdown rendering for safety, or we could use a proper react-markdown package if available */}
-            {memo.memo_markdown.split('\\n').map((para, i) => (
-              <p key={i} className="mb-4">
-                {para.replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>').replace(/^# (.*)/g, '<h2 class="text-lg font-bold mt-6">$1</h2>')}
-              </p>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="p-12 text-center border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-md text-slate-500">
-          No memo generated yet. Complete your DCF valuation and click Generate to write the memo.
-        </div>
-      )}
+  return <section aria-label="Valuation memo" className="stack">
+    <h3>Valuation Memo</h3>
+    <p>Optional AI interpretation of saved assumptions #{assumptions.id}, scenario {assumptions.scenario}. Unsaved edits are excluded. Generating a memo does not save or approve valuation inputs.</p>
+    {blocked && <p role="status" className="basis-note">Generation unavailable. Review saved input and calculation diagnostics, then save a valid version.</p>}
+    <label><input type="checkbox" checked={consent} onChange={event => setConsent(event.target.checked)} /> {AI_DISCLOSURES.valuationMemo}</label>
+    <div className="section-intro">
+      <button type="button" className="btn btn-primary" disabled={generating || !consent || blocked || stored.status === "loading"} onClick={() => void generate()}>
+        {generating ? "Writing memo…" : memo?.memo_markdown ? "Regenerate Memo" : "Generate Memo"}
+      </button>
+      <button type="button" className="btn btn-secondary" disabled={generating || stored.status === "loading"} onClick={() => {
+        gate.invalidate(); setAttempted(false); setGenerated(null); setError(""); void stored.reload().catch(() => {});
+      }}>Reload stored memo</button>
     </div>
-  );
+    {!attempted && stored.status === "loading" && <p role="status">Loading stored memo…</p>}
+    {!attempted && stored.status === "error" && <p role="alert">Stored memo unavailable: {stored.error}</p>}
+    {error && <p role="alert">{error}</p>}
+    {generating && <p role="status">Generating an unreviewed AI explanation. Your saved model is unchanged.</p>}
+    {memo?.memo_markdown ? <>
+      <AIExplanationEvidence evidence={memo.evidence} />
+      <div className="preserve-whitespace" aria-label="Memo text">{memo.memo_markdown}</div>
+      <button type="button" className="btn btn-secondary" onClick={download}>Download memo with evidence</button>
+    </> : !generating && !error && stored.status === "ready" && <p>No memo generated for this saved version. Generation requires explicit consent.</p>}
+  </section>;
 }

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { createRequestGate } from "@/lib/latest-request";
 import {
   BottomUpMacroSegment,
   MacroSensitivityResult,
@@ -19,6 +20,9 @@ export function MacroSensitivityPanel({ market, country }: Props) {
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<MacroSensitivityResult | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const gate = useMemo(createRequestGate, [market, country]);
+  useEffect(() => () => gate.invalidate(), [gate]);
+  const invalidate = () => { gate.invalidate(); setResult(null); setError(null); setLoading(false); };
 
   // Bottom Up State
   const [segments, setSegments] = useState<BottomUpMacroSegment[]>([
@@ -34,7 +38,9 @@ export function MacroSensitivityPanel({ market, country }: Props) {
   ]);
 
   const handleRunBottomUp = async () => {
+    const current = gate.begin();
     setLoading(true);
+    setResult(null);
     setError(null);
     try {
       const validSegments = segments.filter(
@@ -48,16 +54,18 @@ export function MacroSensitivityPanel({ market, country }: Props) {
         country,
         segments: validSegments,
       });
-      setResult(res);
-    } catch (err: any) {
-      setError(err.message || "Failed to run calculation");
+      if (current()) setResult(res);
+    } catch (err: unknown) {
+      if (current()) setError(err instanceof Error ? err.message : "Failed to run calculation");
     } finally {
-      setLoading(false);
+      if (current()) setLoading(false);
     }
   };
 
   const handleRunTopDown = async () => {
+    const current = gate.begin();
     setLoading(true);
+    setResult(null);
     setError(null);
     try {
       const complete = periods.every((period) =>
@@ -77,21 +85,22 @@ export function MacroSensitivityPanel({ market, country }: Props) {
         frequency: "annual",
         periods,
       });
-      setResult(res);
-    } catch (err: any) {
-      setError(err.message || "Failed to run regression");
+      if (current()) setResult(res);
+    } catch (err: unknown) {
+      if (current()) setError(err instanceof Error ? err.message : "Failed to run regression");
     } finally {
-      setLoading(false);
+      if (current()) setLoading(false);
     }
   };
 
   return (
-    <div className="border border-neutral-800 bg-neutral-900 rounded-lg p-4 space-y-4">
+    <div className="border border-neutral-800 bg-neutral-900 rounded-lg p-4 space-y-4" onChange={invalidate}>
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold text-neutral-100">Macro Sensitivity Engine</h3>
         <div className="flex bg-neutral-800 rounded p-1">
           <button
-            onClick={() => setMode("bottom_up")}
+            type="button"
+            onClick={() => { invalidate(); setMode("bottom_up"); }}
             className={`px-3 py-1 text-sm rounded ${
               mode === "bottom_up" ? "bg-neutral-700 text-white" : "text-neutral-400 hover:text-white"
             }`}
@@ -99,7 +108,8 @@ export function MacroSensitivityPanel({ market, country }: Props) {
             Bottom-Up (Segments)
           </button>
           <button
-            onClick={() => setMode("top_down")}
+            type="button"
+            onClick={() => { invalidate(); setMode("top_down"); }}
             className={`px-3 py-1 text-sm rounded ${
               mode === "top_down" ? "bg-neutral-700 text-white" : "text-neutral-400 hover:text-white"
             }`}
@@ -120,6 +130,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
             {segments.map((seg, idx) => (
               <div key={idx} className="grid grid-cols-4 gap-2 px-2">
                 <input
+                  aria-label={`Segment name ${idx + 1}`}
                   type="text"
                   value={seg.segment_name}
                   onChange={(e) => {
@@ -130,6 +141,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
                   className="col-span-2 bg-neutral-900 border border-neutral-700 rounded px-2 py-1 text-sm text-neutral-200"
                 />
                 <input
+                  aria-label={`SIC code ${idx + 1}`}
                   type="text"
                   value={seg.sic_code || ""}
                   onChange={(e) => {
@@ -141,6 +153,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
                   placeholder="e.g. 7372"
                 />
                 <input
+                  aria-label={`Segment weight ${idx + 1}`}
                   type="number"
                   step="0.1"
                   value={seg.segment_weight ?? ""}
@@ -155,6 +168,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
             ))}
           </div>
           <button
+            type="button"
             onClick={handleRunBottomUp}
             disabled={loading}
             className="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm disabled:opacity-50"
@@ -228,6 +242,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
             ))}
           </div>
           <button
+            type="button"
             onClick={handleRunTopDown}
             disabled={loading}
             className="bg-purple-600 hover:bg-purple-500 text-white px-4 py-2 rounded text-sm disabled:opacity-50"
@@ -237,7 +252,7 @@ export function MacroSensitivityPanel({ market, country }: Props) {
         </div>
       )}
 
-      {error && <div className="text-red-400 text-sm mt-4 p-2 bg-red-900/20 border border-red-900/50 rounded">{error}</div>}
+      {error && <div role="alert" className="text-red-300 text-sm mt-4 p-2 bg-red-900/20 border border-red-900/50 rounded">{error}</div>}
 
       {result && (
         <div className="mt-6 border-t border-neutral-800 pt-4">

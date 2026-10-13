@@ -1,5 +1,6 @@
 /** Contracts and endpoint helpers for operations. Import transport directly, never the compatibility facade. */
-import { deleteApi, fetchApi, postBlobApi } from "./transport.ts";
+import { fetchApi } from "./transport.ts";
+import { ApiError } from "./contract.ts";
 
 export type RuntimeReadiness = {
   status: "ready" | "blocked";
@@ -63,12 +64,14 @@ export type AlertGenerationResult = {
   skipped_below_threshold: number;
 };
 
-export async function exportData(resource_types: string[], export_format: string): Promise<Blob> {
-  return postBlobApi("/data-transfer/export", { resource_types, export_format });
+/** @deprecated Bulk export has no backend endpoint. The Data page exposes supported resource exports. */
+export async function exportData(_resource_types: string[], _export_format: string): Promise<Blob> {
+  throw new ApiError("Not available yet. Use the individual resource exports on the Data page.", 501);
 }
 
-export async function deleteScoringConfig(id: number): Promise<void> {
-  return deleteApi(`/scoring-configs/${id}`);
+/** @deprecated No deletion endpoint exists. Use the scoring settings update workflow. */
+export async function deleteScoringConfig(_id: number): Promise<void> {
+  throw new ApiError("Not available yet. Scoring configuration deletion is unsupported.", 501);
 }
 
 export type ScoringConfig = {

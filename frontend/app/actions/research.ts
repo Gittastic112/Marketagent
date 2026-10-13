@@ -5,6 +5,7 @@ import { serverDeleteApi, serverPatchApi, serverPostApi } from "@/lib/server-api
 import { buildThesisNotePayload, buildSocialPostPayload, buildSentimentScorePayload, buildNarrativeClusterPayload, buildNarrativeClaimPayload, buildNarrativeMentionPayload, buildThesisAssumptionPayload, buildThesisChangePayload, getRequiredFormId } from "@/lib/form-payloads";
 import { logAction, createRecord, deleteRecord, updateRecord, formActionError } from "./shared";
 import type { FormActionState } from "./shared";
+import { getRequiredFormString } from "@/lib/form-payloads";
 
 export async function createThesisNote(formData: FormData) {
   await createRecord("/thesis-notes", buildThesisNotePayload(formData), ["/", "/thesis-notes", "/daily-brief"]);
@@ -170,8 +171,8 @@ export async function createThesisChange(formData: FormData, thesisNoteId: strin
 export async function createVariantPerception(formData: FormData, companyId: string) {
   const payload = {
     company_id: parseInt(companyId, 10),
-    market_belief: getRequiredFormId(formData, "market_belief"),
-    my_belief: getRequiredFormId(formData, "my_belief"),
+    market_belief: getRequiredFormString(formData, "market_belief"),
+    my_belief: getRequiredFormString(formData, "my_belief"),
     what_would_close_the_gap: formData.get("what_would_close_the_gap") as string | null,
     confidence: formData.get("confidence") as string || "Medium"
   };
@@ -182,10 +183,11 @@ export async function createVariantPerception(formData: FormData, companyId: str
 export async function createEvidenceLedgerItem(formData: FormData, companyId: string) {
   const payload = {
     company_id: parseInt(companyId, 10),
-    evidence_text: getRequiredFormId(formData, "evidence_text"),
+    evidence_text: getRequiredFormString(formData, "evidence_text"),
+    source_link: formData.get("source_link") as string || null,
     effect: formData.get("effect") as string || "Supports",
     confidence: "Medium",
-    date_discovered: getRequiredFormId(formData, "date_discovered")
+    date_discovered: getRequiredFormString(formData, "date_discovered")
   };
   await serverPostApi("/evidence", payload);
   revalidatePath(`/companies/${companyId}/decisions`);
@@ -196,7 +198,7 @@ export async function createDecisionLogItem(formData: FormData, companyId: strin
   const payload = {
     company_id: parseInt(companyId, 10),
     decision_type: formData.get("decision_type") as string || "Hold",
-    rationale: getRequiredFormId(formData, "rationale"),
+    rationale: getRequiredFormString(formData, "rationale"),
     price_at_time: price ? parseFloat(price as string) : null,
     emotional_state: formData.get("emotional_state") as string || null,
     alternatives_considered: formData.get("alternatives_considered") as string || null,
@@ -207,7 +209,7 @@ export async function createDecisionLogItem(formData: FormData, companyId: strin
 
 export async function createOutcomeReview(formData: FormData, decisionId: string, companyId: string) {
   const payload = {
-    what_happened: getRequiredFormId(formData, "what_happened"),
+    what_happened: getRequiredFormString(formData, "what_happened"),
     wrong_assumption: formData.get("wrong_assumption") as string || null,
     information_unavailable_or_misinterpreted: formData.get("information_unavailable_or_misinterpreted") === "on",
     valuation_wrong: formData.get("valuation_wrong") === "on",

@@ -7,6 +7,8 @@ import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { PageHeader, Panel, EmptyState } from "@/components/page";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { formActionError } from "@/app/actions/shared";
 
 export const dynamic = "force-dynamic";
 
@@ -29,9 +31,9 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
   }
 
   const [evidenceRes, perceptionsRes, decisionsRes] = await Promise.all([
-    serverFetchApiResponse<EvidenceLedgerItem[]>(`/evidence?company_id=${companyId}`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<VariantPerception[]>(`/variant-perceptions?company_id=${companyId}`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<DecisionLog[]>(`/decisions?company_id=${companyId}`).catch(() => ({ data: [], meta: null })),
+    serverFetchApiResponse<EvidenceLedgerItem[]>(`/evidence?company_id=${companyId}`),
+    serverFetchApiResponse<VariantPerception[]>(`/variant-perceptions?company_id=${companyId}`),
+    serverFetchApiResponse<DecisionLog[]>(`/decisions?company_id=${companyId}`),
   ]);
 
   const evidence = evidenceRes.data || [];
@@ -55,6 +57,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
 
       <DataHealthUpdater segment="decisions" isStale={dataState.someStale || dataState.allStale} />
       <DataStateNotices metas={[evidenceRes.meta, perceptionsRes.meta, decisionsRes.meta]} />
+      <p>User Assumptions and research notes. Recorded decisions describe your own reasoning and do not place trades.</p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
 
@@ -63,7 +66,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
           <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
             A variant perception is where your belief about the future diverges from what the market currently prices in.
           </p>
-          {perceptions.length === 0 ? (
+          {perceptionsRes.meta?.status !== "success" ? <p role="alert">Variant perceptions are unavailable. Reload to retry.</p> : perceptions.length === 0 ? (
             <EmptyState label="No variant perception defined." />
           ) : (
             <div className="responsive-field-row" style={{ gap: "1.5rem" }}>
@@ -92,10 +95,11 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
 
           <div style={{ marginTop: "1.5rem", paddingTop: "1.5rem", borderTop: "1px solid var(--line)" }}>
             <h4 style={{ marginBottom: "1rem" }}>Add Variant Perception</h4>
-            <form action={async (data) => {
+            <RetainedActionForm resetOnSuccess successMessage="Saved." label="Variant perception entry" action={async (data) => {
               "use server";
               const { createVariantPerception } = await import("@/app/actions");
-              await createVariantPerception(data, companyId.toString());
+              try {await createVariantPerception(data, companyId.toString()); return {error: null};}
+              catch (error) {return formActionError(error);}
             }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)" }}>
               <input type="hidden" name="company_id" value={companyId} />
               <div className="responsive-field-row">
@@ -111,7 +115,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               <div className="button-row">
                 <button type="submit">Save Perception</button>
               </div>
-            </form>
+            </RetainedActionForm>
           </div>
         </Panel>
 
@@ -122,7 +126,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
             <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
               Keep track of data points and events that support or contradict your thesis.
             </p>
-            {evidence.length === 0 ? (
+            {evidenceRes.meta?.status !== "success" ? <p role="alert">Evidence notes are unavailable. Reload to retry.</p> : evidence.length === 0 ? (
               <EmptyState label="No evidence recorded yet." />
             ) : (
               <div className="brief-list" style={{ marginBottom: "1.5rem" }}>
@@ -140,19 +144,22 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                         <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{formatDate(ev.date_discovered)}</span>
                       </div>
                       <p style={{ margin: 0, fontSize: "0.95rem" }}>{ev.evidence_text}</p>
+                      {ev.source_link && /^https?:\/\//i.test(ev.source_link) && <a href={ev.source_link} target="_blank" rel="noopener noreferrer">Open recorded source</a>}
                     </div>
                   );
                 })}
               </div>
             )}
 
-            <form action={async (data) => {
+            <RetainedActionForm id="evidence-entry" resetOnSuccess successMessage="Saved." label="Evidence note entry" action={async (data) => {
               "use server";
               const { createEvidenceLedgerItem } = await import("@/app/actions");
-              await createEvidenceLedgerItem(data, companyId.toString());
+              try {await createEvidenceLedgerItem(data, companyId.toString()); return {error: null};}
+              catch (error) {return formActionError(error);}
             }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)", background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
               <input type="hidden" name="company_id" value={companyId} />
               <TextAreaField id="evidence_text" name="evidence_text" label="New Evidence" required rows={2} />
+              <TextField id="source_link" name="source_link" label="Source URL (optional)" type="url" />
               <div className="responsive-field-row">
                 <SelectField id="effect" name="effect" label="Effect on Thesis" defaultValue="Supports">
                   <option value="Supports">Supports</option>
@@ -165,7 +172,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               <div className="button-row">
                 <button type="submit" className="secondary-button">Add Evidence</button>
               </div>
-            </form>
+            </RetainedActionForm>
           </Panel>
 
           {/* DECISION LOG */}
@@ -173,7 +180,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
             <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "1.5rem" }}>
               Record every major decision (Buy, Sell, Hold) and the exact rationale at that moment.
             </p>
-            {decisions.length === 0 ? (
+            {decisionsRes.meta?.status !== "success" ? <p role="alert">Decisions are unavailable. Reload to retry.</p> : decisions.length === 0 ? (
               <EmptyState label="No decisions recorded." />
             ) : (
               <div className="brief-list" style={{ marginBottom: "1.5rem" }}>
@@ -191,9 +198,9 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                         <span style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>{formatDate(d.created_at)}</span>
                       </div>
                       <p style={{ margin: 0, fontSize: "0.95rem" }}>{d.rationale}</p>
-                      {d.price_at_time && (
+                      {d.price_at_time !== null && d.price_at_time !== undefined && (
                         <p style={{ margin: "0.25rem 0 0 0", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                          Price at time: ${d.price_at_time.toFixed(2)}
+                          Recorded price: {d.price_at_time.toFixed(2)} (currency not recorded)
                         </p>
                       )}
 
@@ -213,10 +220,11 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                         <div style={{ marginTop: "1rem" }}>
                           <details style={{ fontSize: "0.9rem" }}>
                             <summary style={{ cursor: "pointer", color: "var(--text-secondary)" }}>Review this decision</summary>
-                            <form action={async (data) => {
+                            <RetainedActionForm resetOnSuccess successMessage="Saved." label={`Outcome review for decision ${d.id}`} action={async (data) => {
                               "use server";
                               const { createOutcomeReview } = await import("@/app/actions");
-                              await createOutcomeReview(data, d.id.toString(), companyId.toString());
+                              try {await createOutcomeReview(data, d.id.toString(), companyId.toString()); return {error: null};}
+                              catch (error) {return formActionError(error);}
                             }} style={{ marginTop: "1rem", display: "flex", flexDirection: "column", gap: "1rem", padding: "1rem", border: "1px solid var(--border-color)", borderRadius: "6px" }}>
                               <TextAreaField id={`what_happened_${d.id}`} name="what_happened" label="What Happened?" required rows={2} />
                               <div className="responsive-field-row" style={{ gap: "0.5rem", fontSize: "0.85rem" }}>
@@ -227,7 +235,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                                 <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}><input type="checkbox" name="information_unavailable_or_misinterpreted" /> Information missed</label>
                               </div>
                               <button type="submit" className="secondary-button" style={{ alignSelf: "flex-start" }}>Save Review</button>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                         </div>
                       )}
@@ -237,10 +245,11 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               </div>
             )}
 
-            <form action={async (data) => {
+            <RetainedActionForm resetOnSuccess successMessage="Saved." label="Decision entry" action={async (data) => {
               "use server";
               const { createDecisionLogItem } = await import("@/app/actions");
-              await createDecisionLogItem(data, companyId.toString());
+              try {await createDecisionLogItem(data, companyId.toString()); return {error: null};}
+              catch (error) {return formActionError(error);}
             }} className="form-grid" style={{ gridTemplateColumns: "minmax(0, 1fr)", background: "var(--surface)", padding: "1rem", borderRadius: "8px", border: "1px solid var(--border-color)" }}>
               <input type="hidden" name="company_id" value={companyId} />
               <div className="responsive-field-row">
@@ -251,7 +260,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
                   <option value="Trim">Trim</option>
                   <option value="Pass">Pass</option>
                 </SelectField>
-                <TextField id="price_at_time" name="price_at_time" label="Price at Time" type="number" step="0.01" />
+                <TextField id="price_at_time" name="price_at_time" label="Price at Time (optional; currency is not stored)" type="number" min="0" step="any" />
               </div>
               <TextAreaField id="rationale" name="rationale" label="Rationale" required rows={2} placeholder="Why are you making this decision right now?" />
               <div className="responsive-field-row">
@@ -261,7 +270,7 @@ export default async function DecisionsPage(props: { params: Promise<{ id: strin
               <div className="button-row">
                 <button type="submit" style={{ background: "var(--accent)" }}>Record Decision</button>
               </div>
-            </form>
+            </RetainedActionForm>
           </Panel>
 
         </div>

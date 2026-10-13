@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CompanyResearchCards } from "@/components/company-research-cards";
@@ -256,18 +257,18 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                     {company.exposure_tags.map(tag => (
                       <span key={tag.id} className="badge" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
                         {tag.name}
-                        <form action={removeCompanyExposureTag} style={{ display: "inline", marginLeft: "0.25rem" }}>
+                        <RetainedActionForm label="Remove company exposure tag" action={removeCompanyExposureTag} style={{ display: "inline", marginLeft: "0.25rem" }}>
                           <input type="hidden" name="company_id" value={company.id} />
                           <input type="hidden" name="tag_id" value={tag.id} />
                           <button type="submit" aria-label={`Remove ${tag.name} exposure tag`} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--error)" }}>&times;</button>
-                        </form>
+                        </RetainedActionForm>
                       </span>
                     ))}
                   </div>
                 ) : (
                   <EmptyState label="No exposure factors linked." />
                 )}
-                <form action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
+                <RetainedActionForm label="Add company exposure tag" action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
                   <input type="hidden" name="company_id" value={company.id} />
                   <select name="tag_id" aria-label="Exposure tag" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
                     <option value="" disabled>Add an exposure tag...</option>
@@ -276,7 +277,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                     ))}
                   </select>
                   <button type="submit" style={{ fontSize: "0.85rem" }}>Add</button>
-                </form>
+                </RetainedActionForm>
               </div>
             </Panel>
 
@@ -287,14 +288,14 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 {company.market === "IN" ? (
                   <EmptyState label="India automated filing provider not configured. Add exchange filing links manually from the Documents page." />
                 ) : !company.cik ? (
-                  <form action={lookupCompanyCik} className="inline-form">
+                  <RetainedActionForm label="Lookup company cik" action={lookupCompanyCik} className="inline-form">
                     <input name="id" type="hidden" value={company.id} />
                     <div>
                       <strong>CIK is missing.</strong>
                       <p className="muted">Look up the company CIK before selecting SEC filings.</p>
                     </div>
                     <button className="secondary-button" type="submit">Look up CIK</button>
-                  </form>
+                  </RetainedActionForm>
                 ) : (
                   <>
                     <form className="form-grid" method="get">
@@ -324,7 +325,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                       secFilings.length === 0 ? (
                         <EmptyState label={`No ${formType} filings found for ${filingYear}.`} />
                       ) : (
-                        <form action={importSecFilings} className="form-grid">
+                        <RetainedActionForm label="Import sec filings" resetOnSuccess action={importSecFilings} className="form-grid">
                           <input name="company_id" type="hidden" value={company.id} />
                           <input name="form_type" type="hidden" value={formType} />
                           <input name="filing_year" type="hidden" value={filingYear} />
@@ -357,7 +358,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <div className="button-row">
                             <button type="submit">Import selected filing</button>
                           </div>
-                        </form>
+                        </RetainedActionForm>
                       )
                     ) : null}
                   </>
@@ -418,7 +419,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <summary>Score details</summary>
                         <ScoreExplanationView explanation={event.score_explanation_json} />
                       </details>
-                      <form action={triggerEventClassification} className="company-event-action">
+                      <RetainedActionForm label="Trigger event classification" action={triggerEventClassification} className="company-event-action">
                         <input type="hidden" name="event_id" value={event.id} />
                         <input type="hidden" name="company_id" value={company.id} />
                         <label className="privacy-consent">
@@ -431,7 +432,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <span>{AI_DISCLOSURES.thesisImpact}</span>
                         </label>
                         <button type="submit" className="secondary-button">Propose impact</button>
-                      </form>
+                      </RetainedActionForm>
                     </article>
                   ))}
                 </div>

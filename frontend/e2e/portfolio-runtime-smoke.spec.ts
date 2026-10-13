@@ -61,8 +61,8 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   expect(comparison.holdings.every((holding) => holding.source_dcf_output_id !== null)).toBeTruthy();
 
   const performance = await backendData<{
-    time_weighted_return: { calculation_status: string; return_decimal: number | null };
-    money_weighted_return: { calculation_status: string; return_decimal: number | null };
+    time_weighted_return: { calculation_status: string; return_decimal: number | null; start_date: string | null; end_date: string };
+    money_weighted_return: { calculation_status: string; return_decimal: number | null; start_date: string | null; end_date: string };
   }>(page, `/portfolios/${portfolioId}/performance?start_date=${START_DATE}&end_date=${END_DATE}`);
   expect(performance.time_weighted_return.calculation_status).toBe("complete");
   expect(performance.time_weighted_return.return_decimal).not.toBeNull();
@@ -98,6 +98,15 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
 
   await page.goto(`/portfolio/${portfolioId}?start_date=${START_DATE}&end_date=${END_DATE}`);
   await expect(page.getByRole("heading", { name: PORTFOLIO_NAME })).toBeVisible();
+  const performancePanel = page.getByRole("heading", {name: "Period Performance & Attribution"}).locator("xpath=../..");
+  const twrCard = performancePanel.getByText("TWR: selected period (complete)", {exact: true}).locator("..");
+  const mwrCard = performancePanel.getByText("MWR: annualized (complete)", {exact: true}).locator("..");
+  const twrDates = `Period: ${performance.time_weighted_return.start_date} to ${performance.time_weighted_return.end_date}. Not annualized.`;
+  const mwrDates = `Since first cash flow: ${performance.money_weighted_return.start_date} to ${performance.money_weighted_return.end_date}.`;
+  expect(performance.time_weighted_return.start_date).toBe(START_DATE);
+  expect(performance.money_weighted_return.start_date).not.toBeNull();
+  await expect(twrCard.getByText(twrDates, {exact: true})).toBeVisible();
+  await expect(mwrCard.getByText(mwrDates, {exact: true})).toBeVisible();
   const comparisonPanel = page.getByRole("heading", { name: "Marginal Risk & DCF Valuation Gap" }).locator("xpath=../..");
   await expect(comparisonPanel.getByText("Mock Data", { exact: true })).toBeVisible();
   await expect(comparisonPanel.getByText("E2EUSD")).toBeVisible();
@@ -105,8 +114,12 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   await expect(comparisonPanel.getByText("100.0% covered")).toHaveCount(2);
   await expect(comparisonPanel.getByText("Estimate", { exact: true })).toHaveCount(2);
   await expect(comparisonPanel.getByText(/not an annualized forecast/i)).toBeVisible();
+  await page.screenshot({ path: test.info().outputPath("performance-risk-desktop.png"), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
+  await expect(twrCard.getByText(twrDates, {exact: true})).toBeVisible();
+  await expect(mwrCard.getByText(mwrDates, {exact: true})).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  await page.screenshot({ path: test.info().outputPath("performance-risk-mobile.png"), fullPage: true });
   await page.goto(`/portfolio/${portfolioId}?tab=setup`);
   await expect(page.getByText("Recorded activity reconciled", { exact: true })).toHaveCount(2);
   await page.screenshot({ path: test.info().outputPath("replayed-history-mobile.png"), fullPage: true });

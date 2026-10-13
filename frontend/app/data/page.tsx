@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { DataStateNotices, PageHeader, Panel } from "@/components/page";
 import { fetchRssFeed, fetchRecentSecFilings } from "@/app/actions";
@@ -84,7 +85,7 @@ export default async function DataPage() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <Panel title="Fetch RSS Feed">
-          <form action={fetchRssFeed} className="form-grid">
+          <RetainedActionForm label="Fetch rss feed" action={fetchRssFeed} className="form-grid">
             <SelectField disabled={activeRssSources.length === 0} id="rss-feed-source-id" label="Source" name="source_id" required>
               <option value="">Select RSS source</option>
               {sourceOptions(activeRssSources)}
@@ -97,11 +98,11 @@ export default async function DataPage() {
             <div className="button-row">
               <button disabled={activeRssSources.length === 0} type="submit">Fetch RSS feed</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Fetch Recent SEC Filings">
-          <form action={fetchRecentSecFilings} className="form-grid">
+          <RetainedActionForm label="Fetch recent sec filings" action={fetchRecentSecFilings} className="form-grid">
             {preferredSecSource && <input name="source_id" type="hidden" value={preferredSecSource.id} />}
             <div className="field">
               <span className="field-label">SEC Source</span>
@@ -123,7 +124,7 @@ export default async function DataPage() {
             <div className="button-row">
               <button disabled={secCompanies.length === 0} type="submit">Fetch recent SEC filings</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
       </div>
     </>

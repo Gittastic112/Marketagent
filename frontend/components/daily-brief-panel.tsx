@@ -31,7 +31,7 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {dailyBrief.high_materiality_events.slice(0, 3).map((event) => (
                 <Link
-                  href={`/events/${event.event_id}`}
+                  href={`/events/${event.event_id}/evidence-resolution`}
                   key={event.event_id}
                   className="btn btn-outline"
                   style={{

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -71,10 +72,10 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
         <Link className="secondary-button" href={`/companies/${company.id}/fundamentals`}>Financials</Link>
         <Link className="secondary-button" href={`/companies/${company.id}/valuation`}>Valuation</Link>
         {(company.market === "US" && (company.cik || (company.regulatory_id_type === "CIK" && company.regulatory_id))) && (
-          <form action={extractXbrlFromCompany} style={{ display: "inline-block" }}>
+          <RetainedActionForm label="Extract xbrl from company" action={extractXbrlFromCompany} style={{ display: "inline-block" }}>
             <input name="company_id" type="hidden" value={company.id} />
             <button type="submit" className="primary-button">Extract via SEC XBRL</button>
-          </form>
+          </RetainedActionForm>
         )}
       </div>
 
@@ -194,13 +195,13 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
                           {isPdfUpload(filing) ? (
                             <Link href={`/companies/${company.id}/fundamentals`}>Review candidates</Link>
                           ) : (
-                            <form action={extractFinancialCandidatesFromFiling}>
+                            <RetainedActionForm label="Extract financial candidates from filing" action={extractFinancialCandidatesFromFiling}>
                               <input name="filing_id" type="hidden" value={filing.id} />
                               <input name="company_id" type="hidden" value={company.id} />
                               <button type="submit" className="secondary-button" style={{ padding: "0.35rem 0.6rem" }}>
                                 Extract candidates
                               </button>
-                            </form>
+                            </RetainedActionForm>
                           )}
                         </td>
                       </tr>
@@ -219,7 +220,7 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
             <PdfFilingUpload companyId={company.id} />
           </Panel>
           <Panel title="Add Manual Filing">
-            <form action={createManualCompanyFilingLink} className="form-grid">
+            <RetainedActionForm label="Create manual company filing link" resetOnSuccess action={createManualCompanyFilingLink} className="form-grid">
             <input name="id" type="hidden" value={company.id} />
             <SelectField defaultValue={company.market === "IN" ? "annual_report" : "annual_report"} id="document_type" label="Document type" name="document_type" required>
               <option value="annual_report">Annual report</option>
@@ -243,7 +244,7 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
             <div className="button-row field-full">
               <button type="submit">Add filing source</button>
             </div>
-            </form>
+            </RetainedActionForm>
             <p className="muted" style={{ marginBottom: 0, marginTop: "1rem" }}>
               Manual sources are stored as raw documents and marked for review before financial extraction.
             </p>

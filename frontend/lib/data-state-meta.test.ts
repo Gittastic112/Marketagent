@@ -3,7 +3,7 @@ import { test } from "node:test";
 
 import { buildDataStateBadges, summarizeApiMetas } from "./data-state-meta.ts";
 
-test("buildDataStateBadges labels live non-mock data", () => {
+test("successful stored data is available without asserting live freshness", () => {
   const badges = buildDataStateBadges({
     status: "success",
     source: "internal",
@@ -16,7 +16,7 @@ test("buildDataStateBadges labels live non-mock data", () => {
   });
 
   assert.deepEqual(badges, [
-    { label: "Live", tone: "success" },
+    { label: "Available", tone: "success" },
     { label: "24ms", tone: "muted" }
   ]);
 });

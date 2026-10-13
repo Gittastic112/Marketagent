@@ -10,6 +10,8 @@ import {
   applyManualCitationEdit,
   buildCitationValidationPayload,
   initialCitationDrafts,
+  readableCitations,
+  readableEvaluation,
 } from "@/lib/ai-citation-suggestions";
 import {
   type AiCitationSuggestion,
@@ -39,6 +41,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
     (match) => match[1].trim(),
   ).filter((source, index, sources) => source.startsWith("raw_document:") && sources.indexOf(source) === index);
   const citationPayload = buildCitationValidationPayload(citedSourceIds, drafts);
+  const evaluation = readableEvaluation(output);
 
   async function loadSuggestions() {
     const isCurrent = requests.begin();
@@ -192,7 +195,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         >
           Validate all cited sources
         </button>
-        {output.citations_json.map((citation, index) => (
+        {readableCitations(output).map((citation, index) => (
           <p key={`${citation.source_id}-${index}`} style={{ marginTop: "0.5rem" }}>
             <strong>{citation.status}:</strong> {citation.quote}
             {citation.reason ? ` (${citation.reason})` : ""}
@@ -204,13 +207,11 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
       <div>
         <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Human review</h4>
         <p><strong>Status:</strong> {output.human_review_status.replace("_", " ")}</p>
-        <p><strong>Automated checks:</strong> {output.evaluation_json?.passed ? "passed" : "not passed"}</p>
+        <p><strong>Automated checks:</strong> {evaluation.passed ? "passed" : "not passed"}</p>
         <p className="muted">Automated scope: source citations and policy checks only. Interpretation quality is not evaluated. Review numbers, periods, causal claims and source-text instructions before approving; an exact quote does not prove the claim.</p>
-        {output.evaluation_json && !output.evaluation_json.passed ? (
+        {output.evaluation_json && !evaluation.passed ? (
           <ul>
-            {Object.entries(output.evaluation_json.checks)
-              .filter(([name, passed]) => name !== "citations_required" && !passed)
-              .map(([name]) => <li key={name}>{name.replaceAll("_", " ")}</li>)}
+            {evaluation.failedChecks.map(name => <li key={name}>{name.replaceAll("_", " ")}</li>)}
           </ul>
         ) : null}
         <label style={{ display: "grid", gap: "0.35rem", marginTop: "0.75rem" }}>
@@ -218,7 +219,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
           <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} />
         </label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          <button className="btn btn-primary" type="button" disabled={busy || !output.evaluation_json?.passed} onClick={() => review("approved")}>Approve</button>
+          <button className="btn btn-primary" type="button" disabled={busy || !evaluation.passed} onClick={() => review("approved")}>Approve</button>
           <button className="btn btn-secondary" type="button" disabled={busy || !notes.trim()} onClick={() => review("needs_revision")}>Request revision</button>
           <button className="btn btn-secondary" type="button" disabled={busy || !notes.trim()} onClick={() => review("rejected")}>Reject</button>
         </div>

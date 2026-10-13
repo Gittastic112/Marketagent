@@ -2,7 +2,9 @@ import path from "node:path";
 
 import { expect, test } from "@playwright/test";
 
-import { backendData, createCompany, signIn } from "./helpers";
+import { backendData, createCompany, expandDraftSections, signIn } from "./helpers";
+import type { NormalizedSnapshotRead } from "../lib/api/financials";
+import type { ValuationSetupDraft } from "../lib/api/valuation-drafts";
 
 const PDF_FIXTURE = path.resolve(
   process.cwd(),
@@ -79,4 +81,28 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   expect(coverage.status).toBe("complete");
   expect(coverage.normalized_period_count).toBe(2);
   expect(coverage.trust_ready_period_count).toBe(2);
+
+  const snapshots = await backendData<NormalizedSnapshotRead[]>(page,
+    `/api/companies/${company.id}/financial-statements/normalized`);
+  await page.goto(`/companies/${company.id}/valuation/draft`);
+  await expandDraftSections(page);
+  await expect(page.locator("#starting_revenue:visible")).toHaveValue("1250");
+  const revenueField = page.locator("#starting_revenue:visible").locator("xpath=..");
+  await expect(revenueField).toContainText("Normalized Financials");
+  await expect(revenueField).toContainText("FY2026");
+  await expect(revenueField).toContainText("INR");
+  await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();
+  const draft = await backendData<ValuationSetupDraft>(page, `/companies/${company.id}/valuation-drafts`, {method: "POST", data: {}});
+  const provenance = draft.provenance_json.starting_revenue;
+  expect(typeof provenance).toBe("object");
+  if (typeof provenance === "string") throw new Error("Expected structured financial provenance");
+  expect(provenance.source_table).toBe("normalized_financial_metrics");
+  const snapshot = snapshots.find(item => item.id === provenance.snapshot_id)!;
+  const source = snapshot.metrics.find(item => item.id === provenance.source_record_id)!;
+  expect(source.metric_code).toBe("revenue");
+  expect(source.value).toBe(draft.assumptions_json.starting_revenue);
+  expect(provenance.period_id).toBe(snapshot.period_id);
+  expect(draft.source_metadata_json.reporting_currency).toBe("INR");
+  expect(draft.source_metadata_json.promotion_ready).toBe(false);
+  expect(await backendData<unknown[]>(page, `/companies/${company.id}/valuation-models`)).toHaveLength(0);
 });

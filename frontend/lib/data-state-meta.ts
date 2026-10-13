@@ -1,4 +1,8 @@
-import type { ApiMeta } from "./api";
+import type { ApiMeta, ApiResponse } from "./api";
+
+export function hasUsableData<T>(response: ApiResponse<T> | null | undefined): response is ApiResponse<T> & {data: T} {
+  return response?.meta.status === "success" && response.data !== null && response.data !== undefined;
+}
 
 export type DataStateTone = "success" | "warning" | "danger" | "muted";
 
@@ -36,7 +40,7 @@ export function buildDataStateBadges(meta: (ApiMeta & { is_mock?: boolean }) | n
   } else if (meta.is_stale) {
     badges.push({ label: "Stale", tone: "warning" });
   } else {
-    badges.push({ label: "Live", tone: "success" });
+    badges.push({ label: "Available", tone: "success" });
   }
 
   if (meta.is_mock || meta.source === "mock") {

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { deleteCompanyWithState, updateCompany, createExposureTag, deleteExposureTag, addCompanyExposureTag, removeCompanyExposureTag } from "@/app/actions";
 import { CompanySetupWizard } from "@/components/company-setup-wizard";
 import { DeleteRecordForm } from "@/components/delete-record-form";
@@ -84,7 +85,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                           </Link>
                           {query.edit !== String(company.id) ? <Link prefetch={false} className="secondary-button" href={`/companies?edit=${company.id}#company-${company.id}`}>Edit</Link> : <details className="edit-panel" open>
                             <summary>Edit</summary>
-                            <form action={updateCompany} className="inline-form">
+                            <RetainedActionForm label="Update company" action={updateCompany} className="inline-form">
                               <input name="id" type="hidden" value={company.id} />
                               <SelectField defaultValue={company.market ?? "US"} id={`market-${company.id}`} label="Market" name="market">
                                 <option value="US">United States</option>
@@ -138,7 +139,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>}
                           <details className="edit-panel">
                             <summary>Tags</summary>
@@ -147,15 +148,15 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                                 {company.exposure_tags?.map(tag => (
                                   <li key={tag.id} className="mb-1">
                                     {tag.name}
-                                    <form action={removeCompanyExposureTag} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
+                                    <RetainedActionForm label="Remove company exposure tag" action={removeCompanyExposureTag} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                       <input type="hidden" name="company_id" value={company.id} />
                                       <input type="hidden" name="tag_id" value={tag.id} />
                                       <button type="submit" className="text-red-500 text-xs" title="Remove tag">✕</button>
-                                    </form>
+                                    </RetainedActionForm>
                                   </li>
                                 ))}
                               </ul>
-                              <form action={addCompanyExposureTag} className="inline-form mt-2">
+                              <RetainedActionForm label="Add company exposure tag" action={addCompanyExposureTag} className="inline-form mt-2">
                                 <input type="hidden" name="company_id" value={company.id} />
                                 <SelectField id={`add-tag-${company.id}`} label="Exposure tag" name="tag_id" required>
                                   <option value="">Add tag...</option>
@@ -164,7 +165,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                                   ))}
                                 </SelectField>
                                 <button type="submit" className="secondary-button text-sm mt-1">Add</button>
-                              </form>
+                              </RetainedActionForm>
                             </div>
                           </details>
                           <DeleteRecordForm action={deleteCompanyWithState} recordId={company.id} />
@@ -179,13 +180,13 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
         </Panel>
         <details className="disclosure"><summary>Manage exposure tags</summary>
         <Panel title="Add Exposure Tag">
-          <form action={createExposureTag} className="form-grid">
+          <RetainedActionForm label="Create exposure tag" resetOnSuccess action={createExposureTag} className="form-grid">
             <TextField id="tag_name" label="Tag Name" name="name" placeholder="AI Infrastructure" required />
             <TextAreaField className="field field-full" id="tag_desc" label="Description" name="description" />
             <div className="button-row">
               <button type="submit">Add Tag</button>
             </div>
-          </form>
+          </RetainedActionForm>
           {exposureTags.length > 0 && (
             <div className="mt-4">
               <h4 className="text-sm font-medium mb-2">Existing Tags</h4>
@@ -193,10 +194,10 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                 {exposureTags.map(tag => (
                   <span key={tag.id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs">
                     <span title={tag.description || ''}>{tag.name}</span>
-                    <form action={deleteExposureTag} className="inline" style={{display: 'inline'}}>
+                    <RetainedActionForm label="Delete exposure tag" action={deleteExposureTag} className="inline" style={{display: 'inline'}}>
                       <input type="hidden" name="id" value={tag.id} />
                       <button type="submit" className="text-red-500 hover:text-red-700 ml-1" title="Delete tag">×</button>
-                    </form>
+                    </RetainedActionForm>
                   </span>
                 ))}
               </div>

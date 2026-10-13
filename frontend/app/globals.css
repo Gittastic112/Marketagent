@@ -958,6 +958,10 @@ button:disabled {
   padding: 4px;
 }
 
+.event-ai-panel[open] {
+  min-width: min(34rem, calc(100vw - 4rem));
+}
+
 .edit-panel summary:hover {
   color: var(--accent-strong);
 }
@@ -3037,6 +3041,22 @@ a.secondary-button {
   .brief-list,
   .form-grid {
     padding: var(--space-4);
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .form-grid .field {
+    min-width: 0;
+  }
+
+  .form-grid .field-wide {
+    grid-column: 1 / -1;
+  }
+
+  .button-row {
+    flex-wrap: wrap;
   }
 
   th,

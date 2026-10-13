@@ -120,7 +120,7 @@ test("correcting recorded activity makes selected historical returns provisional
   await page.getByRole("main").getByLabel("Start Date", {exact:true}).fill("2026-05-02");
   await page.getByRole("main").getByLabel("End Date", {exact:true}).fill("2026-05-06");
   await page.getByRole("button", {name:"Calculate Period", exact:true}).click();
-  await expect(page.getByRole("main").getByText("TWR (complete)", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("TWR: selected period (complete)", {exact:true})).toBeVisible();
   await page.goto("/portfolio/manage");
   const form = page.getByRole("main").locator(`form:has(input[name="id"][value="${purchaseId}"])`).filter({has:page.getByLabel("Fees", {exact:true})});
   await form.locator("..").getByText("Edit", {exact:true}).click();
@@ -128,7 +128,7 @@ test("correcting recorded activity makes selected historical returns provisional
   await form.getByRole("button", {name:"Save", exact:true}).click();
   await expect.poll(async () => (await backendData<{fees:number}>(page, `/portfolio-transactions/${purchaseId}`)).fees).toBe(1);
   await page.goto(`/portfolio/${portfolio.id}?tab=performance&start_date=2026-05-02&end_date=2026-05-06`);
-  await expect(page.getByRole("main").getByText("TWR (partial)", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("TWR: selected period (partial)", {exact:true})).toBeVisible();
   await expect(page.getByRole("main").getByText(/changed activity/).first()).toBeVisible();
   expect(await backendData(page, `/portfolio-snapshots?portfolio_id=${portfolio.id}`)).toEqual(before);
 });

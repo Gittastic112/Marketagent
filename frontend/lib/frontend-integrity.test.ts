@@ -522,8 +522,9 @@ test("AI research uses the same complete citation and human-review workflow", ()
   assert.match(controls, /deterministic lexical matches from stored text/);
   assert.match(controls, /applyCitationCandidate/);
   assert.match(controls, /Selecting one does not[\s\S]*validate the claim or approve this output/);
-  assert.match(controls, /!output\.evaluation_json\?\.passed/);
-  assert.match(controls, /citation_source_coverage|Object\.entries\(output\.evaluation_json\.checks\)/);
+  assert.match(controls, /readableEvaluation\(output\)/);
+  assert.match(controls, /!evaluation\.passed/);
+  assert.match(controls, /evaluation\.failedChecks\.map/);
   assert.match(session, /AiOutputReviewControls initialOutput=\{msg\.ai_output\}/);
   assert.match(metadata, /Human review:/);
   assert.match(metadata, /cit\.reason/);

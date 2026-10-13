@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createRequestGate } from "@/lib/latest-request";
 import { useRouter } from "next/navigation";
 import type { DcfAssumptionSet, ValuationCompanyContext, ValuationModel } from "@/lib/api/valuation";
 import { ReverseDcfPanel } from "@/components/valuation/reverse-dcf-panel";
@@ -107,6 +108,9 @@ export function AdvancedWorkspace({
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveSuccess, setSaveSuccess] = useState<string | null>(null);
   const [assumptionNotice, setAssumptionNotice] = useState<string | null>(null);
+  const saves = useMemo(createRequestGate, [modelId]);
+  const saving = useRef(false);
+  useEffect(() => () => saves.invalidate(), [saves]);
 
   const [cashFlowCurrency, setCashFlowCurrency] = useState(latestAssumptionSet ? latestAssumptionSet.cash_flow_currency ?? "" : valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD");
   const [discountRateCurrency, setDiscountRateCurrency] = useState(latestAssumptionSet ? latestAssumptionSet.discount_rate_currency ?? "" : valuationContext?.discount_rate_currency || valuationContext?.default_currency || "USD");
@@ -129,6 +133,7 @@ export function AdvancedWorkspace({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (saving.current) return;
     if (!valuationContext || !currencyCheck.canSave) {
       return;
     }
@@ -146,6 +151,8 @@ export function AdvancedWorkspace({
       requestAnimationFrame(() => invalid.focus());
       return;
     }
+    const current = saves.begin();
+    saving.current = true;
     setIsPending(true);
     try {
       const formData = new FormData(e.currentTarget);
@@ -155,6 +162,7 @@ export function AdvancedWorkspace({
       }
       const { createDcfAssumptionSetWithState } = await import("@/app/actions");
       const result = await createDcfAssumptionSetWithState(formData, modelId.toString(), companyId.toString());
+      if (!current()) return;
       if (result.error) {
         setSaveError(result.error);
         return;
@@ -162,9 +170,10 @@ export function AdvancedWorkspace({
       setSaveSuccess("Assumptions saved and valuation recalculated.");
       router.refresh();
     } catch (error) {
-      setSaveError(error instanceof Error ? error.message : "Could not save and calculate the valuation.");
+      if (current()) setSaveError(error instanceof Error ? error.message : "Could not save and calculate the valuation.");
     } finally {
-      setIsPending(false);
+      saving.current = false;
+      if (current()) setIsPending(false);
     }
   };
 
@@ -190,7 +199,8 @@ export function AdvancedWorkspace({
       field.value = typeof rawValue === "object" ? JSON.stringify(rawValue) : String(rawValue ?? "");
       field.dispatchEvent(new Event("input", { bubbles: true }));
     }
-    setAssumptionNotice("Suggested assumptions were applied to the form. Review them before saving the model.");
+    setSaveSuccess(null);
+    setAssumptionNotice("Reviewed AI estimates were copied to unsaved fields. Inspect them and use Save & Run Valuation to create a new version. The saved model is unchanged.");
   }
 
   return (
@@ -231,6 +241,8 @@ export function AdvancedWorkspace({
       <form key={latestAssumptionSet?.id ?? "new"} id="advanced-dcf-form" className="valuation-workspace-main" onSubmit={handleSubmit} noValidate
         onChange={() => setSaveSuccess(null)}
         style={{ display: activeSection === "real_options" || activeSection === "reverse_dcf" ? "none" : undefined }}>
+        <fieldset disabled={isPending} style={{display: "contents"}}>
+        <legend className="sr-only">Saved valuation inputs and analysis</legend>
         <input type="hidden" name="valuation_model_id" value={modelId} />
         <input type="hidden" name="reinvestment_method" value={latestAssumptionSet?.reinvestment_method || "sales_to_capital"} />
 
@@ -492,6 +504,7 @@ export function AdvancedWorkspace({
         <div style={{ display: activeSection === "narrative_to_numbers" ? "block" : "none" }}>
           {latestAssumptionSet ? (
             <NarrativeToNumbersPanel
+              key={`${latestAssumptionSet.id}:${latestAssumptionSet.updated_at}`}
               valuationId={modelId}
               scenario={latestAssumptionSet.scenario}
               currentAssumptions={latestAssumptionSet}
@@ -504,11 +517,14 @@ export function AdvancedWorkspace({
         <div style={{ display: activeSection === "valuation_memo" ? "block" : "none" }}>
           {latestAssumptionSet ? (
             <ValuationMemoPanel
+              key={`${latestAssumptionSet.id}:${latestAssumptionSet.updated_at}`}
               valuationId={modelId}
-              scenario={latestAssumptionSet.scenario}
+              assumptions={latestAssumptionSet}
+              blocked={outputTrustBlocked || Boolean(latestAssumptionSet.is_stale)}
             />
           ) : <NotConfiguredState title="Valuation memo unavailable" description="Save and calculate the first assumption set before generating a memo." />}
         </div>
+        </fieldset>
       </form>
 
       <div className="valuation-workspace-main valuation-standalone-analysis" style={{ display: activeSection === "real_options" ? "block" : "none" }}>

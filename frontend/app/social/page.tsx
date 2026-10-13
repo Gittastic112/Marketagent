@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import {
   createNarrativeCluster,
   createSocialPost,
@@ -24,7 +26,7 @@ export default async function SocialPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Social & Narratives" title="Social Intelligence" status={`${posts.length} posts, ${clusters.length} clusters`} />
+        <PageHeader eyebrow="Social & Narratives" title="Social Intelligence" status={`${hasUsableData(postsRes) ? `${posts.length} posts` : "Posts unavailable"}, ${hasUsableData(clustersRes) ? `${clusters.length} clusters` : "Clusters unavailable"}`} />
         <DataStateNotices
           metas={[postsRes.meta, clustersRes.meta]}
           mockMessage="Social or narrative data is mocked. Do not treat it as live social intelligence."
@@ -33,7 +35,7 @@ export default async function SocialPage() {
         <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
           <section id="social-posts">
             <Panel title="Import Social Post">
-              <form action={createSocialPost} className="form-grid">
+              <RetainedActionForm label="Create social post" resetOnSuccess action={createSocialPost} className="form-grid">
                 <TextField id="post-platform" label="Platform" name="platform" placeholder="e.g. Substack, SeekingAlpha" required />
                 <TextField id="post-url" label="Source URL" name="source_url" required type="url" />
                 <TextField id="post-author" label="Author" name="author" />
@@ -42,11 +44,11 @@ export default async function SocialPage() {
                 <div className="button-row">
                   <button type="submit">Import Post</button>
                 </div>
-              </form>
+              </RetainedActionForm>
             </Panel>
 
             <Panel title="Social Posts">
-              {posts.length === 0 ? (
+              {!hasUsableData(postsRes) ? <ErrorState message="Social posts could not be loaded. Reload to retry." /> : posts.length === 0 ? (
                 <EmptyState label="No social posts imported yet." />
               ) : (
                 <div className="table-wrap">
@@ -73,7 +75,7 @@ export default async function SocialPage() {
                             <div className="action-stack">
                               <details className="edit-panel">
                                 <summary>Edit</summary>
-                                <form action={updateSocialPost} className="inline-form">
+                                <RetainedActionForm label="Update social post" action={updateSocialPost} className="inline-form">
                                   <input name="id" type="hidden" value={post.id} />
                                   <TextField defaultValue={post.platform} id={`edit-platform-${post.id}`} label="Platform" name="platform" required />
                                   <TextField defaultValue={post.source_url} id={`edit-url-${post.id}`} label="Source URL" name="source_url" required type="url" />
@@ -82,7 +84,7 @@ export default async function SocialPage() {
                                   <div className="button-row">
                                     <button className="secondary-button" type="submit">Save</button>
                                   </div>
-                                </form>
+                                </RetainedActionForm>
                               </details>
                               <DeleteRecordForm action={deleteSocialPostWithState} recordId={post.id} />
                             </div>
@@ -98,17 +100,17 @@ export default async function SocialPage() {
 
           <section id="narratives">
             <Panel title="Create Narrative Cluster">
-              <form action={createNarrativeCluster} className="form-grid">
+              <RetainedActionForm label="Create narrative cluster" resetOnSuccess action={createNarrativeCluster} className="form-grid">
                 <TextField id="cluster-name" label="Cluster Name" name="name" required />
                 <TextAreaField className="field field-full" id="cluster-desc" label="Description" name="description" rows={2} />
                 <div className="button-row">
                   <button type="submit">Create Cluster</button>
                 </div>
-              </form>
+              </RetainedActionForm>
             </Panel>
 
             <Panel title="Narrative Clusters">
-              {clusters.length === 0 ? (
+              {!hasUsableData(clustersRes) ? <ErrorState message="Narrative clusters could not be loaded. Reload to retry." /> : clusters.length === 0 ? (
                 <EmptyState label="No narrative clusters created yet." />
               ) : (
                 <div className="table-wrap">
@@ -129,14 +131,14 @@ export default async function SocialPage() {
                             <div className="action-stack">
                               <details className="edit-panel">
                                 <summary>Edit</summary>
-                                <form action={updateNarrativeCluster} className="inline-form">
+                                <RetainedActionForm label="Update narrative cluster" action={updateNarrativeCluster} className="inline-form">
                                   <input name="id" type="hidden" value={cluster.id} />
                                   <TextField defaultValue={cluster.name} id={`edit-cluster-${cluster.id}`} label="Name" name="name" required />
                                   <TextAreaField className="field field-full" defaultValue={cluster.description ?? ""} id={`edit-cluster-desc-${cluster.id}`} label="Description" name="description" rows={2} />
                                   <div className="button-row">
                                     <button className="secondary-button" type="submit">Save</button>
                                   </div>
-                                </form>
+                                </RetainedActionForm>
                               </details>
                               <DeleteRecordForm action={deleteNarrativeClusterWithState} recordId={cluster.id} />
                             </div>

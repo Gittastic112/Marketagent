@@ -13,6 +13,8 @@ function requiredString(formData: FormData, key: string): string {
   return value;
 }
 
+export const getRequiredFormString = requiredString;
+
 function optionalString(formData: FormData, key: string): string | null {
   const value = formValue(formData, key);
   return value ? value : null;

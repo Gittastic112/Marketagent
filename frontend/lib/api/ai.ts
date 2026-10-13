@@ -16,24 +16,11 @@ export type AiOutput = {
   input_hash: string;
   source_ids_json: string[];
   source_scope: string;
-  citations_json: Array<{
-    source_id: string;
-    quote: string;
-    start_char?: number;
-    end_char?: number;
-    status: "valid" | "invalid";
-    reason?: string | null;
-    internal_href?: string;
-  }>;
-  citation_validation_status: "not_evaluated" | "valid" | "partial" | "invalid";
-  evaluation_json: {
-    version: string;
-    passed: boolean;
-    checks: Record<string, boolean>;
-    evaluation_scope?: "citation_and_policy_checks_only";
-    interpretation_quality?: "not_evaluated";
-    limitations?: string[];
-  } | null;
+  // Persisted JSON can contain legacy or malformed provider metadata. Consumers
+  // validate it before showing citations or enabling approval.
+  citations_json: Array<Record<string, unknown>>;
+  citation_validation_status: string;
+  evaluation_json: Record<string, unknown> | null;
   privacy_disclosure_version: string;
   external_data_classes_json: string[];
   transmission_scope: string;
@@ -102,11 +89,28 @@ export type DcfMappingResponse = ApiResponse<{
   impacted_variables: DcfVariableImpact[];
   ai_output_id: number;
   model_name: string;
+  ai_output: AiOutput;
   error?: string;
 }>;
 
+export async function mapEventToDcf(eventId: number, eventText: string): Promise<DcfMappingResponse> {
+  return api.post("/ai/research/map-event-to-dcf", {event_id: eventId, event_text: eventText,
+    privacy_disclosure_version: AI_PRIVACY_DISCLOSURE_VERSION});
+}
+
 export type NarrativeToNumbersRequest = {
   narrative_text: string;
+  assumption_set_id?: number;
+  assumptions_updated_at?: string;
+};
+
+export type ValuationAIEvidence = {
+  assumption_set_id: number; assumptions_updated_at?: string; valuation_model_id: number;
+  scenario: string; output_id?: number | null; output_calculated_at?: string | null; currency?: string | null;
+  ai_output_id: number; claim_type: "AI Interpretation"; is_current: boolean; basis_verified: boolean;
+  provider_name: string; model_name: string; prompt_version: string; input_hash: string;
+  source_ids: string[]; generated_at: string; review_status: string; is_mock: boolean;
+  confidence_label: string; limitations: string | null; interpretation_quality: "not_evaluated";
 };
 
 export type NarrativeToNumbersResponse = {
@@ -119,6 +123,7 @@ export type NarrativeToNumbersResponse = {
   terminal_growth_rate: number;
   terminal_growth_reason: string;
   ai_meta?: ApiMeta;
+  evidence?: ValuationAIEvidence;
 };
 
 export async function runNarrativeToNumbers(
@@ -143,14 +148,18 @@ export type ValuationMemoResponse = {
   provider_name?: string;
   is_mock?: boolean;
   ai_output_id?: number;
+  evidence?: ValuationAIEvidence;
 };
 
-export async function generateValuationMemo(valuationId: number, scenario: string): Promise<ValuationMemoResponse> {
+export async function generateValuationMemo(valuationId: number, scenario: string,
+  basis?: {assumption_set_id: number; assumptions_updated_at: string}): Promise<ValuationMemoResponse> {
   return postApi<ValuationMemoResponse>(`/valuation/${valuationId}/scenarios/${scenario}/ai/memo`, {
     privacy_disclosure_version: AI_PRIVACY_DISCLOSURE_VERSION,
+    ...basis,
   });
 }
 
-export async function fetchValuationMemo(valuationId: number, scenario: string): Promise<ValuationMemoResponse> {
-  return fetchApi<ValuationMemoResponse>(`/valuation/${valuationId}/scenarios/${scenario}/ai/memo`);
+export async function fetchValuationMemo(valuationId: number, scenario: string, assumptionId?: number): Promise<ValuationMemoResponse> {
+  const suffix = assumptionId === undefined ? "" : `?assumption_set_id=${assumptionId}`;
+  return fetchApi<ValuationMemoResponse>(`/valuation/${valuationId}/scenarios/${encodeURIComponent(scenario)}/ai/memo${suffix}`);
 }

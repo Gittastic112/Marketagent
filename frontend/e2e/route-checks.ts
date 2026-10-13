@@ -1,8 +1,15 @@
 import { writeFile } from "node:fs/promises";
+import { readdirSync } from "node:fs";
+import path from "node:path";
 import { expect, type Page, type TestInfo } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 export const ROUTE_READY_BUDGET_MS = 15_000;
+
+const pageRoutes = readdirSync(path.join(process.cwd(), "app"), {recursive: true})
+  .map(String).filter(file => file === "page.tsx" || file.endsWith("/page.tsx"))
+  .map(file => new RegExp("^/" + file.replace(/(^|\/)page\.tsx$/, "").split("/")
+    .filter(Boolean).map(segment => segment.startsWith("[") ? "[^/]+" : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("/") + "/?$"));
 
 async function collectSemanticFailures(page: Page): Promise<string[]> {
   return page.evaluate(() => {
@@ -47,6 +54,16 @@ async function collectSemanticFailures(page: Page): Promise<string[]> {
     }
     for (const image of document.querySelectorAll<HTMLImageElement>("img")) {
       if (!image.hasAttribute("alt")) failures.push(`Image missing alt: ${image.src}`);
+    }
+    if (innerWidth <= 600) {
+      for (const control of document.querySelectorAll<HTMLElement>(".button-row > a, .button-row > button")) {
+        if (!visible(control) || control.closest(".table-wrap")) continue;
+        const bounds = control.getBoundingClientRect();
+        const row = control.parentElement!.getBoundingClientRect();
+        if (bounds.left < Math.max(0, row.left) - 1 || bounds.right > Math.min(innerWidth, row.right) + 1) {
+          failures.push(`Clipped mobile action: ${control.textContent?.trim()}`);
+        }
+      }
     }
     return failures;
   });
@@ -151,6 +168,15 @@ export async function verifyRoute(
     targets: violation.nodes.map(node => ({ target: node.target, reason: node.failureSummary })),
   })), `${label} automatically detectable accessibility failures`).toEqual([]);
 
+  const internalLinks = await page.locator("main a[href]").evaluateAll(links => links.map(link => ({
+    text: link.textContent?.trim(), href: link.getAttribute("href") || "",
+  })).filter(link => link.href.startsWith("/") && !link.href.startsWith("//")));
+  const unknownPageLinks = internalLinks.filter(link => {
+    const pathname = new URL(link.href, "http://local.invalid").pathname;
+    return !pathname.startsWith("/api/") && !pageRoutes.some(route => route.test(pathname));
+  });
+  expect(unknownPageLinks, `${label} must link to implemented page routes`).toEqual([]);
+
   await page.keyboard.press("Tab");
   await expect.poll(() => page.evaluate(() => document.activeElement?.tagName)).not.toBe("BODY");
   await page.screenshot({
@@ -161,7 +187,7 @@ export async function verifyRoute(
   return { label, path, viewport, route_ready_ms: routeReadyMs, overflow,
     accessibility_passed_rules: accessibility.passes.length,
     accessibility_incomplete_rules: accessibility.incomplete.length,
-    controls: await page.locator("main button, main input, main select, main textarea").count() };
+    controls: await page.locator("main button, main input, main select, main textarea").count(), internal_links: internalLinks };
 }
 
 export async function verifyRoutes(page: Page, testInfo: TestInfo,

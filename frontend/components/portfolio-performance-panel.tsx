@@ -17,11 +17,12 @@ function percent(value: number | null) {
   return value == null ? "Not available" : `${(value * 100).toFixed(2)}%`;
 }
 
-function Metric({ label, value }: { label: string; value: string }) {
+function Metric({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return (
     <div style={{ border: "1px solid var(--border)", borderRadius: "8px", padding: "1rem", background: "var(--surface)" }}>
       <div style={{ color: "var(--text-secondary)", fontSize: "0.8rem" }}>{label}</div>
       <div style={{ fontSize: "1.2rem", fontWeight: 600, marginTop: "0.25rem" }}>{value}</div>
+      {detail && <p className="cell-secondary" style={{ margin: "0.35rem 0 0" }}>{detail}</p>}
     </div>
   );
 }
@@ -63,8 +64,12 @@ export function PortfolioPerformancePanel({
           ) : (
             <>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: "0.75rem" }}>
-                <Metric label={`TWR (${performance.time_weighted_return.calculation_status})`} value={percent(performance.time_weighted_return.return_decimal)} />
-                <Metric label={`MWR (${performance.money_weighted_return.calculation_status})`} value={percent(performance.money_weighted_return.return_decimal)} />
+                <Metric label={`TWR: selected period (${performance.time_weighted_return.calculation_status})`}
+                  value={percent(performance.time_weighted_return.return_decimal)}
+                  detail={`Period: ${performance.time_weighted_return.start_date || "Not available"} to ${performance.time_weighted_return.end_date}. Not annualized.`} />
+                <Metric label={`MWR: annualized (${performance.money_weighted_return.calculation_status})`}
+                  value={percent(performance.money_weighted_return.return_decimal)}
+                  detail={`Since first cash flow: ${performance.money_weighted_return.start_date || "Not available"} to ${performance.money_weighted_return.end_date}.`} />
                 <Metric label="Portfolio Change" value={money(attribution.total_change, attribution.base_currency)} />
                 <Metric label="Price Movement" value={money(attribution.price_movement, attribution.base_currency)} />
                 <Metric label="FX Impact" value={money(attribution.fx_impact, attribution.base_currency)} />

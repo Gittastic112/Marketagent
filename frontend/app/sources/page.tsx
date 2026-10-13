@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import { createSource, deleteSourceWithState, fetchActiveRssFeeds, fetchRssFeed, updateSource } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { CheckboxField, TextField } from "@/components/form-fields";
@@ -14,18 +16,18 @@ export default async function SourcesPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Evidence inputs" title="Sources" status={`${sources.length} sources`} />
+        <PageHeader eyebrow="Evidence inputs" title="Sources" status={hasUsableData(sourcesRes) ? `${sources.length} sources` : "Sources unavailable"} />
         <DataStateNotices
           metas={[sourcesRes.meta]}
           mockMessage="Source configuration is mocked. Configure real sources before using ingestion outputs."
         />
         <Panel title="RSS Feed Runs">
-          <form action={fetchActiveRssFeeds} className="button-row">
+          <RetainedActionForm label="Fetch active rss feeds" action={fetchActiveRssFeeds} className="button-row">
             <button disabled={activeRssCount === 0} type="submit">Fetch active RSS feeds</button>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Add Source">
-          <form action={createSource} className="form-grid">
+          <RetainedActionForm label="Create source" resetOnSuccess action={createSource} className="form-grid">
             <TextField className="field field-wide" id="name" label="Name" name="name" required />
             <TextField id="source_type" label="Type" name="source_type" placeholder="manual" required />
             <TextField id="reliability_score" label="Reliability" max="100" min="0" name="reliability_score" type="number" />
@@ -34,10 +36,10 @@ export default async function SourcesPage() {
             <div className="button-row">
               <button type="submit">Add source</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Sources">
-          {sources.length === 0 ? (
+          {!hasUsableData(sourcesRes) ? <ErrorState message="Sources could not be loaded. Reload to retry." /> : sources.length === 0 ? (
             <EmptyState label="No sources yet." />
           ) : (
             <div className="table-wrap">
@@ -64,7 +66,7 @@ export default async function SourcesPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updateSource} className="inline-form">
+                            <RetainedActionForm label="Update source" action={updateSource} className="inline-form">
                               <input name="id" type="hidden" value={source.id} />
                               <TextField defaultValue={source.name} id={`source-name-${source.id}`} label="Name" name="name" required />
                               <TextField defaultValue={source.source_type} id={`source-type-${source.id}`} label="Type" name="source_type" required />
@@ -74,13 +76,13 @@ export default async function SourcesPage() {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           {source.source_type === "rss" && source.base_url ? (
-                            <form action={fetchRssFeed} className="row-action">
+                            <RetainedActionForm label="Fetch rss feed" action={fetchRssFeed} className="row-action">
                               <input name="source_id" type="hidden" value={source.id} />
                               <button className="secondary-button" disabled={!source.active} type="submit">Fetch feed</button>
-                            </form>
+                            </RetainedActionForm>
                           ) : null}
                           <DeleteRecordForm action={deleteSourceWithState} recordId={source.id} />
                         </div>

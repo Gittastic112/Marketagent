@@ -73,16 +73,17 @@ export async function getFinancialCandidate(candidateId: number): Promise<Financ
   return fetchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}`);
 }
 
-export async function reviewFinancialCandidate(candidateId: number, reviewStatus: "needs_review" | "reviewed" | "rejected" | "overridden"): Promise<FinancialExtractionCandidate> {
-  return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/review`, { review_status: reviewStatus });
+export async function reviewFinancialCandidate(candidateId: number, reviewStatus: "needs_review" | "reviewed" | "rejected" | "overridden", expectedUpdatedAt?: string): Promise<FinancialExtractionCandidate> {
+  return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/review`, { review_status: reviewStatus, expected_updated_at: expectedUpdatedAt });
 }
 
-export async function overrideFinancialCandidate(candidateId: number, value: number, unit: string | null = null): Promise<FinancialExtractionCandidate> {
-  return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/override`, { value, unit });
+export async function overrideFinancialCandidate(candidateId: number, value: number, unit: string | null = null, expectedUpdatedAt?: string): Promise<FinancialExtractionCandidate> {
+  return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/override`, { value, unit, expected_updated_at: expectedUpdatedAt });
 }
 
-export async function promoteFinancialCandidates(companyId: number): Promise<{ status: string; promoted_count: number }> {
-  return postApi<{ status: string; promoted_count: number }>(`/api/companies/${companyId}/financial-statements/mark-reviewed`, {});
+export async function promoteFinancialCandidates(companyId: number, candidates?: Array<Pick<FinancialExtractionCandidate, "id" | "updated_at">>): Promise<{ status: string; promoted_count: number }> {
+  return postApi<{ status: string; promoted_count: number }>(`/api/companies/${companyId}/financial-statements/mark-reviewed`,
+    candidates === undefined ? {} : {expected_candidates: candidates.map(({id, updated_at}) => ({id, updated_at}))});
 }
 
 export type ChartFinancialMetric = {

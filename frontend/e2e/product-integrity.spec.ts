@@ -190,7 +190,7 @@ test("CSV market prices preview, apply, and export without losing the imported r
   const prices = await backendData<Array<{ ticker: string; price: number }>>(page, "/market-prices");
   expect(prices).toContainEqual(expect.objectContaining({ ticker, price: 123.45 }));
 
-  await page.goto("/market-prices");
+  await page.goto(`/market-prices?ticker=${encodeURIComponent(ticker)}`);
   const importedRow = page.getByRole("row").filter({ hasText: ticker });
   await expect(importedRow).toHaveCount(1);
   await expect(importedRow.getByText("Manual entry", { exact: true })).toBeVisible();

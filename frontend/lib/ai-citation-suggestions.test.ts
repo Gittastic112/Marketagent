@@ -5,7 +5,21 @@ import {
   applyCitationCandidate,
   applyManualCitationEdit,
   buildCitationValidationPayload,
+  readableCitations,
+  readableEvaluation,
 } from "./ai-citation-suggestions.ts";
+
+test("legacy metadata cannot crash citations or approve an unverified evaluation", () => {
+  const [citation] = readableCitations({citations_json: [{quote: {html: "untrusted"}, source_id: 7, internal_href: "//example.invalid", start_char: -1}]});
+  assert.equal(citation.quote, "");
+  assert.equal(citation.internal_href, null);
+  assert.equal(citation.status, "not_evaluated");
+  assert.equal(citation.start_char, undefined);
+  for (const evaluation_json of [null, {}, {passed: "true", checks: {citations: true}}, {passed: true}, {passed: true, checks: {citations: "yes"}}, {passed: true, checks: {citations: false}}]) {
+    assert.equal(readableEvaluation({evaluation_json}).passed, false);
+  }
+  assert.equal(readableEvaluation({evaluation_json: {passed: true, checks: {citations: true, citations_required: false}}}).passed, true);
+});
 
 
 test("applying a suggested passage preserves exact source offsets", () => {

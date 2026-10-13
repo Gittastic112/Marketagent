@@ -130,7 +130,6 @@ export function RegimeInputForm() {
       <button
         type="submit"
         disabled={isSubmitting}
-        style={{ padding: "0.5rem 1rem", borderRadius: "4px", background: "var(--primary-color)", color: "white", border: "none", cursor: "pointer" }}
       >
         {isSubmitting ? "Submitting..." : "Submit Metric"}
       </button>

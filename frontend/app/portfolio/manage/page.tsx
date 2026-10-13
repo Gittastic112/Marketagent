@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import {
   createPortfolio,
   createPortfolioHolding,
@@ -133,25 +135,25 @@ export default async function PortfolioPage() {
         <div className="breadcrumb">
           <Link href="/portfolio">← Back to Portfolio Monitoring</Link>
         </div>
-        <PageHeader eyebrow="Portfolio Management" title="Manage Data" status={`${portfolios.length} portfolios`} />
+        <PageHeader eyebrow="Portfolio Management" title="Manage Data" status={hasUsableData(portfoliosRes) ? `${portfolios.length} portfolios` : "Portfolios unavailable"} />
         <DataStateNotices
           metas={dataStateMetas}
           mockMessage="One or more portfolio management panels are using mock data. Do not treat affected values as live holdings or transactions."
         />
 
         <Panel title="Add Portfolio">
-          <form action={createPortfolio} className="form-grid">
+          <RetainedActionForm label="Create portfolio" resetOnSuccess action={createPortfolio} className="form-grid">
             <TextField className="field field-wide" id="name" label="Name" name="name" required />
             <TextField defaultValue="USD" id="base_currency" label="Base Currency" name="base_currency" required />
             <TextAreaField className="field field-full" id="description" label="Description" name="description" />
             <div className="button-row">
               <button type="submit">Add portfolio</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Set Opening Holding">
-          <form action={createPortfolioHolding} className="form-grid">
+          <RetainedActionForm label="Create portfolio holding" resetOnSuccess action={createPortfolioHolding} className="form-grid">
             <PortfolioSelect id="holding-portfolio-id" portfolios={portfolios} />
             <CompanySelect companies={companies} id="holding-company-id" />
             <TextField id="holding-ticker" label="Ticker" name="ticker" required />
@@ -162,11 +164,11 @@ export default async function PortfolioPage() {
             <div className="button-row">
               <button disabled={portfolios.length === 0} type="submit">Set opening holding</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Record Security Activity">
-          <form action={createPortfolioTransaction} className="form-grid">
+          <RetainedActionForm label="Create portfolio transaction" resetOnSuccess action={createPortfolioTransaction} className="form-grid">
             <PortfolioSelect id="transaction-portfolio-id" portfolios={portfolios} />
             <CompanySelect companies={companies} id="transaction-company-id" />
             <TextField id="transaction-ticker" label="Ticker" name="ticker" required />
@@ -186,11 +188,11 @@ export default async function PortfolioPage() {
             <div className="button-row">
               <button disabled={portfolios.length === 0} type="submit">Record security activity</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Record Cash Activity">
-          <form action={createPortfolioTransaction} className="form-grid">
+          <RetainedActionForm label="Create portfolio transaction" resetOnSuccess action={createPortfolioTransaction} className="form-grid">
             <PortfolioSelect id="cash-transaction-portfolio-id" portfolios={portfolios} />
             <input name="company_id" type="hidden" value="" />
             <input name="ticker" type="hidden" value="CASH" />
@@ -210,11 +212,11 @@ export default async function PortfolioPage() {
             <div className="button-row">
               <button disabled={portfolios.length === 0} type="submit">Record cash activity</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Portfolios">
-          {portfolios.length === 0 ? (
+          {!hasUsableData(portfoliosRes) ? <ErrorState message="Portfolios could not be loaded. Reload to retry." /> : portfolios.length === 0 ? (
             <EmptyState label="No portfolios yet." />
           ) : (
             <div className="table-wrap">
@@ -252,7 +254,7 @@ export default async function PortfolioPage() {
                           </Link>
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updatePortfolio} className="inline-form">
+                            <RetainedActionForm label="Update portfolio" action={updatePortfolio} className="inline-form">
                               <input name="id" type="hidden" value={portfolio.id} />
                               <TextField defaultValue={portfolio.name} id={`portfolio-name-${portfolio.id}`} label="Name" name="name" required />
                               <TextField defaultValue={portfolio.base_currency} id={`portfolio-currency-${portfolio.id}`} label="Base Currency" name="base_currency" required />
@@ -260,7 +262,7 @@ export default async function PortfolioPage() {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           <DeleteRecordForm action={deletePortfolioWithState} recordId={portfolio.id} />
                         </div>
@@ -279,7 +281,7 @@ export default async function PortfolioPage() {
           <div style={{ marginBottom: "1rem" }}>
             <DataFreshnessIndicator meta={holdingsRes.meta} source="Portfolio API" />
           </div>
-          {holdings.length === 0 ? (
+          {!hasUsableData(holdingsRes) ? <ErrorState message="Holdings could not be loaded. Reload to retry." /> : holdings.length === 0 ? (
             <EmptyState label="No holdings yet." />
           ) : (
             <div className="table-wrap">
@@ -340,7 +342,7 @@ export default async function PortfolioPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updatePortfolioHolding} className="inline-form">
+                            <RetainedActionForm label="Update portfolio holding" action={updatePortfolioHolding} className="inline-form">
                               <input name="id" type="hidden" value={holding.id} />
                               <PortfolioSelect defaultValue={holding.portfolio_id} id={`holding-portfolio-${holding.id}`} portfolios={portfolios} />
                               <CompanySelect companies={companies} defaultValue={holding.company_id} id={`holding-company-${holding.id}`} />
@@ -352,7 +354,7 @@ export default async function PortfolioPage() {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           <DeleteRecordForm action={deletePortfolioHoldingWithState} recordId={holding.id} />
                         </div>
@@ -367,7 +369,7 @@ export default async function PortfolioPage() {
         </Panel>
 
         <Panel title="Transactions">
-          {transactions.length === 0 ? (
+          {!hasUsableData(transactionsRes) ? <ErrorState message="Transactions could not be loaded. Reload to retry." /> : transactions.length === 0 ? (
             <EmptyState label="No transactions yet." />
           ) : (
             <div className="table-wrap">
@@ -402,7 +404,7 @@ export default async function PortfolioPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updatePortfolioTransaction} className="inline-form">
+                            <RetainedActionForm label="Update portfolio transaction" action={updatePortfolioTransaction} className="inline-form">
                               <input name="id" type="hidden" value={transaction.id} />
                               <PortfolioSelect defaultValue={transaction.portfolio_id} id={`transaction-portfolio-${transaction.id}`} portfolios={portfolios} />
                               <CompanySelect companies={companies} defaultValue={transaction.company_id} id={`transaction-company-${transaction.id}`} />
@@ -423,7 +425,7 @@ export default async function PortfolioPage() {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           <DeleteRecordForm action={deletePortfolioTransactionWithState} recordId={transaction.id} />
                         </div>

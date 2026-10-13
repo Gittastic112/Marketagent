@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
@@ -11,7 +12,9 @@ import type {
   NormalizedSnapshotRead,
 } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
-import { summarizeApiMetas } from "@/lib/data-state-meta";
+import { summarizeApiMetas, hasUsableData } from "@/lib/data-state-meta";
+import { ApiError } from "@/lib/api/contract";
+import { ErrorState } from "@/components/page";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
@@ -28,14 +31,15 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   let company: Company;
   try {
     company = await serverFetchApi<Company>(`/companies/${companyId}`);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    return <ErrorState message="Company fundamentals could not be loaded. Reload to retry." />;
   }
 
   const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse] = await Promise.all([
-    serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`).catch(() => ({ data: [], meta: null })),
+    serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`),
+    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`),
+    serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`),
     serverFetchApiResponse<NormalizedCoverage>(`/api/companies/${companyId}/financial-statements/normalized/coverage`),
     serverFetchApiResponse<FinancialReconciliation>(
       `/api/companies/${companyId}/financial-statements/normalized/reconciliation`,
@@ -105,13 +109,13 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             )}
           </div>
           {coverage && coverage.needs_backfill_count > 0 ? (
-            <form action={backfillNormalizedFinancialsAction}>
+            <RetainedActionForm label="Backfill normalized financials" action={backfillNormalizedFinancialsAction}>
               <input type="hidden" name="company_id" value={companyId} />
               <button className="secondary-button" title="Backfill normalized financials" type="submit">
                 <RefreshCw size={16} />
                 Backfill {coverage.needs_backfill_count} period{coverage.needs_backfill_count === 1 ? "" : "s"}
               </button>
-            </form>
+            </RetainedActionForm>
           ) : null}
         </div>
         {coverage && coverage.status !== "complete" && coverage.status !== "no_data" ? (
@@ -185,9 +189,13 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                   </tbody>
                 </table>
               </div>
-            ) : (
+            ) : reconciliation.exact_count > 0 ? (
               <p className="mt-3 text-sm text-green-700">
                 All comparable source metrics match the latest normalized snapshots.
+              </p>
+            ) : (
+              <p className="mt-3 text-sm text-gray-600">
+                No comparable reviewed metrics are available. Review and normalize source candidates before checking their agreement.
               </p>
             )}
           </>
@@ -283,7 +291,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           <div className="mt-4 flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {periods.length === 0 ? (
+                {!hasUsableData(periodsRes) ? <ErrorState message="Financial periods could not be loaded. Reload to retry." /> : periods.length === 0 ? (
                   <p className="text-sm text-gray-500">No financial periods found. (API ingestion needed)</p>
                 ) : (
                   <table className="min-w-full divide-y divide-gray-300">
@@ -316,14 +324,14 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                           </td>
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                             <div className="flex justify-end gap-3">
-                              <form action={normalizeFinancialPeriodAction}>
+                              <RetainedActionForm label="Normalize financial period" action={normalizeFinancialPeriodAction}>
                                 <input type="hidden" name="company_id" value={companyId} />
                                 <input type="hidden" name="period_id" value={period.id} />
                                 <button type="submit" className="text-blue-600 hover:text-blue-900">
                                   Normalize
                                 </button>
-                              </form>
-                              <form action={async (data) => {
+                              </RetainedActionForm>
+                              <RetainedActionForm label="Review and save record" action={async (data) => {
                                 "use server";
                                 await deleteFinancialStatementPeriod(data, companyId.toString());
                               }}>
@@ -331,7 +339,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                                 <button type="submit" className="text-red-600 hover:text-red-900">
                                   Delete
                                 </button>
-                              </form>
+                              </RetainedActionForm>
                             </div>
                           </td>
                         </tr>
@@ -357,7 +365,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             </Link>
           </div>
           <div className="mt-4 flow-root">
-            <FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} />
+            {hasUsableData(extractedCandidatesRes) ? <FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} />
+              : <ErrorState message="Financial candidates could not be loaded. Reload to retry." />}
           </div>
         </div>
       </div>
@@ -371,7 +380,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           <div className="mt-4 flow-root">
             <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {normalizedSnapshots.length === 0 ? (
+                {!hasUsableData(normalizedSnapshotsRes) ? <ErrorState message="Normalized metrics could not be loaded. Reload to retry." /> : normalizedSnapshots.length === 0 ? (
                   <p className="text-sm text-gray-500">No normalized snapshots found. Click "Normalize" on a period above.</p>
                 ) : (
                   <table className="min-w-full divide-y divide-gray-300">

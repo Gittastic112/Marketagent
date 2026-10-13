@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import { createMacroObservation, createMacroSeries, deleteMacroSeriesWithState, importFredSeries } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
@@ -164,7 +166,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
   try {
     const [seriesListRes, providerHealthRes] = await Promise.all([
       serverFetchApiResponse<MacroSeries[]>("/macro"),
-      serverFetchApiResponse<ProviderHealthRead[]>("/api/providers/health").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<ProviderHealthRead[]>("/api/providers/health"),
     ]);
     const seriesList = seriesListRes.data || [];
 
@@ -320,8 +322,8 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
         </Panel>}
 
         {activeTab === "series" && <><Panel title="Import from FRED">
-          {fredConfigured ? (
-            <form action={importFredSeries} className="form-grid">
+          {!hasUsableData(providerHealthRes) ? <ErrorState message="FRED configuration could not be checked. Reload to retry." /> : fredConfigured ? (
+            <RetainedActionForm label="Import fred series" resetOnSuccess action={importFredSeries} className="form-grid">
               <TextField id="series_id" label="FRED Series ID" name="series_id" placeholder="e.g. CPIAUCSL or FEDFUNDS" required />
               <div className="button-row" style={{ gridColumn: "1 / -1" }}>
                 <button type="submit">Import Series & Observations</button>
@@ -329,7 +331,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
               <p className="text-sm text-gray-500 mt-2" style={{ gridColumn: "1 / -1" }}>
                 Requires FRED API key. Use only for configured US macro series.
               </p>
-            </form>
+            </RetainedActionForm>
           ) : (
             <NotConfiguredState
               title="FRED Integration Not Configured"
@@ -339,7 +341,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
         </Panel>
 
         <Panel title="Add Macro Series Manually">
-          <form action={createMacroSeries} className="form-grid">
+          <RetainedActionForm label="Create macro series" resetOnSuccess action={createMacroSeries} className="form-grid">
             <TextField id="name" label="Series Name" name="name" placeholder="India 10Y Yield" required />
             <TextField id="units" label="Units" name="units" placeholder="%" />
             <TextField id="frequency" label="Frequency" name="frequency" placeholder="Monthly" />
@@ -347,11 +349,11 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
             <div className="button-row">
               <button type="submit">Add Series</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Add Observation">
-          <form action={createMacroObservation} className="form-grid">
+          <RetainedActionForm label="Create macro observation" resetOnSuccess action={createMacroObservation} className="form-grid">
             <SelectField id="series_id" label="Series" name="series_id" required>
               <option value="">Select series...</option>
               {seriesList.map((series) => (
@@ -365,11 +367,11 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
             <div className="button-row">
               <button type="submit">Add Observation</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         <Panel title="Series & Data">
-          {seriesList.length === 0 ? (
+          {!hasUsableData(seriesListRes) ? <ErrorState message="Macro series could not be loaded. Reload to retry." /> : seriesList.length === 0 ? (
             <EmptyState label="No macro series tracked yet." />
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -397,7 +399,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
                   {series.observations.length === 0 ? (
                     <p className="text-sm text-gray-500">No data points yet.</p>
                   ) : (
-                    <div className="max-h-48 overflow-y-auto">
+                    <div className="max-h-48 overflow-y-auto" role="region" aria-label={`${series.name} observations`} tabIndex={0}>
                       <table className="w-full text-sm">
                         <thead>
                           <tr className="text-left text-gray-500">

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { createThesisAssumption, createThesisChange, deleteThesisAssumption, updateThesisAssumption } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
@@ -95,7 +96,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
 
         {/* Assumptions */}
         <Panel title="Assumptions">
-          <form action={createAssumptionAction} className="form-grid">
+          <RetainedActionForm label="Create assumption" resetOnSuccess action={createAssumptionAction} className="form-grid">
             <input name="thesis_note_id" type="hidden" value={note.id} />
             <TextAreaField className="field field-wide" id="new-assumption-desc" label="Description" name="description" required rows={2} />
             <SelectField defaultValue="medium" id="new-assumption-orig" label="Original Confidence" name="original_confidence">
@@ -107,7 +108,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
             <div className="button-row">
               <button type="submit">Add Assumption</button>
             </div>
-          </form>
+          </RetainedActionForm>
           {note.assumptions.length === 0 ? (
             <EmptyState label="No assumptions recorded yet." />
           ) : (
@@ -135,7 +136,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updateAssumptionAction} className="inline-form">
+                            <RetainedActionForm label="Update assumption" action={updateAssumptionAction} className="inline-form">
                               <input name="id" type="hidden" value={a.id} />
                               <input name="thesis_note_id" type="hidden" value={note.id} />
                               <TextAreaField className="field field-full" defaultValue={a.description} id={`edit-desc-${a.id}`} label="Description" name="description" required rows={2} />
@@ -148,13 +149,13 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
-                          <form action={deleteAssumptionAction}>
+                          <RetainedActionForm label="Delete assumption" action={deleteAssumptionAction}>
                             <input name="id" type="hidden" value={a.id} />
                             <input name="thesis_note_id" type="hidden" value={note.id} />
                             <button className="danger-button" type="submit">Delete</button>
-                          </form>
+                          </RetainedActionForm>
                         </div>
                       </td>
                     </tr>
@@ -167,14 +168,14 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
 
         {/* Changes / Drift Log */}
         <Panel title="Change Log (Thesis Drift)">
-          <form action={createChangeAction} className="form-grid">
+          <RetainedActionForm label="Create change" resetOnSuccess action={createChangeAction} className="form-grid">
             <input name="thesis_note_id" type="hidden" value={note.id} />
             <TextAreaField className="field field-wide" id="new-change-summary" label="Change Summary" name="change_summary" required rows={2} />
             <TextField id="new-change-drift" label="Drift Score" name="drift_score" placeholder="0.0" type="number" />
             <div className="button-row">
               <button type="submit">Log Change</button>
             </div>
-          </form>
+          </RetainedActionForm>
           {note.changes.length === 0 ? (
             <EmptyState label="No changes logged yet." />
           ) : (

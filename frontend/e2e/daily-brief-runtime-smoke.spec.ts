@@ -184,4 +184,30 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await expect(scheduleStatus).toBeVisible();
   await expect(scheduleStatus.getByText("Rule-based, no external AI", { exact: true })).toBeVisible();
   await expect(scheduleStatus.getByText("Enabled", { exact: true })).toBeVisible();
+
+  const thesis = await backendData<{id: number}>(page, "/thesis-notes", {method: "POST", data: {
+    company_id: company.id, title: "Mock Data morning-review thesis",
+    thesis_text: "Mock Data: inspect the filing evidence before changing operating assumptions.", status: "active"}});
+  await page.goto("/");
+  const eventLink = page.getByRole("link", {name: /BRIEF filing update/}).first();
+  await expect(eventLink).toHaveAttribute("href", `/events/${event.id}/evidence-resolution`);
+  await eventLink.click();
+  const steps = page.getByRole("navigation", {name: "Next research steps"});
+  await steps.getByRole("link", {name: "Review company thesis"}).click();
+  const assumptionsLink = page.getByRole("link", {name: "Review or add thesis assumptions"});
+  await expect(assumptionsLink).toHaveAttribute("href", `/thesis-notes/${thesis.id}`);
+  await assumptionsLink.click();
+  await page.getByLabel("Description", {exact: true}).fill("Mock Data: review the margin evidence before changing forecasts");
+  await page.getByRole("button", {name: "Add Assumption", exact: true}).click();
+  await expect(page.getByRole("cell", {name: "Mock Data: review the margin evidence before changing forecasts", exact: true})).toBeVisible();
+  await page.goto(`/events/${event.id}/evidence-resolution`);
+  await steps.getByRole("link", {name: "Review valuation input sources"}).click();
+  await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();
+  expect(await backendData<unknown[]>(page, `/companies/${company.id}/valuation-models`)).toHaveLength(0);
+  await page.goto(`/events/${event.id}/evidence-resolution`);
+  await steps.getByRole("link", {name: "Record next review action"}).click();
+  await page.getByLabel("Decision", {exact: true}).selectOption("Pass");
+  await page.getByLabel("Rationale", {exact: true}).fill(`Mock Data: review source document ${document.id} and margin assumptions before proceeding.`);
+  await page.getByRole("button", {name: "Record Decision"}).click();
+  await expect(page.getByText(`Mock Data: review source document ${document.id} and margin assumptions before proceeding.`, {exact: true})).toBeVisible();
 });

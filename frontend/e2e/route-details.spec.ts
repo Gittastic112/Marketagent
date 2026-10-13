@@ -82,6 +82,9 @@ async function detailRoutes(page: Page): Promise<Array<[string, string]>> {
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   test(`owned detail routes at ${viewport.width}px retain accessible evidence and bounded layouts`, async ({ page }, testInfo) => {
+    // Twenty-five pages each include axe and full-page screenshots. Keep the
+    // 15-second per-route readiness budget; allow the aggregate audit to finish.
+    test.setTimeout(180_000);
     await signIn(page);
     const routes = await detailRoutes(page);
     await verifyRoutes(page, testInfo, routes, viewport, "Isolated Mock Data detail records");

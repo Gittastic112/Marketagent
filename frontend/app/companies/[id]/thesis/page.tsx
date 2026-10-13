@@ -1,8 +1,7 @@
-import { PageHeader, Panel, EmptyState } from "@/components/page";
+import { PageHeader, Panel, EmptyState, ErrorState } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, ThesisNote } from "@/lib/api";
 import Link from "next/link";
-import { Suspense } from "react";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 import { DataStateNotices } from "@/components/ui/data-states";
 
@@ -15,13 +14,13 @@ export default async function ThesisEnginePage({ params }: { params: Promise<{ i
   const company = companyRes.data;
 
   if (!company) {
-    return <EmptyState label="Company not found." />;
+    return <ErrorState message="Company information is unavailable. Reload to retry." errors={companyRes.errors} />;
   }
 
-  const thesisRes = await serverFetchApiResponse<ThesisNote[]>(`/thesis-notes`);
+  const thesisRes = await serverFetchApiResponse<ThesisNote[]>(`/thesis-notes?company_id=${companyId}`);
   const allNotes = thesisRes.data || [];
   const companyNotes = allNotes.filter(n => n.company_id === companyId);
-  const activeThesis = companyNotes.length > 0 ? companyNotes[0] : null;
+  const activeThesis = companyNotes.find(note => note.status === "active") ?? null;
 
   const isStale = !!thesisRes.meta?.is_stale;
 
@@ -43,12 +42,12 @@ export default async function ThesisEnginePage({ params }: { params: Promise<{ i
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem" }}>
         <Panel title="Core Assumptions">
-          {!activeThesis ? (
+          {thesisRes.meta.status !== "success" ? <ErrorState message="Thesis notes are unavailable. Reload to retry." errors={thesisRes.errors} /> : !activeThesis ? (
             <EmptyState label="No thesis created for this company yet." />
           ) : activeThesis.assumptions.length === 0 ? (
             <EmptyState label="No structured assumptions added to this thesis." />
           ) : (
-            <div className="table-wrap">
+            <div className="table-wrap" role="region" aria-label="Thesis assumptions" tabIndex={0}>
               <table>
                 <thead>
                   <tr>
@@ -102,12 +101,15 @@ export default async function ThesisEnginePage({ params }: { params: Promise<{ i
             </div>
           )}
           <div style={{ marginTop: "1.5rem", padding: "0 1.5rem 1.5rem" }}>
-            <button className="btn btn-primary">+ Add Assumption</button>
+            <Link className="btn btn-primary" href={activeThesis ? `/thesis-notes/${activeThesis.id}` : "/thesis-notes"}>
+              {activeThesis ? "Review or add thesis assumptions" : "Create or select a thesis note"}
+            </Link>
           </div>
         </Panel>
 
         <Panel title="Variant Perception Map">
-          <EmptyState label="Variant Perception tracking to be implemented." />
+          <p>Compare the recorded market view with your own interpretation in the decision journal.</p>
+          <Link href={`/companies/${companyId}/decisions`}>Review variant perceptions and next actions</Link>
         </Panel>
       </div>
     </>

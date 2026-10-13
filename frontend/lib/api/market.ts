@@ -63,9 +63,9 @@ export async function fetchMarketQuote(
   if (context.currency) {
     params.set("currency", context.currency);
   }
-  const path = context.market || context.exchange || context.currency
+  const path = context.market
     ? `/api/market/quote?${params.toString()}`
-    : `/market/quote/${ticker}`;
+    : `/api/market/quote/${encodeURIComponent(ticker)}`;
   return fetchApiOrNotFound<CompanyMarketData | null>(path, null);
 }
 

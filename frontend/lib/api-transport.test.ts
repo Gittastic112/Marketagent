@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import api, { ApiError, deleteApi, exportData, fetchApi, fetchApiResponse, fetchFinancialTrends, fetchMarketQuote, patchApi, postApi, putApi } from "./api.ts";
+import api, { ApiError, deleteApi, fetchApi, fetchApiResponse, fetchFinancialTrends, fetchMarketQuote, patchApi, postApi, putApi } from "./api.ts";
+import { postBlobApi } from "./api/transport.ts";
 
 async function withFetch(response: () => Response, run: (calls: RequestInit[]) => Promise<void>) {
   const original = globalThis.fetch;
@@ -68,10 +69,10 @@ test("only market and trend 404s use their established empty values", async () =
 
 test("exports preserve binary bytes and their separate failure contract", async () => {
   await withFetch(() => new Response("a,b\n1,2"), async (calls) => {
-    assert.equal(await (await exportData(["companies"], "csv")).text(), "a,b\n1,2");
+    assert.equal(await (await postBlobApi("/export-test", {resource_types: ["companies"], export_format: "csv"})).text(), "a,b\n1,2");
     assert.deepEqual(JSON.parse(String(calls[0].body)), { resource_types: ["companies"], export_format: "csv" });
   });
   await withFetch(() => new Response(null, { status: 403 }), async () => {
-    await assert.rejects(() => exportData([], "csv"), /Export failed with status 403/);
+    await assert.rejects(() => postBlobApi("/export-test", {}), /Export failed with status 403/);
   });
 });

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 
 import { generateDailyBrief, markDailyBriefReviewed } from "@/app/actions";
@@ -84,14 +85,14 @@ export default async function DailyBriefPage() {
               )}
             </div>
             <div className="briefing-controls">
-              <form action={generateDailyBrief}>
+              <RetainedActionForm label="Generate daily brief" action={generateDailyBrief}>
                 <button type="submit" className="btn btn-primary">Generate refreshed analysis</button>
-              </form>
+              </RetainedActionForm>
               {brief.review_status !== "reviewed" ? (
-                <form action={markDailyBriefReviewed}>
+                <RetainedActionForm label="Mark daily brief reviewed" action={markDailyBriefReviewed}>
                   <input type="hidden" name="id" value={brief.id} />
                   <button type="submit" className="btn btn-secondary">Mark brief reviewed</button>
-                </form>
+                </RetainedActionForm>
               ) : (
                 <div className="briefing-review-state">
                   <span className="badge badge-success">Reviewed</span>

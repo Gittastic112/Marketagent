@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerGenerateAiSummary } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
@@ -44,7 +45,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
         />
 
         <Panel title="Generate AI Summary">
-          <form action={triggerSummary}>
+          <RetainedActionForm label="Trigger summary" action={triggerSummary}>
             <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
               AI must be configured unless explicit demo mode is enabled. Provider failures are shown as failures and never replaced by mock text.
             </p>
@@ -58,7 +59,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
               <span>{AI_DISCLOSURES.documentSummary}</span>
             </label>
             <button type="submit">Generate Summary</button>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         {aiOutputs.length === 0 ? (

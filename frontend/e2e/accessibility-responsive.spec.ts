@@ -37,6 +37,9 @@ const CORE_ROUTES = [
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   test(`core routes at ${viewport.width}px pass semantic, keyboard, overflow, and screenshot gates`, async ({ page }, testInfo) => {
+    // The aggregate audit includes axe and screenshots for 28 pages. Each page
+    // still has the unchanged 15-second readiness budget in verifyRoutes.
+    test.setTimeout(180_000);
     await signIn(page);
     await verifyRoutes(page, testInfo, CORE_ROUTES, viewport, "Isolated Mock Data browser seed");
   });
@@ -97,8 +100,40 @@ test("mobile decision fields remain inside their panels and can be edited", asyn
     expect(bounds.right, `${bounds.label} right edge`).toBeLessThanOrEqual(Math.min(bounds.width, bounds.panelRight));
   }
   await content.getByLabel("New Evidence", { exact: true }).fill("Mock Data: editable mobile evidence field.");
-  await content.getByLabel("Price at Time", { exact: true }).fill("0");
+  await content.getByLabel(/^Price at Time/).fill("0");
   await content.getByLabel("Rationale", { exact: true }).fill("Mock Data: keyboard entry stays visible.");
-  await expect(content.getByLabel("Price at Time", { exact: true })).toHaveValue("0");
+  await expect(content.getByLabel(/^Price at Time/)).toHaveValue("0");
   await page.screenshot({ path:testInfo.outputPath("mobile-decision-fields.png"), fullPage:true });
+});
+
+test("mobile intake forms keep readable controls inside their cards", async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await signIn(page);
+  for (const route of ["/portfolio/manage", "/sources", "/data", "/alerts", "/events", "/thesis-notes"]) {
+    await page.goto(route);
+    const fields = page.getByRole("main").locator(".form-grid input:not([type=hidden]):not([type=checkbox]), .form-grid select, .form-grid textarea, .form-grid button[type=submit]");
+    await expect(fields.first()).toBeVisible();
+    let checked = 0;
+    for (const field of await fields.all()) {
+      if (!await field.isVisible()) continue;
+      const bounds = await field.evaluate(element => {
+        const control = element.getBoundingClientRect();
+        const card = element.closest(".panel")!.getBoundingClientRect();
+        return { left:control.left, right:control.right, width:control.width, button:element.tagName === "BUTTON", textFits:element.scrollWidth <= element.clientWidth,
+          cardLeft:card.left, cardRight:card.right, name:element.getAttribute("name") || element.textContent };
+      });
+      if (!bounds.button) expect(bounds.width, `${route}: ${bounds.name} readable width`).toBeGreaterThanOrEqual(200);
+      expect(bounds.textFits, `${route}: ${bounds.name} content fits`).toBe(true);
+      expect(bounds.left, `${route}: ${bounds.name} left`).toBeGreaterThanOrEqual(Math.max(0, bounds.cardLeft));
+      expect(bounds.right, `${route}: ${bounds.name} right`).toBeLessThanOrEqual(Math.min(390, bounds.cardRight));
+      checked++;
+    }
+    expect(checked, `${route} contains visible intake controls`).toBeGreaterThan(0);
+    await page.screenshot({path:testInfo.outputPath(`${route.slice(1).replaceAll("/", "-")}-forms-390.png`), fullPage:true});
+  }
+  await page.goto("/portfolio/regime");
+  const submit = page.getByRole("button", {name:"Submit Metric", exact:true});
+  await expect(submit).toBeVisible();
+  expect(await submit.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");
+  await page.screenshot({path:testInfo.outputPath("regime-form-390.png"), fullPage:true});
 });

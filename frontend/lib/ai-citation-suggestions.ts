@@ -7,10 +7,33 @@ export type CitationDraft = {
   end_char?: number;
 };
 
+export function readableCitations(output: Pick<AiOutput, "citations_json">) {
+  return output.citations_json.map(citation => ({
+    source_id: typeof citation.source_id === "string" ? citation.source_id : "Source unavailable",
+    quote: typeof citation.quote === "string" ? citation.quote : "",
+    status: typeof citation.status === "string" ? citation.status : "not_evaluated",
+    reason: typeof citation.reason === "string" ? citation.reason : null,
+    start_char: typeof citation.start_char === "number" && Number.isInteger(citation.start_char) && citation.start_char >= 0 ? citation.start_char : undefined,
+    end_char: typeof citation.end_char === "number" && Number.isInteger(citation.end_char) && citation.end_char > 0 ? citation.end_char : undefined,
+    internal_href: typeof citation.internal_href === "string" && /^\/(?![\/\\])/.test(citation.internal_href) ? citation.internal_href : null,
+  }));
+}
+
+export function readableEvaluation(output: Pick<AiOutput, "evaluation_json">) {
+  const evaluation = output.evaluation_json;
+  const raw = evaluation?.checks;
+  const checks = raw && typeof raw === "object" && !Array.isArray(raw) ? Object.entries(raw) : [];
+  return {
+    passed: evaluation?.passed === true && checks.length > 0
+      && checks.every(([name, value]) => typeof value === "boolean" && (name === "citations_required" || value === true)),
+    failedChecks: checks.filter(([name, value]) => name !== "citations_required" && value !== true).map(([name]) => name),
+  };
+}
+
 
 export function initialCitationDrafts(output: AiOutput): Record<string, CitationDraft> {
   return Object.fromEntries(
-    output.citations_json
+    readableCitations(output)
       .filter((citation) => citation.source_id && citation.quote)
       .map((citation) => [
         citation.source_id,

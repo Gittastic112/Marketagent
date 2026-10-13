@@ -40,13 +40,13 @@ export type RegressionPriorResponse = {
 };
 
 export async function fetchDebtRatioPrior(payload: DebtRatioPriorRequest): Promise<RegressionPriorResponse> {
-  return postApi<RegressionPriorResponse>(`/priors/debt-ratio`, payload);
+  return postApi<RegressionPriorResponse>(`/api/priors/debt-ratio`, payload);
 }
 
 export async function fetchDividendYieldPrior(payload: DividendYieldPriorRequest): Promise<RegressionPriorResponse> {
-  return postApi<RegressionPriorResponse>(`/priors/dividend-yield`, payload);
+  return postApi<RegressionPriorResponse>(`/api/priors/dividend-yield`, payload);
 }
 
 export async function fetchDividendPayoutPrior(payload: DividendPayoutPriorRequest): Promise<RegressionPriorResponse> {
-  return postApi<RegressionPriorResponse>(`/priors/dividend-payout`, payload);
+  return postApi<RegressionPriorResponse>(`/api/priors/dividend-payout`, payload);
 }

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { updateScoringConfig } from "@/app/actions";
 import { TextField } from "@/components/form-fields";
 import { ErrorState, PageHeader, Panel } from "@/components/page";
@@ -68,7 +69,7 @@ export default async function SettingsPage() {
           Adjust the relative weights used to calculate the Priority Score of an event. These weights must be decimals (e.g., 0.35).
         </p>
         {config ? (
-          <form action={updateScoringConfig} className="form-grid">
+          <RetainedActionForm label="Update scoring config" action={updateScoringConfig} className="form-grid">
             <TextField
               id="weight_credibility"
               label="Credibility Weight"
@@ -108,7 +109,7 @@ export default async function SettingsPage() {
             <div className="button-row">
               <button type="submit">Save Settings</button>
             </div>
-          </form>
+          </RetainedActionForm>
         ) : (
           <ErrorState message="Scoring configuration is not available yet." errors={configRes.errors} />
         )}

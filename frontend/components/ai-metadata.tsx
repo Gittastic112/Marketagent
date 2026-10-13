@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import type { AiOutput } from '@/lib/api/ai';
+import { readableCitations } from '@/lib/ai-citation-suggestions';
 
-export function AiOutputMetadata({ aiOutput }: { aiOutput: any }) {
+export function AiOutputMetadata({ aiOutput }: { aiOutput: AiOutput }) {
   const [showDetails, setShowDetails] = useState(false);
 
   if (!aiOutput) return null;
@@ -45,7 +47,7 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: any }) {
             <div style={{ marginTop: '0.5rem' }}>
               <span style={{ color: 'var(--muted)', display: 'block', marginBottom: '0.25rem' }}>Citations:</span>
               <ul style={{ margin: 0, paddingLeft: '1.25rem' }}>
-                {aiOutput.citations_json.map((cit: any, i: number) => (
+                {readableCitations(aiOutput).map((cit, i) => (
                   <li key={i}>
                     <strong>[{cit.source_id}]</strong>
                     {cit.quote && <span style={{ fontStyle: 'italic', marginLeft: '0.5rem' }}>"{cit.quote}"</span>}

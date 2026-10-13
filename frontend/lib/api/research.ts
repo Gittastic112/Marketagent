@@ -1,5 +1,20 @@
 /** Contracts and endpoint helpers for research. Import transport directly, never the compatibility facade. */
 import { fetchApi, postApi } from "./transport.ts";
+import type { AiOutput } from "./ai.ts";
+import { AI_PRIVACY_DISCLOSURE_VERSION } from "../ai-privacy.ts";
+
+export type ResearchMessage = {id: number; role: string; content: string; created_at: string; ai_output: AiOutput | null};
+export type ResearchSession = {id: number; title: string; messages: ResearchMessage[]};
+
+export function fetchResearchSession(id: string): Promise<ResearchSession> {
+  return fetchApi<ResearchSession>(`/research/sessions/${encodeURIComponent(id)}`);
+}
+
+export function sendResearchMessage(id: string, content: string): Promise<ResearchMessage> {
+  return postApi<ResearchMessage>(`/research/sessions/${encodeURIComponent(id)}/messages`, {
+    role: "user", content, privacy_disclosure_version: AI_PRIVACY_DISCLOSURE_VERSION,
+  });
+}
 
 export type EvidenceLedgerItem = {
   id: number;
@@ -42,15 +57,14 @@ export type DecisionLog = {
 
 export type OutcomeReview = {
   id: number;
-  decision_log_id: number;
   what_happened: string;
+  wrong_assumption: string | null;
   thesis_wrong: boolean;
   valuation_wrong: boolean;
   timing_wrong: boolean;
   sizing_wrong: boolean;
   information_unavailable_or_misinterpreted: boolean;
-  lessons_learned: string | null;
-  reviewed_at: string;
+  created_at: string;
 };
 
 export async function fetchEvidenceLedger(companyId?: number): Promise<EvidenceLedgerItem[]> {
