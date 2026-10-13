@@ -20,6 +20,8 @@ frontend/.next/
 frontend/.DS_Store
 frontend/tsconfig.tsbuildinfo
 output/playwright/
+# Retained official reports, candidate snapshots and local review renderings.
+output/milestones/m05/review-batches-*/
 frontend/playwright-report/
 frontend/test-results/
 backups/

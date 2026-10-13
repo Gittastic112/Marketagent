@@ -63,16 +63,22 @@ folders remain incomplete and retained. Do not manufacture missing records or ac
 
 ## Remaining work
 
-All independent workflow work through M09 is verified. Its M08 prerequisite stays
-open. Use stable tracker IDs and the [single limitation ledger](agent_capabilities_and_limitations.md)
+The connected workflow checks through M09 are verified. M05 source preparation
+now exposes real-report parser gaps; it does not certify financial coverage.
+Use stable tracker IDs and the [single limitation ledger](agent_capabilities_and_limitations.md)
 for exact operator settings, recovery destination, reviewed source/model inputs,
 genuine activity/dated coverage and interpretation-quality evidence. Continue safe
 independent work when possible without marking missing-input gates complete.
 
 The ledger's [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-owns the October 13 input sequence. A local read-only review packet holds target-year
-financial candidates and proposed Mock Data AI labels; none is independently
-approved. Public-source gathering and accounting comparison remain agent work.
+owns the input sequence. The user deferred Mac settings and off-device backup
+while M05 proceeds. The [source-review checkpoint](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
+owns ten company batches, retained official reports, arithmetic and version-pinned
+candidate comparisons. Reference/accounting/model review remains pending; no
+financial records were imported or promoted. Acquisition runs were recorded.
+Next agent work: fix demonstrated PDF layout/unit/scope defects and complete
+remaining note/model inputs. Do not wait for Mac settings to do this work.
+The earlier operator packet's Mock Data AI labels also remain unapproved.
 The repository's old self-scoring extraction CLI now fails unavailable; its
 regression and repository checks pass. This host-tooling follow-up does not change
 the installed application images; inherited copies of that retired CLI are not evidence.

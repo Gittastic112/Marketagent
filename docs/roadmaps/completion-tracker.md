@@ -59,7 +59,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Evidence inventory and certification](../archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Official reports and review batches](../archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
 | M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
@@ -211,6 +211,14 @@ scoped universe, without silent fabrication, source promotion or external AI rea
 ## M05: reviewed financial coverage
 
 Owners: extraction, normalization, source certification; [Knull W2](../../Knull%28readme%29.md#6-w2-reviewed-usindia-financial-source-coverage).
+
+October 13 [source preparation](../archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
+retains official annual reports for all ten issuers and three target years, with
+per-company review batches and source/candidate reconciliations. The real PDF
+previews expose layout, unit and accounting-scope defects; this is not parser
+certification. Human reference/model approval and remaining note work stay open.
+No financial promotion or new acceptance points. Mac settings/backups are deferred
+by the user and do not block this independent work.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
