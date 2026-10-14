@@ -55,7 +55,7 @@ test("exact event evidence rejects an outdated source, recovers, and reaches sav
   await page.getByRole("button", {name:"Search exact text", exact:true}).click();
   await expect(secondMatch.locator('input[name="document_content_hash"]')).toHaveValue(hash(changedText));
   await secondMatch.getByRole("button", {name:"Use exact span", exact:true}).click();
-  await expect(page.getByText("Exact source evidence linked to the event.", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Exact source evidence linked to the event.", {exact:true})).toBeVisible();
   type Reference = {id:number; origin:string; quote:string; start_char:number; end_char:number;
     raw_document_id:number; source_metadata_json:{occurrence_index:number; validated_content_hash:string}};
   const references = await backendData<Reference[]>(page, `/events/${event.id}/evidence-references`);

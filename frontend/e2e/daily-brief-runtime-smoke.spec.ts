@@ -174,7 +174,7 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
     "href",
     `/documents/${document.id}/sections`,
   );
-  await expect(page.getByText("Reviewed", { exact: true }).first()).toBeVisible();
+  await expect(page.getByRole("main").getByText("Reviewed", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Local Brief Schedule" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Private research as generated" })).toBeVisible();
   await expect(page.getByRole("main").getByText(/^Saved as generated \d{4}-/)).toBeVisible();
@@ -209,5 +209,5 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await page.getByLabel("Decision", {exact: true}).selectOption("Pass");
   await page.getByLabel("Rationale", {exact: true}).fill(`Mock Data: review source document ${document.id} and margin assumptions before proceeding.`);
   await page.getByRole("button", {name: "Record Decision"}).click();
-  await expect(page.getByText(`Mock Data: review source document ${document.id} and margin assumptions before proceeding.`, {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText(`Mock Data: review source document ${document.id} and margin assumptions before proceeding.`, {exact: true})).toBeVisible();
 });

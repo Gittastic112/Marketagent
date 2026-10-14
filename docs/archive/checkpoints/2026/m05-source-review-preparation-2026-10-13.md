@@ -147,6 +147,28 @@ their non-persistent database were removed after verification. Exact-head
 GitHub results are recorded on draft PR #2 and in the local packet's publication
 receipt; the original failure remains in its diagnostics.
 
+The October 14 follow-up on `ca8beb0d00f9369a2c18cc052d81f10593c30221`
+passed all five branch checks. Its PR browser run passed the repaired evidence
+workflow but exposed the same duplicate-text lookup in price-history filtering
+(63/64 cases passed). The second diagnostic is retained separately. The shared
+cause warrants a bounded cross-cutting test repair: 38 displayed-content lookups
+across 14 workflow specs now target the main landmark. Existing page-wide absence
+and security checks and nested match locators retain their scope. The two
+previously failing text checks also require exactly one visible occurrence on
+the whole page. No expected text, count, timeout, retry or application behavior
+is relaxed. The local receipt records the affected-workflow rerun and latest
+GitHub results; failed attempts remain available for comparison.
+
+Local validation ran 30 affected browser cases: 28 passed initially. One failed
+because the custom runner omitted the PDF fixture. The other exhausted its
+120-second test budget after Chromium spent 88.3 seconds creating the page,
+before application navigation; its trace is retained. With the fixture copied
+and a fresh browser process, both focused rechecks pass (research recovery in
+4.0 seconds, PDF review in 20.0 seconds). There is passing evidence for each of
+the 30 cases, not a claim that the first run passed. All 302 frontend checks,
+TypeScript and documentation validation also pass. Application code and timeout
+settings remain unchanged.
+
 ## Validation and state boundary
 
 - All 36 retained original hashes verify. Reference IDs and preferred

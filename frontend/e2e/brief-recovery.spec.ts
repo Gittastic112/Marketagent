@@ -20,7 +20,7 @@ test("duplicate intake preserves archived original evidence and explicit restore
   await intake.getByLabel("Source date, if known", {exact: true}).fill("2026-01-02");
   await intake.getByLabel("Source text", {exact: true}).fill("Mock Data: This immutable original passage must survive duplicate intake, archive and restore.");
   await page.getByRole("button", {name: "Save source privately"}).click();
-  await expect(page.getByText(/already exists in your archive/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/already exists in your archive/)).toBeVisible();
   await page.getByRole("link", {name: "Inspect saved source: Mock Data original recovery source"}).click();
   await expect(page.locator(".brief-source-text")).toContainText("immutable original passage");
   await page.getByRole("button", {name: "Restore source", exact: true}).click();
@@ -107,7 +107,7 @@ test("stale comparison save retains the rationale and immutable history survives
   await review.getByLabel(`Rationale for ${group.label}`).fill(rationale);
   await review.getByRole("checkbox", {name: /I reviewed the displayed passages/}).check();
   await review.getByRole("button", {name: "Save analyst review"}).click();
-  await expect(page.getByText(/Analyst review recorded/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Analyst review recorded/)).toBeVisible();
   await review.getByRole("button", {name: "Show review history"}).click();
   await expect(review.getByRole("link", {name: `Version ${oldVersion + 1} · Investigate further`})).toBeVisible();
   const history = await backendData<ComparisonReview[]>(page, `/brief-sources/triage/reviews?company_id=${company.id}&field=${group.field}&include_mock=true`);

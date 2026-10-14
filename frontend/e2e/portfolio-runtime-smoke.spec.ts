@@ -121,6 +121,6 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
   await page.screenshot({ path: test.info().outputPath("performance-risk-mobile.png"), fullPage: true });
   await page.goto(`/portfolio/${portfolioId}?tab=setup`);
-  await expect(page.getByText("Recorded activity reconciled", { exact: true })).toHaveCount(2);
+  await expect(page.getByRole("main").getByText("Recorded activity reconciled", { exact: true })).toHaveCount(2);
   await page.screenshot({ path: test.info().outputPath("replayed-history-mobile.png"), fullPage: true });
 });

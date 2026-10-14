@@ -37,7 +37,7 @@ test("valuation edits invalidate review and stale writes surface a reload action
     },
   });
   await page.getByRole("button", { name: "Save Draft" }).click();
-  await expect(page.getByText(/changed since it was loaded\. Reload before saving\./)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/changed since it was loaded\. Reload before saving\./)).toBeVisible();
 });
 
 

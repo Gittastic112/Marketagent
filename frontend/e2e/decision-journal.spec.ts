@@ -22,12 +22,12 @@ test("decision journal saves text, evidence dates, zero prices and an explicit o
   await expect(page.getByLabel("My Belief", {exact: true})).toHaveValue("Mock Data independent interpretation");
   interruptSave = false;
   await page.getByRole("button", {name: "Save Perception"}).click();
-  await expect(page.getByText("Mock Data independent interpretation", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Mock Data independent interpretation", {exact: true})).toBeVisible();
   await page.getByLabel("New Evidence", {exact: true}).fill("Mock Data source passage needs further review");
   await page.getByLabel("Date Discovered", {exact: true}).fill("2026-01-15");
   await page.getByLabel("Source URL (optional)", {exact: true}).fill("https://example.invalid/mock-source");
   await page.getByRole("button", {name: "Add Evidence", exact: true}).click();
-  await expect(page.getByText("Mock Data source passage needs further review", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Mock Data source passage needs further review", {exact: true})).toBeVisible();
   const evidence = await backendData<Array<{company_id: number; date_discovered: string}>>(page, `/evidence?company_id=${company.id}`);
   expect(evidence).toHaveLength(1);
   expect(evidence[0].company_id).toBe(company.id);
@@ -41,13 +41,13 @@ test("decision journal saves text, evidence dates, zero prices and an explicit o
   await page.getByLabel(/Price at Time/).fill("0");
   await page.getByLabel("Rationale", {exact: true}).fill("Mock Data: record a research decision, no trading instruction");
   await page.getByRole("button", {name: "Record Decision"}).click();
-  await expect(page.getByText("Mock Data: record a research decision, no trading instruction", {exact: true})).toBeVisible();
-  await expect(page.getByText(/Recorded price: 0.*currency not recorded/)).toBeVisible();
-  await page.getByText("Review this decision", {exact: true}).click();
+  await expect(page.getByRole("main").getByText("Mock Data: record a research decision, no trading instruction", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Recorded price: 0.*currency not recorded/)).toBeVisible();
+  await page.getByRole("main").getByText("Review this decision", {exact: true}).click();
   await page.getByLabel("What Happened?", {exact: true}).fill("Mock Data: source evidence remained incomplete");
   await page.getByLabel("Information missed", {exact: true}).check();
   await page.getByRole("button", {name: "Save Review", exact: true}).click();
-  await expect(page.getByText("Mock Data: source evidence remained incomplete", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Mock Data: source evidence remained incomplete", {exact: true})).toBeVisible();
   const decisions = await backendData<Array<{price_at_time: number; outcome_review: {information_unavailable_or_misinterpreted: boolean}}>>(
     page, `/decisions?company_id=${company.id}`);
   expect(decisions).toHaveLength(1);

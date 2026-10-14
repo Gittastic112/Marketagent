@@ -26,7 +26,7 @@ test("exact citation checks leave incorrect Mock Data interpretation pending for
   await review.getByLabel("Review notes", {exact:true}).fill("Mock Data: Incorrect number and fiscal period despite an exact supporting quote.");
   await review.getByRole("button", {name:"Request revision", exact:true}).click();
   await expect(review.getByText("Status: needs revision", {exact:true})).toBeVisible();
-  await expect(page.getByText(/^Review Status:\s+needs revision$/i)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Review Status:\s+needs revision$/i)).toBeVisible();
   expect(providerRequests).toBe(0);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({path:test.info().outputPath("ai-review-boundary-mobile.png"),fullPage:true});

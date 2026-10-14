@@ -25,7 +25,7 @@ test("populated price history stays bounded and every filtered page remains reac
   expect(await ids()).toEqual(saved.slice(0, 50).map(row => row.id));
   await expect(page.getByRole("link", {name:"Previous page", exact:true})).toHaveCount(0);
   await page.getByRole("link", {name:"Next page", exact:true}).click();
-  await expect(page.getByText("Page 2: 50 prices shown", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Page 2: 50 prices shown", {exact:true})).toBeVisible();
   expect(await ids()).toEqual(saved.slice(50, 100).map(row => row.id));
   expect(new URL(page.url()).searchParams.get("ticker")).toBe(ticker);
   await page.getByRole("link", {name:"Next page", exact:true}).click();
@@ -33,15 +33,16 @@ test("populated price history stays bounded and every filtered page remains reac
   expect(await ids()).toEqual(saved.slice(100).map(row => row.id));
   await expect(page.getByRole("link", {name:"Next page", exact:true})).toHaveCount(0);
   await page.getByRole("link", {name:"Previous page", exact:true}).click();
-  await expect(page.getByText("Page 2: 50 prices shown", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Page 2: 50 prices shown", {exact:true})).toBeVisible();
   await page.getByRole("link", {name:"Previous page", exact:true}).click();
-  await expect(page.getByText("Page 1: 50 prices shown", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Page 1: 50 prices shown", {exact:true})).toBeVisible();
   await page.setViewportSize({width:390, height:844});
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({path:test.info().outputPath("market-prices-paginated-mobile.png"), fullPage:true});
   expect(await backendData(page, `/market-prices?ticker=${ticker}`)).toEqual(saved);
   await page.getByLabel("Filter by ticker", {exact:true}).fill("MOCK-NO-MATCH");
   await page.getByRole("button", {name:"Filter prices", exact:true}).click();
-  await expect(page.getByText("No prices match this ticker.", {exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("No prices match this ticker.", {exact:true})).toBeVisible();
+  await expect(page.getByText("No prices match this ticker.", {exact:true}).filter({visible:true})).toHaveCount(1);
   await expect(forms).toHaveCount(0);
 });

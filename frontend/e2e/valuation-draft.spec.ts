@@ -46,7 +46,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
 
   await page.locator("#starting_revenue:visible").fill("1200");
   await page.getByRole("button", { name: "Save Draft" }).click();
-  await expect(page.getByText("Draft saved")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Draft saved")).toBeVisible();
   await page.getByRole("button", { name: "Reset starting_revenue to source" }).click();
   await expect(page.getByRole("button", { name: "Reset starting_revenue to source" })).toHaveCount(0);
 
@@ -73,18 +73,18 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   for (let index = 0; index < reviewCount; index += 1) {
     await reviewCheckboxes.nth(index).check();
   }
-  await expect(page.getByText("Ready to create")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Ready to create")).toBeVisible();
 
   await page.locator("#model-name:visible").fill(`E2E Reviewed DCF ${unique}`);
   await page.getByRole("button", { name: "Confirm and Create Model" }).click();
   await expect(page).toHaveURL(new RegExp(`/companies/${company.id}/valuation/\\d+$`));
-  await expect(page.getByText(`E2E Reviewed DCF ${unique}`, { exact: false })).toBeVisible();
+  await expect(page.getByRole("main").getByText(`E2E Reviewed DCF ${unique}`, { exact: false })).toBeVisible();
 
-  await expect(page.getByText("User Assumption", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main").getByText("User Assumption", { exact: true })).toBeVisible();
   await page.getByLabel("Model name").fill(`E2E Updated DCF ${unique}`);
   await page.getByLabel("Description").fill("Metadata update from the complete valuation workflow");
   await page.getByRole("button", { name: "Save model details" }).click();
-  await expect(page.getByText(`E2E Updated DCF ${unique}`, { exact: false })).toBeVisible();
+  await expect(page.getByRole("main").getByText(`E2E Updated DCF ${unique}`, { exact: false })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Valuation model sections" })
     .getByRole("button", { name: "Payouts & Cash Return", exact: true }).click();
@@ -94,7 +94,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await page.locator("#buybacks:visible").fill("15");
   await page.locator("#new_debt_issued:visible").fill("40");
   await page.getByRole("button", { name: "Save & Run Valuation" }).click();
-  await expect(page.getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
 
   const detailUrl = new URL(page.url());
   const modelId = Number(detailUrl.pathname.split("/").at(-1));
@@ -110,7 +110,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
     .getByRole("button", { name: "Sensitivity Tables", exact: true }).click();
   await expect(page.locator(".sensitivity-card:visible")).toHaveCount(6);
   await expect(page.locator(".sensitivity-card:visible").first().getByText(/Canonical FCFF sensitivity v2/)).toBeVisible();
-  await expect(page.getByText(/Colors compare calculated values with the saved assumed market price/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Colors compare calculated values with the saved assumed market price/)).toBeVisible();
   const saved = await backendData<Array<{
     id: number; outputs: { intrinsic_value_per_share: number };
     sensitivity_tables: Array<{ x_axis_json: { values: number[] }; y_axis_json: { values: number[] }; values_json: Record<string, Record<string, number | null>> }>;
@@ -135,7 +135,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
 
   await page.getByRole("navigation", { name: "Valuation model sections" })
     .getByRole("button", { name: "Real Options", exact: true }).click();
-  await expect(page.getByText(/^Experimental supplemental analysis/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Experimental supplemental analysis/)).toBeVisible();
   await expect(page.getByRole("button", { name: "Calculate Real Option Value", exact: true })).toBeDisabled();
 
   await page.goto(`/companies/${company.id}/valuation`);

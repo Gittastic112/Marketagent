@@ -23,7 +23,7 @@ test("a failed source save keeps entries and can be explicitly retried", async (
   await page.getByRole("button", {name: "Add source", exact: true}).click();
   await expect(page.locator("main #name")).toBeDisabled();
   await expect(page.getByRole("button", {name: "Add source", exact: true})).toBeDisabled();
-  await expect(page.getByText("Waiting for confirmation…", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Waiting for confirmation…", {exact: true})).toBeVisible();
   await expect(page.getByText("Completed.", {exact: true})).toHaveCount(0);
   release();
   await expect(page.getByRole("row").filter({hasText: label})).toBeVisible();

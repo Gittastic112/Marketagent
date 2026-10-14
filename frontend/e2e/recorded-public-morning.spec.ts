@@ -61,6 +61,7 @@ test("recorded official evidence remains dated and linked through a morning revi
     has:page.getByRole("heading",{name:"Source Context",exact:true}),
   });
   await expect(sourceContext.getByText(quote,{exact:true})).toBeVisible();
+  await expect(page.getByText(quote,{exact:true}).filter({visible:true})).toHaveCount(1);
   const stored = await backendData<{url:string;published_at:string;content_hash:string;raw_text:string;raw_payload_json:Record<string,unknown>}>(page,`/raw-documents/${document.id}`);
   expect(stored.url).toBe(sourceUrl);
   expect(stored.published_at.slice(0,10)).toBe(sourceDate);
@@ -73,7 +74,7 @@ test("recorded official evidence remains dated and linked through a morning revi
   await page.getByRole("button",{name:"Search exact text",exact:true}).click();
   await expect(page.getByRole("heading",{name:"Exact Matches (1)",exact:true})).toBeVisible();
   await page.getByRole("button",{name:"Use exact span",exact:true}).click();
-  await expect(page.getByText("Exact source evidence linked to the event.",{exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Exact source evidence linked to the event.",{exact:true})).toBeVisible();
   const references = await backendData<Array<{quote:string;source_metadata_json:{validated_content_hash:string}}>>(page,`/events/${event.id}/evidence-references`);
   expect(references).toHaveLength(1);
   expect(references[0].source_metadata_json.validated_content_hash).toBe(hash);
@@ -103,7 +104,7 @@ test("recorded official evidence remains dated and linked through a morning revi
   await page.getByLabel("Decision",{exact:true}).selectOption("Pass");
   await page.getByLabel("Rationale",{exact:true}).fill(rationale);
   await page.getByRole("button",{name:"Record Decision",exact:true}).click();
-  await expect(page.getByText(rationale,{exact:true})).toBeVisible();
+  await expect(page.getByRole("main").getByText(rationale,{exact:true})).toBeVisible();
   expect(noAiRequests).toEqual([]);
   expect(await page.evaluate(()=>window.document.documentElement.scrollWidth<=innerWidth+1)).toBe(true);
   await page.screenshot({path:test.info().outputPath("recorded-public-next-review-mobile.png"),fullPage:true});

@@ -144,9 +144,9 @@ test("research discloses AI transmission and renders provider failure inline", a
   await page.getByRole("button", { name: "Send" }).click();
 
   await expect(page.locator("p.inline-error[role=alert]")).toContainText("AI is not configured");
-  await expect(page.getByText(/Your research message was saved/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Your research message was saved/)).toBeVisible();
   await expect(
-    page.getByText("Summarize the evidence in this empty research session.", { exact: true }),
+    page.getByRole("main").getByText("Summarize the evidence in this empty research session.", { exact: true }),
   ).toBeVisible();
 });
 
@@ -244,6 +244,6 @@ test("SEC readiness blocks ineligible companies and failed ingestion is recovera
   expect(result.errors).toEqual(["RSS provider could not fetch the feed."]);
 
   await page.goto("/data-health");
-  await expect(page.getByText("rss_ingestion", { exact: true }).last()).toBeVisible();
+  await expect(page.getByRole("main").getByText("rss_ingestion", { exact: true }).last()).toBeVisible();
   await expect(page.locator("tbody tr").filter({ hasText: "rss_ingestion" }).last()).toContainText("failed");
 });

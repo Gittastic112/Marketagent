@@ -43,11 +43,11 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
   await expect(candidateHeading).toBeVisible();
   const candidateReview = candidateHeading.locator("xpath=../../..");
-  await expect(page.getByText("There are 12 extraction candidates")).toBeVisible();
+  await expect(page.getByRole("main").getByText("There are 12 extraction candidates")).toBeVisible();
 
   while (await page.getByRole("button", { name: "Accept" }).count()) {
     const acceptButtons = page.getByRole("button", { name: "Accept" });
-    const reviewedStatuses = page.getByText("reviewed", { exact: true });
+    const reviewedStatuses = page.getByRole("main").getByText("reviewed", { exact: true });
     const reviewedBefore = await reviewedStatuses.count();
     await acceptButtons.first().click();
     await expect(reviewedStatuses).toHaveCount(reviewedBefore + 1);
@@ -55,7 +55,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
 
   while (await page.getByRole("button", { name: "Add unit" }).count()) {
     const addUnitButtons = page.getByRole("button", { name: "Add unit" });
-    const overriddenStatuses = page.getByText("overridden", { exact: true });
+    const overriddenStatuses = page.getByRole("main").getByText("overridden", { exact: true });
     const overriddenBefore = await overriddenStatuses.count();
     await addUnitButtons.first().click();
     await page.getByLabel("Reporting unit").fill("million shares");

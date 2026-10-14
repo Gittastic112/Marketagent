@@ -58,7 +58,7 @@ test("AI failure and analysis controls do not submit or erase unsaved valuation 
   await sections.getByRole("button", {name: "Valuation Memo", exact: true}).click();
   await page.getByRole("checkbox", {name: /external AI provider/}).check();
   await page.getByRole("button", {name: "Generate Memo", exact: true}).click();
-  await expect(page.getByText("Mock Data provider unavailable", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText("Mock Data provider unavailable", {exact: true})).toBeVisible();
   await sections.getByRole("button", {name: "Macro Sensitivity", exact: true}).click();
   await page.getByRole("button", {name: "Top-Down (Regression)", exact: true}).click();
   await page.getByRole("button", {name: "Bottom-Up (Segments)", exact: true}).click();
@@ -107,7 +107,7 @@ test("late narrative suggestions cannot replace edits and copying estimates requ
   await expect(panel.getByRole("button", {name: "Copy reviewed estimates to form"})).toBeDisabled();
   await panel.getByRole("checkbox", {name: /I reviewed these estimates/}).check();
   await panel.getByRole("button", {name: "Copy reviewed estimates to form"}).click();
-  await expect(page.getByText(/Reviewed AI estimates were copied to unsaved fields/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Reviewed AI estimates were copied to unsaved fields/)).toBeVisible();
   expect(await backendData<unknown[]>(page, `/valuation-models/${model.id}/assumptions`)).toHaveLength(1);
   await sections.getByRole("button", {name: "Operating Margins", exact: true}).click();
   await expect(page.locator("#target_operating_margin:visible")).toHaveValue("0.24");
@@ -126,7 +126,7 @@ test("late narrative suggestions cannot replace edits and copying estimates requ
   await savedResponse;
   await expect(page.locator("#target_operating_margin:visible")).toBeDisabled();
   releaseSave();
-  await expect(page.getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
   await expect(page.locator("#target_operating_margin:visible")).toHaveValue("0.24");
   const versions = await backendData<DcfAssumptionSet[]>(
     page, `/valuation-models/${model.id}/assumptions`);
