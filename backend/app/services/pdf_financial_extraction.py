@@ -29,7 +29,7 @@ MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v3"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v4"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -92,10 +92,10 @@ _INDIA_SCALE_PATTERN = re.compile(
 _STATEMENT_VALUE_TOKEN_PATTERN = re.compile(
     r"(?<![\w,./%])(?:\(?[-+]?(?:\d+(?:,\d{2,3})+|\d+)(?:\.\d+)?\)?\*?|[-–—])(?![\w,./%])"
 )
-_SCALE_PATTERN = re.compile(r"\b(thousands?|millions?|billions?|crores?|lakhs?|000s)\b", re.IGNORECASE)
+_SCALE_PATTERN = re.compile(r"\b(thousands?|millions?|billions?|crores?|lakhs?|000s?)\b", re.IGNORECASE)
 _CURRENCY_PATTERN = re.compile(r"\b(USD|INR|EUR|GBP|JPY|CAD|AUD|CHF|CNY|HKD|SGD)\b", re.IGNORECASE)
 _STATEMENT_HEADING = re.compile(
-    r"^(?:consolidated\s+)?(?:balance sheet|statement of profit and loss|profit and loss account|"
+    r"^(?:consolidated\s+)?(?:bal\s*ance sheet|statement of profit and loss|profit and loss account|"
     r"cash flow statement|statement of cash flows)", re.IGNORECASE,
 )
 
@@ -278,7 +278,7 @@ def _parse_pdf_financial_tables(
                 page = pdf.pages[page_number - 1]
                 page_text = page.extract_text() or ""
                 page_texts.append(f"[Page {page_number}]\n{page_text.strip()}".rstrip())
-                page_currency, page_scale = _reporting_unit(page_text)
+                page_currency, page_scale, _ = _page_reporting_unit(page, page_text)
                 reporting_currency = reporting_currency or page_currency
                 reporting_scale = reporting_scale or page_scale
                 regions = _statement_regions(page)
@@ -288,7 +288,7 @@ def _parse_pdf_financial_tables(
                 page_table_number = 0
                 for region_number, region in enumerate(regions, start=1):
                     region_text = region.extract_text() or ""
-                    region_currency, region_scale = _reporting_unit(region_text)
+                    region_currency, region_scale, unit_evidence = _page_reporting_unit(region, region_text)
                     section = _page_section(region_text)
                     has_heading = any(_STATEMENT_HEADING.match(line.strip()) for line in region_text.splitlines())
                     if not has_heading and len(regions) > 1 and inherited_section:
@@ -309,6 +309,7 @@ def _parse_pdf_financial_tables(
                             page=region,
                             region_number=region_number if len(regions) > 1 else None,
                             warnings=warnings,
+                            unit_evidence=unit_evidence,
                             period_type=period_type,
                         )
                     )
@@ -325,6 +326,7 @@ def _parse_pdf_financial_tables(
                                 section=section, currency=region_currency, scale=region_scale,
                                 period_type=period_type, page_text=region_text,
                                 region_number=region_number if len(regions) > 1 else None,
+                                unit_evidence=unit_evidence,
                             )
                         )
     except HTTPException:
@@ -526,11 +528,44 @@ def _statement_regions(page: Any) -> list[Any]:
     return regions if consecutive_folios or repeated_headers else [page]
 
 
+def _page_reporting_unit(page: Any, text: str) -> tuple[str | None, str | None, dict | None]:
+    """Recognize observed embedded symbol encodings; never treat a bare C/I/J as INR."""
+    currency, scale = _reporting_unit(text)
+    if currency or not scale:
+        return currency, scale, None
+    header = "\n".join(text.splitlines()[:20])
+    tokens = set(re.findall(r"(?<!\w)([CIJ])(?=\s+in\b)|^\s*([CIJ])(?:\s+[CIJ])*\s*$", header, re.M))
+    glyphs = {part for token in tokens for part in token if part}
+    if not glyphs:
+        return currency, scale, None
+    from pdfminer.pdftypes import resolve1
+    from pdfminer.psparser import literal_name
+
+    embedded = set()
+    for font in resolve1(page.page_obj.resources.get("Font", {})).values():
+        font = resolve1(font)
+        name = literal_name(font.get("BaseFont"))
+        if not isinstance(name, str) or re.sub(r"^[A-Z]{6}\+", "", name) != "ITFRupee":
+            continue
+        descendants = resolve1(font.get("DescendantFonts", []))
+        details = resolve1(descendants[0]) if descendants else font
+        descriptor = resolve1(details.get("FontDescriptor", {}))
+        if any(descriptor.get(key) is not None for key in ("FontFile", "FontFile2", "FontFile3")):
+            embedded.add(name)
+    symbols = [{key: char[key] for key in ("text", "fontname", "x0", "x1", "top", "bottom")}
+               for char in page.chars if char.get("fontname") in embedded and char.get("text") in glyphs
+               and char["top"] < page.height * .25]
+    if not symbols:
+        return currency, scale, None
+    return "INR", scale, {"basis": "embedded_rupee_symbol_font", "currency": "INR",
+                          "scale": scale, "symbols": symbols, "review_required": True}
+
+
 def _page_section(text: str) -> str | None:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
     for line in lines:
         if _STATEMENT_HEADING.match(line):
-            return line[:255]
+            return re.sub(r"\bbal\s+ance\b", "Balance", line, flags=re.I)[:255]
     for cleaned in lines:
         if _UNIT_PATTERN.search(cleaned) or _INDIA_SCALE_PATTERN.search(cleaned):
             continue
@@ -551,17 +586,39 @@ def _statement_line_candidates(
     period_type: str = "annual",
     region_number: int | None = None,
     warnings: set[str] | None = None,
+    unit_evidence: dict | None = None,
 ) -> list[PdfTableCandidate]:
     years = _statement_years(page_text)
     if not years:
         return []
-    lines = _stitch_statement_lines(page_text.splitlines())
+    lines = _stitch_statement_lines(page_text.splitlines(), len(years))
     candidates: list[PdfTableCandidate] = []
     attribution = "profit"
     liability_scope = None
+    statement_block = None
+    eps_context = False
+    share_context = False
+    share_scale = None
+    share_scale_line = 0
     row_occurrences: dict[str, int] = {}
-    for line_number, source_line in enumerate(lines, start=1):
+    for line_number, (source_line, original_line) in enumerate(lines, start=1):
         normalized_line = source_line.lower()
+        if re.fullmatch(r"\((?:in )?['‘]?000s?\)", normalized_line):
+            share_scale, share_scale_line = "thousand", line_number
+        elif re.match(r"\d+\.\s+\D", source_line) or line_number - share_scale_line > 8:
+            share_scale = None
+        block = re.sub(r"^(?:[iv]+[. ]+)\s*", "", normalized_line).strip()
+        blocks = {"capital and liabilities": "liabilities", "assets": "assets",
+                  "income": "income", "expenditure": "expenses", "expenses": "expenses",
+                  "profit": "profit", "profit/(loss)": "profit", "appropriations": "appropriations",
+                  "appropriations/transfers": "appropriations"}
+        if block in blocks:
+            statement_block = blocks[block]
+        if re.search(r"earnings per (?:equity )?share", normalized_line) and not re.search(r"weighted|computed|dividing", normalized_line):
+            eps_context = True
+            share_context = False
+        if re.match(r"weighted average number of equity shares used as denominator$", normalized_line):
+            share_context = True
         if re.match(r"(?:other|total) comprehensive income", normalized_line):
             attribution = "comprehensive"
         elif re.match(r"(?:net )?profit.*attributable to", normalized_line):
@@ -582,7 +639,8 @@ def _statement_line_candidates(
                 warnings.add("ambiguous_statement_row_skipped")
             continue
         source_label, value_tokens = parsed_row
-        metric = _metric_for_statement_line(source_label, section, liability_scope=liability_scope)
+        metric = _metric_for_statement_line(source_label, section, liability_scope=liability_scope,
+            statement_block=statement_block, eps_context=eps_context, share_context=share_context)
         if metric is None:
             continue
         metric_code, reported_label, source_row_label = metric
@@ -590,16 +648,19 @@ def _statement_line_candidates(
             metric_code, reported_label = "profit_after_tax_before_associates", "Profit after tax before associates"
         if attribution != "profit" and metric_code in {"net_income_parent", "net_income_nci"}:
             continue
-        occurrence = row_occurrences.get(source_line, 0)
-        row_occurrences[source_line] = occurrence + 1
-        row_bbox = _row_bbox(page, source_line, occurrence=occurrence)
+        occurrence = row_occurrences.get(original_line, 0)
+        row_occurrences[original_line] = occurrence + 1
+        row_bbox = _row_bbox(page, original_line, occurrence=occurrence)
 
         for value_index, (fiscal_year, value_token) in enumerate(zip(years, value_tokens, strict=True), start=1):
             value = _number(value_token.rstrip("*"))
             if value is None:
                 continue
-            unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text)
+            unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text,
+                                   share_context=share_context, share_scale=share_scale)
             item_warnings = _candidate_warnings(metric_code, unit)
+            if unit_evidence and not metric_code.endswith("shares"):
+                item_warnings.append("currency_from_embedded_font_requires_review")
             if row_bbox is None:
                 item_warnings.append("row_bounding_box_missing")
             region_ref = f":S{region_number}" if region_number else ""
@@ -612,7 +673,7 @@ def _statement_line_candidates(
                     unit=unit,
                     fiscal_year=fiscal_year,
                     period_type=period_type,
-                    source_text=source_line.strip(),
+                    source_text=original_line.strip(),
                     source_page=page_number,
                     source_section=section,
                     source_table_name=section or "PDF statement rows",
@@ -631,6 +692,9 @@ def _statement_line_candidates(
                         "page_height": page_height,
                         "bounding_box": row_bbox,
                         **({"region": region_number} if region_number else {}),
+                        **({"share_unit_header": {"scale": share_scale, "line": share_scale_line}}
+                           if share_scale and metric_code.endswith("shares") else {}),
+                        **({"unit_evidence": unit_evidence} if unit_evidence and not metric_code.endswith("shares") else {}),
                     },
                     extraction_warnings=";".join(item_warnings) or None,
                     confidence_label="high" if not item_warnings else "medium",
@@ -643,7 +707,9 @@ def _statement_row_values(line: str, count: int, page_text: str) -> tuple[str, l
     # Match complete tokens at the end of a row. Never take arbitrary numbers
     # from the opposite printed page, an embedded note, a percentage or prose.
     cleaned = re.sub(r"\(refer\s+note\s+\d+(?:\.\d+)?(?:\([a-z]\))?\)", "", line, flags=re.I).rstrip()
-    matches = list(_STATEMENT_VALUE_TOKEN_PATTERN.finditer(cleaned))
+    unit_spans = [match.span() for match in re.finditer(r"\(\s*(?:in\s+)?['‘]?000s?\s*\)", cleaned, re.I)]
+    matches = [match for match in _STATEMENT_VALUE_TOKEN_PATTERN.finditer(cleaned)
+               if not any(start <= match.start() < end for start, end in unit_spans)]
     suffix = []
     end = len(cleaned)
     for match in reversed(matches):
@@ -711,24 +777,39 @@ def _end_year(match: re.Match) -> int:
     return result if result == start + 1 else start
 
 
-def _stitch_statement_lines(lines: list[str]) -> list[str]:
-    stitched: list[str] = []
+def _stitch_statement_lines(lines: list[str], value_count: int) -> list[tuple[str, str]]:
+    """Join only observed label continuations, keeping original text for geometry."""
+    stitched: list[tuple[str, str]] = []
+    lines = [re.sub(r"\s+", " ", line).strip() for line in lines]
     index = 0
     while index < len(lines):
-        line = re.sub(r"\s+", " ", lines[index]).strip()
-        next_line = re.sub(r"\s+", " ", lines[index + 1]).strip() if index + 1 < len(lines) else ""
-        if (
-            line.lower().startswith("weighted average number of equity shares")
-            and "diluted" not in line.lower()
-            and next_line.lower().startswith("diluted")
-        ):
-            values = list(_STATEMENT_VALUE_TOKEN_PATTERN.finditer(line))
-            start = values[0].start() if values else len(line)
-            stitched.append(f"{line[:start].rstrip()} {next_line} {line[start:]}")
-            index += 2
-            continue
-        stitched.append(line)
-        index += 1
+        line = lines[index]
+        parts = [line]
+        supported = line.lower().startswith(("weighted average number of equity shares",
+            "consolidated profit/(loss) for the year attributable to the",
+            "net profit for the year (before"))
+        if supported:
+            for following in lines[index + 1:index + 3]:
+                continuation = re.match(r"^(?:computation of (?:basic|diluted) eps|diluted eps|"
+                    r"share(?:\s|$)|group\s|associates and minority interest\)|minority interest\)|interest\))",
+                    following, re.I)
+                values_only = re.fullmatch(r"[\d,.()\s]+", following)
+                if not continuation and not values_only:
+                    break
+                parts.append(following)
+        original = "\n".join(parts)
+        # A wrapped label may follow its values in PDF reading order. Reorder
+        # only when exactly one complete value suffix exists across these lines.
+        parsed = [_statement_row_values(part, value_count, "") for part in parts]
+        populated = [i for i, row in enumerate(parsed) if row is not None]
+        if len(parts) > 1 and len(populated) == 1:
+            row_index = populated[0]
+            label, values = parsed[row_index]
+            labels = [label if i == row_index else part for i, part in enumerate(parts)]
+            stitched.append((" ".join(labels + values).strip(), original))
+        else:
+            stitched.extend((part, part) for part in parts)
+        index += len(parts)
     return stitched
 
 
@@ -737,21 +818,107 @@ def _metric_for_statement_line(
     section: str | None,
     *,
     liability_scope: str | None = None,
+    statement_block: str | None = None,
+    eps_context: bool = False,
+    share_context: bool = False,
 ) -> tuple[str, str, str] | None:
     normalized = re.sub(r"\s+", " ", source_line.strip().lower())
     normalized = normalized.replace("–", "-").replace("‑", "-")
     normalized = re.sub(r"^(?:[-•]\s+|[a-z]\)\s+)", "", normalized)
     normalized = re.sub(r"\s*\(['‘]?nci['’]?\)\s*$", "", normalized)
     normalized = re.sub(r"\s*\((?:in )?(?:thousands?|millions?|billions?|actuals?|numbers?)\)\s*$", "", normalized)
+    normalized = re.sub(r"\s*[*^]+$", "", normalized).strip()
     section_lower = (section or "").lower()
     profit_statement = "profit and loss" in section_lower
 
-    if normalized.startswith("weighted average number of equity shares"):
+    if normalized.startswith(("weighted average number of equity shares", "weighted average number of shares",
+                              "weighted average shares outstanding")):
         if "diluted" in normalized:
             return "diluted_shares", "Diluted shares", source_line
         if "basic" in normalized:
             return "basic_shares", "Basic shares", source_line
         return None
+    if share_context and normalized in {"basic eps", "diluted eps"}:
+        code = "basic_shares" if normalized.startswith("basic") else "diluted_shares"
+        return code, code.replace("_", " ").capitalize(), source_line
+    if eps_context and re.fullmatch(r"(?:[12]\) )?(basic|diluted)(?: earnings per share| eps)?(?:\s*\([^)]*\))?\d?", normalized):
+        code = "diluted_eps" if "diluted" in normalized else "basic_eps"
+        return code, code.replace("_", " ").capitalize(), source_line
+    if normalized == "total" and statement_block in {"liabilities", "assets", "income", "expenses"}:
+        code = {"liabilities": "total_liabilities_equity", "assets": "total_assets",
+                "income": "total_income", "expenses": "total_expenses"}[statement_block]
+        return code, code.replace("_", " ").capitalize(), source_line
+    if normalized == "deferred payment liabilities" and liability_scope:
+        code = "deferred_payment_liabilities_" + liability_scope
+        return code, "Deferred payment liabilities: " + liability_scope, source_line
+    explicit = {
+        "total current assets": "current_assets", "total current liabilities": "current_liabilities",
+        "total liabilities": "total_liabilities", "total equity and liabilities": "total_liabilities_equity",
+        "total capital and liabilities": "total_liabilities_equity", "total equity": "total_equity_including_nci",
+        "equity share capital": "share_capital", "share capital": "share_capital", "other equity": "other_equity",
+        "capital": "share_capital", "reserves and surplus": "reserves_surplus", "reserves & surplus": "reserves_surplus",
+        "deposits": "deposits", "balances with banks and money at call and short notice": "balances_with_banks",
+        "balances with banks and money at call & short notice": "balances_with_banks", "investments": "investments",
+        "advances": "advances", "fixed assets": "fixed_assets", "other assets": "other_assets",
+        "other liabilities and provisions": "other_liabilities_provisions", "policyholders' funds": "policyholder_funds",
+        "goodwill on consolidation": "goodwill", "employees stock options outstanding": "employee_awards",
+        "employees stock options / units outstanding": "employee_awards", "employees stock options/units outstanding": "employee_awards",
+        "interest earned": "interest_earned", "interest expended": "interest_expended",
+        "operating expenses": "operating_expenses", "provisions and contingencies": "provisions_contingencies",
+        "other income": "other_income", "total income": "total_income", "total expenses": "total_expenses",
+        "total expenditure": "total_expenses", "current tax": "current_tax", "deferred tax": "deferred_tax",
+        "value of sales & services (revenue)": "gross_revenue_including_gst", "less: gst recovered": "gst_recovered",
+        "exceptional items (net)": "exceptional_items_expense",
+        "profit before share of profit / (loss) of associates / joint ventures and tax": "profit_before_associates_tax",
+        "share of profit / (loss) of associate and joint ventures": "share_of_associate_profit",
+        "share of profit / (loss) of associates and joint ventures": "share_of_associate_profit",
+        "add: share of profit in associates": "share_of_associate_profit",
+        "add: share in profit of associates": "share_of_associate_profit",
+        "consolidated net profit for the year before minority interest": "group_profit",
+        "net profit for the year before deducting minority interest": "group_profit",
+        "net profit for the year (before share in profit of associates and minority interest)": "profit_before_associates_nci",
+        "net profit for the year (before adjustment for share in profit of associates and minority interest)": "profit_before_associates_nci",
+        "consolidated net profit for the year attributable to the group": "net_income_parent",
+        "consolidated profit/(loss) for the year attributable to the group": "net_income_parent",
+        "net profit for the group": "net_income_parent",
+        "dividend paid during the year": "dividends", "dividend for the current year": "dividend_appropriation",
+    }
+    balance_only = {"share_capital", "reserves_surplus", "deposits", "balances_with_banks", "investments",
+                    "advances", "fixed_assets", "other_assets", "other_liabilities_provisions", "policyholder_funds", "employee_awards", "goodwill"}
+    if normalized in explicit:
+        code = explicit[normalized]
+        if code in balance_only and "balance sheet" not in section_lower:
+            return None
+        if "cash flow" in section_lower:
+            return None
+        return code, code.replace("_", " ").capitalize(), source_line
+    if "cash flow" in section_lower:
+        flow_label = re.sub(r"\s*\((?:[abc]|a\+b\+c)\)$", "", normalized).strip()
+        cash_flows = {
+            "net cash flow from operating activities": "operating_cash_flow",
+            "net cash generated from operating activities": "operating_cash_flow",
+            "net cash used in investing activities": "investing_cash_flow",
+            "net cash flow used in investing activities": "investing_cash_flow",
+            "net cash used in financing activities": "financing_cash_flow",
+            "net cash flow used in financing activities": "financing_cash_flow",
+            "net cash flow from / (used in) financing activities": "financing_cash_flow",
+            "purchase of property, plant and equipment": "ppe_cash_outflow",
+            "purchase of property, plant and equipment and capital work-in-progress": "ppe_cash_outflow",
+            "purchase of intangible assets": "intangibles_cash_outflow",
+            "purchase of intangible assets and intangible assets under development": "intangibles_cash_outflow",
+            "payment towards spectrum": "spectrum_cash_outflow",
+            "payment towards spectrum (including deferred payment liability)": "spectrum_cash_outflow",
+            "expenditure for property, plant and equipment, spectrum and other intangible assets": "ppe_spectrum_intangibles_cash_outflow",
+            "net increase in cash and cash equivalents": "cash_change",
+            "net increase in the cash and cash equivalents": "cash_change",
+            "net increase in the cash and cash equivalents during the year": "cash_change",
+            "effect of exchange rate on the cash and cash equivalents": "cash_fx_effect",
+            "opening balance of cash and cash equivalents": "cash_flow_cash_opening",
+            "closing balance of cash and cash equivalents": "cash_flow_cash_closing",
+        }
+        if flow_label in cash_flows:
+            code = cash_flows[flow_label]
+            return code, code.replace("_", " ").capitalize(), source_line
     if normalized == "cash and balances with reserve bank of india":
         return "cash_and_balances_with_rbi", "Cash and balances with Reserve Bank of India", source_line
     if normalized in {"borrowings", "total borrowings"}:
@@ -818,7 +985,7 @@ def _row_bbox(page: Any | None, source_line: str, *, occurrence: int = 0) -> dic
     matches = []
     for value in search_values:
         try:
-            matches = page.search(re.escape(value), regex=True, case=True)
+            matches = page.search(re.escape(value).replace(r"\ ", r"\s+"), regex=True, case=True)
         except Exception:
             continue
         if matches:
@@ -879,6 +1046,7 @@ def _table_candidates(
     period_type: str = "annual",
     page_text: str = "",
     region_number: int | None = None,
+    unit_evidence: dict | None = None,
 ) -> list[PdfTableCandidate]:
     header_index = _header_row_index(matrix)
     if header_index is None:
@@ -911,6 +1079,8 @@ def _table_candidates(
 
             unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text)
             item_warnings = _candidate_warnings(metric_code, unit)
+            if unit_evidence and not metric_code.endswith("shares"):
+                item_warnings.append("currency_from_embedded_font_requires_review")
             cell_bbox = _cell_bbox(rows, row_index, column_index)
             if cell_bbox is None:
                 item_warnings.append("cell_bounding_box_missing")
@@ -945,6 +1115,7 @@ def _table_candidates(
                         "table_bbox": _bbox_dict(table_bbox),
                         "cell_bbox": _bbox_dict(cell_bbox) if cell_bbox else None,
                         **({"region": region_number} if region_number else {}),
+                        **({"unit_evidence": unit_evidence} if unit_evidence and not metric_code.endswith("shares") else {}),
                     },
                     extraction_warnings=";".join(item_warnings) or None,
                     confidence_label="high" if not item_warnings else "medium",
@@ -979,16 +1150,26 @@ def _number(value: str) -> float | None:
     return -parsed if negative else parsed
 
 
-def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *, source_label: str = "", page_text: str = "") -> str | None:
+def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *, source_label: str = "", page_text: str = "", share_context: bool = False, share_scale: str | None = None) -> str | None:
     if metric_code in {"basic_shares", "diluted_shares"}:
         explicit = _SCALE_PATTERN.search(source_label)
         if not explicit:
             explicit = re.search(r"\bshares?\s+(?:are\s+)?(?:in\s+)?(thousands?|millions?|billions?)\b", page_text, re.I)
         if explicit:
-            return f"shares {explicit.group(1).lower().rstrip('s')}"
-        if re.search(r"\bnumber of\b|\bactuals?\b", source_label, re.I):
+            share_unit = explicit.group(1).lower().rstrip('s')
+            return "shares thousand" if share_unit == "000" else f"shares {share_unit}"
+        if share_scale:
+            return f"shares {share_scale}"
+        if share_context or re.search(r"\bnumber of\b|\bactuals?\b", source_label, re.I):
             return "shares"
         return None
+    if metric_code in {"basic_eps", "diluted_eps"}:
+        explicit_currency = _CURRENCY_PATTERN.search(source_label)
+        if explicit_currency:
+            return explicit_currency.group(1).upper() + "/share"
+        if re.search(r"[₹`]|\bRs\.?", source_label, re.I):
+            return "INR/share"
+        return currency + "/share" if currency else None
     if currency is None:
         return None
     return f"{currency} {scale}".strip() if scale else currency
@@ -996,7 +1177,7 @@ def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *
 
 def _candidate_warnings(metric_code: str, unit: str | None) -> list[str]:
     result = [] if unit else ["reporting_unit_missing"]
-    if metric_code in {"borrowings", "current_borrowings", "noncurrent_borrowings", "bills_discounted", "cash_and_balances_with_rbi", "profit_after_tax_before_associates", "group_profit"} or metric_code.startswith("cash_flow_"):
+    if metric_code in {"borrowings", "current_borrowings", "noncurrent_borrowings", "bills_discounted", "cash_and_balances_with_rbi", "profit_after_tax_before_associates", "profit_before_associates_nci", "investments", "group_profit"} or metric_code.startswith("cash_flow_"):
         result.append("accounting_scope_requires_review")
     return result
 

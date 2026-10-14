@@ -44,8 +44,8 @@ follow-up, query/route profiles, normal rollout and source/image identity.
 
 ## Normal runtime and recovery
 
-The normal app runs October 14 parser backend/worker images and the unchanged
-October 13 frontend after a verified format-3 backup. The [parser checkpoint](archive/checkpoints/2026/m05-pdf-parser-repair-2026-10-14.md)
+The normal app runs October 14 unit/coverage backend/worker images and the unchanged
+October 13 frontend after a verified format-3 backup. The [coverage checkpoint](archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md)
 records passing source/workflow tests and 48 normal desktop/mobile views.
 Original PostgreSQL volume and s1s1s1s1s1s1 remain. All 109 table fingerprints match
 across rollout and authenticated browser verification. Ports remain localhost-only.
@@ -78,11 +78,13 @@ while M05 proceeds. The [source-review checkpoint](archive/checkpoints/2026/m05-
 owns ten company batches, retained official reports, arithmetic and version-pinned
 candidate comparisons. Reference/accounting/model review remains pending; no
 financial records were imported or promoted. Acquisition runs were recorded.
-Demonstrated PDF spread/year/number/scope defects are repaired; unknown units,
-unexplained extra columns and unsupported statement/note rows remain explicit gaps.
-Updated comparison and accounting-note review packets are retained locally. Next
-work requires reviewed references and accounting/model decisions before promotion;
-keep unsupported coverage visible. Do not wait for Mac settings on independent work.
+The unit/coverage follow-up adds explicit statement rows, wrapped labels, embedded
+rupee evidence and separate EPS/share units. Official HDFC results support prepared
+unit corrections; remaining ambiguous rows have manual review entries and images.
+Start with `output/milestones/m05/review-batches-20261014-coverage/review-packet.html`.
+All comparisons remain unapproved and unimported. Next work requires source,
+accounting/model decisions and current stored candidate versions before promotion;
+broader note coverage stays open. Do not wait for Mac settings on independent work.
 The earlier operator packet's Mock Data AI labels also remain unapproved.
 The repository's old self-scoring extraction CLI now fails unavailable; its
 regression and repository checks pass. This host-tooling follow-up does not change
