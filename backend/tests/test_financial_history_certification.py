@@ -396,5 +396,26 @@ def test_stored_pdf_parser_candidates_keep_verifiable_locators():
         candidate = SimpleNamespace(company_id=1, raw_document=document, source_page=item.source_page,
             unit=item.unit, source_locator_json=item.source_locator_json, source_text=item.source_text,
             source_cell_reference=item.source_cell_reference, metric_code=item.metric_code, fiscal_year=item.fiscal_year)
+        if item.metric_code == "diluted_shares":
+            # The fixture does not declare a share scale. Geometry is retained,
+            # but missing units must block certification until explicitly reviewed.
+            assert item.unit is None
+            assert not _candidate_has_exact_locator(candidate, source_hashes=hashes)
+            candidate.unit = "million shares"  # Mock Data reviewer-supplied basis.
         assert _candidate_has_exact_locator(candidate, source_hashes=hashes)
     assert len(hashes) == 1
+
+
+@pytest.mark.parametrize("change", [None, "left_region", "invalid_region", "bool_region", "wrong_cell"])
+def test_facing_page_locator_keeps_absolute_geometry_and_region_identity(change):
+    from app.services.financial_history_certification import _pdf_location_is_bounded
+
+    locator = {"type": "pdf_text_row", "page": 1, "region": 2,
+        "coordinate_system": "pdfplumber_top_left_points", "page_width": 1200, "page_height": 840,
+        "bounding_box": {"x0": 630, "top": 100, "x1": 1100, "bottom": 120},
+        "line": 5, "value_index": 1, "fiscal_year": 2026, "cell_reference": "P1:S2:L5:Y2026"}
+    if change == "left_region": locator["region"] = 1
+    if change == "invalid_region": locator["region"] = 3
+    if change == "bool_region": locator["region"] = True
+    if change == "wrong_cell": locator["cell_reference"] = "P1:L5:Y2026"
+    assert _pdf_location_is_bounded(locator, 1) is (change is None)

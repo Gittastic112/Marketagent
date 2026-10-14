@@ -191,13 +191,20 @@ def _pdf_location_is_bounded(locator: dict[str, Any], page_count: int) -> bool:
     width, height, left, top, right, bottom = values
     if not (0 <= left < right <= width and 0 <= top < bottom <= height):
         return False
+    region = locator.get("region")
+    if region is not None:
+        if type(region) is not int or region not in (1, 2):
+            return False
+        if not ((region - 1) * width / 2 <= left < right <= region * width / 2):
+            return False
     if kind == "pdf_table_cell":
         if any(type(locator.get(k)) is not int or locator[k] < 1 for k in ("table", "row", "column")):
             return False
         return locator.get("cell") == f"P{page}:T{locator['table']}:R{locator['row']}:C{locator['column']}"
     if any(type(locator.get(k)) is not int or locator[k] < 1 for k in ("line", "value_index", "fiscal_year")):
         return False
-    return locator.get("cell_reference") == f"P{page}:L{locator['line']}:Y{locator['fiscal_year']}"
+    region_reference = f":S{region}" if region is not None else ""
+    return locator.get("cell_reference") == f"P{page}{region_reference}:L{locator['line']}:Y{locator['fiscal_year']}"
 
 
 def _pdf_locator_matches_asset(candidate: FinancialExtractionCandidate, locator: dict[str, Any], source_hashes: dict[tuple[str, int], str]) -> bool:

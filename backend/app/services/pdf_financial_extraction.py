@@ -1,6 +1,7 @@
 import hashlib
+import math
 import re
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from io import BytesIO
 from pathlib import PurePath
@@ -28,7 +29,7 @@ MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v2"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v3"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -82,14 +83,20 @@ _UNIT_PATTERN = re.compile(
     r"(?:\s+(?P<scale>thousand|million|billion|crore|lakh))?\b",
     re.IGNORECASE,
 )
-_YEAR_PATTERN = re.compile(r"\b(?:FY\s*)?(19\d{2}|20\d{2})\b", re.IGNORECASE)
+_YEAR_PATTERN = re.compile(r"\b(?:FY\s*)?(19\d{2}|20\d{2})(?:\s*[-–]\s*(\d{4}|\d{2}))?\b", re.IGNORECASE)
 _INDIA_SCALE_PATTERN = re.compile(
     r"(?:₹|`|\brs\.?\b|\binr\b)?\s*(?:amounts?\s+)?(?:are\s+)?in\s+"
     r"(?P<scale>crore|crores|lakh|lakhs)\b",
     re.IGNORECASE,
 )
 _STATEMENT_VALUE_TOKEN_PATTERN = re.compile(
-    r"\(?[-+]?(?:\d{1,3}(?:,\d{2,3})+|\d+)(?:\.\d+)?\)?\*?|(?<!\S)-(?!\S)"
+    r"(?<![\w,./%])(?:\(?[-+]?(?:\d+(?:,\d{2,3})+|\d+)(?:\.\d+)?\)?\*?|[-–—])(?![\w,./%])"
+)
+_SCALE_PATTERN = re.compile(r"\b(thousands?|millions?|billions?|crores?|lakhs?|000s)\b", re.IGNORECASE)
+_CURRENCY_PATTERN = re.compile(r"\b(USD|INR|EUR|GBP|JPY|CAD|AUD|CHF|CNY|HKD|SGD)\b", re.IGNORECASE)
+_STATEMENT_HEADING = re.compile(
+    r"^(?:consolidated\s+)?(?:balance sheet|statement of profit and loss|profit and loss account|"
+    r"cash flow statement|statement of cash flows)", re.IGNORECASE,
 )
 
 
@@ -274,43 +281,52 @@ def _parse_pdf_financial_tables(
                 page_currency, page_scale = _reporting_unit(page_text)
                 reporting_currency = reporting_currency or page_currency
                 reporting_scale = reporting_scale or page_scale
-                section = _page_section(page_text)
-                tables = page.find_tables()
-                table_count += len(tables)
-
-                extracted.extend(
-                    _statement_line_candidates(
-                        page_text=page_text,
-                        page_number=page_number,
-                        section=section,
-                        currency=page_currency,
-                        scale=page_scale,
-                        page_width=float(page.width),
-                        page_height=float(page.height),
-                        page=page,
-                        period_type=period_type,
-                    )
-                )
-
-                for table_number, table in enumerate(tables, start=1):
-                    matrix = table.extract()
-                    if not matrix:
-                        continue
+                regions = _statement_regions(page)
+                if len(regions) > 1:
+                    warnings.add("facing_page_regions")
+                inherited_section = None
+                page_table_number = 0
+                for region_number, region in enumerate(regions, start=1):
+                    region_text = region.extract_text() or ""
+                    region_currency, region_scale = _reporting_unit(region_text)
+                    section = _page_section(region_text)
+                    has_heading = any(_STATEMENT_HEADING.match(line.strip()) for line in region_text.splitlines())
+                    if not has_heading and len(regions) > 1 and inherited_section:
+                        section = inherited_section
+                    if has_heading:
+                        inherited_section = section
+                    tables = region.find_tables()
+                    table_count += len(tables)
                     extracted.extend(
-                        _table_candidates(
-                            matrix=matrix,
-                            rows=table.rows,
-                            table_bbox=table.bbox,
+                        _statement_line_candidates(
+                            page_text=region_text,
                             page_number=page_number,
+                            section=section,
+                            currency=region_currency,
+                            scale=region_scale,
                             page_width=float(page.width),
                             page_height=float(page.height),
-                            table_number=table_number,
-                            section=section,
-                            currency=page_currency,
-                            scale=page_scale,
+                            page=region,
+                            region_number=region_number if len(regions) > 1 else None,
+                            warnings=warnings,
                             period_type=period_type,
                         )
                     )
+                    for table in tables:
+                        page_table_number += 1
+                        matrix = table.extract()
+                        if not matrix:
+                            continue
+                        extracted.extend(
+                            _table_candidates(
+                                matrix=matrix, rows=table.rows, table_bbox=table.bbox,
+                                page_number=page_number, page_width=float(page.width),
+                                page_height=float(page.height), table_number=page_table_number,
+                                section=section, currency=region_currency, scale=region_scale,
+                                period_type=period_type, page_text=region_text,
+                                region_number=region_number if len(regions) > 1 else None,
+                            )
+                        )
     except HTTPException:
         raise
     except Exception as exc:
@@ -464,29 +480,57 @@ def _safe_filename(filename: str | None) -> str:
 
 
 def _reporting_unit(text: str) -> tuple[str | None, str | None]:
+    # Read unit declarations, not incidental amounts in note prose. Some Indian
+    # PDFs encode the rupee glyph as a backtick. An unreadable Latin-letter glyph
+    # or an Indian numbering scale alone is not sufficient currency evidence.
+    lines = text.splitlines()[:20]
+    for line in lines:
+        scale_match = _SCALE_PATTERN.search(line)
+        if not scale_match or not re.search(r"\bin\b|\bamounts?\b|omitted|^\s*\([`₹]", line, re.I):
+            continue
+        scale = scale_match.group(1).lower().rstrip("s")
+        scale = "thousand" if scale == "000" else scale
+        currency_match = _CURRENCY_PATTERN.search(line)
+        if currency_match:
+            return currency_match.group(1).upper(), scale
+        if re.search(r"Indian Rupees?|\bRs\.?|[₹`]|\bINR\b", line, re.I):
+            return "INR", scale
+        if "omitted" in line.lower() and any(re.fullmatch(r"\s*[`₹](?:\s+[`₹])*\s*", item) for item in lines):
+            return "INR", scale
+        return None, scale
     match = _UNIT_PATTERN.search(text)
-    if match is not None:
-        currency = match.group("currency").upper()
-        scale = match.group("scale")
-        return currency, scale.lower() if scale else None
-    india_scale = _INDIA_SCALE_PATTERN.search(text)
-    if india_scale is not None:
-        return "INR", india_scale.group("scale").lower().rstrip("s")
-    return None, None
+    return (match.group("currency").upper(), None) if match else (None, None)
+
+
+def _statement_regions(page: Any) -> list[Any]:
+    """Split demonstrated facing pages, never a landscape table just for being wide."""
+    if page.width < page.height * 1.2:
+        return [page]
+    mid = float(page.width) / 2
+    # A real gutter must remain empty through the statement body.
+    if any(char["x0"] < mid + 6 and char["x1"] > mid - 6
+           and page.height * .12 < char["top"] < page.height * .9
+           and char.get("text", "").strip() for char in page.chars):
+        return [page]
+    regions = [page.crop((0, 0, mid, page.height)), page.crop((mid, 0, page.width, page.height))]
+    texts = [region.extract_text() or "" for region in regions]
+    if not all(_reporting_unit(text)[1] for text in texts):
+        return [page]
+    folios = []
+    for region in regions:
+        folios.append({int(word["text"]) for word in region.extract_words()
+                       if word["top"] > page.height * .92 and re.fullmatch(r"\d{1,4}", word["text"])})
+    consecutive_folios = any(left + 1 in folios[1] for left in folios[0])
+    years = [_statement_years(text) for text in texts]
+    repeated_headers = len(years[0]) >= 2 and years[0] == years[1]
+    return regions if consecutive_folios or repeated_headers else [page]
 
 
 def _page_section(text: str) -> str | None:
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    preferred_headings = (
-        "consolidated balance sheet",
-        "consolidated statement of profit and loss",
-        "consolidated cash flow statement",
-        "notes to the consolidated financial statements",
-    )
     for line in lines:
-        for heading in preferred_headings:
-            if line.lower().startswith(heading):
-                return line[:255]
+        if _STATEMENT_HEADING.match(line):
+            return line[:255]
     for cleaned in lines:
         if _UNIT_PATTERN.search(cleaned) or _INDIA_SCALE_PATTERN.search(cleaned):
             continue
@@ -505,38 +549,61 @@ def _statement_line_candidates(
     page_height: float,
     page: Any | None,
     period_type: str = "annual",
+    region_number: int | None = None,
+    warnings: set[str] | None = None,
 ) -> list[PdfTableCandidate]:
     years = _statement_years(page_text)
     if not years:
         return []
     lines = _stitch_statement_lines(page_text.splitlines())
     candidates: list[PdfTableCandidate] = []
-    in_other_comprehensive_income = False
+    attribution = "profit"
+    liability_scope = None
+    row_occurrences: dict[str, int] = {}
     for line_number, source_line in enumerate(lines, start=1):
-        if "other comprehensive income" in source_line.lower():
-            in_other_comprehensive_income = True
-        metric = _metric_for_statement_line(source_line, section)
+        normalized_line = source_line.lower()
+        if re.match(r"(?:other|total) comprehensive income", normalized_line):
+            attribution = "comprehensive"
+        elif re.match(r"(?:net )?profit.*attributable to", normalized_line):
+            attribution = "profit"
+            # This is the group total repeated as an attribution heading.
+            if re.search(r"attributable to\s*:", normalized_line):
+                continue
+        if normalized_line in {"non-current liabilities", "non current liabilities", "non‑current liabilities"}:
+            liability_scope = "noncurrent"
+        elif normalized_line == "current liabilities":
+            liability_scope = "current"
+        elif normalized_line in {"assets", "equity", "current assets", "non-current assets"}:
+            liability_scope = None
+        parsed_row = _statement_row_values(source_line, len(years), page_text)
+        if parsed_row is None:
+            possible_label = re.split(r"\s+(?=[\d(])", source_line, maxsplit=1)[0]
+            if warnings is not None and _metric_for_statement_line(possible_label, section):
+                warnings.add("ambiguous_statement_row_skipped")
+            continue
+        source_label, value_tokens = parsed_row
+        metric = _metric_for_statement_line(source_label, section, liability_scope=liability_scope)
         if metric is None:
             continue
         metric_code, reported_label, source_row_label = metric
-        if in_other_comprehensive_income and metric_code in {"net_income_parent", "net_income_nci"}:
+        if metric_code == "net_income" and source_label.lower() == "profit after tax" and re.search(r"share of profit.*associate", page_text, re.I):
+            metric_code, reported_label = "profit_after_tax_before_associates", "Profit after tax before associates"
+        if attribution != "profit" and metric_code in {"net_income_parent", "net_income_nci"}:
             continue
-        value_source_line = re.sub(r"\(refer\s+note\s+\d+\)", "", source_line, flags=re.IGNORECASE)
-        value_tokens = _STATEMENT_VALUE_TOKEN_PATTERN.findall(value_source_line)
-        if len(value_tokens) < len(years):
-            continue
-        value_tokens = value_tokens[-len(years):]
-        row_bbox = _row_bbox(page, source_line)
+        occurrence = row_occurrences.get(source_line, 0)
+        row_occurrences[source_line] = occurrence + 1
+        row_bbox = _row_bbox(page, source_line, occurrence=occurrence)
 
         for value_index, (fiscal_year, value_token) in enumerate(zip(years, value_tokens, strict=True), start=1):
             value = _number(value_token.rstrip("*"))
             if value is None:
                 continue
-            unit = _candidate_unit(metric_code, currency, scale)
-            item_warnings = [] if unit else ["reporting_unit_missing"]
+            unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text)
+            item_warnings = _candidate_warnings(metric_code, unit)
             if row_bbox is None:
                 item_warnings.append("row_bounding_box_missing")
-            cell_reference = f"P{page_number}:L{line_number}:Y{fiscal_year}"
+            region_ref = f":S{region_number}" if region_number else ""
+            cell_reference = f"P{page_number}{region_ref}:L{line_number}:Y{fiscal_year}"
             candidates.append(
                 PdfTableCandidate(
                     metric_code=metric_code,
@@ -563,12 +630,38 @@ def _statement_line_candidates(
                         "page_width": page_width,
                         "page_height": page_height,
                         "bounding_box": row_bbox,
+                        **({"region": region_number} if region_number else {}),
                     },
                     extraction_warnings=";".join(item_warnings) or None,
                     confidence_label="high" if not item_warnings else "medium",
                 )
             )
     return candidates
+
+
+def _statement_row_values(line: str, count: int, page_text: str) -> tuple[str, list[str]] | None:
+    # Match complete tokens at the end of a row. Never take arbitrary numbers
+    # from the opposite printed page, an embedded note, a percentage or prose.
+    cleaned = re.sub(r"\(refer\s+note\s+\d+(?:\.\d+)?(?:\([a-z]\))?\)", "", line, flags=re.I).rstrip()
+    matches = list(_STATEMENT_VALUE_TOKEN_PATTERN.finditer(cleaned))
+    suffix = []
+    end = len(cleaned)
+    for match in reversed(matches):
+        if cleaned[match.end():end].strip():
+            break
+        suffix.insert(0, match)
+        end = match.start()
+    if len(suffix) < count:
+        return None
+    extra = suffix[:-count]
+    if extra:
+        note = cleaned[extra[0].start():extra[-1].end()]
+        if not re.search(r"\bnotes?\b|\bschedule", page_text[:1500], re.I) or not re.fullmatch(r"\d{1,2}(?:\.\d{1,2})?(?:\s*\(\d{1,2}\))?", note):
+            return None
+    label = cleaned[:suffix[0].start()].strip()
+    if re.search(r"\bnotes?\b|\bschedule", page_text[:1500], re.I):
+        label = re.sub(r"\s+\d{1,2}[A-Z]$", "", label)
+    return label, [match.group() for match in suffix[-count:]]
 
 
 def _statement_years(page_text: str) -> tuple[int, ...]:
@@ -579,7 +672,7 @@ def _statement_years(page_text: str) -> tuple[int, ...]:
             continue
         line_years: list[int] = []
         for match in _YEAR_PATTERN.finditer(line):
-            year = int(match.group(1))
+            year = _end_year(match)
             if year not in line_years:
                 line_years.append(year)
         if len(line_years) >= 2:
@@ -588,7 +681,7 @@ def _statement_years(page_text: str) -> tuple[int, ...]:
     for line in header_lines:
         line_years: list[int] = []
         for match in _YEAR_PATTERN.finditer(line):
-            year = int(match.group(1))
+            year = _end_year(match)
             if year not in line_years:
                 line_years.append(year)
         if len(line_years) >= 2:
@@ -599,10 +692,23 @@ def _statement_years(page_text: str) -> tuple[int, ...]:
         if "year ended" not in line.lower() and "as at" not in line.lower():
             continue
         for match in _YEAR_PATTERN.finditer(line):
-            year = int(match.group(1))
+            year = _end_year(match)
             if year not in years:
                 years.append(year)
     return tuple(years)
+
+
+def _end_year(match: re.Match) -> int:
+    start = int(match.group(1))
+    end = match.group(2)
+    if end is None:
+        return start
+    result = int(end) if len(end) == 4 else start // 100 * 100 + int(end)
+    if result < start:
+        result += 100
+    # Only consecutive year ranges establish a fiscal-year end. An ISO date
+    # such as 2026-03-31 must not turn into FY2103.
+    return result if result == start + 1 else start
 
 
 def _stitch_statement_lines(lines: list[str]) -> list[str]:
@@ -616,7 +722,9 @@ def _stitch_statement_lines(lines: list[str]) -> list[str]:
             and "diluted" not in line.lower()
             and next_line.lower().startswith("diluted")
         ):
-            stitched.append(f"{line} {next_line}")
+            values = list(_STATEMENT_VALUE_TOKEN_PATTERN.finditer(line))
+            start = values[0].start() if values else len(line)
+            stitched.append(f"{line[:start].rstrip()} {next_line} {line[start:]}")
             index += 2
             continue
         stitched.append(line)
@@ -627,47 +735,81 @@ def _stitch_statement_lines(lines: list[str]) -> list[str]:
 def _metric_for_statement_line(
     source_line: str,
     section: str | None,
+    *,
+    liability_scope: str | None = None,
 ) -> tuple[str, str, str] | None:
     normalized = re.sub(r"\s+", " ", source_line.strip().lower())
-    normalized = normalized.replace("–", "-")
+    normalized = normalized.replace("–", "-").replace("‑", "-")
+    normalized = re.sub(r"^(?:[-•]\s+|[a-z]\)\s+)", "", normalized)
+    normalized = re.sub(r"\s*\(['‘]?nci['’]?\)\s*$", "", normalized)
+    normalized = re.sub(r"\s*\((?:in )?(?:thousands?|millions?|billions?|actuals?|numbers?)\)\s*$", "", normalized)
     section_lower = (section or "").lower()
+    profit_statement = "profit and loss" in section_lower
+
+    if normalized.startswith("weighted average number of equity shares"):
+        if "diluted" in normalized:
+            return "diluted_shares", "Diluted shares", source_line
+        if "basic" in normalized:
+            return "basic_shares", "Basic shares", source_line
+        return None
+    if normalized == "cash and balances with reserve bank of india":
+        return "cash_and_balances_with_rbi", "Cash and balances with Reserve Bank of India", source_line
+    if normalized in {"borrowings", "total borrowings"}:
+        code = f"{liability_scope}_borrowings" if liability_scope and normalized == "borrowings" else "borrowings"
+        return code, code.replace("_", " ").capitalize(), source_line
+    if normalized in {"lease liabilities", "operating lease liabilities"} and liability_scope:
+        code = f"{liability_scope}_lease_liabilities"
+        return code, code.replace("_", " ").capitalize(), source_line
+    if normalized.startswith("cash and cash equivalents") and ("cash flow" in section_lower):
+        if re.search(r"\b(?:beginning|opening)\b", normalized):
+            return "cash_flow_cash_opening", "Cash flow statement opening cash", source_line
+        if re.search(r"\b(?:end|closing)\b", normalized):
+            return "cash_flow_cash_closing", "Cash flow statement closing cash", source_line
+        return None
+    if profit_statement and normalized in {"profit for the year", "profit for the period"}:
+        return "group_profit", "Reported group profit", source_line
 
     contextual_patterns: tuple[tuple[str, str, str], ...] = (
-        ("weighted average number of equity shares", "diluted_shares", "Diluted shares"),
-        ("customers' bills discounted", "debt", "Customers' bills discounted"),
-        ("customers’ bills discounted", "debt", "Customers' bills discounted"),
+        ("customers' bills discounted", "bills_discounted", "Customers' bills discounted"),
+        ("customers’ bills discounted", "bills_discounted", "Customers' bills discounted"),
         ("investments accounted using equity method", "investments_in_associates", "Investments accounted using equity method"),
         ("interest and bank charges", "finance_costs", "Interest and bank charges"),
+        ("finance costs", "finance_costs", "Finance costs"),
         ("total tax expense", "tax_expense", "Total tax expense"),
         ("profit before tax", "pre_tax_income", "Profit before tax"),
         ("total equity attributable to equity holders of the parent", "book_equity", "Equity attributable to parent"),
         ("total assets", "total_assets", "Total assets"),
+        ("depreciation and amortisation expenses", "depreciation", "Depreciation and amortisation"),
+        ("depreciation / amortisation and depletion expense", "depreciation", "Depreciation, amortisation and depletion"),
+        ("equity attributable to owners of the parent", "book_equity", "Equity attributable to parent"),
     )
     for prefix, metric_code, reported_label in contextual_patterns:
-        if normalized.startswith(prefix):
-            return metric_code, reported_label, source_line.split("  ", maxsplit=1)[0].strip()
+        if normalized == prefix:
+            if "cash flow" in section_lower and metric_code in {"finance_costs", "depreciation", "pre_tax_income"}:
+                return f"cash_flow_{metric_code}", f"Cash flow statement: {reported_label}", source_line
+            return metric_code, reported_label, source_line
 
-    if "profit and loss" in section_lower:
-        if normalized.startswith("profit for the year attributable to equity holders of the parent"):
+    if profit_statement:
+        if normalized == "profit for the year attributable to equity holders of the parent":
             return "net_income_parent", "Net income attributable to parent", "Equity holders of the parent"
-        if normalized.startswith("equity holders of the parent"):
-            return "net_income_parent", "Net income attributable to parent", "Equity holders of the parent"
+        if normalized in {"equity holders of the parent", "owners of the parent", "owners of the company"}:
+            return "net_income_parent", "Net income attributable to parent", source_line
     elif normalized.startswith("profit for the year attributable"):
         return None
 
-    if normalized.startswith("non-controlling interests") or normalized.startswith("noncontrolling interests"):
-        if "profit and loss" in section_lower:
-            return "net_income_nci", "Net income attributable to NCI", "Non-controlling interests"
-        return "minority_interests", "Minority interests", "Non-controlling interests"
+    if normalized in {"non-controlling interests", "noncontrolling interests", "non-controlling interest", "minority interest", "minority interests", "nci", "less: minority interest", "less : minority interest"}:
+        if profit_statement:
+            return "net_income_nci", "Net income attributable to NCI", source_line
+        return "minority_interests", "Minority interests", source_line
 
     for metric_code, reported_label, aliases in _METRIC_ALIASES:
         for alias in sorted(aliases, key=len, reverse=True):
-            if normalized == alias or normalized.startswith(f"{alias} "):
+            if normalized == alias:
                 return metric_code, reported_label, alias
     return None
 
 
-def _row_bbox(page: Any | None, source_line: str) -> dict[str, float] | None:
+def _row_bbox(page: Any | None, source_line: str, *, occurrence: int = 0) -> dict[str, float] | None:
     if page is None:
         return None
     search_values = [source_line]
@@ -681,9 +823,9 @@ def _row_bbox(page: Any | None, source_line: str) -> dict[str, float] | None:
             continue
         if matches:
             break
-    if not matches:
+    if len(matches) <= occurrence:
         return None
-    match = matches[0]
+    match = matches[occurrence]
     required = ("x0", "top", "x1", "bottom")
     if any(key not in match for key in required):
         return None
@@ -691,57 +833,35 @@ def _row_bbox(page: Any | None, source_line: str) -> dict[str, float] | None:
 
 
 def _consolidate_candidates(candidates: list[PdfTableCandidate]) -> list[PdfTableCandidate]:
-    deduplicated: dict[tuple[str, int, int, float], PdfTableCandidate] = {}
+    # Deduplicate only the same physical row read by the text and table paths.
+    # Equal values on different rows are separate evidence. Never add apparent
+    # debt/lease components without knowing whether they overlap or include totals.
+    output: list[PdfTableCandidate] = []
     for candidate in candidates:
-        key = (candidate.metric_code, candidate.fiscal_year, candidate.source_page, candidate.value)
-        existing = deduplicated.get(key)
-        if existing is None or (
-            existing.source_locator_json.get("type") != "pdf_table_cell"
-            and candidate.source_locator_json.get("type") == "pdf_table_cell"
-        ):
-            deduplicated[key] = candidate
-
-    output = list(deduplicated.values())
-    for metric_code in ("debt", "lease_liabilities"):
-        grouped: dict[tuple[int, int], list[PdfTableCandidate]] = {}
-        for candidate in output:
-            if candidate.metric_code == metric_code:
-                grouped.setdefault((candidate.fiscal_year, candidate.source_page), []).append(candidate)
-        for (fiscal_year, page_number), components in grouped.items():
-            if len(components) < 2:
-                continue
-            output = [candidate for candidate in output if candidate not in components]
-            total = round(sum(component.value for component in components), 6)
-            first = components[0]
-            component_locators = [component.source_locator_json for component in components]
-            output.append(
-                replace(
-                    first,
-                    reported_label=(
-                        "Total debt (summed reported components)"
-                        if metric_code == "debt"
-                        else "Lease liabilities (summed reported components)"
-                    ),
-                    value=total,
-                    source_text=" + ".join(component.source_text for component in components),
-                    source_row_label=" + ".join(component.source_row_label for component in components),
-                    source_cell_reference=f"P{page_number}:SUM:{metric_code}:{fiscal_year}"[:40],
-                    source_locator_json={
-                        "type": "pdf_reported_component_sum",
-                        "page": page_number,
-                        "operation": "sum",
-                        "metric_code": metric_code,
-                        "fiscal_year": fiscal_year,
-                        "components": component_locators,
-                    },
-                    extraction_warnings="derived_sum_of_reported_components;review_required",
-                    confidence_label="medium",
-                )
-            )
+        duplicate = next((i for i, other in enumerate(output) if _same_pdf_row(other, candidate)), None)
+        if duplicate is None:
+            output.append(candidate)
+        elif candidate.source_locator_json.get("type") == "pdf_table_cell":
+            output[duplicate] = candidate
     return sorted(
         output,
         key=lambda item: (item.source_page, item.fiscal_year, item.metric_code, item.value),
     )
+
+
+def _same_pdf_row(left: PdfTableCandidate, right: PdfTableCandidate) -> bool:
+    if (left.metric_code, left.fiscal_year, left.source_page, left.value, left.unit) != (
+        right.metric_code, right.fiscal_year, right.source_page, right.value, right.unit
+    ):
+        return False
+    if left.source_cell_reference == right.source_cell_reference:
+        return True
+    a, b = left.source_locator_json, right.source_locator_json
+    if a.get("type") == b.get("type") or a.get("region") != b.get("region"):
+        return False
+    aa, bb = a.get("bounding_box") or a.get("cell_bbox"), b.get("bounding_box") or b.get("cell_bbox")
+    return bool(aa and bb and max(aa["top"], bb["top"]) < min(aa["bottom"], bb["bottom"])
+                and max(aa["x0"], bb["x0"]) < min(aa["x1"], bb["x1"]))
 
 
 def _table_candidates(
@@ -757,6 +877,8 @@ def _table_candidates(
     currency: str | None,
     scale: str | None,
     period_type: str = "annual",
+    page_text: str = "",
+    region_number: int | None = None,
 ) -> list[PdfTableCandidate]:
     header_index = _header_row_index(matrix)
     if header_index is None:
@@ -770,10 +892,14 @@ def _table_candidates(
         if not row:
             continue
         source_label = (row[0] or "").strip()
-        metric = _metric_for_label(source_label)
+        metric = _metric_for_statement_line(source_label, section)
         if metric is None:
             continue
-        metric_code, reported_label = metric
+        metric_code, reported_label, _ = metric
+        # Text rows retain context for attribution and current/noncurrent headings.
+        # Table cells alone cannot safely infer that context from merged headings.
+        if metric_code in {"borrowings", "lease_liabilities", "net_income_parent", "net_income_nci", "minority_interests", "cash_flow_cash_opening", "cash_flow_cash_closing"} or (metric_code == "net_income" and source_label.lower() == "profit after tax"):
+            continue
 
         for column_index in range(1, min(len(row), len(headers))):
             column_label = (headers[column_index] or "").strip()
@@ -783,8 +909,8 @@ def _table_candidates(
             if fiscal_year is None or value is None:
                 continue
 
-            unit = _candidate_unit(metric_code, currency, scale)
-            item_warnings = [] if unit else ["reporting_unit_missing"]
+            unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text)
+            item_warnings = _candidate_warnings(metric_code, unit)
             cell_bbox = _cell_bbox(rows, row_index, column_index)
             if cell_bbox is None:
                 item_warnings.append("cell_bounding_box_missing")
@@ -818,6 +944,7 @@ def _table_candidates(
                         "page_height": page_height,
                         "table_bbox": _bbox_dict(table_bbox),
                         "cell_bbox": _bbox_dict(cell_bbox) if cell_bbox else None,
+                        **({"region": region_number} if region_number else {}),
                     },
                     extraction_warnings=";".join(item_warnings) or None,
                     confidence_label="high" if not item_warnings else "medium",
@@ -834,38 +961,44 @@ def _header_row_index(matrix: list[list[str | None]]) -> int | None:
 
 
 def _fiscal_year(value: str) -> int | None:
-    match = _YEAR_PATTERN.search(value)
-    return int(match.group(1)) if match else None
-
-
-def _metric_for_label(value: str) -> tuple[str, str] | None:
-    normalized = re.sub(r"\s+", " ", value.strip().lower())
-    normalized = re.sub(r"\s*[\[(]\s*note\s+\d+[a-z]?\s*[\])]\s*$", "", normalized)
-    normalized = re.sub(r"\s+(?:note\s*)?\d+[a-z]?$", "", normalized)
-    for metric_code, reported_label, aliases in _METRIC_ALIASES:
-        if normalized in aliases:
-            return metric_code, reported_label
-    return None
+    matches = list(_YEAR_PATTERN.finditer(value))
+    return _end_year(matches[0]) if len(matches) == 1 else None
 
 
 def _number(value: str) -> float | None:
     cleaned = value.strip().replace(",", "")
-    if not cleaned or cleaned in {"-", "--", "n/a", "N/A"}:
+    if not cleaned or cleaned in {"-", "–", "—", "--", "n/a", "N/A"}:
         return None
     negative = cleaned.startswith("(") and cleaned.endswith(")")
     cleaned = cleaned.strip("()").strip()
     if not re.fullmatch(r"[-+]?\d+(?:\.\d+)?", cleaned):
         return None
     parsed = float(cleaned)
+    if not math.isfinite(parsed):
+        return None
     return -parsed if negative else parsed
 
 
-def _candidate_unit(metric_code: str, currency: str | None, scale: str | None) -> str | None:
+def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *, source_label: str = "", page_text: str = "") -> str | None:
     if metric_code in {"basic_shares", "diluted_shares"}:
-        return "shares"
+        explicit = _SCALE_PATTERN.search(source_label)
+        if not explicit:
+            explicit = re.search(r"\bshares?\s+(?:are\s+)?(?:in\s+)?(thousands?|millions?|billions?)\b", page_text, re.I)
+        if explicit:
+            return f"shares {explicit.group(1).lower().rstrip('s')}"
+        if re.search(r"\bnumber of\b|\bactuals?\b", source_label, re.I):
+            return "shares"
+        return None
     if currency is None:
         return None
     return f"{currency} {scale}".strip() if scale else currency
+
+
+def _candidate_warnings(metric_code: str, unit: str | None) -> list[str]:
+    result = [] if unit else ["reporting_unit_missing"]
+    if metric_code in {"borrowings", "current_borrowings", "noncurrent_borrowings", "bills_discounted", "cash_and_balances_with_rbi", "profit_after_tax_before_associates", "group_profit"} or metric_code.startswith("cash_flow_"):
+        result.append("accounting_scope_requires_review")
+    return result
 
 
 def _cell_bbox(rows: list[Any], row_index: int, column_index: int) -> tuple[float, float, float, float] | None:

@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 13, 2026: M01-M02 accepted; M09 technical checks verified with prerequisites open.
+October 14, 2026: M01-M02 accepted; M09 technical checks verified with prerequisites open.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. Do not report 90% complete or waive genuine-input gates.
@@ -44,7 +44,9 @@ follow-up, query/route profiles, normal rollout and source/image identity.
 
 ## Normal runtime and recovery
 
-The normal app runs October 13 workflow images after a verified format-3 backup.
+The normal app runs October 14 parser backend/worker images and the unchanged
+October 13 frontend after a verified format-3 backup. The [parser checkpoint](archive/checkpoints/2026/m05-pdf-parser-repair-2026-10-14.md)
+records passing source/workflow tests and 48 normal desktop/mobile views.
 Original PostgreSQL volume and s1s1s1s1s1s1 remain. All 109 table fingerprints match
 across rollout and authenticated browser verification. Ports remain localhost-only.
 No normal fixture seed, financial approval, portfolio rewrite or AI scan was run.
@@ -76,8 +78,11 @@ while M05 proceeds. The [source-review checkpoint](archive/checkpoints/2026/m05-
 owns ten company batches, retained official reports, arithmetic and version-pinned
 candidate comparisons. Reference/accounting/model review remains pending; no
 financial records were imported or promoted. Acquisition runs were recorded.
-Next agent work: fix demonstrated PDF layout/unit/scope defects and complete
-remaining note/model inputs. Do not wait for Mac settings to do this work.
+Demonstrated PDF spread/year/number/scope defects are repaired; unknown units,
+unexplained extra columns and unsupported statement/note rows remain explicit gaps.
+Updated comparison and accounting-note review packets are retained locally. Next
+work requires reviewed references and accounting/model decisions before promotion;
+keep unsupported coverage visible. Do not wait for Mac settings on independent work.
 The earlier operator packet's Mock Data AI labels also remain unapproved.
 The repository's old self-scoring extraction CLI now fails unavailable; its
 regression and repository checks pass. This host-tooling follow-up does not change

@@ -74,9 +74,9 @@ def test_parse_pdf_financial_tables_preserves_page_and_cell_geometry() -> None:
         for candidate in parsed.candidates
         if candidate.metric_code == "diluted_shares" and candidate.fiscal_year == 2026
     )
-    assert diluted_2026.unit == "shares"
-    assert diluted_2026.extraction_warnings is None
-    assert diluted_2026.confidence_label == "high"
+    assert diluted_2026.unit is None
+    assert diluted_2026.extraction_warnings == "reporting_unit_missing"
+    assert diluted_2026.confidence_label == "medium"
 
     presentation = parse_pdf_financial_tables(FIXTURE.read_bytes(), period_type="unknown")
     assert {candidate.period_type for candidate in presentation.candidates} == {"unknown"}
@@ -118,7 +118,7 @@ def test_targeted_pdf_scan_preserves_full_physical_page_count() -> None:
     assert parsed.raw_text.startswith("[Page 2]")
 
 
-def test_india_statement_rows_preserve_attribution_and_sum_debt_components() -> None:
+def test_india_statement_rows_preserve_attribution_and_separate_components() -> None:
     balance_sheet = """
 Consolidated Balance Sheet
 as at March 31, 2025
@@ -143,16 +143,9 @@ Lease Liabilities 15 254.56 71.20
     )
     candidates = _consolidate_candidates(rows)
 
-    debt_2025 = next(item for item in candidates if item.metric_code == "debt" and item.fiscal_year == 2025)
-    assert debt_2025.value == 45_810.03
-    assert debt_2025.source_locator_json["type"] == "pdf_reported_component_sum"
-    assert len(debt_2025.source_locator_json["components"]) == 2
-    assert debt_2025.extraction_warnings == "derived_sum_of_reported_components;review_required"
-
-    leases_2025 = next(
-        item for item in candidates if item.metric_code == "lease_liabilities" and item.fiscal_year == 2025
-    )
-    assert leases_2025.value == 5_644.17
+    assert {item.value for item in candidates if item.metric_code == "borrowings" and item.fiscal_year == 2025} == {35_830.68, 9_979.35}
+    assert {item.value for item in candidates if item.metric_code == "lease_liabilities" and item.fiscal_year == 2025} == {5_389.61, 254.56}
+    assert not any(item.source_locator_json["type"] == "pdf_reported_component_sum" for item in candidates)
     assert next(
         item for item in candidates if item.metric_code == "minority_interests" and item.fiscal_year == 2025
     ).value == 2_537.95
@@ -180,7 +173,7 @@ diluted EPS
         page=None,
     )
 
-    assert next(item for item in pnl_candidates if item.metric_code == "net_income").value == 11_061.26
+    assert next(item for item in pnl_candidates if item.metric_code == "group_profit").value == 11_061.26
     assert next(item for item in pnl_candidates if item.metric_code == "net_income_parent").value == 11_092.31
     assert next(item for item in pnl_candidates if item.metric_code == "net_income_nci").value == -31.05
     diluted = next(item for item in pnl_candidates if item.metric_code == "diluted_shares")
