@@ -2,6 +2,11 @@
 
 **Source and runtime status reconciled:** 2026-10-17. Validation dates are in Current State.
 
+First release: local research/demo using existing data, explicitly chosen October
+17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
+excludes genuine portfolio validation and defers Mac/off-device setup. This changes
+acceptance scope, not capability status or the truth labels of stored records.
+
 Status meanings:
 
 - **Built:** real persisted behavior with meaningful tests.
@@ -30,7 +35,7 @@ Status meanings:
 | Portfolios, holdings, cash, transactions | Built | No broker sync |
 | Manual and provider-backed prices | Partial | The selected adapter and its own configuration determine availability. FMP remains unsupported; configuration does not certify stored coverage or freshness |
 | Portfolio valuation and exposure | Built | Current value, cash, exposures, and concentration are source-aware |
-| Portfolio performance and attribution | Built, genuine-input proof pending | M07 source adds dated transaction/cash replay, purchase-date FX, current-balance reconciliation and immutable snapshot provenance. Legacy/manual or corrected-activity history remains provisional across returns, attribution and benchmark reads. Risk is fixed-weight price return, not realized total return. Owner-scoped readiness rejects Mock Data; actual multi-currency activity and reviewed valuation inputs remain required |
+| Portfolio performance and attribution | Built; research/demo scope | M07 source adds dated transaction/cash replay, purchase-date FX, current-balance reconciliation and immutable snapshot provenance. Legacy/manual or corrected-activity history remains provisional across returns, attribution and benchmark reads. Risk is fixed-weight price return, not realized total return. Genuine-input readiness still rejects Mock Data; that real-activity validation is outside v1. Existing examples and reviewed valuation inputs retain their labels and gaps |
 | FCFF DCF and scenarios | Built | Durable reviewed drafts, atomic versioned runs, field-level readiness, complete visible input coverage, currency audit fields, trust-gated output, and source-backed benchmark autofill are built; company inputs and every benchmark prior still require review |
 | Source-to-valuation refresh | Built, review-required | Queued SEC annual/FRED/price steps populate drafts alongside existing benchmark priors; weekday 07:00 New York scheduling is enabled locally. Explicit edits survive refresh; saved models and source approvals remain unchanged. India statements and unsupported fields remain manual |
 | Reverse DCF and diagnostics | Built | Failures and missing inputs are visible; results remain dependent on reviewed market and financial inputs |

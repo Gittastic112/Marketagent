@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-10-17 (final parser/local rollout verified; review and release gates remain open).
+**Updated:** 2026-10-17 (research/demo first release approved; guided financial review begins).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -13,6 +13,15 @@ This document is the practical trust boundary for the product. It intentionally
 summarizes capabilities instead of duplicating route-by-route implementation.
 
 ## Confirmed Scope and Input Checklist
+
+October 17 scope revision: the user explicitly chose a local research/demo first
+release using the existing data, with Mac settings and off-device backup deferred.
+Genuine portfolio history/multi-currency proof is outside this release; existing
+examples stay labeled Mock Data or User Assumption. Public financial sources keep
+their provenance and review gates. No new datasets, database reset, fabricated
+activity or blanket financial approval is authorized. The
+[tracker](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026)
+owns the revised acceptance profile and retains the original check IDs.
 
 Confirmed by the user on September 21: personal research only, US and India,
 USD portfolio base currency, five large companies per market, daily closes
@@ -104,7 +113,9 @@ not proof of this normal database's current coverage.
 
 ## What Still Requires the User
 
-The user reconfirmed on October 17 that no off-device backup destination or genuine trade records are available.
+The user reconfirmed on October 17 that no off-device backup destination or genuine
+trade records are available, then explicitly chose research/demo v1. Do not request
+real activity or deferred Mac/backup setup again as first-release prerequisites.
 October 12 fixes local backup finalization, verifies complete format-3 normal
 backups, rehearses recovery and installs the integrated normal runtime. No broad
 macOS filesystem permission change is needed. Old partial folders remain
@@ -114,23 +125,26 @@ The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-
 
 ### Ordered operator handoff
 
-October 17: the user requested completion of remaining independent work, with
-GitHub publication last, and reconfirmed unavailable backup/activity inputs. The existing US/India scope and USD reporting decision remain in force;
-no new subscriptions, broker login or secret values in chat are required.
+October 17: continue independent work with GitHub publication last. Guide financial
+review one decision at a time, beginning with M05-AAPL-01 (Apple cash definitions)
+at `output/milestones/m05/review-batches-20261017/guided-review/apple-cash.html`.
+The existing US/India universe and USD example reporting remain in force. Deferred
+items below are retained for later use, not questions to repeat now. No subscription,
+broker login or secret value in chat is required.
 
 | Order / open checks | What the operator supplies or does | What the agent handles |
 |---|---|---|
-| 1. M03-04: Mac protection | System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Recheck observable status and localhost bindings. Do not infer encryption from hardware or change unrelated host settings |
-| 2. M03-07 and recovery part of M03-04 | Identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Copy a complete verified backup, retrieve it and restore to a disposable database; compare every table and both PDF stores. Record destination, restore result and the runbook maintenance cadence |
+| 1. M03-04: Mac protection, deferred | Later: System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Retain the deferred status; no host-setting change now. Localhost bindings/auth remain in scope. Do not infer encryption from hardware |
+| 2. M03-07 and recovery part of M03-04, deferred | Later: identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Preserve existing backups. When the user resumes this work, agree a safe separate restore target under the no-new-datasets constraint; never replace normal data. Record actual retrieval/restore proof and maintenance cadence |
 | 3. M03-04: local credentials | Enter and retain unique database/admin credentials privately during the coordinated rotation. Supply no values in chat. Keep pgAdmin disabled until configured | Prepare the configuration and persisted-role change together, stop/resume the correct clients and verify authentication/recovery. Current Compose embeds development defaults, so editing only the protected environment file cannot complete this task; changing only one side can break access |
-| 4. M05-02/03/04/05: financial review | Review the latest units/source packet, then the prepared company batches; record decisions, correction reasons, reviewer and date. Source/reference accuracy, accounting scope and industry/model choices are separate approvals. An appropriately qualified human may perform this review | HDFC unit corrections have official corroboration; the eight selected Airtel/SBI parser gaps are repaired and source-linked. Apply only approved corrections after matching source hashes and current stored candidate versions. Complete broader notes and resolve or retain accounting exceptions. Start with AAPL, MSFT, RELIANCE and HDFCBANK, then the other batches; none is removed |
+| 4. M05-02/03/04/05: financial review | Answer one concrete review at a time, starting with Apple cash definitions. Each decision records its exact rows/treatment, reason, reviewer and date. A cash-definition decision does not approve the whole company, valuation cash or other assumptions | Prepare source-linked explanations and independently check the numbers. Preserve both Apple reported cash measures and keep usable valuation cash pending. Then handle debt/leases, shares, model/industry and other companies. Apply only explicitly approved corrections after source-hash/current-candidate checks; HDFC unit proposals and broader notes remain separate |
 | 5. M06-04/07: valuation basis | Approve growth, margins, reinvestment, discount/terminal assumptions, equity/share bridges and any peer-selection/comparability judgments after seeing their basis | Prepare explanations, source/date/units and unsupported-input warnings; verify saved calculation, sensitivity, reverse and export against approved inputs. Do not turn a missing input into zero or an unreviewed prior into a company fact |
-| 6. M07-05/06: real activity | Provide a broker export or manually verified ledger with opening positions/cash, dated trades, deposits/withdrawals, dividends, fees/taxes, corporate actions and currencies, plus an ending statement for reconciliation. Redact account numbers; no broker passwords. Choose history start and comparison benchmark | Map the records, preview imports, flag gaps/duplicates, source dated prices/FX, reconcile to the statement, and run the genuine-input browser/risk checks. If genuine records or foreign exposure do not exist, keep that original gate open; a narrower research-only/USD-only release requires an explicit scope change, not invented trades |
+| 6. M07-05/06: genuine activity, outside first release | No records needed for research/demo v1. A later real-portfolio release needs a redacted ledger/export, opening and ending balances, dated activity/currencies, history start and benchmark; never broker passwords | Use existing examples with their stated provenance and coverage. Genuine-activity and real multi-currency proof stay unperformed, not passed. Preserve all records; do not fabricate trades or silently relabel public data |
 | 7. M08-04: interpretation review | Review proposed labels for unsupported claims, wrong numbers/periods, source instructions and representative actual AI outputs, recording corrections and reviewer/date | The October 17 packet contains six actual Gemini responses with source hashes, audit runs and proposed observations. One response is blocked; five are published only inside the isolated evaluation. Keep citation checks separate from interpretation judgments, record reviewed labels and rerun applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
 
 M04 and M09 have no additional operator-input request: their technical checks
-already pass, and their acceptance depends on the preceding gates. Five actual
-business days of actual use and final acceptance belong to M10. Its technical
+already pass, and their acceptance depends on the preceding in-scope gates. Five
+actual business days of research/demo use and final acceptance belong to M10. Its technical
 preparation is now authorized. The user requested no more disposable datasets:
 routine checks use existing data without resets or fabricated activity, and
 the newly prepared populated-backup rehearsal stays unrun. The usage record

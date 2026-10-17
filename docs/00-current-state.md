@@ -1,6 +1,6 @@
 # Current State
 
-Source tests and normal parser rollout: 2026-10-17. Scope: local-first, single-user equity research.
+Source tests and normal parser rollout: 2026-10-17. First-release scope: local, single-user research/demo using existing data, explicitly approved October 17.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
 Latest source and normal runtime: [October 17 parser and release preparation](archive/checkpoints/2026/release-readiness-2026-10-17.md), following [October 13 workflows](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Source/candidate/price intake remains separately audited and review-required.
@@ -9,8 +9,9 @@ records the actual Apple scan, illustrative calculation and recovery verificatio
 
 ## Product position
 
-This is a broad research, valuation, evidence and portfolio platform, not a
-finished daily-driver or trading system. Reviewed-source coverage, workflow
+This research, valuation, evidence and portfolio platform is not a finished daily-driver or trading system.
+The [scope revision](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026) excludes genuine portfolio validation from v1 and defers Mac/off-device setup without marking it passed.
+It preserves the ten milestone IDs and existing data. Reviewed-source coverage, workflow
 integrity, and public-deployment security remain uneven. The tracker accepts M01-M02
 at 20% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
 capability status; the [single limitation ledger](agent_capabilities_and_limitations.md)
@@ -124,7 +125,7 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 | Saved outputs | Stale/invalid/critical, identity/currency and finite-value gates; saved prices are User Assumptions, quality scores are historical |
 | Scenarios | Owned model dispatch, zero-preserving shocks, on-demand request isolation, saved currency and backend gaps; deterministic shocks are not probabilities |
 | Relative pricing | Source-separated active industry benchmarks and owner-reviewed peers; exact input hashes, diagnostic receipts, normalized immutable revisions and bounded CSV workflows |
-| Portfolio | Recorded dated replay, purchase-date FX, benchmarks, snapshots, selected-period TWR, annualized MWR since first cash flow and fixed-weight price risk. Legacy/manual or corrected-activity snapshots remain provisional. Genuine multi-currency records and reviewed-input smoke are still required |
+| Portfolio | Recorded dated replay, purchase-date FX, benchmarks, snapshots, selected-period TWR, annualized MWR since first cash flow and fixed-weight price risk. Existing examples retain Mock Data/User Assumption labels; legacy/manual or corrected-activity snapshots remain provisional. Genuine multi-currency validation is outside the approved research/demo first release |
 | Evidence and briefing | Source-linked events/alerts/theses, deterministic briefs and bounded private source/receipt snapshots with separate review queues. Saved evidence remains as generated; quoted labels and exact citations do not certify interpretation or numeric edits. Normal reviews were not invented |
 | AI and research | Provenance, exact-span review, bounded local passage suggestions, human approval, owner-scoped stored search; no semantic truth guarantee |
 | Provider health | Observable runs/configuration/freshness; FRED NFCI exact-record macro application; unsupported regime provider modules remain manual |

@@ -1,4 +1,4 @@
-# Completion tracker: local research release v1
+# Completion tracker: local research/demo release v1
 
 Created October 10, 2026. **Accepted milestones: 2/10 (20%). Next: M03.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
@@ -6,17 +6,20 @@ Much of the implementation exists; historical tests do not close today's gates.
 
 ## What 100% means
 
-A dependable local, single-user research app for the confirmed US/India universe,
-USD portfolio reporting, daily prices, reviewed financials, explainable valuation,
-portfolio history and an evidence-linked daily review. The exact company/security
+A local, single-user research/demo app using the existing database for the confirmed
+US/India universe, daily prices, reviewed financials, explainable valuation and an
+evidence-linked daily review. Existing portfolio examples retain their Mock Data or
+User Assumption labels and USD reporting; this release does not certify real trading
+records or genuine multi-currency portfolio performance. The exact company/security
 selection and user assumptions remain in the [single ledger](../agent_capabilities_and_limitations.md#confirmed-scope-and-input-checklist).
 The September selection is a fixed scope, not a live market-cap ranking.
 
-The release is complete when all ten gates below pass, the genuine-input daily
-workflow works, recovery is rehearsed, and remaining optional features are visibly
-bounded. An implemented manual India/report-review path can pass; pretending an
-unimplemented automated feed works cannot. External data, financial review and
-off-device recovery can require user input. They cannot be replaced by fixtures.
+The release is complete when all ten gates pass under the explicitly revised scope
+below, the research/demo workflow works, and remaining limitations are visible.
+An implemented manual India/report-review path can pass; pretending an unimplemented
+automated feed works cannot. Public-source financial review still requires evidence
+and explicit decisions. Existing examples do not become real activity or approved
+financial statements because the release is a demo.
 
 Public hosting, broker integration/trading, real-time feeds, prohibited scraping,
 paid provider expansion, a Sheets alternative and unused workbook parsers are
@@ -24,6 +27,29 @@ outside this release. Experimental methods with no validated consuming workflow
 must be clearly unavailable or explicitly experimental, not quietly counted as
 complete. Scope additions require a new version of this plan and an explicit
 decision; do not move the denominator to manufacture progress.
+
+## Scope revision approved October 17, 2026
+
+The user explicitly chose: "Make the first release research/demo only and use our
+existing data. I'll handle the Mac settings and backup later." This supersedes the
+original genuine-portfolio release requirement. The ten milestone IDs and weights
+stay fixed; no gate becomes passed merely because its scope changed. M01-M02 remain
+the only accepted milestones (20 acceptance points).
+
+| Original check | First-release treatment | Evidence still needed |
+|---|---|---|
+| M03-04 host settings; M03-07 off-device recovery | Deferred by the user, not passed | Keep exact follow-up in the limitation ledger. Local application authentication, localhost bindings and coordinated database credential rotation remain in scope |
+| M05/M06 financial and valuation reviews | In scope, one decision at a time | Source-specific approvals, version checks, accounting/model decisions and approved assumptions; begin with Apple cash definitions |
+| M07-05/06 real activity and multi-currency proof | Genuine records are outside this first release | Use the existing labeled examples, preserve input/freshness gaps and verify displayed outputs against their stated basis. No fabricated trades or claim of real portfolio accuracy |
+| M10-02 additional populated-backup rehearsal | Deferred while no new disposable datasets are authorized | Retain existing recovery evidence and disclose the unrun rehearsal. Never restore over the normal database to close this check |
+| M10-04/05/07 release acceptance | Five actual business days and final acceptance apply to the research/demo workflow; off-device recovery is deferred | Record actual use, restart/retry and local resource checks. Do not invent use days or claim daily-driver recovery readiness |
+
+Use the revised treatment when evaluating the original checklists below. An open
+checkbox for a deferred requirement preserves the original full-release obligation;
+it is not a blocker for this research/demo profile and must never be marked passed
+without its original evidence. Public deployment, broker integration and new local
+fixture databases remain outside authorization. Official source records keep their
+provenance; the scope change does not relabel them as Mock Data.
 
 ## How to execute a percentage request
 
@@ -37,8 +63,9 @@ decision; do not move the denominator to manufacture progress.
   engineering-time estimate.
 - Read the handoff, this tracker, its cited owners, and current code/tests. Work
   sequentially unless delegation is explicitly requested. This plan launches no agents.
-- A checkbox needs dated evidence. A milestone closes only when every checkbox
-  and its gate passes. Blocked checks stay open; record exact missing input in the
+- A checkbox needs dated evidence. A milestone closes only when every in-scope
+  checkbox and its revised gate passes, with explicit deferrals retained above.
+  Blocked in-scope checks stay open; record exact missing input in the
   ledger. Work that can proceed safely in later milestones earns no cumulative gate.
 - Preserve stable IDs. On completion, mark checks, attach one dated evidence
   checkpoint, update the table and handoff, and reconcile affected current docs.
@@ -61,18 +88,19 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Review inputs prepared; approval open | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
-| M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
+| M07 | 70% | Truthful example portfolio history and performance | M06 | Demo scope revised; input gaps remain | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
 | M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Checks verified; M08 prerequisite open | [Connected workflow verification](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md) |
-| M10 | 100% | Proven local daily-driver release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
+| M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
 checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
 closes M05-06, M06-05, M08-03/06/07 and verifies all M09 technical checks. Its recorded
 official-source morning flow and separate due-cycle test preserve their distinct
 source/fixture boundaries. Final return labels, affected browser flows, measured
-process-cold/warm profiles and normal rollout are verified. Genuine-input, human
-review and recovery/host gates remain open in the [single ledger](../agent_capabilities_and_limitations.md).
+process-cold/warm profiles and normal rollout are verified. Human review and local
+credential work remain open; the scope revision above separates deferred host/
+off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
 M04 and M09 have verified checks but open prerequisites. Cumulative acceptance
 remains 20 points; the next milestone is M03.
 
@@ -300,8 +328,9 @@ Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
 - [x] M07-07 Exercise import preview/hash/atomic apply, duplicate/conflict handling,
   historical-date selection, corrections and browser states on disposable fixtures.
 
-Gate: present and historical portfolio views reconcile to their dated inputs and
-the genuine-input smoke passes without fixture data in the normal database.
+Research/demo gate: present and historical example views reconcile to their dated,
+labeled inputs or disclose missing coverage. Genuine-input and multi-currency proof
+remain outside v1 under the explicit scope revision; existing records are preserved.
 
 ## M08: connected daily research and review
 
@@ -363,7 +392,7 @@ transport/state helpers and query-budget tests.
 Gate: all scoped workflows are usable and truthful across supported viewports,
 with measured performance and no unresolved release-blocking regression.
 
-## M10: proven local daily-driver release
+## M10: accepted local research/demo release
 
 Owners: coordinated release lane, current-state/handoff/ledger and operations runbook.
 
@@ -371,8 +400,9 @@ The October 17 request to finish remaining work authorizes release preparation.
 Fresh install/concurrent-write recovery passed before the user requested no more
 disposable datasets. A new populated-backup rehearsal is prepared but not run;
 normal data must not be reset to substitute for that test. The technical local
-rollout is verified, but reviewed-input freeze, actual-use days, off-device
-recovery and final acceptance remain open. Future use is never inferred.
+rollout is verified, but reviewed-input freeze, actual-use days and final acceptance
+remain open. Off-device recovery and the additional populated-backup rehearsal are
+deferred for this research/demo profile. Future use is never inferred.
 
 - [ ] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
   full source/type/contract suites, migrations, dependency scans and browser gates.
@@ -393,6 +423,7 @@ recovery and final acceptance remain open. Future use is never inferred.
 - [ ] M10-07 Obtain final user acceptance of the genuine daily workflow and the
   disclosed local/manual/provider boundaries. Close M10 only after this acceptance.
 
-Gate: all earlier milestones remain valid, the user accepts the working local
-release, and release/soak/recovery evidence is recorded. This is the end of v1;
-future enhancements and public deployment belong to a separately scoped release.
+Gate: all earlier milestones remain valid under the approved scope revision, the
+user accepts the local research/demo workflow, and actual release/use evidence and
+explicit recovery deferrals are recorded. This does not certify a daily-driver or
+real portfolio release. Future enhancements and public deployment need new scope.

@@ -3,7 +3,8 @@
 October 17, 2026: M01-M02 accepted; M04/M09 technical checks verified with prerequisites open.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
-"Next 10%" means M03. Do not report 90% complete or waive genuine-input gates.
+"Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
+existing data; apply the tracker's scope revision, not the original portfolio gate.
 
 ## Execution boundary
 
@@ -65,23 +66,27 @@ encrypted off-device recovery. Earlier partial folders remain incomplete.
 
 ## Next work and operator gates
 
-The user reconfirmed no off-device destination or genuine activity records on
-October 17. Host settings remain deferred. The [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-is the single owner of exact Mac, credential, backup, financial/model, activity
-and AI review inputs. Continue independent work without manufacturing these inputs.
+The user chose a research/demo first release using the existing data on October 17.
+Genuine portfolio records are outside this release. Mac settings and off-device
+backup are explicitly deferred, not passed; local credential rotation remains open.
+The [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
+owns the remaining inputs. Continue independent work and one financial decision at
+a time; do not ask again for real trades or deferred host/backup setup.
 
 Start financial review at
-`output/milestones/m05/review-batches-20261017/review-packet.html`.
-It links the ten company batches, HDFC corroboration, eight recovered entries and
-accounting-note topics. Start actual AI interpretation review at
+`output/milestones/m05/review-batches-20261017/guided-review/apple-cash.html`.
+The first pending decision is M05-AAPL-01: preserve distinct FY2023 cash definitions
+and leave valuation-available cash unapproved. The guided decision record retains
+exact source hashes, references and a blank human verdict. The parent packet links
+all ten company batches, HDFC corroboration and accounting notes. AI review starts at
 `output/milestones/m08/interpretation-review-20261017/review-packet.html`.
 Neither packet is imported or approved. Apply decisions only after checking exact
 source hashes and current stored candidate versions. Missing notes remain gaps.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
-Reviewed source/input freeze, the remaining release rehearsal, five business days
-of actual daily use, encrypted off-device recovery and final user acceptance stay
-open. Do not count preparation as a completed release.
+Reviewed source/input freeze, five business days of actual research/demo use and
+final acceptance stay open. Off-device recovery and the new disposable rehearsal
+are deferred under the approved scope. Do not count preparation as completion.
 
 Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds, PDF
 tests and browser projects sequential on the small Docker VM. Browser checks use
