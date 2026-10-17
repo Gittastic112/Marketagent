@@ -1,12 +1,12 @@
 # Product Roadmap
 
 **Prioritized:** 2026-08-24. Product evidence: see Current State.
-Completion sequencing reviewed: 2026-10-10.
+Completion sequencing reviewed: 2026-10-17.
 
 **Completion requests:** use the [ten-milestone tracker](completion-tracker.md).
 It defines ten acceptance gates for the remaining local release, not an estimate
-of engineering hours or the amount of code already built. M01 is accepted at 10%;
-M02 is the next unfinished gate. See the tracker for dated rollout/browser evidence.
+of engineering hours or the amount of code already built. M01-M02 are accepted
+at 20 acceptance points; M03 is the next unfinished gate. See the tracker for dated rollout/browser evidence.
 
 ## Planning Rule
 
@@ -57,7 +57,7 @@ Acceptance gates:
 - The two-market certification harness remains portable and deterministic.
 - Unsupported NSE/BSE automation remains visibly manual until implemented.
 
-## Priority 3: Daily Evidence-to-Decision Loop (FOUNDATION DELIVERED, INTEGRATION OPEN)
+## Priority 3: Daily Evidence-to-Decision Loop (WORKFLOW VERIFIED, REVIEW OPEN)
 
 Connect ingestion, evidence, alerts, thesis changes, valuation relevance,
 portfolio exposure, and next actions into one repeatable workflow (The Morning Briefing).
@@ -77,15 +77,17 @@ Delivered: bounded source-linked event/alert aggregation, held-company impact,
 review timestamps, exact-price market moves, inspection queues and opt-in
 deterministic scheduling. A separate private paste/PDF inbox now offers explicit
 AI triage, exact quotes and links to valuation fields. Source refresh has its own
-SEC/FRED/price worker and draft-only review gate. These are working components,
-not a completed unified research loop.
+SEC/FRED/price worker and draft-only review gate. October 13 verifies the connected
+recorded-public morning workflow; genuine portfolio inputs and interpretation
+review still gate the complete daily workflow.
 
 Private-source search, reversible archiving and a bounded multi-source comparison
 now support the inbox lifecycle. The comparison groups exact-passage-backed
 suggestions by input and flags opposing directions without claiming a verified
 contradiction. Persisted analyst dispositions now retain exact evidence receipts,
-immutable history and stale-review guards. Still open: semantic period/scope
-reconciliation and scheduled-brief integration.
+immutable history and stale-review guards. Quoted period/currency/scope checks
+and bounded manual/scheduled private-brief snapshots are integrated. Semantic
+interpretation quality remains a separate human-review gate.
 Do not imply comprehensive overnight news coverage or automatic numerical forecast
 edits. Reads stay deterministic; external AI requires an explicit disclosed action.
 Use [Current State](../00-current-state.md) for dated browser/provider evidence,

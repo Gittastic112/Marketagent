@@ -29,7 +29,7 @@ MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v4"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v5"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -90,7 +90,7 @@ _INDIA_SCALE_PATTERN = re.compile(
     re.IGNORECASE,
 )
 _STATEMENT_VALUE_TOKEN_PATTERN = re.compile(
-    r"(?<![\w,./%])(?:\(?[-+]?(?:\d+(?:,\d{2,3})+|\d+)(?:\.\d+)?\)?\*?|[-–—])(?![\w,./%])"
+    r"(?<![\w,./%₹`])(?:[₹`]?\(?[-+]?(?:\d+(?:,\d{2,3})+|\d+)(?:\.\d+)?\)?\*?|[-–—])(?![\w,./%])"
 )
 _SCALE_PATTERN = re.compile(r"\b(thousands?|millions?|billions?|crores?|lakhs?|000s?)\b", re.IGNORECASE)
 _CURRENCY_PATTERN = re.compile(r"\b(USD|INR|EUR|GBP|JPY|CAD|AUD|CHF|CNY|HKD|SGD)\b", re.IGNORECASE)
@@ -538,6 +538,17 @@ def _page_reporting_unit(page: Any, text: str) -> tuple[str | None, str | None, 
     glyphs = {part for token in tokens for part in token if part}
     if not glyphs:
         return currency, scale, None
+    embedded = _embedded_rupee_fonts(page)
+    symbols = [{key: char[key] for key in ("text", "fontname", "x0", "x1", "top", "bottom")}
+               for char in page.chars if char.get("fontname") in embedded and char.get("text") in glyphs
+               and char["top"] < page.height * .25]
+    if not symbols:
+        return currency, scale, None
+    return "INR", scale, {"basis": "embedded_rupee_symbol_font", "currency": "INR",
+                          "scale": scale, "symbols": symbols, "review_required": True}
+
+
+def _embedded_rupee_fonts(page: Any) -> set[str]:
     from pdfminer.pdftypes import resolve1
     from pdfminer.psparser import literal_name
 
@@ -552,13 +563,83 @@ def _page_reporting_unit(page: Any, text: str) -> tuple[str | None, str | None, 
         descriptor = resolve1(details.get("FontDescriptor", {}))
         if any(descriptor.get(key) is not None for key in ("FontFile", "FontFile2", "FontFile3")):
             embedded.add(name)
-    symbols = [{key: char[key] for key in ("text", "fontname", "x0", "x1", "top", "bottom")}
-               for char in page.chars if char.get("fontname") in embedded and char.get("text") in glyphs
-               and char["top"] < page.height * .25]
-    if not symbols:
-        return currency, scale, None
-    return "INR", scale, {"basis": "embedded_rupee_symbol_font", "currency": "INR",
-                          "scale": scale, "symbols": symbols, "review_required": True}
+    return embedded
+
+
+def _eps_rupee_symbols(page: Any | None, line: str) -> tuple[str, dict | None]:
+    """Repair observed EPS glyphs only with physical embedded-font evidence."""
+    glyphs = set(re.findall(r"(?<!\w)([CHIJ])(?=[\d)])", line))
+    if page is None or not glyphs:
+        return line, None
+    matches = page.search(re.escape(line).replace(r"\ ", r"\s+"), regex=True, case=True)
+    if len(matches) != 1:
+        return line, None
+    symbols = [char for char in matches[0].get("chars", []) if char.get("text") in glyphs]
+    embedded = _embedded_rupee_fonts(page)
+    if len(symbols) != sum(line.count(glyph) for glyph in glyphs) or any(
+            char.get("fontname") not in embedded for char in symbols):
+        return line, None
+    evidence = {"basis": "embedded_rupee_symbol_font", "currency": "INR", "unit": "INR/share",
+                "symbols": [{key: char[key] for key in ("text", "fontname", "x0", "x1", "top", "bottom")}
+                            for char in symbols], "review_required": True}
+    return re.sub(r"(?<!\w)[CHIJ](?=[\d)])", "₹", line), evidence
+
+
+def _without_margin_number(page: Any | None, line: str, page_text: str, years: tuple[int, ...]) -> tuple[str, dict | None]:
+    """Ignore a repeated navigation number only outside proven year columns."""
+    suffix = re.search(r" (\d{2})$", line)
+    if page is None or suffix is None:
+        return line, None
+    trimmed = line[:suffix.start()]
+    parsed = _statement_row_values(trimmed, len(years), page_text)
+    if parsed is None:
+        return line, None
+    header = next((value for value in page_text.splitlines()[:80]
+        if tuple(dict.fromkeys(_end_year(m) for m in _YEAR_PATTERN.finditer(value))) == years), None)
+    if header is None:
+        return line, None
+    headers = page.search(re.escape(header).replace(r"\ ", r"\s+"), regex=True, case=True)
+    rows = page.search(re.escape(trimmed).replace(r"\ ", r"\s+"), regex=True, case=True)
+    if len(headers) != 1 or len(rows) != 1:
+        return line, None
+    header_box, row_box = headers[0], rows[0]
+    columns = []
+    for year in years:
+        matches = [match for match in page.search(rf"\b{year}\b", regex=True)
+                   if abs(match['top'] - header_box['top']) < 3
+                   and header_box['x0'] <= match['x0'] < match['x1'] <= header_box['x1']]
+        if len(matches) != 1:
+            return line, None
+        columns.append(matches[0]['x1'])
+    if abs(header_box['x1']-columns[-1]) > 3:
+        return line, None
+    if columns != sorted(columns) or any(right-left < 25 for left, right in zip(columns, columns[1:])):
+        return line, None
+    words = page.extract_words()
+    for value, right in zip(parsed[1], columns, strict=True):
+        matches = [word for word in words if word['text'] == value and abs(word['x1']-right) <= 12
+                   and abs(word['top']-row_box['top']) < 3]
+        if len(matches) != 1:
+            return line, None
+    left, _, right, _ = page.bbox
+    margin = [word for word in words if re.fullmatch(r"\d{2}", word['text'])
+              and word['x0'] > max(columns[-1]+15, left+(right-left)*.94)
+              and word['top'] > header_box['bottom']]
+    target = [word for word in margin if word['text'] == suffix.group(1)
+              and row_box['top']-3 <= word['top'] <= row_box['bottom']]
+    if len(target) != 1:
+        return line, None
+    chosen = target[0]
+    aligned = sorted((word for word in margin if abs(word['x0']-chosen['x0']) < 4
+                      and abs(word['height']-chosen['height']) < 1), key=lambda w: w['top'])
+    numbers = [int(word['text']) for word in aligned]
+    if len(numbers) < 3 or numbers != list(range(numbers[0], numbers[0]+len(numbers))):
+        return line, None
+    if any(b['top']-a['top'] < chosen['height']*2 for a,b in zip(aligned,aligned[1:])):
+        return line, None
+    return trimmed, {**{key:chosen[key] for key in ('text','x0','x1','top','bottom')},
+        'basis':'repeated_right_margin_outside_year_columns', 'year_column_right_edges':columns,
+        'review_required':True}
 
 
 def _page_section(text: str) -> str | None:
@@ -632,7 +713,15 @@ def _statement_line_candidates(
             liability_scope = "current"
         elif normalized_line in {"assets", "equity", "current assets", "non-current assets"}:
             liability_scope = None
+        row_unit_evidence = None
+        margin_evidence = None
+        if eps_context:
+            source_line, row_unit_evidence = _eps_rupee_symbols(page, source_line)
         parsed_row = _statement_row_values(source_line, len(years), page_text)
+        if parsed_row is None and "cash flow" in (section or "").lower():
+            source_line, margin_evidence = _without_margin_number(page, source_line, page_text, years)
+            if margin_evidence:
+                parsed_row = _statement_row_values(source_line, len(years), page_text)
         if parsed_row is None:
             possible_label = re.split(r"\s+(?=[\d(])", source_line, maxsplit=1)[0]
             if warnings is not None and _metric_for_statement_line(possible_label, section):
@@ -650,17 +739,28 @@ def _statement_line_candidates(
             continue
         occurrence = row_occurrences.get(original_line, 0)
         row_occurrences[original_line] = occurrence + 1
-        row_bbox = _row_bbox(page, original_line, occurrence=occurrence)
+        row_bbox = _row_bbox(page, source_line if margin_evidence else original_line, occurrence=occurrence)
+
+        prefixed = any(token.startswith(("₹", "`")) for token in value_tokens)
+        unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text,
+                               share_context=share_context, share_scale=share_scale)
+        if prefixed:
+            if metric_code not in {"basic_eps", "diluted_eps"} or unit not in {None, "INR/share"}:
+                if warnings is not None:
+                    warnings.add("conflicting_or_unsupported_value_currency")
+                continue
+            unit = "INR/share"
+        applied_unit_evidence = row_unit_evidence or unit_evidence
 
         for value_index, (fiscal_year, value_token) in enumerate(zip(years, value_tokens, strict=True), start=1):
-            value = _number(value_token.rstrip("*"))
+            value = _number(value_token.rstrip("*").lstrip("₹`"))
             if value is None:
                 continue
-            unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text,
-                                   share_context=share_context, share_scale=share_scale)
             item_warnings = _candidate_warnings(metric_code, unit)
-            if unit_evidence and not metric_code.endswith("shares"):
+            if applied_unit_evidence and not metric_code.endswith("shares"):
                 item_warnings.append("currency_from_embedded_font_requires_review")
+            if margin_evidence:
+                item_warnings.append("margin_number_excluded_requires_review")
             if row_bbox is None:
                 item_warnings.append("row_bounding_box_missing")
             region_ref = f":S{region_number}" if region_number else ""
@@ -694,7 +794,8 @@ def _statement_line_candidates(
                         **({"region": region_number} if region_number else {}),
                         **({"share_unit_header": {"scale": share_scale, "line": share_scale_line}}
                            if share_scale and metric_code.endswith("shares") else {}),
-                        **({"unit_evidence": unit_evidence} if unit_evidence and not metric_code.endswith("shares") else {}),
+                        **({"unit_evidence": applied_unit_evidence} if applied_unit_evidence and not metric_code.endswith("shares") else {}),
+                        **({"excluded_margin_number": margin_evidence} if margin_evidence else {}),
                     },
                     extraction_warnings=";".join(item_warnings) or None,
                     confidence_label="high" if not item_warnings else "medium",

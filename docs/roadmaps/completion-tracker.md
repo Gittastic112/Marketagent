@@ -59,12 +59,12 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | In progress | [Unit and source coverage](../archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Review inputs prepared; approval open | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Correct portfolio history and performance | M06 | In progress | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
 | M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Checks verified; M08 prerequisite open | [Connected workflow verification](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md) |
-| M10 | 100% | Proven local daily-driver release | M09 | Not started | None |
+| M10 | 100% | Proven local daily-driver release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
 checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
@@ -212,13 +212,13 @@ scoped universe, without silent fabrication, source promotion or external AI rea
 
 Owners: extraction, normalization, source certification; [Knull W2](../../Knull%28readme%29.md#6-w2-reviewed-usindia-financial-source-coverage).
 
-October 14 [unit and coverage follow-up](../archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md)
-extends the parser repair with explicit statement rows, wrapped labels, embedded
-rupee evidence and separate per-share/share-count units. Official HDFC results
-support pending unit corrections; ambiguous source rows have manual review entries.
-Expanded comparisons and source-linked accounting notes supplement the ten company
-packets. This is not independent reviewed-reference certification. Human reference,
-accounting/model approval, broader note coverage and approved normalization remain open.
+October 17 [parser and review follow-up](../archive/checkpoints/2026/release-readiness-2026-10-17.md)
+recovers the eight selected Airtel/SBI entries previously skipped. All selected
+references now have candidates; HDFC unit proposals remain pending. The ten-company
+packets and accounting-note topics retain exact sources and blank human decisions.
+Selected numeric agreement is not independent reviewed-reference certification.
+Human reference/accounting/model approval, broader note coverage and approved
+normalization remain open.
 No financial promotion or new acceptance points. Mac settings/backups are deferred
 by the user and do not block independent work.
 
@@ -331,6 +331,12 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 Gate: a user can explain what changed, which evidence supports it and what needs
 review from one repeatable workflow, without implying universal news/AI coverage.
 
+October 17 prepares six actual Gemini responses: three retained public-report
+excerpts and three Mock Data adversarial inputs. Five pass source/format checks;
+one is blocked for comparison labels absent from its own quote. Agent observations
+and blank human verdicts are retained. This advances M08-04 preparation without
+closing its reviewed-quality gate. See the [release checkpoint](../archive/checkpoints/2026/release-readiness-2026-10-17.md).
+
 ## M09: complete browser workflows and responsiveness
 
 Owners: every active route in [route inventory](../09-route-inventory.md), domain UI,
@@ -360,6 +366,13 @@ with measured performance and no unresolved release-blocking regression.
 ## M10: proven local daily-driver release
 
 Owners: coordinated release lane, current-state/handoff/ledger and operations runbook.
+
+The October 17 request to finish remaining work authorizes release preparation.
+Fresh install/concurrent-write recovery passed before the user requested no more
+disposable datasets. A new populated-backup rehearsal is prepared but not run;
+normal data must not be reset to substitute for that test. The technical local
+rollout is verified, but reviewed-input freeze, actual-use days, off-device
+recovery and final acceptance remain open. Future use is never inferred.
 
 - [ ] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
   full source/type/contract suites, migrations, dependency scans and browser gates.

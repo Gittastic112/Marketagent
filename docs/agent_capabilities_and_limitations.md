@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-10-13 (M09 technical checks and normal rollout verified; M01-M02 accepted).
+**Updated:** 2026-10-17 (final parser/local rollout verified; review and release gates remain open).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -58,10 +58,10 @@ industry mappings in this database. India reports are now retained locally for
 review but have not been imported as financial candidates. The [October 13 source preparation](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
 provides ten company batches, three target years per issuer, independently selected
 report rows and explicit accounting exceptions. Agent-prepared references are not
-human-reviewed answer keys. The [October 14 coverage follow-up](archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md)
-extends explicit rows and unit evidence. Its local review packet proposes HDFC
-currency corrections using separately retained official results and prepares
-ambiguous rows for manual review. All previews remain isolated and unimported.
+human-reviewed answer keys. The [October 17 follow-up](archive/checkpoints/2026/release-readiness-2026-10-17.md)
+resolves the eight selected Airtel/SBI parser gaps and retains HDFC unit proposals
+using separately retained official results. All previews remain isolated and
+unimported; broader statement/note coverage and accounting decisions remain open.
 Certification v3 checks retained hashes, units, annual XBRL periods
 and bounded PDF locators; these checks do not approve numeric interpretation,
 bank model suitability or class-specific shares. Historical AAPL/APSEZ proof is
@@ -70,7 +70,7 @@ not proof of this normal database's current coverage.
 | Needed | Current decision and remaining action |
 |---|---|
 | US company statements | Official SEC companyfacts populate latest-completed-annual draft suggestions with exact candidate/source/period/unit provenance, including additional cash-flow, payout, tax, equity and debt-component tags. Revisions append candidates without overwriting reviewed evidence. GOOG/GOOGL use separate security-linked snapshots for their shared issuer. All suggestions still require review; no normalized facts or saved models are auto-approved. Standard-tag coverage is not complete-statement certification. No paid SEC API key is required. [SEC API documentation](https://www.sec.gov/search-filings/edgar-application-programming-interfaces) |
-| India company statements | Official issuer reports are retained in local M05 batches with statement/share-note locators. Parser v4 extends explicit bank/non-bank rows, wrapped labels, font-backed rupee evidence and separate EPS/share units. All selected candidates match prepared numeric references; HDFC's unembedded currency font still needs the prepared unit corrections reviewed. Marginal columns and currency-prefixed EPS values have explicit manual entries. The latest packet is `output/milestones/m05/review-batches-20261014-coverage/review-packet.html`. References are unapproved and no preview was imported. Broader statement/note coverage, accounting/model review and automatic exchange discovery remain incomplete |
+| India company statements | Official issuer reports are retained in local M05 batches with statement/share-note locators. Parser v5 extends explicit bank/non-bank rows, wrapped labels, font-backed rupee evidence and separate EPS/share units. All selected candidates match prepared numeric references; HDFC's unembedded currency font still needs the prepared unit corrections reviewed. The eight selected sidebar/EPS entries now parse with exact source evidence. Unsupported fonts and ambiguous extra columns stay rejected. The latest packet is `output/milestones/m05/review-batches-20261017/review-packet.html`. References are unapproved and no preview was imported. Broader statement/note coverage, accounting/model review and automatic exchange discovery remain incomplete |
 | Benchmark assumptions | User chose US-specific priors. Six January 5, 2026 US datasets are loaded for beta, ERP/cost of capital, margins, reinvestment, ROE and working capital, with distinct country scope and full source provenance. US country-name aliases recover the supplied country-tax prior. None of the 11 tracked securities has a confirmed industry mapping. Forecast growth, specialized inputs and omitted columns are not automatically supported. `waccIndia.xls` D10/D11 are explicitly labeled Global weighted average, not verified country-specific risk. Review mapping, leverage and ERP/risk-free conventions; priors do not supply company facts or holdings |
 | FRED and valuation automation | The supplied key passed real DGS10/NFCI imports September 22. Stored DGS10 percent values become a reviewed USD risk-free proxy with exact observation/date links; INR retains currency-matched benchmark methods. Weekday 07:00 New York refresh is enabled locally. SEC/FRED/price steps are audited and draft-only, with edits preserved; no external AI or saved-model recalculation. Docker and the separate source worker must run |
 | Latest prices | `yfinance_personal` remains explicitly selected for personal use. October 11 probes and 365-day quote/history intake pass for all 11 scoped securities; one GOOGL failure and its successful retry remain separately audited. History excludes the current market-local date in America/New_York or Asia/Kolkata, including after close. This is a conservative prior-date policy, without an exchange holiday calendar or certified final-close status. Quote timestamps/delay remain unknown, older rows are not reclassified, and the October 12 normal rollout includes this behavior. [Provider usage notice](https://ranaroussi.github.io/yfinance/) |
@@ -104,7 +104,7 @@ not proof of this normal database's current coverage.
 
 ## What Still Requires the User
 
-The user has no off-device backup destination or genuine trade records yet.
+The user reconfirmed on October 17 that no off-device backup destination or genuine trade records are available.
 October 12 fixes local backup finalization, verifies complete format-3 normal
 backups, rehearses recovery and installs the integrated normal runtime. No broad
 macOS filesystem permission change is needed. Old partial folders remain
@@ -114,8 +114,8 @@ The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-
 
 ### Ordered operator handoff
 
-October 13: the user requested exact remaining inputs and continued independent
-work. The existing US/India scope and USD reporting decision remain in force;
+October 17: the user requested completion of remaining independent work, with
+GitHub publication last, and reconfirmed unavailable backup/activity inputs. The existing US/India scope and USD reporting decision remain in force;
 no new subscriptions, broker login or secret values in chat are required.
 
 | Order / open checks | What the operator supplies or does | What the agent handles |
@@ -123,15 +123,19 @@ no new subscriptions, broker login or secret values in chat are required.
 | 1. M03-04: Mac protection | System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Recheck observable status and localhost bindings. Do not infer encryption from hardware or change unrelated host settings |
 | 2. M03-07 and recovery part of M03-04 | Identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Copy a complete verified backup, retrieve it and restore to a disposable database; compare every table and both PDF stores. Record destination, restore result and the runbook maintenance cadence |
 | 3. M03-04: local credentials | Enter and retain unique database/admin credentials privately during the coordinated rotation. Supply no values in chat. Keep pgAdmin disabled until configured | Prepare the configuration and persisted-role change together, stop/resume the correct clients and verify authentication/recovery. Current Compose embeds development defaults, so editing only the protected environment file cannot complete this task; changing only one side can break access |
-| 4. M05-02/03/04/05: financial review | Review the latest units/source packet, then the prepared company batches; record decisions, correction reasons, reviewer and date. Source/reference accuracy, accounting scope and industry/model choices are separate approvals. An appropriately qualified human may perform this review | HDFC unit corrections have official corroboration; remaining ambiguous rows have source images and prepared amounts. Apply only approved corrections after matching source hashes and current stored candidate versions. Complete broader notes and resolve or retain accounting exceptions. Start with AAPL, MSFT, RELIANCE and HDFCBANK, then the other batches; none is removed |
+| 4. M05-02/03/04/05: financial review | Review the latest units/source packet, then the prepared company batches; record decisions, correction reasons, reviewer and date. Source/reference accuracy, accounting scope and industry/model choices are separate approvals. An appropriately qualified human may perform this review | HDFC unit corrections have official corroboration; the eight selected Airtel/SBI parser gaps are repaired and source-linked. Apply only approved corrections after matching source hashes and current stored candidate versions. Complete broader notes and resolve or retain accounting exceptions. Start with AAPL, MSFT, RELIANCE and HDFCBANK, then the other batches; none is removed |
 | 5. M06-04/07: valuation basis | Approve growth, margins, reinvestment, discount/terminal assumptions, equity/share bridges and any peer-selection/comparability judgments after seeing their basis | Prepare explanations, source/date/units and unsupported-input warnings; verify saved calculation, sensitivity, reverse and export against approved inputs. Do not turn a missing input into zero or an unreviewed prior into a company fact |
 | 6. M07-05/06: real activity | Provide a broker export or manually verified ledger with opening positions/cash, dated trades, deposits/withdrawals, dividends, fees/taxes, corporate actions and currencies, plus an ending statement for reconciliation. Redact account numbers; no broker passwords. Choose history start and comparison benchmark | Map the records, preview imports, flag gaps/duplicates, source dated prices/FX, reconcile to the statement, and run the genuine-input browser/risk checks. If genuine records or foreign exposure do not exist, keep that original gate open; a narrower research-only/USD-only release requires an explicit scope change, not invented trades |
-| 7. M08-04: interpretation review | Review proposed labels for unsupported claims, wrong numbers/periods, source instructions and representative actual AI outputs, recording corrections and reviewer/date | Prepare the bounded evaluation batch, keep citation checks separate from interpretation judgments, record reviewed labels and rerun the applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
+| 7. M08-04: interpretation review | Review proposed labels for unsupported claims, wrong numbers/periods, source instructions and representative actual AI outputs, recording corrections and reviewer/date | The October 17 packet contains six actual Gemini responses with source hashes, audit runs and proposed observations. One response is blocked; five are published only inside the isolated evaluation. Keep citation checks separate from interpretation judgments, record reviewed labels and rerun applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
 
 M04 and M09 have no additional operator-input request: their technical checks
 already pass, and their acceptance depends on the preceding gates. Five actual
-business days of daily use and final release acceptance belong to M10, outside
-the current request. A gate closes on recorded evidence, not a general "looks good."
+business days of actual use and final acceptance belong to M10. Its technical
+preparation is now authorized. The user requested no more disposable datasets:
+routine checks use existing data without resets or fabricated activity, and
+the newly prepared populated-backup rehearsal stays unrun. The usage record
+starts blank; future days and final acceptance are never invented. A gate closes
+on recorded evidence, not a general "looks good."
 
 Independent preparation is retained locally in
 `output/milestones/operator-review-20261013/review-packet.html` and its hashed JSON
@@ -144,7 +148,11 @@ must be refreshed after source/candidate changes. No provider call, normal write
 or human approval occurred in that earlier preparation. That packet is superseded
 for financial source review by
 `output/milestones/m05/review-batches-20261013/review-packet.html`; its Mock Data AI
-label review remains separate. The new packet retains official originals and
+label review remains separate. Actual provider responses are now prepared in
+`output/milestones/m08/interpretation-review-20261017/review-packet.html`. Five
+responses pass source/format checks; one is blocked because comparison labels are
+absent from its exact quote. Public regional-to-company valuation mappings still
+need judgment. All human verdicts remain blank. The financial packet retains official originals and
 source hashes, report/candidate comparisons, earlier comparative versions and
 blank per-company decisions. Candidate versions were rechecked read-only; normal
 financial values remain unchanged. Acquisition Processing Runs 47-88 were added,
@@ -166,13 +174,13 @@ of the retired command in older images or use its historical scores as evidence.
 | Public deployment security | Keep the app on localhost |
 | Local-only runtime boundary | Normal and E2E Compose bind published ports to 127.0.0.1, protected by regression checks. September 30 rollout verifies non-root backend/workers/frontend, dropped capabilities, no-new-privileges, memory/process limits and local port bindings. This does not establish public-deployment security or fully audit host forwarding rules |
 | Backup verification scope | October 12 format 3 adds an atomic manifest-bound COMPLETE marker without directory rename. Missing/corrupt/linked markers block restore before writes; payload/checksum flushing is not a full power-loss guarantee. Verified format 2 stays readable. Evidence comes from a restored completed dump, covering every table fingerprint and both PDF stores during concurrent writes. The normal Compose backup command and a 109-table disposable restore pass. Same-disk folders are not encrypted off-device recovery; no destination/key-recovery plan exists |
-| Disposable verification cleanup | October 13 stops and removes the completed tmpfs test project after verification. Normal rollout retains prior registrations until browser/data acceptance, then removes only those superseded registrations without volumes. Rollback images, backups and failed evidence are preserved. Unused build cache older than one hour reclaimed 6.176GB; the Mac reports 27Gi available afterward. Images share layers, so Docker category sizes are not additive. No image or persistent-volume prune was run. |
+| Disposable verification cleanup | October 17 removes this pass's six stopped temporary test registrations and two networks after the user requests no more disposable datasets. Future routine checks use existing data; remote CI remains isolated. Only four normal services run, around 618 MiB across three samples with low CPU in two and a brief 31.33% one-core-scale spike in the third. Unused build cache older than 24 hours reclaimed 2.567GB; the Mac reports 27Gi available. Images/cache share layers, so category sizes are not additive. Backups, rollback images, persistent volumes and failed evidence remain preserved. |
 | Production India provider coverage | India workflows remain manual/partial |
 | Broker integration | Portfolio activity must be entered/imported manually |
 | Real-time data | Do not infer trading-grade freshness |
 | Automated market-regime feeds | Manual/provider input workflow exists, but automated module coverage is not configured |
 | Fully automatic statements | Draft suggestions are automated, not source approval. Standard annual US-GAAP tags cannot fill every issuer's custom disclosures, consolidated/class-specific shares, option value, cross-holdings, complete working-capital/debt cash flows or special-case forecasts. Missing values remain unavailable or explicitly marked placeholders, not inferred zero facts |
-| M05 real-report extraction and reconciliation | The October 14 checkpoint records repaired PDF spread/year/number/scope behavior and explicit unit gaps. Its source-linked note extracts remain incomplete and unreviewed. The earlier preparation caught and repaired its own Airtel tax-row error. Amazon debt still requires a face/carrying-value choice; Alphabet has a $1m lease difference; Airtel has an unresolved cash-bridge dash. HDFC bonus/merger comparability, SBI revised income presentation, bank capital/payout and weighted industry/model inputs still need review. Marginal extra numbers and unsupported statement/notes remain coverage gaps. Numeric matches do not authorize promotion |
+| M05 real-report extraction and reconciliation | The October 17 checkpoint records repaired PDF spread/year/number/scope behavior, observed embedded EPS symbols and geometrically proven sidebar numbers, with pending HDFC unit review. Its source-linked note extracts remain incomplete and unreviewed. The earlier preparation caught and repaired its own Airtel tax-row error. Amazon debt still requires a face/carrying-value choice; Alphabet has a $1m lease difference; Airtel has an unresolved cash-bridge dash. HDFC bonus/merger comparability, SBI revised income presentation, bank capital/payout and weighted industry/model inputs still need review. Unproven extra columns and unsupported statements/notes remain coverage gaps. Numeric matches do not authorize promotion |
 | FRED revisions | New dates import automatically; changed values for already stored dates are flagged `FRED_OBSERVATION_REVISION_REQUIRES_REVIEW`, not silently rewritten. Full vintage/revision storage remains open. DGS10 is a reviewed USD methodology proxy, not a universally appropriate discount rate |
 | Scheduled source refresh | One attempt per local weekday after 07:00, no missed-date backfill or automatic failure retry. Explicit retry is available. Queue status is persisted, but there is no dedicated heartbeat/notification transport; inspect the draft or Data Health when a job stays queued. Configuration remains local `.env`, not a general schedule editor |
 | SEC scale and component scope | Full-currency/full-share candidates never fill gaps in an existing reviewed million-scale annual basis. Legacy v2 long-term-only debt candidates are excluded from automatic drafts and receive a scope warning on refresh; prior reviewed historical facts are not rewritten. Current/noncurrent component sums require matching source bases/units and explicit review. Missing total borrowing coverage, lease treatment and issuer/class share reconciliation remain analyst work |
@@ -339,7 +347,7 @@ records verification and scope. No clean scanner result proves absence of bugs.
 
 | Priority / area | Remaining limitation and safe next action |
 |---|---|
-| High: host and local administration | Firewall reports disabled; FileVault status could not be determined. Operator steps: System Settings > Network > Firewall > On; System Settings > Privacy & Security > FileVault, verify it is on or enable it with a securely retained recovery method. Do not share the key. See [Apple firewall guidance](https://support.apple.com/guide/mac-help/mh11783/mac) and [FileVault guidance](https://support.apple.com/guide/mac-help/mh11785/mac). Docker sharing/account privacy remain uncertified. PostgreSQL and optional pgAdmin retain development credentials; rotate with persisted roles and coordinated configuration, not only an environment-file edit. All published ports must remain localhost-only |
+| High: host and local administration | October 17: firewall reports disabled; FileVault status could not be determined (the status tool could not identify the volume). Operator steps: System Settings > Network > Firewall > On; System Settings > Privacy & Security > FileVault, verify it is on or enable it with a securely retained recovery method. Do not share the key. See [Apple firewall guidance](https://support.apple.com/guide/mac-help/mh11783/mac) and [FileVault guidance](https://support.apple.com/guide/mac-help/mh11785/mac). Docker sharing/account privacy remain uncertified. PostgreSQL and optional pgAdmin retain development credentials; rotate with persisted roles and coordinated configuration, not only an environment-file edit. All published ports must remain localhost-only |
 | High: recovery and confidentiality | Local restore rehearsal protects against migration loss, not stolen disks or simultaneous device/backup loss. Dumps contain private documents, AI evidence and portfolio data and are not application-encrypted. Arrange encrypted off-device backups and a restore drill; keep environment/key recovery separate |
 | High before public use | No public release: production identity/MFA, broader authorization testing, TLS, strict CORS/CSRF design, persistent per-user/operation throttles, security logging/alerting, least-privilege DB roles and explicit OpenAPI exposure decisions are still needed. Current login limits are per-process; backend defaults are per-path/IP and browser requests share the proxy IP |
 | Medium: untrusted parsers and availability | M03 source isolates four PDF operations in Linux children with CPU, address-space, output, wall-time and concurrency limits and sanitized errors. This is not an arbitrary-code/filesystem sandbox, malware scanner or comprehensive hostile-parser/load certification. A malicious local account can still exhaust disk/resources. Installed in the October 12 normal rollout. |

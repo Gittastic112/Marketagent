@@ -1,9 +1,9 @@
 # Current State
 
-Source tests and normal parser rollout: 2026-10-14. Scope: local-first, single-user equity research.
+Source tests and normal parser rollout: 2026-10-17. Scope: local-first, single-user equity research.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source and normal runtime: [October 14 unit and source coverage](archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md), following [October 13 workflows](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Source/candidate/price intake remains separately audited and review-required.
+Latest source and normal runtime: [October 17 parser and release preparation](archive/checkpoints/2026/release-readiness-2026-10-17.md), following [October 13 workflows](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Source/candidate/price intake remains separately audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -20,22 +20,23 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | October 14: 1,666 tests pass, six opt-in PostgreSQL checks skip; earlier October 13 PostgreSQL proof remains separately dated. Five upstream deprecation warnings. Expanded PDF statement/unit/wrapped-row regressions and legacy/regional locator compatibility pass; no migration change |
+| Backend | October 17: 1,680 tests pass, six opt-in PostgreSQL checks skip in the offline suite; all six pass separately on disposable PostgreSQL. Five upstream deprecation warnings. Font-backed EPS, sidebar exclusion and rejection regressions pass; no migration change |
 | Frontend | 302 tests, TypeScript and production build pass. Final v10: 64 isolated browser workflows, 110 desktop/mobile route/state views covering all 50 pages plus populated price-history paging and keyboard scrolling. Screenshots, failures and automatic accessibility results remain retained |
 | API compatibility | 279 public paths, 513 schemas and 373 public operations. Audit covers 380 static HTTP callers, ten reviewed dynamic entries and 227 controls with no unwired-button candidates. Pure contracts, facade identity and wire guards pass; counts alone are not behavioral proof |
 | Operations | 56 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion, bounded proof-database readiness, timeout cleanup, retention and format-2 compatibility are covered. Protected environment files remain excluded |
 | PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Fresh schema reaches s1s1s1s1s1s1 |
-| Normal runtime | October 14 unit/coverage backend/workers and unchanged October 13 frontend installed after a verified format-3 backup. All 109 table fingerprints, original volume/schema and settings preserved; localhost-only ports. Seven temporary source/tool files copied and hash-verified before replacement |
-| Normal browser | October 14 follow-up: 24 routes and 48 desktop/mobile views pass with zero browser errors or overflow, two forbidden-Origin checks and maximum readiness 11,789 ms within the existing 15-second gate. Separate isolated PDF/review/security workflows pass. No normal fixture seeding, financial promotion or provider/AI call |
-| Recovery | Complete format-3 normal backups and an isolated concurrent-write restore pass. Both original public/private PDF bytes and all 109 table inventories are verified in the drill. Restore verification took 10 seconds, complete drill 35 seconds. Same-disk copies do not prove encrypted off-device recovery |
+| Normal runtime | October 17 parser v5 backend/workers and unchanged October 13 frontend installed after a verified format-3 backup. All 109 table fingerprints, original volume/schema and settings preserved; localhost-only ports. Rollback images retained |
+| Normal browser | October 17: 48 desktop/mobile views pass with zero browser errors or overflow, two forbidden-Origin checks and maximum readiness 470 ms within the existing 15-second gate. Four isolated PDF/review/security workflows pass. No normal fixture seeding or financial promotion |
+| Recovery | October 17 format-3 concurrent-write recovery verifies both PDF stores and all 109 tables: restore 8 seconds, full drill 30 seconds. The later populated-backup rehearsal is prepared but unrun after the user requested no new disposable datasets. Same-disk copies do not prove encrypted off-device recovery |
 | Performance | Final profile: six process-cold and 30 warm samples over 774 rows/109 tables, nine query-budget regressions and eight section interactions pass. Market Prices fetches 51 rows and renders 50 forms, retaining filtering/history/export access. Database fingerprints remain unchanged; database/OS caches remain warm. Dataset and hardware are recorded without a concurrent-user/load claim |
-| Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. October 13 [M05 preparation](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md) retains official reports and ten company batches; October 14 adds expanded comparisons, official HDFC unit corroboration and manual source-row entries. Human source/accounting/model review and broader note coverage remain open; preparation does not certify financial coverage |
+| Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. October 13 [M05 preparation](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md) retains official reports and ten company batches; October 17 recovers all eight selected parser gaps, retains HDFC unit proposals, and prepares six actual Gemini outputs with one blocked response and no human verdicts. Human source/accounting/model review and broader note coverage remain open; preparation does not certify financial coverage |
 
 Normal screens still contain labeled Mock Data. The final rollout has no stored
 PDF assets, so September's private-PDF/source inventories below remain historical.
-Earlier browser reads add one FRED capability, two SEC discovery runs and one blocked
-new-day regime score. The checkpoint separates these from the final rollout and
-browser pass, each of which preserves all 109 table fingerprints.
+The first October 17 browser pass generated one new daily brief, triggering
+automatic image rollback. All six older briefs and every other table/asset stayed
+unchanged. A supplementary quiesced dump is retained with no restore-verification
+claim; the final rollout/browser pass preserves the explicitly recorded new baseline.
 
 [Refactor checkpoint](archive/checkpoints/2026/repository-architecture-refactor-2026-09-09.md)
 records the older production/browser scope. The

@@ -1,97 +1,92 @@
 # Agent Handoff
 
-October 14, 2026: M01-M02 accepted; M09 technical checks verified with prerequisites open.
+October 17, 2026: M01-M02 accepted; M04/M09 technical checks verified with prerequisites open.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. Do not report 90% complete or waive genuine-input gates.
 
 ## Execution boundary
 
-The user authorized conservative continuation through M09, refactors/worktrees and
-Git/GitHub publication last. Bounded parallel source review used explicit file
-ownership; central docs are reconciled once after integration. GitHub is Allow all
-actions; other app permissions remain unchanged. Public deployment, broker work
-and M10 acceptance remain outside this task.
+The user authorized remaining independent work, refactors/worktrees and Git/GitHub
+publication last. The latest request includes M10 preparation, not invented final
+acceptance. Public deployment and broker work remain outside scope. GitHub is
+Allow all actions; other app permissions remain unchanged. No new agents are
+authorized by the plan alone. Protected environment files must not be read directly
+or indirectly, including by Compose, app settings or browser configuration.
 
 [Draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1) preserves M01.
 [Draft PR #2](https://github.com/Gittastic112/Marketagent/pull/2), based on M01,
 holds subsequent work and owns the latest published head/check results. Publish
 only explicit paths through an isolated Git snapshot: the shared checkout/index
 contains extensive prior changes. Never reset, clean or stage everything.
-Protected environment files must not be read directly or indirectly.
 
 ## Current evidence
 
-The [October 13 checkpoint](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
-owns connected-workflow repairs, full source/browser validation, final return-label
-follow-up, query/route profiles, normal rollout and source/image identity.
+The [October 17 checkpoint](archive/checkpoints/2026/release-readiness-2026-10-17.md)
+owns parser v5, final source/integration/browser checks, local rollout, recovery,
+review packets and exact source/image identities. The [October 13 checkpoint](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
+retains the full frontend/workflow matrix and process-cold/warm performance scope.
 
-- Financial review preserves inspected versions and retains failed corrections;
-  source-to-candidate-to-normalized-draft browser proof closes M05-06 only.
-- Narrative estimates use bounded typed output before successful audit. Saved
-  calculations, sensitivity/reverse and memo/export keep their immutable basis.
-- Event interpretation has explicit disclosure, strict provider-compatible schema
-  and exact provenance. Field suggestions cannot silently edit numeric assumptions.
-- Exact evidence, held-company/thesis links, source recovery and recorded-public
-  morning review pass. Separate PostgreSQL due-cycle evidence saves one audited
-  snapshot. Exact citations do not certify interpretation quality.
-- Retained manual forms preserve edits and confirmations. Static endpoint/control
-  review, adverse-state cases, keyboard checks and manual desktop/mobile review
-  repaired identified issues. TWR and annualized MWR show their separate bases/dates.
-- Full integration and final affected-browser follow-up pass. Earlier timing and
-  selector failures remain recorded. Application-process cold/warm profiles pass
-  on a fingerprinted dataset; database/OS caches remain warm. No load-test claim.
+- Parser v5 handles verified embedded rupee EPS and repeated sidebar navigation
+  numbers outside aligned statement columns. Unknown/conflicting inputs stay
+  rejected. Original text, coordinates and review warnings remain.
+- All eight previously skipped selected entries now parse. Official comparisons
+  retain unapproved references and pending HDFC unit proposals. This does not
+  certify complete statements/notes or authorize financial promotion.
+- Six actual Gemini responses use only retained public excerpts and Mock Data.
+  One response fails the finding-level quote-context guard; five pass source/format
+  checks. Human verdicts remain blank; valuation mapping quality needs review.
+- Source -> candidate -> normalized draft, saved calculation/sensitivity/reverse,
+  event/evidence/thesis, manual recovery and morning-review workflows retain their
+  separately dated browser and genuine-source/fixture boundaries.
 
 ## Normal runtime and recovery
 
-The normal app runs October 14 unit/coverage backend/worker images and the unchanged
-October 13 frontend after a verified format-3 backup. The [coverage checkpoint](archive/checkpoints/2026/m05-unit-coverage-2026-10-14.md)
-records passing source/workflow tests and 48 normal desktop/mobile views.
-Original PostgreSQL volume and s1s1s1s1s1s1 remain. All 109 table fingerprints match
-across rollout and authenticated browser verification. Ports remain localhost-only.
-No normal fixture seed, financial approval, portfolio rewrite or AI scan was run.
-Settings are forwarded only in memory. Old registrations remain until browser/data
-acceptance; failure restores them and only previously active services resume.
+Normal backend/workers now use October 17 parser v5; frontend remains October 13.
+The verified format-3 backup, original PostgreSQL volume/schema and runtime settings
+are preserved. The first browser pass appended today's normal Daily Brief and
+triggered image rollback. Its exact one-row delta is verified; an additional
+quiesced dump is retained without claiming a new restore verification. The final
+rollout/browser pass preserves all 109 table fingerprints from that recorded baseline.
+Ports remain localhost-only. No normal fixture seed, financial approval, portfolio
+rewrite or AI scan was performed. Provider settings travel only in memory.
 
-Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no;
-queued external jobs cannot run while their worker is stopped. The completed
-disposable browser stack is stopped. Preserve rollback images, backups, all
-persistent volumes and failed artifacts. Resource/cache evidence is in the checkpoint.
+Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
+Disposable verification projects are stopped. Preserve backups, rollback images,
+all persistent volumes and failed artifacts. Do not prune those to reduce disk use.
 
-M03's macOS backup finalization is fixed; no broad filesystem permission change
-is needed. Completed format-3 recovery and both PDF stores were rehearsed on
-October 12. Same-disk folders do not prove encrypted off-device recovery. Old partial
-folders remain incomplete and retained. Do not manufacture missing records or acceptance.
+macOS backup finalization is fixed. October 17 verifies fresh concurrent-write
+recovery with both PDF stores. A new populated-backup rehearsal is prepared but
+unrun after the user requested no more disposable datasets. Routine checks now
+reuse existing data without resets or fabricated activity. Remote GitHub CI
+remains isolated; it does not consume this Mac's Docker resources.
+No broad filesystem permission change is needed. Same-disk folders do not prove
+encrypted off-device recovery. Earlier partial folders remain incomplete.
 
-## Remaining work
+## Next work and operator gates
 
-The connected workflow checks through M09 are verified. M05 source preparation
-now exposes real-report parser gaps; it does not certify financial coverage.
-Use stable tracker IDs and the [single limitation ledger](agent_capabilities_and_limitations.md)
-for exact operator settings, recovery destination, reviewed source/model inputs,
-genuine activity/dated coverage and interpretation-quality evidence. Continue safe
-independent work when possible without marking missing-input gates complete.
+The user reconfirmed no off-device destination or genuine activity records on
+October 17. Host settings remain deferred. The [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
+is the single owner of exact Mac, credential, backup, financial/model, activity
+and AI review inputs. Continue independent work without manufacturing these inputs.
 
-The ledger's [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-owns the input sequence. The user deferred Mac settings and off-device backup
-while M05 proceeds. The [source-review checkpoint](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
-owns ten company batches, retained official reports, arithmetic and version-pinned
-candidate comparisons. Reference/accounting/model review remains pending; no
-financial records were imported or promoted. Acquisition runs were recorded.
-The unit/coverage follow-up adds explicit statement rows, wrapped labels, embedded
-rupee evidence and separate EPS/share units. Official HDFC results support prepared
-unit corrections; remaining ambiguous rows have manual review entries and images.
-Start with `output/milestones/m05/review-batches-20261014-coverage/review-packet.html`.
-All comparisons remain unapproved and unimported. Next work requires source,
-accounting/model decisions and current stored candidate versions before promotion;
-broader note coverage stays open. Do not wait for Mac settings on independent work.
-The earlier operator packet's Mock Data AI labels also remain unapproved.
-The repository's old self-scoring extraction CLI now fails unavailable; its
-regression and repository checks pass. This host-tooling follow-up does not change
-the installed application images; inherited copies of that retired CLI are not evidence.
+Start financial review at
+`output/milestones/m05/review-batches-20261017/review-packet.html`.
+It links the ten company batches, HDFC corroboration, eight recovered entries and
+accounting-note topics. Start actual AI interpretation review at
+`output/milestones/m08/interpretation-review-20261017/review-packet.html`.
+Neither packet is imported or approved. Apply decisions only after checking exact
+source hashes and current stored candidate versions. Missing notes remain gaps.
 
-Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds,
-PDF tests and browser projects sequential on the small Docker VM. Browser tests
-use baked runtime source and local-container artifacts to reduce Mac folder I/O;
-do not relax timing gates to hide a failure. Preserve the immutable corpus.
-[Knull](../Knull%28readme%29.md) governs its assigned parallel batches only.
+M10 preparation retains dated recovery evidence and a blank actual-use record.
+Reviewed source/input freeze, the remaining release rehearsal, five business days
+of actual daily use, encrypted off-device recovery and final user acceptance stay
+open. Do not count preparation as a completed release.
+
+Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds, PDF
+tests and browser projects sequential on the small Docker VM. Browser checks use
+baked runtime source and container-local test artifacts, never protected files.
+Preserve failed runs and timing thresholds; a rerun must explain what changed.
+The retired self-scoring extraction CLI is unavailable, not evaluation evidence.
+Preserve the immutable knowledge corpus. [Knull](../Knull%28readme%29.md) governs
+explicitly assigned parallel batches only.

@@ -192,3 +192,73 @@ def test_zero_notation_share_units_are_not_extra_value_columns():
     result = current(rows("Weighted average number of equity shares for calculation of basic earnings per share (C) (in ‘000) 120 110\n"
         "(in ‘000)\nWeighted average shares outstanding for diluted EPS 125 115", section="Notes", scale="million"))
     assert result == {"basic_shares": (120, "shares thousand"), "diluted_shares": (125, "shares thousand")}
+
+
+@pytest.mark.parametrize("symbol", ["₹", "`"])
+def test_explicit_rupee_prefixed_eps_values_are_complete_tokens(symbol):
+    result = current(rows(f"Earnings per equity share\nBasic (in {symbol}) {symbol}4.5 {symbol}4.0\n"
+        f"Diluted (in {symbol}) {symbol}4.2 {symbol}3.8", section="Consolidated Profit and Loss Account"))
+    assert result == {"basic_eps": (4.5, "INR/share"), "diluted_eps": (4.2, "INR/share")}
+
+
+@pytest.mark.parametrize("body", ["Basic (in USD) ₹4.5 ₹4.0", "Basic H4.5 H4.0",
+    "Basic ₹4.5abc ₹4.0", "Basic ₹4.5% ₹4.0%"])
+def test_unverified_currency_tokens_and_conflicting_eps_units_are_not_values(body):
+    assert rows("Earnings per equity share\n" + body, section="Consolidated Profit and Loss Account") == []
+
+
+@pytest.mark.parametrize("embedded", [True, False])
+def test_eps_letter_glyph_requires_matching_embedded_font_and_retains_original(embedded):
+    line = "Basic (in H) H4.5 H4.0"
+    page = font_page(embedded=embedded, glyph="H", top=460)
+    symbols = [{**page.chars[0], "x0": x, "x1": x+7} for x in (90, 450, 520)]
+    page.search = lambda *a, **kw: [{"x0": 30, "x1": 550, "top": 460, "bottom": 468, "chars": symbols}]
+    result = parser._statement_line_candidates(page_text="FY2026 FY2025\nEarnings per equity share\n"+line,
+        page_number=1, section="Consolidated Profit and Loss Account", currency="INR", scale="thousand",
+        page_width=600, page_height=840, page=page)
+    if not embedded:
+        assert result == []
+        return
+    assert current(result) == {"basic_eps": (4.5, "INR/share")}
+    assert all(r.source_text == line for r in result)
+    assert all(r.source_locator_json['unit_evidence']['symbols'] == symbols for r in result)
+    assert all('currency_from_embedded_font_requires_review' in r.extraction_warnings for r in result)
+
+
+def test_a_single_normal_letter_among_rupee_glyphs_blocks_eps_repair():
+    page = font_page(glyph="H", top=460)
+    page.search = lambda *a, **kw: [{"chars": [page.chars[0], page.chars[0],
+        {**page.chars[0], "fontname": "NormalFont"}]}]
+    result = parser._statement_line_candidates(page_text="FY2026 FY2025\nEarnings per equity share\nBasic (in H) H4.5 H4.0",
+        page_number=1, section="Consolidated Profit and Loss Account", currency="INR", scale="thousand",
+        page_width=600, page_height=840, page=page)
+    assert result == []
+
+
+def sidebar_pdf(*, repeated=True, extra_x=575, headers=True, extra_header=False):
+    from test_pdf_statement_regressions import mock_pdf
+    items = [(30,45,"Consolidated Cash Flow Statement"),(30,65,"Amounts in INR million")]
+    items += [(420,95,"2026"),(500,95,"2025")] if headers else [(30,95,"FY2026 FY2025")]
+    if extra_header:
+        items += [(565,95,"Change")]
+    items += [(30,155,"Net increase in cash and cash equivalents"),(420,155,"30"),(500,155,"20"),(extra_x,155,"02")]
+    if repeated:
+        items += [(extra_x,120,"01"),(extra_x,190,"03")]
+    return mock_pdf(items,width=600)
+
+
+def test_repeated_sidebar_numbers_outside_reported_columns_are_not_financial_values():
+    result = parser._parse_pdf_financial_tables(sidebar_pdf())
+    assert {(r.fiscal_year,r.value) for r in result.candidates} == {(2026,30),(2025,20)}
+    assert all(r.unit == "INR million" for r in result.candidates)
+    for item in result.candidates:
+        assert item.source_text.endswith("30 20 02")
+        evidence = item.source_locator_json['excluded_margin_number']
+        assert evidence['text'] == '02' and evidence['x0'] == 575
+        assert item.source_locator_json['bounding_box']['x1'] < evidence['x0']
+        assert 'margin_number_excluded_requires_review' in item.extraction_warnings
+
+
+@pytest.mark.parametrize("kwargs", [{"repeated":False},{"extra_x":535},{"headers":False},{"extra_header":True}])
+def test_extra_numbers_without_margin_and_column_proof_remain_skipped(kwargs):
+    assert parser._parse_pdf_financial_tables(sidebar_pdf(**kwargs)).candidates == ()
