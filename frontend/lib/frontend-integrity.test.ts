@@ -62,11 +62,15 @@ test("Docker defaults to a bounded production runtime with an explicit developme
   for (const directory of ["data", "docs", "frontend", "damodaran_knowledge_base_v1"]) {
     assert.doesNotMatch(rootDockerignore, new RegExp(`^!${directory}(?:/|$)`, "m"));
   }
-  assert.match(rootDockerignore, /^\*\*\/\.env$/m);
-  assert.match(rootDockerignore, /^\*\*\/\.env\.\*$/m);
-  assert.match(frontendDockerignore, /^\.env$/m);
-  assert.match(frontendDockerignore, /^\.env\.\*$/m);
-  assert.match(frontendDockerignore, /^!\.env\.example$/m);
+  // Environment files, including templates, stay outside both build contexts.
+  // Recursive patterns also protect nested files copied by the frontend builder.
+  for (const dockerignore of [rootDockerignore, frontendDockerignore]) {
+    assert.match(dockerignore, /^\*\*\/\.env$/m);
+    assert.match(dockerignore, /^\*\*\/\.env\.\*$/m);
+    assert.match(dockerignore, /^\*\*\/\*\.env$/m);
+    assert.match(dockerignore, /^\*\*\/\*\.env\.\*$/m);
+    assert.doesNotMatch(dockerignore, /^!.*\.env(?:[./*]|$)/m);
+  }
   assert.match(e2eCompose, /E2E_BACKEND_PORT:-18000/);
   assert.match(e2eCompose, /E2E_FRONTEND_PORT:-13000/);
   assert.match(browserWorkflow, /E2E_BACKEND_PORT="\$\{E2E_BACKEND_PORT:-18000\}"/);

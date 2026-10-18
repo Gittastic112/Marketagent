@@ -53,7 +53,8 @@ files are disk usage, not a measurement of active RAM.
 Docker initially reported 87 images / 24.70 GB, 18 volumes / 3.125 GB and 135 build
 cache records / 8.068 GB. Conservative age/space filters reclaimed zero. Cache
 inventory then identified 50 unused, unshared records. Removing only those IDs
-reclaimed approximately 3.581 GB; 85 shared cache records / 4.487 GB remain.
+reclaimed approximately 3.581 GB; the post-prune snapshot retains 85 shared cache
+records / 4.487 GB. Later verification can create small new build-cache records.
 The [Docker filter reference](https://docs.docker.com/reference/cli/docker/buildx/prune/)
 supports explicit cache ID selection. This is daemon-reported reclamation, not a
 claim that the macOS sparse disk image shrank by the same amount immediately.
@@ -85,6 +86,17 @@ paths excluded, the old ignore rules expose 9,422 paths versus 1,143 with the ne
 rules; later evidence files can change those counts. No new fixture database,
 provider call, application build or browser run was needed for these file-only
 changes. Earlier application/browser evidence remains separately dated.
+
+Initial GitHub validation passed browser, recovery and both security jobs, but
+the frontend source guard still expected the example environment file in its
+Docker context. The guard now requires recursive environment exclusions in both
+contexts without an environment-file exception. Frontend patterns use Docker's
+[recursive wildcard](https://docs.docker.com/build/concepts/context/#matching).
+All 302 frontend tests pass locally. Two tiny scratch builds verify that Docker
+excludes 26 non-secret environment filename probes at multiple depths while
+retaining ordinary source files. These checks create no database or runtime image
+and never copy actual environment files. Publication includes 14 distinct paths
+across the cleanup and this correction; the PR owns final CI results.
 
 Local evidence: output/cleanup-20261018 contains inventories, exact removal and
 cache-ID manifests, before/after image/volume/container lists, failed/zero-result
