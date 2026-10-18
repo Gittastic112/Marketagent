@@ -293,6 +293,15 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
         key: _reviewed_period_end(group_candidates)
         for key, group_candidates in groups.items()
     }
+    # A statement and its notes can repeat the same fact. Preserve both source
+    # revisions, but never silently choose between conflicting reviewed values.
+    for group_candidates in groups.values():
+        values_by_code = {}
+        for candidate in group_candidates:
+            value = (candidate.value, candidate.unit)
+            previous = values_by_code.setdefault(candidate.metric_code, value)
+            if previous != value:
+                raise HTTPException(status_code=409, detail="Reviewed candidates contain conflicting values or units for the same period and metric. Resolve the source selection before promotion. No financial values were written.")
 
     for (year, period_type), group_candidates in groups.items():
         currency_resolution = reporting_currencies[(year, period_type)]
@@ -326,13 +335,14 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
         if exact_report_date is not None:
             period.report_date = exact_report_date
 
-        # Add or update metrics
+        # Reuse pending inserts as well as stored rows. Sessions disable
+        # autoflush, so a database query alone cannot see the first occurrence.
+        period_metrics = db.scalars(select(FinancialMetric).where(FinancialMetric.period_id == period.id)).all()
+        metrics_by_code = {metric.metric_name: metric for metric in period_metrics}
+        if len(metrics_by_code) != len(period_metrics):
+            raise HTTPException(status_code=409, detail="The financial period contains duplicate stored metrics. Reconcile those records before promotion.")
         for candidate in group_candidates:
-            metric = db.scalar(
-                select(FinancialMetric)
-                .where(FinancialMetric.period_id == period.id)
-                .where(FinancialMetric.metric_name == candidate.metric_code)
-            )
+            metric = metrics_by_code.get(candidate.metric_code)
             if metric:
                 metric.value = candidate.value
                 metric.unit = candidate.unit
@@ -344,12 +354,16 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
                     unit=candidate.unit
                 )
                 db.add(metric)
+                metrics_by_code[candidate.metric_code] = metric
 
             record_financial_fact_revision(
                 db,
                 candidate,
                 effective_at=period.report_date,
             )
+            # The next repeated occurrence must see this revision when assigning
+            # its sequence and superseding the prior occurrence in this transaction.
+            db.flush()
 
             # Delete the candidate after promotion or mark as promoted
             candidate.review_status = "promoted"

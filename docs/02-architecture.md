@@ -1,6 +1,6 @@
 # Architecture
 
-**Updated:** 2026-10-13 (saved explanation identity and form recovery). Product validation scope is in [Current State](00-current-state.md).
+**Updated:** 2026-10-18 (reported-metric calculations and repeated-source promotion). Product validation scope is in [Current State](00-current-state.md).
 
 **Deployment boundary:** local Docker Compose only
 
@@ -20,7 +20,11 @@ Research messages separately verify whether a failed AI request actually saved
 the user's text. An uncertain transport result cannot claim a successful save.
 
 Financial review and promotion carry the viewed candidate timestamps and lock
-the affected rows. Conflicting edits require reload before promotion. Valuation AI
+the affected rows. Repeated identical occurrences share one period metric and retain
+separate source revisions; conflicting values/units block promotion. Pure reported-
+metric calculations require their actual inputs and compatible units; persistence
+stays in the normalization workflow. Missing inputs do not become zero or assumed tax.
+Conflicting edits require reload before promotion. Valuation AI
 requests carry the exact saved assumption ID/time; explanation provenance also
 records the calculation hash. A later version or changed output makes an earlier
 memo historical. Reviewing or copying an AI estimate never saves a valuation.

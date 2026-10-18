@@ -17,6 +17,28 @@ from app.models import (
 from helpers import response_data
 
 
+def test_reported_net_capex_does_not_request_gross_capex_backfill(db) -> None:
+    from app.services.accounting_normalization import (
+        FinancialReconciliationService, MetricNormalizationEngine, NormalizedSnapshotBackfillService,
+    )
+    from datetime import date
+
+    company = Company(ticker="NETCAPEX", name="Mock Data net-capex coverage", currency="USD")
+    db.add(company); db.flush()
+    period = FinancialStatementPeriod(company_id=company.id, period_type="annual", year=2025,
+        report_date=date(2025, 12, 31), currency="USD", currency_source="manual_entry", currency_confidence="high")
+    db.add(period); db.flush()
+    db.add_all([FinancialMetric(period_id=period.id, metric_name=code, value=value, unit="USD million")
+        for code, value in (("revenue", 100), ("net_capex", 20))])
+    db.commit()
+    snapshot = MetricNormalizationEngine.normalize_period(db, period.id)
+    assert {m.metric_code for m in snapshot.metrics} == {"revenue"}
+    coverage = NormalizedSnapshotBackfillService.summarize(db, company.id)
+    assert coverage["needs_backfill_count"] == 0
+    reconciliation = FinancialReconciliationService.reconcile(db, company.id)
+    assert reconciliation["missing_normalized_count"] == 0
+
+
 def test_extract_financial_candidates_from_filing_text(client, db) -> None:
     company = Company(
         ticker="ADANIPORTS",
@@ -665,14 +687,14 @@ def test_promote_candidates_creates_normalized_snapshot_for_autofill(client, db)
     assert normalized["revenue"].value == 12345
     assert normalized["ebit"].value == 2469
     assert normalized["net_debt"].value == 4250
-    assert normalized["nopat"].value == pytest.approx(1851.75)
+    assert "nopat" not in normalized  # No reported tax basis.
     assert normalized["cash"].value == 4000
     assert normalized["debt"].value == 8250
     assert normalized["diluted_shares"].value == 1200
     assert normalized["capex"].value == 900
     assert normalized["depreciation"].value == 300
     assert normalized["change_in_nwc"].value == 100
-    assert normalized["reinvestment"].value == 700
+    assert "reinvestment" not in normalized  # Acquisition coverage is missing.
     assert normalized["cash"].unit == "INR million"
     assert normalized["revenue"].provenance_notes
 
@@ -802,11 +824,13 @@ def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -
         for metric in db.query(NormalizedFinancialMetric).filter_by(snapshot_id=snapshot.id).all()
     }
 
-    # Check that warnings are generated for missing fields
-    assert "Missing current assets" in normalized["working_capital"].warnings
-    assert "Missing capex or D&A" in normalized["reinvestment"].warnings
-    assert "Pre-tax income missing" in normalized["effective_tax_rate"].warnings
-    assert "Missing invested capital" in normalized["invested_capital"].warnings
+    # Missing source inputs do not become numerical company facts.
+    assert not {
+        "working_capital", "reinvestment", "effective_tax_rate", "invested_capital",
+        "nopat", "fcff", "fcfe", "roic", "roe", "ebitda",
+    }.intersection(normalized)
+    assert normalized["revenue"].value == 12345
+    assert normalized["ebit"].value == 2469
 
 
 def test_promote_candidates_preserves_source_provenance_for_reported_and_derived_metrics(client, db) -> None:

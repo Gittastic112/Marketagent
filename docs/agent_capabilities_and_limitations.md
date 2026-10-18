@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-10-17 (research/demo review decisions delegated; five explicit Apple approvals recorded; six US benchmark versions loaded).
+**Updated:** 2026-10-18 (delegated HDFC review/promotion, missing-input normalization and populated financial UI).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -63,16 +63,19 @@ GOOGL's failed first price intake remains audited; retry 40 succeeded. The Septe
 the October 12 normal rollout includes this behavior. [M04 evidence](archive/checkpoints/2026/m04-ingestion-2026-10-11.md).
 
 The October 11 [M05 inventory](archive/checkpoints/2026/m05-financial-evidence-2026-10-11.md)
-records required annual sources and actual coverage for all 11 securities. All 667
-SEC candidates remain unreviewed; all 11 lack normalized histories and confirmed
-industry mappings in this database. India reports are now retained locally for
-review but have not been imported as financial candidates. The [October 13 source preparation](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
+records required annual sources and its dated coverage for all 11 securities:
+667 unreviewed SEC candidates and no normalized histories or confirmed industry
+mappings. Those counts are historical. The [October 13 source preparation](archive/checkpoints/2026/m05-source-review-preparation-2026-10-13.md)
 provides ten company batches, three target years per issuer, independently selected
 report rows and explicit accounting exceptions. Agent-prepared references are not
 human-reviewed answer keys. The [October 17 follow-up](archive/checkpoints/2026/release-readiness-2026-10-17.md)
-resolves the eight selected Airtel/SBI parser gaps and retains HDFC unit proposals
-using separately retained official results. All previews remain isolated and
-unimported; broader statement/note coverage and accounting decisions remain open.
+resolves the eight selected Airtel/SBI parser gaps. The October 18 delegated HDFC
+review applies 56 unit corrections and promotes 64 selected source occurrences
+into two normal historical periods. Other previews remain unimported; broader
+statement/note coverage and accounting decisions remain open.
+An October 18 read-only inventory confirms 667 pre-existing US candidates remain
+unpromoted; HDFC has 64 promoted occurrences and two normalized snapshots. The
+other ten securities still have no normalized periods in the normal database.
 Certification v3 checks retained hashes, units, annual XBRL periods
 and bounded PDF locators; these checks do not approve numeric interpretation,
 bank model suitability or class-specific shares. Historical AAPL/APSEZ proof is
@@ -136,9 +139,11 @@ not missing facts, independent human certification or unperformed acceptance tes
 M05-AAPL-04A US/USD/FCFF is explicitly approved. Delegated M05-AAPL-04B uses separate
 industry comparisons while services allocation and economically consistent ratio
 weights remain evidence work. Six audited January 2026 US versions are now loaded
-in the normal database; company financials, mappings and saved valuations are unchanged.
-Browser automation failed to initialize for this intake, so fresh proof is limited
-to source/database verification. The broader financial and model gates remain open.
+in the normal database. That benchmark intake did not change company financials or
+saved valuations. The later HDFC review applies 64 selected source entries to two
+March 31 periods, with 56 unit corrections, 60 distinct facts and eight normalized
+values. Its [checkpoint](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
+records separate runtime/browser proof. Broader financial/model gates remain open.
 The existing US/India universe and USD example reporting remain in force. Deferred
 items below are retained for later use, not questions to repeat now. No subscription,
 broker login or secret value in chat is required.
@@ -148,7 +153,7 @@ broker login or secret value in chat is required.
 | 1. M03-04: Mac protection, deferred | Later: System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Retain the deferred status; no host-setting change now. Localhost bindings/auth remain in scope. Do not infer encryption from hardware |
 | 2. M03-07 and recovery part of M03-04, deferred | Later: identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Preserve existing backups. When the user resumes this work, agree a safe separate restore target under the no-new-datasets constraint; never replace normal data. Record actual retrieval/restore proof and maintenance cadence |
 | 3. M03-04: local credentials | Enter and retain unique database/admin credentials privately during the coordinated rotation. Supply no values in chat. Keep pgAdmin disabled until configured | Prepare the configuration and persisted-role change together, stop/resume the correct clients and verify authentication/recovery. Current Compose embeds development defaults, so editing only the protected environment file cannot complete this task; changing only one side can break access |
-| 4. M05-02/03/04/05: financial review | No routine approval input needed under delegated authority; the user can revisit any decision by ID | Reconcile sources, record exact rows/treatment and rationale in the decision log, and apply only supported scopes after source-hash/current-candidate checks. Services mapping, ratio weighting, HDFC unit proposals and broader notes remain evidence tasks. Preserve the original packets and distinguish agent review from human certification |
+| 4. M05-02/03/04/05: financial review | No routine approval input needed under delegated authority; the user can revisit any decision by ID | Reconcile sources, record exact rows/treatment and rationale, and apply supported scopes after source-hash/current-candidate checks. HDFC's 56 selected unit gaps are resolved. Broader notes, comparability, services mapping and ratio weighting remain evidence tasks. Preserve original packets and distinguish agent review from human certification |
 | 5. M06-04/07: valuation basis | Numerical and methodological research/demo choices are delegated; retain a record for later revision | Choose defensible assumptions with source/date/units and uncertainty, then verify saved calculation, sensitivity, reverse and export against the exact basis. Missing facts stay missing; benchmark priors remain estimates |
 | 6. M07-05/06: genuine activity, outside first release | No records needed for research/demo v1. A later real-portfolio release needs a redacted ledger/export, opening and ending balances, dated activity/currencies, history start and benchmark; never broker passwords | Use existing examples with their stated provenance and coverage. Genuine-activity and real multi-currency proof stay unperformed, not passed. Preserve all records; do not fabricate trades or silently relabel public data |
 | 7. M08-04: interpretation review | Review judgments may be recorded under delegated research/demo authority; personal or independent human review must not be fabricated | The October 17 packet contains six actual Gemini responses with source hashes, audit runs and proposed observations. One response is blocked; five are published only inside the isolated evaluation. Keep citation checks separate from interpretation judgments, record reviewer type and labels, and rerun applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
@@ -164,7 +169,7 @@ on recorded evidence, not a general "looks good."
 
 Independent preparation is retained locally in
 `output/milestones/operator-review-20261013/review-packet.html` and its hashed JSON
-manifest. The refreshed inventory still has 667 unreviewed candidates and no
+manifest. That October 13 inventory had 667 unreviewed candidates and no
 normalized histories or confirmed industry mappings for the 11 securities.
 The packet selects 402 stored SEC annual candidates for target years and includes
 seven **Mock Data** AI cases with proposed, unapproved labels. Candidate rows are
@@ -179,8 +184,8 @@ responses pass source/format checks; one is blocked because comparison labels ar
 absent from its exact quote. Public regional-to-company valuation mappings still
 need judgment. All human verdicts remain blank. The financial packet retains official originals and
 source hashes, report/candidate comparisons, earlier comparative versions and
-blank per-company decisions. Candidate versions were rechecked read-only; normal
-financial values remain unchanged. Acquisition Processing Runs 47-88 were added,
+blank per-company decisions. That preparation rechecked versions read-only and did
+not change normal financial values. Acquisition Processing Runs 47-88 were added,
 so this follow-up is not an unchanged-database claim. Source rows/derived totals
 remain agent-prepared, not a complete approved reference. Mac settings and the
 backup destination are deferred by the user; independent M05 work continues.
@@ -205,7 +210,8 @@ of the retired command in older images or use its historical scores as evidence.
 | Real-time data | Do not infer trading-grade freshness |
 | Automated market-regime feeds | Manual/provider input workflow exists, but automated module coverage is not configured |
 | Fully automatic statements | Draft suggestions are automated, not source approval. Standard annual US-GAAP tags cannot fill every issuer's custom disclosures, consolidated/class-specific shares, option value, cross-holdings, complete working-capital/debt cash flows or special-case forecasts. Missing values remain unavailable or explicitly marked placeholders, not inferred zero facts |
-| M05 real-report extraction and reconciliation | The October 17 checkpoint records repaired PDF spread/year/number/scope behavior, observed embedded EPS symbols and geometrically proven sidebar numbers, with pending HDFC unit review. Its source-linked note extracts remain incomplete and unreviewed. The earlier preparation caught and repaired its own Airtel tax-row error. Amazon debt still requires a face/carrying-value choice; Alphabet has a $1m lease difference; Airtel has an unresolved cash-bridge dash. HDFC bonus/merger comparability, SBI revised income presentation, bank capital/payout and weighted industry/model inputs still need review. Unproven extra columns and unsupported statements/notes remain coverage gaps. Numeric matches do not authorize promotion |
+| M05 real-report extraction and reconciliation | Parser v5 resolves the selected layout gaps. Delegated HDFC review resolves 56 units and promotes only the selected FY2024/FY2025 pre-bonus basis; this does not certify full statements/notes or a current bank model. Amazon face/carrying debt, Alphabet's $1m lease difference, Airtel's cash-bridge dash, HDFC bonus/merger comparability, SBI revised income, bank capital/payout and weighted industry inputs remain evidence tasks. Original broad reference packets retain their historical review state |
+| Historical normalization and repeated evidence | New normalization requires explicit inputs, matching units and valid denominators; it does not repair old saved outputs automatically. The HDFC run retains every source occurrence; four redundant canonical projections created by that run were removed with exact reversible receipts. Earlier occurrence revision-number metadata remains as recorded. New promotion sequences repeated occurrences correctly and blocks conflicting values. Normalization/currency checks and comparable-metric reconciliation do not certify complete valuation inputs |
 | FRED revisions | New dates import automatically; changed values for already stored dates are flagged `FRED_OBSERVATION_REVISION_REQUIRES_REVIEW`, not silently rewritten. Full vintage/revision storage remains open. DGS10 is a reviewed USD methodology proxy, not a universally appropriate discount rate |
 | Scheduled source refresh | One attempt per local weekday after 07:00, no missed-date backfill or automatic failure retry. Explicit retry is available. Queue status is persisted, but there is no dedicated heartbeat/notification transport; inspect the draft or Data Health when a job stays queued. Configuration remains local `.env`, not a general schedule editor |
 | SEC scale and component scope | Full-currency/full-share candidates never fill gaps in an existing reviewed million-scale annual basis. Legacy v2 long-term-only debt candidates are excluded from automatic drafts and receive a scope warning on refresh; prior reviewed historical facts are not rewritten. Current/noncurrent component sums require matching source bases/units and explicit review. Missing total borrowing coverage, lease treatment and issuer/class share reconciliation remain analyst work |

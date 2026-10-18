@@ -198,6 +198,20 @@ def test_validate_pdf_upload_sanitizes_filename_and_rejects_signature_spoof() ->
         raise AssertionError("A spoofed PDF signature must be rejected")
 
 
+def test_pdf_upload_without_publication_date_keeps_it_unknown(client, db) -> None:
+    company = _company(db)
+    response = client.post(
+        f"/api/companies/{company.id}/filings/pdf",
+        data={"document_type": "annual_report"},
+        files={"file": ("financial_statement_table.pdf", FIXTURE.read_bytes(), "application/pdf")},
+    )
+    assert response.status_code == 201
+    document = db.get(RawDocument, response_data(response)["raw_document_id"])
+    assert document.published_at is None
+    assert document.ingested_at is not None
+    assert document.raw_payload_json["publication_date_basis"] == "unknown"
+
+
 def test_pdf_upload_persists_asset_candidates_and_processing_run(client, db) -> None:
     company = _company(db)
 

@@ -4,6 +4,7 @@ from datetime import datetime
 from typing import List, Dict, Any, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from app.services.financial_metric_derivations import derive_reported_metrics
 from app.models.financial import (
     FinancialStatementPeriod,
     FinancialMetric,
@@ -114,116 +115,6 @@ class MetricNormalizationEngine:
         db.flush()
         db.refresh(snapshot)
 
-        def val(codes: List[str], default: float = 0.0) -> float:
-            v = MetricNormalizationEngine._get_metric_value(metrics, codes)
-            return v if v is not None else default
-
-        def has(codes: List[str]) -> bool:
-            return MetricNormalizationEngine._get_metric_value(metrics, codes) is not None
-
-        # Extract base values
-        revenue = val(["revenue", "total_revenue"])
-        ebit = val(["ebit", "operating_income"])
-        da = val(["depreciation_and_amortization", "da", "depreciation"])
-        ebitda_reported = val(["ebitda"])
-        net_income = val(["net_income", "profit"])
-        capex_codes = ["capital_expenditures", "capex", "net_capex"]
-        depreciation_codes = ["depreciation_and_amortization", "da", "depreciation"]
-        nwc_change_codes = ["change_in_working_capital", "nwc_change", "change_in_nwc"]
-        cash_codes = ["cash", "cash_and_equivalents"]
-        debt_codes = ["debt", "total_debt"]
-        diluted_share_codes = ["diluted_shares", "weighted_average_diluted_shares"]
-        basic_share_codes = ["basic_shares", "weighted_average_basic_shares"]
-        acquisition_codes = ["acquisitions", "business_acquisitions"]
-        lease_liability_codes = ["operating_leases", "lease_liabilities", "operating_lease_liabilities"]
-        minority_interest_codes = ["minority_interests", "noncontrolling_interests"]
-        preferred_stock_codes = ["preferred_stock"]
-        employee_options_codes = ["employee_options_value"]
-        cross_holdings_codes = ["cross_holdings", "cross_holdings_value"]
-        capex = val(capex_codes)
-        acquisitions = val(acquisition_codes)
-        nwc_change = val(nwc_change_codes)
-        cash = val(cash_codes)
-        debt = val(debt_codes)
-        debt_is_calculated = False
-        if not has(debt_codes):
-            for components in (["current_debt", "long_term_debt_noncurrent"],
-                ["short_term_borrowings", "long_term_debt_total"], ["short_term_debt", "long_term_debt"]):
-                rows = [next((m for m in metrics if m.metric_name == code), None) for code in components]
-                if all(row is not None and row.unit and math.isfinite(row.value) for row in rows) and len({row.unit for row in rows}) == 1:
-                    debt_codes = components
-                    debt = sum(row.value for row in rows)
-                    debt_is_calculated = True
-                    break
-        diluted_shares = val(diluted_share_codes)
-        basic_shares = val(basic_share_codes)
-        operating_leases = val(lease_liability_codes)
-        minority_interests = val(minority_interest_codes)
-        preferred_stock = val(preferred_stock_codes)
-        employee_options_value = val(employee_options_codes)
-        cross_holdings = val(cross_holdings_codes)
-        current_assets = val(["current_assets"])
-        current_liabilities = val(["current_liabilities"])
-        tax_expense = val(["tax_expense", "income_tax"])
-        pre_tax_income = val(["pre_tax_income", "ebt"])
-        book_equity = val(["book_equity", "total_equity", "shareholders_equity"])
-        total_assets = val(["total_assets"])
-        invested_capital_reported = val(["invested_capital"])
-
-        # Computed metrics
-        ebitda = ebitda_reported if has(["ebitda"]) else (ebit + da)
-
-        # Tax Rate
-        tax_rate = 0.25 # Default Damodaran
-        tax_warnings = None
-        if has(["tax_expense"]) and has(["pre_tax_income"]) and pre_tax_income > 0:
-            tax_rate = tax_expense / pre_tax_income
-            if tax_rate < 0 or tax_rate > 1:
-                tax_warnings = f"Computed effective tax rate is {tax_rate:.1%}, using cap."
-                tax_rate = max(0.0, min(tax_rate, 1.0))
-        elif has(["tax_expense"]) and has(["ebit"]) and ebit > 0:
-            tax_rate = tax_expense / ebit
-            if tax_rate < 0 or tax_rate > 1:
-                tax_rate = max(0.0, min(tax_rate, 1.0))
-        else:
-            tax_warnings = "Pre-tax income missing or negative, using default 25% tax rate."
-
-        nopat = ebit * (1 - tax_rate)
-
-        net_debt = debt - cash
-
-        # Working Capital
-        working_capital = 0.0
-        wc_warnings = None
-        if has(["current_assets"]) and has(["current_liabilities"]):
-            working_capital = current_assets - current_liabilities - cash
-        else:
-            wc_warnings = "Missing current assets/liabilities; WC is assumed 0."
-
-        # Reinvestment
-        reinvestment = 0.0
-        reinvest_warnings = None
-        if has(capex_codes) and has(depreciation_codes):
-            reinvestment = capex - da + nwc_change + acquisitions
-        else:
-            reinvest_warnings = "Missing capex or D&A; Reinvestment cannot be accurately computed."
-
-        fcff = nopat - reinvestment
-        fcfe = net_income - reinvestment # Simplified, ignoring net debt issued
-
-        # Invested Capital & Returns
-        invested_capital = invested_capital_reported
-        ic_warnings = None
-        if not has(["invested_capital"]):
-            if has(["book_equity"]) and has(debt_codes) and has(cash_codes):
-                invested_capital = book_equity + debt - cash
-            else:
-                ic_warnings = "Missing invested capital, book equity, or debt."
-                invested_capital = 0.0
-
-        roic = (nopat / invested_capital) if invested_capital > 0 else 0.0
-        roe = (net_income / book_equity) if book_equity > 0 else 0.0
-
         from app.models.financial import FinancialExtractionCandidate
         candidates = db.scalars(
             select(FinancialExtractionCandidate)
@@ -253,13 +144,6 @@ class MetricNormalizationEngine:
                 base_note += " | Sources: " + ", ".join(sources)
             return f"{base_note} | {currency_context}"
 
-        def metric_unit(codes: List[str]) -> str | None:
-            for code in codes:
-                for metric in metrics:
-                    if metric.metric_name == code and metric.unit:
-                        return metric.unit
-            return None
-
         def add_metric(
             code: str,
             v: float,
@@ -280,55 +164,12 @@ class MetricNormalizationEngine:
             )
             db.add(nm)
 
-        if has(["revenue", "total_revenue"]):
-            add_metric("revenue", revenue, "From reported line items", source_codes=["revenue", "total_revenue"], unit=metric_unit(["revenue", "total_revenue"]))
-        if has(["ebit", "operating_income"]):
-            add_metric("ebit", ebit, "From reported line items", source_codes=["ebit", "operating_income"], unit=metric_unit(["ebit", "operating_income"]))
-        if has(["ebitda"]) or has(["ebit", "operating_income"]) or has(depreciation_codes):
-            add_metric("ebitda", ebitda, "Computed: EBIT + D&A" if not has(["ebitda"]) else "Reported", source_codes=["ebitda", "ebit", *depreciation_codes])
-        if has(["net_income", "profit"]):
-            add_metric("net_income", net_income, "From reported line items", source_codes=["net_income", "profit"], unit=metric_unit(["net_income", "profit"]))
-        add_metric("effective_tax_rate", tax_rate, "Computed: Tax / Pre-Tax Income" if not tax_warnings else "Default or Capped", tax_warnings, source_codes=["tax_expense", "pre_tax_income", "ebit"])
-        add_metric("nopat", nopat, "Computed: EBIT * (1 - Tax Rate)", source_codes=["ebit", "tax_expense", "pre_tax_income"])
-        if has(debt_codes) and has(cash_codes):
-            add_metric("net_debt", net_debt, "Computed: Debt - Cash", source_codes=[*debt_codes, *cash_codes])
-        add_metric("working_capital", working_capital, "Computed: Current Assets - Current Liab - Cash", wc_warnings, source_codes=["current_assets", "current_liabilities", "cash"])
-        reinvestment_sources = [*capex_codes, *depreciation_codes, *nwc_change_codes, *acquisition_codes]
-        add_metric("reinvestment", reinvestment, "Computed: Capex - D&A + dWC + Acq", reinvest_warnings, source_codes=reinvestment_sources)
-        add_metric("fcff", fcff, "Computed: NOPAT - Reinvestment", source_codes=["ebit", "tax_expense", "pre_tax_income", *reinvestment_sources])
-        add_metric("fcfe", fcfe, "Computed: Net Income - Reinvestment", source_codes=["net_income", *reinvestment_sources])
-        add_metric("invested_capital", invested_capital, "Computed: Book Equity + Debt - Cash", ic_warnings, source_codes=["invested_capital", "book_equity", *debt_codes, *cash_codes])
-        add_metric("roic", roic, "Computed: NOPAT / Invested Capital", source_codes=["ebit", "tax_expense", "pre_tax_income", "invested_capital", "book_equity", *debt_codes, *cash_codes])
-        add_metric("roe", roe, "Computed: Net Income / Book Equity", source_codes=["net_income", "book_equity"])
-
-        for code, value, source_codes in (
-            ("cash", cash, cash_codes),
-            ("diluted_shares", diluted_shares, diluted_share_codes),
-            ("basic_shares", basic_shares, basic_share_codes),
-            ("capex", capex, capex_codes),
-            ("depreciation", da, depreciation_codes),
-            ("change_in_nwc", nwc_change, nwc_change_codes),
-            ("acquisitions", acquisitions, acquisition_codes),
-            ("lease_liabilities", operating_leases, lease_liability_codes),
-            ("operating_leases", operating_leases, lease_liability_codes),
-            ("minority_interests", minority_interests, minority_interest_codes),
-            ("preferred_stock", preferred_stock, preferred_stock_codes),
-            ("employee_options_value", employee_options_value, employee_options_codes),
-            ("cross_holdings", cross_holdings, cross_holdings_codes),
-        ):
-            if has(source_codes):
-                add_metric(
-                    code,
-                    value,
-                    "From reported line items",
-                    source_codes=source_codes,
-                    unit=metric_unit(source_codes),
-                )
-
-        if has(debt_codes):
-            add_metric("debt", debt, "Computed: " + " + ".join(debt_codes) if debt_is_calculated else "From reported line items",
-                "Review lease inclusion and other financing claims." if debt_is_calculated else "",
-                source_codes=debt_codes, unit=metric_unit(debt_codes))
+        reported = {}
+        for metric in metrics:
+            reported.setdefault(metric.metric_name, (metric.value, metric.unit))
+        for code, item in derive_reported_metrics(reported).items():
+            add_metric(code, item.value, item.notes, item.warnings,
+                       list(item.source_codes), item.unit)
 
         if commit:
             db.commit()
@@ -343,7 +184,7 @@ class NormalizedSnapshotBackfillService:
         "cash": {"cash", "cash_and_equivalents"},
         "debt": {"debt", "total_debt", "short_term_debt", "long_term_debt"},
         "diluted_shares": {"diluted_shares", "weighted_average_diluted_shares"},
-        "capex": {"capital_expenditures", "capex", "net_capex"},
+        "capex": {"capital_expenditures", "capex"},
         "depreciation": {"depreciation_and_amortization", "da", "depreciation"},
         "change_in_nwc": {"change_in_working_capital", "nwc_change", "change_in_nwc"},
         "acquisitions": {"acquisitions", "business_acquisitions"},
@@ -555,12 +396,12 @@ class FinancialReconciliationService:
         "revenue": ("revenue", "total_revenue"),
         "ebit": ("ebit", "operating_income"),
         "ebitda": ("ebitda",),
-        "net_income": ("net_income", "profit"),
+        "net_income": ("net_income_parent", "net_income", "profit"),
         "cash": ("cash", "cash_and_equivalents"),
         "debt": ("debt", "total_debt", "short_term_debt", "long_term_debt"),
         "diluted_shares": ("diluted_shares", "weighted_average_diluted_shares"),
         "basic_shares": ("basic_shares", "weighted_average_basic_shares"),
-        "capex": ("capital_expenditures", "capex", "net_capex"),
+        "capex": ("capital_expenditures", "capex"),
         "depreciation": ("depreciation_and_amortization", "da", "depreciation"),
         "change_in_nwc": ("change_in_working_capital", "nwc_change", "change_in_nwc"),
         "acquisitions": ("acquisitions", "business_acquisitions"),

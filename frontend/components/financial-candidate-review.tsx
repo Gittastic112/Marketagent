@@ -123,7 +123,7 @@ export function FinancialCandidateReview({
         {error ? <p className="text-sm text-red-700" role="alert">{error}</p> : null}
         {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
         <p className="text-sm text-gray-500">
-          No extracted candidates yet. Add or select a filing, then run extraction.
+          No candidates awaiting review. Add or select a filing to extract more source entries.
         </p>
       </div>
     );

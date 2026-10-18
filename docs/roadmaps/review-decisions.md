@@ -1,6 +1,6 @@
 # Research/demo decision log
 
-Updated October 17, 2026. This is the readable index for the
+Updated October 18, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
 owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
@@ -45,6 +45,15 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 |---|---|---|
 | M05-US-BENCHMARK-INTAKE-20261017 | Load the six retained US benchmark workbooks dated January 5, 2026. The normal database had no dataset versions; source mirrors match the audited immutable originals | Added six active versions, 1,131 typed rows and six successful Processing Runs. Changed seven benchmark/audit tables; the other 102 tables are unchanged. Twenty-seven selected values match workbook cells |
 | M05-AAPL-04B | Use Computers/Peripherals and the two software categories as separate labeled comparisons. Retain the FY2025 Products/Services revenue split as context; do not adopt a unique services allocation or apply industry averages as company forecasts | Products USD307.003bn and Services USD109.158bn reconcile to USD416.161bn. Company mapping, forecasts and saved valuations remain unchanged. A final weighted mapping still needs sound business and ratio-aggregation evidence |
+| M05-HDFCBANK-05 | Accept 64 selected consolidated FY2024/FY2025 entries on their historical pre-bonus basis. Separate official audited results corroborate the annual PDF's missing currency glyph | Report retained as document 10/asset 1. Corrected 52 monetary units to INR crores and four EPS units to INR/share; eight existing share/EPS units retained. Eighteen statement/EPS checks pass; Processing Runs 97/98 succeed |
+| M05-HDFCBANK-06 | Promote the reviewed entries with exact March 31 period ends. Preserve bank accounting labels and keep the unverified publication date unknown | Two annual periods, 60 distinct reported facts, 64 source revisions and eight normalized values. Run 99 succeeds; 101 other tables and unrelated rows within changed tables remain unchanged. Ingestion time is retained |
+| M05-HDFCBANK-07 | Correct only four identical EPS projections just created by the first promotion, where statement and note occurrences were inserted twice | First projections retained; all source candidates/revisions preserved. Exact removed row IDs, values and timestamps are retained in the receipt and Run 99. Original source-history metadata is not rewritten |
+| M05-NORMALIZATION-20261017 | Require actual, compatible inputs for derived financial figures. Keep missing values distinct from zero; require reported tax/net borrowing and distinguish gross/net capex | Pure calculation helper and regression checks replace implicit defaults. Repeated identical candidates produce one period fact, conflicts block promotion, and new source occurrences get sequential revisions. Other companies and saved valuations are not recalculated |
+
+The [HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
+owns the source, calculation, rollout and browser proof. These are delegated agent
+decisions, not independent human certification. The selected historical basis does
+not approve a current bank valuation or a bonus-adjusted share/EPS series.
 
 The source categories are **Computers/Peripherals**, **Software (Internet)** and
 **Software (System & Application)**. The service activities do not establish a
@@ -69,7 +78,9 @@ current market observations. The knowledge-base audit passes for all 64 original
 Validation used the existing database and runtime libraries; no fixture dataset
 was created and protected environment files were excluded. Fresh browser validation
 was unavailable because browser automation failed to initialize; the intake proof
-is at the database level.
+is at the database level. The subsequent HDFC browser checks use the existing normal
+data and the repository's Docker Playwright runner; they do not retroactively add
+browser proof for that benchmark-intake step.
 
 ## Continuing work
 

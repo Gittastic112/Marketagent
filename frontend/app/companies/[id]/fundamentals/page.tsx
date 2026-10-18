@@ -100,7 +100,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             {coverage ? (
               <p className="mt-1 text-sm text-gray-600">
                 {coverage.normalized_period_count} of {coverage.period_count} periods normalized ({coverage.coverage_percent}%).
-                {" "}{coverage.trust_ready_period_count} periods are ready for valuation use.
+                {" "}{coverage.trust_ready_period_count} periods pass normalization and currency checks.
+                {" "}Complete valuation inputs still need review.
               </p>
             ) : (
               <p className="mt-1 text-sm text-red-700">
@@ -119,7 +120,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           ) : null}
         </div>
         {coverage && coverage.status !== "complete" && coverage.status !== "no_data" ? (
-          <div className="mt-4 overflow-x-auto" tabIndex={0}>
+          <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial normalization coverage" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -153,11 +154,11 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         {reconciliation ? (
           <>
             <p className="mt-1 text-sm text-gray-600">
-              {reconciliation.exact_count} exact matches, {reconciliation.mismatch_count} mismatches, and{" "}
+              Among comparable normalized metrics: {reconciliation.exact_count} exact matches, {reconciliation.mismatch_count} mismatches, and{" "}
               {reconciliation.missing_normalized_count + reconciliation.normalized_only_count} coverage gaps.
             </p>
             {reconciliationIssues.length > 0 ? (
-              <div className="mt-4 overflow-x-auto">
+              <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial source reconciliation details" tabIndex={0}>
                 <table className="min-w-full divide-y divide-gray-200 text-sm">
                   <thead>
                     <tr className="text-left text-gray-600">
@@ -234,7 +235,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           ) : null}
         </div>
         {identityReport && identityReport.periods.length > 0 ? (
-          <div className="mt-4 overflow-x-auto" tabIndex={0}>
+          <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial statement identity checks" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -289,7 +290,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           )}
 
           <div className="mt-4 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Financial periods" tabIndex={0}>
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                 {!hasUsableData(periodsRes) ? <ErrorState message="Financial periods could not be loaded. Reload to retry." /> : periods.length === 0 ? (
                   <p className="text-sm text-gray-500">No financial periods found. (API ingestion needed)</p>
@@ -373,12 +374,12 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
 
       <div className="bg-white shadow sm:rounded-lg overflow-hidden">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-base font-semibold leading-6 text-gray-900">Valuation-Ready Normalized Metrics</h3>
+          <h3 className="text-base font-semibold leading-6 text-gray-900">Normalized Metrics</h3>
           <p className="text-sm text-gray-500">
-            Metrics mapped to Damodaran's standard framework for DCF input.
+            Check coverage and missing inputs before using these figures in a valuation.
           </p>
           <div className="mt-4 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Normalized financial metrics" tabIndex={0}>
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                 {!hasUsableData(normalizedSnapshotsRes) ? <ErrorState message="Normalized metrics could not be loaded. Reload to retry." /> : normalizedSnapshots.length === 0 ? (
                   <p className="text-sm text-gray-500">No normalized snapshots found. Click "Normalize" on a period above.</p>

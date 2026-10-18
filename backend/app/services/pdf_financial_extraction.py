@@ -2,7 +2,7 @@ import hashlib
 import math
 import re
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from io import BytesIO
 from pathlib import PurePath
 from typing import Any
@@ -383,7 +383,7 @@ def ingest_pdf_financials(
         document_type=document_type,
         title=(title or upload.filename).strip()[:500] or upload.filename,
         url=source_url,
-        published_at=published_at or datetime.now(UTC),
+        published_at=published_at,
         raw_text=parsed.raw_text,
         raw_payload_json={
             "source_kind": "pdf_filing_upload",
@@ -396,6 +396,7 @@ def ingest_pdf_financials(
             "reporting_currency": parsed.reporting_currency,
             "reporting_scale": parsed.reporting_scale,
             "source_url": source_url,
+            "publication_date_basis": "provided" if published_at is not None else "unknown",
             "extraction_scope": "targeted_pages" if len(parsed.scanned_pages) < parsed.page_count else "full_document",
             "scanned_pages": list(parsed.scanned_pages),
             "warnings": list(parsed.warnings),

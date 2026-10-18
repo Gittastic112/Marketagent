@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
 import { backendData, createCompany, expandDraftSections, signIn } from "./helpers";
 import type { NormalizedSnapshotRead } from "../lib/api/financials";
@@ -66,9 +67,25 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await expect(page.getByRole("heading", { name: "Review Required" })).toHaveCount(0);
   await page.getByRole("button", { name: "Promote Reviewed Candidates" }).click();
   await expect(candidateReview.getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
-  await expect(candidateReview.getByText("No extracted candidates yet")).toBeVisible();
+  await expect(candidateReview.getByText("No candidates awaiting review", { exact: false })).toBeVisible();
   await expect(page.getByRole("region", { name: "Normalization Coverage" })).toContainText("2 of 2 periods normalized");
   await expect(page.getByRole("region", { name: "Source Reconciliation" })).toContainText(/exact matches, 0 mismatches/);
+
+  await page.setViewportSize({width:390,height:844});
+  const normalizedRegion = page.getByRole("region", {name:"Normalized financial metrics",exact:true});
+  await normalizedRegion.scrollIntoViewIfNeeded();
+  for (let attempt = 0; attempt < 80; attempt++) {
+    if (await normalizedRegion.evaluate(element => element === document.activeElement)) break;
+    await page.keyboard.press("Tab");
+  }
+  await expect(normalizedRegion).toBeFocused();
+  expect(await normalizedRegion.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => normalizedRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const accessibility = await new AxeBuilder({page})
+    .withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]).analyze();
+  expect(accessibility.violations).toEqual([]);
+  await page.setViewportSize({width:1440,height:1000});
 
   const coverage = await backendData<{
     status: string;

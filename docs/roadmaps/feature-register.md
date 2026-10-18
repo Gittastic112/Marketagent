@@ -1,6 +1,6 @@
 # Feature Register
 
-**Source and runtime status reconciled:** 2026-10-17. Validation dates are in Current State.
+**Source and runtime status reconciled:** 2026-10-18. Validation dates are in Current State.
 
 First release: local research/demo using existing data, explicitly chosen October
 17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
@@ -21,9 +21,9 @@ Status meanings:
 | SEC filing ingestion | Built | Requires SEC identity/configuration. Filing discovery remains manual; annual companyfacts also run through the opt-in valuation source worker |
 | RSS ingestion | Built | Feed quality and scheduling remain limited |
 | Official India PDF upload | Built, manual | Identity-bound official guidance covers the five scoped NSE issuers, with checked date and required reports. Upload/excerpt/page/currency/scale review remains manual; source selection is not financial approval |
-| Financial extraction candidates | Built, coverage limited | PDF v5 handles observed font-backed EPS and geometrically verified sidebar numbers while retaining warnings and source text. Selected official-report comparisons pass with pending HDFC unit proposals; full statements/notes and human review remain open |
+| Financial extraction candidates | Built, coverage limited | PDF v5 handles verified EPS/sidebar layouts and retains source warnings. Delegated HDFC review resolves 56 selected unit gaps and promotes its narrow historical basis. Repeated identical occurrences share one period fact; conflicts block promotion. Full statements/notes and independent certification remain open |
 | Local text-extraction evaluation | Built, limited scope | Owned persisted runs compare stored text against independently reviewed reference rows, retaining hashes, precision/recall and separate numeric/unit/period/locator results. Missing units fail; no PDF/XBRL/AI or forecast certification is implied |
-| Financial normalization/reconciliation | Built | AAPL and APSEZ are certified; broader issuer/layout coverage partial |
+| Financial normalization/reconciliation | Built, coverage limited | Pure calculations preserve missing versus zero and require compatible inputs. Selected HDFC periods retain four supported normalized fields each. Snapshot/currency checks do not certify complete valuation inputs; historical AAPL/APSEZ proof is separately dated |
 | Exact PDF/text evidence | Built | Historical records can have coarse fallback |
 | Events, scoring, and alerts | Built | Extraction remains primarily rule-based |
 | Thesis notes and evidence ledger | Built | Contradiction workflow partial |

@@ -249,7 +249,7 @@ Owners: extraction, normalization, source certification; [Knull W2](../../Knull%
 
 October 17 [parser and review follow-up](../archive/checkpoints/2026/release-readiness-2026-10-17.md)
 recovers the eight selected Airtel/SBI entries previously skipped. All selected
-references now have candidates; HDFC unit proposals remain pending. The ten-company
+references now have candidates. The ten-company
 packets and accounting-note topics retain exact sources and blank human decisions.
 Selected numeric agreement is not independent reviewed-reference certification.
 The user approved M05-AAPL-01 (two FY2023 cash figures/separate definitions),
@@ -263,9 +263,14 @@ Remaining review choices are delegated and logged. M05-AAPL-04B selects separate
 industry comparisons while a final services allocation and appropriate ratio
 weights remain evidence work. Six audited January 2026 US versions were imported
 into the existing database: 1,131 typed rows, six successful runs and 27 selected
-cell checks; 102 other tables unchanged. Valuation bridges, remaining company
-reconciliation, broader notes and normalization remain open. No normal financial
-candidate promotion or new acceptance points. Mac settings/backups remain deferred.
+cell checks; 102 other tables unchanged. The [October 18 HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
+resolves all 56 selected unit gaps and applies 64 reviewed source entries to two
+March 31 periods, yielding 60 distinct reported facts and eight supported normalized
+metrics. Source locators/revisions remain; four duplicate projections created by
+the first promotion were corrected with a retained receipt. Missing inputs remain
+unavailable. Broader company reconciliation, notes, valuation bridges and mappings
+remain open. This partial M05-03/04 evidence earns no new acceptance points.
+Mac settings/backups remain deferred.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record

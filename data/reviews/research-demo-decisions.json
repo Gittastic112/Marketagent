@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-18T02:03:03.996577+00:00",
+  "updated_at": "2026-10-18T15:00:33.520802+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -744,6 +744,2997 @@
       "normal_company_mapping_changed": false,
       "normal_benchmark_records_changed": true,
       "normal_financial_records_changed": false
+    },
+    {
+      "decision_id": "M05-HDFCBANK-05",
+      "reviewed_at": "2026-10-18T02:51:45.173483+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "applied",
+      "receipt_path": "output/milestones/m05/delegated-review-20261017/hdfc-as-reported-decision.json",
+      "receipt_sha256": "21ffd8b7edf16ef465a3ff307563191726c78d82ab350f9c7b64fc7146523517",
+      "receipt": {
+        "id": "M05-HDFCBANK-05",
+        "reviewed_at": "2026-10-18T02:51:45.173483+00:00",
+        "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+        "reviewer": "codex_under_user_delegation",
+        "review_type": "agent_review_under_user_delegation",
+        "claim_type": "Source Summary",
+        "status": "approved_as_reported_source_scope",
+        "scope": "64 selected consolidated FY2024/FY2025 report entries on physical PDF pages 441, 442 and 515; 56 missing units resolved from separate official audited results. Historical pre-August-2025-bonus basis only.",
+        "decision": "Accept the selected reported values and their exact accounting labels; correct 52 monetary units to INR crores and four EPS units to INR/share. Retain the eight existing share/EPS note units. Add the retained report to the existing normal database and apply version-checked candidate review. Do not promote or normalize these candidates into a valuation basis in this step.",
+        "rationale": [
+          "Original report values and column dates were visually checked on the three exact pages, and the separate official consolidated results pages 9 and 11 visibly label INR crore and INR per share.",
+          "The original FY2025 annual report has an unembedded currency font. The parser correctly leaves unknown units unresolved; this is a source-specific review correction, not a parser-wide currency guess.",
+          "Both years satisfy all seven exact statement identities; all four EPS calculations agree with attributed profit and weighted shares within half of the displayed INR 0.01 precision.",
+          "The annual statement provisions line includes tax expense; its presentation differs from the results statement, which separates tax. Neither is a pure credit-loss number.",
+          "Deposits, borrowings, policyholder funds, minority interests and employee awards retain separate reported labels. Neither cash/RBI balances nor bank funding is automatically an operating-company FCFF equity-bridge input."
+        ],
+        "sources": [
+          {
+            "path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2025.pdf",
+            "sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+            "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf",
+            "physical_pages": [
+              441,
+              442,
+              515
+            ],
+            "printed_pages": [
+              446,
+              447,
+              520
+            ]
+          },
+          {
+            "path": "output/milestones/m05/review-batches-20261014-coverage/acquisition/originals/HDFCBANK-2025-results.pdf",
+            "sha256": "6c5f091ab14a7d3b97114fe2d59a6a148722e9e67cf43d34cabe10181954cbd7",
+            "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/financial-results/2024-2025/quarter-4/financial-results-for-the-quarter-and-year-ended-March-31-2025.pdf",
+            "physical_pages": [
+              9,
+              11
+            ]
+          }
+        ],
+        "comparison": {
+          "path": "output/milestones/m05/review-batches-20261017/parser-previews/comparison.json",
+          "sha256": "002bd21510485f4289560d71ba05bb7ea10cc4c4f4d1e10810742892cf830697"
+        },
+        "visual_checks": {
+          "reviewer_type": "agent",
+          "annual_pages": [
+            441,
+            442,
+            515
+          ],
+          "supplement_pages": [
+            9,
+            11
+          ],
+          "fresh_annual_renders": true
+        },
+        "reconciliations": [
+          {
+            "year": 2024,
+            "check": "assets",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "liabilities_and_capital",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "balance",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "income",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "expenses",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "profit",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "attributable_profit",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "basic_eps_rounding",
+            "difference": "0.00170943304210279296930216",
+            "tolerance": "0.005 INR/share",
+            "passed": true
+          },
+          {
+            "year": 2024,
+            "check": "diluted_eps_rounding",
+            "difference": "-0.00049963538250708421127328",
+            "tolerance": "0.005 INR/share",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "assets",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "liabilities_and_capital",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "balance",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "income",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "expenses",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "profit",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "attributable_profit",
+            "difference": "0.00",
+            "tolerance": "0",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "basic_eps_rounding",
+            "difference": "-0.00170233191875818531304227",
+            "tolerance": "0.005 INR/share",
+            "passed": true
+          },
+          {
+            "year": 2025,
+            "check": "diluted_eps_rounding",
+            "difference": "0.00431206893890326324512321",
+            "tolerance": "0.005 INR/share",
+            "passed": true
+          }
+        ],
+        "approved_rows": [
+          {
+            "candidate": {
+              "metric_code": "advances",
+              "reported_label": "Advances",
+              "value": 2571916.65,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Advances 9 2,724,938.16 2,571,916.65",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Advances",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L21:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 21,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L21:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 332.238,
+                  "x1": 540.78,
+                  "bottom": 340.23810000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l23:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "balances_with_banks",
+              "reported_label": "Balances with banks",
+              "value": 50115.84,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Balances with banks and money at call and short notice 7 105,557.65 50,115.84",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Balances with banks and money at call and short notice",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L19:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 19,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L19:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 302.672,
+                  "x1": 540.779,
+                  "bottom": 310.67220000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l21:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "borrowings",
+              "reported_label": "Borrowings",
+              "value": 730615.46,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Borrowings 4 634,605.57 730,615.46",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Borrowings",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L13:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 13,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L13:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 197.764,
+                  "x1": 540.779,
+                  "bottom": 205.76409999999998
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l15:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "cash_and_balances_with_rbi",
+              "reported_label": "Cash and balances with Reserve Bank of India",
+              "value": 178718.67,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Cash and balances with Reserve Bank of India 6 144,390.25 178,718.67",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Cash and balances with Reserve Bank of India",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L18:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 18,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L18:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0236,
+                  "top": 287.889,
+                  "x1": 540.779,
+                  "bottom": 295.889
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l20:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "deposits",
+              "reported_label": "Deposits",
+              "value": 2376887.28,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Deposits 3 2,710,898.23 2,376,887.28",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Deposits",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L12:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 12,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L12:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 182.98090000000002,
+                  "x1": 540.78,
+                  "bottom": 190.98109999999997
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l14:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "employee_awards",
+              "reported_label": "Employee awards",
+              "value": 2652.72,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Employees stock options outstanding 18 (5) 3,805.19 2,652.72",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Employees stock options outstanding",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L9:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 9,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L9:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02370000000002,
+                  "top": 138.63300000000004,
+                  "x1": 540.779,
+                  "bottom": 146.6332
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l11:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "fixed_assets",
+              "reported_label": "Fixed assets",
+              "value": 12603.76,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Fixed assets 10 15,257.94 12,603.76",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Fixed assets",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L22:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 22,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L22:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 347.021,
+                  "x1": 540.779,
+                  "bottom": 355.0212
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l24:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "investments",
+              "reported_label": "Investments",
+              "value": 1005681.63,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Investments 8 1,186,472.89 1,005,681.63",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Investments",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L20:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 20,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L20:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 317.4549,
+                  "x1": 540.78,
+                  "bottom": 325.45520000000005
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l22:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "minority_interests",
+              "reported_label": "Minority interests",
+              "value": 13383.4,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Minority interest 2A 16,359.04 13,383.40",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Minority interest",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L11:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 11,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L11:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 168.1975,
+                  "x1": 540.779,
+                  "bottom": 176.1979
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l13:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_assets",
+              "reported_label": "Other assets",
+              "value": 211157.71,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Other assets 11 215,800.53 211,157.71",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Other assets",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L23:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 23,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L23:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 361.8039,
+                  "x1": 540.779,
+                  "bottom": 369.80420000000004
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l25:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_liabilities_provisions",
+              "reported_label": "Other liabilities provisions",
+              "value": 174832.07,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Other liabilities and provisions 5 188,163.66 174,832.07",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Other liabilities and provisions",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L14:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 14,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L14:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 212.54690000000005,
+                  "x1": 540.779,
+                  "bottom": 220.54719999999998
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l16:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "policyholder_funds",
+              "reported_label": "Policyholder funds",
+              "value": 278080.8,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Policyholders' funds 320,601.53 278,080.80",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Policyholders' funds",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L15:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 15,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L15:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 227.3299,
+                  "x1": 540.779,
+                  "bottom": 235.33010000000007
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l17:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "reserves_surplus",
+              "reported_label": "Reserves surplus",
+              "value": 452982.84,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Reserves and surplus 2 517,218.98 452,982.84",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Reserves and surplus",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L10:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 10,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L10:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 153.41589999999997,
+                  "x1": 540.779,
+                  "bottom": 161.4162
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l12:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "share_capital",
+              "reported_label": "Share capital",
+              "value": 759.69,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Capital 1 765.22 759.69",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Capital",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L8:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 8,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L8:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0236,
+                  "top": 123.85000000000002,
+                  "x1": 540.7789,
+                  "bottom": 131.85000000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l9:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_assets",
+              "reported_label": "Total assets",
+              "value": 4030194.26,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Total 4,392,417.42 4,030,194.26",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Total",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L24:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 24,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L24:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 376.52299999999997,
+                  "x1": 540.78,
+                  "bottom": 384.5231
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l26:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_liabilities_equity",
+              "reported_label": "Total liabilities equity",
+              "value": 4030194.26,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Total 4,392,417.42 4,030,194.26",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Total",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P441:L16:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 16,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P441:L16:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 242.0489,
+                  "x1": 540.78,
+                  "bottom": 250.0491
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l18:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "advances",
+              "reported_label": "Advances",
+              "value": 2724938.16,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Advances 9 2,724,938.16 2,571,916.65",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Advances",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L21:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 21,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L21:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 332.238,
+                  "x1": 540.78,
+                  "bottom": 340.23810000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l23:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "balances_with_banks",
+              "reported_label": "Balances with banks",
+              "value": 105557.65,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Balances with banks and money at call and short notice 7 105,557.65 50,115.84",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Balances with banks and money at call and short notice",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L19:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 19,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L19:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 302.672,
+                  "x1": 540.779,
+                  "bottom": 310.67220000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l21:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "borrowings",
+              "reported_label": "Borrowings",
+              "value": 634605.57,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Borrowings 4 634,605.57 730,615.46",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Borrowings",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L13:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 13,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L13:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 197.764,
+                  "x1": 540.779,
+                  "bottom": 205.76409999999998
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l15:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "cash_and_balances_with_rbi",
+              "reported_label": "Cash and balances with Reserve Bank of India",
+              "value": 144390.25,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Cash and balances with Reserve Bank of India 6 144,390.25 178,718.67",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Cash and balances with Reserve Bank of India",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L18:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 18,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L18:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0236,
+                  "top": 287.889,
+                  "x1": 540.779,
+                  "bottom": 295.889
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l20:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "deposits",
+              "reported_label": "Deposits",
+              "value": 2710898.23,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Deposits 3 2,710,898.23 2,376,887.28",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Deposits",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L12:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 12,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L12:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 182.98090000000002,
+                  "x1": 540.78,
+                  "bottom": 190.98109999999997
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l14:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "employee_awards",
+              "reported_label": "Employee awards",
+              "value": 3805.19,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Employees stock options outstanding 18 (5) 3,805.19 2,652.72",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Employees stock options outstanding",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L9:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 9,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L9:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02370000000002,
+                  "top": 138.63300000000004,
+                  "x1": 540.779,
+                  "bottom": 146.6332
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l11:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "fixed_assets",
+              "reported_label": "Fixed assets",
+              "value": 15257.94,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Fixed assets 10 15,257.94 12,603.76",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Fixed assets",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L22:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 22,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L22:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.024,
+                  "top": 347.021,
+                  "x1": 540.779,
+                  "bottom": 355.0212
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l24:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "investments",
+              "reported_label": "Investments",
+              "value": 1186472.89,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Investments 8 1,186,472.89 1,005,681.63",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Investments",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L20:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 20,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L20:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 317.4549,
+                  "x1": 540.78,
+                  "bottom": 325.45520000000005
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l22:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "minority_interests",
+              "reported_label": "Minority interests",
+              "value": 16359.04,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Minority interest 2A 16,359.04 13,383.40",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Minority interest",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L11:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 11,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L11:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 168.1975,
+                  "x1": 540.779,
+                  "bottom": 176.1979
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l13:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_assets",
+              "reported_label": "Other assets",
+              "value": 215800.53,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Other assets 11 215,800.53 211,157.71",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Other assets",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L23:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 23,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L23:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 361.8039,
+                  "x1": 540.779,
+                  "bottom": 369.80420000000004
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l25:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_liabilities_provisions",
+              "reported_label": "Other liabilities provisions",
+              "value": 188163.66,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Other liabilities and provisions 5 188,163.66 174,832.07",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Other liabilities and provisions",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L14:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 14,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L14:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 212.54690000000005,
+                  "x1": 540.779,
+                  "bottom": 220.54719999999998
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l16:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "policyholder_funds",
+              "reported_label": "Policyholder funds",
+              "value": 320601.53,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Policyholders' funds 320,601.53 278,080.80",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Policyholders' funds",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L15:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 15,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L15:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 227.3299,
+                  "x1": 540.779,
+                  "bottom": 235.33010000000007
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l17:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "reserves_surplus",
+              "reported_label": "Reserves surplus",
+              "value": 517218.98,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Reserves and surplus 2 517,218.98 452,982.84",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Reserves and surplus",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L10:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 10,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L10:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.023799999999994,
+                  "top": 153.41589999999997,
+                  "x1": 540.779,
+                  "bottom": 161.4162
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l12:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "share_capital",
+              "reported_label": "Share capital",
+              "value": 765.22,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Capital 1 765.22 759.69",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Capital",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L8:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 8,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L8:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0236,
+                  "top": 123.85000000000002,
+                  "x1": 540.7789,
+                  "bottom": 131.85000000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l9:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_assets",
+              "reported_label": "Total assets",
+              "value": 4392417.42,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Total 4,392,417.42 4,030,194.26",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Total",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L24:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 24,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L24:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 376.52299999999997,
+                  "x1": 540.78,
+                  "bottom": 384.5231
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l26:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_liabilities_equity",
+              "reported_label": "Total liabilities equity",
+              "value": 4392417.42,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Total 4,392,417.42 4,030,194.26",
+              "source_page": 441,
+              "source_section": "CONSOLIDATED Balance SHEET",
+              "source_table_name": "CONSOLIDATED Balance SHEET",
+              "source_row_label": "Total",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P441:L16:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 441,
+                "line": 16,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P441:L16:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02380000000005,
+                  "top": 242.0489,
+                  "x1": 540.78,
+                  "bottom": 250.0491
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p441:l18:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_eps",
+              "reported_label": "Basic eps",
+              "value": 90.42,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Basic 92.81 90.42",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Basic",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L35:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 35,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L35:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02350000000001,
+                  "top": 405.91159999999996,
+                  "x1": 539.362,
+                  "bottom": 413.9119
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p442:l37:basic_eps:2024",
+            "approved_unit": "INR/share",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_eps",
+              "reported_label": "Diluted eps",
+              "value": 90.01,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Diluted 92.39 90.01",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Diluted",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L36:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 36,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L36:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999993,
+                  "top": 416.443,
+                  "x1": 539.362,
+                  "bottom": 424.4431
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l38:2024",
+            "approved_unit": "INR/share",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "group_profit",
+              "reported_label": "Group profit",
+              "value": 65446.5,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Consolidated Net Profit for the year before Minority Interest 73,440.17 65,446.50",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Consolidated Net Profit for the year before Minority Interest",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L17:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 17,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L17:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 213.813,
+                  "x1": 539.362,
+                  "bottom": 221.813
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l19:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "interest_earned",
+              "reported_label": "Interest earned",
+              "value": 283649.02,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Interest earned 13 336,367.43 283,649.02",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Interest earned",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L8:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 8,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L8:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 117.60590000000002,
+                  "x1": 539.362,
+                  "bottom": 125.60590000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l10:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "interest_expended",
+              "reported_label": "Interest expended",
+              "value": 154138.55,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Interest expended 15 183,894.20 154,138.55",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Interest expended",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L12:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 12,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L12:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 160.44399999999996,
+                  "x1": 539.362,
+                  "bottom": 168.44399999999996
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l14:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "net_income_nci",
+              "reported_label": "Net income attributable to NCI",
+              "value": 1384.46,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Less : Minority Interest 2,647.92 1,384.46",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Less : Minority Interest",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L18:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 18,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L18:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 224.34260000000006,
+                  "x1": 539.362,
+                  "bottom": 232.3429
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l20:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "net_income_parent",
+              "reported_label": "Net income parent",
+              "value": 64062.04,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Consolidated Net Profit for the year attributable to the group 70,792.25 64,062.04",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Consolidated Net Profit for the year attributable to the group",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L19:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 19,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L19:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 234.81009999999998,
+                  "x1": 539.362,
+                  "bottom": 242.8739
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l21:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "operating_expenses",
+              "reported_label": "Operating expenses",
+              "value": 152269.34,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Operating expenses 16 176,605.07 152,269.34",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Operating expenses",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L13:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 13,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L13:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 170.97500000000002,
+                  "x1": 539.362,
+                  "bottom": 178.97519999999997
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l15:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_income",
+              "reported_label": "Other income",
+              "value": 124345.75,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Other income 14 134,548.50 124,345.75",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Other income",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L9:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 9,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L9:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 128.13689999999997,
+                  "x1": 539.362,
+                  "bottom": 136.13710000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l11:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "provisions_contingencies",
+              "reported_label": "Provisions contingencies",
+              "value": 36140.38,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Provisions and contingencies 18 (10) 36,976.49 36,140.38",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Provisions and contingencies",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L14:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 14,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L14:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 181.50599999999997,
+                  "x1": 539.362,
+                  "bottom": 189.50620000000004
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l16:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_expenses",
+              "reported_label": "Total expenses",
+              "value": 342548.27,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Total 397,475.76 342,548.27",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Total",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L15:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 15,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L15:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 191.97300000000007,
+                  "x1": 539.362,
+                  "bottom": 199.97320000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l17:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_income",
+              "reported_label": "Total income",
+              "value": 407994.77,
+              "unit": null,
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Total 470,915.93 407,994.77",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Total",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P442:L10:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 10,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P442:L10:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 138.60400000000004,
+                  "x1": 540.78,
+                  "bottom": 146.60410000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l12:2024",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_eps",
+              "reported_label": "Basic eps",
+              "value": 92.81,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Basic 92.81 90.42",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Basic",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L35:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 35,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L35:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02350000000001,
+                  "top": 405.91159999999996,
+                  "x1": 539.362,
+                  "bottom": 413.9119
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p442:l37:basic_eps:2025",
+            "approved_unit": "INR/share",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_eps",
+              "reported_label": "Diluted eps",
+              "value": 92.39,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Diluted 92.39 90.01",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Diluted",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L36:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 36,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L36:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999993,
+                  "top": 416.443,
+                  "x1": 539.362,
+                  "bottom": 424.4431
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l38:2025",
+            "approved_unit": "INR/share",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "group_profit",
+              "reported_label": "Group profit",
+              "value": 73440.17,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Consolidated Net Profit for the year before Minority Interest 73,440.17 65,446.50",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Consolidated Net Profit for the year before Minority Interest",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L17:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 17,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L17:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 213.813,
+                  "x1": 539.362,
+                  "bottom": 221.813
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing;accounting_scope_requires_review",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l19:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "interest_earned",
+              "reported_label": "Interest earned",
+              "value": 336367.43,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Interest earned 13 336,367.43 283,649.02",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Interest earned",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L8:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 8,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L8:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 117.60590000000002,
+                  "x1": 539.362,
+                  "bottom": 125.60590000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l10:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "interest_expended",
+              "reported_label": "Interest expended",
+              "value": 183894.2,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Interest expended 15 183,894.20 154,138.55",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Interest expended",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L12:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 12,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L12:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.0237,
+                  "top": 160.44399999999996,
+                  "x1": 539.362,
+                  "bottom": 168.44399999999996
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l14:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "net_income_nci",
+              "reported_label": "Net income attributable to NCI",
+              "value": 2647.92,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Less : Minority Interest 2,647.92 1,384.46",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Less : Minority Interest",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L18:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 18,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L18:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 224.34260000000006,
+                  "x1": 539.362,
+                  "bottom": 232.3429
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l20:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "net_income_parent",
+              "reported_label": "Net income parent",
+              "value": 70792.25,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Consolidated Net Profit for the year attributable to the group 70,792.25 64,062.04",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Consolidated Net Profit for the year attributable to the group",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L19:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 19,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L19:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 234.81009999999998,
+                  "x1": 539.362,
+                  "bottom": 242.8739
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l21:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "operating_expenses",
+              "reported_label": "Operating expenses",
+              "value": 176605.07,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Operating expenses 16 176,605.07 152,269.34",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Operating expenses",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L13:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 13,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L13:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 170.97500000000002,
+                  "x1": 539.362,
+                  "bottom": 178.97519999999997
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l15:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "other_income",
+              "reported_label": "Other income",
+              "value": 134548.5,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Other income 14 134,548.50 124,345.75",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Other income",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L9:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 9,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L9:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 128.13689999999997,
+                  "x1": 539.362,
+                  "bottom": 136.13710000000003
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l11:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "provisions_contingencies",
+              "reported_label": "Provisions contingencies",
+              "value": 36976.49,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Provisions and contingencies 18 (10) 36,976.49 36,140.38",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Provisions and contingencies",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L14:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 14,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L14:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 181.50599999999997,
+                  "x1": 539.362,
+                  "bottom": 189.50620000000004
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l16:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_expenses",
+              "reported_label": "Total expenses",
+              "value": 397475.76,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Total 397,475.76 342,548.27",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Total",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L15:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 15,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L15:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 191.97300000000007,
+                  "x1": 539.362,
+                  "bottom": 199.97320000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l17:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "total_income",
+              "reported_label": "Total income",
+              "value": 470915.93,
+              "unit": null,
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Total 470,915.93 407,994.77",
+              "source_page": 442,
+              "source_section": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_table_name": "CONSOLIDATED PROFIT AND LOSS ACCOUNT",
+              "source_row_label": "Total",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P442:L10:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 442,
+                "line": 10,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P442:L10:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 53.02359999999999,
+                  "top": 138.60400000000004,
+                  "x1": 540.78,
+                  "bottom": 146.60410000000002
+                }
+              },
+              "extraction_warnings": "reporting_unit_missing",
+              "confidence_label": "medium"
+            },
+            "reference_id": "HDFCBANK-2025:p442:l12:2025",
+            "approved_unit": "INR crores",
+            "unit_correction_required": true,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_eps",
+              "reported_label": "Basic eps",
+              "value": 90.42,
+              "unit": "INR/share",
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Basic earnings per share (`) 92.81 90.42",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Basic earnings per share (`)",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P515:L14:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 14,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P515:L14:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 230.3979,
+                  "x1": 533.8579,
+                  "bottom": 238.51790000000005
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p515:l15:basic_eps:2024",
+            "approved_unit": "INR/share",
+            "unit_correction_required": false,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_shares",
+              "reported_label": "Basic shares",
+              "value": 7084807443.0,
+              "unit": "shares",
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Weighted average number of equity shares used in computing basic earnings per equity 7,62,77,93,180 7,08,48,07,443\nshare",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Weighted average number of equity shares used in computing basic earnings per equity share",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P515:L22:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 22,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P515:L22:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.8661,
+                  "top": 348.062,
+                  "x1": 533.8580000000001,
+                  "bottom": 365.66200000000003
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:p515:l23:2024",
+            "approved_unit": "shares",
+            "unit_correction_required": false,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_eps",
+              "reported_label": "Diluted eps",
+              "value": 90.01,
+              "unit": "INR/share",
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Diluted earnings per share (`) 92.39 90.01",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Diluted earnings per share (`)",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P515:L16:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 16,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P515:L16:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 258.8179,
+                  "x1": 533.8579,
+                  "bottom": 267.19
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p515:l17:diluted_eps:2024",
+            "approved_unit": "INR/share",
+            "unit_correction_required": false,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_shares",
+              "reported_label": "Diluted shares",
+              "value": 7117253150.0,
+              "unit": "shares",
+              "fiscal_year": 2024,
+              "period_type": "annual",
+              "source_text": "Weighted average number of equity shares used in computing diluted earnings per equity 7,66,19,70,571 7,11,72,53,150\nshare",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Weighted average number of equity shares used in computing diluted earnings per equity share",
+              "source_column_label": "FY2024",
+              "source_cell_reference": "P515:L24:Y2024",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 24,
+                "value_index": 2,
+                "fiscal_year": 2024,
+                "cell_reference": "P515:L24:Y2024",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 385.8419,
+                  "x1": 533.8580000000001,
+                  "bottom": 403.694
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:p515:l27:2024",
+            "approved_unit": "shares",
+            "unit_correction_required": false,
+            "approved_period_end": "2024-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_eps",
+              "reported_label": "Basic eps",
+              "value": 92.81,
+              "unit": "INR/share",
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Basic earnings per share (`) 92.81 90.42",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Basic earnings per share (`)",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P515:L14:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 14,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P515:L14:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 230.3979,
+                  "x1": 533.8579,
+                  "bottom": 238.51790000000005
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p515:l15:basic_eps:2025",
+            "approved_unit": "INR/share",
+            "unit_correction_required": false,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "basic_shares",
+              "reported_label": "Basic shares",
+              "value": 7627793180.0,
+              "unit": "shares",
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Weighted average number of equity shares used in computing basic earnings per equity 7,62,77,93,180 7,08,48,07,443\nshare",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Weighted average number of equity shares used in computing basic earnings per equity share",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P515:L22:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 22,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P515:L22:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.8661,
+                  "top": 348.062,
+                  "x1": 533.8580000000001,
+                  "bottom": 365.66200000000003
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:p515:l23:2025",
+            "approved_unit": "shares",
+            "unit_correction_required": false,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_eps",
+              "reported_label": "Diluted eps",
+              "value": 92.39,
+              "unit": "INR/share",
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Diluted earnings per share (`) 92.39 90.01",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Diluted earnings per share (`)",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P515:L16:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 16,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P515:L16:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 258.8179,
+                  "x1": 533.8579,
+                  "bottom": 267.19
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:supp:p515:l17:diluted_eps:2025",
+            "approved_unit": "INR/share",
+            "unit_correction_required": false,
+            "approved_period_end": "2025-03-31"
+          },
+          {
+            "candidate": {
+              "metric_code": "diluted_shares",
+              "reported_label": "Diluted shares",
+              "value": 7661970571.0,
+              "unit": "shares",
+              "fiscal_year": 2025,
+              "period_type": "annual",
+              "source_text": "Weighted average number of equity shares used in computing diluted earnings per equity 7,66,19,70,571 7,11,72,53,150\nshare",
+              "source_page": 515,
+              "source_section": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_table_name": "SCHEDULES TO THE CONSOLIDATED FINANCIAL STATEMENTS",
+              "source_row_label": "Weighted average number of equity shares used in computing diluted earnings per equity share",
+              "source_column_label": "FY2025",
+              "source_cell_reference": "P515:L24:Y2025",
+              "source_locator_json": {
+                "type": "pdf_text_row",
+                "page": 515,
+                "line": 24,
+                "value_index": 1,
+                "fiscal_year": 2025,
+                "cell_reference": "P515:L24:Y2025",
+                "coordinate_system": "pdfplumber_top_left_points",
+                "page_width": 594.0,
+                "page_height": 738.0,
+                "bounding_box": {
+                  "x0": 72.86599999999999,
+                  "top": 385.8419,
+                  "x1": 533.8580000000001,
+                  "bottom": 403.694
+                }
+              },
+              "extraction_warnings": null,
+              "confidence_label": "high"
+            },
+            "reference_id": "HDFCBANK-2025:p515:l27:2025",
+            "approved_unit": "shares",
+            "unit_correction_required": false,
+            "approved_period_end": "2025-03-31"
+          }
+        ],
+        "limitations": [
+          "This is agent review under delegated research/demo authority, not independent human reference certification.",
+          "Selected statement/note coverage is incomplete and does not approve all source-report claims.",
+          "These are as-reported historical amounts. Bonus-restated comparability, merger effects, bank regulatory capital, payouts and a final bank-equity model remain separate review work.",
+          "Candidate approval is separate from promotion. The PDF candidate locators currently omit an exact period-end field; generic promotion can default to December 31. March 31 must be preserved before promotion.",
+          "EPS appears on both the income statement and note page. Values agree; retain both source locations and prefer the detailed note for denominator provenance before promotion."
+        ],
+        "normal_application": {
+          "state": "authorized_pending_current_source_and_candidate_checks",
+          "company_id": 8,
+          "ticker": "HDFCBANK",
+          "promote": false,
+          "normalize": false
+        },
+        "milestone_acceptance_changed": false
+      },
+      "affected_records": {
+        "application_status": "applied",
+        "document_id": 10,
+        "asset_id": 1,
+        "processing_runs": [
+          97,
+          98
+        ],
+        "reviewed_candidates": 64,
+        "unit_corrections": 56
+      }
+    },
+    {
+      "decision_id": "M05-HDFCBANK-06",
+      "reviewed_at": "2026-10-18T03:17:58.605025+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "applied_and_verified",
+      "receipt_path": "output/milestones/m05/delegated-review-20261017/hdfc-promotion-decision.json",
+      "receipt_sha256": "66807260d0dd324be2a0d759b05eee3cabc8350f3058a7ded5ef415b19aa88b0",
+      "receipt": {
+        "id": "M05-HDFCBANK-06",
+        "reviewed_at": "2026-10-18T03:17:58.605025+00:00",
+        "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+        "reviewer": "codex_under_user_delegation",
+        "review_type": "agent_review_under_user_delegation",
+        "claim_type": "Source Summary",
+        "status": "approved_for_historical_source_promotion",
+        "prior_decision": {
+          "id": "M05-HDFCBANK-05",
+          "sha256": "21ffd8b7edf16ef465a3ff307563191726c78d82ab350f9c7b64fc7146523517"
+        },
+        "scope": "Only the existing 64 reviewed HDFC FY2024/FY2025 consolidated pre-bonus source entries; no valuation model or forecasts.",
+        "decision": "Create exact March 31 annual periods, promote the reviewed candidates through the current version-checked UI, retain immutable fact revisions, and normalize only supported reported values. Correct the intake timestamp incorrectly stored as publication time to unknown while retaining ingested_at.",
+        "rationale": [
+          "Official pages state March 31; the parser did not retain an exact period-end locator, so the existing explicit period API is required to avoid a December 31 fallback.",
+          "Duplicate EPS occurrences agree and remain individually traceable, while period facts have one value per metric.",
+          "Parent-attributable earnings, basic/diluted weighted shares and minority interests are supported; missing bank cash-flow, tax and return inputs must not become invented zeros or a 25% tax rate.",
+          "The report signature date is not verified publication time, and intake time is not publication time."
+        ],
+        "source_sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+        "sources": [
+          {
+            "path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2025.pdf",
+            "sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+            "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf",
+            "physical_pages": [
+              441,
+              442,
+              515
+            ],
+            "printed_pages": [
+              446,
+              447,
+              520
+            ]
+          },
+          {
+            "path": "output/milestones/m05/review-batches-20261014-coverage/acquisition/originals/HDFCBANK-2025-results.pdf",
+            "sha256": "6c5f091ab14a7d3b97114fe2d59a6a148722e9e67cf43d34cabe10181954cbd7",
+            "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/financial-results/2024-2025/quarter-4/financial-results-for-the-quarter-and-year-ended-March-31-2025.pdf",
+            "physical_pages": [
+              9,
+              11
+            ]
+          }
+        ],
+        "period_ends": [
+          "2024-03-31",
+          "2025-03-31"
+        ],
+        "expected_candidate_count": 64,
+        "expected_unique_period_metrics": 60,
+        "expected_normalized_codes": [
+          "basic_shares",
+          "diluted_shares",
+          "minority_interests",
+          "net_income"
+        ],
+        "normalization_basis": "Reported historical source facts only; missing inputs unavailable, matching units, explicit zero preserved, FCFE requires net borrowing, net capex is not reduced twice.",
+        "review_basis": "18 recorded statement/EPS checks plus exact stored candidate, value, unit and PDF-hash verification.",
+        "remaining_uncertainty": [
+          "No independent human certification.",
+          "Selected statements and note excerpts do not certify whole-company or complete note coverage.",
+          "Historical as-reported pre-August-2025-bonus shares/EPS are not a current comparable series.",
+          "A bank-specific model and current reviewed valuation assumptions remain separate work."
+        ],
+        "application_status": "authorized_not_yet_applied",
+        "supersedes": null
+      },
+      "affected_records": {
+        "application_status": "applied_and_verified",
+        "processing_runs": [
+          99
+        ],
+        "promoted_candidates": 64,
+        "unique_reported_metrics": 60,
+        "periods": 2,
+        "normalized_metrics": 8,
+        "source_fact_revisions": 64,
+        "unchanged_tables": 101,
+        "unrelated_records_unchanged": true
+      }
+    },
+    {
+      "decision_id": "M05-HDFCBANK-07",
+      "reviewed_at": "2026-10-18T03:22:54.478475+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "applied",
+      "receipt_path": "output/milestones/m05/delegated-review-20261017/hdfc-duplicate-correction.json",
+      "receipt_sha256": "3b74db18d43587a796f5f1cf3b430d0a1cfc77119f22dd76527c818400810d57",
+      "receipt": {
+        "id": "M05-HDFCBANK-07",
+        "reviewed_at": "2026-10-18T03:22:54.478475+00:00",
+        "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+        "reviewer": "codex_under_user_delegation",
+        "review_type": "agent_review_under_user_delegation",
+        "claim_type": "Calculation",
+        "decision": "Consolidate only four identical duplicate EPS projections created by the immediately preceding promotion. Retain the first projection, all source candidates and all source revision records.",
+        "rationale": "Autoflush is disabled; repeated statement/note candidates could not see pending metric inserts. These four rows carry no additional fact. Exact row identities and values are retained here and in Processing Run 99 for reversal.",
+        "parent_decision_id": "M05-HDFCBANK-06",
+        "processing_run_id": 99,
+        "source_sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+        "deleted_projection_rows": [
+          {
+            "id": 29,
+            "period_id": 1,
+            "metric_name": "basic_eps",
+            "value": 90.42,
+            "unit": "INR/share",
+            "created_at": "2026-10-18 03:19:22.351429",
+            "updated_at": "2026-10-18 03:19:22.351429"
+          },
+          {
+            "id": 31,
+            "period_id": 1,
+            "metric_name": "diluted_eps",
+            "value": 90.01,
+            "unit": "INR/share",
+            "created_at": "2026-10-18 03:19:22.351431",
+            "updated_at": "2026-10-18 03:19:22.351431"
+          },
+          {
+            "id": 61,
+            "period_id": 2,
+            "metric_name": "basic_eps",
+            "value": 92.81,
+            "unit": "INR/share",
+            "created_at": "2026-10-18 03:19:22.432582",
+            "updated_at": "2026-10-18 03:19:22.432582"
+          },
+          {
+            "id": 63,
+            "period_id": 2,
+            "metric_name": "diluted_eps",
+            "value": 92.39,
+            "unit": "INR/share",
+            "created_at": "2026-10-18 03:19:22.432583",
+            "updated_at": "2026-10-18 03:19:22.432584"
+          }
+        ],
+        "retained_projection_ids": [
+          17,
+          18,
+          49,
+          50
+        ],
+        "source_candidates_retained": 64,
+        "source_revisions_retained": 64,
+        "remaining_uncertainty": [
+          "Earlier duplicate source occurrences retain their original revision sequence metadata; this correction does not rewrite source history."
+        ],
+        "status": "applied",
+        "completed_at": "2026-10-18T03:22:54.499033+00:00",
+        "unique_reported_metrics": 60
+      },
+      "affected_records": {
+        "application_status": "applied",
+        "duplicate_projection_rows_removed": 4,
+        "source_candidates_and_revisions_preserved": true
+      }
+    },
+    {
+      "decision_id": "M05-NORMALIZATION-20261017",
+      "reviewed_at": "2026-10-18T15:00:33.515433+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "implemented_and_verified",
+      "claim_type": "Calculation",
+      "decision": "Keep unreported inputs unavailable, preserve explicit zero, require compatible units and reported tax/net-borrowing inputs, and distinguish gross from net capex in calculations, coverage and reconciliation. Repeated identical sources create one period fact and preserve each source revision; conflicting duplicates block promotion.",
+      "reason": "Selected bank statements exposed invented default-tax/zero values; normal promotion exposed pending duplicate inserts under disabled autoflush. Neither behavior may turn missing or repeated evidence into false completeness.",
+      "validation": {
+        "backend_suite_passed": 1695,
+        "backend_postgres_opt_in_skipped": 6,
+        "final_focused_passed": 71,
+        "frontend_tests_passed": 302,
+        "frontend_typecheck_and_build_passed": true,
+        "normal_browser_views": 4,
+        "normal_browser_errors": 0,
+        "normal_browser_detected_accessibility_violations": 0
+      },
+      "affected_records": "Only reviewed HDFC periods normalized in this batch. Other company financials and saved valuations were not recalculated.",
+      "sources": [
+        "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/AppldCF/derivn/ch11deriv.html",
+        "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/littlebook/financialsvccompanies.htm"
+      ],
+      "remaining_uncertainty": [
+        "Period-end ROE/ROIC are labeled as such, not average-balance returns.",
+        "HDFC historical pre-bonus shares/EPS do not constitute a current comparable series or approved bank valuation.",
+        "Historical source-revision metadata is retained; the new promotion path fixes sequencing for future repeated occurrences."
+      ]
     }
   ],
   "evidence": {
@@ -1490,6 +4481,80 @@
         }
       },
       "local_only_evidence": "Complete before/after database table fingerprints remain in the local receipt at path; its SHA-256 is retained here."
+    },
+    "hdfc_source_review": {
+      "path": "output/milestones/m05/delegated-review-20261017/hdfc-application-receipt.json",
+      "sha256": "caca2c81be1f200a767e4c45be711bd431411c04f5b7d2720d369874a60004b0",
+      "public_summary": {
+        "observed_at": "2026-10-18T02:53:24.320953+00:00",
+        "decision_id": "M05-HDFCBANK-05",
+        "decision_sha256": "21ffd8b7edf16ef465a3ff307563191726c78d82ab350f9c7b64fc7146523517",
+        "source_sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+        "company_id": 8,
+        "ticker": "HDFCBANK",
+        "source_url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf",
+        "environment_files_read": false,
+        "parser_matches_reviewed_selection": true,
+        "mode": "apply",
+        "normal_financial_metrics_changed": false,
+        "promotion_performed": false,
+        "normalization_performed": false,
+        "new_disposable_database_created": false,
+        "intake_processing_run_id": 97,
+        "raw_document_id": 10,
+        "asset_id": 1,
+        "review_processing_run_id": 98,
+        "status": "success",
+        "changed_tables": [
+          "document_assets",
+          "financial_extraction_candidates",
+          "processing_runs",
+          "raw_documents",
+          "sources"
+        ],
+        "unchanged_table_count": 104,
+        "reviewed_count": 64,
+        "unit_corrections": 56,
+        "unchanged_unit_reviews": 8,
+        "source_asset_hash_verified": true,
+        "all_stored_candidates_verified": true,
+        "completed_at": "2026-10-18T02:53:25.876980+00:00"
+      }
+    },
+    "hdfc_source_promotion": {
+      "path": "output/milestones/m05/delegated-review-20261017/hdfc-promotion-receipt.json",
+      "sha256": "98bb682a87cfae1bf58cba64fc531339aefd0836a642b49f5704dedab253b1e6",
+      "public_summary": {
+        "decision_id": "M05-HDFCBANK-06",
+        "decision_sha256": "66807260d0dd324be2a0d759b05eee3cabc8350f3058a7ded5ef415b19aa88b0",
+        "started_at": "2026-10-18T03:18:59.699666+00:00",
+        "old_published_at": "2026-10-18T02:53:24.811755+00:00",
+        "ingested_at": "2026-10-18T02:53:24.804670+00:00",
+        "source_sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+        "processing_run_id": 99,
+        "metadata_corrected": true,
+        "completed_at": "2026-10-18T03:23:37.778028+00:00",
+        "status": "success",
+        "candidate_count": 64,
+        "period_count": 2,
+        "unique_reported_metrics": 60,
+        "normalized_metric_count": 8,
+        "source_fact_revisions": 64,
+        "changed_tables": [
+          "financial_extraction_candidates",
+          "financial_metrics",
+          "financial_statement_periods",
+          "normalized_financial_metrics",
+          "normalized_financial_snapshots",
+          "processing_runs",
+          "raw_documents",
+          "source_fact_revisions"
+        ],
+        "unchanged_tables": 101,
+        "unrelated_records_unchanged": true,
+        "publication_date_unknown": true,
+        "ingestion_date_retained": true
+      }
     }
   },
   "change_policy": "Append a dated decision with supersedes_decision_id when revising a choice. Never rewrite an earlier approval or represent delegated review as independent human validation.",
