@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-18T15:00:33.520802+00:00",
+  "updated_at": "2026-10-18T18:08:42.277551+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -3734,6 +3734,130 @@
         "Period-end ROE/ROIC are labeled as such, not average-balance returns.",
         "HDFC historical pre-bonus shares/EPS do not constitute a current comparable series or approved bank valuation.",
         "Historical source-revision metadata is retained; the new promotion path fixes sequencing for future repeated occurrences."
+      ]
+    },
+    {
+      "decision_id": "M08-AI-REVIEW-20261018",
+      "recorded_at": "2026-10-18T17:29:07.173224+00:00",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "decision": "Accept four saved outputs only for their constrained source-summary uses; reject unsupported company-wide valuation directions in public-region and preserve the blocked mock-period response. Reject the four existing adversarial fixture interpretations despite exact quotes.",
+      "reason": "Exact citations establish text support, not numerical, temporal or economic meaning. The six actual responses and four existing fixtures now have explicit delegated semantic judgments.",
+      "receipt_path": "data/reviews/ai-interpretation-review-20261018.json",
+      "receipt_sha256": "f34c874e12069dbe343dba39ca05343351e99b11405c38471b6ce8db85f16dd7",
+      "affected_records": "New review receipt and decision-log entry only. Original evaluation packets, human approval fields, normal database and saved valuations are unchanged.",
+      "limitations": [
+        "This is a small selected sample, not a statistical estimate of model accuracy.",
+        "The recorded provider/model/prompt versions do not certify future responses.",
+        "Citation validation and semantic review are separate. Four fixture claims intentionally pass citation checks while failing interpretation review.",
+        "Original files, failed response, human-review fields and normal application records remain unchanged.",
+        "No forecast or saved valuation is approved or changed by this review."
+      ]
+    },
+    {
+      "decision_id": "M05-US-08",
+      "reviewed_at": "2026-10-18T17:35:43.367859+00:00",
+      "reviewer": "Codex",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "decision": "Approve the exact selected historical source facts for existing-candidate review and promotion. Preserve every held candidate unchanged.",
+      "reason": "Original filing cells, units, dates and concept scopes were checked independently of app extraction; five source-encoded zeros and explicit non-XBRL/comparative exceptions are documented.",
+      "approved_existing_candidate_count": 355,
+      "held_selected_candidates": 47,
+      "receipt_path": "data/reviews/us-financial-review-20261018.json",
+      "receipt_sha256": "bade01d427c1073a78bf2d054c502d0db315379ab3dd31f14dd2a4078be732fa",
+      "affected_records": "Review decision only at this stage. Application requires the recorded exact-version checks and a separate execution receipt.",
+      "limitations": [
+        "Selected historical facts are not complete accounting coverage, independent human certification or valuation approval.",
+        "Forty-seven selected candidates and all outside-period candidates retain their prior review states."
+      ]
+    },
+    {
+      "decision_id": "M05-US-09",
+      "recorded_at": "2026-10-18T17:58:55.324722+00:00",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "decision": "Apply only the 355 current-version candidates approved in M05-US-08, retaining exact USD units, issuer/security identities and fiscal period ends.",
+      "reason": "Source hashes, values, units, candidate versions and review scope passed the recorded preflight. Six audited successful promotions and independent arithmetic/API/browser checks verify the applied result.",
+      "receipt_path": "data/reviews/us-financial-application-20261018.json",
+      "receipt_sha256": "200d70a9f317f18e94fb2e812193826553f381d40479924cfe1d46549256df5d",
+      "affected_records": {
+        "reported_facts": 355,
+        "source_revisions": 355,
+        "annual_periods": 18,
+        "normalized_values": 248,
+        "processing_run_ids": [
+          100,
+          101,
+          102,
+          103,
+          104,
+          105
+        ],
+        "changed_tables": 7,
+        "other_tables_unchanged": 102,
+        "unrelated_rows_within_changed_tables_unchanged": true
+      },
+      "limitations": [
+        "Selected historical facts only; incomplete statements, accounting bridges, forecasts and current share-class inputs remain gaps.",
+        "47 selected candidates and all older unselected candidates retain their previous review state.",
+        "No FCFF, FCFE or reinvestment value is manufactured from missing inputs.",
+        "Existing portfolio records, saved valuations, HDFC facts, original source documents and all unrelated records remain unchanged.",
+        "This receipt is delegated agent review, not personal user approval or independent human certification."
+      ]
+    },
+    {
+      "decision_id": "M07-DEMO-REVIEW-20261018",
+      "recorded_at": "2026-10-18T18:08:42.277511+00:00",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "decision": "Accept the existing examples only for the revised research/demo portfolio gate: calculations reconcile to their disclosed input basis, and missing current/history/model coverage remains visible.",
+      "reason": "64 independent arithmetic checks cover current/historical holding values, sample covariance, marginal/component risk and simple closed-form TWR/MWR references. Six normal desktop/mobile views confirm source/assumption/Mock Data labels, provisional legacy returns and unavailable DCF/benchmark evidence.",
+      "affected_records": "Existing portfolio activity, holdings, snapshots, quotes, models and forecasts are unchanged. One frontend attribution table gains an accessible label and keyboard focus; the browser regression verifies focus and horizontal scrolling.",
+      "evidence": [
+        {
+          "path": "output/milestones/review-continuation-20261018/portfolio-read/reference-results.json",
+          "sha256": "26f902189477b98a71c586e2a5bce4fd1dc60e67e3452ce340b9c94ad4877f56"
+        },
+        {
+          "path": "output/milestones/review-continuation-20261018/portfolio-browser-fixed/results.json",
+          "sha256": "1357e16e753af2849852eb8d0e73fb9589c544b2a2d387068b5a03487b922695"
+        },
+        {
+          "path": "output/milestones/review-continuation-20261018/portfolio-ui-rollout.json",
+          "sha256": "06cf71cdf5bf40a5276f039d5fd81392164bf747d2e80ed1cbc9f18d5598ec1b"
+        },
+        {
+          "path": "output/milestones/review-continuation-20261018/portfolio-ui-source-manifest.json",
+          "sha256": "cac6c61863f3a5bbc6a0f7aaa09f580c69dd394d1d8e250134cf86dd0632563c"
+        }
+      ],
+      "public_summary": {
+        "existing_holdings": 3,
+        "existing_snapshots": 22,
+        "reference_check_count": 64,
+        "normal_browser_views": 6,
+        "browser_errors": 0,
+        "accessibility_violations": 0,
+        "normal_data_writes": 0,
+        "new_dataset_created": false,
+        "current_risk_status": "partial",
+        "historical_risk_status": "partial",
+        "dcf_gap_status": "not_available",
+        "genuine_input_readiness": "blocked",
+        "legacy_returns": "provisional",
+        "keyboard_scroll_verified": true
+      },
+      "limitations": [
+        "The approved first release uses existing labeled examples; it does not certify real activity or multi-currency accuracy.",
+        "Two current histories mix adjustment bases and remain excluded; stale prices and unmatched intervals preserve partial risk status.",
+        "The assumed 252-period covariance annualization is not an exchange-calendar or realized-total-return certification.",
+        "No benchmark or trusted current DCF was fabricated; missing inputs remain unavailable.",
+        "Original complete-series/reviewed-model and genuine-input acceptance evidence remains unperformed.",
+        "M07 milestone acceptance still depends on M06; cumulative accepted milestones are unchanged."
       ]
     }
   ],

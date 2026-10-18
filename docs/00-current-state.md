@@ -3,7 +3,7 @@
 Source tests and reviewed-financial rollout: 2026-10-18. First-release scope: local, single-user research/demo using existing data, explicitly approved October 17.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest source and normal runtime: [October 18 HDFC review/normalization](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md), following [October 17 parser/recovery](archive/checkpoints/2026/release-readiness-2026-10-17.md) and [October 13 workflows](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Intake remains audited and review-required.
+Latest reviewed data: [October 18 US/AI review](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md), following [HDFC review/normalization](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md), [October 17 parser/recovery](archive/checkpoints/2026/release-readiness-2026-10-17.md) and [October 13 workflows](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md). Intake remains audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -26,11 +26,11 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 | API compatibility | 279 public paths, 513 schemas and 373 public operations. Audit covers 380 static HTTP callers, ten reviewed dynamic entries and 227 controls with no unwired-button candidates. Pure contracts, facade identity and wire guards pass; counts alone are not behavioral proof |
 | Operations | 56 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion, bounded proof-database readiness, timeout cleanup, retention and format-2 compatibility are covered. Protected environment files remain excluded |
 | PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Fresh schema reaches s1s1s1s1s1s1 |
-| Normal runtime | October 18 normalization/promotion and financial UI installed. Original volume/schema/settings and localhost-only ports retained. Image rollouts preserve their 109-table baselines; HDFC review/promotion is separately audited. Quiesced dumps and rollback images retained |
-| Normal browser | October 18: four HDFC desktop/mobile views verify retained source values, March 31 periods, supported normalization and mobile keyboard scrolling. Final reads do not write data. October 17 separately retains 48 normal views, two Origin checks and four isolated PDF/review/security workflows |
+| Normal runtime | October 18 normalization/promotion and financial UI installed. Original volume/schema/settings and localhost-only ports retained. HDFC and six US securities now have selected reviewed histories with audited application receipts. Image rollouts preserve their 109-table baselines; fresh dumps and rollback images are retained |
+| Normal browser | October 18: 12 US financial views verify source facts, fiscal dates, normalization and preserved gaps. Six current/historical portfolio views verify partial/unavailable states and the attribution-table keyboard fix. No writes, page overflow, browser errors or axe violations on the passing runs. Earlier HDFC and October 17 workflow proofs retain their separate scope |
 | Recovery | October 17 format-3 concurrent-write recovery verifies both PDF stores and all 109 tables: restore 8 seconds, full drill 30 seconds. The later populated-backup rehearsal is prepared but unrun after the user requested no new disposable datasets. Same-disk copies do not prove encrypted off-device recovery |
 | Performance | Final profile: six process-cold and 30 warm samples over 774 rows/109 tables, nine query-budget regressions and eight section interactions pass. Market Prices fetches 51 rows and renders 50 forms, retaining filtering/history/export access. Database fingerprints remain unchanged; database/OS caches remain warm. Dataset and hardware are recorded without a concurrent-user/load claim |
-| Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. October 13 retains ten company source batches; parser v5 recovers eight selected gaps. Delegated HDFC review resolves 56 units and promotes its narrow historical basis. Six actual Gemini outputs retain one blocked response and no human verdicts. Broader coverage remains open |
+| Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Ten company source batches are retained; delegated US/HDFC reviews apply only selected historical facts. Six actual Gemini outputs and four existing adversarial fixtures now have delegated semantic judgments, with unsupported mappings rejected and one response still blocked. Original human fields remain unchanged; broader coverage remains open |
 
 Normal screens still contain labeled Mock Data. HDFC's official PDF is now asset 1,
 document 10; September's private-PDF/source inventories below remain historical.
@@ -140,9 +140,10 @@ not normal database contents. September 22 retained 694 unreviewed SEC candidate
 and no normalized snapshots. Drafts retain source/unit/period/review warnings;
 debt scope, share-class reconciliation and India statement gaps remain explicit.
 October 17 normal intake loaded six audited US versions dated January 5, 2026 into an empty benchmark registry: 1,131 typed rows, six successful runs and 27 source-cell checks; 102 other tables unchanged.
-The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. HDFC now has 60 distinct historical facts, eight normalized values and 64 source occurrences; other company financials and saved valuations remain unchanged. Final mappings/forecasts remain evidence work.
+The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. HDFC and six US securities now have 20 periods, 415 distinct reported facts, 419 source revisions and 256 supported normalized values. Unselected records and saved valuations remain unchanged; complete accounting bridges, mappings and forecasts remain evidence work.
 Earlier workbook inspection corrected global-input labels and a US country-tax alias without rewriting old rows.
 September counts are historical, not current inventory.
+October 18's existing portfolio examples pass 64 independent value/risk/return checks. Legacy returns remain provisional, current risk partial and DCF/benchmark coverage unavailable; the revised M07 demo check passes without certifying real activity.
 
 The September 22 reference portfolio modeled 200 AAPL and 200 GOOGL at January 2, 2024 unadjusted closes,
 rounded to USD185.64/USD138.17. The confirmed USD64,762 deposit, zero fees,

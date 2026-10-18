@@ -93,7 +93,7 @@ export function PortfolioPerformancePanel({
               </div>
 
               {attribution.holdings.length > 0 && (
-                <div className="table-wrap" style={{ marginTop: "1rem" }}>
+                <div className="table-wrap" role="region" aria-label="Holding performance attribution" tabIndex={0} style={{ marginTop: "1rem" }}>
                   <table>
                     <thead><tr><th>Holding</th><th>Price</th><th>FX</th><th>Position</th><th>Total</th><th>Status</th></tr></thead>
                     <tbody>

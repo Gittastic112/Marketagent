@@ -28,6 +28,8 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 The [October 18 repository cleanup](archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
 records bounded navigation, ignored evidence, cache savings and preserved runtime.
+The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
+owns the later US source decisions, normal-data application and semantic judgments.
 The [October 18 HDFC checkpoint](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the delegated unit review/promotion, normalization and repeated-source fixes,
 populated financial UI, local rollout and exact source/image proof. The
@@ -44,9 +46,10 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 - Normalization keeps missing inputs unavailable and preserves explicit zero.
   Duplicate source occurrences retain their provenance; conflicting values block
   promotion. The decision log records the exact duplicate-projection correction.
-- Six actual Gemini responses use only retained public excerpts and Mock Data.
-  One response fails the finding-level quote-context guard; five pass source/format
-  checks. Human verdicts remain blank; valuation mapping quality needs review.
+- Six actual Gemini responses and four adversarial fixtures now have delegated
+  semantic judgments. Four summaries have constrained acceptance; unsupported
+  regional-to-company edits are rejected and the blocked response stays blocked.
+  Original human verdicts remain blank; this is not independent certification.
 - Source -> candidate -> normalized draft, saved calculation/sensitivity/reverse,
   event/evidence/thesis, manual recovery and morning-review workflows retain their
   separately dated browser and genuine-source/fixture boundaries.
@@ -57,7 +60,7 @@ Normal backend/workers use the tested normalization/promotion fixes; frontend no
 includes keyboard-accessible financial tables and truthful readiness labels.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
-after the explicit HDFC changes. Fresh quiesced dumps pass archive listing without
+after the explicit HDFC and US changes. Fresh quiesced dumps pass archive listing without
 claiming new restore verification. Prior verified backups/rollback images remain.
 No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in memory.
 
@@ -65,11 +68,11 @@ Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restar
 Disposable verification projects are stopped. Preserve backups, rollback images,
 all persistent volumes and failed artifacts. Do not prune those to reduce disk use.
 
-The later delegated review batch imported six audited January 2026 US benchmark
-versions: 1,131 typed rows and six successful Processing Runs. Seven benchmark/audit
-tables changed; the other 102 tables stayed unchanged. Source hashes and 27 selected
-values were verified. See the decision log for the exact receipt. Fresh browser
-verification was unavailable because browser automation could not initialize.
+Six January 2026 US benchmark versions retain their separate source/import receipt.
+The attribution table's mobile keyboard defect is now fixed in the normal frontend.
+Existing portfolio checks pass 64 arithmetic comparisons and six browser views;
+partial risk, provisional legacy returns and missing DCF/benchmark evidence remain.
+M07 demo checks and M08's selected review set are verified; prerequisites stay open.
 
 macOS backup finalization is fixed. October 17 verifies fresh concurrent-write
 recovery with both PDF stores. A new populated-backup rehearsal is prepared but
@@ -95,9 +98,9 @@ comparisons, preserving unresolved services mapping and ratio-weighting choices.
 Those are agent evidence tasks, not permission gates. Reconcile remaining company
 statements, broader bank notes/comparability and model inputs; apply exact reviewed
 scopes through source/candidate checks. Original broad reference packets stay intact.
-AI review starts at
-`output/milestones/m08/interpretation-review-20261017/review-packet.html`.
-HDFC document 10 has 64 retained source revisions and eight supported normalized values.
+US Runs 100-105 apply 355 reviewed facts/revisions, 18 periods and 248 normalized
+values; 47 selected gaps and older unselected candidates remain held. HDFC retains
+64 source occurrences and eight normalized values. Do not reapply these batches.
 Missing notes remain gaps. Do not label delegated review independent human validation.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.

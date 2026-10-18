@@ -119,6 +119,14 @@ test("multi-currency portfolio comparison reconciles risk, FX, benchmark, and DC
   await expect(twrCard.getByText(twrDates, {exact: true})).toBeVisible();
   await expect(mwrCard.getByText(mwrDates, {exact: true})).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1)).toBe(true);
+  const attributionTable = page.getByRole("region", { name: "Holding performance attribution", exact: true });
+  await attributionTable.scrollIntoViewIfNeeded();
+  await page.getByRole("button", { name: "Calculate Period", exact: true }).focus();
+  await page.keyboard.press("Tab");
+  await expect(attributionTable).toBeFocused();
+  expect(await attributionTable.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => attributionTable.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await page.screenshot({ path: test.info().outputPath("performance-risk-mobile.png"), fullPage: true });
   await page.goto(`/portfolio/${portfolioId}?tab=setup`);
   await expect(page.getByRole("main").getByText("Recorded activity reconciled", { exact: true })).toHaveCount(2);

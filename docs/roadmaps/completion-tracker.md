@@ -95,8 +95,8 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Evidence review proceeding under delegated authority | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md), [decision log](review-decisions.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
-| M07 | 70% | Truthful example portfolio history and performance | M06 | Demo scope revised; input gaps remain | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
-| M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
+| M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
+| M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Checks verified; M08 prerequisite open | [Connected workflow verification](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md) |
 | M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
@@ -263,7 +263,8 @@ M05-AAPL-03A (three FY2025 share counts, units and separate historical uses), an
 M05-AAPL-03B (four FY2025 payout figures, units, signs and definitions), and
 M05-AAPL-04A (US domicile, USD and FCFF DCF) on October 17.
 Guided receipts pin exact source scope without changing the original broad batches.
-The narrow FY2025 shares/payout reviews are resolved; other periods remain unapproved.
+The narrow FY2025 shares/payout reviews retain their explicit user approvals;
+subsequent source decisions below are separately recorded delegated agent reviews.
 Remaining review choices are delegated and logged. M05-AAPL-04B selects separate
 industry comparisons while a final services allocation and appropriate ratio
 weights remain evidence work. Six audited January 2026 US versions were imported
@@ -275,7 +276,12 @@ metrics. Source locators/revisions remain; four duplicate projections created by
 the first promotion were corrected with a retained receipt. Missing inputs remain
 unavailable. Broader company reconciliation, notes, valuation bridges and mappings
 remain open. This partial M05-03/04 evidence earns no new acceptance points.
-Mac settings/backups remain deferred.
+The subsequent [US/AI checkpoint](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
+reviews ten original US reports and 402 selected candidates: 355 are approved and
+applied, while 47 selected gaps remain held. Six securities now have 18 reviewed
+annual periods and 248 supported normalized values, verified in 12 normal browser
+views. With HDFC, there are 20 periods and 256 normalized values; other issuers and
+complete model inputs remain open. Mac settings/backups remain deferred.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
@@ -347,9 +353,10 @@ Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
 - [x] M07-04 Reconcile cash, position, price and FX contributions; TWR/MWR,
   dimensions, benchmark opportunity cost and residuals must agree with independent
   reference cases. Missing aligned history must reduce availability/confidence.
-- [ ] M07-05 Verify marginal/component risk and current valuation gaps with complete
-  dated series, freshness and reviewed model coverage. Never substitute an annualized
-  return forecast for a valuation gap or emit portfolio trading instructions.
+- [x] M07-05 Under the approved research/demo profile, verify marginal/component
+  risk and valuation-gap availability against existing dated inputs; expose missing
+  series, freshness and reviewed-model coverage. Original complete-series/model
+  proof remains unperformed. Never present a valuation gap as an annualized forecast.
 - [ ] M07-06 Finish the genuine-input readiness checklist and a real multi-currency
   manual smoke using sourced history and reviewed user activity. The existing assumed
   AAPL/GOOGL case is useful separate evidence, not a replacement for that proof.
@@ -359,6 +366,13 @@ Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
 Research/demo gate: present and historical example views reconcile to their dated,
 labeled inputs or disclose missing coverage. Genuine-input and multi-currency proof
 remain outside v1 under the explicit scope revision; existing records are preserved.
+
+October 18 [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
+passes 64 independent arithmetic checks and six current/historical desktop/mobile
+views. The discovered attribution-table keyboard defect is fixed and verified.
+Partial risk, provisional legacy returns, unavailable DCF gaps and an unconfigured
+benchmark stay visible. M07-06 remains unperformed outside demo scope; M07 still
+depends on M06 and earns no cumulative acceptance points yet.
 
 ## M08: connected daily research and review
 
@@ -374,7 +388,7 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 - [x] M08-03 Connect event -> evidence -> held company -> thesis review -> relevant
   valuation field -> next review action. Preserve source access and stale-review
   guards. A suggested field link never approves or changes its numeric assumption.
-- [ ] M08-04 Build a reviewed AI evaluation set with unsupported claims, numeric
+- [x] M08-04 Build a reviewed AI evaluation set with unsupported claims, numeric
   errors, contradictory periods and source-text prompt injection. Report citation
   validity and interpretation quality separately; exact quotes do not prove meaning.
 - [x] M08-05 Verify explicit consent, model/prompt/input/source provenance, owner
@@ -388,11 +402,14 @@ Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 Gate: a user can explain what changed, which evidence supports it and what needs
 review from one repeatable workflow, without implying universal news/AI coverage.
 
-October 17 prepares six actual Gemini responses: three retained public-report
-excerpts and three Mock Data adversarial inputs. Five pass source/format checks;
-one is blocked for comparison labels absent from its own quote. Agent observations
-and blank human verdicts are retained. This advances M08-04 preparation without
-closing its reviewed-quality gate. See the [release checkpoint](../archive/checkpoints/2026/release-readiness-2026-10-17.md).
+October 18 [delegated review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
+completes the selected six-response/four-fixture set: four constrained source
+summaries are accepted, unsupported regional-to-company valuation directions are
+rejected, and one blocked period comparison stays blocked. All four adversarial
+fixture interpretations are rejected despite valid citations. Original packet and
+human verdict fields remain unchanged. M08-04 is verified under delegated review;
+this is neither independent human certification nor statistical model-accuracy or
+future prompt-injection proof. M08 acceptance still depends on M07.
 
 ## M09: complete browser workflows and responsiveness
 
