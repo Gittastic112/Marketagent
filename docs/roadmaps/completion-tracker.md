@@ -188,6 +188,11 @@ Gate: each changed workflow has one clear owner and no broken callers or source
 loss. Keep the current modular monolith and database. Do not add microservices,
 a second provider factory or a catch-all utilities framework for folder tidiness.
 
+October 18 [maintenance audit](../archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
+adds compact agent navigation, bounded searches and comprehensive generated-file
+exclusions, removes the obsolete tree listing and verified caches, and preserves
+all runtime images/volumes. This maintains M01/M02; acceptance stays at 20 points.
+
 ## M03: reliable recovery and local security
 
 Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consistent-backup-and-recoverable-evidence);

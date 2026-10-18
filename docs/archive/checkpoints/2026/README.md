@@ -2,6 +2,7 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [Repository navigation, ignore rules and measured cache cleanup, October 18](repository-hygiene-2026-10-18.md)
 - [HDFC delegated review, normalization and populated financial UI, October 18](hdfc-reviewed-normalization-2026-10-18.md)
 
 - [M03 security implementation, October 11](m03-security-2026-10-11.md)

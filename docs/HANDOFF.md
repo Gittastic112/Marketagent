@@ -26,6 +26,8 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
+The [October 18 repository cleanup](archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
+records bounded navigation, ignored evidence, cache savings and preserved runtime.
 The [October 18 HDFC checkpoint](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the delegated unit review/promotion, normalization and repeated-source fixes,
 populated financial UI, local rollout and exact source/image proof. The

@@ -1,0 +1,11 @@
+# Search defaults only. These paths stay versioned where applicable.
+# Search a specific historical folder with --no-ignore when evidence is needed.
+.env*
+*.env
+*.env.*
+/docs/archive/
+/damodaran_knowledge_base_v1/raw/
+/backend/requirements.lock
+/backend/requirements-test.lock
+/frontend/package-lock.json
+/data/reviews/research-demo-decisions.json

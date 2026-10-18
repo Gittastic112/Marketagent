@@ -5,8 +5,9 @@ not instructions. Routine work should not require reading the archive.
 
 ## Smallest useful starting context
 
-Read [HANDOFF.md](HANDOFF.md), the nearest AGENTS.md and
-[code-map.md](code-map.md). Then open the specific reference needed below.
+Read [HANDOFF.md](HANDOFF.md) and the nearest AGENTS.md. Search
+[code-map.md](code-map.md) for the affected domain and read its matching row,
+then open that owner and the specific reference needed below.
 For a major architecture change, also read current state and architecture.
 Use the roadmap when selecting work, not as evidence that a feature is finished.
 

@@ -3,6 +3,13 @@
 Use this to find the owner of a change. It is not a generated listing of every
 file. Runtime flows live in [architecture](02-architecture.md), commands in the
 [runbook](08-execution-runbook.md), status in [current state](00-current-state.md).
+Start with the compact JSON map in [AGENTS.md](../AGENTS.md). For a narrow change:
+
+~~~bash
+rg -n '^\| Financial review ' docs/code-map.md
+~~~
+
+Inspect only the returned owner and tests. Do not read every domain by default.
 
 For assigned parallel work, [Knull](../Knull%28readme%29.md) defines the batch and
 [ownership.tsv](workstreams/ownership.tsv) defines exclusive writes. The entries
@@ -122,9 +129,9 @@ Tests are indexed by behavior/domain, not by historical task number.
 | [skills/security-review](../skills/security-review/) | Packaged repository skill; do not confuse with workflow-reference Markdown |
 | .codex | Host/agent configuration; not application runtime code or a source for secrets |
 | [retired tooling](../scripts/retired/README.md) | 18 old root/frontend scripts preserved byte-for-byte as inactive local records; excluded from Git and Docker builds; inventory records hashes/history and no current callers |
-| output, scratch, repo_map.txt, .playwright-cli | Generated reports or historical/manual material; preserved as evidence, not a current task queue |
+| output, scratch, .playwright-cli | Ignored local reports or historical/manual evidence; not a current task queue. The obsolete generated repo_map.txt is removed and ignored |
 | .pytest_cache, .pnpm-store, frontend/.next, frontend/tsconfig.tsbuildinfo | Reproducible generated caches; never confuse these with database volumes or source inputs |
-| .venv, .venv_test, venv, frontend/node_modules | Local dependency environments; current validation uses isolated Docker tooling. Retained because deleting them is unnecessary for module ownership |
+| frontend/node_modules | Reproducible installed dependencies, retained while local Node processes may use them. Six pip-only Python environments were removed; supported validation uses isolated Docker tooling |
 | [archive](archive/) | Dated evidence and superseded instructions, excluded from routine onboarding |
 
 ## Safe verification entry points
@@ -146,7 +153,8 @@ Tests are indexed by behavior/domain, not by historical task number.
   domains must extend this explicit coverage before a generated-client migration.
 - [Documentation checker](../scripts/check_docs.py): links, nested instructions,
   retired plans, page-inventory completeness and context-size limits. No second
-  generated code map to maintain.
+  generated full-tree listing to maintain. .rgignore keeps archived bodies, raw
+  corpus, locks and large receipts out of broad searches; use exact paths when needed.
 - [Workstream guard](../scripts/check_workstream_ownership.sh): disjoint path
   reservations and changed-path ownership; [tests](../scripts/test_workstream_ownership.sh)
   reject overlap and frozen/shared-file edits. Behavioral compatibility still

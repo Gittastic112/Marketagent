@@ -1,12 +1,12 @@
 # Execution Runbook
 
-Updated: 2026-10-12. This document owns commands, not historical phase records.
+Updated: 2026-10-18. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
 
-Read [the handoff](HANDOFF.md), nearest AGENTS.md, [code map](code-map.md), and
-the relevant current reference. Inspect status and actual owning code. State a
+Read [the handoff](HANDOFF.md), nearest AGENTS.md, the matching [code-map](code-map.md)
+row and relevant current reference. Inspect status and actual owning code. State a
 bounded plan, add tests where practical, preserve user changes, and report
 verified scope. Use [local setup](07-local-development.md) for first-time login
 and environment configuration. Never print secrets.
@@ -81,9 +81,9 @@ Backend, using edited source and repository workbook fixtures without normal
 database settings or network access:
 
 ~~~bash
-docker compose -f docker-compose.test.yml build backend-tests
-docker compose -f docker-compose.test.yml run --rm backend-tests pytest -q -p no:cacheprovider backend/tests/test_schema_boundaries.py
-docker compose -f docker-compose.test.yml run --rm backend-tests
+docker compose --env-file /dev/null -f docker-compose.test.yml build backend-tests
+docker compose --env-file /dev/null -f docker-compose.test.yml run --rm backend-tests pytest -q -p no:cacheprovider backend/tests/test_schema_boundaries.py
+docker compose --env-file /dev/null -f docker-compose.test.yml run --rm backend-tests
 ~~~
 
 Replace the focused test path with the behavior being changed. Tests use their
@@ -91,6 +91,9 @@ isolated database fixtures, not normal portfolio rows. The default database is
 also disposable SQLite inside the container; PostgreSQL-specific browser/migration
 checks require the separate disposable runtime below. Inspect test setup before
 running an unfamiliar manual script. Do not collect root debug scripts as tests.
+The explicit empty environment file prevents Compose from reading the root .env
+for these isolated definitions. It does not authorize reading protected files or
+substituting empty settings into the normal runtime.
 
 The browser runner also executes `backend/tests/integration/test_ingestion_postgres.py`
 against its disposable PostgreSQL database. It proves row/advisory locking that

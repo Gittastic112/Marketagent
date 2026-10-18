@@ -12,6 +12,8 @@ scripts/retired/**
 # Apply these after the directory allowlist, including nested environments.
 **/.env
 **/.env.*
+**/*.env
+**/*.env.*
 **/.venv*
 **/venv
 **/__pycache__

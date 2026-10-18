@@ -1,18 +1,42 @@
 # Agent Operating Rules
 
-Local-first equity research and portfolio software. Help answer what changed,
-what evidence supports it, what affects the thesis/exposure, and what assumptions
-drive value. Do not make the app look more capable or certain than it is.
+Local-first equity research, valuation and portfolio software with source traceability.
+Do not make the app look more capable or certain than it is.
+
+## Compact repository map
+
+```json
+{
+  "backend/app": {"entry": "main.py", "owners": ["api/routers", "schemas", "services", "models", "providers"]},
+  "backend/tests": "backend behavior and isolated fixtures",
+  "backend/alembic": "ordered database migrations",
+  "frontend": {"entry": "app/layout.tsx", "owners": ["app", "components", "lib/api", "e2e"]},
+  "scripts": "repository checks and operations",
+  "docs": {"start": "HANDOFF.md", "lookup": "code-map.md", "commands": "08-execution-runbook.md"},
+  "data": "runtime assets and versioned review receipts",
+  "damodaran_knowledge_base_v1": "immutable source corpus; read its AGENTS.md"
+}
+```
+
+Quick checks: `python3 scripts/check_docs.py`; `npm --prefix frontend test`;
+`npm --prefix frontend run typecheck`. Backend tests and production builds use the
+[runbook's environment table](docs/08-execution-runbook.md#choose-the-right-environment).
 
 ## Start with the smallest relevant context
 
 1. Read [the handoff](docs/HANDOFF.md) and the nearest nested AGENTS.md.
-2. Use [the code map](docs/code-map.md) to find the owning module and tests.
+2. Search [the code map](docs/code-map.md) for the affected domain, then read its
+   matching row and owning files. Do not load the whole map for a narrow change.
 3. Read only the relevant current reference from [the docs index](docs/README.md).
 4. For major architectural work, also read [current state](docs/00-current-state.md),
    [architecture](docs/02-architecture.md), and [the roadmap](docs/roadmaps/product-roadmap.md).
-5. Inspect actual code before editing. Archive files are historical evidence,
+5. Use `rg --files <owning-directory>` before content searches, with bounded output.
+   Inspect actual code before editing. Archive files are historical evidence,
    not current instructions or an execution queue.
+
+Routine searches honor .gitignore/.rgignore. Open an exact lockfile, decision
+register or historical path only when needed; never run an unrestricted dump of
+the repository, raw corpus or output directory. Respect protected-file restrictions.
 
 Specific directory rules refine these rules. User instructions take precedence
 over repository instructions. For facts, prefer running code/database, then
@@ -71,6 +95,12 @@ conflicts; do not guess silently.
 - Do not move public imports without a compatibility or migration plan.
 - Do not add dependencies without a concrete need. Check the manifests/lockfile
   and existing helpers first.
+- Prefer shallow domain ownership, not a flat folder or catch-all utilities module.
+  Preserve framework routes, package boundaries, migrations and public imports.
+- Cleanup starts with measured sizes, callers and tracked status. Untracked is not
+  disposable. Delete only identified generated material; retain source reports,
+  review receipts, backups, failed evidence and rollback images. Ignore rules
+  control discovery, not retention. Record removed paths and actual byte savings.
 
 ## Security and external input
 
