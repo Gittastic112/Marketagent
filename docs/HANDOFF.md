@@ -9,7 +9,10 @@ existing data; apply the tracker's scope revision, not the original portfolio ga
 ## Execution boundary
 
 The user authorized remaining independent work, refactors/worktrees and Git/GitHub
-publication last. The latest request includes M10 preparation, not invented final
+publication last. Remaining research/demo review choices are now delegated: record
+each choice in the [decision log](roadmaps/review-decisions.md), distinguish agent
+review from personal user approval, and do not repeat routine approval questions.
+The latest request includes M10 preparation, not invented final
 acceptance. Public deployment and broker work remain outside scope. GitHub is
 Allow all actions; other app permissions remain unchanged. No new agents are
 authorized by the plan alone. Protected environment files must not be read directly
@@ -56,6 +59,12 @@ Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restar
 Disposable verification projects are stopped. Preserve backups, rollback images,
 all persistent volumes and failed artifacts. Do not prune those to reduce disk use.
 
+The later delegated review batch imported six audited January 2026 US benchmark
+versions: 1,131 typed rows and six successful Processing Runs. Seven benchmark/audit
+tables changed; the other 102 tables stayed unchanged. Source hashes and 27 selected
+values were verified. See the decision log for the exact receipt. Fresh browser
+verification was unavailable because browser automation could not initialize.
+
 macOS backup finalization is fixed. October 17 verifies fresh concurrent-write
 recovery with both PDF stores. A new populated-backup rehearsal is prepared but
 unrun after the user requested no more disposable datasets. Routine checks now
@@ -70,18 +79,20 @@ The user chose a research/demo first release using the existing data on October 
 Genuine portfolio records are outside this release. Mac settings and off-device
 backup are explicitly deferred, not passed; local credential rotation remains open.
 The [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-owns the remaining inputs. Continue independent work and one financial decision at
-a time; do not ask again for real trades or deferred host/backup setup.
+owns the remaining inputs. Continue evidence work under delegated authority;
+do not ask again for routine review, real trades or deferred host/backup setup.
 
-Start financial review at
-`output/milestones/m05/review-batches-20261017/guided-review/apple-cash.html`.
-The first pending decision is M05-AAPL-01: preserve distinct FY2023 cash definitions
-and leave valuation-available cash unapproved. The guided decision record retains
-exact source hashes, references and a blank human verdict. The parent packet links
-all ten company batches, HDFC corroboration and accounting notes. AI review starts at
+Continue from the [decision log](roadmaps/review-decisions.md) and its versioned
+JSON register. Five explicit user approvals cover Apple cash, debt/leases, shares,
+payouts and US/USD/FCFF setup. Delegated M05-AAPL-04B selects separate industry
+comparisons, preserving unresolved services mapping and ratio-weighting choices.
+Those are agent evidence tasks, not permission gates. Reconcile remaining company
+statements, HDFC unit proposals and model inputs; apply only exact approved scopes
+through current source/candidate checks. Original broad reference packets stay intact.
+AI review starts at
 `output/milestones/m08/interpretation-review-20261017/review-packet.html`.
-Neither packet is imported or approved. Apply decisions only after checking exact
-source hashes and current stored candidate versions. Missing notes remain gaps.
+No normal company-financial import/promotion occurred; benchmark intake is separate.
+Missing notes remain gaps. Do not label delegated review independent human validation.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
 Reviewed source/input freeze, five business days of actual research/demo use and

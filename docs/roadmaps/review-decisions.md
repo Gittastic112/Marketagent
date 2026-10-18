@@ -1,0 +1,81 @@
+# Research/demo decision log
+
+Updated October 17, 2026. This is the readable index for the
+[versioned decision register](../../data/reviews/research-demo-decisions.json).
+It records decisions and their effects; the [completion tracker](completion-tracker.md)
+owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
+owns unresolved gaps.
+
+## Review authority
+
+The user instructed: "Approve all of what you think is best just keep track of
+these things somewhere so i can go back later if need be."
+
+Authorization `AUTH-20261017-DELEGATED-REVIEW` replaces individual approval prompts
+for the remaining research/demo financial, valuation and interpretation-review choices. Codex may make
+evidence-based decisions within that scope and must record the rationale, sources,
+assumptions, timestamp, affected records and remaining uncertainty. Decisions under
+this authorization are **agent review under user delegation**, not personal user
+inspection or independent human certification. Existing permissions and scope
+boundaries remain in force.
+
+To revisit a choice, name its ID or subject. Record a new dated entry with
+`supersedes_decision_id`, preserve the old receipt, and recheck source/candidate
+versions before applying a change. The original source packets remain intact.
+
+## Decisions personally approved in chat
+
+| ID | Approved scope | Application state |
+|---|---|---|
+| M05-AAPL-01 | FY2023 cash: USD29.965bn balance-sheet cash and USD30.737bn cash-flow closing cash including restricted cash; preserve separate definitions | Source approval recorded; valuation-available cash remains a separate input |
+| M05-AAPL-02 | FY2025 term debt USD90.678bn, commercial paper USD7.979bn, operating leases USD12.490bn and finance leases USD1.230bn; subtotals and separate accounting treatment | Source approval recorded; valuation debt/lease bridge not yet applied |
+| M05-AAPL-03A | FY2025 year-end shares 14,773.260m, average basic shares 14,948.500m and average diluted shares 15,004.697m; units and historical uses | Source approval recorded; valuation-date denominator not yet selected |
+| M05-AAPL-03B | FY2025 dividends/equivalents declared USD15.413bn, paid USD15.421bn, buyback cash USD90.711bn and declaration USD1.02 per share/RSU; units, signs and definitions | Source approval recorded; USD8m declared/paid difference retained without an invented bridge |
+| M05-AAPL-04A | US domicile, USD cash flows and matching discount-rate currency, operating-company FCFF DCF as primary method | Setup approval recorded; no numerical forecast or saved valuation changed |
+
+Every approval's exact user message, scope, timestamp and source evidence is
+embedded in the register. These approvals did not themselves promote financial
+candidates. FY2025 Apple figures use the [official report](https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm),
+SHA-256 `45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c`.
+The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
+
+## Decisions under delegated authority
+
+| ID | Decision and reason | Actual effect / verification |
+|---|---|---|
+| M05-US-BENCHMARK-INTAKE-20261017 | Load the six retained US benchmark workbooks dated January 5, 2026. The normal database had no dataset versions; source mirrors match the audited immutable originals | Added six active versions, 1,131 typed rows and six successful Processing Runs. Changed seven benchmark/audit tables; the other 102 tables are unchanged. Twenty-seven selected values match workbook cells |
+| M05-AAPL-04B | Use Computers/Peripherals and the two software categories as separate labeled comparisons. Retain the FY2025 Products/Services revenue split as context; do not adopt a unique services allocation or apply industry averages as company forecasts | Products USD307.003bn and Services USD109.158bn reconcile to USD416.161bn. Company mapping, forecasts and saved valuations remain unchanged. A final weighted mapping still needs sound business and ratio-aggregation evidence |
+
+The source categories are **Computers/Peripherals**, **Software (Internet)** and
+**Software (System & Application)**. The service activities do not establish a
+unique mapping among those categories. Revenue shares are not automatically the
+right weights for beta, ROE or sales-to-capital ratios. See the retained source
+evidence and [Damodaran's business-weighting guidance](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/TenQs/TenQsBottomupBetas.htm).
+
+### Imported benchmark versions
+
+| Runtime version | Source | Source date | Typed rows |
+|---|---|---|---:|
+| 1 | betasUS-2026-01-05.xls | 2026-01-05 | 282 |
+| 2 | waccUS-2026-01-05.xls | 2026-01-05 | 473 |
+| 3 | marginUS-2026-01-05.xls | 2026-01-05 | 94 |
+| 4 | capexUS-2026-01-05.xls | 2026-01-05 | 94 |
+| 5 | roeUS-2026-01-05.xls | 2026-01-05 | 94 |
+| 6 | wcdataUS-2026-01-05.xls | 2026-01-05 | 94 |
+
+The register embeds hashes, source rows, import evidence and Processing Run IDs;
+full database fingerprints stay in the local receipt. Import time does not make these January estimates
+current market observations. The knowledge-base audit passes for all 64 originals.
+Validation used the existing database and runtime libraries; no fixture dataset
+was created and protected environment files were excluded. Fresh browser validation
+was unavailable because browser automation failed to initialize; the intake proof
+is at the database level.
+
+## Continuing work
+
+Reconcile the remaining company statements and accounting definitions, check
+candidate versions, and prepare supported valuation inputs under delegated
+authority. Keep source gaps visible and record a decision before applying a
+material choice. Delegation removes repeated permission requests; it does not
+supply missing evidence or close milestone gates by itself. GitHub publication
+remains the final step of a coherent batch.

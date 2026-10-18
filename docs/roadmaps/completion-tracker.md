@@ -39,7 +39,7 @@ the only accepted milestones (20 acceptance points).
 | Original check | First-release treatment | Evidence still needed |
 |---|---|---|
 | M03-04 host settings; M03-07 off-device recovery | Deferred by the user, not passed | Keep exact follow-up in the limitation ledger. Local application authentication, localhost bindings and coordinated database credential rotation remain in scope |
-| M05/M06 financial and valuation reviews | In scope, one decision at a time | Source-specific approvals, version checks, accounting/model decisions and approved assumptions; begin with Apple cash definitions |
+| M05/M06 financial and valuation reviews | In scope; remaining choices delegated October 17 | Evidence-based decisions, version checks, rationale and source/assumption distinctions recorded in the decision log; five explicit Apple approvals retained |
 | M07-05/06 real activity and multi-currency proof | Genuine records are outside this first release | Use the existing labeled examples, preserve input/freshness gaps and verify displayed outputs against their stated basis. No fabricated trades or claim of real portfolio accuracy |
 | M10-02 additional populated-backup rehearsal | Deferred while no new disposable datasets are authorized | Retain existing recovery evidence and disclose the unrun rehearsal. Never restore over the normal database to close this check |
 | M10-04/05/07 release acceptance | Five actual business days and final acceptance apply to the research/demo workflow; off-device recovery is deferred | Record actual use, restart/retry and local resource checks. Do not invent use days or claim daily-driver recovery readiness |
@@ -50,6 +50,13 @@ it is not a blocker for this research/demo profile and must never be marked pass
 without its original evidence. Public deployment, broker integration and new local
 fixture databases remain outside authorization. Official source records keep their
 provenance; the scope change does not relabel them as Mock Data.
+
+Later on October 17 the user delegated remaining research/demo choices and asked
+for a record to revisit. The [decision log](review-decisions.md) and its versioned
+register own those choices. This replaces routine individual approval requests;
+it does not waive source evidence, source/candidate version checks, genuine test
+execution or actual-use requirements. Record delegated agent review separately
+from personal user approval and independent reference certification.
 
 ## How to execute a percentage request
 
@@ -86,7 +93,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Review inputs prepared; approval open | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Evidence review proceeding under delegated authority | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md), [decision log](review-decisions.md) |
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Demo scope revised; input gaps remain | [Recorded replay and provenance](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md) |
 | M08 | 80% | Connected daily research and review | M07 | In progress | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md) |
@@ -98,7 +105,7 @@ checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoin
 closes M05-06, M06-05, M08-03/06/07 and verifies all M09 technical checks. Its recorded
 official-source morning flow and separate due-cycle test preserve their distinct
 source/fixture boundaries. Final return labels, affected browser flows, measured
-process-cold/warm profiles and normal rollout are verified. Human review and local
+process-cold/warm profiles and normal rollout are verified. Evidence review and local
 credential work remain open; the scope revision above separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
 M04 and M09 have verified checks but open prerequisites. Cumulative acceptance
@@ -245,10 +252,20 @@ recovers the eight selected Airtel/SBI entries previously skipped. All selected
 references now have candidates; HDFC unit proposals remain pending. The ten-company
 packets and accounting-note topics retain exact sources and blank human decisions.
 Selected numeric agreement is not independent reviewed-reference certification.
-Human reference/accounting/model approval, broader note coverage and approved
-normalization remain open.
-No financial promotion or new acceptance points. Mac settings/backups are deferred
-by the user and do not block independent work.
+The user approved M05-AAPL-01 (two FY2023 cash figures/separate definitions),
+M05-AAPL-02 (four FY2025 debt/lease figures, subtotals and accounting separation),
+M05-AAPL-03A (three FY2025 share counts, units and separate historical uses), and
+M05-AAPL-03B (four FY2025 payout figures, units, signs and definitions), and
+M05-AAPL-04A (US domicile, USD and FCFF DCF) on October 17.
+Guided receipts pin exact source scope without changing the original broad batches.
+The narrow FY2025 shares/payout reviews are resolved; other periods remain unapproved.
+Remaining review choices are delegated and logged. M05-AAPL-04B selects separate
+industry comparisons while a final services allocation and appropriate ratio
+weights remain evidence work. Six audited January 2026 US versions were imported
+into the existing database: 1,131 typed rows, six successful runs and 27 selected
+cell checks; 102 other tables unchanged. Valuation bridges, remaining company
+reconciliation, broader notes and normalization remain open. No normal financial
+candidate promotion or new acceptance points. Mac settings/backups remain deferred.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
@@ -272,7 +289,8 @@ by the user and do not block independent work.
 
 Gate: every scoped company has a usable reviewed input basis for its supported
 model, or an explicit user-approved scope change. Lack of evidence is a blocker,
-not permission to invent it. Human source/assumption review remains required.
+not permission to invent it. Record source/assumption review under the explicit
+delegation, preserving the distinction from independent human certification.
 
 ## M06: consistent valuation and sensitivity
 

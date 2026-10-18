@@ -1,0 +1,1497 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-18T02:03:03.996577+00:00",
+  "updated_at": "2026-10-18T02:03:03.996577+00:00",
+  "scope": "Local research/demo release using existing data",
+  "authorization": {
+    "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+    "recorded_at": "2026-10-18T02:03:03.996577+00:00",
+    "user_message": "Approve all of what you think is best just keep track of these things somewhere so i can go back later if need be",
+    "status": "active",
+    "scope": "Make the remaining evidence-based research/demo review decisions, including financials, industry/valuation assumptions and interpretation-review labels; use existing data and keep a retrospective decision register.",
+    "supersedes_workflow": "Requesting a separate chat approval for every financial review.",
+    "recording_rule": "Record each actual decision, evidence, rationale, author, timestamp, affected records, remaining uncertainty and any later superseding decision. Record agent decisions as agent_review_under_user_delegation, never as personal user inspection.",
+    "retained_boundaries": [
+      "Source gaps and failed/unperformed checks remain visible.",
+      "No invented company facts, independent human review, real-portfolio proof or actual-use days.",
+      "Existing research/demo scope, deferred Mac/off-device setup and prohibited public/broker activity remain unchanged.",
+      "Existing auth, provenance and candidate/version gates still apply before any application write."
+    ]
+  },
+  "human_explicit_approvals": [
+    {
+      "receipt_path": "output/milestones/m05/review-batches-20261017/guided-review/apple-cash-approval.json",
+      "sha256": "dfbccf20c7cc44e9b32ec821a1b49441739993287953ee2d145d1653f20d64db",
+      "receipt": {
+        "decision_id": "M05-AAPL-01",
+        "decision": "approved",
+        "reviewer": "user_in_this_chat",
+        "reviewed_at": "2026-10-17T22:46:33.164788+00:00",
+        "review_date_local": "2026-10-17",
+        "review_timezone": "America/New_York",
+        "user_message": "approve",
+        "approval_scope": "This cash-definition treatment and the two displayed FY2023 source figures only. No whole-company certification, valuation-cash amount, other metric, industry/model mapping or forecast assumption is approved.",
+        "approved_reference_ids": [
+          "AAPL-2024-sec:t25:r5:c7:2023",
+          "AAPL-2025-sec:t27:r41:c11:2023"
+        ],
+        "approved_treatment": "Preserve both reported cash measures separately. Do not substitute cash-flow closing cash for balance-sheet cash or approve usable valuation cash from this difference alone.",
+        "reason": "User explicitly approved the two presented FY2023 figures and their separate treatment.",
+        "previous_decision_sha256": "31b11839e888dcfd0e5c4e49c540cf5a9b4bbe0654a29549a49b269fb2dbf625",
+        "sources": {
+          "AAPL-2024-sec": {
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm",
+            "sha256": "147973a09b33b00f6f9ef5e53357aa8dc01415cb013f5269bd983d7970670476",
+            "local_path": "originals/AAPL-2024-sec.html",
+            "source_hash_verified": true
+          },
+          "AAPL-2025-sec": {
+            "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "local_path": "originals/AAPL-2025-sec.html",
+            "source_hash_verified": true
+          }
+        },
+        "source_hashes_reverified": true,
+        "normal_candidate_reviews_changed": false,
+        "normal_financial_records_changed": false,
+        "valuation_cash_approved": false
+      }
+    },
+    {
+      "receipt_path": "output/milestones/m05/review-batches-20261017/guided-review/apple-debt-approval.json",
+      "sha256": "60104efeb2caa38b2e97cfd7d5a59132533af1590ab8b5fb2224cd576490db52",
+      "receipt": {
+        "decision_id": "M05-AAPL-02",
+        "decision": "approved",
+        "reviewer": "user_in_this_chat",
+        "reviewed_at": "2026-10-17T23:50:09.916029+00:00",
+        "review_date_local": "2026-10-17",
+        "review_timezone": "America/New_York",
+        "user_message": "Approve the debt figures and treatment, move on to the next review.",
+        "approval_scope": "The four displayed FY2025 amounts, calculated subtotals, and accounting separation only. No earlier years, valuation debt basis, lease adjustment to operating profit, whole-company certification or forecast assumptions are approved.",
+        "approved_rows": [
+          {
+            "source_id": "AAPL-2025-sec",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "reporting_unit": "USD millions",
+            "locator": {
+              "table": 43,
+              "row": 13,
+              "cell": 4
+            },
+            "reported_text": "90,678",
+            "approved": true,
+            "claim_type": "Source Summary",
+            "metric": "term_debt_carrying",
+            "label": "Term borrowings, accounting value",
+            "display_usd_billions": "90.678"
+          },
+          {
+            "source_id": "AAPL-2025-sec",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "reporting_unit": "USD millions",
+            "locator": {
+              "table": 25,
+              "row": 25,
+              "cell": 2
+            },
+            "reported_text": "7,979",
+            "approved": true,
+            "claim_type": "Source Summary",
+            "metric": "commercial_paper",
+            "label": "Short-term commercial paper",
+            "display_usd_billions": "7.979"
+          },
+          {
+            "source_id": "AAPL-2025-sec",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "reporting_unit": "USD millions",
+            "locator": {
+              "table": 41,
+              "row": 11,
+              "cell": 3
+            },
+            "reported_text": "12,490",
+            "approved": true,
+            "claim_type": "Source Summary",
+            "metric": "operating_lease_liability",
+            "label": "Operating lease liabilities",
+            "display_usd_billions": "12.490"
+          },
+          {
+            "source_id": "AAPL-2025-sec",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "reporting_unit": "USD millions",
+            "locator": {
+              "table": 41,
+              "row": 11,
+              "cell": 7
+            },
+            "reported_text": "1,230",
+            "approved": true,
+            "claim_type": "Source Summary",
+            "metric": "finance_lease_liability",
+            "label": "Finance lease liabilities",
+            "display_usd_billions": "1.230"
+          }
+        ],
+        "approved_calculations": [
+          {
+            "label": "Borrowings excluding leases",
+            "usd_millions": "98657",
+            "formula": "90678 + 7979",
+            "claim_type": "Calculation"
+          },
+          {
+            "label": "Lease liabilities",
+            "usd_millions": "13720",
+            "formula": "12490 + 1230",
+            "claim_type": "Calculation"
+          }
+        ],
+        "approved_treatment": "Keep term borrowings at their reported carrying amount and commercial paper as borrowing components; retain operating and finance lease liabilities separately. Do not add alternative principal/carrying measures or undiscounted commitments together.",
+        "reason": "User explicitly approved the presented FY2025 figures, subtotals and accounting separation.",
+        "previous_decision_sha256": "2b5dc00e7628a1484dac52d6278e39a6aa6277e04f32a933457b704ec4bf4efa",
+        "source_hashes_reverified": true,
+        "source_cells_reverified": 12,
+        "normal_candidate_reviews_changed": false,
+        "normal_financial_records_changed": false,
+        "valuation_debt_basis_approved": false,
+        "valuation_lease_adjustment_approved": false
+      }
+    },
+    {
+      "receipt_path": "output/milestones/m05/review-batches-20261017/guided-review/apple-shares-approval.json",
+      "sha256": "c15b983626cd1649f74ec29def953ad056a99e10e961b33d2f86fd181677d4e2",
+      "receipt": {
+        "decision_id": "M05-AAPL-03A",
+        "parent_decision_id": "M05-AAPL-03",
+        "decision": "approved",
+        "reviewer": "user_in_this_chat",
+        "reviewed_at": "2026-10-18T00:03:17.979008+00:00",
+        "review_date_local": "2026-10-17",
+        "review_timezone": "America/New_York",
+        "user_message": "Approve the share counts and treatment, move on to the next review.",
+        "approval_scope": "The three displayed FY2025 share counts, conversion from thousands to millions/shares, and their separate historical uses only. No valuation-date share denominator, additional dilution assumption, payout figures, other years or whole-company approval.",
+        "approved_rows": [
+          {
+            "metric": "shares_outstanding",
+            "label": "Shares outstanding at year-end",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 45,
+              "row": 6,
+              "cell": 2
+            },
+            "reported_text": "14,773,260",
+            "reporting_unit": "thousands of shares",
+            "scale_to_shares": 1000,
+            "value_shares": "14773260000",
+            "display_million_shares": "14,773.260",
+            "period_end": "2025-09-27",
+            "fiscal_year": 2025,
+            "reporting_scope": "consolidated",
+            "period_basis": "point_in_time",
+            "claim_type": "Source Summary",
+            "approved": true
+          },
+          {
+            "metric": "weighted_average_basic_shares",
+            "label": "Average basic shares during FY2025",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 29,
+              "row": 7,
+              "cell": 2
+            },
+            "reported_text": "14,948,500",
+            "reporting_unit": "thousands of shares",
+            "scale_to_shares": 1000,
+            "value_shares": "14948500000",
+            "display_million_shares": "14,948.500",
+            "period_end": "2025-09-27",
+            "fiscal_year": 2025,
+            "reporting_scope": "consolidated",
+            "period_basis": "weighted_average",
+            "claim_type": "Source Summary",
+            "approved": true
+          },
+          {
+            "metric": "weighted_average_diluted_shares",
+            "label": "Average diluted shares used for FY2025 EPS",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 29,
+              "row": 9,
+              "cell": 2
+            },
+            "reported_text": "15,004,697",
+            "reporting_unit": "thousands of shares",
+            "scale_to_shares": 1000,
+            "value_shares": "15004697000",
+            "display_million_shares": "15,004.697",
+            "period_end": "2025-09-27",
+            "fiscal_year": 2025,
+            "reporting_scope": "consolidated",
+            "period_basis": "weighted_average",
+            "claim_type": "Source Summary",
+            "approved": true
+          }
+        ],
+        "approved_treatment": "Store all three distinct share measures with correct units and dates. Use weighted-average basic and diluted counts for the respective historical EPS measures; keep year-end shares outstanding separate. Select valuation-date shares and dilution separately.",
+        "reason": "User explicitly approved the three presented FY2025 share counts, unit conversion and separate historical uses.",
+        "previous_decision_sha256": "f8257282cad16260b492cea1b5fae59015d6419faadc18ee12fc0bb374042918",
+        "source_hashes_reverified": true,
+        "source_cells_reverified": 12,
+        "reconciliation": {
+          "basic_plus_dilutive_awards_matches_diluted": true,
+          "opening_less_repurchase_plus_issued_matches_closing": true,
+          "independent_eps_arithmetic_matches_report_rounding": true,
+          "income_statement_and_eps_note_agree": true
+        },
+        "normal_candidate_reviews_changed": false,
+        "normal_financial_records_changed": false,
+        "valuation_share_denominator_approved": false,
+        "additional_dilution_assumption_approved": false,
+        "payout_figures_approved": false,
+        "parent_review_complete": false
+      }
+    },
+    {
+      "receipt_path": "output/milestones/m05/review-batches-20261017/guided-review/apple-payout-approval.json",
+      "sha256": "7f24822a61dd72797bb1049717354baa880616f07719f0ee018b052dc84873c9",
+      "receipt": {
+        "decision_id": "M05-AAPL-03B",
+        "parent_decision_id": "M05-AAPL-03",
+        "decision": "approved",
+        "reviewer": "user_in_this_chat",
+        "reviewed_at": "2026-10-18T01:07:18.555033+00:00",
+        "review_date_local": "2026-10-17",
+        "review_timezone": "America/New_York",
+        "user_message": "Approve the payout figures and treatment, move on to the next review.",
+        "approval_scope": "Only the four displayed FY2025 figures, their aggregate versus per-share units, source signs and separate historical definitions. No other years, future dividends or buybacks, payout forecasts, valuation assumptions, additional company facts or whole-company approval.",
+        "approved_rows": [
+          {
+            "metric": "dividends_and_equivalents_declared",
+            "label": "Dividends and equivalents declared",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 26,
+              "row": 16,
+              "cell": 2
+            },
+            "reported_label": "Dividends and dividend equivalents declared",
+            "reported_text": "( 15,413 )",
+            "reporting_unit": "USD millions",
+            "reported_signed_value": "-15413",
+            "display_value": "$15.413 billion",
+            "display_basis": "positive payout magnitude",
+            "fiscal_year": 2025,
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "period_basis": "fiscal_year",
+            "claim_type": "Source Summary",
+            "approved": true
+          },
+          {
+            "metric": "dividends_and_equivalents_paid",
+            "label": "Dividends and equivalents paid",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 27,
+              "row": 32,
+              "cell": 2
+            },
+            "reported_label": "Payments for dividends and dividend equivalents",
+            "reported_text": "( 15,421 )",
+            "reporting_unit": "USD millions",
+            "reported_signed_value": "-15421",
+            "display_value": "$15.421 billion",
+            "display_basis": "positive payout magnitude",
+            "fiscal_year": 2025,
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "period_basis": "fiscal_year",
+            "claim_type": "Source Summary",
+            "approved": true
+          },
+          {
+            "metric": "cash_share_repurchases",
+            "label": "Cash paid for share buybacks",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 27,
+              "row": 33,
+              "cell": 2
+            },
+            "reported_label": "Repurchases of common stock",
+            "reported_text": "( 90,711 )",
+            "reporting_unit": "USD millions",
+            "reported_signed_value": "-90711",
+            "display_value": "$90.711 billion",
+            "display_basis": "positive payout magnitude",
+            "fiscal_year": 2025,
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "period_basis": "fiscal_year",
+            "claim_type": "Source Summary",
+            "approved": true
+          },
+          {
+            "metric": "dividends_declared_per_share_or_rsu",
+            "label": "Declared per share or restricted stock unit",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "locator": {
+              "table": 26,
+              "row": 28,
+              "cell": 3
+            },
+            "reported_label": "Dividends and dividend equivalents declared per share or RSU",
+            "reported_text": "1.02",
+            "reporting_unit": "USD per share or RSU",
+            "reported_signed_value": "1.02",
+            "display_value": "$1.02",
+            "display_basis": "per share or restricted stock unit",
+            "fiscal_year": 2025,
+            "period_end": "2025-09-27",
+            "reporting_scope": "consolidated",
+            "period_basis": "fiscal_year",
+            "claim_type": "Source Summary",
+            "approved": true
+          }
+        ],
+        "approved_treatment": "Keep dividends declared distinct from dividends paid, retaining dividend equivalents in both definitions. Keep share buybacks separate from dividends. Preserve the reported negative signs for equity reductions and cash outflows in the source, while showing positive payout magnitudes with explicit labels. Keep USD 1.02 per share or RSU separate from aggregate amounts and future payout assumptions.",
+        "retained_calculations": [
+          {
+            "label": "Cash dividends paid exceed dividends declared",
+            "usd_millions": "8",
+            "claim_type": "Calculation",
+            "source_row_indices": [
+              0,
+              1
+            ]
+          }
+        ],
+        "retained_limitations": [
+          "The USD 8 million difference is retained. These statement rows do not establish a complete bridge explaining it; no balancing correction is proposed.",
+          "Declared per share or RSU does not establish a current dividend yield or a future dividend assumption."
+        ],
+        "reason": "User explicitly approved the four presented FY2025 payout figures, units, signs and separate historical definitions.",
+        "previous_decision_sha256": "90e123adfbd0605eaef8052d01f10a9eafdfe1baed230f33a2dbfb2ebdf22df6",
+        "source_hashes_reverified": true,
+        "source_rows_reverified": 4,
+        "source_unit_headings_reverified": true,
+        "normal_candidate_reviews_changed": false,
+        "normal_financial_records_changed": false,
+        "future_payout_assumptions_approved": false,
+        "valuation_assumptions_approved": false,
+        "parent_fy2025_guided_subreviews_resolved": true,
+        "all_periods_reference_review_complete": false
+      }
+    },
+    {
+      "receipt_path": "output/milestones/m05/review-batches-20261017/guided-review/apple-model-basis-approval.json",
+      "sha256": "3effcd5009af62e05e118ef042d832d42efecb8b1d770f7cb0f6ca74532e88b3",
+      "receipt": {
+        "decision_id": "M05-AAPL-04A",
+        "parent_decision_id": "M05-AAPL-04",
+        "decision": "approved",
+        "reviewer": "user_in_this_chat",
+        "reviewed_at": "2026-10-18T02:03:03.996577+00:00",
+        "review_date_local": "2026-10-17",
+        "review_timezone": "America/New_York",
+        "user_message": "Approve the US/USD/FCFF setup, move on to the next review.",
+        "approval_scope": "Only United States domicile, USD as the proposed cash-flow and discount-rate currency, and FCFF DCF as the primary modeling method. No numerical growth, margin, discount rate, country-risk premium, industry benchmark name/weight/version, valuation date, cash/debt/share bridge amount, forecast, output valuation or full-company approval.",
+        "approved_choices": [
+          {
+            "field": "country",
+            "proposed_value": "United States",
+            "claim_type": "Source Summary",
+            "basis": "Country of incorporation and headquarters; global operations are retained separately.",
+            "evidence_ids": [
+              "domicile",
+              "geographic_segments"
+            ],
+            "approved": true
+          },
+          {
+            "field": "valuation_currency",
+            "proposed_value": "USD",
+            "cash_flow_currency": "USD",
+            "discount_rate_currency": "USD",
+            "claim_type": "User Assumption",
+            "basis": "Keep the valuation in the reporting currency and match the discount-rate currency to the projected cash flows.",
+            "evidence_ids": [
+              "currency"
+            ],
+            "approved": true
+          },
+          {
+            "field": "primary_model",
+            "proposed_value": "fcff_dcf",
+            "label": "Operating-company discounted cash flow (FCFF)",
+            "claim_type": "User Assumption",
+            "basis": "Estimate operating cash flows after taxes and reinvestment, discount at the cost of capital, then make the separately reviewed cash, debt and other equity-bridge adjustments. This is the proposed modeling choice based on the operating business, not an Apple-reported fact.",
+            "evidence_ids": [
+              "business",
+              "service_mix"
+            ],
+            "approved": true
+          }
+        ],
+        "approved_treatment": "Use United States as domicile and USD for both forecast cash flows and the matching discount-rate currency. Use an operating-company FCFF DCF as the primary model, with separately reviewed equity-bridge adjustments. Keep Apple\u2019s products and services visible in the business description. Review exact industry mappings, benchmark versions and weights separately; domicile does not set a US-only country-risk premium.",
+        "source_evidence": [
+          {
+            "id": "domicile",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "extracted_text_sha256": "8ecac81c38a79153e5151fe15995dc30bb4ad4a8a1bc13eaba832b9b70ecfca5",
+            "locator": {
+              "path": "extracted/AAPL-2025-sec.txt",
+              "line_start": 730,
+              "line_end": 744
+            },
+            "selected_text_sha256": "6cfd4b76c1b8c3cd4ba5d91e6f5026743f3284b5a54b6b985d57de94c5d281bd",
+            "summary": "Apple reports California incorporation and principal offices in Cupertino, California; the country classification is United States.",
+            "claim_type": "Source Summary"
+          },
+          {
+            "id": "currency",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "extracted_text_sha256": "8ecac81c38a79153e5151fe15995dc30bb4ad4a8a1bc13eaba832b9b70ecfca5",
+            "locator": {
+              "path": "extracted/AAPL-2025-sec.txt",
+              "line_start": 1,
+              "line_end": 6
+            },
+            "selected_text_sha256": "9021e4ac4928d133fe714ac3c97cb3da417e31b538bcc2f5bdf9b5eeda924fe0",
+            "summary": "The filing defines its monetary XBRL unit as USD.",
+            "claim_type": "Source Summary"
+          },
+          {
+            "id": "business",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "extracted_text_sha256": "8ecac81c38a79153e5151fe15995dc30bb4ad4a8a1bc13eaba832b9b70ecfca5",
+            "locator": {
+              "path": "extracted/AAPL-2025-sec.txt",
+              "line_start": 912,
+              "line_end": 914
+            },
+            "selected_text_sha256": "07ae2f23f20db05cf30b8a761efcf1dc466d31bfde605e8ce68c8776b286c8d0",
+            "summary": "Apple sells devices and related services.",
+            "claim_type": "Source Summary"
+          },
+          {
+            "id": "service_mix",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "extracted_text_sha256": "8ecac81c38a79153e5151fe15995dc30bb4ad4a8a1bc13eaba832b9b70ecfca5",
+            "locator": {
+              "path": "extracted/AAPL-2025-sec.txt",
+              "line_start": 981,
+              "line_end": 1011
+            },
+            "selected_text_sha256": "ba96dd247dbeba5ceec64722eed0bddcb4a4e6dc066f7b4a46d54f77455bb7bc",
+            "summary": "Services include advertising, support, cloud storage, digital content and payment services.",
+            "claim_type": "Source Summary"
+          },
+          {
+            "id": "geographic_segments",
+            "source_id": "AAPL-2025-sec",
+            "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+            "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+            "extracted_text_sha256": "8ecac81c38a79153e5151fe15995dc30bb4ad4a8a1bc13eaba832b9b70ecfca5",
+            "locator": {
+              "path": "extracted/AAPL-2025-sec.txt",
+              "line_start": 1012,
+              "line_end": 1013
+            },
+            "selected_text_sha256": "aff9cc39664aeb01d23d83ade15e6e70ab5190f0bc84333caa6923c23a2c2a73",
+            "summary": "Apple reports geographic operating segments, so US domicile does not mean US-only sales or risk exposure.",
+            "claim_type": "Source Summary"
+          }
+        ],
+        "reason": "User explicitly approved US domicile, USD valuation currency and the FCFF modeling method.",
+        "previous_decision_sha256": "e9fa1049268b904802bfa7dd6362b8840c88b0a8ffce43e8d8d88c6147b25c17",
+        "source_hashes_reverified": true,
+        "normal_company_settings_changed": false,
+        "normal_financial_records_changed": false,
+        "normal_valuation_models_changed": false,
+        "numerical_assumptions_approved": false
+      }
+    }
+  ],
+  "agent_delegated_decisions": [
+    {
+      "decision_id": "M05-US-BENCHMARK-INTAKE-20261017",
+      "reviewed_at": "2026-10-18T02:03:03.996577+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "applied_and_database_verified",
+      "decision": "Import the six retained, audited January 5, 2026 US benchmark workbooks into the existing normal database.",
+      "reason": "The normal database contained no dataset versions. Local mirror bytes match the immutable audited originals and all six workbooks identify the US population and registered date.",
+      "affected_records": {
+        "new_active_dataset_versions": 6,
+        "new_typed_records": 1131,
+        "successful_processing_runs": 6,
+        "changed_tables": [
+          "assumption_method_values",
+          "damodaran_dataset_files",
+          "damodaran_industry_capex_benchmarks",
+          "damodaran_industry_margin_benchmarks",
+          "damodaran_industry_roe_benchmarks",
+          "damodaran_industry_working_capital_benchmarks",
+          "processing_runs"
+        ],
+        "unchanged_tables": 102
+      },
+      "validation": "27 selected stored values match retained workbook cells; source hashes, dates, population and Processing Runs verified.",
+      "source_date_not_current_market_date": true,
+      "revisit": "A newer source must be added as a new version through the audited importer. Preserve these version IDs and hashes in historical calculations."
+    },
+    {
+      "decision_id": "M05-AAPL-04B",
+      "parent_decision_id": "M05-AAPL-04",
+      "reviewed_at": "2026-10-18T02:03:03.996577+00:00",
+      "reviewer": "codex_under_user_delegation",
+      "review_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "status": "decided_comparison_use_only",
+      "decision": "Use the audited US benchmarks for labeled comparisons; withhold a single automatic company mapping and forecast defaults.",
+      "reason": "Apple combines products with multiple service businesses. The filing supports product/service revenues but not a unique allocation to the loaded software benchmark categories. Automatically blending industry ratios would add assumptions about both the service mix and the ratio denominators.",
+      "revenue_mix": [
+        {
+          "category": "Products",
+          "revenue_usd_millions": "307003",
+          "weight_percent": "73.77024757245393008955668599",
+          "display_percent": "73.77"
+        },
+        {
+          "category": "Services",
+          "revenue_usd_millions": "109158",
+          "weight_percent": "26.22975242754606991044331401",
+          "display_percent": "26.23"
+        }
+      ],
+      "revenue_mix_claim_type": "Calculation",
+      "source_rows": [
+        {
+          "metric": "products_net_sales",
+          "source_id": "AAPL-2025-sec",
+          "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+          "locator": {
+            "table": 23,
+            "row": 5,
+            "cell": 3
+          },
+          "reported_text": "307,003",
+          "value_usd_millions": "307003",
+          "fiscal_year": 2025,
+          "period_end": "2025-09-27",
+          "claim_type": "Source Summary",
+          "approved": false,
+          "review_role": "Context for later industry-mapping review only"
+        },
+        {
+          "metric": "services_net_sales",
+          "source_id": "AAPL-2025-sec",
+          "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+          "locator": {
+            "table": 23,
+            "row": 6,
+            "cell": 2
+          },
+          "reported_text": "109,158",
+          "value_usd_millions": "109158",
+          "fiscal_year": 2025,
+          "period_end": "2025-09-27",
+          "claim_type": "Source Summary",
+          "approved": false,
+          "review_role": "Context for later industry-mapping review only"
+        },
+        {
+          "metric": "total_net_sales",
+          "source_id": "AAPL-2025-sec",
+          "original_sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+          "locator": {
+            "table": 23,
+            "row": 7,
+            "cell": 2
+          },
+          "reported_text": "416,161",
+          "value_usd_millions": "416161",
+          "fiscal_year": 2025,
+          "period_end": "2025-09-27",
+          "claim_type": "Source Summary",
+          "approved": false,
+          "review_role": "Context for later industry-mapping review only"
+        }
+      ],
+      "approved_source_as_of": "2026-01-05",
+      "benchmark_country": "United States",
+      "benchmark_versions": [
+        {
+          "id": 1,
+          "uploaded_filename": "betasUS-2026-01-05.xls",
+          "dataset_code": "beta_methods",
+          "country": "United States",
+          "source_sha256": "fa5d91af58046937e2db27a764b077dde9d5414df5f69214328f163b940e42a5",
+          "source_as_of": "2026-01-05",
+          "row_count": 282,
+          "is_active": true
+        },
+        {
+          "id": 2,
+          "uploaded_filename": "waccUS-2026-01-05.xls",
+          "dataset_code": "wacc_methods",
+          "country": "United States",
+          "source_sha256": "d38b149c731bba6847d077ef67c9a4bfa0a54f947ba480b2f9ea89f5451d39a6",
+          "source_as_of": "2026-01-05",
+          "row_count": 473,
+          "is_active": true
+        },
+        {
+          "id": 3,
+          "uploaded_filename": "marginUS-2026-01-05.xls",
+          "dataset_code": "margins",
+          "country": "United States",
+          "source_sha256": "25b04fce9740d9a471d50e176bf55aa6b7608cd0621b00072508a20e7c35ed7a",
+          "source_as_of": "2026-01-05",
+          "row_count": 94,
+          "is_active": true
+        },
+        {
+          "id": 4,
+          "uploaded_filename": "capexUS-2026-01-05.xls",
+          "dataset_code": "capex",
+          "country": "United States",
+          "source_sha256": "97216e369c8c6bd69987ed2ace0933381cc278b7d423a0c7b4944effded4c58e",
+          "source_as_of": "2026-01-05",
+          "row_count": 94,
+          "is_active": true
+        },
+        {
+          "id": 5,
+          "uploaded_filename": "roeUS-2026-01-05.xls",
+          "dataset_code": "roe",
+          "country": "United States",
+          "source_sha256": "7da8fd4c41dd75dcc898b784f42d407e92f2b242ddda09237c99cc02a6787817",
+          "source_as_of": "2026-01-05",
+          "row_count": 94,
+          "is_active": true
+        },
+        {
+          "id": 6,
+          "uploaded_filename": "wcdataUS-2026-01-05.xls",
+          "dataset_code": "working_capital",
+          "country": "United States",
+          "source_sha256": "d73a2bc07111d90996595c74718a0eedb902ffd50dff45395a08b65f39db1288",
+          "source_as_of": "2026-01-05",
+          "row_count": 94,
+          "is_active": true
+        }
+      ],
+      "comparison_industries": [
+        "Computers/Peripherals",
+        "Software (Internet)",
+        "Software (System & Application)"
+      ],
+      "comparison_industry_claim_type": "User Assumption",
+      "allowed_use": "Context and sensitivity comparisons after keeping company actuals and periods separate. No imported benchmark is an Apple fact or a current-rate observation.",
+      "not_selected": [
+        "A unique services-industry allocation",
+        "A revenue-weighted beta or WACC",
+        "An automatic blended sales-to-capital or ROE forecast",
+        "Any numerical company forecast or valuation output"
+      ],
+      "application_status": "Six source versions imported through the audited service; Apple company mapping and all financial/model records remain unchanged.",
+      "remaining_evidence_work": "Review the full company input basis and economically consistent aggregation before applying a final weighted mapping. This is independent agent work, not a pending user-permission request.",
+      "parent_review_complete": false,
+      "normal_company_mapping_changed": false,
+      "normal_benchmark_records_changed": true,
+      "normal_financial_records_changed": false
+    }
+  ],
+  "evidence": {
+    "benchmark_import": {
+      "path": "output/milestones/m05/review-batches-20261017/guided-review/benchmark-import-receipt.json",
+      "sha256": "dd48f0306f5c7d392920436e85f3395dcd67adfc0625ed7902aa6208279f8953",
+      "public_summary": {
+        "observed_at": "2026-10-18T01:57:13.394089+00:00",
+        "source_preflight": [
+          {
+            "contract": "beta_methods",
+            "filename": "betasUS-2026-01-05.xls",
+            "sha256": "fa5d91af58046937e2db27a764b077dde9d5414df5f69214328f163b940e42a5",
+            "bytes": 82432,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/betas.xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 31,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of firms": 36,
+                  "Beta": 1.3503292085851684,
+                  "D/E Ratio": 0.04624738158842277,
+                  "Effective Tax rate": 0.05911353077642165,
+                  "Unlevered beta": 1.3050624188250832,
+                  "Cash/Firm value": 0.01474015694541099,
+                  "Unlevered beta corrected for cash": 1.3245870396777912,
+                  "HiLo Risk": 0.5570782029943967,
+                  "Standard deviation of equity": 0.5457679517178851,
+                  "Standard deviation in operating income (last 10 years)": 0.3056919037558648,
+                  "2022": 1.2487708944175273,
+                  "2023.0": 1.227042372213005,
+                  "2024": 1.1,
+                  "2025.0": 1.12,
+                  "Average (2022-2026)": 1.204080061261665
+                }
+              },
+              {
+                "sheet_row": 93,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of firms": 29,
+                  "Beta": 1.6886761161660595,
+                  "D/E Ratio": 0.12298911343132386,
+                  "Effective Tax rate": 0.03054366211647507,
+                  "Unlevered beta": 1.5460643073174678,
+                  "Cash/Firm value": 0.027953523483810944,
+                  "Unlevered beta corrected for cash": 1.5905250877083126,
+                  "HiLo Risk": 0.5617970760653243,
+                  "Standard deviation of equity": 0.526123151821511,
+                  "Standard deviation in operating income (last 10 years)": 2.3401804886371456,
+                  "2022": 0.9750638036621639,
+                  "2023.0": 1.416511407810549,
+                  "2024": 1.51,
+                  "2025.0": 1.6,
+                  "Average (2022-2026)": 1.4184200598362051
+                }
+              },
+              {
+                "sheet_row": 94,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of firms": 309,
+                  "Beta": 1.276648178078175,
+                  "D/E Ratio": 0.05577131922321719,
+                  "Effective Tax rate": 0.05509792802786181,
+                  "Unlevered beta": 1.225391886520662,
+                  "Cash/Firm value": 0.018272345449553515,
+                  "Unlevered beta corrected for cash": 1.2481994174665423,
+                  "HiLo Risk": 0.574139770333485,
+                  "Standard deviation of equity": 0.5678932632947824,
+                  "Standard deviation in operating income (last 10 years)": 0.48630696217783415,
+                  "2022": 1.122454939608095,
+                  "2023.0": 1.4129709426977197,
+                  "2024": 1.27,
+                  "2025.0": 1.22,
+                  "Average (2022-2026)": 1.2547250599544713
+                }
+              }
+            ]
+          },
+          {
+            "contract": "wacc_methods",
+            "filename": "waccUS-2026-01-05.xls",
+            "sha256": "d38b149c731bba6847d077ef67c9a4bfa0a54f947ba480b2f9ea89f5451d39a6",
+            "bytes": 77312,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/waccUS-2026-01-05.xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 40,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of Firms": 36,
+                  "Beta": 1.3503292085851684,
+                  "Cost of Equity": 0.09972468270289851,
+                  "E/(D+E)": 0.9557968962195064,
+                  "Std Dev in Stock": 0.5457679517178851,
+                  "Cost of Debt": 0.052913,
+                  "Tax Rate": 0.05911353077642165,
+                  "After-tax Cost of Debt": 0.039684750000000005,
+                  "D/(D+E)": 0.044203103780493636,
+                  "Cost of Capital": 0.09707073132665844,
+                  "Cost of Capital (Local Currency)": 0.09707073132665833
+                }
+              },
+              {
+                "sheet_row": 102,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of Firms": 29,
+                  "Beta": 1.6886761161660595,
+                  "Cost of Equity": 0.11481495478100626,
+                  "E/(D+E)": 0.8904805826162221,
+                  "Std Dev in Stock": 0.526123151821511,
+                  "Cost of Debt": 0.052913,
+                  "Tax Rate": 0.03054366211647507,
+                  "After-tax Cost of Debt": 0.039684750000000005,
+                  "D/(D+E)": 0.1095194173837779,
+                  "Cost of Capital": 0.10658673852546652,
+                  "Cost of Capital (Local Currency)": 0.10658673852546663
+                }
+              },
+              {
+                "sheet_row": 103,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of Firms": 309,
+                  "Beta": 1.276648178078175,
+                  "Cost of Equity": 0.09643850874228661,
+                  "E/(D+E)": 0.9471748112420303,
+                  "Std Dev in Stock": 0.5678932632947824,
+                  "Cost of Debt": 0.052913,
+                  "Tax Rate": 0.05509792802786181,
+                  "After-tax Cost of Debt": 0.039684750000000005,
+                  "D/(D+E)": 0.05282518875796971,
+                  "Cost of Capital": 0.09344048072400105,
+                  "Cost of Capital (Local Currency)": 0.09344048072400102
+                }
+              }
+            ]
+          },
+          {
+            "contract": "margin",
+            "filename": "marginUS-2026-01-05.xls",
+            "sha256": "25b04fce9740d9a471d50e176bf55aa6b7608cd0621b00072508a20e7c35ed7a",
+            "bytes": 78336,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/marginUS-2026-01-05.xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 30,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of firms": 36,
+                  "Gross Margin": 0.38355293535188456,
+                  "Net Margin": 0.1777744098144937,
+                  "Pre-tax, Pre-stock compensation Operating Margin": 0.24958721825026448,
+                  "Pre-tax Unadjusted Operating Margin": 0.22484874696685003,
+                  "After-tax Unadjusted Operating Margin": 0.21155714364298528,
+                  "Pre-tax Lease adjusted Margin": 0.22489034296518012,
+                  "After-tax Lease Adjusted Margin": 0.21159628075498793,
+                  "Pre-tax Lease & R&D adj Margin": 0.22923659803850288,
+                  "After-tax Lease & R&D adj Margin": 0.2159425358283107,
+                  "EBITDA/Sales": 0.2532063954429002,
+                  "EBITDASG&A/Sales": 0.34027706843377953,
+                  "EBITDAR&D/Sales": 0.3240283059561002,
+                  "COGS/Sales": 0.6164470646481155,
+                  "R&D/Sales": 0.07082191051320001,
+                  "SG&A/ Sales": 0.08707067299087932,
+                  "Stock-Based Compensation/Sales": 0.024738471283414457,
+                  "Lease Expense/Sales": 0.029201072269448423
+                }
+              },
+              {
+                "sheet_row": 92,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of firms": 29,
+                  "Gross Margin": 0.6257871205088534,
+                  "Net Margin": -0.009326071858346227,
+                  "Pre-tax, Pre-stock compensation Operating Margin": 0.18552281932267495,
+                  "Pre-tax Unadjusted Operating Margin": 0.03686141997593261,
+                  "After-tax Unadjusted Operating Margin": 0.035735537219054245,
+                  "Pre-tax Lease adjusted Margin": 0.03738840189516249,
+                  "After-tax Lease Adjusted Margin": 0.036246423180601665,
+                  "Pre-tax Lease & R&D adj Margin": 0.04704900770571774,
+                  "After-tax Lease & R&D adj Margin": 0.04590702899115692,
+                  "EBITDA/Sales": 0.09518583462265771,
+                  "EBITDASG&A/Sales": 0.42866863331614236,
+                  "EBITDAR&D/Sales": 0.2927400378201822,
+                  "COGS/Sales": 0.37421287949114657,
+                  "R&D/Sales": 0.1975542031975245,
+                  "SG&A/ Sales": 0.3334827986934846,
+                  "Stock-Based Compensation/Sales": 0.14866139934674233,
+                  "Lease Expense/Sales": 0.03216478597215059
+                }
+              },
+              {
+                "sheet_row": 93,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of firms": 309,
+                  "Gross Margin": 0.7172070917475231,
+                  "Net Margin": 0.25492956311411463,
+                  "Pre-tax, Pre-stock compensation Operating Margin": 0.4081278489238267,
+                  "Pre-tax Unadjusted Operating Margin": 0.32982513736047653,
+                  "After-tax Unadjusted Operating Margin": 0.31165245568040933,
+                  "Pre-tax Lease adjusted Margin": 0.3320749595853169,
+                  "After-tax Lease Adjusted Margin": 0.31377831736223,
+                  "Pre-tax Lease & R&D adj Margin": 0.34449305784609674,
+                  "After-tax Lease & R&D adj Margin": 0.3261964156230099,
+                  "EBITDA/Sales": 0.35930450706077793,
+                  "EBITDASG&A/Sales": 0.6031518522228108,
+                  "EBITDAR&D/Sales": 0.5190888475831121,
+                  "COGS/Sales": 0.28279290825247694,
+                  "R&D/Sales": 0.15978434052233426,
+                  "SG&A/ Sales": 0.2438473451620328,
+                  "Stock-Based Compensation/Sales": 0.07830271156335021,
+                  "Lease Expense/Sales": 0.016846370609233385
+                }
+              }
+            ]
+          },
+          {
+            "contract": "capex",
+            "filename": "capexUS-2026-01-05.xls",
+            "sha256": "97216e369c8c6bd69987ed2ace0933381cc278b7d423a0c7b4944effded4c58e",
+            "bytes": 59904,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/capexUS-2026-01-05.xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 29,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of Firms": 36,
+                  "Capital Expenditures (US $ millions)": 19858.182,
+                  "Depreciation & Amort ((US $ millions)": 16570.098000000005,
+                  "Cap Ex/Deprecn": 1.198434795014489,
+                  "Acquisitions (US $ millions)": 13320.14,
+                  "Net R&D (US $ millions)": 2928.5636000000814,
+                  "Net Cap Ex/Sales": 0.028994371924491297,
+                  "Net Cap Ex/ EBIT (1-t)": 0.15194986721367795,
+                  "Sales/ Invested Capital (LTM)": 3.6197887497686683
+                }
+              },
+              {
+                "sheet_row": 91,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of Firms": 29,
+                  "Capital Expenditures (US $ millions)": 12240.522999999997,
+                  "Depreciation & Amort ((US $ millions)": 3454.96,
+                  "Cap Ex/Deprecn": 3.542884143376478,
+                  "Acquisitions (US $ millions)": 319.88399999999996,
+                  "Net R&D (US $ millions)": 351.2233999999994,
+                  "Net Cap Ex/Sales": 0.26011127110194243,
+                  "Net Cap Ex/ EBIT (1-t)": 12.211899786808276,
+                  "Sales/ Invested Capital (LTM)": 1.3500967702032756
+                }
+              },
+              {
+                "sheet_row": 92,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of Firms": 309,
+                  "Capital Expenditures (US $ millions)": 113147.62599999997,
+                  "Depreciation & Amort ((US $ millions)": 46267.56100000003,
+                  "Cap Ex/Deprecn": 2.4455066045085,
+                  "Acquisitions (US $ millions)": 38574.79,
+                  "Net R&D (US $ millions)": 7898.89699999991,
+                  "Net Cap Ex/Sales": 0.17820691047928386,
+                  "Net Cap Ex/ EBIT (1-t)": 0.6607986043450148,
+                  "Sales/ Invested Capital (LTM)": 1.5381715801685372
+                }
+              }
+            ]
+          },
+          {
+            "contract": "roe",
+            "filename": "roeUS-2026-01-05.xls",
+            "sha256": "7da8fd4c41dd75dcc898b784f42d407e92f2b242ddda09237c99cc02a6787817",
+            "bytes": 49152,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/roe(1).xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 29,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of firms": 36,
+                  "ROE (unadjusted)": -0.0017413160406024974,
+                  "ROE (adjusted for R&D)": 0.4842749814598282
+                }
+              },
+              {
+                "sheet_row": 91,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of firms": 29,
+                  "ROE (unadjusted)": -0.01469962217495586,
+                  "ROE (adjusted for R&D)": 0.0002719147106055063
+                }
+              },
+              {
+                "sheet_row": 92,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of firms": 309,
+                  "ROE (unadjusted)": 0.2962489469128928,
+                  "ROE (adjusted for R&D)": 0.20207672077851566
+                }
+              }
+            ]
+          },
+          {
+            "contract": "working_capital",
+            "filename": "wcdataUS-2026-01-05.xls",
+            "sha256": "d73a2bc07111d90996595c74718a0eedb902ffd50dff45395a08b65f39db1288",
+            "bytes": 51200,
+            "canonical_path": "damodaran_knowledge_base_v1/raw/datasets/wcdata.xls",
+            "source_as_of": "2026-01-05",
+            "country": "United States",
+            "claim_type": "Estimate",
+            "review_required_for_valuation_use": true,
+            "scope_cell": "US companies",
+            "source_date_cell": "2026-01-05",
+            "selected_industries": [
+              {
+                "sheet_row": 29,
+                "industry": "Computers/Peripherals",
+                "values": {
+                  "Industry Name": "Computers/Peripherals",
+                  "Number of firms": 36,
+                  "Acc Rec/ Sales": 0.10681622709148311,
+                  "Inventory/Sales": 0.059151080706431915,
+                  "Acc Pay/ Sales": 0.1877539293726315,
+                  "Non-cash WC/ Sales": -0.04705741851421019
+                }
+              },
+              {
+                "sheet_row": 91,
+                "industry": "Software (Internet)",
+                "values": {
+                  "Industry Name": "Software (Internet)",
+                  "Number of firms": 29,
+                  "Acc Rec/ Sales": 0.16312504727522775,
+                  "Inventory/Sales": 2.6460374763623862e-05,
+                  "Acc Pay/ Sales": 0.06776881554065668,
+                  "Non-cash WC/ Sales": 0.14797882069795426
+                }
+              },
+              {
+                "sheet_row": 92,
+                "industry": "Software (System & Application)",
+                "values": {
+                  "Industry Name": "Software (System & Application)",
+                  "Number of firms": 309,
+                  "Acc Rec/ Sales": 0.1684062022686881,
+                  "Inventory/Sales": 0.004550992868829418,
+                  "Acc Pay/ Sales": 0.08361218359201783,
+                  "Non-cash WC/ Sales": 0.10046216066901616
+                }
+              }
+            ]
+          }
+        ],
+        "after_versions": [
+          {
+            "id": 1,
+            "uploaded_filename": "betasUS-2026-01-05.xls",
+            "dataset_code": "beta_methods",
+            "country": "United States",
+            "source_sha256": "fa5d91af58046937e2db27a764b077dde9d5414df5f69214328f163b940e42a5",
+            "source_as_of": "2026-01-05",
+            "row_count": 282,
+            "is_active": true
+          },
+          {
+            "id": 2,
+            "uploaded_filename": "waccUS-2026-01-05.xls",
+            "dataset_code": "wacc_methods",
+            "country": "United States",
+            "source_sha256": "d38b149c731bba6847d077ef67c9a4bfa0a54f947ba480b2f9ea89f5451d39a6",
+            "source_as_of": "2026-01-05",
+            "row_count": 473,
+            "is_active": true
+          },
+          {
+            "id": 3,
+            "uploaded_filename": "marginUS-2026-01-05.xls",
+            "dataset_code": "margins",
+            "country": "United States",
+            "source_sha256": "25b04fce9740d9a471d50e176bf55aa6b7608cd0621b00072508a20e7c35ed7a",
+            "source_as_of": "2026-01-05",
+            "row_count": 94,
+            "is_active": true
+          },
+          {
+            "id": 4,
+            "uploaded_filename": "capexUS-2026-01-05.xls",
+            "dataset_code": "capex",
+            "country": "United States",
+            "source_sha256": "97216e369c8c6bd69987ed2ace0933381cc278b7d423a0c7b4944effded4c58e",
+            "source_as_of": "2026-01-05",
+            "row_count": 94,
+            "is_active": true
+          },
+          {
+            "id": 5,
+            "uploaded_filename": "roeUS-2026-01-05.xls",
+            "dataset_code": "roe",
+            "country": "United States",
+            "source_sha256": "7da8fd4c41dd75dcc898b784f42d407e92f2b242ddda09237c99cc02a6787817",
+            "source_as_of": "2026-01-05",
+            "row_count": 94,
+            "is_active": true
+          },
+          {
+            "id": 6,
+            "uploaded_filename": "wcdataUS-2026-01-05.xls",
+            "dataset_code": "working_capital",
+            "country": "United States",
+            "source_sha256": "d73a2bc07111d90996595c74718a0eedb902ffd50dff45395a08b65f39db1288",
+            "source_as_of": "2026-01-05",
+            "row_count": 94,
+            "is_active": true
+          }
+        ],
+        "import_counts": {
+          "beta_methods": 282,
+          "wacc_methods": 473,
+          "margin": 94,
+          "capex": 94,
+          "roe": 94,
+          "working_capital": 94
+        },
+        "changed_tables": [
+          "assumption_method_values",
+          "damodaran_dataset_files",
+          "damodaran_industry_capex_benchmarks",
+          "damodaran_industry_margin_benchmarks",
+          "damodaran_industry_roe_benchmarks",
+          "damodaran_industry_working_capital_benchmarks",
+          "processing_runs"
+        ],
+        "unchanged_table_count": 102,
+        "successful_processing_runs": 6,
+        "company_financial_portfolio_and_saved_valuation_tables_unchanged": true,
+        "validation": {
+          "selected_cell_checks": 27,
+          "checks": [
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "gross_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "ebitda_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "ebit_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "net_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "gross_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "ebitda_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "ebit_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "net_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "gross_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "ebitda_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "ebit_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_margin_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "net_margin",
+              "dataset_file_id": 3,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "net_capex_to_sales",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "sales_to_capital",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "net_capex_to_sales",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "sales_to_capital",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "net_capex_to_sales",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_capex_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "sales_to_capital",
+              "dataset_file_id": 4,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "rd_adjusted_roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "rd_adjusted_roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_roe_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "rd_adjusted_roe",
+              "dataset_file_id": 5,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_working_capital_benchmarks",
+              "industry": "Computers/Peripherals",
+              "field": "non_cash_wc_to_sales",
+              "dataset_file_id": 6,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_working_capital_benchmarks",
+              "industry": "Software (Internet)",
+              "field": "non_cash_wc_to_sales",
+              "dataset_file_id": 6,
+              "matches_cached_source": true
+            },
+            {
+              "table": "damodaran_industry_working_capital_benchmarks",
+              "industry": "Software (System & Application)",
+              "field": "non_cash_wc_to_sales",
+              "dataset_file_id": 6,
+              "matches_cached_source": true
+            }
+          ],
+          "processing_runs": [
+            {
+              "id": 91,
+              "status": "success",
+              "fetched_count": 282,
+              "created_count": 282,
+              "error_count": 0,
+              "source_sha256": "fa5d91af58046937e2db27a764b077dde9d5414df5f69214328f163b940e42a5"
+            },
+            {
+              "id": 92,
+              "status": "success",
+              "fetched_count": 473,
+              "created_count": 473,
+              "error_count": 0,
+              "source_sha256": "d38b149c731bba6847d077ef67c9a4bfa0a54f947ba480b2f9ea89f5451d39a6"
+            },
+            {
+              "id": 93,
+              "status": "success",
+              "fetched_count": 94,
+              "created_count": 94,
+              "error_count": 0,
+              "source_sha256": "25b04fce9740d9a471d50e176bf55aa6b7608cd0621b00072508a20e7c35ed7a"
+            },
+            {
+              "id": 94,
+              "status": "success",
+              "fetched_count": 94,
+              "created_count": 94,
+              "error_count": 0,
+              "source_sha256": "97216e369c8c6bd69987ed2ace0933381cc278b7d423a0c7b4944effded4c58e"
+            },
+            {
+              "id": 95,
+              "status": "success",
+              "fetched_count": 94,
+              "created_count": 94,
+              "error_count": 0,
+              "source_sha256": "7da8fd4c41dd75dcc898b784f42d407e92f2b242ddda09237c99cc02a6787817"
+            },
+            {
+              "id": 96,
+              "status": "success",
+              "fetched_count": 94,
+              "created_count": 94,
+              "error_count": 0,
+              "source_sha256": "d73a2bc07111d90996595c74718a0eedb902ffd50dff45395a08b65f39db1288"
+            }
+          ],
+          "created_records": 1131,
+          "read_only_validation": true,
+          "environment_files_read": false
+        },
+        "environment_files_read": false,
+        "source_files_changed": false,
+        "browser_verification": {
+          "status": "not_completed",
+          "reason": "Browser automation process failed to initialize on two attempts. Database validation passed; no fresh UI result is claimed."
+        }
+      },
+      "local_only_evidence": "Complete before/after database table fingerprints remain in the local receipt at path; its SHA-256 is retained here."
+    }
+  },
+  "change_policy": "Append a dated decision with supersedes_decision_id when revising a choice. Never rewrite an earlier approval or represent delegated review as independent human validation.",
+  "milestone_acceptance_changed": false
+}

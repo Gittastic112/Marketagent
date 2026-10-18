@@ -11,8 +11,10 @@ at 20 acceptance points; M03 is the next unfinished gate. See the tracker for da
 October 17 explicitly scopes the first release to local research/demo on the
 existing data. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
 defers Mac/off-device setup and excludes genuine portfolio validation from v1.
-Financial, model and AI review continue one decision at a time; no new local
-disposable datasets or automatic approval of existing records is authorized.
+Remaining financial, model and AI review choices are delegated to Codex and
+recorded in the [decision log](review-decisions.md). Each applied choice still
+requires supporting evidence and current-record checks. No new local disposable
+fixture datasets are authorized.
 
 ## Planning Rule
 

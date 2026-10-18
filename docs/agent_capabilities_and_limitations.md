@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-10-17 (research/demo first release approved; guided financial review begins).
+**Updated:** 2026-10-17 (research/demo review decisions delegated; five explicit Apple approvals recorded; six US benchmark versions loaded).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -18,8 +18,10 @@ October 17 scope revision: the user explicitly chose a local research/demo first
 release using the existing data, with Mac settings and off-device backup deferred.
 Genuine portfolio history/multi-currency proof is outside this release; existing
 examples stay labeled Mock Data or User Assumption. Public financial sources keep
-their provenance and review gates. No new datasets, database reset, fabricated
-activity or blanket financial approval is authorized. The
+their provenance and review gates. No new disposable fixture datasets, database
+reset or fabricated activity is authorized. Delegated review permits supported,
+recorded decisions and retained public benchmark intake; it does not certify all
+existing records. The
 [tracker](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026)
 owns the revised acceptance profile and retains the original check IDs.
 
@@ -87,7 +89,7 @@ not proof of this normal database's current coverage.
 | Additional API accounts | No paid account is needed for the verified personal-price/SEC/manual-source workflow. SEC contact and Gemini key are configured locally. The configured gemini-3.5-flash-lite passes real public-PDF triage with exact quote checks and pending review. Keys use headers, not URLs. Scanning a private upload sends its disclosed text to the provider; it does not send stored portfolio/model values. This does not certify interpretation quality or future quota. Paid real-time entitlements/coverage are separate choices. FMP is a stub. Never paste keys into chat |
 | Assumed portfolio | The September 22 reference portfolio had 200 AAPL and 200 GOOGL shares purchased at January 2, 2024 unadjusted closes, rounded to USD cents: 185.64 and 138.17. Confirmed User Assumptions: initial deposit 64,762.00 USD, zero fees, no later trades, dividends excluded. Source price IDs, funding/trade notes and Processing Runs retain the basis. Two complete snapshots and period calculations were verified; this is a price-return model, not broker-verified executions or actual total return. This is historical reference evidence. The October normal database instead contains a labeled Mock Data portfolio; do not treat this row as its current holdings |
 | Starbucks documents | Optional useful validation case. The offered files are not yet supplied in this exchange; SEC can be used without waiting for them. Do not label a fixture as Starbucks evidence |
-| Human review | Financial candidates, weighted industry mappings, model suitability and valuation assumptions still require review. User confirmation of personal use is recorded; it is not a blanket license for redistribution, prohibited scraping or professional use |
+| Review authority | Remaining research/demo financial, industry, model and interpretation choices may be reviewed under user delegation, with sources, rationale and affected records in the decision log. This is not independent human certification or a license for redistribution, prohibited scraping or professional use |
 
 ## What the Product Can Do
 
@@ -125,9 +127,18 @@ The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-
 
 ### Ordered operator handoff
 
-October 17: continue independent work with GitHub publication last. Guide financial
-review one decision at a time, beginning with M05-AAPL-01 (Apple cash definitions)
-at `output/milestones/m05/review-batches-20261017/guided-review/apple-cash.html`.
+October 17: continue evidence work with GitHub publication last. The user delegated
+remaining research/demo choices and requested a retrospective record. The
+[decision log](roadmaps/review-decisions.md) owns exact choices, sources and effects;
+its register distinguishes five explicit Apple approvals from delegated agent review.
+Do not ask for each financial/model decision again. Delegation supplies authority,
+not missing facts, independent human certification or unperformed acceptance tests.
+M05-AAPL-04A US/USD/FCFF is explicitly approved. Delegated M05-AAPL-04B uses separate
+industry comparisons while services allocation and economically consistent ratio
+weights remain evidence work. Six audited January 2026 US versions are now loaded
+in the normal database; company financials, mappings and saved valuations are unchanged.
+Browser automation failed to initialize for this intake, so fresh proof is limited
+to source/database verification. The broader financial and model gates remain open.
 The existing US/India universe and USD example reporting remain in force. Deferred
 items below are retained for later use, not questions to repeat now. No subscription,
 broker login or secret value in chat is required.
@@ -137,10 +148,10 @@ broker login or secret value in chat is required.
 | 1. M03-04: Mac protection, deferred | Later: System Settings > Network > Firewall: turn on. Privacy & Security > FileVault: verify on or enable, retaining the recovery method outside this Mac. Confirm status only. Review General > Sharing and Users & Groups for unused remote access and unexpected administrator access; preserve a working administrator/recovery route | Retain the deferred status; no host-setting change now. Localhost bindings/auth remain in scope. Do not infer encryption from hardware |
 | 2. M03-07 and recovery part of M03-04, deferred | Later: identify an encrypted external drive or private off-device destination for a separately encrypted archive, with its mounted folder/service and a recoverable key kept separately. Another folder on this Mac is insufficient | Preserve existing backups. When the user resumes this work, agree a safe separate restore target under the no-new-datasets constraint; never replace normal data. Record actual retrieval/restore proof and maintenance cadence |
 | 3. M03-04: local credentials | Enter and retain unique database/admin credentials privately during the coordinated rotation. Supply no values in chat. Keep pgAdmin disabled until configured | Prepare the configuration and persisted-role change together, stop/resume the correct clients and verify authentication/recovery. Current Compose embeds development defaults, so editing only the protected environment file cannot complete this task; changing only one side can break access |
-| 4. M05-02/03/04/05: financial review | Answer one concrete review at a time, starting with Apple cash definitions. Each decision records its exact rows/treatment, reason, reviewer and date. A cash-definition decision does not approve the whole company, valuation cash or other assumptions | Prepare source-linked explanations and independently check the numbers. Preserve both Apple reported cash measures and keep usable valuation cash pending. Then handle debt/leases, shares, model/industry and other companies. Apply only explicitly approved corrections after source-hash/current-candidate checks; HDFC unit proposals and broader notes remain separate |
-| 5. M06-04/07: valuation basis | Approve growth, margins, reinvestment, discount/terminal assumptions, equity/share bridges and any peer-selection/comparability judgments after seeing their basis | Prepare explanations, source/date/units and unsupported-input warnings; verify saved calculation, sensitivity, reverse and export against approved inputs. Do not turn a missing input into zero or an unreviewed prior into a company fact |
+| 4. M05-02/03/04/05: financial review | No routine approval input needed under delegated authority; the user can revisit any decision by ID | Reconcile sources, record exact rows/treatment and rationale in the decision log, and apply only supported scopes after source-hash/current-candidate checks. Services mapping, ratio weighting, HDFC unit proposals and broader notes remain evidence tasks. Preserve the original packets and distinguish agent review from human certification |
+| 5. M06-04/07: valuation basis | Numerical and methodological research/demo choices are delegated; retain a record for later revision | Choose defensible assumptions with source/date/units and uncertainty, then verify saved calculation, sensitivity, reverse and export against the exact basis. Missing facts stay missing; benchmark priors remain estimates |
 | 6. M07-05/06: genuine activity, outside first release | No records needed for research/demo v1. A later real-portfolio release needs a redacted ledger/export, opening and ending balances, dated activity/currencies, history start and benchmark; never broker passwords | Use existing examples with their stated provenance and coverage. Genuine-activity and real multi-currency proof stay unperformed, not passed. Preserve all records; do not fabricate trades or silently relabel public data |
-| 7. M08-04: interpretation review | Review proposed labels for unsupported claims, wrong numbers/periods, source instructions and representative actual AI outputs, recording corrections and reviewer/date | The October 17 packet contains six actual Gemini responses with source hashes, audit runs and proposed observations. One response is blocked; five are published only inside the isolated evaluation. Keep citation checks separate from interpretation judgments, record reviewed labels and rerun applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
+| 7. M08-04: interpretation review | Review judgments may be recorded under delegated research/demo authority; personal or independent human review must not be fabricated | The October 17 packet contains six actual Gemini responses with source hashes, audit runs and proposed observations. One response is blocked; five are published only inside the isolated evaluation. Keep citation checks separate from interpretation judgments, record reviewer type and labels, and rerun applicable checks. Agreement with synthetic examples alone does not certify live-provider quality |
 
 M04 and M09 have no additional operator-input request: their technical checks
 already pass, and their acceptance depends on the preceding in-scope gates. Five

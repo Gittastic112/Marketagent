@@ -133,18 +133,16 @@ Prior runtime evidence remains valid only for the environment and inputs tested.
 
 ## Data evidence, not inferred runtime contents
 
-September 22 benchmark audit: 24 active typed sources, 3,756 rows, all with
-complete active provenance; 14 supported, 18 partial and 9 unsupported mirrors.
-Repeated US intake created no duplicate versions or values and retained India rows.
+September 22 historical benchmark audit: 24 typed sources, 3,756 rows with complete provenance; 14 supported, 18 partial and 9 unsupported mirrors. Repeated US intake was idempotent and retained India rows.
 
-The audited AAPL FY2022-FY2025 and APSEZ FY2023-FY2025 reference histories prove
-covered real-source extraction paths. They do not prove those histories exist in
-the normal user's database. September 22 leaves 694 unreviewed SEC candidates
-and no normalized snapshots. Annual values populate drafts with source, unit,
-period and review warnings; they are not approved financial statements. Missing
-debt scope, share-class reconciliation and India statements remain explicit.
-US industry priors are loaded but mappings require review. Workbook inspection
-corrected global-input labels and a US country-tax alias without rewriting old rows.
+The audited AAPL FY2022-FY2025 and APSEZ FY2023-FY2025 histories prove source paths,
+not normal database contents. September 22 retained 694 unreviewed SEC candidates
+and no normalized snapshots. Drafts retain source/unit/period/review warnings;
+debt scope, share-class reconciliation and India statement gaps remain explicit.
+October 17 normal intake loaded six audited US versions dated January 5, 2026 into an empty benchmark registry: 1,131 typed rows, six successful runs and 27 source-cell checks; 102 other tables unchanged.
+The [decision log](roadmaps/review-decisions.md) records versions, five explicit Apple approvals and delegated review. Final mappings/forecasts remain evidence work; intake proof is at database level, with fresh browser verification unavailable.
+Earlier workbook inspection corrected global-input labels and a US country-tax alias without rewriting old rows.
+September counts are historical, not current inventory.
 
 The September 22 reference portfolio modeled 200 AAPL and 200 GOOGL at January 2, 2024 unadjusted closes,
 rounded to USD185.64/USD138.17. The confirmed USD64,762 deposit, zero fees,
