@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-18T18:08:42.277551+00:00",
+  "updated_at": "2026-10-18T23:43:12.956416+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -3858,6 +3858,85 @@
         "No benchmark or trusted current DCF was fabricated; missing inputs remain unavailable.",
         "Original complete-series/reviewed-model and genuine-input acceptance evidence remains unperformed.",
         "M07 milestone acceptance still depends on M06; cumulative accepted milestones are unchanged."
+      ]
+    },
+    {
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-18T23:43:12.955701+00:00",
+      "decision_id": "M05-IN-10",
+      "decision": "Approve the exact selected historical source occurrences for normal-data intake, version-checked review and promotion. Keep older FY2025 comparatives unreviewed.",
+      "reason": "Fresh independent source text and visual review verify units, physical cells and annual period ends. 112 accounting equations tie exactly and 24 EPS checks tie at reported precision. Parser v6 separates explicit current/noncurrent investments without changing values.",
+      "receipt_path": "data/reviews/india-financial-review-20261018.json",
+      "receipt_sha256": "2749e1dc4de05361081ba5dd6506e8072258d25015d1f95da36753afd705234b",
+      "affected_records": {
+        "reviewed_source_occurrences": 492,
+        "companies": [
+          "RELIANCE",
+          "BHARTIARTL",
+          "ICICIBANK",
+          "SBIN"
+        ],
+        "source_reports_for_intake": 8,
+        "hdfc_bonus_note_recorded_without_application": true
+      },
+      "limitations": [
+        "Selected reported historical facts and supported calculations only; no company-wide, model, forecast or current-share certification.",
+        "The 164 older FY2025 candidate occurrences retain needs_review status and their original values; latest presentation is canonical for this batch.",
+        "Bank deposits/investments/RBI cash are not corporate EV debt/excess cash. Missing EBIT, tax, capital investment, FCFF and FCFE stay unavailable.",
+        "SBI comparative reclassification has an equal/opposite amount but no independently identified account cause. Airtel restricted/trust cash and EPS numerator differences retain their separate definitions.",
+        "HDFC FY2026 bonus-note review does not change the existing FY2024/FY2025 pre-bonus records. Its full capital, merger and share-basis comparability remains open.",
+        "Fresh quiesced backups pass archive listing; they are not new restore or off-device-recovery proof. No local fixture database was created.",
+        "Existing US/HDFC records, portfolios, saved valuations and other unrelated records are unchanged. Delegated agent review is not independent human certification."
+      ]
+    },
+    {
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-18T23:43:12.955701+00:00",
+      "decision_id": "M05-IN-11",
+      "decision": "Apply only the exact M05-IN-10 selection through audited intake, current-version review and promotion; preserve all held and unrelated records.",
+      "reason": "Deployed parser parity, source hashes, exact candidate versions, independent persisted calculations and 16 normal desktop/mobile financial/evidence views pass. The discovered PDF keyboard defect is fixed in the normal frontend.",
+      "receipt_path": "data/reviews/india-financial-application-20261018.json",
+      "receipt_sha256": "ef12ed394184cd4f1b8c654f060d19d85029bb352c516ebe7f1fa307dddd4cf3",
+      "affected_records": {
+        "reported_facts": 456,
+        "source_revisions": 492,
+        "annual_periods": 12,
+        "normalized_values": 72,
+        "source_documents_and_assets": 8,
+        "processing_run_ids": [
+          106,
+          107,
+          108,
+          109,
+          110,
+          111,
+          112,
+          113,
+          114,
+          115,
+          116,
+          117,
+          118,
+          119,
+          120,
+          121
+        ],
+        "other_tables_unchanged": 100,
+        "unrelated_rows_within_changed_tables_unchanged": true,
+        "post_browser_table_fingerprints_unchanged": 109
+      },
+      "limitations": [
+        "Selected reported historical facts and supported calculations only; no company-wide, model, forecast or current-share certification.",
+        "The 164 older FY2025 candidate occurrences retain needs_review status and their original values; latest presentation is canonical for this batch.",
+        "Bank deposits/investments/RBI cash are not corporate EV debt/excess cash. Missing EBIT, tax, capital investment, FCFF and FCFE stay unavailable.",
+        "SBI comparative reclassification has an equal/opposite amount but no independently identified account cause. Airtel restricted/trust cash and EPS numerator differences retain their separate definitions.",
+        "HDFC FY2026 bonus-note review does not change the existing FY2024/FY2025 pre-bonus records. Its full capital, merger and share-basis comparability remains open.",
+        "Fresh quiesced backups pass archive listing; they are not new restore or off-device-recovery proof. No local fixture database was created.",
+        "Existing US/HDFC records, portfolios, saved valuations and other unrelated records are unchanged. Delegated agent review is not independent human certification."
       ]
     }
   ],

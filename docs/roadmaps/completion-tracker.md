@@ -280,13 +280,18 @@ The subsequent [US/AI checkpoint](../archive/checkpoints/2026/us-financial-and-a
 reviews ten original US reports and 402 selected candidates: 355 are approved and
 applied, while 47 selected gaps remain held. Six securities now have 18 reviewed
 annual periods and 248 supported normalized values, verified in 12 normal browser
-views. With HDFC, there are 20 periods and 256 normalized values; other issuers and
-complete model inputs remain open. Mac settings/backups remain deferred.
+views. The subsequent [India review](../archive/checkpoints/2026/india-financial-review-2026-10-18.md)
+adds four issuers, 492 source occurrences, 456 facts, 12 periods and 72 normalized
+values. All 11 scoped securities now have selected histories: 32 periods and 328
+normalized values. Independent accounting/EPS checks and 16 normal financial/PDF
+views pass. M05-02 now has selected-layout/reference proof; full notes, HDFC's
+latest bonus-comparable history, model bridges and mappings remain open. No new
+milestone acceptance points are earned. Mac settings/backups remain deferred.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
   required source documents and human-review dependencies before execution.
-- [ ] M05-02 Verify parser coverage against independent reviewed references,
+- [x] M05-02 Verify parser coverage against independent reviewed references,
   including a new US issuer/layout and India non-bank/bank layouts. Cover units,
   currency, dates, fiscal periods, duplicate/revised facts and exact source hashes.
 - [ ] M05-03 Reconcile statements and review debt scope, leases, minority interests,

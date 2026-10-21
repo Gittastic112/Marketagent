@@ -46,6 +46,28 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   const candidateReview = candidateHeading.locator("xpath=../../..");
   await expect(page.getByRole("main").getByText("There are 12 extraction candidates")).toBeVisible();
 
+  const evidenceHref = await candidateReview.getByRole("link", {name: "Open evidence"}).first().getAttribute("href");
+  expect(evidenceHref).toBeTruthy();
+  await page.goto(evidenceHref!);
+  await page.setViewportSize({width:390,height:844});
+  const sourceRegion = page.getByRole("region", {name:"Rendered source evidence",exact:true});
+  await sourceRegion.getByRole("img").evaluate((element: HTMLImageElement) => element.decode());
+  await sourceRegion.scrollIntoViewIfNeeded();
+  for (let attempt = 0; attempt < 80; attempt++) {
+    if (await sourceRegion.evaluate(element => element === document.activeElement)) break;
+    await page.keyboard.press("Tab");
+  }
+  await expect(sourceRegion).toBeFocused();
+  expect(await sourceRegion.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => sourceRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const sourceAccessibility = await new AxeBuilder({page})
+    .withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]).analyze();
+  expect(sourceAccessibility.violations).toEqual([]);
+  await page.setViewportSize({width:1440,height:1000});
+  await page.getByRole("link", {name:"Back to fundamentals",exact:true}).click();
+  await expect(candidateHeading).toBeVisible();
+
   while (await page.getByRole("button", { name: "Accept" }).count()) {
     const acceptButtons = page.getByRole("button", { name: "Accept" });
     const reviewedStatuses = page.getByRole("main").getByText("reviewed", { exact: true });

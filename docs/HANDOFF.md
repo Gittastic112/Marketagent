@@ -28,6 +28,8 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 The [October 18 repository cleanup](archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
 records bounded navigation, ignored evidence, cache savings and preserved runtime.
+The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
+owns parser v6, four-company promotion, PDF keyboard repair and final browser proof.
 The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
 owns the later US source decisions, normal-data application and semantic judgments.
 The [October 18 HDFC checkpoint](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
@@ -37,9 +39,9 @@ populated financial UI, local rollout and exact source/image proof. The
 parser v5, broader validation/recovery and original packets. The [October 13 checkpoint](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
 retains the full frontend/workflow matrix and process-cold/warm performance scope.
 
-- Parser v5 handles verified embedded rupee EPS and repeated sidebar navigation
-  numbers outside aligned statement columns. Unknown/conflicting inputs stay
-  rejected. Original text, coordinates and review warnings remain.
+- Parser v6 also separates explicitly scoped current/noncurrent investments;
+  unclassified bank investments stay separate. The 784 retained candidates keep
+  their values/units/locations; 16 scoped labels change. Review warnings remain.
 - All eight previously skipped selected entries now parse. HDFC's 56 selected
   unit gaps are resolved under delegated review; 64 entries become 60 distinct
   reported facts across two March 31 periods. Whole-company/note coverage stays open.
@@ -56,8 +58,8 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 
 ## Normal runtime and recovery
 
-Normal backend/workers use the tested normalization/promotion fixes; frontend now
-includes keyboard-accessible financial tables and truthful readiness labels.
+Normal backend/workers use parser v6 and the tested normalization/promotion fixes;
+frontend includes keyboard-accessible financial tables and PDF evidence regions.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
 after the explicit HDFC and US changes. Fresh quiesced dumps pass archive listing without
@@ -98,10 +100,10 @@ comparisons, preserving unresolved services mapping and ratio-weighting choices.
 Those are agent evidence tasks, not permission gates. Reconcile remaining company
 statements, broader bank notes/comparability and model inputs; apply exact reviewed
 scopes through source/candidate checks. Original broad reference packets stay intact.
-US Runs 100-105 apply 355 reviewed facts/revisions, 18 periods and 248 normalized
-values; 47 selected gaps and older unselected candidates remain held. HDFC retains
-64 source occurrences and eight normalized values. Do not reapply these batches.
-Missing notes remain gaps. Do not label delegated review independent human validation.
+US Runs 100-105 and HDFC remain unchanged. India Runs 106-121 add 492 source occurrences,
+456 facts, 12 periods and 72 normalized values; 164 older comparative
+entries stay held. Combined: 32 periods, 871 facts, 911 revisions and 328 normalized
+values across all 11 scoped securities. Do not reapply; this is not independent human validation.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
 Reviewed source/input freeze, five business days of actual research/demo use and

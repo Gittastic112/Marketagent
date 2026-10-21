@@ -10,6 +10,7 @@ from app.services.pdf_financial_extraction import (
     _reporting_unit,
     _statement_line_candidates,
     _statement_years,
+    _table_candidates,
 )
 
 
@@ -63,6 +64,38 @@ def test_borrowings_retain_scope_and_are_never_summed_with_totals():
         ("noncurrent_borrowings", 70), ("current_borrowings", 30), ("borrowings", 100), ("debt", 120),
     }
     assert not any(r.source_locator_json["type"] == "pdf_reported_component_sum" for r in result)
+
+
+@pytest.mark.parametrize("heading", ["Non-current assets", "Non current assets", "Non‑current assets"])
+def test_investments_keep_current_and_noncurrent_asset_scope(heading):
+    result = rows(f"Notes FY2026 FY2025\nAssets\n{heading}\n"
+        "Financial assets\nInvestments 2 70 60\nCurrent assets\n"
+        "Financial assets\nInvestments 8 30 25\nEquity and liabilities\n"
+        "Current liabilities\nBorrowings 20 15 12")
+    current = [item for item in result if item.fiscal_year == 2026]
+    assert {(item.metric_code, item.value) for item in current} == {
+        ("noncurrent_investments", 70), ("current_investments", 30), ("current_borrowings", 15),
+    }
+    for item in current:
+        if item.metric_code.endswith("investments"):
+            assert item.source_locator_json["statement_asset_scope"] == item.metric_code.split("_")[0]
+            assert "accounting_scope_requires_review" in item.extraction_warnings
+
+
+def test_unclassified_bank_investments_do_not_inherit_an_asset_heading_from_a_prior_statement():
+    result = rows("Notes FY2026 FY2025\nCurrent assets\nInvestments 8 30 25\n"
+        "Capital and liabilities\nCapital 1 10 9\nAssets\nInvestments 8 90 80")
+    assert [(item.metric_code, item.value) for item in result if item.fiscal_year == 2026] == [
+        ("current_investments", 30), ("share_capital", 10), ("investments", 90),
+    ]
+
+
+def test_table_cells_without_asset_headings_cannot_create_unscoped_investment_duplicates():
+    result = _table_candidates(matrix=[["Particulars", "FY2026", "FY2025"],
+        ["Investments", "70", "60"], ["Investments", "30", "25"]], rows=[],
+        table_bbox=(0, 0, 600, 800), page_number=1, page_width=600, page_height=840,
+        table_number=1, section="Consolidated Balance Sheet", currency="INR", scale="crore")
+    assert result == []
 
 
 def test_cash_flow_opening_closing_and_movements_do_not_become_balance_sheet_cash():

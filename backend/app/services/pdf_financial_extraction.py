@@ -29,7 +29,7 @@ MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v5"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v6"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -677,6 +677,7 @@ def _statement_line_candidates(
     candidates: list[PdfTableCandidate] = []
     attribution = "profit"
     liability_scope = None
+    asset_scope = None
     statement_block = None
     eps_context = False
     share_context = False
@@ -714,6 +715,14 @@ def _statement_line_candidates(
             liability_scope = "current"
         elif normalized_line in {"assets", "equity", "current assets", "non-current assets"}:
             liability_scope = None
+        asset_heading = normalized_line.replace("‑", "-")
+        if asset_heading in {"non-current assets", "non current assets"}:
+            asset_scope = "noncurrent"
+        elif asset_heading == "current assets":
+            asset_scope = "current"
+        elif asset_heading in {"assets", "equity", "equity and liabilities", "capital and liabilities",
+                              "non-current liabilities", "non current liabilities", "current liabilities"}:
+            asset_scope = None
         row_unit_evidence = None
         margin_evidence = None
         if eps_context:
@@ -729,7 +738,7 @@ def _statement_line_candidates(
                 warnings.add("ambiguous_statement_row_skipped")
             continue
         source_label, value_tokens = parsed_row
-        metric = _metric_for_statement_line(source_label, section, liability_scope=liability_scope,
+        metric = _metric_for_statement_line(source_label, section, liability_scope=liability_scope, asset_scope=asset_scope,
             statement_block=statement_block, eps_context=eps_context, share_context=share_context)
         if metric is None:
             continue
@@ -793,6 +802,8 @@ def _statement_line_candidates(
                         "page_height": page_height,
                         "bounding_box": row_bbox,
                         **({"region": region_number} if region_number else {}),
+                        **({"statement_asset_scope": asset_scope}
+                           if asset_scope and metric_code.endswith("investments") else {}),
                         **({"share_unit_header": {"scale": share_scale, "line": share_scale_line}}
                            if share_scale and metric_code.endswith("shares") else {}),
                         **({"unit_evidence": applied_unit_evidence} if applied_unit_evidence and not metric_code.endswith("shares") else {}),
@@ -920,6 +931,7 @@ def _metric_for_statement_line(
     section: str | None,
     *,
     liability_scope: str | None = None,
+    asset_scope: str | None = None,
     statement_block: str | None = None,
     eps_context: bool = False,
     share_context: bool = False,
@@ -993,6 +1005,8 @@ def _metric_for_statement_line(
             return None
         if "cash flow" in section_lower:
             return None
+        if code == "investments" and asset_scope in {"current", "noncurrent"}:
+            code = asset_scope + "_investments"
         return code, code.replace("_", " ").capitalize(), source_line
     if "cash flow" in section_lower:
         flow_label = re.sub(r"\s*\((?:[abc]|a\+b\+c)\)$", "", normalized).strip()
@@ -1168,7 +1182,7 @@ def _table_candidates(
         metric_code, reported_label, _ = metric
         # Text rows retain context for attribution and current/noncurrent headings.
         # Table cells alone cannot safely infer that context from merged headings.
-        if metric_code in {"borrowings", "lease_liabilities", "net_income_parent", "net_income_nci", "minority_interests", "cash_flow_cash_opening", "cash_flow_cash_closing"} or (metric_code == "net_income" and source_label.lower() == "profit after tax"):
+        if metric_code in {"borrowings", "lease_liabilities", "investments", "net_income_parent", "net_income_nci", "minority_interests", "cash_flow_cash_opening", "cash_flow_cash_closing"} or (metric_code == "net_income" and source_label.lower() == "profit after tax"):
             continue
 
         for column_index in range(1, min(len(row), len(headers))):
@@ -1279,7 +1293,7 @@ def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *
 
 def _candidate_warnings(metric_code: str, unit: str | None) -> list[str]:
     result = [] if unit else ["reporting_unit_missing"]
-    if metric_code in {"borrowings", "current_borrowings", "noncurrent_borrowings", "bills_discounted", "cash_and_balances_with_rbi", "profit_after_tax_before_associates", "profit_before_associates_nci", "investments", "group_profit"} or metric_code.startswith("cash_flow_"):
+    if metric_code in {"borrowings", "current_borrowings", "noncurrent_borrowings", "bills_discounted", "cash_and_balances_with_rbi", "profit_after_tax_before_associates", "profit_before_associates_nci", "investments", "current_investments", "noncurrent_investments", "group_profit"} or metric_code.startswith("cash_flow_"):
         result.append("accounting_scope_requires_review")
     return result
 
