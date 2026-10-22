@@ -1,9 +1,9 @@
 # Current State
 
-Dependency/PDF repair rollout: [2026-10-21/22](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md); Next.js 16.4.1 CI rerun pending. First-release scope: local, single-user research/demo using existing data, explicitly approved October 17.
+Dependency/PDF repair rollout: [2026-10-21/22](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md); Next.js 16.4.1 CI passes on 767a8526; the later HDFC source matrix is pending. First-release scope: local, single-user research/demo using existing data, explicitly approved October 17.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest reviewed data: [October 18 India review](archive/checkpoints/2026/india-financial-review-2026-10-18.md), following [US/AI review](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md), [HDFC normalization](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md) and [October 17 parser/recovery](archive/checkpoints/2026/release-readiness-2026-10-17.md). Intake remains audited and review-required.
+Latest reviewed data: [October 22 HDFC restatement](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md), following [India review](archive/checkpoints/2026/india-financial-review-2026-10-18.md), [US/AI review](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md), [HDFC normalization](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md) and [October 17 parser/recovery](archive/checkpoints/2026/release-readiness-2026-10-17.md). Intake remains audited and review-required.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -21,19 +21,19 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | October 22 CI on fed0210: 1,701 pass, six opt-in PostgreSQL skips; the separate browser job verifies all six integration checks. October 21 dependency repair: 106 focused tests pass, 784 PDF candidates and ten rendered-page hashes unchanged. Only Pillow/certifi versions change; audit returns zero advisories in 69 dependencies, with packaging separately checked |
-| Frontend | October 22 Next.js 16.4.1: 304 tests, TypeScript, production build and zero-advisory npm audit pass. PDF repair on fed0210 passes all 64 CI browser workflows. A new Next.js advisory then requires this dependency-only update; its full CI rerun is pending. October 13's 110 route/state views retain their date; failed artifacts remain |
+| Backend | October 22 CI on 767a8526: 1,701 pass, six opt-in PostgreSQL skips; the separate browser job verifies all six integration checks. October 21 dependency repair: 106 focused tests pass, 784 PDF candidates and ten rendered-page hashes unchanged. Only Pillow/certifi versions change; audit returns zero advisories in 69 dependencies, with packaging separately checked |
+| Frontend | October 22 Next.js 16.4.1: 304 tests, TypeScript, production build and zero-advisory npm audit pass. The exact Next.js head 767a8526 passes all five CI jobs and 64 browser workflows. The later HDFC source has 37 local backend checks and a fresh 304-test frontend build; its remote matrix is pending. October 13's 110 route/state views retain their date; failed artifacts remain |
 | API compatibility | 279 public paths, 513 schemas and 373 public operations. Audit covers 380 static HTTP callers, ten reviewed dynamic entries and 227 controls with no unwired-button candidates. Pure contracts, facade identity and wire guards pass; counts alone are not behavioral proof |
 | Operations | 56 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion, bounded proof-database readiness, timeout cleanup, retention and format-2 compatibility are covered. Protected environment files remain excluded |
 | PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Fresh schema reaches s1s1s1s1s1s1 |
-| Normal runtime | October 22 adds Next.js 16.4.1 to the installed security/PDF repair. Original volume/schema/settings and localhost-only ports retained; all 109 table fingerprints unchanged and the identical verified backup reused. Coverage stays 32 periods, 871 facts, 911 revisions and 328 normalized values. Ten rollback registrations are separate; removing only the successful temporary builder recovers 849,703,505 layer bytes |
-| Normal browser | October 22 passes 16 India financial/PDF and six existing-portfolio views, 456 fact comparisons, 164 held candidates and mobile keyboard scrolling. No writes, page overflow, browser errors or axe violations. Mock, stale, partial and unavailable portfolio states remain visible. Table-cell E2E proof is the separately dated fed0210 CI result; the new dependency CI rerun is pending |
+| Normal runtime | October 22 HDFC/source-revision fixes are installed with Next.js 16.4.1. Original volume/schema/settings and localhost-only ports remain. Coverage: 33 periods, 901 facts, 975 revisions and 332 normalized values. A new post-review backup passes archive listing. Seventeen rollback registrations are separate; this successful builder cleanup recovers 849,557,071 layer bytes |
+| Normal browser | October 22 passes 16 India financial/PDF and six existing-portfolio views, 456 fact comparisons, 164 held candidates and mobile keyboard scrolling. No writes, page overflow, browser errors or axe violations. Mock, stale, partial and unavailable portfolio states remain visible. Later HDFC checks pass six views, 60 comparisons and visible review limitations; all 109 post-application fingerprints stay unchanged. Table-cell E2E proof is CI on 767a8526; the new HDFC matrix remains pending |
 | Recovery | October 17 format-3 concurrent-write recovery verifies both PDF stores and all 109 tables: restore 8 seconds, full drill 30 seconds. The later populated-backup rehearsal is prepared but unrun after the user requested no new disposable datasets. Same-disk copies do not prove encrypted off-device recovery |
 | Performance | Final profile: six process-cold and 30 warm samples over 774 rows/109 tables, nine query-budget regressions and eight section interactions pass. Market Prices fetches 51 rows and renders 50 forms, retaining filtering/history/export access. Database fingerprints remain unchanged; database/OS caches remain warm. Dataset and hardware are recorded without a concurrent-user/load claim |
 | Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Ten company source batches are retained; delegated US/India reviews apply only selected historical facts. Six actual Gemini outputs and four existing adversarial fixtures have delegated semantic judgments, with unsupported mappings rejected and one response still blocked. Original human fields remain unchanged; broader coverage remains open |
 
-Normal screens still contain labeled Mock Data. HDFC's official PDF is now asset 1,
-document 10; September's private-PDF/source inventories below remain historical.
+Normal screens still contain labeled Mock Data. HDFC PDFs are assets 1/10, documents
+10/19; September's private-PDF/source inventories below remain historical.
 The first October 17 browser pass generated one new daily brief, triggering
 automatic image rollback. All six older briefs and every other table/asset stayed
 unchanged. A supplementary quiesced dump is retained with no restore-verification
@@ -140,7 +140,7 @@ not normal database contents. September 22 retained 694 unreviewed SEC candidate
 and no normalized snapshots. Drafts retain source/unit/period/review warnings;
 debt scope, share-class reconciliation and India statement gaps remain explicit.
 October 17 normal intake loaded six audited US versions dated January 5, 2026 into an empty benchmark registry: 1,131 typed rows, six successful runs and 27 source-cell checks; 102 other tables unchanged.
-The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. HDFC and six US securities now have 20 periods, 415 distinct reported facts, 419 source revisions and 256 supported normalized values. Unselected records and saved valuations remain unchanged; complete accounting bridges, mappings and forecasts remain evidence work.
+The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. All 11 scoped securities now have 33 periods, 901 reported facts, 975 revisions and 332 supported normalized values. Unselected records and saved valuations remain unchanged; complete accounting bridges, mappings and forecasts remain evidence work.
 Earlier workbook inspection corrected global-input labels and a US country-tax alias without rewriting old rows.
 September counts are historical, not current inventory.
 October 18's existing portfolio examples pass 64 independent value/risk/return checks. Legacy returns remain provisional, current risk partial and DCF/benchmark coverage unavailable; the revised M07 demo check passes without certifying real activity.

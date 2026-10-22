@@ -20,6 +20,7 @@ import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
 import { ScreenerUpload } from "@/components/screener-upload";
+import { formatNumber } from "@/lib/formatting";
 
 export default async function FundamentalsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -387,16 +388,36 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                   <table className="min-w-full divide-y divide-gray-300">
                     <thead>
                       <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Period ID</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Metrics Count</th>
+                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Period</th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Values and basis</th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Updated</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {normalizedSnapshots.map((snapshot) => (
                         <tr key={snapshot.id}>
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{snapshot.period_id}</td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{snapshot.metrics?.length || 0}</td>
+                          <td className="whitespace-nowrap py-4 pl-4 pr-3 align-top text-sm font-medium text-gray-900">
+                            {periods.find(period => period.id === snapshot.period_id)?.report_date ?? `Period ${snapshot.period_id}`}
+                          </td>
+                          <td className="px-3 py-4 align-top text-sm text-gray-700">
+                            {snapshot.metrics.length === 0 ? "No normalized metrics" : (
+                              <details>
+                                <summary className="cursor-pointer whitespace-nowrap font-medium text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600">
+                                  Show {snapshot.metrics.length} metrics and their basis
+                                </summary>
+                                <dl className="mt-3 w-80 space-y-4 break-words sm:w-96">
+                                  {snapshot.metrics.map(metric => (
+                                    <div key={metric.id}>
+                                      <dt className="font-semibold text-gray-900">{metric.metric_code.replaceAll("_", " ")}</dt>
+                                      <dd className="tabular-nums">{formatNumber(metric.value, 6)} {metric.unit ?? "Unit unavailable"}</dd>
+                                      <dd className="mt-1 text-xs">{metric.provenance_notes || "Source basis unavailable. Review the original filing before use."}</dd>
+                                      {metric.warnings && <dd className="mt-1 text-xs text-amber-800">Limitations: {metric.warnings}</dd>}
+                                    </div>
+                                  ))}
+                                </dl>
+                              </details>
+                            )}
+                          </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{new Date(snapshot.updated_at).toLocaleString()}</td>
                         </tr>
                       ))}

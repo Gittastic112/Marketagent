@@ -2,6 +2,8 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [HDFC latest history, revision provenance and visible review basis, October 22](hdfc-latest-history-2026-10-22.md)
+- [Dependency security and exact PDF-cell links, October 21-22](dependency-and-pdf-evidence-2026-10-21.md)
 - [Repository navigation, ignore rules and measured cache cleanup, October 18](repository-hygiene-2026-10-18.md)
 - [HDFC delegated review, normalization and populated financial UI, October 18](hdfc-reviewed-normalization-2026-10-18.md)
 

@@ -106,6 +106,14 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   expect(await normalizedRegion.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
   await page.keyboard.press("ArrowRight");
   await expect.poll(() => normalizedRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const firstMetricDetails = normalizedRegion.locator("details").first();
+  await page.keyboard.press("Tab");
+  await expect(firstMetricDetails.locator("summary")).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(firstMetricDetails.locator("dl")).toBeVisible();
+  await expect(firstMetricDetails).toContainText("revenue");
+  await expect(firstMetricDetails).toContainText(/document \d+, candidate \d+, revision \d+/);
+  await expect(firstMetricDetails).not.toContainText("Current source revision unavailable");
   const accessibility = await new AxeBuilder({page})
     .withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]).analyze();
   expect(accessibility.violations).toEqual([]);

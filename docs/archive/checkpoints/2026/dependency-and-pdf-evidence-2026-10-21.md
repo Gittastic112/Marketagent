@@ -97,7 +97,7 @@ unrelated dirty checkout/index are preserved and excluded from publication.
 
 Six source files and five linked status documents form this cross-cutting batch:
 dependency manifests/locks, evidence helper/tests and their installed-release
-status. M09-07 remains open for the subsequent Next.js security update below. M05/M06
+status. The subsequent Next.js update also passes CI as recorded below. M05/M06
 accounting/source-basis work continues. M01/M02 remain the only accepted milestones,
 at 20 acceptance points. The [tracker](../../../roadmaps/completion-tracker.md) owns
 gates and the [single ledger](../../../agent_capabilities_and_limitations.md) owns
@@ -143,5 +143,10 @@ sample during visual checks is separately retained and is not described as idle.
 
 Receipts and retained setup failures live under `output/milestones/next-security-20261022/`.
 This follow-up changes two package files and five linked status documents. Local
-verification is complete; the full CI matrix for the new dependency source remains
-pending. Prior-head success is not substituted for that gate.
+verification and both full CI runs pass on `767a8526f71c4339b4a54b19ac8cb8fbf2622779`.
+PR run `39833015268` and push run `39833005426` each pass baseline, browser,
+dependency-security, container-security and recovery. The logs retain 64 browser
+workflows, 1,701 backend tests with six opt-in skips, 304 frontend tests and six
+separate PostgreSQL checks. These results apply to that exact source revision;
+later financial changes need their own validation. Final CI logs and job receipts
+are saved alongside the Next.js evidence.

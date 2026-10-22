@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-18T23:43:12.956416+00:00",
+  "updated_at": "2026-10-22T19:43:41.534178+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -3938,6 +3938,311 @@
         "Fresh quiesced backups pass archive listing; they are not new restore or off-device-recovery proof. No local fixture database was created.",
         "Existing US/HDFC records, portfolios, saved valuations and other unrelated records are unchanged. Delegated agent review is not independent human certification."
       ]
+    },
+    {
+      "decision_id": "M05-HDFCBANK-12",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "decision": "Accept the 64 selected FY2025/FY2026 source occurrences as reported, with the EPS exception and accounting distinctions below. Apply only through exact-source and current-candidate version checks.",
+      "limitations": [
+        "Historical selected consolidated statements only. This is delegated agent review, not independent human certification or a current bank valuation.",
+        "FY2025/FY2026 share and EPS values use the FY2026 report bonus-adjusted basis. Retained FY2024 facts remain pre-bonus; do not compute cross-basis per-share growth.",
+        "Weighted-average shares are EPS denominators, not ending shares or a current valuation denominator. Rounded share capital is not an exact ending-share count.",
+        "Bank deposits, policyholder funds, RBI balances, advances and investments are operating accounts. Do not substitute them for industrial-company EV debt or excess cash.",
+        "Employee-award balances are accounting entries, not the market value of outstanding employee options. Regulatory capital differs from consolidated accounting equity.",
+        "The source confirms the July 1, 2023 merger. A comparable FY2024 combined full-year earnings series has not been independently reconstructed.",
+        "Pillar 3 consolidated capital is a separate unaudited disclosure referenced on PDF page 554; the reviewed standalone capital table is not a consolidated distributable-capital calculation."
+      ],
+      "recorded_at": "2026-10-22T19:13:47.574663+00:00",
+      "reason": "64 independently sourced occurrences, 14 exact statement equations, four bonus comparisons and three of four direct EPS checks pass. The fourth EPS check remains an explicit exception.",
+      "receipt_path": "data/reviews/hdfc-financial-review-20261022.json",
+      "receipt_sha256": "424a6fcf50d45a18cfbd1c6a41c60b855c335f23e35fb3ab675f85cdff726af1",
+      "affected_records": {
+        "approved_source_occurrences": 64,
+        "normal_data_application": "separate M05-HDFCBANK-13 receipt required"
+      },
+      "supersedes_scope": "The FY2025 pre-bonus canonical presentation from M05-HDFCBANK-05/06 will be replaced by latest reported comparatives only when M05-HDFCBANK-13 is applied. Original sources and revisions remain."
+    },
+    {
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-22T19:43:41.534178+00:00",
+      "receipt_path": "data/reviews/hdfc-financial-application-20261022.json",
+      "receipt_sha256": "6b5eb9b3c71859270ebceef84522ec60496754f753d92ebef91993f2368322c0",
+      "limitations": [
+        "Selected historical sources only; current bank valuation and full notes/model bridges remain unapproved.",
+        "FY2024 retains pre-bonus figures. One FY2025 EPS arithmetic exception remains explicit.",
+        "The failed promotion audit is preserved; source values were not reapplied or deleted. No new restore or off-device proof."
+      ],
+      "decision_id": "M05-HDFCBANK-13",
+      "decision": "Apply the exact M05-HDFCBANK-12 source selection with current candidate versions. Preserve prior values and expose review basis in normalized metrics.",
+      "reason": "Original PDF, runtime parser parity, current values/units and versions, persisted facts, exact revision provenance and six normal browser views are verified. The post-write active-revision exception is resolved under M05-HDFCBANK-14.",
+      "affected_records": {
+        "source_occurrences": 64,
+        "new_period": 2026,
+        "new_facts": 30,
+        "new_source_revisions": 64,
+        "fy2025_numeric_changes": [
+          "basic_eps",
+          "diluted_eps",
+          "basic_shares",
+          "diluted_shares"
+        ],
+        "fy2025_unit_label_changes": {
+          "advances": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "balances_with_banks": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "borrowings": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "cash_and_balances_with_rbi": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "deposits": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "employee_awards": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "fixed_assets": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "investments": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "minority_interests": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "other_assets": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "other_liabilities_provisions": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "policyholder_funds": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "reserves_surplus": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "share_capital": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "total_assets": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "total_liabilities_equity": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "group_profit": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "interest_earned": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "interest_expended": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "net_income_nci": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "net_income_parent": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "operating_expenses": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "other_income": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "provisions_contingencies": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "total_expenses": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          },
+          "total_income": {
+            "from": "INR crores",
+            "to": "INR crore",
+            "scale_unchanged": 10000000
+          }
+        },
+        "unit_scales_unchanged": true,
+        "candidate_ids": [
+          1388,
+          1389,
+          1390,
+          1391,
+          1392,
+          1393,
+          1394,
+          1395,
+          1396,
+          1397,
+          1398,
+          1399,
+          1400,
+          1401,
+          1402,
+          1403,
+          1404,
+          1405,
+          1406,
+          1407,
+          1408,
+          1409,
+          1410,
+          1411,
+          1412,
+          1413,
+          1414,
+          1415,
+          1416,
+          1417,
+          1418,
+          1419,
+          1420,
+          1421,
+          1422,
+          1423,
+          1424,
+          1425,
+          1426,
+          1427,
+          1428,
+          1429,
+          1430,
+          1431,
+          1432,
+          1433,
+          1434,
+          1435,
+          1436,
+          1437,
+          1438,
+          1439,
+          1440,
+          1441,
+          1442,
+          1443,
+          1444,
+          1445,
+          1446,
+          1447,
+          1448,
+          1449,
+          1450,
+          1451
+        ],
+        "hdfc_periods": 3,
+        "hdfc_facts": 90,
+        "hdfc_revisions": 128,
+        "hdfc_normalized_values": 12
+      }
+    },
+    {
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-22T19:43:41.534178+00:00",
+      "receipt_path": "data/reviews/hdfc-financial-application-20261022.json",
+      "receipt_sha256": "6b5eb9b3c71859270ebceef84522ec60496754f753d92ebef91993f2368322c0",
+      "limitations": [
+        "Selected historical sources only; current bank valuation and full notes/model bridges remain unapproved.",
+        "FY2024 retains pre-bonus figures. One FY2025 EPS arithmetic exception remains explicit.",
+        "The failed promotion audit is preserved; source values were not reapplied or deleted. No new restore or off-device proof."
+      ],
+      "decision_id": "M05-HDFCBANK-14",
+      "decision": "Retire only obsolete active flags on source revisions 61 and 63; retain their values, units, source identities and revision numbers.",
+      "reason": "The earlier repeated EPS sources left duplicate active revisions. The new report is the reviewed current fact; selecting only one old active occurrence left two obsolete flags. New promotion now supersedes all prior active occurrences in the same fact/period scope.",
+      "affected_records": {
+        "decision_id": "M05-HDFCBANK-14",
+        "status": "success",
+        "processing_run_id": 125,
+        "repaired_at": "2026-10-22T19:35:45.011000+00:00",
+        "changes": [
+          {
+            "revision_id": 61,
+            "candidate_id": 728,
+            "fact": "basic_eps",
+            "value": 92.81,
+            "unit": "INR/share",
+            "old_superseded_at": null,
+            "current_revision_id": 940,
+            "current_candidate_id": 1444,
+            "current_value": 46.41
+          },
+          {
+            "revision_id": 63,
+            "candidate_id": 730,
+            "fact": "diluted_eps",
+            "value": 92.39,
+            "unit": "INR/share",
+            "old_superseded_at": null,
+            "current_revision_id": 942,
+            "current_candidate_id": 1446,
+            "current_value": 46.2
+          }
+        ],
+        "values_units_source_ids_unchanged": true,
+        "deleted_rows": 0,
+        "failed_run_124_preserved": true
+      }
     }
   ],
   "evidence": {

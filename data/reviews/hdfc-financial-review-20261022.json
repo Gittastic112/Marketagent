@@ -1,0 +1,1141 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-HDFCBANK-12",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewed_at": "2026-10-22T19:13:47.574663+00:00",
+  "scope": "Local research/demo; existing retained official report and normal HDFC history",
+  "decision": "Accept the 64 selected FY2025/FY2026 source occurrences as reported, with the EPS exception and accounting distinctions below. Apply only through exact-source and current-candidate version checks.",
+  "source": {
+    "source_id": "HDFCBANK-2026",
+    "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+    "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+    "selected_pdf_pages": [
+      471,
+      472,
+      546
+    ],
+    "note_pdf_pages": [
+      377,
+      378,
+      509,
+      510,
+      546,
+      554,
+      562
+    ],
+    "merger_pdf_page": 249,
+    "publication_date": null,
+    "original_fetch_processing_run_id": 63,
+    "period_ends": {
+      "2025": "2025-03-31",
+      "2026": "2026-03-31"
+    },
+    "reporting_scope": "consolidated",
+    "units": [
+      "INR crore",
+      "INR/share",
+      "shares"
+    ],
+    "unit_scale": {
+      "INR crore": 10000000
+    }
+  },
+  "selection": {
+    "occurrences": 64,
+    "distinct_facts": 60,
+    "facts_per_year": 30,
+    "rows": [
+      {
+        "fiscal_year": 2025,
+        "metric_code": "advances",
+        "value": "2724938.16",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L21:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l24:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "balances_with_banks",
+        "value": "105557.65",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L19:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l22:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "borrowings",
+        "value": "634605.57",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L13:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l16:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "cash_and_balances_with_rbi",
+        "value": "144390.25",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L18:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l21:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "deposits",
+        "value": "2710898.23",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L12:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l15:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "employee_awards",
+        "value": "3805.19",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L9:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l12:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "fixed_assets",
+        "value": "15257.94",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L22:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l25:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "investments",
+        "value": "1186472.89",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L20:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l23:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "minority_interests",
+        "value": "16359.04",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L11:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l14:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "other_assets",
+        "value": "215800.53",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L23:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l26:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "other_liabilities_provisions",
+        "value": "188163.66",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L14:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l17:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "policyholder_funds",
+        "value": "320601.53",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L15:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l18:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "reserves_surplus",
+        "value": "517218.98",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L10:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l13:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "share_capital",
+        "value": "765.22",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L8:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l10:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "total_assets",
+        "value": "4392417.42",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L24:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "total_liabilities_equity",
+        "value": "4392417.42",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L16:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l19:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "advances",
+        "value": "3050783.23",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L21:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l24:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "balances_with_banks",
+        "value": "111218.94",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L19:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l22:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "borrowings",
+        "value": "588484.55",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L13:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l16:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "cash_and_balances_with_rbi",
+        "value": "200707.11",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L18:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l21:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "deposits",
+        "value": "3099638.29",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L12:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l15:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "employee_awards",
+        "value": "4545.11",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L9:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l12:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "fixed_assets",
+        "value": "16491.59",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L22:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l25:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "investments",
+        "value": "1280216.29",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L20:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l23:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "minority_interests",
+        "value": "22384.96",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L11:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l14:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "other_assets",
+        "value": "248623.68",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L23:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l26:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "other_liabilities_provisions",
+        "value": "252977.53",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L14:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l17:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "policyholder_funds",
+        "value": "358496.04",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L15:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l18:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "reserves_surplus",
+        "value": "579975.02",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L10:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l13:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "share_capital",
+        "value": "1539.34",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L8:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l10:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "total_assets",
+        "value": "4908040.84",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L24:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "total_liabilities_equity",
+        "value": "4908040.84",
+        "unit": "INR crore",
+        "source_page": 471,
+        "source_cell_reference": "P471:L16:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l19:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "basic_eps",
+        "value": "46.41",
+        "unit": "INR/share",
+        "source_page": 472,
+        "source_cell_reference": "P472:L34:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p472:l35:basic_eps:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "diluted_eps",
+        "value": "46.2",
+        "unit": "INR/share",
+        "source_page": 472,
+        "source_cell_reference": "P472:L35:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l36:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "group_profit",
+        "value": "73440.17",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L17:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l18:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "interest_earned",
+        "value": "336367.43",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L8:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l9:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "interest_expended",
+        "value": "183894.2",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L12:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l13:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "net_income_nci",
+        "value": "2647.92",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L18:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l19:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "net_income_parent",
+        "value": "70792.25",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L19:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l20:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "operating_expenses",
+        "value": "176605.07",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L13:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l14:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "other_income",
+        "value": "134548.5",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L9:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l10:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "provisions_contingencies",
+        "value": "36976.49",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L14:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l15:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "total_expenses",
+        "value": "397475.76",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L15:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l16:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "total_income",
+        "value": "470915.93",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L10:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l11:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "basic_eps",
+        "value": "49.5",
+        "unit": "INR/share",
+        "source_page": 472,
+        "source_cell_reference": "P472:L34:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p472:l35:basic_eps:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "diluted_eps",
+        "value": "49.28",
+        "unit": "INR/share",
+        "source_page": 472,
+        "source_cell_reference": "P472:L35:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l36:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "group_profit",
+        "value": "79219.46",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L17:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l18:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "interest_earned",
+        "value": "348615.15",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L8:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l9:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "interest_expended",
+        "value": "185491.23",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L12:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l13:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "net_income_nci",
+        "value": "3193.49",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L18:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l19:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "net_income_parent",
+        "value": "76025.97",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L19:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l20:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "operating_expenses",
+        "value": "181173.91",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L13:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l14:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "other_income",
+        "value": "146847.66",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L9:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l10:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "provisions_contingencies",
+        "value": "49578.21",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L14:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l15:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "total_expenses",
+        "value": "416243.35",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L15:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l16:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "total_income",
+        "value": "495462.81",
+        "unit": "INR crore",
+        "source_page": 472,
+        "source_cell_reference": "P472:L10:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l11:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "basic_eps",
+        "value": "46.41",
+        "unit": "INR/share",
+        "source_page": 546,
+        "source_cell_reference": "P546:L19:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p546:l20:basic_eps:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "basic_shares",
+        "value": "15255586360.0",
+        "unit": "shares",
+        "source_page": 546,
+        "source_cell_reference": "P546:L27:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p546:l28:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "diluted_eps",
+        "value": "46.2",
+        "unit": "INR/share",
+        "source_page": 546,
+        "source_cell_reference": "P546:L21:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p546:l22:diluted_eps:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2025,
+        "metric_code": "diluted_shares",
+        "value": "15323941142.0",
+        "unit": "shares",
+        "source_page": 546,
+        "source_cell_reference": "P546:L29:Y2025",
+        "reference_ids": [
+          "HDFCBANK-2026:p546:l32:2025"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "basic_eps",
+        "value": "49.5",
+        "unit": "INR/share",
+        "source_page": 546,
+        "source_cell_reference": "P546:L19:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p546:l20:basic_eps:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "basic_shares",
+        "value": "15357462189.0",
+        "unit": "shares",
+        "source_page": 546,
+        "source_cell_reference": "P546:L27:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p546:l28:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "diluted_eps",
+        "value": "49.28",
+        "unit": "INR/share",
+        "source_page": 546,
+        "source_cell_reference": "P546:L21:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:supp:p546:l22:diluted_eps:2026"
+        ]
+      },
+      {
+        "fiscal_year": 2026,
+        "metric_code": "diluted_shares",
+        "value": "15427952775.0",
+        "unit": "shares",
+        "source_page": 546,
+        "source_cell_reference": "P546:L29:Y2026",
+        "reference_ids": [
+          "HDFCBANK-2026:p546:l32:2026"
+        ]
+      }
+    ]
+  },
+  "reconciliation": {
+    "checks": [
+      {
+        "kind": "bonus_reconciliation",
+        "metric": "basic_eps",
+        "expected": "46.41",
+        "reported": "46.41",
+        "passed": true
+      },
+      {
+        "kind": "bonus_reconciliation",
+        "metric": "diluted_eps",
+        "expected": "46.20",
+        "reported": "46.2",
+        "passed": true
+      },
+      {
+        "kind": "bonus_reconciliation",
+        "metric": "basic_shares",
+        "expected": "15255586360",
+        "reported": "15255586360.0",
+        "passed": true
+      },
+      {
+        "kind": "bonus_reconciliation",
+        "metric": "diluted_shares",
+        "expected": "15323941142",
+        "reported": "15323941142.0",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "total_assets = 1 * total_liabilities_equity",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2025",
+          "HDFCBANK-2026:p471:l19:2025"
+        ],
+        "expected_base_units": "43924174200000.00",
+        "reported_base_units": "43924174200000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "total_income = 1 * interest_earned + 1 * other_income",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l11:2025",
+          "HDFCBANK-2026:p472:l9:2025",
+          "HDFCBANK-2026:p472:l10:2025"
+        ],
+        "expected_base_units": "4709159300000.00",
+        "reported_base_units": "4709159300000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "total_expenses = 1 * interest_expended + 1 * operating_expenses + 1 * provisions_contingencies",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l16:2025",
+          "HDFCBANK-2026:p472:l13:2025",
+          "HDFCBANK-2026:p472:l14:2025",
+          "HDFCBANK-2026:p472:l15:2025"
+        ],
+        "expected_base_units": "3974757600000.00",
+        "reported_base_units": "3974757600000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "total_liabilities_equity = 1 * share_capital + 1 * reserves_surplus + 1 * minority_interests + 1 * deposits + 1 * bank_borrowings + 1 * other_liabilities_provisions + 1 * employee_awards + 1 * policyholder_funds",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l19:2025",
+          "HDFCBANK-2026:p471:l10:2025",
+          "HDFCBANK-2026:p471:l13:2025",
+          "HDFCBANK-2026:p471:l14:2025",
+          "HDFCBANK-2026:p471:l15:2025",
+          "HDFCBANK-2026:p471:l16:2025",
+          "HDFCBANK-2026:p471:l17:2025",
+          "HDFCBANK-2026:p471:l12:2025",
+          "HDFCBANK-2026:p471:l18:2025"
+        ],
+        "expected_base_units": "43924174200000.00",
+        "reported_base_units": "43924174200000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "total_assets = 1 * cash_rbi + 1 * balances_with_banks + 1 * investments + 1 * advances + 1 * fixed_assets + 1 * other_assets",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2025",
+          "HDFCBANK-2026:p471:l21:2025",
+          "HDFCBANK-2026:p471:l22:2025",
+          "HDFCBANK-2026:p471:l23:2025",
+          "HDFCBANK-2026:p471:l24:2025",
+          "HDFCBANK-2026:p471:l25:2025",
+          "HDFCBANK-2026:p471:l26:2025"
+        ],
+        "expected_base_units": "43924174200000.00",
+        "reported_base_units": "43924174200000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "net_income = 1 * total_income + -1 * total_expenses + -1 * profit_nci",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l20:2025",
+          "HDFCBANK-2026:p472:l11:2025",
+          "HDFCBANK-2026:p472:l16:2025",
+          "HDFCBANK-2026:p472:l19:2025"
+        ],
+        "expected_base_units": "707922500000.00",
+        "reported_base_units": "707922500000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2025,
+        "formula": "group_profit = 1 * net_income + 1 * profit_nci",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l18:2025",
+          "HDFCBANK-2026:p472:l20:2025",
+          "HDFCBANK-2026:p472:l19:2025"
+        ],
+        "expected_base_units": "734401700000.00",
+        "reported_base_units": "734401700000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "total_assets = 1 * total_liabilities_equity",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2026",
+          "HDFCBANK-2026:p471:l19:2026"
+        ],
+        "expected_base_units": "49080408400000.00",
+        "reported_base_units": "49080408400000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "total_income = 1 * interest_earned + 1 * other_income",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l11:2026",
+          "HDFCBANK-2026:p472:l9:2026",
+          "HDFCBANK-2026:p472:l10:2026"
+        ],
+        "expected_base_units": "4954628100000.00",
+        "reported_base_units": "4954628100000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "total_expenses = 1 * interest_expended + 1 * operating_expenses + 1 * provisions_contingencies",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l16:2026",
+          "HDFCBANK-2026:p472:l13:2026",
+          "HDFCBANK-2026:p472:l14:2026",
+          "HDFCBANK-2026:p472:l15:2026"
+        ],
+        "expected_base_units": "4162433500000.00",
+        "reported_base_units": "4162433500000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "total_liabilities_equity = 1 * share_capital + 1 * reserves_surplus + 1 * minority_interests + 1 * deposits + 1 * bank_borrowings + 1 * other_liabilities_provisions + 1 * employee_awards + 1 * policyholder_funds",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l19:2026",
+          "HDFCBANK-2026:p471:l10:2026",
+          "HDFCBANK-2026:p471:l13:2026",
+          "HDFCBANK-2026:p471:l14:2026",
+          "HDFCBANK-2026:p471:l15:2026",
+          "HDFCBANK-2026:p471:l16:2026",
+          "HDFCBANK-2026:p471:l17:2026",
+          "HDFCBANK-2026:p471:l12:2026",
+          "HDFCBANK-2026:p471:l18:2026"
+        ],
+        "expected_base_units": "49080408400000.00",
+        "reported_base_units": "49080408400000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "total_assets = 1 * cash_rbi + 1 * balances_with_banks + 1 * investments + 1 * advances + 1 * fixed_assets + 1 * other_assets",
+        "reference_ids": [
+          "HDFCBANK-2026:p471:l27:2026",
+          "HDFCBANK-2026:p471:l21:2026",
+          "HDFCBANK-2026:p471:l22:2026",
+          "HDFCBANK-2026:p471:l23:2026",
+          "HDFCBANK-2026:p471:l24:2026",
+          "HDFCBANK-2026:p471:l25:2026",
+          "HDFCBANK-2026:p471:l26:2026"
+        ],
+        "expected_base_units": "49080408400000.00",
+        "reported_base_units": "49080408400000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "net_income = 1 * total_income + -1 * total_expenses + -1 * profit_nci",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l20:2026",
+          "HDFCBANK-2026:p472:l11:2026",
+          "HDFCBANK-2026:p472:l16:2026",
+          "HDFCBANK-2026:p472:l19:2026"
+        ],
+        "expected_base_units": "760259700000.00",
+        "reported_base_units": "760259700000.00",
+        "passed": true
+      },
+      {
+        "kind": "statement_equation",
+        "year": 2026,
+        "formula": "group_profit = 1 * net_income + 1 * profit_nci",
+        "reference_ids": [
+          "HDFCBANK-2026:p472:l18:2026",
+          "HDFCBANK-2026:p472:l20:2026",
+          "HDFCBANK-2026:p472:l19:2026"
+        ],
+        "expected_base_units": "792194600000.00",
+        "reported_base_units": "792194600000.00",
+        "passed": true
+      },
+      {
+        "kind": "eps",
+        "year": 2025,
+        "metric": "basic_eps",
+        "calculated": "46.40414883404062090734347886",
+        "reported": "46.41",
+        "difference": "0.00585116595937909265652114",
+        "tolerance_inr_per_share": "0.005",
+        "passed": false,
+        "explanation": "Reported 46.41 is consistent with halving the previously rounded 92.81 then rounding again. The direct profit/share quotient rounds to 46.40. This does not establish the issuer internal rounding method; retain as-reported EPS with an explicit reconciliation exception."
+      },
+      {
+        "kind": "eps",
+        "year": 2025,
+        "metric": "diluted_eps",
+        "calculated": "46.19715603446945163162256161",
+        "reported": "46.2",
+        "difference": "0.00284396553054836837743839",
+        "tolerance_inr_per_share": "0.005",
+        "passed": true,
+        "explanation": null
+      },
+      {
+        "kind": "eps",
+        "year": 2026,
+        "metric": "basic_eps",
+        "calculated": "49.50425341398833379865793658",
+        "reported": "49.5",
+        "difference": "-0.00425341398833379865793658",
+        "tolerance_inr_per_share": "0.005",
+        "passed": true,
+        "explanation": null
+      },
+      {
+        "kind": "eps",
+        "year": 2026,
+        "metric": "diluted_eps",
+        "calculated": "49.27806761451536786934454432",
+        "reported": "49.28",
+        "difference": "0.00193238548463213065545568",
+        "tolerance_inr_per_share": "0.005",
+        "passed": true,
+        "explanation": null
+      }
+    ],
+    "passed_count": 21,
+    "exception_count": 1,
+    "exception_treatment": "Retain reported basic EPS 46.41; direct profit/share quotient rounds to 46.40. Halving the prior rounded EPS is consistent with 46.41, but the issuer internal rounding method is unconfirmed. Do not mark this arithmetic check passed."
+  },
+  "comparative_changes": [
+    {
+      "metric_code": "basic_eps",
+      "previous_reported": "92.81",
+      "latest_reported": "46.41",
+      "unit": "INR/share"
+    },
+    {
+      "metric_code": "diluted_eps",
+      "previous_reported": "92.39",
+      "latest_reported": "46.2",
+      "unit": "INR/share"
+    },
+    {
+      "metric_code": "basic_shares",
+      "previous_reported": "7627793180",
+      "latest_reported": "15255586360.0",
+      "unit": "shares"
+    },
+    {
+      "metric_code": "diluted_shares",
+      "previous_reported": "7661970571",
+      "latest_reported": "15323941142.0",
+      "unit": "shares"
+    }
+  ],
+  "bonus": {
+    "claim_type": "Source Summary",
+    "pdf_pages": [
+      509,
+      546
+    ],
+    "ratio": "1:1",
+    "allotment_date": "2025-08-28",
+    "bonus_shares_allotted": 7677039761,
+    "source_treatment": "Report retrospectively adjusts shares and per-share information; FY2025 comparative changes are four metrics only."
+  },
+  "payout": {
+    "claim_type": "Source Summary",
+    "pdf_pages": [
+      377,
+      509
+    ],
+    "currency": "INR",
+    "special_interim_per_share_pre_bonus": "5.00",
+    "special_interim_per_share_post_bonus": "2.50",
+    "special_interim_paid_crore": "3836.57",
+    "proposed_final_per_share": "13.00",
+    "proposal_date": "2026-04-18",
+    "fy2026_bonus_adjusted_total_per_share": "15.50",
+    "fy2025_bonus_adjusted_total_per_share": "11.00",
+    "fy2026_total_proposed_and_interim_crore": "23847.94",
+    "fy2025_total_crore": "16869.41",
+    "treatment": "Special dividend is not recurring. Final dividend was proposed subject to shareholder approval as of this report and is not certified paid. Source says proposed dividend is considered in regulatory capital but not appropriated to profit and loss until approved payment."
+  },
+  "capital": {
+    "claim_type": "Source Summary",
+    "pdf_pages": [
+      377,
+      378,
+      554
+    ],
+    "scope": "standalone",
+    "unit": "INR crore",
+    "fy2026": {
+      "cet1": "514070.42",
+      "at1": "13212.50",
+      "tier1": "527282.92",
+      "tier2": "58933.47",
+      "total": "586216.39",
+      "rwa": "2974116.57",
+      "cet1_ratio_percent": "17.28",
+      "total_ratio_percent": "19.71",
+      "reported_minimum_cet1_percent": "8.4",
+      "reported_minimum_total_percent": "11.9"
+    },
+    "fy2025": {
+      "cet1": "458210.41",
+      "at1": "12256.50",
+      "tier1": "470466.91",
+      "tier2": "49575.61",
+      "total": "520042.52",
+      "rwa": "2660003.89",
+      "cet1_ratio_percent": "17.23",
+      "total_ratio_percent": "19.55",
+      "reported_minimum_cet1_percent": "8.2",
+      "reported_minimum_total_percent": "11.7"
+    },
+    "treatment": "Historical report figures, not current legal guidance. Standalone capital, consolidated equity and distributable excess capital are separate bases. No capital-release or model assumption is inferred."
+  },
+  "limitations": [
+    "Historical selected consolidated statements only. This is delegated agent review, not independent human certification or a current bank valuation.",
+    "FY2025/FY2026 share and EPS values use the FY2026 report bonus-adjusted basis. Retained FY2024 facts remain pre-bonus; do not compute cross-basis per-share growth.",
+    "Weighted-average shares are EPS denominators, not ending shares or a current valuation denominator. Rounded share capital is not an exact ending-share count.",
+    "Bank deposits, policyholder funds, RBI balances, advances and investments are operating accounts. Do not substitute them for industrial-company EV debt or excess cash.",
+    "Employee-award balances are accounting entries, not the market value of outstanding employee options. Regulatory capital differs from consolidated accounting equity.",
+    "The source confirms the July 1, 2023 merger. A comparable FY2024 combined full-year earnings series has not been independently reconstructed.",
+    "Pillar 3 consolidated capital is a separate unaudited disclosure referenced on PDF page 554; the reviewed standalone capital table is not a consolidated distributable-capital calculation."
+  ],
+  "independent_human_certification": false,
+  "normal_data_application_decision_id": "M05-HDFCBANK-13",
+  "source_integrity": "Existing official PDF hash, independent references and fresh note text retained; original reference packets and human-verdict fields unchanged."
+}

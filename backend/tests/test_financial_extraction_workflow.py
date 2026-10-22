@@ -834,6 +834,8 @@ def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -
 
 
 def test_promote_candidates_preserves_source_provenance_for_reported_and_derived_metrics(client, db) -> None:
+    from app.services.accounting_normalization import MetricNormalizationEngine
+
     company = Company(
         ticker="PROVENANCE",
         name="Promotion Provenance Co",
@@ -897,6 +899,47 @@ def test_promote_candidates_preserves_source_provenance_for_reported_and_derived
     assert "tax_expense: reviewed_test_source ('Tax expense 40')" in normalized["nopat"].provenance_notes
     assert normalized["effective_tax_rate"].value == pytest.approx(0.25)
     assert normalized["effective_tax_rate"].warnings is None
+
+    # A reviewed restatement has not been applied yet. It cannot relabel the
+    # current fact merely because its candidate happens to be returned last.
+    next_document = RawDocument(
+        company_id=company.id, source_id=source.id, document_type="annual_report",
+        title="FY2026 restatement", raw_text="Restated revenue 2,000",
+        content_hash="manual-filing:test-normalized-restatement",
+    )
+    db.add(next_document)
+    db.flush()
+    restatement = FinancialExtractionCandidate(
+        company_id=company.id, raw_document_id=next_document.id,
+        metric_code="revenue", reported_label="Revenue", value=2000,
+        unit="INR million", fiscal_year=2026, period_type="annual",
+        source_text="Restated revenue 2,000", extraction_method="restatement_source",
+        review_status="reviewed", confidence_label="high",
+        source_locator_json={"reviewed_basis": "Revised annual comparative.",
+                             "reviewed_limitations": ["Review comparability before growth calculations."]},
+    )
+    db.add(restatement)
+    db.commit()
+    MetricNormalizationEngine.normalize_period(db, snapshot.period_id)
+    current = db.query(NormalizedFinancialMetric).join(NormalizedFinancialSnapshot).filter(
+        NormalizedFinancialSnapshot.company_id == company.id,
+        NormalizedFinancialMetric.metric_code == "revenue",
+    ).one()
+    assert current.value == 1000
+    assert "Restated revenue" not in current.provenance_notes
+
+    assert response_data(client.post(
+        f"/api/companies/{company.id}/financial-statements/mark-reviewed"
+    ))["promoted_count"] == 1
+    current = db.query(NormalizedFinancialMetric).join(NormalizedFinancialSnapshot).filter(
+        NormalizedFinancialSnapshot.company_id == company.id,
+        NormalizedFinancialMetric.metric_code == "revenue",
+    ).one()
+    assert current.value == 2000
+    assert "restatement_source ('Restated revenue 2,000')" in current.provenance_notes
+    assert f"document {next_document.id}, candidate {restatement.id}" in current.provenance_notes
+    assert "Revised annual comparative." in current.provenance_notes
+    assert current.warnings == "Review comparability before growth calculations."
 
 
 def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client, db) -> None:

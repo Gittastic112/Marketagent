@@ -1,6 +1,6 @@
 # Research/demo decision log
 
-Updated October 18, 2026. This is the readable index for the
+Updated October 22, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
 owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
@@ -53,13 +53,17 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 | M05-US-09 | Apply M05-US-08 only after source/current-candidate version checks and a fresh backup | [Application receipt](../../data/reviews/us-financial-application-20261018.json): Runs 100-105, 355 facts/revisions, 18 periods and 248 normalized values across six securities. Twelve normal financial views pass; unrelated records and all 109 post-browser fingerprints are unchanged |
 | M05-IN-10 | Review exact Reliance/Airtel/ICICI/SBI histories; separate investment scope, restricted cash, bank accounts, EPS numerators and SBI comparative presentation. Record HDFC bonus treatment without changing its existing history | [Exact review](../../data/reviews/india-financial-review-20261018.json): 112 accounting equations and 24 EPS checks pass. Select 492 source occurrences, keeping 164 older comparatives held. This is historical evidence, not complete model approval |
 | M05-IN-11 | Apply M05-IN-10 through exact-source intake and version-checked promotion after a fresh backup | [Application receipt](../../data/reviews/india-financial-application-20261018.json): Runs 106-121, eight source documents/assets, 456 distinct facts, 492 revisions, 12 periods and 72 normalized values. Sixteen normal financial/PDF views pass after the mobile keyboard fix; unrelated rows and all 109 post-browser fingerprints are unchanged |
+| M05-HDFCBANK-12 | Accept 64 FY2025/FY2026 occurrences from the retained latest report, including four bonus-adjusted comparatives and one explicit basic-EPS arithmetic exception. Separate capital, dividends and share denominators | [Review receipt](../../data/reviews/hdfc-financial-review-20261022.json): 21 checks pass, one exception remains; no current bank valuation or FY2024 per-share comparability is inferred |
+| M05-HDFCBANK-13 | Apply that exact selection through source/candidate version checks and expose normalized values with their review basis | [Application receipt](../../data/reviews/hdfc-financial-application-20261022.json): document 19/asset 10; HDFC has three periods, 90 facts, 128 revisions and 12 normalized values. Six normal views pass; unrelated data remains |
+| M05-HDFCBANK-14 | Retire only obsolete active flags on old EPS revisions 61/63 after the committed promotion audit failed | Run 125 records the exact metadata repair; Run 124 remains failed. Values, units, sources and revision numbers are preserved. New promotions supersede all prior active occurrences within the same fact/period |
 | M08-AI-REVIEW-20261018 | Review six saved actual responses and four existing adversarial fixtures. Accept four outputs only as constrained summaries; reject regional-to-company forecast directions and preserve the blocked period response | [Review receipt](../../data/reviews/ai-interpretation-review-20261018.json) separates citation checks from semantic judgment. All four misleading fixture claims are rejected. Original files, human-review fields, saved models and normal AI records are unchanged |
 | M07-DEMO-REVIEW-20261018 | Accept existing examples for the explicitly revised demo gate, with partial/unavailable coverage preserved. Do not certify real records or fabricate missing models/benchmarks | 64 independent arithmetic checks and six normal browser views pass. Portfolio records are unchanged. The attribution table's mobile keyboard defect is fixed and verified; original complete-series/model and genuine multi-currency proof remain unperformed |
 
 The [HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the source, calculation, rollout and browser proof. These are delegated agent
 decisions, not independent human certification. The selected historical basis does
-not approve a current bank valuation or a bonus-adjusted share/EPS series.
+not approve a current bank valuation. The [October 22 follow-up](../archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md)
+applies the later FY2025/FY2026 bonus-adjusted source basis, with FY2024 kept separate.
 The [US/AI checkpoint](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
 records the subsequent source review, normal-data application and verification.
 The [India checkpoint](../archive/checkpoints/2026/india-financial-review-2026-10-18.md)

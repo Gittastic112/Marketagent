@@ -6,11 +6,77 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.services.financial_metric_derivations import derive_reported_metrics
 from app.models.financial import (
+    FinancialExtractionCandidate,
     FinancialStatementPeriod,
     FinancialMetric,
     NormalizedFinancialSnapshot,
     NormalizedFinancialMetric,
 )
+from app.models.source_fact_revision import SourceFactRevision
+
+
+def _select_current_sources(period, metrics, revision_candidates):
+    """Bind provenance to the stored fact, never to candidate query order."""
+    reported = {metric.metric_name: (metric.value, metric.unit) for metric in metrics}
+    active = {}
+    for revision, candidate in revision_candidates:
+        if (revision.company_id != period.company_id
+                or revision.period_type != period.period_type
+                or revision.effective_at != period.report_date
+                or revision.superseded_at is not None):
+            continue
+        active.setdefault(revision.fact_key, []).append((revision, candidate))
+    sources = {}
+    for code, rows in active.items():
+        # Conflicting active revisions are a data problem, not a sorting choice.
+        if len(rows) != 1:
+            continue
+        revision, candidate = rows[0]
+        if (candidate is None or candidate.review_status != "promoted"
+                or candidate.id != revision.financial_candidate_id
+                or candidate.raw_document_id != revision.raw_document_id
+                or candidate.company_id != period.company_id
+                or candidate.fiscal_year != period.year
+                or candidate.period_type != period.period_type
+                or candidate.metric_code != code
+                or (revision.value, revision.unit) != reported.get(code)
+                or (candidate.value, candidate.unit) != (revision.value, revision.unit)):
+            continue
+        sources[code] = (revision, candidate)
+    return sources
+
+
+def _source_provenance(codes, current_sources):
+    sources, warnings, missing = [], [], []
+    for code in dict.fromkeys(codes):
+        if code not in current_sources:
+            missing.append(code)
+            continue
+        revision, candidate = current_sources[code]
+        source = f"{code}: {candidate.extraction_method}"
+        if candidate.source_text:
+            text = candidate.source_text
+            text = text if len(text) <= 50 else text[:47] + "..."
+            source += f" ('{text}')"
+        source += (f" [document {revision.raw_document_id}, candidate {candidate.id}, "
+                   f"revision {revision.id}]")
+        locator = candidate.source_locator_json
+        if isinstance(locator, dict):
+            reviewer, decision = locator.get("reviewer_type"), locator.get("review_decision_id")
+            if isinstance(reviewer, str) and isinstance(decision, str):
+                source += f" | Review: {reviewer} / {decision}"
+            basis = locator.get("reviewed_basis")
+            if isinstance(basis, str) and basis.strip():
+                source += f" | Review basis: {basis}"
+            limitations = locator.get("reviewed_limitations")
+            if isinstance(limitations, list):
+                warnings.extend(note for note in limitations if isinstance(note, str) and note.strip())
+        sources.append(source)
+    if missing:
+        warning = "Current source revision unavailable for: " + ", ".join(missing) + "."
+        warnings.append(warning)
+        sources.append(warning)
+    return "; ".join(sources), list(dict.fromkeys(warnings))
 
 class RDCapitalizationService:
     @staticmethod
@@ -115,34 +181,20 @@ class MetricNormalizationEngine:
         db.flush()
         db.refresh(snapshot)
 
-        from app.models.financial import FinancialExtractionCandidate
-        candidates = db.scalars(
-            select(FinancialExtractionCandidate)
-            .where(FinancialExtractionCandidate.company_id == period.company_id)
-            .where(FinancialExtractionCandidate.fiscal_year == period.year)
-            .where(FinancialExtractionCandidate.period_type == period.period_type)
-            .where(FinancialExtractionCandidate.review_status.in_(["promoted", "overridden", "reviewed"]))
+        revision_candidates = db.execute(
+            select(SourceFactRevision, FinancialExtractionCandidate)
+            .outerjoin(FinancialExtractionCandidate,
+                       FinancialExtractionCandidate.id == SourceFactRevision.financial_candidate_id)
+            .where(SourceFactRevision.company_id == period.company_id,
+                   SourceFactRevision.period_type == period.period_type,
+                   SourceFactRevision.effective_at == period.report_date,
+                   SourceFactRevision.superseded_at.is_(None))
         ).all()
-        candidate_map = {c.metric_code: c for c in candidates}
+        current_sources = _select_current_sources(period, metrics, revision_candidates)
         currency_context = (
             f"Reporting currency: {period.currency} "
             f"({period.currency_source}, {period.currency_confidence} confidence)"
         )
-
-        def build_provenance(codes: List[str], base_note: str) -> str:
-            sources = []
-            for code in codes:
-                if code in candidate_map:
-                    cand = candidate_map[code]
-                    source = f"{code}: {cand.extraction_method}"
-                    if cand.source_text:
-                        # Truncate source_text if too long
-                        stext = cand.source_text if len(cand.source_text) <= 50 else cand.source_text[:47] + "..."
-                        source += f" ('{stext}')"
-                    sources.append(source)
-            if sources:
-                base_note += " | Sources: " + ", ".join(sources)
-            return f"{base_note} | {currency_context}"
 
         def add_metric(
             code: str,
@@ -153,7 +205,9 @@ class MetricNormalizationEngine:
             unit: str | None = None,
         ):
             if source_codes:
-                notes = build_provenance(source_codes, notes)
+                source_notes, source_warnings = _source_provenance(source_codes, current_sources)
+                notes = f"{notes} | Sources: {source_notes} | {currency_context}"
+                warns = " | ".join(filter(None, [warns, *source_warnings]))
             nm = NormalizedFinancialMetric(
                 snapshot_id=snapshot.id,
                 metric_code=code,

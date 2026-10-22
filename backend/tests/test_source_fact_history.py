@@ -97,3 +97,35 @@ def test_source_fact_history_preserves_calculation_claim_type(db):
     db.commit()
 
     assert revision.claim_type == "Calculation"
+
+
+def test_restatement_supersedes_all_legacy_active_occurrences_without_deleting_history(db):
+    company = Company(ticker="DUPREV", name="Mock Data legacy revisions", market="US")
+    source = Source(name="Mock Data revision source", source_type="filing")
+    db.add_all([company, source])
+    db.flush()
+    document = RawDocument(company_id=company.id, source_id=source.id,
+        document_type="annual_report", title="Mock Data source occurrences",
+        raw_text="Revenue 100\nRevenue 100\nRevenue 110", content_hash="legacy-active-revisions")
+    db.add(document)
+    db.flush()
+    effective_at = date(2025, 12, 31)
+    first = record_financial_fact_revision(db,
+        _candidate(db, company=company, document=document, value=100, suffix="first"),
+        effective_at=effective_at)
+    db.flush()
+    second = record_financial_fact_revision(db,
+        _candidate(db, company=company, document=document, value=100, suffix="repeat"),
+        effective_at=effective_at)
+    db.flush()
+    # Earlier intake could leave both identical source occurrences active.
+    first.superseded_at = None
+    db.flush()
+    current = record_financial_fact_revision(db,
+        _candidate(db, company=company, document=document, value=110, suffix="revised"),
+        effective_at=effective_at)
+    db.flush()
+    assert first.superseded_at == second.superseded_at == current.observed_at
+    assert first.value == second.value == 100
+    assert current.value == 110 and current.revision_number == 3
+    assert current.superseded_at is None

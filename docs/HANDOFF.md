@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 22, 2026: M01-M02 accepted; PDF repair passes CI, Next.js security rerun pending.
+October 22, 2026: M01-M02 accepted; HDFC latest history installed; new source CI pending.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -26,8 +26,8 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
-The [October 21-22 dependency/PDF repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md)
-owns installed patches, 64 passing PDF-repair workflows and the pending Next.js CI rerun.
+The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
+The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the FY2026/comparative application, source-revision fixes and visible review basis.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
 owns parser v6, four-company promotion, PDF keyboard repair and final browser proof.
 The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
@@ -58,17 +58,18 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 
 ## Normal runtime and recovery
 
-Normal backend/workers use parser v6, reviewed normalization and Pillow 13/certifi fixes;
-frontend uses Next.js 16.4.1 with keyboard-accessible tables/PDF regions and exact cell links.
+Normal backend/workers use parser v6, exact revision provenance and reviewed normalization;
+frontend uses Next.js 16.4.1 with accessible financial details/PDF regions and exact cell links.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
-after the explicit HDFC and US changes. Fresh quiesced dumps pass archive listing without
+after the explicit reviewed changes. Fresh quiesced dumps pass archive listing without
 claiming new restore verification. Prior verified backups/rollback images remain.
 No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in memory.
 
 Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
 Disposable verification projects are stopped. Preserve backups, rollback images,
-all persistent volumes and failed artifacts. Ten rollback registrations are separate from the six-service project; their files/logs/images remain preserved.
+all persistent volumes and failed artifacts. Seventeen rollback registrations are separate
+from the six-service project; their files/logs/images remain preserved.
 
 Six January 2026 US benchmark versions retain their separate source/import receipt.
 The attribution table's mobile keyboard defect is now fixed in the normal frontend.
@@ -97,13 +98,12 @@ Continue from the [decision log](roadmaps/review-decisions.md) and its versioned
 JSON register. Five explicit user approvals cover Apple cash, debt/leases, shares,
 payouts and US/USD/FCFF setup. Delegated M05-AAPL-04B selects separate industry
 comparisons, preserving unresolved services mapping and ratio-weighting choices.
-Those are agent evidence tasks, not permission gates. Reconcile remaining company
-statements, broader bank notes/comparability and model inputs; apply exact reviewed
-scopes through source/candidate checks. Original broad reference packets stay intact.
-US Runs 100-105 and HDFC remain unchanged. India Runs 106-121 add 492 source occurrences,
-456 facts, 12 periods and 72 normalized values; 164 older comparative
-entries stay held. Combined: 32 periods, 871 facts, 911 revisions and 328 normalized
-values across all 11 scoped securities. Do not reapply; this is not independent human validation.
+Reconcile remaining company notes, merger comparability, model bridges and mappings
+under delegated authority. Apply only exact reviewed scopes; preserve original packets.
+US/India applications remain unchanged. HDFC Runs 122-125 add FY2026 and revise
+FY2025 bonus comparatives; the failed post-write audit and exact flag repair remain recorded.
+Combined: 33 periods, 901 facts, 975 revisions and 332 normalized values across 11
+securities. FY2024 stays pre-bonus; one EPS exception remains. Do not reapply.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
 Reviewed source/input freeze, five business days of actual research/demo use and

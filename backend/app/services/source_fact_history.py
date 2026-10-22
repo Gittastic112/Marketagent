@@ -21,7 +21,7 @@ def record_financial_fact_revision(
         return existing
 
     observed_at = datetime.now(UTC)
-    active = db.scalar(
+    active = db.scalars(
         select(SourceFactRevision)
         .where(
             SourceFactRevision.company_id == candidate.company_id,
@@ -31,9 +31,11 @@ def record_financial_fact_revision(
             SourceFactRevision.superseded_at.is_(None),
         )
         .order_by(SourceFactRevision.revision_number.desc())
-    )
-    if active is not None:
-        active.superseded_at = observed_at
+    ).all()
+    # Legacy repeated occurrences may have more than one active revision. A
+    # newly promoted fact supersedes every prior occurrence in this exact scope.
+    for revision in active:
+        revision.superseded_at = observed_at
     latest_revision = db.scalar(
         select(func.max(SourceFactRevision.revision_number)).where(
             SourceFactRevision.company_id == candidate.company_id,
