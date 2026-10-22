@@ -1,4 +1,4 @@
-# Dependency and PDF evidence repair: October 21, 2026
+# Dependency and PDF evidence repair: October 21-22, 2026
 
 The normal research/demo runtime now uses the security dependency updates and
 correct table-cell PDF evidence links. No financial review decisions or data
@@ -42,8 +42,10 @@ each report matches the old renderer's dimensions and decoded RGB hash; two new
 renders were visually inspected. The render baseline was freshly generated using
 the prior installed Pillow version, not represented as an older screenshot.
 
-Full remote corrective CI remains pending. Existing normal data contains text-row
-locators, so its passing browser checks do not substitute for table-cell E2E proof.
+October 22 CI on `fed0210de389d80ab9211d6c1748a947a618f0bf` passes all 64 browser
+workflows, including the table-cell case, plus 1,701 backend tests and six separate
+PostgreSQL integration checks. Six opt-in tests skip in the broad backend suite.
+Existing normal data contains text-row locators; CI supplies the table-cell E2E proof.
 The CI artifact URL download was blocked by the host policy even after escalation;
 logs were retained and the failure was reproduced with the parser/helper regression.
 No alternate download route bypassed that denial.
@@ -95,8 +97,51 @@ unrelated dirty checkout/index are preserved and excluded from publication.
 
 Six source files and five linked status documents form this cross-cutting batch:
 dependency manifests/locks, evidence helper/tests and their installed-release
-status. M09-07 is reopened pending the full corrective remote matrix. M05/M06
+status. M09-07 remains open for the subsequent Next.js security update below. M05/M06
 accounting/source-basis work continues. M01/M02 remain the only accepted milestones,
 at 20 acceptance points. The [tracker](../../../roadmaps/completion-tracker.md) owns
 gates and the [single ledger](../../../agent_capabilities_and_limitations.md) owns
 operator and product limitations. Draft PR #2 owns the latest published source/checks.
+
+## October 22 Next.js security follow-up
+
+Both `fed0210` CI runs pass browser, baseline, recovery and container-security jobs.
+The dependency job instead encounters Next.js advisories added to GitHub's advisory
+database on October 22. [The official 16.4.1 release](https://github.com/vercel/next.js/releases/tag/v16.4.1)
+provides the fix. Existing sharp 0.35.5 already satisfies the image-library advisory's
+workaround; that finding does not establish this installed app's exploitability.
+The App Router/Server Actions denial-of-service advisory requires the Next.js upgrade.
+
+The declared minimum `^16.3.6` previously resolved to locked 16.3.8. Next.js is now
+pinned exactly to 16.4.1; only it and its nine matching `@next` packages change.
+React, sharp and every unrelated package version remain. Fresh npm ci, all 304 tests,
+production build, TypeScript and a zero-vulnerability npm audit pass. The new image
+is `market-intelligence-next-security-frontend:20261022`,
+`sha256:6d1b305f81a0c52144369884cc145201f568e1609077a1c2ed5bcf51730a6c2c`.
+Its runtime metadata confirms Next.js 16.4.1 and sharp 0.35.5. The backend image
+above is unchanged. The build uses an explicit 340-file manifest excluding protected
+environment files; only its package manifests and temporary build recipe differ.
+
+Normal rollout/browser checks pass all 16 financial/PDF and six existing-portfolio
+views. They retain 456 value comparisons, 164 held candidates, mobile keyboard access,
+Mock Data/stale/partial/unavailable states, and no errors, writes, overflow or axe
+violations. Four additional actual-viewport screenshots confirm mobile PDF geometry;
+the full-page capture's sticky-header artifact remains separately recorded.
+All 109 table fingerprints are unchanged. Their identical earlier baseline permits
+reuse of the verified October 21 dump, avoiding another 111MB backup. Daily Brief
+resumes; source refresh and pgAdmin stay disabled. No new dataset is created.
+
+The prior frontend's files/logs/image are retained outside active Compose discovery,
+bringing this batch's detached rollback total to ten. The active project still has
+six services. Removing only the successful temporary builder stage reclaims exactly
+849,703,505 Docker layer bytes; installed, rollback and prior verification images and all
+volumes remain. Its source manifest, build log and recipes remain reproducible.
+Post-work sampling records 1,258.11MiB working set and 0.77% combined container CPU,
+excluding VM overhead. Images use 25.88GB, volumes 3.339GB and build cache 4.487GB;
+these shared totals are not additive. The host has about 26GiB free. An earlier
+sample during visual checks is separately retained and is not described as idle.
+
+Receipts and retained setup failures live under `output/milestones/next-security-20261022/`.
+This follow-up changes two package files and five linked status documents. Local
+verification is complete; the full CI matrix for the new dependency source remains
+pending. Prior-head success is not substituted for that gate.
