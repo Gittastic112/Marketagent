@@ -106,6 +106,50 @@ test("financialEvidenceGeometry preserves bounded component-sum rows", () => {
   assert.deepEqual(geometry?.boxes.map((box) => box.label), ["Component 1", "Component 2"]);
 });
 
+const tableCandidate = {
+  ...candidate,
+  id: 43,
+  raw_document_id: 9,
+  source_page: 1,
+  source_locator_json: {
+    type: "pdf_table_cell",
+    page: 1,
+    coordinate_system: "pdfplumber_top_left_points",
+    page_width: 612,
+    page_height: 792,
+    table_bbox: { x0: 72, top: 102, x1: 520, bottom: 298 },
+    cell_bbox: { x0: 300, top: 214, x1: 410, bottom: 242 },
+  },
+} as FinancialExtractionCandidate;
+
+test("financial table evidence uses the reported cell coordinates, not the whole table", () => {
+  const original = structuredClone(tableCandidate);
+  assert.deepEqual(financialEvidenceGeometry(tableCandidate), {
+    pageNumber: 1,
+    pageWidth: 612,
+    pageHeight: 792,
+    boxes: [{ x0: 300, top: 214, x1: 410, bottom: 242, label: "Reported cell" }],
+  });
+  assert.equal(financialEvidenceHref(tableCandidate), "/documents/9/financial-evidence?candidate_id=43");
+  assert.deepEqual(tableCandidate, original);
+});
+
+test("invalid table cell geometry keeps the document fallback without substituting the table", () => {
+  for (const changed of [
+    { cell_bbox: undefined },
+    { cell_bbox: { x0: 300, top: 214, x1: 700, bottom: 242 } },
+    { cell_bbox: { x0: 410, top: 214, x1: 300, bottom: 242 } },
+    { cell_bbox: { x0: 300, top: Number.NaN, x1: 410, bottom: 242 } },
+    { page: 2 },
+    { coordinate_system: "bottom_left_points" },
+    { type: "pdf_text_row" },
+  ]) {
+    const invalid = { ...tableCandidate, source_locator_json: { ...tableCandidate.source_locator_json, ...changed } } as FinancialExtractionCandidate;
+    assert.equal(financialEvidenceGeometry(invalid), null);
+    assert.equal(financialEvidenceHref(invalid), "/api/backend/api/raw-documents/9/asset/content#page=1");
+  }
+});
+
 test("financialEvidenceGeometry rejects untrusted or out-of-bounds geometry", () => {
   assert.equal(financialEvidenceGeometry({
     ...candidate,

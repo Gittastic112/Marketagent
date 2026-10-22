@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 18, 2026: M01-M02 accepted; M04/M09 technical checks verified with prerequisites open.
+October 21, 2026: M01-M02 accepted; M09's repaired integration checks await CI.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -26,8 +26,8 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
-The [October 18 repository cleanup](archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
-records bounded navigation, ignored evidence, cache savings and preserved runtime.
+The [October 21 dependency/PDF repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md)
+owns installed security patches, table-cell evidence links and the pending CI rerun.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
 owns parser v6, four-company promotion, PDF keyboard repair and final browser proof.
 The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
@@ -58,8 +58,8 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 
 ## Normal runtime and recovery
 
-Normal backend/workers use parser v6 and the tested normalization/promotion fixes;
-frontend includes keyboard-accessible financial tables and PDF evidence regions.
+Normal backend/workers use parser v6, reviewed normalization and Pillow 13/certifi fixes;
+frontend includes keyboard-accessible tables/PDF regions and exact table-cell links.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
 after the explicit HDFC and US changes. Fresh quiesced dumps pass archive listing without
@@ -68,7 +68,7 @@ No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in m
 
 Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
 Disposable verification projects are stopped. Preserve backups, rollback images,
-all persistent volumes and failed artifacts. Do not prune those to reduce disk use.
+all persistent volumes and failed artifacts. Nine rollback registrations are separate from the six-service project; their files/logs/images remain preserved.
 
 Six January 2026 US benchmark versions retain their separate source/import receipt.
 The attribution table's mobile keyboard defect is now fixed in the normal frontend.

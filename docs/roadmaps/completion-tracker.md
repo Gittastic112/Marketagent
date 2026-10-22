@@ -97,7 +97,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Checks verified; M08 prerequisite open | [Connected workflow verification](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Repaired integration checks await CI; M08 prerequisite open | [October 21 repair](../archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) |
 | M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
@@ -108,8 +108,8 @@ source/fixture boundaries. Final return labels, affected browser flows, measured
 process-cold/warm profiles and normal rollout are verified. Evidence review and local
 credential work remain open; the scope revision above separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
-M04 and M09 have verified checks but open prerequisites. Cumulative acceptance
-remains 20 points; the next milestone is M03.
+M04 retains verified checks with an open prerequisite. M09's October 21 integration
+rerun is pending. Cumulative acceptance remains 20 points; the next milestone is M03.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -436,8 +436,11 @@ transport/state helpers and query-budget tests.
 - [x] M09-06 Verify read-only previews, bounded exports/imports, source links and
   useful recovery paths. A build is not browser proof and a fast response is not
   a guarantee that the rendered workflow is responsive.
-- [x] M09-07 Run the complete isolated production browser matrix and full source/
+- [ ] M09-07 Run the complete isolated production browser matrix and full source/
   type/contract suites after integration; record screenshot/trace and source identity.
+  October 21 CI on 04aa156 passed 63/64 workflows; a table-cell evidence-link defect
+  is repaired and installed. Local 304 frontend/106 pure backend tests and 16 normal
+  views pass; the exact corrective source still needs the complete remote matrix.
 
 Gate: all scoped workflows are usable and truthful across supported viewports,
 with measured performance and no unresolved release-blocking regression.

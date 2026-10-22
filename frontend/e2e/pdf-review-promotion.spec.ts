@@ -46,11 +46,13 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   const candidateReview = candidateHeading.locator("xpath=../../..");
   await expect(page.getByRole("main").getByText("There are 12 extraction candidates")).toBeVisible();
 
-  const evidenceHref = await candidateReview.getByRole("link", {name: "Open evidence"}).first().getAttribute("href");
-  expect(evidenceHref).toBeTruthy();
+  const evidenceLink = candidateReview.getByRole("link", {name: "Open evidence"}).first();
+  await expect(evidenceLink).toHaveAttribute("href", /\/documents\/\d+\/financial-evidence\?candidate_id=\d+/);
+  const evidenceHref = await evidenceLink.getAttribute("href");
   await page.goto(evidenceHref!);
   await page.setViewportSize({width:390,height:844});
   const sourceRegion = page.getByRole("region", {name:"Rendered source evidence",exact:true});
+  await expect(sourceRegion.getByRole("img")).toBeVisible();
   await sourceRegion.getByRole("img").evaluate((element: HTMLImageElement) => element.decode());
   await sourceRegion.scrollIntoViewIfNeeded();
   for (let attempt = 0; attempt < 80; attempt++) {

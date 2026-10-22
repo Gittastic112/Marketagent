@@ -31,10 +31,11 @@ function parseBox(
   pageWidth: number,
   pageHeight: number,
   label: string,
+  boxField: "bounding_box" | "cell_bbox" = "bounding_box",
 ): PdfEvidenceBox | null {
   const locatorPage = finiteNumber(locator.page);
   const coordinateSystem = locator.coordinate_system;
-  const box = record(locator.bounding_box);
+  const box = record(locator[boxField]);
   if (
     locatorPage !== pageNumber
     || coordinateSystem !== "pdfplumber_top_left_points"
@@ -89,7 +90,12 @@ export function financialEvidenceGeometry(
   const pageHeight = finiteNumber(dimensionSource.page_height);
   if (pageWidth === null || pageHeight === null || pageWidth <= 0 || pageHeight <= 0) return null;
 
-  const rootBox = parseBox(locator, pageNumber, pageWidth, pageHeight, "Reported row");
+  const isTableCell = locator.type === "pdf_table_cell";
+  const rootBox = parseBox(
+    locator, pageNumber, pageWidth, pageHeight,
+    isTableCell ? "Reported cell" : "Reported row",
+    isTableCell ? "cell_bbox" : "bounding_box",
+  );
   const componentBoxes = componentRecords
     .map((component, index) => parseBox(
       component,
@@ -97,6 +103,7 @@ export function financialEvidenceGeometry(
       pageWidth,
       pageHeight,
       `Component ${index + 1}`,
+      component.type === "pdf_table_cell" ? "cell_bbox" : "bounding_box",
     ))
     .filter((box): box is PdfEvidenceBox => box !== null);
   const boxes = componentBoxes.length > 0 ? componentBoxes : rootBox ? [rootBox] : [];
