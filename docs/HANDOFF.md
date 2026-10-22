@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 22, 2026: M01-M02 accepted; HDFC latest history installed; new source CI pending.
+October 22, 2026: M01-M02 accepted; HDFC history installed; all source CI gates pass.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -27,7 +27,7 @@ contains extensive prior changes. Never reset, clean or stage everything.
 ## Current evidence
 
 The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
-The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the FY2026/comparative application, source-revision fixes and visible review basis.
+The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the application, revision fixes, passing CI on 1ab9bacf and accounting-note review.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
 owns parser v6, four-company promotion, PDF keyboard repair and final browser proof.
 The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
@@ -98,7 +98,7 @@ Continue from the [decision log](roadmaps/review-decisions.md) and its versioned
 JSON register. Five explicit user approvals cover Apple cash, debt/leases, shares,
 payouts and US/USD/FCFF setup. Delegated M05-AAPL-04B selects separate industry
 comparisons, preserving unresolved services mapping and ratio-weighting choices.
-Reconcile remaining company notes, merger comparability, model bridges and mappings
+M05-HDFCBANK-15 records 24 note/share/equity checks. Complete remaining bridges and mappings
 under delegated authority. Apply only exact reviewed scopes; preserve original packets.
 US/India applications remain unchanged. HDFC Runs 122-125 add FY2026 and revise
 FY2025 bonus comparatives; the failed post-write audit and exact flag repair remain recorded.

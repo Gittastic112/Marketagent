@@ -59,8 +59,14 @@ Local tests pass 37 focused backend checks without a fixture database; frontend
 tests pass 304, with TypeScript and the production build. Added integration tests
 cover unapplied/revised candidates and legacy duplicate active revisions. The
 existing PDF browser test also opens normalized details with the keyboard.
-Full remote CI for this new source remains pending publication; the prior Next.js
-head `767a8526` passes all five jobs on both PR and push runs.
+Full remote CI passes on source commit `1ab9bacf44b6e554fd4b9705009c835c248f2694`.
+All five jobs succeed on [PR run 39844299823](https://github.com/Gittastic112/Marketagent/actions/runs/39844299823)
+and [push run 39844286070](https://github.com/Gittastic112/Marketagent/actions/runs/39844286070):
+1,724 backend tests, 304 frontend tests, TypeScript/build, 64 browser workflows,
+six separate PostgreSQL integration checks, recovery, dependency and container
+gates. Six opt-in PostgreSQL tests are skipped in the baseline job and run in the
+browser job. Exact logs and job receipts are retained. The subsequent documentation
+and accounting-note receipt update changes no runtime source.
 
 Six normal desktop/mobile views pass 60 source-value comparisons, correct PDF
 highlights, keyboard details, no writes/errors/overflow and zero axe violations.
@@ -68,6 +74,38 @@ Readiness is 369-2,105ms under the unchanged 15-second limit. Two narrower visua
 views inspect the latest review notes; the first screenshots of the older FY2024
 row remain retained. All 109 post-application table fingerprints stay unchanged.
 No disposable database, invented trade or AI scan is created.
+
+## Further accounting-note decision
+
+[M05-HDFCBANK-15](../../../../data/reviews/hdfc-accounting-notes-20261022.json)
+reviews the same retained PDF without another download or normal-database write.
+Ninety text-value checks, six visual page reviews and 24 exact Decimal equations
+reconcile provisions, segment eliminations, parent profit, equity and shares.
+The prior FY2025 EPS exception remains unchanged.
+
+The report separately identifies the INR7,000.27 crore HDBFS disposal gain before
+tax/net of IPO expenses, INR9,000 crore floating provision, INR1,037.28 crore
+estimated employee-cost effect and INR1,190.28 crore tax write-back. These have
+different tax, ownership and recurrence bases. No recurring-profit amount is
+invented, and the reported earnings remain unchanged. The INR93.72 crore
+estimated Pillar Two tax charge is not automatically treated as nonrecurring.
+
+Actual issued shares reconcile exactly: 7,652,221,674 opening shares plus
+7,677,039,761 bonus shares and 64,106,893 shares from exercises equals
+15,393,368,328 at March 31, 2026. Bonus-adjusted outstanding parent options
+(233,964,038) and units (31,719,700) reconcile separately. These are historical
+counts; grant-date fair values, accounting award reserves and subsidiary awards
+are not interchangeable with current HDFC Bank dilution or option value.
+
+FY2026 consolidated net assets of INR608,444.43 crore include INR22,384.96 crore
+minority interests and INR4,545.11 crore employee-award reserves. Excluding both
+reconciles to the INR581,514.36 crore capital-and-reserves subtotal. The receipt
+keeps each basis separate; none automatically becomes distributable capital or a
+model input. Subsidiary assets already consolidated cannot be added again.
+Gross segment revenue of INR722,946.41 crore includes INR227,483.60 crore of
+intersegment eliminations, so this table does not support a mechanical bank/
+insurance revenue blend. Remaining model/mapping inputs stay in the limitation
+ledger. Five personal Apple approvals and all earlier decisions remain intact.
 
 ## Runtime, backup and retained evidence
 
