@@ -1,6 +1,6 @@
 # Feature Register
 
-**Source and runtime status reconciled:** 2026-10-18. Validation dates are in Current State.
+**Source and runtime status reconciled:** 2026-10-24. Validation dates are in Current State.
 
 First release: local research/demo using existing data, explicitly chosen October
 17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
@@ -21,9 +21,9 @@ Status meanings:
 | SEC filing ingestion | Built | Requires SEC identity/configuration. Filing discovery remains manual; annual companyfacts also run through the opt-in valuation source worker |
 | RSS ingestion | Built | Feed quality and scheduling remain limited |
 | Official India PDF upload | Built, manual | Identity-bound official guidance covers the five scoped NSE issuers, with checked date and required reports. Upload/excerpt/page/currency/scale review remains manual; source selection is not financial approval |
-| Financial extraction candidates | Built, coverage limited | PDF v5 handles verified EPS/sidebar layouts and retains source warnings. Delegated HDFC review resolves 56 selected unit gaps and promotes its narrow historical basis. Repeated identical occurrences share one period fact; conflicts block promotion. Full statements/notes and independent certification remain open |
+| Financial extraction candidates | Built, coverage limited | PDF v6 handles selected EPS/sidebar and investment-scope layouts with source warnings. All 11 scoped securities have selected reviewed histories. HDFC retains bonus comparability and one EPS exception. Repeated identical occurrences share one period fact; conflicts block promotion. Full statements/notes and independent certification remain open |
 | Local text-extraction evaluation | Built, limited scope | Owned persisted runs compare stored text against independently reviewed reference rows, retaining hashes, precision/recall and separate numeric/unit/period/locator results. Missing units fail; no PDF/XBRL/AI or forecast certification is implied |
-| Financial normalization/reconciliation | Built, coverage limited | Pure calculations preserve missing versus zero and require compatible inputs. Selected HDFC periods retain four supported normalized fields each. Snapshot/currency checks do not certify complete valuation inputs; historical AAPL/APSEZ proof is separately dated |
+| Financial normalization/reconciliation | Built, coverage limited | Pure calculations preserve missing versus zero and require compatible inputs. The scoped universe has 33 periods and 332 normalized values, with exact active source-revision provenance on new normalization. Explicitly reviewed after-tax equity-method income can enter the profit identity; generic SEC concepts do not establish that presentation. Complete valuation inputs remain separate |
 | Exact PDF/text evidence | Built | Historical records can have coarse fallback |
 | Events, scoring, and alerts | Built | Extraction remains primarily rule-based |
 | Thesis notes and evidence ledger | Built | Contradiction workflow partial |
@@ -37,7 +37,7 @@ Status meanings:
 | Portfolio valuation and exposure | Built | Current value, cash, exposures, and concentration are source-aware |
 | Portfolio performance and attribution | Built; research/demo scope | M07 source adds dated transaction/cash replay, purchase-date FX, current-balance reconciliation and immutable snapshot provenance. Legacy/manual or corrected-activity history remains provisional across returns, attribution and benchmark reads. Risk is fixed-weight price return, not realized total return. Genuine-input readiness still rejects Mock Data; that real-activity validation is outside v1. Existing examples and reviewed valuation inputs retain their labels and gaps |
 | FCFF DCF and scenarios | Built | Durable reviewed drafts, atomic versioned runs, field-level readiness, complete visible input coverage, currency audit fields, trust-gated output, and source-backed benchmark autofill are built; company inputs and every benchmark prior still require review |
-| Source-to-valuation refresh | Built, review-required | Queued SEC annual/FRED/price steps populate drafts alongside existing benchmark priors; weekday 07:00 New York scheduling is enabled locally. Explicit edits survive refresh; saved models and source approvals remain unchanged. India statements and unsupported fields remain manual |
+| Source-to-valuation refresh | Built, review-required | Queued SEC annual/FRED/price steps populate drafts alongside existing benchmark priors. The opt-in source worker is currently stopped with restart disabled; Daily Brief scheduling runs separately. Explicit edits survive refresh; saved models and source approvals remain unchanged. India statements and unsupported fields remain manual |
 | Reverse DCF and diagnostics | Built | Failures and missing inputs are visible; results remain dependent on reviewed market and financial inputs |
 | FCFE/DDM | Built, explicit-input single-stage estimates | Complete finite equity cash flows, cost of equity, growth and shares required; zeros preserved, unavailable methods diagnosed. Stable-growth suitability and historical resaves still require review |
 | Financial-services and distressed engines | Built with explicit-input limits | Finite equity input/zero/convergence guards, probability/recovery/share validation, corrected distressed gap/bridge and equity-specific scenarios. Specialized form presets are removed; bank forms/scenarios validate equity inputs, saved projections label equity fields and relative years. Unsupported adjusted sensitivities/supplementary estimates are withheld; historical outputs require a new saved version |
@@ -46,13 +46,13 @@ Status meanings:
 | DCF implied pricing | Built with evidence limits | Saved net income/book/revenue/margin replace proxy earnings and EBITDA. Historical responses reconcile without storage rewrites; formulas, timestamps, zero/unavailable states and trust gates are visible. Full D&A evidence and historical score refresh remain outside this repair |
 | Relative valuation | Built with disclosed input-coverage limits | Industry aggregates and owner-scoped reviewed peer sets retain normalized/versioned evidence, median/minimum-three gates, diagnostic receipts, retry-safe CSV v2, eligibility, comparability warnings, finite math, and request isolation. Saved DCF inputs now use an owned backend adapter with zero/book-equity preservation, EBIT provenance, explicit unavailable EBITDA, exact input-hash consent, stale/invalid-input gates, method coverage, and consumed input-basis disclosure. Remaining evidence, unit, and simplified-bridge boundaries are in the single limitations ledger |
 | WACC and synthetic ratings | Built | Operating-lease capitalization remains incomplete |
-| Assumption methodology selection | Built | Country-separated India and US rate, ERP, beta, capital-structure and WACC methods preserve dataset/hash/cell provenance. US country-name aliases recover the supplied country-tax prior. Six dated US source contracts also supply margin/reinvestment/ROE/working-capital priors. Mappings require confirmation; India workbook global-input labels are explicit, not verified country-specific risk |
+| Assumption methodology selection | Built, review-required | Six January 2026 versions per country now supply US/India rate, beta, margin, reinvestment, ROE and working-capital priors, preserving dataset/hash/cell provenance. India workbook global-input labels remain explicit, not verified country-specific risk. Unsupported columns and missing values remain unavailable |
 | Real options | Experimental | Owned FCFF panel validates saved inputs and explicit eligibility, integrates total equity before per-share conversion, and isolates requests/forms. Non-persisted; legacy custom-base endpoints are deprecated and warn that they do not enforce the saved-basis contract. Industry volatility is a prior, not company fact |
 | Macro sensitivity | Partial | Provider and company exposure coverage uneven |
-| Weighted industry mapping | Built | User confirmation required |
-| Damodaran source versioning | Built | 24 of 41 mirrors have active typed rows and complete source provenance; the explicit US intake is audited and duplicate-safe |
+| Weighted industry mapping | Built, provisional comparisons reviewed | Seven saved revenue mixes and four single-industry comparisons are recorded under delegated review. Sales/capital uses a harmonic ratio; unsupported growth, return and financing blends are withheld. Versioned refresh preserves manual edits. Reliance's net external-revenue allocation remains unresolved |
+| Damodaran source versioning | Built | Twelve active US/India versions retain original hashes, dates and typed-source provenance. Imports are audited and duplicate-safe; this does not imply every retained workbook or column has a consuming parser |
 | Data Health | Built | Separates liveness/readiness, migration/schema blockers, run outcomes, freshness, and RSS coverage; owner-scoped receipt audits have bounded cursor pages, explicit coverage counts, shared evidence eligibility, conflict/coverage blockers, and direct peer-review links |
-| AI memo and narrative assistance | Partial | Exact-source validation, deterministic stored-text passage candidates, exact-offset submission, and approval gates are built; evaluation v3 separates citation/policy checks from interpretation quality, which is not evaluated. Adversarial Mock Data proves exact quotes can accompany wrong claims; human review remains required. Six actual Gemini responses now have a local review packet, with one blocked response and blank human verdicts; no general quality claim |
+| AI memo and narrative assistance | Partial | Exact-source validation, deterministic passage candidates and approval gates are built. Delegated semantic review covers six saved Gemini responses and four adversarial fixtures: four constrained summaries accepted, unsupported valuation directions rejected, one response still blocked. Original human verdicts remain blank. Citation checks and this small review set do not establish general interpretation accuracy |
 | Research sessions | Built | Not yet a unified research workflow |
 | Market regime | Built | Manual inputs are bounded; persisted FRED NFCI can supply one idempotent, exact-record-linked macro Calculation with explicit freshness, while options, liquidity, volume, and breadth remain manual because no compliant automated adapter is configured |
 | Broker sync | Not built | Security design required first |
@@ -61,9 +61,12 @@ Status meanings:
 
 ## Next Status Changes Expected
 
-1. India provider and issuer coverage expands beyond the certified APSEZ case.
-2. Portfolio risk/return comparison completes a manual real-input smoke with a multi-currency portfolio.
-3. Remaining market-regime modules gain compliant automated providers only where exact stored-record provenance and licensing allow it.
+1. Complete the remaining sourced accounting and valuation-input reviews in the
+   [tracker](completion-tracker.md), retaining explicit unavailable inputs.
+2. Freeze and verify the research/demo release, then record actual use and final
+   acceptance. Preparation does not supply those observations.
+3. Keep real-portfolio validation, deferred host/off-device protection, unsupported
+   provider modules and public hosting under their separately stated boundaries.
 
 Update this file when code changes a status. Put implementation proof in tests
 and a dated archived checkpoint, not in additional columns here.

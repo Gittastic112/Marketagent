@@ -1,0 +1,283 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+  "decision_id": "M05-AMZN-19",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "review_path": "data/reviews/amazon-equity-income-review-20261022.json",
+  "review_sha256": "e7f4664a046058cc0c04dcfc4891ae6fb6d9d29fa42cb03957241a00e879ab5c",
+  "status": "applied_and_verified",
+  "processing_runs": [
+    143,
+    144,
+    145
+  ],
+  "original_post_commit_audit_status": "failed",
+  "failed_processing_run_preserved": 145,
+  "verification_run_id": 146,
+  "reviewed_candidates": [
+    {
+      "id": 1452,
+      "updated_at": "2026-10-22 21:54:53.185007",
+      "metric_code": "equity_method_income_after_tax",
+      "value": -12000000.0,
+      "unit": "USD",
+      "fiscal_year": 2023,
+      "raw_document_id": 8,
+      "review_status": "reviewed"
+    },
+    {
+      "id": 1453,
+      "updated_at": "2026-10-22 21:54:53.187684",
+      "metric_code": "equity_method_income_after_tax",
+      "value": -101000000.0,
+      "unit": "USD",
+      "fiscal_year": 2024,
+      "raw_document_id": 8,
+      "review_status": "reviewed"
+    },
+    {
+      "id": 1454,
+      "updated_at": "2026-10-22 21:54:53.190089",
+      "metric_code": "equity_method_income_after_tax",
+      "value": -554000000.0,
+      "unit": "USD",
+      "fiscal_year": 2025,
+      "raw_document_id": 8,
+      "review_status": "reviewed"
+    }
+  ],
+  "new_reported_facts": 3,
+  "new_source_revisions": 3,
+  "original_reported_values_unchanged": 901,
+  "normalized_values_units_warnings_unchanged": 332,
+  "normalized_provenance_refreshed": 36,
+  "verified_revision_references": 54,
+  "normalization_difference": "Installed source-revision provenance repair adds exact document/candidate/revision references; source membership and numerical results unchanged.",
+  "backup_comparison_sha256": "62879fb3329a888446d8acf7cbdf7a25a30b4288375f7313760c0bc48dea6ff9",
+  "after_identity": {
+    "company_id": 6,
+    "period_type": "annual",
+    "status": "partial",
+    "tolerance_contract": {
+      "absolute_tolerance": 0.01,
+      "relative_tolerance": 1e-06,
+      "formula": "max(absolute_tolerance, max(abs(actual), abs(expected)) * relative_tolerance)"
+    },
+    "period_count": 3,
+    "applicable_period_count": 3,
+    "passed_period_count": 0,
+    "partial_period_count": 3,
+    "failed_period_count": 0,
+    "unavailable_period_count": 0,
+    "applicable_check_count": 3,
+    "passed_check_count": 3,
+    "failed_check_count": 0,
+    "unavailable_check_count": 3,
+    "periods": [
+      {
+        "period_id": 8,
+        "year": 2025,
+        "quarter": null,
+        "period_type": "annual",
+        "report_date": "2025-12-31",
+        "currency": "USD",
+        "status": "partial",
+        "applicable_check_count": 1,
+        "passed_check_count": 1,
+        "failed_check_count": 0,
+        "unavailable_check_count": 1,
+        "checks": [
+          {
+            "identity_code": "profit_after_tax",
+            "label": "Profit after tax",
+            "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax",
+            "unit": "USD",
+            "missing_metrics": [],
+            "ambiguous_metrics": [],
+            "status": "passed",
+            "actual_value": 77670000000.0,
+            "expected_value": 77670000000.0,
+            "delta": 0.0,
+            "tolerance": 77670.0,
+            "inputs": {
+              "net_income": 77670000000.0,
+              "pre_tax_income": 97311000000.0,
+              "tax_expense": 19087000000.0,
+              "equity_method_income_after_tax": -554000000.0
+            },
+            "blocking": false
+          },
+          {
+            "identity_code": "profit_attribution",
+            "label": "Profit attribution",
+            "formula": "net_income = net_income_parent + net_income_nci",
+            "unit": "USD",
+            "missing_metrics": [
+              "net_income_parent",
+              "net_income_nci"
+            ],
+            "ambiguous_metrics": [],
+            "status": "not_available",
+            "actual_value": null,
+            "expected_value": null,
+            "delta": null,
+            "tolerance": null,
+            "inputs": {},
+            "blocking": false
+          }
+        ]
+      },
+      {
+        "period_id": 7,
+        "year": 2024,
+        "quarter": null,
+        "period_type": "annual",
+        "report_date": "2024-12-31",
+        "currency": "USD",
+        "status": "partial",
+        "applicable_check_count": 1,
+        "passed_check_count": 1,
+        "failed_check_count": 0,
+        "unavailable_check_count": 1,
+        "checks": [
+          {
+            "identity_code": "profit_after_tax",
+            "label": "Profit after tax",
+            "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax",
+            "unit": "USD",
+            "missing_metrics": [],
+            "ambiguous_metrics": [],
+            "status": "passed",
+            "actual_value": 59248000000.0,
+            "expected_value": 59248000000.0,
+            "delta": 0.0,
+            "tolerance": 59248.0,
+            "inputs": {
+              "net_income": 59248000000.0,
+              "pre_tax_income": 68614000000.0,
+              "tax_expense": 9265000000.0,
+              "equity_method_income_after_tax": -101000000.0
+            },
+            "blocking": false
+          },
+          {
+            "identity_code": "profit_attribution",
+            "label": "Profit attribution",
+            "formula": "net_income = net_income_parent + net_income_nci",
+            "unit": "USD",
+            "missing_metrics": [
+              "net_income_parent",
+              "net_income_nci"
+            ],
+            "ambiguous_metrics": [],
+            "status": "not_available",
+            "actual_value": null,
+            "expected_value": null,
+            "delta": null,
+            "tolerance": null,
+            "inputs": {},
+            "blocking": false
+          }
+        ]
+      },
+      {
+        "period_id": 6,
+        "year": 2023,
+        "quarter": null,
+        "period_type": "annual",
+        "report_date": "2023-12-31",
+        "currency": "USD",
+        "status": "partial",
+        "applicable_check_count": 1,
+        "passed_check_count": 1,
+        "failed_check_count": 0,
+        "unavailable_check_count": 1,
+        "checks": [
+          {
+            "identity_code": "profit_after_tax",
+            "label": "Profit after tax",
+            "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax",
+            "unit": "USD",
+            "missing_metrics": [],
+            "ambiguous_metrics": [],
+            "status": "passed",
+            "actual_value": 30425000000.0,
+            "expected_value": 30425000000.0,
+            "delta": 0.0,
+            "tolerance": 30425.0,
+            "inputs": {
+              "net_income": 30425000000.0,
+              "pre_tax_income": 37557000000.0,
+              "tax_expense": 7120000000.0,
+              "equity_method_income_after_tax": -12000000.0
+            },
+            "blocking": false
+          },
+          {
+            "identity_code": "profit_attribution",
+            "label": "Profit attribution",
+            "formula": "net_income = net_income_parent + net_income_nci",
+            "unit": "USD",
+            "missing_metrics": [
+              "net_income_parent",
+              "net_income_nci"
+            ],
+            "ambiguous_metrics": [],
+            "status": "not_available",
+            "actual_value": null,
+            "expected_value": null,
+            "delta": null,
+            "tolerance": null,
+            "inputs": {},
+            "blocking": false
+          }
+        ]
+      }
+    ]
+  },
+  "browser": {
+    "completed_at": "2026-10-23T00:28:03.599Z",
+    "status": "success",
+    "mode": "read_only_existing_normal_data",
+    "verified_profit_equations": 3,
+    "verified_new_facts": 3,
+    "views": [
+      {
+        "view": "fundamentals",
+        "width": 1440,
+        "ready_ms": 665,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "valuation",
+        "width": 1440,
+        "ready_ms": 682,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "fundamentals",
+        "width": 390,
+        "ready_ms": 509,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "valuation",
+        "width": 390,
+        "ready_ms": 419,
+        "accessibility_violations": 0
+      }
+    ],
+    "browser_errors": 0,
+    "backend_writes": 0,
+    "new_dataset_created": false
+  },
+  "final_counts": {
+    "financial_statement_periods": 33,
+    "financial_metrics": 904,
+    "source_fact_revisions": 978,
+    "normalized_financial_metrics": 332
+  },
+  "data_loss_or_restore_performed": false,
+  "financial_inputs_reapplied": false
+}

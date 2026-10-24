@@ -150,6 +150,8 @@ class AssumptionAutofillEngine:
                     industry_mix_signature=industry_mix["signature"],
                     industry_mix_basis=industry_mix["basis"],
                     industry_mix_allocations=industry_mix["allocations"],
+                    aggregation_methods=priors.get("aggregationMethods", {}),
+                    aggregation_version=priors.get("aggregationVersion"),
                     source_summary=priors.get("sourceSummary", []),
                     requires_review=True,
                 )

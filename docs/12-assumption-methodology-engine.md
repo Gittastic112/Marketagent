@@ -1,6 +1,6 @@
 # Assumption Methodology Engine
 
-**Source reviewed:** 2026-09-22. Runtime validation is recorded in Current State.
+**Source reviewed:** 2026-10-22. Runtime validation is recorded in Current State.
 
 **Status:** source-backed benchmark methods are built; review required
 
@@ -53,6 +53,29 @@ mappings. The stored FRED DGS10 observation supplies a dated USD risk-free proxy
 through the separate source-to-draft workflow, not a universal currency fallback.
 See [source boundaries](04-data-sources-and-ingestion.md) and
 [intake commands](08-execution-runbook.md#us-benchmark-intake).
+
+## Revenue-weighted prior calculations
+
+Aggregation version 2 records the method for every blended field. Margins,
+net-capex/sales and working-capital/sales use revenue weights. Sales-to-capital
+uses `1 / sum(revenue_weight / component_sales_to_capital)`: combine the implied
+capital before dividing revenue. Every component must be present and finite;
+capital ratios must be positive. An absent component withholds the field rather
+than redistributing its weight. Accepted percentage-rounding differences are
+normalized to the actual total.
+
+Revenue weights do not establish equity/capital weights or matched growth periods.
+Multi-industry ROE, ROC, capital-structure ratios and multi-year growth therefore
+remain unavailable. Absolute industry financing totals are not blended. Multiple
+segments mapped to one taxonomy retain that single industry's own prior/context.
+The aggregation version participates in the draft's source signature so old
+autofilled values refresh, while explicit manual edits remain protected.
+
+The October 22 review installs seven provisional mixes and four single-industry
+comparisons across the scoped securities. Reliance's net external-revenue split
+is withheld; bank comparisons do not claim that all group revenue is banking.
+The [decision log](roadmaps/review-decisions.md) owns exact source scopes and proxy
+choices. None approves a company forecast, current share count or valuation.
 
 ## Important Limitations
 

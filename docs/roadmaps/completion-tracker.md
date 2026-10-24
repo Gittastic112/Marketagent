@@ -292,6 +292,18 @@ notes identify exceptional earnings and tax items without inventing recurring
 profit or current option value. Complete bridges and mappings remain M05-03/05
 work. No new acceptance points are earned. Mac settings/backups remain deferred.
 
+The [October 22-24 follow-up](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md)
+adds seven provisional revenue mixes, four single-industry comparisons and six
+verified India benchmark versions. Proper sales-to-capital aggregation replaces
+ratio averaging; unsupported growth/return/financing blends remain unavailable.
+Selected India notes retain exact tax, minority, dilution and segment treatments.
+Three reviewed Amazon after-tax equity-method losses now reconcile its reported
+profits. Its failed post-commit audit is retained; independent backup comparison
+verifies unchanged original values and the exact source-link refresh. Current
+totals: 33 periods, 904 facts, 978 revisions and 332 normalized values. Twenty-six
+normal browser views pass. M05-03/05 remain open for complete accounting inputs
+and the unresolved Reliance allocation; this is progress, not new acceptance points.
+
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
   required source documents and human-review dependencies before execution.
@@ -478,6 +490,8 @@ deferred for this research/demo profile. Future use is never inferred.
 - [ ] M10-06 Reconcile the feature register and limitation ledger. Every v1 acceptance
   item is evidenced; every optional/deferred capability is clearly labeled. Replace
   the handoff with maintenance priorities, not an endless historical task list.
+  October 24 reconciles current parser, normalization, mapping, benchmark, AI and
+  worker-state claims. Remaining valuation evidence and final acceptance stay open.
 - [ ] M10-07 Obtain final user acceptance of the genuine daily workflow and the
   disclosed local/manual/provider boundaries. Close M10 only after this acceptance.
 

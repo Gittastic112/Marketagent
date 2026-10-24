@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-AMZN-19",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewed_at": "2026-10-22T21:50:49.224826+00:00",
+  "decision": "Review the separately presented after-tax equity-method investment losses and add them to the historical profit identity without changing reported net income, pre-tax income or tax. Generic SEC tags alone do not establish after-tax presentation.",
+  "source": {
+    "source_id": "AMZN-2025-sec",
+    "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+    "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+    "local_path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html",
+    "table": 36,
+    "companyfacts_document_id": 8,
+    "companyfacts_sha256": "9ed7d44b3b63e1ddaa71cffd3828101a8f998b7c8198b3c62e218ff3ed440f84"
+  },
+  "checks": [
+    {
+      "year": 2023,
+      "table": 36,
+      "row": 20,
+      "cell": 2,
+      "label": "Income before income taxes",
+      "reported_text": "37,557",
+      "usd_million": "37557",
+      "status": "pass"
+    },
+    {
+      "year": 2023,
+      "table": 36,
+      "row": 21,
+      "cell": 2,
+      "label": "Provision for income taxes",
+      "reported_text": "( 7,120 )",
+      "usd_million": "-7120",
+      "status": "pass"
+    },
+    {
+      "year": 2023,
+      "table": 36,
+      "row": 22,
+      "cell": 2,
+      "label": "Equity-method investment activity, net of tax",
+      "reported_text": "( 12 )",
+      "usd_million": "-12",
+      "status": "pass"
+    },
+    {
+      "year": 2023,
+      "table": 36,
+      "row": 23,
+      "cell": 3,
+      "label": "Net income",
+      "reported_text": "30,425",
+      "usd_million": "30425",
+      "status": "pass"
+    },
+    {
+      "year": 2024,
+      "table": 36,
+      "row": 20,
+      "cell": 5,
+      "label": "Income before income taxes",
+      "reported_text": "68,614",
+      "usd_million": "68614",
+      "status": "pass"
+    },
+    {
+      "year": 2024,
+      "table": 36,
+      "row": 21,
+      "cell": 5,
+      "label": "Provision for income taxes",
+      "reported_text": "( 9,265 )",
+      "usd_million": "-9265",
+      "status": "pass"
+    },
+    {
+      "year": 2024,
+      "table": 36,
+      "row": 22,
+      "cell": 5,
+      "label": "Equity-method investment activity, net of tax",
+      "reported_text": "( 101 )",
+      "usd_million": "-101",
+      "status": "pass"
+    },
+    {
+      "year": 2024,
+      "table": 36,
+      "row": 23,
+      "cell": 7,
+      "label": "Net income",
+      "reported_text": "59,248",
+      "usd_million": "59248",
+      "status": "pass"
+    },
+    {
+      "year": 2025,
+      "table": 36,
+      "row": 20,
+      "cell": 8,
+      "label": "Income before income taxes",
+      "reported_text": "97,311",
+      "usd_million": "97311",
+      "status": "pass"
+    },
+    {
+      "year": 2025,
+      "table": 36,
+      "row": 21,
+      "cell": 8,
+      "label": "Provision for income taxes",
+      "reported_text": "( 19,087 )",
+      "usd_million": "-19087",
+      "status": "pass"
+    },
+    {
+      "year": 2025,
+      "table": 36,
+      "row": 22,
+      "cell": 8,
+      "label": "Equity-method investment activity, net of tax",
+      "reported_text": "( 554 )",
+      "usd_million": "-554",
+      "status": "pass"
+    },
+    {
+      "year": 2025,
+      "table": 36,
+      "row": 23,
+      "cell": 11,
+      "label": "Net income",
+      "reported_text": "77,670",
+      "usd_million": "77670",
+      "status": "pass"
+    }
+  ],
+  "reviewed_candidates": [
+    {
+      "company_id": 6,
+      "ticker": "AMZN",
+      "raw_document_id": 8,
+      "fiscal_year": 2023,
+      "period_end": "2023-12-31",
+      "metric_code": "equity_method_income_after_tax",
+      "reported_label": "Equity-method investment activity, net of tax",
+      "value": -12000000,
+      "unit": "USD",
+      "source_report_unit": "USD million",
+      "source_report_value": "-12",
+      "source_table": 36,
+      "source_row": 22,
+      "source_cell": 2,
+      "xbrl_concept": "IncomeLossFromEquityMethodInvestments",
+      "observation": {
+        "start": "2023-01-01",
+        "end": "2023-12-31",
+        "val": -12000000,
+        "accn": "0001018724-26-000004",
+        "fy": 2025,
+        "fp": "FY",
+        "form": "10-K",
+        "filed": "2026-02-06",
+        "frame": "CY2023"
+      },
+      "prior_identity_delta": -12000000,
+      "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax"
+    },
+    {
+      "company_id": 6,
+      "ticker": "AMZN",
+      "raw_document_id": 8,
+      "fiscal_year": 2024,
+      "period_end": "2024-12-31",
+      "metric_code": "equity_method_income_after_tax",
+      "reported_label": "Equity-method investment activity, net of tax",
+      "value": -101000000,
+      "unit": "USD",
+      "source_report_unit": "USD million",
+      "source_report_value": "-101",
+      "source_table": 36,
+      "source_row": 22,
+      "source_cell": 5,
+      "xbrl_concept": "IncomeLossFromEquityMethodInvestments",
+      "observation": {
+        "start": "2024-01-01",
+        "end": "2024-12-31",
+        "val": -101000000,
+        "accn": "0001018724-26-000004",
+        "fy": 2025,
+        "fp": "FY",
+        "form": "10-K",
+        "filed": "2026-02-06",
+        "frame": "CY2024"
+      },
+      "prior_identity_delta": -101000000,
+      "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax"
+    },
+    {
+      "company_id": 6,
+      "ticker": "AMZN",
+      "raw_document_id": 8,
+      "fiscal_year": 2025,
+      "period_end": "2025-12-31",
+      "metric_code": "equity_method_income_after_tax",
+      "reported_label": "Equity-method investment activity, net of tax",
+      "value": -554000000,
+      "unit": "USD",
+      "source_report_unit": "USD million",
+      "source_report_value": "-554",
+      "source_table": 36,
+      "source_row": 22,
+      "source_cell": 8,
+      "xbrl_concept": "IncomeLossFromEquityMethodInvestments",
+      "observation": {
+        "start": "2025-01-01",
+        "end": "2025-12-31",
+        "val": -554000000,
+        "accn": "0001018724-26-000004",
+        "fy": 2025,
+        "fp": "FY",
+        "form": "10-K",
+        "filed": "2026-02-06",
+        "frame": "CY2025"
+      },
+      "prior_identity_delta": -554000000,
+      "formula": "net_income = pre_tax_income - tax_expense + equity_method_income_after_tax"
+    }
+  ],
+  "accounting_treatment": "Signed after-tax gains/losses are added once after subtracting reported tax. Before-tax or generically classified equity income is not added automatically; missing after-tax facts are not replaced with a balancing number.",
+  "limitations": [
+    "Selected historical profit bridge only; no recurring-income or current valuation approval.",
+    "Profit attribution remains unavailable without separate parent/minority evidence.",
+    "No change to generic SEC extraction: exact report review is required to establish statement presentation."
+  ],
+  "application_state": "Prepared; separate version-checked application receipt required."
+}

@@ -1,4 +1,5 @@
 from copy import deepcopy
+from math import fsum, isfinite
 from typing import Any
 
 from sqlalchemy.orm import Session
@@ -15,6 +16,8 @@ from app.models.damodaran_fundamentals import (
 
 
 class IndustryAssumptionService:
+    WEIGHTED_PRIOR_VERSION = 2
+
     @staticmethod
     def _source_summary(
         db: Session,
@@ -162,14 +165,22 @@ class IndustryAssumptionService:
     ) -> dict[str, Any]:
         if not allocations:
             raise ValueError("At least one industry allocation is required")
-        total = sum(float(item["weight_percent"]) for item in allocations)
+        weights = [item["weight_percent"] for item in allocations]
+        if any(
+            isinstance(weight, bool) or not isinstance(weight, (int, float))
+            or not isfinite(weight) or not 0 < weight <= 100
+            for weight in weights
+        ):
+            raise ValueError("Industry allocation weights must be finite and between 0% and 100%")
+        total = fsum(weights)
         if abs(total - 100.0) > 0.01:
             raise ValueError("Industry allocation weights must total 100%")
 
         components = [
             {
                 **allocation,
-                "weight_fraction": float(allocation["weight_percent"]) / 100.0,
+                # Normalize only the rounding allowed by the 100% total check.
+                "weight_fraction": float(allocation["weight_percent"]) / total,
                 "priors": IndustryAssumptionService.get_assumption_priors(
                     db,
                     country,
@@ -183,6 +194,7 @@ class IndustryAssumptionService:
             {
                 "country": country,
                 "industry": "Revenue-weighted industry blend",
+                "aggregationVersion": IndustryAssumptionService.WEIGHTED_PRIOR_VERSION,
                 "dataVersion": {
                     "activeDatasetFileIds": sorted({
                         dataset_id
@@ -221,35 +233,99 @@ class IndustryAssumptionService:
                 "industryWorkingCapitalToSales",
                 "suggestedSalesToCapital",
             ),
-            "returnPriors": ("industryRoc", "industryRoe", "suggestedTerminalRoc"),
+            "returnPriors": (
+                "industryRoc", "industryRoe", "industryRoeAdjustedForRd", "suggestedTerminalRoc",
+            ),
             "capitalStructurePriors": ("industryDebtSignals", "suggestedTargetDebtRatio"),
         }
         warnings: list[str] = []
         coverage: dict[str, dict[str, bool]] = {}
+        methods: dict[str, dict[str, str]] = {}
+        multiple_industries = len({
+            str(item["industry_name"]).strip().casefold() for item in allocations
+        }) > 1
+        capital_ratios = {"industrySalesToCapital", "suggestedSalesToCapital"}
         for group, keys in fields.items():
             coverage[group] = {}
+            methods[group] = {}
             for key in keys:
                 values = [component["priors"].get(group, {}).get(key) for component in components]
-                complete = all(isinstance(value, (int, float)) for value in values)
-                coverage[group][key] = complete
-                if complete:
-                    result[group][key] = sum(
-                        float(value) * component["weight_fraction"]
-                        for value, component in zip(values, components, strict=True)
-                    )
-                else:
+                valid = [
+                    isinstance(value, (int, float)) and not isinstance(value, bool)
+                    and isfinite(value) and (key not in capital_ratios or value > 0)
+                    for value in values
+                ]
+                if multiple_industries and group in {"returnPriors", "capitalStructurePriors"}:
                     result[group][key] = None
+                    coverage[group][key] = False
+                    methods[group][key] = "unavailable_without_denominator_weights"
+                    warnings.append(
+                        f"{group}.{key} is unavailable: revenue weights do not establish "
+                        "capital or equity weights for this ratio."
+                    )
+                    continue
+                if multiple_industries and group == "revenueGrowthPriors":
+                    result[group][key] = None
+                    coverage[group][key] = False
+                    methods[group][key] = "unavailable_without_growth_period_basis"
+                    warnings.append(
+                        f"{group}.{key} is unavailable: multi-year growth requires matched "
+                        "base periods and compounding, not an arithmetic average of rates."
+                    )
+                    continue
+                if not all(valid):
+                    result[group][key] = None
+                    coverage[group][key] = False
+                    methods[group][key] = "unavailable_component"
                     missing = [
                         component["segment_name"]
-                        for value, component in zip(values, components, strict=True)
-                        if not isinstance(value, (int, float))
+                        for usable, component in zip(valid, components, strict=True)
+                        if not usable
                     ]
                     warnings.append(
-                        f"{group}.{key} is unavailable because benchmark data is missing for: "
+                        f"{group}.{key} is unavailable because benchmark data is missing or invalid for: "
                         + ", ".join(missing)
                     )
+                    continue
+                try:
+                    if key in capital_ratios:
+                        # Capital_i = Revenue_i / (Sales/Capital)_i. Sum capital
+                        # before dividing total revenue, rather than averaging ratios.
+                        blended = 1.0 / fsum(
+                            component["weight_fraction"] / float(value)
+                            for value, component in zip(values, components, strict=True)
+                        )
+                        method = "revenue_weighted_harmonic_ratio"
+                    else:
+                        blended = fsum(
+                            float(value) * component["weight_fraction"]
+                            for value, component in zip(values, components, strict=True)
+                        )
+                        method = "revenue_weighted_mean" if multiple_industries else "single_industry_prior"
+                except (OverflowError, ZeroDivisionError):
+                    blended = float("nan")
+                    method = "unavailable_numeric_range"
+                usable = isfinite(blended) and (key not in capital_ratios or blended > 0)
+                result[group][key] = blended if usable else None
+                coverage[group][key] = usable
+                methods[group][key] = method if usable else "unavailable_numeric_range"
+                if not usable:
+                    warnings.append(f"{group}.{key} is unavailable outside the supported numeric range.")
+
+        if multiple_industries:
+            # These are absolute totals for an industry's constituent companies,
+            # not ratios or the first segment's contribution to this company.
+            result["financingFlowPriors"] = {
+                key: True if key == "contextOnly" else None
+                for key in result.get("financingFlowPriors", {})
+            }
+            warnings.append(
+                "Financing-flow industry totals are unavailable for a revenue-weighted blend; "
+                "inspect each industry's context separately."
+            )
 
         result["coverage"] = coverage
+        result["aggregationMethods"] = methods
         result["warnings"] = warnings
         result["sourceSummary"] = [
             {

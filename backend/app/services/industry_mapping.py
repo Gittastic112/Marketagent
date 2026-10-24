@@ -223,6 +223,8 @@ class IndustryMappingService:
 
     @staticmethod
     def industry_mix_context(db: Session, company_id: int) -> dict[str, Any] | None:
+        from app.services.industry_assumption import IndustryAssumptionService
+
         mix = IndustryMappingService.get_industry_mix(db, company_id)
         if mix is None or not mix.allocations:
             return None
@@ -235,6 +237,7 @@ class IndustryMappingService:
             for allocation in mix.allocations
         ]
         signature_payload = {
+            "aggregation_version": IndustryAssumptionService.WEIGHTED_PRIOR_VERSION,
             "basis": mix.basis,
             "as_of_date": mix.as_of_date.isoformat() if mix.as_of_date else None,
             "source_document_id": mix.source_document_id,

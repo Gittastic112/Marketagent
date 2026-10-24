@@ -61,12 +61,22 @@ class FinancialStatementIdentityService:
         checks: list[dict[str, Any]] = []
         for identity in IDENTITIES:
             required_metrics = identity["required_metrics"]
+            formula = identity["formula"]
+            after_tax_adjustment = (
+                identity["code"] == "profit_after_tax"
+                and bool(metrics_by_name["equity_method_income_after_tax"])
+            )
+            if after_tax_adjustment:
+                # Only an explicitly reviewed after-tax presentation belongs here.
+                # Generic equity-method income may already be included before tax.
+                required_metrics = (*required_metrics, "equity_method_income_after_tax")
+                formula += " + equity_method_income_after_tax"
             missing_metrics = [name for name in required_metrics if not metrics_by_name[name]]
             ambiguous_metrics = [name for name in required_metrics if len(metrics_by_name[name]) > 1]
             base = {
                 "identity_code": identity["code"],
                 "label": identity["label"],
-                "formula": identity["formula"],
+                "formula": formula,
                 "unit": period.currency,
                 "missing_metrics": missing_metrics,
                 "ambiguous_metrics": ambiguous_metrics,
@@ -100,6 +110,8 @@ class FinancialStatementIdentityService:
             actual = values[identity["actual_metric"]]
             expected_fn: Callable[[dict[str, float]], float] = identity["expected"]
             expected = expected_fn(values)
+            if after_tax_adjustment:
+                expected += values["equity_method_income_after_tax"]
             delta = actual - expected
             tolerance = _tolerance(actual, expected)
             passed = abs(delta) <= tolerance

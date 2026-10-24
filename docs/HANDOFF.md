@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 22, 2026: M01-M02 accepted; HDFC history installed; all source CI gates pass.
+October 24, 2026: M01-M02 accepted; industry/accounting review installed; new CI pending.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -26,6 +26,7 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
+The [industry/accounting checkpoint](archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md) owns the latest mappings, India benchmarks, Amazon identity fix and 26 normal browser views.
 The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
 The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the application, revision fixes, passing CI on 1ab9bacf and accounting-note review.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
@@ -58,7 +59,7 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 
 ## Normal runtime and recovery
 
-Normal backend/workers use parser v6, exact revision provenance and reviewed normalization;
+Normal backend/workers use parser v6, exact provenance, reviewed normalization and aggregation v2;
 frontend uses Next.js 16.4.1 with accessible financial details/PDF regions and exact cell links.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
@@ -68,11 +69,11 @@ No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in m
 
 Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
 Disposable verification projects are stopped. Preserve backups, rollback images,
-all persistent volumes and failed artifacts. Seventeen rollback registrations are separate
+all persistent volumes and failed artifacts. Twenty-three rollback registrations are separate
 from the six-service project; their files/logs/images remain preserved.
 
-Six January 2026 US benchmark versions retain their separate source/import receipt.
-The attribution table's mobile keyboard defect is now fixed in the normal frontend.
+Twelve January 2026 US/India benchmark versions retain exact source/import receipts.
+Seven provisional revenue mixes and four single-industry comparisons are installed.
 Existing portfolio checks pass 64 arithmetic comparisons and six browser views;
 partial risk, provisional legacy returns and missing DCF/benchmark evidence remain.
 M07 demo checks and M08's selected review set are verified; prerequisites stay open.
@@ -96,22 +97,21 @@ do not ask again for routine review, real trades or deferred host/backup setup.
 
 Continue from the [decision log](roadmaps/review-decisions.md) and its versioned
 JSON register. Five explicit user approvals cover Apple cash, debt/leases, shares,
-payouts and US/USD/FCFF setup. Delegated M05-AAPL-04B selects separate industry
-comparisons, preserving unresolved services mapping and ratio-weighting choices.
-M05-HDFCBANK-15 records 24 note/share/equity checks. Complete remaining bridges and mappings
-under delegated authority. Apply only exact reviewed scopes; preserve original packets.
-US/India applications remain unchanged. HDFC Runs 122-125 add FY2026 and revise
-FY2025 bonus comparatives; the failed post-write audit and exact flag repair remain recorded.
-Combined: 33 periods, 901 facts, 975 revisions and 332 normalized values across 11
-securities. FY2024 stays pre-bonus; one EPS exception remains. Do not reapply.
+payouts and US/USD/FCFF setup. M05-MAPPING-16 supersedes only Apple's provisional
+comparison mapping. M05-IN-NOTES-17 and M05-INDIA-BENCHMARK-18 record the latest
+notes/imports. Reliance's net external-revenue weights stay unavailable.
+M05-AMZN-19 adds three sourced after-tax equity losses. Failed Run 145 stays failed;
+Run 146 verifies the committed values and exact provenance refresh. Do not reapply.
+Combined: 33 periods, 904 facts, 978 revisions and 332 normalized values across 11
+securities. HDFC FY2024 stays pre-bonus; its EPS exception remains. All 11 still need
+valuation review; use the latest application's per-company input checklist.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
 Reviewed source/input freeze, five business days of actual research/demo use and
 final acceptance stay open. Off-device recovery and the new disposable rehearsal
 are deferred under the approved scope. Do not count preparation as completion.
 
-Commands belong in the [runbook](08-execution-runbook.md). Keep heavy builds, PDF
-tests and browser projects sequential on the small Docker VM. Browser checks use
+Commands belong in the [runbook](08-execution-runbook.md). Run heavy checks sequentially. Browser checks use
 baked runtime source and container-local test artifacts, never protected files.
 Preserve failed runs and timing thresholds; a rerun must explain what changed.
 The retired self-scoring extraction CLI is unavailable, not evaluation evidence.

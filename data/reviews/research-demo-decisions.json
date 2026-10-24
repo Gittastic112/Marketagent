@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-22T20:08:27.269823+00:00",
+  "updated_at": "2026-10-24T16:37:58.089248+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -4266,6 +4266,91 @@
         "A comparable FY2024 combined full-year series before using merger-crossing growth.",
         "Business/capital weights and compatible benchmark-country/ratio coverage before adopting blended priors."
       ]
+    },
+    {
+      "decision_id": "M05-MAPPING-16",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+      "receipt_path": "data/reviews/industry-and-accounting-review-20261022.json",
+      "receipt_sha256": "8342a1338b3a2ec7547def6e89a123e772adfc098df3dd189293b3086e104a37",
+      "decision": "Record seven provisional revenue mixes and four single-industry comparisons across 11 securities. Retain explicit proxy, country/currency and unavailable-weight boundaries.",
+      "reason": "Reported segment/product revenues and algebraically appropriate ratio aggregation support comparisons, not unique taxonomies or company forecasts.",
+      "affected_records": {
+        "weighted_mixes": 7,
+        "allocations": 29,
+        "single_industry_comparisons": 4,
+        "application_receipt": "data/reviews/industry-and-accounting-application-20261024.json"
+      },
+      "supersedes_decision_id": "M05-AAPL-04B",
+      "supersession_scope": "Provisional Apple mapping only; five personal approvals and original comparison receipt remain preserved."
+    },
+    {
+      "decision_id": "M05-IN-NOTES-17",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+      "receipt_path": "data/reviews/industry-and-accounting-review-20261022.json",
+      "receipt_sha256": "8342a1338b3a2ec7547def6e89a123e772adfc098df3dd189293b3086e104a37",
+      "decision": "Accept the selected Reliance/Airtel/ICICI/SBI statement, earnings, tax, share and segment distinctions. Withhold unsupported bridge inputs.",
+      "reason": "Exact source text, visual report checks and reconciliations distinguish parent/group results, tax treatment and eliminations.",
+      "affected_records": {
+        "normal_financial_rows_changed": 0,
+        "review_receipt": "data/reviews/industry-and-accounting-review-20261022.json"
+      }
+    },
+    {
+      "decision_id": "M05-INDIA-BENCHMARK-18",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+      "receipt_path": "data/reviews/industry-and-accounting-application-20261024.json",
+      "receipt_sha256": "98b4dc2ab3f0bc4aba24324eaa5fe5b141a33c0ad97d173c723f2e9865d93ae8",
+      "decision": "Import six retained January 5, 2026 India workbooks through the existing typed importers, preserving missing columns and explicit global-input labels.",
+      "reason": "Original and mirror hashes agree; 1,968 independent numeric-cell checks and all 1,310 persisted typed rows are verified.",
+      "affected_records": {
+        "dataset_file_ids": [
+          7,
+          8,
+          9,
+          10,
+          11,
+          12
+        ],
+        "processing_run_ids": [
+          126,
+          127,
+          128,
+          129,
+          130,
+          131
+        ],
+        "typed_rows": 1310
+      }
+    },
+    {
+      "decision_id": "M05-AMZN-19",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+      "receipt_path": "data/reviews/amazon-equity-income-review-20261022.json",
+      "receipt_sha256": "e7f4664a046058cc0c04dcfc4891ae6fb6d9d29fa42cb03957241a00e879ab5c",
+      "decision": "Add three explicitly reviewed after-tax equity-method losses to the Amazon profit identities. Preserve all original reported amounts and failed Run 145; record successful verification in Run 146.",
+      "reason": "The annual statement and retained SEC observations reconcile every discrepancy. The post-commit mismatch was the earlier source-provenance repair adding exact links, not a numeric change.",
+      "affected_records": {
+        "candidate_ids": [
+          1452,
+          1453,
+          1454
+        ],
+        "new_facts": 3,
+        "new_revisions": 3,
+        "application_receipt": "data/reviews/amazon-equity-income-application-20261024.json"
+      }
     }
   ],
   "evidence": {
@@ -5086,6 +5171,17 @@
         "publication_date_unknown": true,
         "ingestion_date_retained": true
       }
+    },
+    "industry_accounting_20261024": {
+      "application_receipt": "data/reviews/industry-and-accounting-application-20261024.json",
+      "sha256": "98b4dc2ab3f0bc4aba24324eaa5fe5b141a33c0ad97d173c723f2e9865d93ae8",
+      "checkpoint": "docs/archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md"
+    },
+    "amazon_after_tax_20261024": {
+      "application_receipt": "data/reviews/amazon-equity-income-application-20261024.json",
+      "sha256": "b8844c365ebbfc96f930467015451aacc530ce143d084949a8500d0708fcd3ad",
+      "failed_run_145_preserved": true,
+      "verification_run_id": 146
     }
   },
   "change_policy": "Append a dated decision with supersedes_decision_id when revising a choice. Never rewrite an earlier approval or represent delegated review as independent human validation.",

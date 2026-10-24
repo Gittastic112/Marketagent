@@ -1,6 +1,6 @@
 # Research/demo decision log
 
-Updated October 22, 2026. This is the readable index for the
+Updated October 24, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
 owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
@@ -44,7 +44,7 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 | ID | Decision and reason | Actual effect / verification |
 |---|---|---|
 | M05-US-BENCHMARK-INTAKE-20261017 | Load the six retained US benchmark workbooks dated January 5, 2026. The normal database had no dataset versions; source mirrors match the audited immutable originals | Added six active versions, 1,131 typed rows and six successful Processing Runs. Changed seven benchmark/audit tables; the other 102 tables are unchanged. Twenty-seven selected values match workbook cells |
-| M05-AAPL-04B | Use Computers/Peripherals and the two software categories as separate labeled comparisons. Retain the FY2025 Products/Services revenue split as context; do not adopt a unique services allocation or apply industry averages as company forecasts | Products USD307.003bn and Services USD109.158bn reconcile to USD416.161bn. Company mapping, forecasts and saved valuations remain unchanged. A final weighted mapping still needs sound business and ratio-aggregation evidence |
+| M05-AAPL-04B | Initially retain separate industry comparisons and the FY2025 Products/Services revenue context | Original receipt preserved. M05-MAPPING-16 supersedes only the provisional mapping; no company forecast is approved |
 | M05-HDFCBANK-05 | Accept 64 selected consolidated FY2024/FY2025 entries on their historical pre-bonus basis. Separate official audited results corroborate the annual PDF's missing currency glyph | Report retained as document 10/asset 1. Corrected 52 monetary units to INR crores and four EPS units to INR/share; eight existing share/EPS units retained. Eighteen statement/EPS checks pass; Processing Runs 97/98 succeed |
 | M05-HDFCBANK-06 | Promote the reviewed entries with exact March 31 period ends. Preserve bank accounting labels and keep the unverified publication date unknown | Two annual periods, 60 distinct reported facts, 64 source revisions and eight normalized values. Run 99 succeeds; 101 other tables and unrelated rows within changed tables remain unchanged. Ingestion time is retained |
 | M05-HDFCBANK-07 | Correct only four identical EPS projections just created by the first promotion, where statement and note occurrences were inserted twice | First projections retained; all source candidates/revisions preserved. Exact removed row IDs, values and timestamps are retained in the receipt and Run 99. Original source-history metadata is not rewritten |
@@ -57,6 +57,10 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 | M05-HDFCBANK-13 | Apply that exact selection through source/candidate version checks and expose normalized values with their review basis | [Application receipt](../../data/reviews/hdfc-financial-application-20261022.json): document 19/asset 10; HDFC has three periods, 90 facts, 128 revisions and 12 normalized values. Six normal views pass; unrelated data remains |
 | M05-HDFCBANK-14 | Retire only obsolete active flags on old EPS revisions 61/63 after the committed promotion audit failed | Run 125 records the exact metadata repair; Run 124 remains failed. Values, units, sources and revision numbers are preserved. New promotions supersede all prior active occurrences within the same fact/period |
 | M05-HDFCBANK-15 | Accept historical earnings-item distinctions, exact issued-share and award movements, and separate parent/minority/equity subtotals. Withhold unsupported recurring-profit, current-option-value and mechanical segment-weight estimates | [Accounting-note receipt](../../data/reviews/hdfc-accounting-notes-20261022.json): 24 exact arithmetic checks and 90 source-text checks, plus visual page review. Existing reported data and saved models are unchanged |
+| M05-MAPPING-16 | Save seven provisional revenue mixes and four single-industry comparisons, retaining source and proxy limitations. Use appropriate ratio aggregation and withhold unsupported blends | [Review](../../data/reviews/industry-and-accounting-review-20261022.json) and [application](../../data/reviews/industry-and-accounting-application-20261024.json): 29 allocations, 11 securities and 22 normal browser views. Reliance net external-revenue weights remain unavailable |
+| M05-IN-NOTES-17 | Accept selected Reliance/Airtel/ICICI/SBI segment, tax, parent-profit and dilution distinctions. Keep unsupported accounting bridges separate | Thirty source/arithmetic checks and visual report review. No numerical financial-history change from this note review |
+| M05-INDIA-BENCHMARK-18 | Import the six retained January 2026 India workbooks with their exact country/global scope and unsupported fields | Versions 7-12, Runs 126-131 and 1,310 typed rows. 1,968 independent source-cell checks and 20,936 persisted attributes verified. Dated priors remain Estimates |
+| M05-AMZN-19 | Include explicitly reviewed after-tax equity-method losses in historical profit identities without changing reported profit or guessing the tax presentation of generic SEC tags | [Review](../../data/reviews/amazon-equity-income-review-20261022.json) and [application](../../data/reviews/amazon-equity-income-application-20261024.json): three new facts/revisions and three passing profit checks. Failed post-commit audit Run 145 preserved; Run 146 verifies 36 provenance refreshes and unchanged numerical values. Four normal browser views pass |
 | M08-AI-REVIEW-20261018 | Review six saved actual responses and four existing adversarial fixtures. Accept four outputs only as constrained summaries; reject regional-to-company forecast directions and preserve the blocked period response | [Review receipt](../../data/reviews/ai-interpretation-review-20261018.json) separates citation checks from semantic judgment. All four misleading fixture claims are rejected. Original files, human-review fields, saved models and normal AI records are unchanged |
 | M07-DEMO-REVIEW-20261018 | Accept existing examples for the explicitly revised demo gate, with partial/unavailable coverage preserved. Do not certify real records or fabricate missing models/benchmarks | 64 independent arithmetic checks and six normal browser views pass. Portfolio records are unchanged. The attribution table's mobile keyboard defect is fixed and verified; original complete-series/model and genuine multi-currency proof remain unperformed |
 
@@ -86,6 +90,12 @@ evidence and [Damodaran's business-weighting guidance](https://pages.stern.nyu.e
 | 4 | capexUS-2026-01-05.xls | 2026-01-05 | 94 |
 | 5 | roeUS-2026-01-05.xls | 2026-01-05 | 94 |
 | 6 | wcdataUS-2026-01-05.xls | 2026-01-05 | 94 |
+| 7 | betaIndia.xls | 2026-01-05 | 280 |
+| 8 | waccIndia.xls | 2026-01-05 | 654 |
+| 9 | marginIndia.xls | 2026-01-05 | 94 |
+| 10 | capexIndia.xls | 2026-01-05 | 94 |
+| 11 | roeIndia.xls, original roeIndia(1).xls | 2026-01-05 | 94 |
+| 12 | wcdataIndia.xls | 2026-01-05 | 94 |
 
 The register embeds hashes, source rows, import evidence and Processing Run IDs;
 full database fingerprints stay in the local receipt. Import time does not make these January estimates
@@ -95,7 +105,9 @@ was created and protected environment files were excluded. Fresh browser validat
 was unavailable because browser automation failed to initialize; the intake proof
 is at the database level. The subsequent HDFC browser checks use the existing normal
 data and the repository's Docker Playwright runner; they do not retroactively add
-browser proof for that benchmark-intake step.
+browser proof for that benchmark-intake step. The later
+[October 22-24 checkpoint](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md)
+verifies the installed US/India comparison consumers and exact ratio calculations.
 
 ## Continuing work
 
