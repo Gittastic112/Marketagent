@@ -76,8 +76,8 @@ still need valuation input review; no current model was approved.
 ## Validation and normal runtime
 
 - 33 focused pure calculation checks pass without a database. The earlier failing
-  regression logs remain. One draft-refresh integration regression awaits the
-  remote full suite; local fixture creation remains outside authorization.
+  regression logs remain. The new draft-refresh integration regression passes in
+  remote CI; local fixture creation remains outside authorization.
 - 21 independent calculations verify the installed mixes and source-method
   provenance using the existing database in a read-only transaction.
 - 22 normal desktop/mobile mapping views and four subsequent Amazon financial/
@@ -102,8 +102,15 @@ browser images, original failures, exact comparisons, source manifests, backups,
 runtime receipts and reproducible operation scripts. User-added skill folders are
 preserved locally and are not part of the publication whitelist.
 
-Full source/type/contract/browser/security CI and GitHub publication are pending
-for this batch. Earlier passing CI on `1ab9bacf` remains separately dated evidence.
+Source commit `ceae4f6ce37b84f6ef2acd631306a53af1023a7a` passes all five GitHub
+gates on both the [PR run](https://github.com/Gittastic112/Marketagent/actions/runs/40114933656)
+and [push run](https://github.com/Gittastic112/Marketagent/actions/runs/40114929628):
+1,758 backend tests, 304 frontend tests, TypeScript, production build, 64 browser
+workflows, recovery, dependency and container-security checks. Six opt-in baseline
+PostgreSQL skips are covered by all six passing checks in the separate browser job.
+An exact 20-path publication preserves every unrelated remote file and the shared
+local Git index. This checkpoint's final results follow as documentation only;
+the installed application source is unchanged. Earlier CI remains dated evidence.
 
 ## Acceptance boundary
 

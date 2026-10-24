@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 24, 2026: M01-M02 accepted; industry/accounting review installed; new CI pending.
+October 24, 2026: M01-M02 accepted; industry/accounting review installed; full CI passes on ceae4f6c.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the

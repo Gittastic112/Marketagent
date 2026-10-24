@@ -97,7 +97,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Source/browser matrix passes on 1ab9bacf; M08 prerequisite open | [October 22 verification](../archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Source/browser matrix passes on ceae4f6c; M08 prerequisite open | [October 24 verification](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md) |
 | M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
@@ -108,8 +108,8 @@ source/fixture boundaries. Final return labels, affected browser flows, measured
 process-cold/warm profiles and normal rollout are verified. Evidence review and local
 credential work remain open; the scope revision above separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
-M04 retains verified checks with an open prerequisite. Next.js CI passes; M09's
-later HDFC source matrix also passes on 1ab9bacf. Cumulative acceptance remains 20 points; the next milestone is M03.
+M04 retains verified checks with an open prerequisite. M09's latest integrated
+source/browser matrix passes on ceae4f6c. Cumulative acceptance remains 20 points; the next milestone is M03.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -454,10 +454,10 @@ transport/state helpers and query-budget tests.
   a guarantee that the rendered workflow is responsive.
 - [x] M09-07 Run the complete isolated production browser matrix and full source/
   type/contract suites after integration; record screenshot/trace and source identity.
-  October 22 CI on 1ab9bacf passes all five gates on PR and push runs: 64 browser
-  workflows, 1,724 backend tests, 304 frontend tests and six separate PostgreSQL
+  October 24 CI on ceae4f6c passes all five gates on PR and push runs: 64 browser
+  workflows, 1,758 backend tests, 304 frontend tests and six separate PostgreSQL
   checks. Normal-data browser proof and retained source/image identities are in
-  the [HDFC checkpoint](../archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md).
+  the [industry/accounting checkpoint](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md).
 
 Gate: all scoped workflows are usable and truthful across supported viewports,
 with measured performance and no unresolved release-blocking regression.
