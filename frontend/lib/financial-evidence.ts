@@ -1,5 +1,23 @@
 import type { EventEvidenceReference, FinancialExtractionCandidate } from "@/lib/api";
 
+const financialMetricLabels: Record<string, string> = {
+  net_income: "Net income",
+  pre_tax_income: "Profit before tax",
+  tax_expense: "Tax expense",
+  equity_method_income_after_tax: "After-tax income from equity-method investments",
+  net_income_parent: "Profit attributable to parent shareholders",
+  net_income_nci: "Profit attributable to minority shareholders",
+};
+
+export function financialMetricLabel(metric: string): string {
+  const fallback = metric.replaceAll("_", " ");
+  return financialMetricLabels[metric] ?? fallback.charAt(0).toUpperCase() + fallback.slice(1);
+}
+
+export function financialIdentityFormula(formula: string): string {
+  return formula.replace(/\b[a-z][a-z0-9_]*\b/g, financialMetricLabel);
+}
+
 export type PdfEvidenceBox = {
   x0: number;
   top: number;

@@ -301,8 +301,11 @@ Three reviewed Amazon after-tax equity-method losses now reconcile its reported
 profits. Its failed post-commit audit is retained; independent backup comparison
 verifies unchanged original values and the exact source-link refresh. Current
 totals: 33 periods, 904 facts, 978 revisions and 332 normalized values. Twenty-six
-normal browser views pass. M05-03/05 remain open for complete accounting inputs
-and the unresolved Reliance allocation; this is progress, not new acceptance points.
+normal browser views pass for that earlier batch. The [October 24 follow-up](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md)
+checks 66 financing/cash/lease cells and 36 equations; two existing Alphabet entries
+are promoted with their USD1m component discrepancy retained. Current totals are
+906 facts, 980 revisions and 336 normalized values. All earlier amounts remain
+unchanged. M05-03/05 stay open for full accounting inputs and Reliance allocation.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
@@ -333,6 +336,12 @@ delegation, preserving the distinction from independent human certification.
 
 Owners: deterministic engines, saved-input contracts and valuation panels;
 [Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
+
+October 24 installs compact mix summaries, readable warnings and a save/cancel
+gate before drafting from saved weights. M06-BRIDGE-01 records financing/cash
+treatments; all 11 drafts still require review. Local tests/build and 21 existing-data
+calculation checks pass. Fresh normal browser verification awaits the approved
+permission-profile reload. M06-04/07 remain open; no acceptance points are added.
 
 - [x] M06-01 Repair sensitivity to reuse the canonical forecast/bridge behavior,
   preserve saved funding/terminal assumptions, and expose per-cell validity and

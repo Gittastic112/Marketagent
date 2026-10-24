@@ -21,6 +21,7 @@ import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, nor
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
 import { ScreenerUpload } from "@/components/screener-upload";
 import { formatNumber } from "@/lib/formatting";
+import { financialIdentityFormula, financialMetricLabel } from "@/lib/financial-evidence";
 
 export default async function FundamentalsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -254,7 +255,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                     <td className="py-2 pr-4 text-gray-900">{period.period_type} {period.year}</td>
                     <td className="px-4 py-2 text-gray-900">
                       {check.label}
-                      <span className="block text-xs text-gray-500">{check.formula}</span>
+                      <span className="block text-xs text-gray-500">{financialIdentityFormula(check.formula)}</span>
                     </td>
                     <td className={`px-4 py-2 ${check.status === "passed" ? "text-green-700" : check.status === "failed" ? "text-red-700" : "text-amber-700"}`}>
                       {check.status.replaceAll("_", " ")}
@@ -269,8 +270,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                       {check.delta !== null
                         ? `${check.delta.toLocaleString()} (tolerance ${check.tolerance?.toLocaleString()})`
                         : check.ambiguous_metrics.length > 0
-                          ? `Duplicate metrics: ${check.ambiguous_metrics.join(", ")}`
-                          : `Missing: ${check.missing_metrics.join(", ")}`}
+                          ? `Duplicate metrics: ${check.ambiguous_metrics.map(financialMetricLabel).join(", ")}`
+                          : `Missing: ${check.missing_metrics.map(financialMetricLabel).join(", ")}`}
                     </td>
                   </tr>
                 ))) }

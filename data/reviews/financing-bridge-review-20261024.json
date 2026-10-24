@@ -1,0 +1,1306 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-BRIDGE-20",
+  "related_decision_id": "M06-BRIDGE-01",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewed_at": "2026-10-24T19:26:48.449648+00:00",
+  "independent_human_certification": false,
+  "scope": "Retained Amazon FY2023-25 borrowing/cash/lease notes and Alphabet FY2025 lease notes. Existing securities and existing source snapshots only.",
+  "sources": {
+    "AMZN-2024-sec": {
+      "source_id": "AMZN-2024-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000004/amzn-20241231.htm",
+      "sha256": "e20c7637f54438c7d3cf34d04671c1c4282844177132d4aa53236271fa85900c",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2024-sec.html"
+    },
+    "AMZN-2025-sec": {
+      "source_id": "AMZN-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html"
+    },
+    "GOOG-2025-sec": {
+      "source_id": "GOOG-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html"
+    }
+  },
+  "verified_cells": [
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 11,
+      "cell": 8,
+      "label": "Total face value of long-term debt",
+      "year": 2023,
+      "reported_text": "67,182",
+      "value": "67182",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 12,
+      "cell": 8,
+      "label": "Unamortized discount and issuance costs, net",
+      "year": 2023,
+      "reported_text": "( 374 )",
+      "value": "-374",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 13,
+      "cell": 8,
+      "label": "Less: current portion of long-term debt",
+      "year": 2023,
+      "reported_text": "( 8,494 )",
+      "value": "-8494",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 14,
+      "cell": 9,
+      "label": "Long-term debt",
+      "year": 2023,
+      "reported_text": "58,314",
+      "value": "58314",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 11,
+      "cell": 11,
+      "label": "Total face value of long-term debt",
+      "year": 2024,
+      "reported_text": "58,000",
+      "value": "58000",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 12,
+      "cell": 11,
+      "label": "Unamortized discount and issuance costs, net",
+      "year": 2024,
+      "reported_text": "( 360 )",
+      "value": "-360",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 13,
+      "cell": 11,
+      "label": "Less: current portion of long-term debt",
+      "year": 2024,
+      "reported_text": "( 5,017 )",
+      "value": "-5017",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "table": 58,
+      "row": 14,
+      "cell": 13,
+      "label": "Long-term debt",
+      "year": 2024,
+      "reported_text": "52,623",
+      "value": "52623",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 12,
+      "cell": 8,
+      "label": "Total face value of long-term debt",
+      "year": 2024,
+      "reported_text": "58,000",
+      "value": "58000",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 13,
+      "cell": 8,
+      "label": "Unamortized discount and issuance costs, net",
+      "year": 2024,
+      "reported_text": "( 360 )",
+      "value": "-360",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 14,
+      "cell": 8,
+      "label": "Less: current portion of long-term debt",
+      "year": 2024,
+      "reported_text": "( 5,017 )",
+      "value": "-5017",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 15,
+      "cell": 9,
+      "label": "Long-term debt",
+      "year": 2024,
+      "reported_text": "52,623",
+      "value": "52623",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 12,
+      "cell": 11,
+      "label": "Total face value of long-term debt",
+      "year": 2025,
+      "reported_text": "68,836",
+      "value": "68836",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 13,
+      "cell": 11,
+      "label": "Unamortized discount and issuance costs, net",
+      "year": 2025,
+      "reported_text": "( 440 )",
+      "value": "-440",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 14,
+      "cell": 11,
+      "label": "Less: current portion of long-term debt",
+      "year": 2025,
+      "reported_text": "( 2,748 )",
+      "value": "-2748",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 57,
+      "row": 15,
+      "cell": 13,
+      "label": "Long-term debt",
+      "year": 2025,
+      "reported_text": "65,648",
+      "value": "65648",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 3,
+      "cell": 3,
+      "label": "Cash and cash equivalents",
+      "year": 2024,
+      "reported_text": "78,779",
+      "value": "78779",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 4,
+      "cell": 2,
+      "label": "Restricted cash included in accounts receivable, net and other",
+      "year": 2024,
+      "reported_text": "247",
+      "value": "247",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 5,
+      "cell": 2,
+      "label": "Restricted cash included in other assets",
+      "year": 2024,
+      "reported_text": "3,286",
+      "value": "3286",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 6,
+      "cell": 3,
+      "label": "Total cash, cash equivalents, and restricted cash shown in the consolidated statements of cash flows",
+      "year": 2024,
+      "reported_text": "82,312",
+      "value": "82312",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 3,
+      "cell": 7,
+      "label": "Cash and cash equivalents",
+      "year": 2025,
+      "reported_text": "86,810",
+      "value": "86810",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 4,
+      "cell": 5,
+      "label": "Restricted cash included in accounts receivable, net and other",
+      "year": 2025,
+      "reported_text": "300",
+      "value": "300",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 5,
+      "cell": 5,
+      "label": "Restricted cash included in other assets",
+      "year": 2025,
+      "reported_text": "2,996",
+      "value": "2996",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 48,
+      "row": 6,
+      "cell": 7,
+      "label": "Total cash, cash equivalents, and restricted cash shown in the consolidated statements of cash flows",
+      "year": 2025,
+      "reported_text": "90,106",
+      "value": "90106",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 5,
+      "cell": 3,
+      "label": "Gross lease liabilities",
+      "year": 2024,
+      "reported_text": "95,294",
+      "value": "95294",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 5,
+      "cell": 7,
+      "label": "Gross lease liabilities",
+      "year": 2024,
+      "reported_text": "12,520",
+      "value": "12520",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 5,
+      "cell": 11,
+      "label": "Gross lease liabilities",
+      "year": 2024,
+      "reported_text": "107,814",
+      "value": "107814",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 6,
+      "cell": 2,
+      "label": "Less: imputed interest",
+      "year": 2024,
+      "reported_text": "( 15,698 )",
+      "value": "-15698",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 6,
+      "cell": 5,
+      "label": "Less: imputed interest",
+      "year": 2024,
+      "reported_text": "( 1,918 )",
+      "value": "-1918",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 6,
+      "cell": 8,
+      "label": "Less: imputed interest",
+      "year": 2024,
+      "reported_text": "( 17,616 )",
+      "value": "-17616",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 7,
+      "cell": 2,
+      "label": "Present value of lease liabilities",
+      "year": 2024,
+      "reported_text": "79,596",
+      "value": "79596",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 7,
+      "cell": 5,
+      "label": "Present value of lease liabilities",
+      "year": 2024,
+      "reported_text": "10,602",
+      "value": "10602",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 7,
+      "cell": 8,
+      "label": "Present value of lease liabilities",
+      "year": 2024,
+      "reported_text": "90,198",
+      "value": "90198",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 8,
+      "cell": 2,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2024,
+      "reported_text": "( 10,546 )",
+      "value": "-10546",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 8,
+      "cell": 5,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2024,
+      "reported_text": "( 1,375 )",
+      "value": "-1375",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 8,
+      "cell": 8,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2024,
+      "reported_text": "( 11,921 )",
+      "value": "-11921",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 9,
+      "cell": 3,
+      "label": "Total long-term lease liabilities",
+      "year": 2024,
+      "reported_text": "69,050",
+      "value": "69050",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 9,
+      "cell": 7,
+      "label": "Total long-term lease liabilities",
+      "year": 2024,
+      "reported_text": "9,227",
+      "value": "9227",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 52,
+      "row": 9,
+      "cell": 11,
+      "label": "Total long-term lease liabilities",
+      "year": 2024,
+      "reported_text": "78,277",
+      "value": "78277",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 5,
+      "cell": 3,
+      "label": "Gross lease liabilities",
+      "year": 2025,
+      "reported_text": "106,914",
+      "value": "106914",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 5,
+      "cell": 7,
+      "label": "Gross lease liabilities",
+      "year": 2025,
+      "reported_text": "14,917",
+      "value": "14917",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 5,
+      "cell": 11,
+      "label": "Gross lease liabilities",
+      "year": 2025,
+      "reported_text": "121,831",
+      "value": "121831",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 6,
+      "cell": 2,
+      "label": "Less: imputed interest",
+      "year": 2025,
+      "reported_text": "( 17,662 )",
+      "value": "-17662",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 6,
+      "cell": 5,
+      "label": "Less: imputed interest",
+      "year": 2025,
+      "reported_text": "( 2,631 )",
+      "value": "-2631",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 6,
+      "cell": 8,
+      "label": "Less: imputed interest",
+      "year": 2025,
+      "reported_text": "( 20,293 )",
+      "value": "-20293",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 7,
+      "cell": 2,
+      "label": "Present value of lease liabilities",
+      "year": 2025,
+      "reported_text": "89,252",
+      "value": "89252",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 7,
+      "cell": 5,
+      "label": "Present value of lease liabilities",
+      "year": 2025,
+      "reported_text": "12,286",
+      "value": "12286",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 7,
+      "cell": 8,
+      "label": "Present value of lease liabilities",
+      "year": 2025,
+      "reported_text": "101,538",
+      "value": "101538",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 8,
+      "cell": 2,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2025,
+      "reported_text": "( 12,655 )",
+      "value": "-12655",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 8,
+      "cell": 5,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2025,
+      "reported_text": "( 1,544 )",
+      "value": "-1544",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 8,
+      "cell": 8,
+      "label": "Less: current portion of lease liabilities",
+      "year": 2025,
+      "reported_text": "( 14,199 )",
+      "value": "-14199",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 9,
+      "cell": 3,
+      "label": "Total long-term lease liabilities",
+      "year": 2025,
+      "reported_text": "76,597",
+      "value": "76597",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 9,
+      "cell": 7,
+      "label": "Total long-term lease liabilities",
+      "year": 2025,
+      "reported_text": "10,742",
+      "value": "10742",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 53,
+      "row": 9,
+      "cell": 11,
+      "label": "Total long-term lease liabilities",
+      "year": 2025,
+      "reported_text": "87,339",
+      "value": "87339",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 7,
+      "cell": 8,
+      "label": "Accrued expenses and other liabilities",
+      "year": 2025,
+      "reported_text": "3,209",
+      "value": "3209",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 8,
+      "cell": 6,
+      "label": "Operating lease liabilities",
+      "year": 2025,
+      "reported_text": "12,744",
+      "value": "12744",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 9,
+      "cell": 8,
+      "label": "Total operating lease liabilities",
+      "year": 2025,
+      "reported_text": "15,954",
+      "value": "15954",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 15,
+      "cell": 8,
+      "label": "Accrued expenses and other liabilities",
+      "year": 2025,
+      "reported_text": "441",
+      "value": "441",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 16,
+      "cell": 6,
+      "label": "Other long-term liabilities",
+      "year": 2025,
+      "reported_text": "2,059",
+      "value": "2059",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 123,
+      "row": 17,
+      "cell": 8,
+      "label": "Total finance lease liabilities",
+      "year": 2025,
+      "reported_text": "2,500",
+      "value": "2500",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 9,
+      "cell": 2,
+      "label": "Total undiscounted lease payments",
+      "year": 2025,
+      "reported_text": "18,251",
+      "value": "18251",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 9,
+      "cell": 5,
+      "label": "Total undiscounted lease payments",
+      "year": 2025,
+      "reported_text": "2,869",
+      "value": "2869",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 10,
+      "cell": 2,
+      "label": "Less: imputed interest",
+      "year": 2025,
+      "reported_text": "( 2,297 )",
+      "value": "-2297",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 10,
+      "cell": 5,
+      "label": "Less: imputed interest",
+      "year": 2025,
+      "reported_text": "( 369 )",
+      "value": "-369",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 11,
+      "cell": 3,
+      "label": "Total lease liability balance",
+      "year": 2025,
+      "reported_text": "15,954",
+      "value": "15954",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 126,
+      "row": 11,
+      "cell": 7,
+      "label": "Total lease liability balance",
+      "year": 2025,
+      "reported_text": "2,500",
+      "value": "2500",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    }
+  ],
+  "equations": [
+    {
+      "name": "Amazon FY2023 face to noncurrent carrying amount (AMZN-2024-sec)",
+      "terms": [
+        "67182",
+        "-374",
+        "-8494"
+      ],
+      "result": "58314",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2023 current plus noncurrent carrying amount (AMZN-2024-sec)",
+      "terms": [
+        "8494",
+        "58314"
+      ],
+      "result": "66808",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 face to noncurrent carrying amount (AMZN-2024-sec)",
+      "terms": [
+        "58000",
+        "-360",
+        "-5017"
+      ],
+      "result": "52623",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 current plus noncurrent carrying amount (AMZN-2024-sec)",
+      "terms": [
+        "5017",
+        "52623"
+      ],
+      "result": "57640",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 face to noncurrent carrying amount (AMZN-2025-sec)",
+      "terms": [
+        "58000",
+        "-360",
+        "-5017"
+      ],
+      "result": "52623",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 current plus noncurrent carrying amount (AMZN-2025-sec)",
+      "terms": [
+        "5017",
+        "52623"
+      ],
+      "result": "57640",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 face to noncurrent carrying amount (AMZN-2025-sec)",
+      "terms": [
+        "68836",
+        "-440",
+        "-2748"
+      ],
+      "result": "65648",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 current plus noncurrent carrying amount (AMZN-2025-sec)",
+      "terms": [
+        "2748",
+        "65648"
+      ],
+      "result": "68396",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 unrestricted cash plus restricted cash",
+      "terms": [
+        "78779",
+        "247",
+        "3286"
+      ],
+      "result": "82312",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 unrestricted cash plus restricted cash",
+      "terms": [
+        "86810",
+        "300",
+        "2996"
+      ],
+      "result": "90106",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 Gross lease liabilities: operating plus finance",
+      "terms": [
+        "95294",
+        "12520"
+      ],
+      "result": "107814",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 Less: imputed interest: operating plus finance",
+      "terms": [
+        "-15698",
+        "-1918"
+      ],
+      "result": "-17616",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 Present value of lease liabilities: operating plus finance",
+      "terms": [
+        "79596",
+        "10602"
+      ],
+      "result": "90198",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 Less: current portion of lease liabilities: operating plus finance",
+      "terms": [
+        "-10546",
+        "-1375"
+      ],
+      "result": "-11921",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 Total long-term lease liabilities: operating plus finance",
+      "terms": [
+        "69050",
+        "9227"
+      ],
+      "result": "78277",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 operating undiscounted to present value",
+      "terms": [
+        "95294",
+        "-15698"
+      ],
+      "result": "79596",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 operating present value less current portion",
+      "terms": [
+        "79596",
+        "-10546"
+      ],
+      "result": "69050",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 finance undiscounted to present value",
+      "terms": [
+        "12520",
+        "-1918"
+      ],
+      "result": "10602",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 finance present value less current portion",
+      "terms": [
+        "10602",
+        "-1375"
+      ],
+      "result": "9227",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 combined undiscounted to present value",
+      "terms": [
+        "107814",
+        "-17616"
+      ],
+      "result": "90198",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2024 combined present value less current portion",
+      "terms": [
+        "90198",
+        "-11921"
+      ],
+      "result": "78277",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 Gross lease liabilities: operating plus finance",
+      "terms": [
+        "106914",
+        "14917"
+      ],
+      "result": "121831",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 Less: imputed interest: operating plus finance",
+      "terms": [
+        "-17662",
+        "-2631"
+      ],
+      "result": "-20293",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 Present value of lease liabilities: operating plus finance",
+      "terms": [
+        "89252",
+        "12286"
+      ],
+      "result": "101538",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 Less: current portion of lease liabilities: operating plus finance",
+      "terms": [
+        "-12655",
+        "-1544"
+      ],
+      "result": "-14199",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 Total long-term lease liabilities: operating plus finance",
+      "terms": [
+        "76597",
+        "10742"
+      ],
+      "result": "87339",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 operating undiscounted to present value",
+      "terms": [
+        "106914",
+        "-17662"
+      ],
+      "result": "89252",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 operating present value less current portion",
+      "terms": [
+        "89252",
+        "-12655"
+      ],
+      "result": "76597",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 finance undiscounted to present value",
+      "terms": [
+        "14917",
+        "-2631"
+      ],
+      "result": "12286",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 finance present value less current portion",
+      "terms": [
+        "12286",
+        "-1544"
+      ],
+      "result": "10742",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 combined undiscounted to present value",
+      "terms": [
+        "121831",
+        "-20293"
+      ],
+      "result": "101538",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Amazon FY2025 combined present value less current portion",
+      "terms": [
+        "101538",
+        "-14199"
+      ],
+      "result": "87339",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Alphabet FY2025 operating lease present value",
+      "terms": [
+        "18251",
+        "-2297"
+      ],
+      "result": "15954",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Alphabet FY2025 finance lease present value",
+      "terms": [
+        "2869",
+        "-369"
+      ],
+      "result": "2500",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Alphabet FY2025 finance lease current plus noncurrent",
+      "terms": [
+        "441",
+        "2059"
+      ],
+      "result": "2500",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    },
+    {
+      "name": "Alphabet FY2025 reported operating total less component sum",
+      "terms": [
+        "15954",
+        "-3209",
+        "-12744"
+      ],
+      "result": "1",
+      "unit": "USD million",
+      "claim_type": "Calculation",
+      "status": "pass"
+    }
+  ],
+  "amazon_borrowing_basis": [
+    {
+      "year": 2023,
+      "source_id": "AMZN-2024-sec",
+      "face_value": "67182",
+      "carrying_amount": "66808",
+      "unit": "USD million",
+      "scope": "Reported long-term borrowing including current portion; not all financing claims or market value."
+    },
+    {
+      "year": 2024,
+      "source_id": "AMZN-2024-sec",
+      "face_value": "58000",
+      "carrying_amount": "57640",
+      "unit": "USD million",
+      "scope": "Reported long-term borrowing including current portion; not all financing claims or market value."
+    },
+    {
+      "year": 2024,
+      "source_id": "AMZN-2025-sec",
+      "face_value": "58000",
+      "carrying_amount": "57640",
+      "unit": "USD million",
+      "scope": "Reported long-term borrowing including current portion; not all financing claims or market value."
+    },
+    {
+      "year": 2025,
+      "source_id": "AMZN-2025-sec",
+      "face_value": "68836",
+      "carrying_amount": "68396",
+      "unit": "USD million",
+      "scope": "Reported long-term borrowing including current portion; not all financing claims or market value."
+    }
+  ],
+  "decision": "Approve the unchanged reported Alphabet operating-lease total for historical promotion with the component discrepancy retained in source provenance, normalized warnings and draft review requirements. Preserve the Amazon generic debt candidates on hold; face values are not carrying balances or complete valuation debt.",
+  "supersedes": {
+    "M05-US-08": "Only the hold on candidates 340 and 664. All other earlier holds, facts, source values and personal approvals remain unchanged."
+  },
+  "reviewed_limitations": [
+    "Alphabet FY2025 reported operating leases total USD15,954 million; current USD3,209 million plus noncurrent USD12,744 million equals USD15,953 million. The USD1 million difference is unexplained, not silently treated as rounding.",
+    "The separate maturity schedule supports the reported total: USD18,251 million undiscounted payments less USD2,297 million imputed interest equals USD15,954 million. This verifies the reported amount, not component reconciliation or valuation readiness.",
+    "Historical lease liabilities are not current market values. Review cash-flow lease treatment and debt inclusion before valuation; do not deduct the same lease claim twice."
+  ],
+  "reviewed_candidates": [
+    {
+      "id": 340,
+      "company_id": 4,
+      "ticker": "GOOG",
+      "raw_document_id": 6,
+      "fiscal_year": 2025,
+      "metric_code": "operating_leases",
+      "value": 15954000000,
+      "unit": "USD",
+      "expected_updated_at": "2026-10-11T19:20:10.874523"
+    },
+    {
+      "id": 664,
+      "company_id": 12,
+      "ticker": "GOOGL",
+      "raw_document_id": 9,
+      "fiscal_year": 2025,
+      "metric_code": "operating_leases",
+      "value": 15954000000,
+      "unit": "USD",
+      "expected_updated_at": "2026-10-11T19:21:21.139052"
+    }
+  ],
+  "m06_treatment": [
+    "Amazon cash-flow closing cash includes restrictions. FY2025 restricted cash is USD3,296 million; the USD86,810 million balance-sheet cash amount already excludes it. Do not subtract those restrictions twice or label all balance-sheet cash excess operating cash.",
+    "Amazon FY2025 long-term borrowing carrying amount is USD68,396 million, face value USD68,836 million, and finance-lease present value USD12,286 million. These are distinct historical scopes, not an approved total debt input.",
+    "Amazon FY2025 operating-lease present value is USD89,252 million. USD106,914 million contractual operating payments and USD14,917 million finance payments include future interest and are not additional claims on top of their present values.",
+    "Keep financing obligations, leases not commenced, purchase commitments, operating cash needs, minority interests, cross-holdings, employee awards and current share basis explicitly unresolved until their valuation treatment is supported.",
+    "GOOG and GOOGL share issuer lease evidence. Do not add their duplicate issuer balances, share counts or claims together.",
+    "No saved valuation, forecast, WACC, current market price or full equity bridge is approved by this historical note review."
+  ],
+  "application_status": "Prepared; application receipt must verify existing-candidate versions, unchanged reported values, preserved discrepancy warnings and unchanged saved valuations."
+}

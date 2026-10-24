@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 24, 2026: M01-M02 accepted; industry/accounting review installed; full CI passes on ceae4f6c.
+October 24, 2026: M01-M02 accepted; UI/financing review installed; fresh browser verification awaits profile reload.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -14,7 +14,7 @@ each choice in the [decision log](roadmaps/review-decisions.md), distinguish age
 review from personal user approval, and do not repeat routine approval questions.
 The latest request includes M10 preparation, not invented final
 acceptance. Public deployment and broker work remain outside scope. GitHub is
-Allow all actions; other app permissions remain unchanged. No new agents are
+Allow all actions; user approved only localhost/127.0.0.1 and the macOS OpenSSL read exception. No new agents are
 authorized by the plan alone. Protected environment files must not be read directly
 or indirectly, including by Compose, app settings or browser configuration.
 
@@ -26,7 +26,7 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
-The [industry/accounting checkpoint](archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md) owns the latest mappings, India benchmarks, Amazon identity fix and 26 normal browser views.
+The [UI/financing checkpoint](archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) owns the latest repairs, source review, application, rollout and pending browser boundary.
 The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
 The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the application, revision fixes, passing CI on 1ab9bacf and accounting-note review.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
@@ -60,7 +60,7 @@ retains the full frontend/workflow matrix and process-cold/warm performance scop
 ## Normal runtime and recovery
 
 Normal backend/workers use parser v6, exact provenance, reviewed normalization and aggregation v2;
-frontend uses Next.js 16.4.1 with accessible financial details/PDF regions and exact cell links.
+frontend uses Next.js 16.4.1 with compact industry summaries, readable warnings and protected saved-mix drafting.
 The original PostgreSQL volume/schema and runtime settings are preserved, with
 localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
 after the explicit reviewed changes. Fresh quiesced dumps pass archive listing without
@@ -69,7 +69,7 @@ No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in m
 
 Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
 Disposable verification projects are stopped. Preserve backups, rollback images,
-all persistent volumes and failed artifacts. Twenty-three rollback registrations are separate
+all persistent volumes and failed artifacts. Twenty-seven rollback copies are retained separately
 from the six-service project; their files/logs/images remain preserved.
 
 Twelve January 2026 US/India benchmark versions retain exact source/import receipts.
@@ -102,9 +102,9 @@ comparison mapping. M05-IN-NOTES-17 and M05-INDIA-BENCHMARK-18 record the latest
 notes/imports. Reliance's net external-revenue weights stay unavailable.
 M05-AMZN-19 adds three sourced after-tax equity losses. Failed Run 145 stays failed;
 Run 146 verifies the committed values and exact provenance refresh. Do not reapply.
-Combined: 33 periods, 904 facts, 978 revisions and 332 normalized values across 11
-securities. HDFC FY2024 stays pre-bonus; its EPS exception remains. All 11 still need
-valuation review; use the latest application's per-company input checklist.
+Combined: 33 periods, 906 facts, 980 revisions and 336 normalized values across 11
+securities. M05-BRIDGE-20 retains Alphabet's USD1m lease difference; Run 151 verifies source-link refreshes.
+All 11 still need valuation review. HDFC FY2024/pre-bonus and EPS exceptions remain; no saved models changed.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.
 Reviewed source/input freeze, five business days of actual research/demo use and

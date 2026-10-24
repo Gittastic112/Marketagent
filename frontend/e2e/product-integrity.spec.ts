@@ -81,6 +81,9 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
 
   await expect(mix.getByText("Saved as User Assumption")).toBeVisible();
   await expect(mix.getByText("partial benchmark coverage")).toBeVisible();
+  await expect(mix.getByRole("list", { name: "Saved business mix" })).toBeVisible();
+  await expect(mix.getByLabel("Revenue weight for Software")).toHaveCount(0);
+  await mix.getByText("Basis and source", { exact: true }).click();
   await expect(mix.getByText(`Source: ${document.title}`)).toBeVisible();
   const stored = await backendData<{
     source_document_id: number | null;
@@ -95,8 +98,21 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   ]);
 
   await page.reload();
+  await expect(mix.getByRole("list", { name: "Saved business mix" })).toBeVisible();
+  await mix.getByRole("button", { name: "Edit business mix" }).click();
   await expect(mix.getByLabel("Revenue weight for Software")).toHaveValue("60");
   await expect(mix.getByLabel("Revenue weight for Semiconductors")).toHaveValue("40");
+  await mix.getByLabel("Revenue weight for Software").fill("59");
+  await expect(mix.getByText("Unsaved changes", { exact: true })).toBeVisible();
+  await expect(mix.getByRole("button", { name: "Draft from saved mix" })).toBeDisabled();
+  await mix.getByRole("button", { name: "Cancel edits" }).click();
+  await expect(mix.getByRole("button", { name: "Draft from saved mix" })).toBeEnabled();
+  await page.setViewportSize({ width: 390, height: 844 });
+  await mix.getByRole("button", { name: "Edit business mix" }).click();
+  await expect(mix.getByLabel("Revenue weight for Software")).toHaveValue("60");
+  const remove = mix.getByRole("button", { name: "Remove Semiconductors", exact: true });
+  await expect(remove).toBeVisible();
+  await expect(remove).toHaveText(/Remove/);
 });
 
 

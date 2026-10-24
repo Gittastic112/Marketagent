@@ -27,8 +27,16 @@ from app.services.damodaran_dataset_versions import active_dataset_ids
 
 
 def _profile_tokens(value: str) -> set[str]:
-    tokens = set(re.findall(r"[a-z]+", value.casefold()))
-    return {"transport" if token.startswith("transport") else token for token in tokens}
+    # Broad sector words do not establish a specific business comparison.
+    # Keep "non-bank" distinct from bank before splitting punctuation.
+    value = re.sub(r"non[\s-]*bank", "nonbank", value.casefold())
+    generic = {"and", "other", "general", "diversified", "business", "consumer",
+               "service", "services", "technology", "information", "product",
+               "products", "industry", "industries"}
+    aliases = {"banks": "bank", "banking": "bank", "computers": "computer",
+               "semiconductors": "semiconductor", "electronics": "electronic"}
+    tokens = set(re.findall(r"[a-z]+", value)) - generic
+    return {"transport" if token.startswith("transport") else aliases.get(token, token) for token in tokens}
 
 
 def _shares_profile_token(left: str, right: str) -> bool:
@@ -79,15 +87,15 @@ class IndustryMappingService:
     def suggest_damodaran_industries(db: Session, company_id: int, country: str = "India") -> list[dict[str, Any]]:
         company = db.get(Company, company_id)
 
-        all_industries = IndustryMappingService.get_available_industries(db, country)
+        all_industries = IndustryMappingService.get_available_industries(
+            db, country, fallback_to_loaded=False,
+        )
 
         candidates = []
         if company:
             search_terms = []
-            if company.industry:
-                search_terms.append(company.industry.lower())
-            if company.sector:
-                search_terms.append(company.sector.lower())
+            if company.industry and _profile_tokens(company.industry):
+                search_terms.append(company.industry.strip().lower())
 
             # Require a shared profile token so permissive edit distance cannot
             # suggest unrelated industries with similar suffixes.
@@ -104,18 +112,9 @@ class IndustryMappingService:
                     if original_ind not in [c["industryName"] for c in candidates]:
                         candidates.append({
                             "industryName": original_ind,
-                            "confidence": "high" if score > 0.8 else "medium",
-                            "reason": f"Matches company profile: {term.title()}"
+                            "confidence": "medium",
+                            "reason": f"Text match to company industry: {term.title()}. Review the comparison before use."
                         })
-
-            # Simple substring matching as fallback
-            for ind in all_industries:
-                if any(t in ind.lower() for t in search_terms) and ind not in [c["industryName"] for c in candidates]:
-                    candidates.append({
-                        "industryName": ind,
-                        "confidence": "medium",
-                        "reason": f"Partial match with company profile"
-                    })
 
         for c in candidates:
             c["benchmarkAvailability"] = IndustryMappingService._benchmark_availability(

@@ -64,6 +64,16 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 | M08-AI-REVIEW-20261018 | Review six saved actual responses and four existing adversarial fixtures. Accept four outputs only as constrained summaries; reject regional-to-company forecast directions and preserve the blocked period response | [Review receipt](../../data/reviews/ai-interpretation-review-20261018.json) separates citation checks from semantic judgment. All four misleading fixture claims are rejected. Original files, human-review fields, saved models and normal AI records are unchanged |
 | M07-DEMO-REVIEW-20261018 | Accept existing examples for the explicitly revised demo gate, with partial/unavailable coverage preserved. Do not certify real records or fabricate missing models/benchmarks | 64 independent arithmetic checks and six normal browser views pass. Portfolio records are unchanged. The attribution table's mobile keyboard defect is fixed and verified; original complete-series/model and genuine multi-currency proof remain unperformed |
 
+M05-BRIDGE-20 and M06-BRIDGE-01 are recorded in the
+[financing review](../../data/reviews/financing-bridge-review-20261024.json) and
+[application](../../data/reviews/financing-bridge-application-20261024.json).
+Sixty-six original cells and 36 equations distinguish Amazon borrowing, leases
+and restricted cash. Alphabet's reported FY2025 lease total is promoted with its
+USD1m component discrepancy preserved and valuation review still required.
+Runs 147-150 apply two existing candidates. Run 151 independently verifies
+unchanged prior amounts and 22 source-link enrichments; the failed local equality
+audit remains retained. No saved forecast, valuation or full equity bridge is approved.
+
 The [HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the source, calculation, rollout and browser proof. These are delegated agent
 decisions, not independent human certification. The selected historical basis does

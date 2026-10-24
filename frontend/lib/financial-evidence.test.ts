@@ -8,8 +8,18 @@ import {
   financialEvidenceGeometry,
   financialEvidenceHref,
   financialEvidenceLocatorLabel,
+  financialIdentityFormula,
+  financialMetricLabel,
 } from "./financial-evidence.ts";
 import type { EventEvidenceReference } from "@/lib/api";
+
+test("accounting labels retain the after-tax and parent/minority distinctions", () => {
+  assert.equal(financialIdentityFormula("net_income = pre_tax_income - tax_expense + equity_method_income_after_tax"),
+    "Net income = Profit before tax - Tax expense + After-tax income from equity-method investments");
+  assert.equal(financialMetricLabel("net_income_parent"), "Profit attributable to parent shareholders");
+  assert.equal(financialMetricLabel("net_income_nci"), "Profit attributable to minority shareholders");
+  assert.equal(financialMetricLabel("unmapped_metric"), "Unmapped metric");
+});
 
 const candidate = {
   source_table_name: null,

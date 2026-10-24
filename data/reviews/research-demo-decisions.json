@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-10-24T16:37:58.089248+00:00",
+  "updated_at": "2026-10-24T19:37:20.450461+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -4350,6 +4350,60 @@
         "new_facts": 3,
         "new_revisions": 3,
         "application_receipt": "data/reviews/amazon-equity-income-application-20261024.json"
+      }
+    },
+    {
+      "decision_id": "M05-BRIDGE-20",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T19:37:20.450461+00:00",
+      "receipt_path": "data/reviews/financing-bridge-review-20261024.json",
+      "receipt_sha256": "7be927aaae89036818335e221ce961dc0596a1ccc7c315d00940127545e4e958",
+      "application_receipt": "data/reviews/financing-bridge-application-20261024.json",
+      "application_sha256": "dc2f10ab52cc9ac05555bd6f02f92cd74d6d0232cb5dee212bfa03fa72f4acb5",
+      "decision": "Accept Alphabet FY2025 operating leases as the unchanged explicitly reported historical total, corroborated by its maturity schedule. Preserve the USD1 million component difference as an unresolved warning. Keep Amazon face/carrying borrowing, finance leases and restricted cash separate.",
+      "reason": "Three retained reports, 66 original cells and 36 exact arithmetic checks establish the selected historical amounts. Candidates 340/664 are promoted without changing their source values; original figures and saved valuations are independently checked against the pre-change backup.",
+      "affected_records": {
+        "candidate_ids": [
+          340,
+          664
+        ],
+        "processing_run_ids": [
+          147,
+          148,
+          149,
+          150
+        ],
+        "verification_run_id": 151,
+        "saved_valuations_changed": false
+      }
+    },
+    {
+      "decision_id": "M06-BRIDGE-01",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-10-24T19:37:20.450461+00:00",
+      "receipt_path": "data/reviews/financing-bridge-review-20261024.json",
+      "receipt_sha256": "7be927aaae89036818335e221ce961dc0596a1ccc7c315d00940127545e4e958",
+      "application_receipt": "data/reviews/financing-bridge-application-20261024.json",
+      "application_sha256": "dc2f10ab52cc9ac05555bd6f02f92cd74d6d0232cb5dee212bfa03fa72f4acb5",
+      "decision": "Require valuation review for the newly available historical lease input. Do not equate Amazon face debt, carrying debt, finance-lease present value or undiscounted commitments; do not subtract already excluded restricted cash twice. No saved forecast or equity bridge is approved.",
+      "reason": "The report definitions describe different dates, scopes and measurement bases. All 11 company drafts still require review. GOOG/GOOGL carry the same issuer evidence and must not be aggregated as separate financial businesses.",
+      "affected_records": {
+        "candidate_ids": [
+          340,
+          664
+        ],
+        "processing_run_ids": [
+          147,
+          148,
+          149,
+          150
+        ],
+        "verification_run_id": 151,
+        "saved_valuations_changed": false
       }
     }
   ],
