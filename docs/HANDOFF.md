@@ -1,6 +1,6 @@
 # Agent Handoff
 
-October 24, 2026: M01-M02 accepted; UI/financing review installed; fresh browser verification awaits profile reload.
+October 24, 2026: M01-M02 accepted; UI and borrowing reviews installed; 36 fresh normal-data browser views pass.
 The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
 Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
 "Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
@@ -26,7 +26,7 @@ contains extensive prior changes. Never reset, clean or stage everything.
 
 ## Current evidence
 
-The [UI/financing checkpoint](archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) owns the latest repairs, source review, application, rollout and pending browser boundary.
+The [UI/financing checkpoint](archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) owns repairs, borrowing review, 36 normal browser views and five passing source CI gates on 6e2a6f8b.
 The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
 The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the application, revision fixes, passing CI on 1ab9bacf and accounting-note review.
 The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
@@ -102,8 +102,8 @@ comparison mapping. M05-IN-NOTES-17 and M05-INDIA-BENCHMARK-18 record the latest
 notes/imports. Reliance's net external-revenue weights stay unavailable.
 M05-AMZN-19 adds three sourced after-tax equity losses. Failed Run 145 stays failed;
 Run 146 verifies the committed values and exact provenance refresh. Do not reapply.
-Combined: 33 periods, 906 facts, 980 revisions and 336 normalized values across 11
-securities. M05-BRIDGE-20 retains Alphabet's USD1m lease difference; Run 151 verifies source-link refreshes.
+Combined: 33 periods, 929 facts, 1,003 revisions and 336 normalized values across 11
+securities. M05-DEBT-21/M06-DEBT-02 add 23 sourced borrowing facts in Runs 152-159; seven entries stay held. Alphabet's USD1m lease warning remains.
 All 11 still need valuation review. HDFC FY2024/pre-bonus and EPS exceptions remain; no saved models changed.
 
 M10 preparation retains dated recovery evidence and a blank actual-use record.

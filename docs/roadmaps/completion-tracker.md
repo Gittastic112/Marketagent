@@ -97,7 +97,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Source/browser matrix passes on ceae4f6c; M08 prerequisite open | [October 24 verification](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Remote matrix passes on 6e2a6f8b; 36 fresh normal-data views pass; M08 prerequisite open | [October 24 verification](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
 | M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
@@ -109,7 +109,7 @@ process-cold/warm profiles and normal rollout are verified. Evidence review and 
 credential work remain open; the scope revision above separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
 M04 retains verified checks with an open prerequisite. M09's latest integrated
-source/browser matrix passes on ceae4f6c. Cumulative acceptance remains 20 points; the next milestone is M03.
+remote source/browser matrix passes on 6e2a6f8b; 36 fresh desktop/mobile views verify the installed UI and borrowing review using existing data. Cumulative acceptance remains 20 points; the next milestone is M03.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -304,8 +304,14 @@ totals: 33 periods, 904 facts, 978 revisions and 332 normalized values. Twenty-s
 normal browser views pass for that earlier batch. The [October 24 follow-up](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md)
 checks 66 financing/cash/lease cells and 36 equations; two existing Alphabet entries
 are promoted with their USD1m component discrepancy retained. Current totals are
-906 facts, 980 revisions and 336 normalized values. All earlier amounts remain
-unchanged. M05-03/05 stay open for full accounting inputs and Reliance allocation.
+906 facts, 980 revisions and 336 normalized values before the borrowing review.
+M05-DEBT-21 then verifies 34 original cells, four inline facts and 12 equations
+across five retained reports. Runs 152-159 add 23 unchanged historical candidates
+for NVIDIA, Alphabet and Microsoft; six Alphabet face totals and one unsupported
+NVIDIA commercial-paper zero stay held. Current totals: 33 periods, 929 facts,
+1,003 revisions and 336 normalized values. All 906 earlier facts and all normalized
+amounts/units/warnings remain unchanged. Thirty-six fresh normal browser views pass.
+M05-03/05 stay open for full accounting inputs and Reliance allocation.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
@@ -338,10 +344,12 @@ Owners: deterministic engines, saved-input contracts and valuation panels;
 [Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
 
 October 24 installs compact mix summaries, readable warnings and a save/cancel
-gate before drafting from saved weights. M06-BRIDGE-01 records financing/cash
-treatments; all 11 drafts still require review. Local tests/build and 21 existing-data
-calculation checks pass. Fresh normal browser verification awaits the approved
-permission-profile reload. M06-04/07 remain open; no acceptance points are added.
+gate before drafting from saved weights. M06-BRIDGE-01 and M06-DEBT-02 separate
+historical carrying/face amounts, commercial paper and lease treatment from a
+valuation-date equity bridge. All 11 drafts still require review; no saved model
+changes. Local tests/build, 21 existing-data calculations and 36 normal browser
+views pass; 6e2a6f8b passes all five source CI gates. M06-04/07 remain open;
+no acceptance points are added.
 
 - [x] M06-01 Repair sensitivity to reuse the canonical forecast/bridge behavior,
   preserve saved funding/terminal assumptions, and expose per-cell validity and
@@ -463,10 +471,10 @@ transport/state helpers and query-budget tests.
   a guarantee that the rendered workflow is responsive.
 - [x] M09-07 Run the complete isolated production browser matrix and full source/
   type/contract suites after integration; record screenshot/trace and source identity.
-  October 24 CI on ceae4f6c passes all five gates on PR and push runs: 64 browser
-  workflows, 1,758 backend tests, 304 frontend tests and six separate PostgreSQL
-  checks. Normal-data browser proof and retained source/image identities are in
-  the [industry/accounting checkpoint](../archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md).
+  October 24 CI on 6e2a6f8b passes all five gates on PR and push runs: 64 browser
+  workflows, 1,766 backend tests, 309 frontend tests and six separate PostgreSQL
+  checks. The [UI/financing checkpoint](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md)
+  records these results and the new UI's pending normal-data browser check; earlier proof retains its dated scope.
 
 Gate: all scoped workflows are usable and truthful across supported viewports,
 with measured performance and no unresolved release-blocking regression.

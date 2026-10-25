@@ -74,6 +74,22 @@ Runs 147-150 apply two existing candidates. Run 151 independently verifies
 unchanged prior amounts and 22 source-link enrichments; the failed local equality
 audit remains retained. No saved forecast, valuation or full equity bridge is approved.
 
+M05-DEBT-21 and M06-DEBT-02 are recorded in the
+[borrowing review](../../data/reviews/borrowing-basis-review-20261024.json) and
+[application](../../data/reviews/borrowing-basis-application-20261024.json).
+Five retained official reports establish 23 unchanged historical candidates:
+NVIDIA current/noncurrent carrying debt, Alphabet carrying components and commercial
+paper, and Microsoft's explicitly scoped commercial paper. Thirty-four original
+cells, four inline facts and 12 exact equations support the decisions. Six Alphabet
+face-value totals and NVIDIA's unsupported FY2024 commercial-paper zero stay held.
+Runs 152-159 add 23 facts/revisions; all 906 prior facts and 336 normalized amounts,
+units and warnings remain unchanged. The 132 provenance refreshes retain 325 verified
+source references. The helper audit identity error and its correction are retained;
+the application was not rerun. These historical amounts do not approve current
+market debt, lease inclusion, forecast assumptions or any saved valuation.
+Fresh checks pass 36 normal browser views and 21 read-only benchmark calculations.
+All 11 drafts still need review, including Alphabet's retained USD1m lease warning.
+
 The [HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the source, calculation, rollout and browser proof. These are delegated agent
 decisions, not independent human certification. The selected historical basis does
