@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from app.models.company import Company
 from app.models.financial import FinancialMetric, FinancialStatementPeriod, NormalizedFinancialMetric, NormalizedFinancialSnapshot
 from app.services.assumption_provenance import DERIVED_NORMALIZED_METRICS, _freshness_metadata, _provenance
+from app.services.valuation_input_units import canonical_financial_input
 
 def financial_history_signature(db: Session, company_id: int) -> str:
     rows = db.execute(
@@ -186,6 +187,8 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
             )
         metrics = {**bridge_fallbacks, **normalized_metrics}
 
+    metrics = {key: canonical_financial_input(key, value, source, period.currency)
+               for key, (value, source) in metrics.items()}
     actuals: Dict[str, tuple[float, Dict[str, Any]]] = {}
     for source_key, target_key in (
         ("revenue", "revenue"),
@@ -219,7 +222,7 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
 
     revenue_tuple = metrics.get("revenue")
     ebit_tuple = metrics.get("ebit")
-    if revenue_tuple and ebit_tuple is not None and revenue_tuple[0] != 0:
+    if revenue_tuple and ebit_tuple and revenue_tuple[0] not in (None, 0) and ebit_tuple[0] is not None:
         is_normalized = "Normalized" in ebit_tuple[1]["label"]
         actuals["operating_margin"] = (
             ebit_tuple[0] / revenue_tuple[0],
@@ -236,7 +239,8 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
         )
 
     invested_capital_tuple = metrics.get("invested_capital")
-    if revenue_tuple and invested_capital_tuple and invested_capital_tuple[0] > 0:
+    if (revenue_tuple and revenue_tuple[0] is not None and invested_capital_tuple
+            and invested_capital_tuple[0] is not None and invested_capital_tuple[0] > 0):
         actuals["sales_to_capital"] = (
             revenue_tuple[0] / invested_capital_tuple[0],
             _provenance(
@@ -294,8 +298,13 @@ def _extract_revenue_history(
                 snapshot_id=snapshot.id,
                 period_id=period.id,
                 fiscal_year=period.year,
+                unit=metric.unit,
+                reporting_currency=period.currency,
             )
-            history.append((period.year, metric.value, source))
+            value, source = canonical_financial_input("revenue", metric.value, source, period.currency)
+            if value is None:
+                return None
+            history.append((period.year, value, source))
             continue
 
         if snapshot is not None:
@@ -315,10 +324,15 @@ def _extract_revenue_history(
                 source_record_id=legacy_metric.id,
                 period_id=period.id,
                 fiscal_year=period.year,
+                unit=legacy_metric.unit,
+                reporting_currency=period.currency,
             )
-            history.append((period.year, legacy_metric.value, source))
+            value, source = canonical_financial_input("revenue", legacy_metric.value, source, period.currency)
+            if value is None:
+                return None
+            history.append((period.year, value, source))
 
-    if len(history) < 2:
+    if len(history) < 2 or len({source["reporting_currency"] for _, _, source in history}) != 1:
         return None
 
     oldest_year, oldest_revenue, _ = history[0]

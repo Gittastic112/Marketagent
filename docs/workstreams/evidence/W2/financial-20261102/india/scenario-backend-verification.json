@@ -1,0 +1,25 @@
+{
+  "backend_image": "market-intelligence-review-test:20261030-r2",
+  "no_database_or_provider_calls": true,
+  "tests": [
+    {
+      "ticker": "RELIANCE",
+      "actual_backend_forecast_years": 10,
+      "zero_net_reinvestment_all_years": true,
+      "cash_flow_and_terminal_continuity": true,
+      "annuity_plus_terminal_equals_perpetuity": true,
+      "per_share_equity_calculation_performed": false,
+      "status": "pass"
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "actual_backend_forecast_years": 10,
+      "zero_net_reinvestment_all_years": true,
+      "cash_flow_and_terminal_continuity": true,
+      "annuity_plus_terminal_equals_perpetuity": true,
+      "per_share_equity_calculation_performed": false,
+      "status": "pass"
+    }
+  ],
+  "dcf_source_sha256": "cc92a3112daddb5b72ede2ec84318f081bf5d4097154463be73ab4e0b94298ef"
+}

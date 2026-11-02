@@ -2,7 +2,7 @@
 
 **Source reviewed:** 2026-09-30. Runtime verification is recorded in Current State.
 
-**Current source head:** `s1s1s1s1s1s1`. Migration adds analyst comparison receipts.
+**Current source head:** `t2t2t2t2t2t2`. Projection calendar years may be unknown; existing stored values remain unchanged.
 Check Current State for the normal runtime's verified revision.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic

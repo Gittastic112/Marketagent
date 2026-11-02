@@ -2,6 +2,10 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [Local release, financial follow-up and publication boundary, November 2](release-publication-and-financial-followup-2026-11-02.md)
+
+- [Locked builds, OS correction and verified local rollout, October 28](locked-build-and-local-rollout-2026-10-28.md)
+- [Release preflight and browser-test isolation, October 28](release-preflight-isolation-2026-10-28.md)
 - [HDFC latest history, revision provenance and visible review basis, October 22](hdfc-latest-history-2026-10-22.md)
 - [Dependency security and exact PDF-cell links, October 21-22](dependency-and-pdf-evidence-2026-10-21.md)
 - [Repository navigation, ignore rules and measured cache cleanup, October 18](repository-hygiene-2026-10-18.md)

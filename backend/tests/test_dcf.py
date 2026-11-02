@@ -110,6 +110,44 @@ def test_persisted_dcf_contract_allows_missing_market_price_comparison():
     assert assumptions.current_market_price == 0
 
 
+@pytest.mark.parametrize("price", [None, 0, float("inf"), float("nan")])
+def test_missing_comparison_is_null_in_new_calculation_and_legacy_read(price):
+    from datetime import datetime, UTC
+    from app.schemas.valuation import DcfOutputRead
+
+    assumptions = DcfAssumptionSet(id=1, valuation_model_id=1, projection_years_count=1,
+        starting_revenue=1000, current_operating_margin=0.1, target_operating_margin=0.1,
+        wacc_start=0.1, wacc_terminal=0.1, terminal_growth_rate=0.02,
+        diluted_shares=100, current_market_price=price)
+    output, _, _ = calculate_dcf(assumptions)
+    assert output.intrinsic_value_per_share > 0
+    assert output.current_market_price is None
+    assert output.upside_downside_pct is None
+    output.id = 1
+    output.created_at = datetime.now(UTC)
+    output.current_market_price = 0
+    output.upside_downside_pct = 0
+    displayed = DcfOutputRead.model_validate(output, context={"assumption_set": assumptions})
+    assert displayed.current_market_price is None
+    assert displayed.upside_downside_pct is None
+    assert output.current_market_price == 0
+    assert output.upside_downside_pct == 0
+
+
+def test_comparison_overflow_is_unavailable_and_nonfinite_prices_cannot_be_saved():
+    from app.services.dcf import calculate_equity_bridge
+    from app.services.relative_valuation_service import reconcile_output_read
+    assumptions = DcfAssumptionSet(diluted_shares=1, current_market_price=5e-324)
+    assert calculate_equity_bridge(assumptions, 100)[2] is None
+    historical = {"assumption_set_id": 1, "current_market_price": 5e-324, "upside_downside_pct": float("inf")}
+    displayed = reconcile_output_read(historical, assumptions)
+    assert displayed["upside_downside_pct"] is None
+    assert historical["upside_downside_pct"] == float("inf")
+    for price in [float("inf"), float("-inf"), float("nan")]:
+        with pytest.raises(ValidationError):
+            DcfAssumptionSetWrite(current_market_price=price)
+
+
 def test_dcf_quality_score_penalizes_blocking_unit_errors():
     assumption_set = DcfAssumptionSet(
         id=4,

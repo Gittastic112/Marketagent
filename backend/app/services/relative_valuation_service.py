@@ -85,6 +85,15 @@ class RelativeValuationService:
 def reconcile_output_read(data: dict[str, Any], assumptions: Any) -> dict[str, Any]:
     """Return a detached response copy. Never mutate persisted ratios or warnings."""
     result = dict(data)
+    price = field(assumptions, "current_market_price") if assumptions is not None else result.get("current_market_price")
+    stored_price = result.get("current_market_price")
+    if not finite(price) or price <= 0 or not finite(stored_price) or stored_price <= 0:
+        # Historical calculations stored 0/0 for absent comparison data. Withhold
+        # those values in the response without rewriting the saved calculation.
+        result["current_market_price"] = None
+        result["upside_downside_pct"] = None
+    elif not finite(result.get("upside_downside_pct")):
+        result["upside_downside_pct"] = None
     basis = implied_pricing(result, assumptions)
     for method in basis["methods"]:
         result[method["field"]] = method["value"]

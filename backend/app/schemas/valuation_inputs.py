@@ -131,7 +131,7 @@ class DcfAssumptionSetWrite(DcfAssumptionSetCreate):
             value = getattr(self, field)
             if value is not None and not lower <= value <= upper:
                 raise ValueError(f"{field} must be between {lower} and {upper} using decimal units")
-        for field in ("book_value_of_equity", "net_income", "distress_sale_proceeds", "diluted_shares"):
+        for field in ("book_value_of_equity", "net_income", "distress_sale_proceeds", "diluted_shares", "current_market_price"):
             value = getattr(self, field)
             if value is not None and not isfinite(value):
                 raise ValueError(f"{field} must be finite")

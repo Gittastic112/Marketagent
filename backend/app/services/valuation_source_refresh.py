@@ -75,6 +75,39 @@ def enqueue_company_refresh(db: Session, company_id: int, user_id: str) -> Proce
     return run
 
 
+def cancel_queued_refresh(db: Session, run_id: int, user_id: str) -> ProcessingRun:
+    """Cancel an owned queue entry while excluding the source worker's claim path."""
+    run = db.scalar(_owned_runs(user_id).where(ProcessingRun.id == run_id))
+    if run is None:
+        raise HTTPException(status_code=404, detail="Source refresh not found")
+    connection, acquired = None, False
+    try:
+        engine = db.get_bind()
+        if engine.dialect.name == "postgresql":
+            connection = engine.connect()
+            acquired = bool(connection.scalar(text("SELECT pg_try_advisory_lock(:key)"), {"key": LOCK_ID}))
+            if not acquired:
+                raise HTTPException(status_code=409, detail="The source-refresh worker is busy. Wait for it to finish before cancelling.")
+        db.refresh(run, with_for_update=True)
+        if run.status == "cancelled":
+            return run
+        if run.status != "queued":
+            raise HTTPException(status_code=409, detail="Only a queued source refresh can be cancelled. Reload to check its current status.")
+        run.status = "cancelled"
+        run.finished_at = datetime.now(UTC)
+        run.metadata_json = {**(run.metadata_json or {}), "cancelled_by": user_id,
+            "warnings": [*((run.metadata_json or {}).get("warnings") or []),
+                "Cancelled before source processing. Existing source data and saved models were preserved."]}
+        db.commit()
+        db.refresh(run)
+        return run
+    finally:
+        if connection is not None:
+            if acquired:
+                connection.execute(text("SELECT pg_advisory_unlock(:key)"), {"key": LOCK_ID})
+            connection.close()
+
+
 def _source_step(db, parent, name, callback, *, run_type, company_id=None, metadata=None):
     child = start_processing_run(db, run_type=run_type, source_type="macro" if name.startswith("FRED") else "sec",
         company_id=company_id, metadata={"parent_run_id": parent.id, **(metadata or {})})

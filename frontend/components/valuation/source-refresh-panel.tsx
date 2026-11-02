@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Clock3, RefreshCw } from "lucide-react";
-import { fetchValuationRefreshRun, fetchValuationRefreshStatus, queueValuationSourceRefresh,
+import { cancelValuationSourceRefresh, fetchValuationRefreshRun, fetchValuationRefreshStatus, queueValuationSourceRefresh,
   type ValuationRefreshRun } from "@/lib/api/valuation-refresh";
 import { useLatestResource } from "@/lib/use-latest-resource";
 
@@ -15,6 +15,7 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
   const resource = useLatestResource(useCallback(() => fetchValuationRefreshStatus(companyId), [companyId]));
   const [run, setRun] = useState<ValuationRefreshRun | null>(null);
   const [starting, setStarting] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const alive = useRef(true);
   const resumedRunId = useRef<number | null>(null);
@@ -35,7 +36,7 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
   }, [resource.data, run]);
 
   useEffect(() => {
-    if (!run || !pending) return;
+    if (!run || !pending || cancelling) return;
     let cancelled = false;
     const timer = setTimeout(async () => {
       try {
@@ -55,7 +56,23 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
       }
     }, 3000);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [run, pending]);
+  }, [run, pending, cancelling]);
+
+  async function cancelQueued() {
+    if (!run || run.status !== "queued") return;
+    setCancelling(true);
+    setError(null);
+    try {
+      const next = await cancelValuationSourceRefresh(run.id);
+      if (!alive.current) return;
+      setRun(next);
+      callbacks.current.onBusyChange(false);
+    } catch (reason) {
+      if (alive.current) setError(reason instanceof Error ? reason.message : "Could not cancel the queued refresh");
+    } finally {
+      if (alive.current) setCancelling(false);
+    }
+  }
 
   async function queue() {
     setStarting(true);
@@ -103,10 +120,13 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
       <p>Current edits are saved first. Suggestions require review; saved valuation models and financial approvals remain unchanged.</p>
       <p className="source-refresh-schedule muted"><Clock3 size={16} aria-hidden="true" /> <span>{resource.status === "loading" ? "Checking schedule..."
         : resource.status === "error" ? "Schedule status unavailable."
-        : status?.enabled ? "Weekdays at 7:00 a.m. New York time. Computer and Docker must be running."
+        : status?.enabled ? "Weekdays at 7:00 a.m. New York time. Computer, Docker and the source-refresh service must be running."
         : "Weekday automation is off. Manual refreshes require the local source-refresh worker."}</span></p>
-      {pending ? <p role="status">{run?.status === "queued" ? "Queued. The local worker checks every 30 seconds."
+      {pending ? <p role="status">{run?.status === "queued" ? "Queued. The local source-refresh service must be running to start this request. You can cancel it to continue editing."
         : `Running. ${run?.steps.length ?? 0} source steps recorded.`} Draft editing is paused until this refresh finishes.</p> : null}
+      {run?.status === "queued" ? <button type="button" className="secondary-button" onClick={cancelQueued} disabled={cancelling || starting}>
+        {cancelling ? "Cancelling..." : run.company_id === null ? "Cancel queued batch for all companies" : "Cancel queued refresh"}
+      </button> : null}
       {error || resource.error ? <p role="alert" className="form-error">Status unavailable: {error || resource.error}. The job may still be running; reload to check before retrying.</p> : null}
       {displayedRun ? <details className="source-refresh-results" open={Boolean(incomplete)}>
         <summary>Last {displayedRun.company_id === null ? "scheduled batch" : "refresh"}: {displayedRun.status.replaceAll("_", " ")} · run #{displayedRun.id}</summary>

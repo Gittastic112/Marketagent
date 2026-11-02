@@ -6,30 +6,25 @@ COMPOSE_FILE="$ROOT_DIR/docker-compose.e2e.yml"
 PROJECT_NAME="market-intel-e2e"
 E2E_FRONTEND_PORT="${E2E_FRONTEND_PORT:-13000}"
 E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-18000}"
-COMPOSE=(docker compose -p "$PROJECT_NAME" -f "$COMPOSE_FILE")
+COMPOSE=(docker compose --env-file /dev/null -p "$PROJECT_NAME" -f "$COMPOSE_FILE")
+
+# The isolated project must never require or load normal application credentials.
+export NEXTAUTH_SECRET="${NEXTAUTH_SECRET:-browser-check-secret-not-for-production}"
+export LOCAL_AUTH_USERNAME="${LOCAL_AUTH_USERNAME:-browser-check-user}"
+export LOCAL_AUTH_PASSWORD="${LOCAL_AUTH_PASSWORD:-browser-check-password}"
 
 cleanup() {
   "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
 }
-trap cleanup EXIT INT TERM
-
-if [[ ! -f "$ROOT_DIR/.env" ]] && {
-  [[ -z "${NEXTAUTH_SECRET:-}" ]] \
-    || [[ -z "${LOCAL_AUTH_USERNAME:-}" ]] \
-    || [[ -z "${LOCAL_AUTH_PASSWORD:-}" ]];
-}; then
-  printf 'Configure local auth in %s/.env or export NEXTAUTH_SECRET, LOCAL_AUTH_USERNAME, and LOCAL_AUTH_PASSWORD.\n' "$ROOT_DIR" >&2
-  exit 1
-fi
-
-cleanup
-
 for port in "$E2E_FRONTEND_PORT" "$E2E_BACKEND_PORT"; do
   if command -v lsof >/dev/null 2>&1 && lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then
     printf 'Port %s is already allocated. Stop the owning service or override E2E_FRONTEND_PORT/E2E_BACKEND_PORT.\n' "$port" >&2
     exit 1
   fi
 done
+
+trap cleanup EXIT INT TERM
+cleanup
 
 E2E_FRONTEND_PORT="$E2E_FRONTEND_PORT" E2E_BACKEND_PORT="$E2E_BACKEND_PORT" \
   "${COMPOSE[@]}" up --build --detach
@@ -60,4 +55,4 @@ fi
   backend-e2e pytest -q -p no:cacheprovider backend/tests/integration/test_ingestion_postgres.py
 
 cd "$ROOT_DIR/frontend"
-E2E_BASE_URL="http://127.0.0.1:${E2E_FRONTEND_PORT}" npx playwright test "$@"
+E2E_BASE_URL="http://127.0.0.1:${E2E_FRONTEND_PORT}" npx --no-install playwright test "$@"

@@ -101,6 +101,16 @@ def test_quick_valuation_rejects_unsafe_or_malformed_inputs(client: TestClient) 
     assert response_errors(invalid_terminal)[0]["code"] == "VALIDATION_ERROR"
 
 
+def test_quick_valuation_withholds_overflowing_comparison_without_persisting(client, db_session):
+    company = _company(client)
+    payload = {**_valid_payload(company["id"]), "current_market_price": 5e-324}
+    result = response_data(client.post("/api/valuation/quick/calculate", json=payload))
+    assert result["intrinsic_value_per_share"] > 0
+    assert result["upside_downside_pct"] is None
+    assert db_session.query(ValuationModel).count() == 0
+    assert db_session.query(DcfOutput).count() == 0
+
+
 def test_quick_valuation_returns_stable_company_not_found_error(client: TestClient) -> None:
     baseline = client.post(
         "/api/valuation/quick/assumptions",

@@ -33,6 +33,11 @@ def test_autofill_engine_with_no_data(db_session: Session):
     assert provenance["revenue_growth_years_json"]["label"].startswith("[PLACEHOLDER]")
     assert provenance.get("terminal_growth_rate", {}).get("source_type") == "missing_dependency"
     assert provenance["terminal_growth_rate"]["requires_review"] is True
+    assert res["assumptions"]["terminal_growth_rate"] is None
+    endpoint = provenance["revenue_growth_years_json"]["projection_basis"]["terminal_growth"]
+    assert endpoint["value"] == 0.03
+    assert endpoint["source"]["is_placeholder"] is True
+    assert endpoint["source"]["requires_review"] is True
     assert provenance.get("starting_revenue", {}).get("source_type") == "missing_actual_default"
     assert provenance["starting_revenue"]["label"].startswith("[PLACEHOLDER]")
     assert provenance["starting_revenue"]["requires_review"] is True
@@ -178,8 +183,8 @@ def test_autofill_engine_with_actuals(db_session: Session):
     db_session.commit()
 
     # Legacy metrics
-    rev = FinancialMetric(period_id=period.id, metric_name="revenue", value=5000)
-    ebit = FinancialMetric(period_id=period.id, metric_name="ebit", value=1000)
+    rev = FinancialMetric(period_id=period.id, metric_name="revenue", value=5000, unit="USD")
+    ebit = FinancialMetric(period_id=period.id, metric_name="ebit", value=1000, unit="USD")
     db_session.add_all([rev, ebit])
     db_session.commit()
 
@@ -188,8 +193,8 @@ def test_autofill_engine_with_actuals(db_session: Session):
     db_session.add(snapshot)
     db_session.commit()
 
-    n_rev = NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="revenue", value=5500)
-    n_ebit = NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="ebit", value=1100)
+    n_rev = NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="revenue", value=5500, unit="USD")
+    n_ebit = NormalizedFinancialMetric(snapshot_id=snapshot.id, metric_code="ebit", value=1100, unit="USD")
     db_session.add_all([n_rev, n_ebit])
     db_session.commit()
 
@@ -261,10 +266,11 @@ def test_autofill_uses_normalized_capital_and_revenue_history(db_session: Sessio
         periods.append(period)
     db_session.commit()
 
-    result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
+    result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id,
+        {"terminal_growth_rate": 0.025})
 
     assumptions = result["assumptions"]
-    assert assumptions["starting_invested_capital"] == 750
+    assert assumptions["starting_invested_capital"] == 750_000_000
     assert assumptions["sales_to_capital_ratio"] == pytest.approx(2.0)
     expected_cagr = (1500 / 1000) ** (1 / 2) - 1
     assert assumptions["revenue_growth_years_json"]["1"] == pytest.approx(expected_cagr)
@@ -281,7 +287,43 @@ def test_autofill_uses_normalized_capital_and_revenue_history(db_session: Sessio
     growth_source = result["provenance"]["revenue_growth_years_json"]
     assert growth_source["source_type"] == "calculation"
     assert growth_source["history_years"] == [2024, 2025, 2026]
-    assert growth_source["claim_type"] == "Calculation"
+    assert growth_source["claim_type"] == "Estimate"
+    assert growth_source["requires_review"] is True
+    assert growth_source["historical_growth_rate"] == pytest.approx(expected_cagr)
+    assert "revenue_growth_years_json" in result["source_metadata"]["review_fields"]
+    assert growth_source["projection_basis"]["terminal_growth"]["value"] == assumptions["terminal_growth_rate"]
+
+
+@pytest.mark.parametrize("reported_lease", [50.0, 0.0, None])
+def test_reported_leases_require_valuation_treatment_review(db_session, reported_lease):
+    company = Company(name="Mock Data Lease Co", ticker="LEASE", market="US", currency="USD")
+    db_session.add(company)
+    db_session.flush()
+    period = FinancialStatementPeriod(company_id=company.id, year=date.today().year,
+        period_type="annual", report_date=date.today(), currency="USD")
+    db_session.add(period)
+    db_session.flush()
+    if reported_lease is not None:
+        db_session.add(FinancialMetric(period_id=period.id, metric_name="operating_leases",
+            value=reported_lease, unit="USD million"))
+    db_session.commit()
+
+    result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
+    assert result["assumptions"]["operating_leases"] == (reported_lease * 1_000_000 if reported_lease is not None else None)
+    source = result["provenance"]["operating_leases"]
+    assert source["requires_review"] is (reported_lease == 50.0)
+    if reported_lease == 50.0:
+        assert source["claim_type"] == "Calculation"
+        assert source["original_value"] == 50
+        assert source["source_table"] == "financial_metrics"
+        assert "does not automatically adjust" in source["valuation_treatment_warning"]
+        assert "operating_leases" in result["source_metadata"]["review_fields"]
+        assert source["valuation_treatment_warning"] in result["warnings"]
+
+    explicit = AssumptionAutofillEngine.draft_assumptions(db_session, company.id,
+        {"operating_leases": 0.0})
+    assert explicit["assumptions"]["operating_leases"] == 0.0
+    assert explicit["provenance"]["operating_leases"]["source_type"] == "user_input"
 
 
 def test_autofill_derives_invested_capital_when_reported_value_is_zero(db_session: Session):
@@ -364,8 +406,8 @@ def test_autofill_legacy_fallback_is_limited_to_same_period_bridge_fields(db_ses
     )
     db_session.add(period)
     db_session.flush()
-    legacy_revenue = FinancialMetric(period_id=period.id, metric_name="revenue", value=9999)
-    legacy_cash = FinancialMetric(period_id=period.id, metric_name="cash", value=400)
+    legacy_revenue = FinancialMetric(period_id=period.id, metric_name="revenue", value=9999, unit="INR")
+    legacy_cash = FinancialMetric(period_id=period.id, metric_name="cash", value=400, unit="INR")
     db_session.add_all([legacy_revenue, legacy_cash])
     snapshot = NormalizedFinancialSnapshot(company_id=company.id, period_id=period.id)
     db_session.add(snapshot)
@@ -374,6 +416,7 @@ def test_autofill_legacy_fallback_is_limited_to_same_period_bridge_fields(db_ses
         snapshot_id=snapshot.id,
         metric_code="revenue",
         value=1200,
+        unit="INR",
     )
     db_session.add(normalized_revenue)
     db_session.commit()
@@ -430,7 +473,7 @@ def test_autofill_uses_normalized_fcfe_inputs_and_currency_metadata(db_session: 
     result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
 
     for key in ("cash", "debt", "diluted_shares", "net_income", "capex", "depreciation", "change_in_nwc"):
-        assert result["assumptions"][key] == values[key]
+        assert result["assumptions"][key] == values[key] * 1_000_000
         assert result["provenance"][key]["source_table"] == "normalized_financial_metrics"
     assert result["source_metadata"]["legacy_fallback_fields"] == []
     assert result["source_metadata"]["reporting_currency"] == "INR"

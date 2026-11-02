@@ -59,15 +59,23 @@ be changed merely to make a test pass. Synthetic fixtures must say Mock Data.
 | [backend](backend/) | FastAPI routes, contracts, deterministic services, persistence, providers and tests |
 | [frontend](frontend/) | App Router pages, UI, server-only auth client and domain browser APIs |
 | [scripts](scripts/) | Maintained verification and operations; inspect side effects before running |
+| [skills](skills/) | Local helper packages and their references; separate from application code and session plugin installation |
 | [data](data/) | Runtime source assets and mirrored versioned datasets |
 | [knowledge base](damodaran_knowledge_base_v1/) | Separate audited valuation doctrine and immutable raw sources |
 | [docs](docs/) | Current architecture, setup, workflows and categorized historical evidence |
 | [workstream coordination](docs/workstreams/) | Exclusive edit ownership and per-agent evidence; shared docs have one coordinator |
+| output and backups | Local execution evidence and recovery copies; retained separately from maintained source |
 
 The dependency manifests and exact entry points are linked in the code map.
-Old root debug scripts, generated repo_map.txt and archived plans are not the
-current development workflow. Do not delete untracked material without checking
-its ownership and purpose.
+Open this project folder on the Mac as the repository root. Work on application
+code inside backend/app or frontend, maintained tests inside backend/tests,
+frontend/lib or frontend/e2e, and current guides inside docs. Docker Compose and
+dependency configuration stay in their established locations.
+
+Old one-off scripts are preserved under [retired tooling](scripts/retired/README.md),
+with original paths and checksums in dated inventories. Spreadsheet helper sources
+are consolidated under skills. Generated files, review evidence, local source
+workbooks and backups have different purposes; an untracked file is not disposable.
 
 Company actuals, user assumptions, benchmark priors, calculations and AI
 interpretations must remain distinguishable. Stored sources and review gates

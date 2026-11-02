@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import { readFileSync } from "node:fs";
-import { fetchValuationRefreshRun, fetchValuationRefreshStatus, queueValuationSourceRefresh } from "./api/valuation-refresh.ts";
+import { cancelValuationSourceRefresh, fetchValuationRefreshRun, fetchValuationRefreshStatus, queueValuationSourceRefresh } from "./api/valuation-refresh.ts";
 
 test("refresh endpoints enqueue without a long-lived provider request and retain owned run identity", async () => {
   const original = globalThis.fetch;
@@ -14,10 +14,13 @@ test("refresh endpoints enqueue without a long-lived provider request and retain
     assert.equal((await queueValuationSourceRefresh(3)).id, 42);
     await fetchValuationRefreshStatus(3);
     await fetchValuationRefreshRun(42);
+    await cancelValuationSourceRefresh(42);
     assert.equal(calls[0].method, "POST");
     assert.ok(calls[0].url.endsWith("/companies/3/valuation-source-refresh"));
     assert.ok(calls[1].url.endsWith("/companies/3/valuation-source-refresh"));
     assert.ok(calls[2].url.endsWith("/valuation-source-refresh/42"));
+    assert.equal(calls[3].method, "POST");
+    assert.ok(calls[3].url.endsWith("/valuation-source-refresh/42/cancel"));
   } finally { globalThis.fetch = original; }
 });
 

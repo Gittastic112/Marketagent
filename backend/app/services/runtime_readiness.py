@@ -4,7 +4,7 @@ from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 
-EXPECTED_MIGRATION_HEAD = "s1s1s1s1s1s1"
+EXPECTED_MIGRATION_HEAD = "t2t2t2t2t2t2"
 REQUIRED_SCHEMA: dict[str, set[str]] = {
     "brief_comparison_reviews": {"id", "user_id", "company_id", "field", "include_mock", "version", "evidence_hash", "evidence_json"},
     "users": {"id"},

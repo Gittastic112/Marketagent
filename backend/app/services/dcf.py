@@ -1,3 +1,5 @@
+from math import isfinite
+
 from app.models.dcf import DcfAssumptionSet, DcfOutput, DcfProjectionYear, DcfSensitivityTable
 from app.services.financial_services_engine import FinancialServicesEngine
 from app.services.distressed_engine import DistressedCompanyEngine
@@ -66,7 +68,7 @@ def build_fcff_forecast(assumption_set: DcfAssumptionSet) -> tuple[list[DcfProje
         proj_year = DcfProjectionYear(
             assumption_set_id=assumption_set.id,
             year_index=year,
-            calendar_year=2024 + year,
+            calendar_year=None,  # No reviewed fiscal-year anchor is stored.
             revenue=revenue,
             revenue_growth=growth_rate,
             ebit_margin=ebit_margin,
@@ -112,7 +114,7 @@ def calculate_terminal_value(assumption_set: DcfAssumptionSet, last_revenue: flo
     return terminal_value, pv_terminal_value, terminal_fcff
 
 
-def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: float) -> tuple[float, float, float]:
+def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: float) -> tuple[float, float, float | None]:
     cash = assumption_set.cash or 0.0
     debt = assumption_set.debt or 0.0
     minority_interests = assumption_set.minority_interests or 0.0
@@ -125,7 +127,9 @@ def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: 
 
     equity_value = enterprise_value + cash + cross_holdings - debt - operating_leases - minority_interests - preferred_stock - employee_options_value
     intrinsic_value_per_share = equity_value / diluted_shares if diluted_shares > 0 else 0.0
-    upside_downside_pct = (intrinsic_value_per_share / current_market_price - 1) if current_market_price > 0 else 0.0
+    upside_downside_pct = (intrinsic_value_per_share / current_market_price - 1) if current_market_price > 0 else None
+    if not isfinite(current_market_price) or (upside_downside_pct is not None and not isfinite(upside_downside_pct)):
+        upside_downside_pct = None
 
     return equity_value, intrinsic_value_per_share, upside_downside_pct
 
@@ -338,7 +342,7 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
         equity_value=equity_value,
         diluted_shares=_if_missing(assumption_set.diluted_shares, 1.0),
         intrinsic_value_per_share=intrinsic_value_per_share,
-        current_market_price=assumption_set.current_market_price or 0.0,
+        current_market_price=assumption_set.current_market_price if (assumption_set.current_market_price or 0) > 0 and isfinite(assumption_set.current_market_price) else None,
         upside_downside_pct=upside_downside_pct,
         terminal_value_pct_of_ev=terminal_value_pct_of_ev
     )

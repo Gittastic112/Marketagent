@@ -11,6 +11,12 @@ function readFrontendFile(filePath: string): string {
   return readFileSync(path.join(frontendRoot, filePath), "utf8");
 }
 
+function readDataHealth(): string {
+  return ["components/data-health/health-overview.tsx", "components/data-health/health-diagnostics.tsx",
+    "components/data-health/provider-health.tsx", "components/data-health/processing-health.tsx",
+    "lib/server/data-health.ts"].map(readFrontendFile).join("\n");
+}
+
 function readRepositoryFile(filePath: string): string {
   return readFileSync(path.join(repositoryRoot, filePath), "utf8");
 }
@@ -162,7 +168,7 @@ test("high-fanout and explicit diagnostic links do not prefetch expensive work",
   for (const file of guardedFiles) {
     assert.match(readFrontendFile(file), /prefetch=\{false\}/, file);
   }
-  const dataHealth = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const dataHealth = readDataHealth();
   assert.doesNotMatch(dataHealth, /<Link(?![^>]*prefetch=\{false\})[^>]*href="\/data-health\?audit=/);
 });
 
@@ -538,7 +544,7 @@ test("AI research uses the same complete citation and human-review workflow", ()
 });
 
 test("data health exposes the authenticated evidence integrity report", () => {
-  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts")) + readFrontendFile("components/peer-receipt-health-panel.tsx");
+  const page = readDataHealth() + readFrontendFile("components/peer-receipt-health-panel.tsx");
   const runtimePanel = readFrontendFile("components/runtime-readiness-panel.tsx");
   const api = readFrontendFile("lib/api/health.ts");
   const styles = readFrontendFile("app/globals.css");
@@ -546,7 +552,7 @@ test("data health exposes the authenticated evidence integrity report", () => {
   assert.match(page, /Fast health check/);
   assert.match(page, /Run deep evidence audit/);
   assert.match(page, /timeoutMs: 60_000/);
-  assert.match(page, /evidenceIntegrityRes\?\.data/);
+  assert.match(page, /hasUsableData\(evidenceIntegrityRes\) \? evidenceIntegrityRes\.data : null/);
   assert.match(page, /evidenceIntegrityRes\.errors/);
   assert.match(page, /Evidence Integrity/);
   assert.match(page, /Required Action/);
@@ -559,8 +565,8 @@ test("data health exposes the authenticated evidence integrity report", () => {
   assert.match(page, /aria-labelledby="operations-health-title"/);
   assert.match(page, /aria-labelledby="provider-readiness-title"/);
   assert.match(page, /aria-labelledby="diagnostic-status-title"/);
-  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.error_count : "Not run"/);
-  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.certified_markets\.join\(", "\) \|\| "None" : "Not run"/);
+  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.error_count : unavailableLabel/);
+  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.certified_markets\.join\(", "\) \|\| "None" : unavailableLabel/);
   assert.doesNotMatch(page, /className="metric-grid" style=\{\{ marginBottom: "2rem" \}\}/);
   assert.match(styles, /\.health-metric-grid/);
   assert.match(styles, /\.health-diagnostic-grid/);
@@ -606,7 +612,7 @@ test("navigation and AI provenance labels avoid sub-12px text", () => {
 });
 
 test("provider health exposes run classification, freshness, and owned coverage", () => {
-  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const page = readDataHealth();
   const api = readFrontendFile("lib/api/operations.ts");
 
   assert.match(page, /Latest Attempt/);
@@ -628,7 +634,7 @@ test("provider health exposes run classification, freshness, and owned coverage"
 
 
 test("data health exposes deterministic historical event evidence backfill", () => {
-  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const page = readDataHealth();
   const actions = readFrontendFile("app/actions/evidence.ts");
   const api = readFrontendFile("lib/api/health.ts");
 
@@ -643,7 +649,7 @@ test("data health exposes deterministic historical event evidence backfill", () 
 
 
 test("data health exposes typed Damodaran application coverage", () => {
-  const page = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const page = readDataHealth();
   const api = readFrontendFile("lib/api/health.ts");
 
   assert.match(page, /serverFetchApiResponse<DamodaranCoverageReport>\("\/data-health\/damodaran-coverage"/);
@@ -909,7 +915,7 @@ test("historical events expose bounded exact-span evidence resolution", () => {
   const page = readFrontendFile("app/events/[id]/evidence-resolution/page.tsx");
   const form = readFrontendFile("components/event-evidence-resolution-form.tsx");
   const actions = readFrontendFile("app/actions/evidence.ts");
-  const dataHealth = (readFrontendFile("components/data-health/health-overview.tsx") + readFrontendFile("lib/server/data-health.ts"));
+  const dataHealth = readDataHealth();
   const api = readFrontendFile("lib/api/evidence.ts");
 
   assert.match(page, /evidence-resolution\/search/);

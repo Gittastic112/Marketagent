@@ -18,6 +18,9 @@ from app.models.market_price import MarketPrice
 from app.services.sec_xbrl_extractor import EXTRACTION_METHOD
 
 
+DRAFT_REVIEW_POLICY_VERSION = "2026-10-30-growth-lease-unit-and-model-review"
+
+
 def freshness(as_of: date, max_age: int) -> dict:
     age = (date.today() - as_of).days
     return dict(source_as_of=as_of.isoformat(), age_days=age, max_age_days=max_age,
@@ -175,6 +178,8 @@ def sec_draft_inputs(db: Session, company: Company) -> dict:
 
 def source_input_signature(db: Session, company: Company) -> str:
     inputs = sec_draft_inputs(db, company)
+    inputs["draft_review_policy_version"] = DRAFT_REVIEW_POLICY_VERSION
+    inputs["company_context"] = {"currency": company.currency, "country": company.country}
     inputs["risk_free_rate"] = stored_usd_risk_free_rate(db, company.currency)
     inputs["current_market_price"] = stored_market_price(db, company)
     # Freshness changes matter too: yesterday's reviewed rate may become stale.

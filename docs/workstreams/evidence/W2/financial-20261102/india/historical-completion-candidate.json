@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "decision_id": "M06-RELIANCE-HISTORICAL-AWARDS-20261102",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "reviewed_on": "2026-11-02",
+  "historical_reference_date": "2026-03-31",
+  "historical_information_set": "FY2026 annual statements subsequently published; retrospective reference, not an ex-ante backtest",
+  "ticker": "RELIANCE",
+  "company_id": 7,
+  "source_input_signature": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30",
+  "previous_historical_packet_sha256": "d7112187a294fb723f0f8cd592dc42c7beb4de133cdd9f576e8f332312bdd1f1",
+  "previous_scenario_packet_sha256": "4a31dacec2caa470c4d736f3d93b428fe6fe312b12f0aa94d186722a689e7c4b",
+  "status": "reviewed historical reference candidate; coordinator applies only through current version/source guard",
+  "claim_type": "Estimate",
+  "not_current_share_count_or_fair_value": true,
+  "assumptions_patch": {
+    "scenario": "31 Mar 2026 INR stationary reference with disclosed awards (Estimate)",
+    "basic_shares": 13532472634,
+    "diluted_shares": 13533379686,
+    "employee_options_value": 2564000000
+  },
+  "reviewed_fields": [
+    "basic_shares",
+    "diluted_shares",
+    "employee_options_value"
+  ],
+  "rejected_current_value_fields": [
+    "current_market_price"
+  ],
+  "sources": {
+    "RELIANCE-2026-direct": {
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+      "verified_sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/RELIANCE-2026-direct.txt",
+      "extracted_text_sha256": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737"
+    },
+    "JIO-STANDALONE-2026-WEB": {
+      "source_id": "JIO-STANDALONE-2026-WEB",
+      "url": "https://rilstaticasset.akamaized.net/sites/default/files/2026-05/Jio_Platforms_Limited.pdf",
+      "discovery_url": "https://www.ril.com/investors/subsidiaries-associates/financial-statements-of-subsidiaries/financial-statements-of-subsidiaries-2025-26",
+      "as_of": "2026-03-31",
+      "read_on": "2026-11-02",
+      "pdf_pages": [
+        27,
+        28,
+        48
+      ],
+      "facts": {
+        "issued_ordinary_shares": 8939030830,
+        "ril_ordinary_holding": 5937841645,
+        "outstanding_options": 10280000
+      },
+      "original_bytes_sha256": null,
+      "basis": "Read through web tool from issuer-linked CDN. Direct byte retrieval was rejected because this CDN is outside the shell network allowlist. No raw-byte hash or database ingestion is claimed.",
+      "cross_checks": "Exact RIL holding and award count match retained original. Exact share count times INR10 rounds to retained AOC-1 capital INR8,939.03 crore. Only ordinary equity is issued; preference share capital in note9 is authorised."
+    }
+  },
+  "source_facts": {
+    "reliance_issued_shares": {
+      "value": 13532472634,
+      "unit": "shares",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "13,53,24,72,634",
+        "pdf_pages": [
+          112
+        ]
+      }
+    },
+    "reliance_options": {
+      "value": 907052,
+      "unit": "shares under options",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Total 9,07,052 1,65,824",
+        "pdf_pages": [
+          117
+        ]
+      }
+    },
+    "jio_options": {
+      "value": 10280000,
+      "unit": "Jio shares under options",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Balance at the end of the year 1,02,80,000 10.00",
+        "pdf_pages": [
+          118
+        ]
+      }
+    },
+    "jio_parent_book_equity_capital": {
+      "value": 8939,
+      "unit": "INR crore",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Equity Share Capital 8,939 8,939",
+        "pdf_pages": [
+          145
+        ]
+      }
+    },
+    "jio_parent_book_equity_other": {
+      "value": 327038,
+      "unit": "INR crore",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Other Equity 3,27,038 2,96,108",
+        "pdf_pages": [
+          145
+        ]
+      }
+    },
+    "jio_lower_tier_nci": {
+      "value": 1099,
+      "unit": "INR crore",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Non-Controlling Interest 1,099 1,134",
+        "pdf_pages": [
+          145
+        ]
+      }
+    },
+    "ril_jio_holding_shares": {
+      "value": 5937841645,
+      "unit": "Jio shares",
+      "locator": {
+        "source_id": "RELIANCE-2026-direct",
+        "anchor": "Jio Platforms Limited of H 10 each 5,93,78,41,645",
+        "pdf_pages": [
+          66
+        ]
+      }
+    },
+    "jio_issued_shares": {
+      "value": 8939030830,
+      "unit": "Jio shares",
+      "source_id": "JIO-STANDALONE-2026-WEB",
+      "pdf_page": 27,
+      "note": "9 / 9.2; exact count, not EPS average or rounded capital conversion"
+    }
+  },
+  "method": {
+    "parent_awards": "Assume every disclosed outstanding RIL option converts one-for-one. Add 907,052 to the March31 issued13,532,472,634; include unvested options, assume no forfeiture, and credit no exercise proceeds. Zero additional parent option deduction means denominator treatment, not zero economic awards.",
+    "subsidiary_awards": "Jio awards cannot be added as RIL shares. Value Jio ordinary equity at its disclosed March31 consolidated book equity excluding its lower-tier NCI; compute the incremental loss of RIL ownership if all Jio options convert. This is a historical carrying-value proxy with no exercise-proceeds credit, not an option-pricing or market-value estimate.",
+    "jio_parent_book_equity_inr": 3359770000000,
+    "jio_current_ril_fraction": 0.6642601147623517,
+    "formula": "(8939+327038)*10000000 * (5937841645/8939030830) * (10280000/(8939030830+10280000))",
+    "unrounded_incremental_ril_award_loss_inr": 2563605805.092826,
+    "selected_incremental_ril_award_loss_inr": 2564000000,
+    "precision": "Round to nearest INR1 million because book values are rounded and carrying equity is only a proxy.",
+    "nci_no_double_count": "Keep prior aggregate NCI carrying deduction. Add only RIL incremental Jio dilution loss, not full Jio award value. E*(1-p)+E*p*A/(S+A) equals E*(S-H)/(S+A)+E*A/(S+A), where p=H/S. Existing outside owners also bear dilution; this identity keeps their economic share from being deducted twice.",
+    "expense_scope": "Retain share-based employee cost in reported operating margin; do not add it back. Parent awards use denominator only; Jio incremental award claim uses employee_options_value only.",
+    "coverage": "Covers the two material equity-settled award populations disclosed in RIL consolidated note28.2. It does not certify absence of every possible undisclosed/immaterial subsidiary claim."
+  },
+  "effect": {
+    "additional_parent_shares": 907052,
+    "parent_share_count_increase_fraction": 6.702780966436647e-05,
+    "additional_equity_deduction_inr": 2564000000,
+    "deduction_per_selected_share_inr": 0.18945747917295225
+  },
+  "review_note_append": "M06-RELIANCE-HISTORICAL-AWARDS-20261102, reviewed 2026-11-02 under AUTH-20261017-DELEGATED-REVIEW. Retrospective 2026-03-31 reference only. All907,052 parent options are included in13,533,379,686 shares; all10,280,000 Jio options are handled by INR2,564m incremental RIL book-equity dilution proxy, retaining aggregate NCI and crediting no exercise proceeds. Source:RIL FY2026 notes14.4/28.2/40 and Jio FY2026 note9. Not current fair value, GAAP diluted EPS or an ex-ante backtest. Exact locators/method in immutable historical-completion-candidate.json. Preserve prior story and personal edits.",
+  "uncertainty": [
+    "Book equity may differ substantially from economic equity value. Ignoring proceeds and forfeitures is conservative within this proxy; it is not a reliable upper bound for actual fair-value dilution.",
+    "RIL consolidated note28.2 describes an eight-year Jio exercise period whereas the standalone Jio note26 describes seven years. No option-pricing or remaining-life estimate is made; the matched March31 outstanding count agrees.",
+    "These dated inputs cannot be rolled to November2 without official post-March capital/award and ownership reconciliation. No current price comparison is supplied.",
+    "Existing cash, investment, debt and NCI selections remain explicitly historical carrying proxies. This award decision does not transform them into fair values."
+  ],
+  "remaining_fields": {
+    "missing_issuer_risk_estimates": [
+      "beta",
+      "equity_risk_premium",
+      "cost_of_equity",
+      "pre_tax_cost_of_debt",
+      "debt_to_capital",
+      "equity_to_capital"
+    ],
+    "accepted_reference_hurdle": "Prior packet explicitly selects14% nominal INR as discretionary reference hurdle, not issuer WACC. Current FCFF promotion contract still requests the component fields. Do not invent CAPM/financing facts; coordinator must resolve that method/contract distinction before promotion.",
+    "industry": "Net external segment weights unavailable. Existing disclosed Diversified comparison remains a valid broad taxonomy choice, not an unknown mixture silently calculated.",
+    "market_comparison": "Unavailable by choice for this retrospective reference; not necessary to intrinsic-value arithmetic."
+  },
+  "full_model_promotion_authorized": false,
+  "application_policy": [
+    "Recheck current source_input_signature and expected_updated_at before applying.",
+    "Append review note without replacing existing personal story/assumptions.",
+    "Preserve all original financial facts and the two earlier immutable packets.",
+    "Retain historical date, Estimate label, proxy rationale and no current-market claim in model and exports.",
+    "Model-promotion gate is not bypassed by this candidate."
+  ],
+  "checks": [
+    {
+      "name": "Parent full-conversion denominator",
+      "actual": 13533379686,
+      "expected": 13533379686,
+      "passed": true
+    },
+    {
+      "name": "Jio issued shares reconcile rounded AOC-1 capital",
+      "actual_crore": 8939.03,
+      "expected_crore": 8939.03,
+      "passed": true
+    },
+    {
+      "name": "Jio equity excludes lower-tier NCI",
+      "actual_crore": 335977,
+      "expected_crore": 335977,
+      "passed": true
+    },
+    {
+      "name": "NCI plus incremental awards equals post-conversion outside claims",
+      "difference_inr": 0.0,
+      "passed": true
+    },
+    {
+      "name": "Selected award proxy rounded to INR1m",
+      "actual": 2564000000,
+      "expected": 2564000000,
+      "passed": true
+    }
+  ],
+  "normal_database_writes": false,
+  "saved_valuations_changed": false,
+  "provider_ingestion": false
+}

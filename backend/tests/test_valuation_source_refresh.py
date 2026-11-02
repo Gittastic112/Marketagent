@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 from types import SimpleNamespace
+import pytest
 
 from sqlalchemy import select
 
@@ -15,6 +16,44 @@ def configured_company(db):
     db.add(company)
     db.commit()
     return company
+
+
+def test_cancel_queued_refresh_preserves_history_and_allows_explicit_requeue(client, db, monkeypatch):
+    company = configured_company(db)
+    monkeypatch.setattr(refresh, "execute_refresh", lambda *a: pytest.fail("Cancellation must not fetch sources"))
+    queued = client.post(f"/companies/{company.id}/valuation-source-refresh").json()["data"]
+    response = client.post(f"/valuation-source-refresh/{queued['id']}/cancel")
+    assert response.status_code == 200
+    canceled = response.json()["data"]
+    assert canceled["status"] == "cancelled"
+    assert canceled["started_at"] == queued["started_at"]
+    assert canceled["finished_at"] is not None
+    assert canceled["steps"] == []
+    row = db.get(ProcessingRun, queued["id"])
+    db.refresh(row)
+    assert row.metadata_json["cancelled_by"] == row.metadata_json["user_id"]
+    assert client.post(f"/valuation-source-refresh/{row.id}/cancel").json()["data"] == canceled
+    assert client.post(f"/companies/{company.id}/valuation-source-refresh").json()["data"]["id"] != queued["id"]
+    assert db.get(ProcessingRun, queued["id"]) is not None
+
+
+@pytest.mark.parametrize("state", ["running", "success", "failed", "wrong_owner", "wrong_type"])
+def test_cancel_refuses_active_finished_and_unowned_requests(client, db, state):
+    company = configured_company(db)
+    queued = client.post(f"/companies/{company.id}/valuation-source-refresh").json()["data"]
+    row = db.get(ProcessingRun, queued["id"])
+    if state == "wrong_owner":
+        row.metadata_json = {**row.metadata_json, "user_id": "other-owner"}
+    elif state == "wrong_type":
+        row.run_type = "unrelated_operation"
+    else:
+        row.status = state
+    db.commit()
+    response = client.post(f"/valuation-source-refresh/{row.id}/cancel")
+    assert response.status_code == (404 if state.startswith("wrong_") else 409)
+    db.refresh(row)
+    assert row.finished_at is None
+    assert row.status == ("queued" if state.startswith("wrong_") else state)
 
 
 def test_queue_is_owned_deduplicated_and_does_not_fetch_in_request(client, db, monkeypatch):

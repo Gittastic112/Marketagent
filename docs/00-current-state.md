@@ -1,9 +1,9 @@
 # Current State
 
-Dependency/PDF repair rollout: [2026-10-21/22](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md); Next.js 16.4.1 and the HDFC source matrix pass all five CI gates on 1ab9bacf. First-release scope: local, single-user research/demo using existing data, explicitly approved October 17.
+Latest technical release: [November 2 release follow-up](archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md); reviewed drafts, optional comparison prices, honest relative dates and verified local installation. First-release scope: local, single-user research/demo using existing data, approved October 17.
 M01 rollout/browser proof: [2026-10-10](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md); broader product claims retain their dates.
 
-Latest UI/source work: [October 24 financing/borrowing review](archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md), following [industry/accounting](archive/checkpoints/2026/m05-industry-and-accounting-2026-10-24.md). Intake remains audited and review-required; 36 fresh normal-data browser views pass after the narrow permission update.
+Latest financial-input review: 274 selected field reviews across 11 drafts, including 11 explicit unavailable-price acknowledgements. The follow-up adds 14 dated financial decisions; 31 initially unavailable fields remain unreviewed. Complete company-basis gaps still prevent promotion. The user confirmed zero personal use days; agent checks do not count toward acceptance.
 The preceding [private research inbox and AAPL proof](archive/checkpoints/2026/research-inbox-and-aapl-2026-09-22.md)
 records the actual Apple scan, illustrative calculation and recovery verification.
 
@@ -12,8 +12,8 @@ records the actual Apple scan, illustrative calculation and recovery verificatio
 This research, valuation, evidence and portfolio platform is not a finished daily-driver or trading system.
 The [scope revision](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026) excludes genuine portfolio validation from v1 and defers Mac/off-device setup without marking it passed.
 It preserves the ten milestone IDs and existing data. Reviewed-source coverage, workflow
-integrity, and public-deployment security remain uneven. The tracker accepts M01-M02
-at 20% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
+integrity, and public-deployment security remain uneven. The tracker accepts M01-M04
+at 40% of its gates, not engineering effort. The [feature register](roadmaps/feature-register.md) owns detailed
 capability status; the [single limitation ledger](agent_capabilities_and_limitations.md)
 owns remaining gaps and the confirmed personal-research US/India, USD-base scope.
 
@@ -21,13 +21,14 @@ owns remaining gaps and the confirmed personal-research US/India, USD-base scope
 
 | Check | Evidence |
 |---|---|
-| Backend | October 24 UI follow-up: 64 focused pure checks pass without a local fixture database. Source 6e2a6f8b passes all five CI gates on PR and push runs, including 1,766 backend tests and six separate PostgreSQL integration checks; the six baseline opt-in skips are covered by that separate job |
-| Frontend | October 24 UI follow-up: 309 tests, TypeScript and the production Next.js 16.4.1 build pass. Source 6e2a6f8b passes 64 remote browser workflows. The installed UI also passes 36 existing-data desktop/mobile views, including mix precision, source disclosure, save/cancel drafting guards and visible removal labels |
-| API compatibility | 279 public paths, 513 schemas and 373 public operations. Audit covers 380 static HTTP callers, ten reviewed dynamic entries and 227 controls with no unwired-button candidates. Pure contracts, facade identity and wire guards pass; counts alone are not behavioral proof |
-| Operations | 56 documentation/secret-fixture/Compose/recovery/lock/scan tests pass. Format-3 completion, bounded proof-database readiness, timeout cleanup, retention and format-2 compatibility are covered. Protected environment files remain excluded |
-| PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Fresh schema reaches s1s1s1s1s1s1 |
-| Normal runtime | October 24 UI/financing images are installed and healthy. Original PostgreSQL volume/schema/settings and localhost bindings remain. Coverage: 33 periods, 929 facts, 1,003 revisions and 336 normalized values; all earlier amounts and saved models preserved. Runs 152-159 add 23 reviewed borrowing facts. Seven mixes, four comparisons and twelve benchmark versions remain. Backup archive/hash passes; 27 rollback copies remain |
-| Normal browser | Fresh normal checks pass 28 UI views plus eight post-review financial views at 1440/390px, with zero browser errors, accessibility violations or backend writes. All 109 table and source-asset fingerprints remain unchanged by each browser pass. Twenty-one read-only benchmark calculations pass; all 11 drafts require review and both Alphabet drafts retain the lease warning |
+| Backend | November 2 final source: 1,824 tests pass, six PostgreSQL opt-in skips and five deprecation warnings. Optional comparison review, finite outputs and non-writing historical reconciliation have regressions. No new local PostgreSQL dataset is created. [PR2](https://github.com/Gittastic112/Marketagent/pull/2) owns exact remote head/check/merge evidence |
+| Frontend | November 2 locked Linux ARM64 production build, 323 tests and full TypeScript pass. October 28 dependency/OS audits retain their dates; locks are unchanged. Macro-layout and browser-harness initial failures remain retained. Native Node/npm are absent from this Mac shell and six host dependency mismatches remain; the Docker build is canonical |
+| October 25 source cleanup | [Continuation](archive/checkpoints/2026/cleanup-rollout-continuation-2026-10-25.md) verifies all 41 moves and restores both locked axe 4.13.0 archives. October 28 completes its supported locked builds and normal rollout. Six host-package mismatches and 16 permission-blocked empty original directories remain; no source reports, failed evidence or backups are deleted |
+| API compatibility | Contract/ownership/facade and wire checks pass. Queued cancellation adds an owner-scoped POST with running/completed/lock-conflict rejection. Prior static inventory counts retain their dated audit scope and are not claimed as current behavioral coverage |
+| Operations | November 2: 62 repository tests pass; final documentation tests/checks also pass. The [private database rotation](archive/checkpoints/2026/local-credential-rotation-2026-11-02.md) verifies fresh authentication, old/wrong-password rejection, existing sign-in and all 109 tables/assets. Verified images and the original volume remain. No new recovery rehearsal or protected-file inspection is claimed |
+| PostgreSQL | Six real integration checks pass, including candidate/valuation competing versions, queue recovery, source/price idempotency and one audited due brief. Those earlier fresh-schema tests reached s1s1s1s1s1s1; the normal database now reaches t2t2t2t2t2t2 with all application rows preserved |
+| Normal runtime | Final November images match all 447 selected installed runtime source files, retaining the original PostgreSQL volume/settings, t2t2t2t2t2t2 schema and localhost ports. Six normal registrations and 49 detached rollback copies remain. Daily Brief is restored; source refresh and pgAdmin stay stopped. Coverage is unchanged: 33 periods, 929 facts, 1,003 revisions and 336 normalized values. Final 128,362,952-byte backup passes archive/hash checks; no new restore drill |
+| Normal browser | Earlier 56-route audit and valuation-section proofs retain their dates. Latest follow-up passes 30 desktop/mobile views, all 11 optional-price controls and 11 rejected financial promotions, without detected accessibility/overflow/duplicate-ID/page errors. Both browser passes preserve 109 tables/assets. Initial shrinking-locator timeout and corrected repeat are retained; financial application is not repeated. Complete valuation inputs remain unavailable |
 | Recovery | October 17 format-3 concurrent-write recovery verifies both PDF stores and all 109 tables: restore 8 seconds, full drill 30 seconds. The later populated-backup rehearsal is prepared but unrun after the user requested no new disposable datasets. Same-disk copies do not prove encrypted off-device recovery |
 | Performance | Final profile: six process-cold and 30 warm samples over 774 rows/109 tables, nine query-budget regressions and eight section interactions pass. Market Prices fetches 51 rows and renders 50 forms, retaining filtering/history/export access. Database fingerprints remain unchanged; database/OS caches remain warm. Dataset and hardware are recorded without a concurrent-user/load claim |
 | Provider evidence | October 11 authentic SEC/FRED/Gemini and 11-security price probes pass. Ten company source batches are retained; delegated US/India reviews apply only selected historical facts. Six actual Gemini outputs and four existing adversarial fixtures have delegated semantic judgments, with unsupported mappings rejected and one response still blocked. Original human fields remain unchanged; broader coverage remains open |
@@ -140,7 +141,7 @@ not normal database contents. September 22 retained 694 unreviewed SEC candidate
 and no normalized snapshots. Drafts retain source/unit/period/review warnings;
 debt scope, share-class reconciliation and India statement gaps remain explicit.
 October 17 normal intake loaded six audited US versions dated January 5, 2026 into an empty benchmark registry: 1,131 typed rows, six successful runs and 27 source-cell checks; 102 other tables unchanged.
-The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. All 11 scoped securities now have 33 periods, 901 reported facts, 975 revisions and 332 supported normalized values. Unselected records and saved valuations remain unchanged; complete accounting bridges, mappings and forecasts remain evidence work.
+The [decision log](roadmaps/review-decisions.md) records five explicit Apple approvals and delegated choices. All 11 scoped securities now have 33 periods, 929 reported facts, 1,003 revisions and 336 supported normalized values. Unselected records and saved valuations remain unchanged; complete accounting bridges, mappings and forecasts remain evidence work.
 Earlier workbook inspection corrected global-input labels and a US country-tax alias without rewriting old rows.
 September counts are historical, not current inventory.
 October 18's existing portfolio examples pass 64 independent value/risk/return checks. Legacy returns remain provisional, current risk partial and DCF/benchmark coverage unavailable; the revised M07 demo check passes without certifying real activity.
@@ -163,8 +164,8 @@ The [M09 checkpoint](archive/checkpoints/2026/m09-browser-validation-2026-10-11.
 owns the earlier matrix; the October 13 follow-up above owns current workflow evidence.
 These isolated fixtures do not replace genuine-input portfolio proof.
 
-The normal runtime is s1s1s1s1s1s1 after fresh and populated restore/migration
-preflights. Legacy evaluation ownership/report fields remain null.
+The normal runtime is t2t2t2t2t2t2 after the November nullable-calendar migration;
+application rows are preserved. Earlier restore evidence retains its original scope.
 Databases stamped with deliberately deleted 20260524_* or 20260530_* revisions
 cannot be assumed upgradeable; stop and inspect before any reset/stamp.
 

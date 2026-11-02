@@ -6,7 +6,7 @@ from app.schemas.common import ApiResponse
 from app.db.session import get_db
 from app.models import Company, ProcessingRun
 from app.schemas.valuation_refresh import ValuationSourceRefreshRead, ValuationRefreshStatusRead
-from app.services.valuation_source_refresh import RUN_TYPE, enqueue_company_refresh, refresh_status, run_response
+from app.services.valuation_source_refresh import RUN_TYPE, cancel_queued_refresh, enqueue_company_refresh, refresh_status, run_response
 
 router = APIRouter(tags=["valuation source refresh"])
 
@@ -31,3 +31,8 @@ def get_refresh(run_id: int, db: Session = Depends(get_db), user: dict = Depends
     if run is None or run.run_type != RUN_TYPE or (run.metadata_json or {}).get("user_id") != user["id"]:
         raise HTTPException(status_code=404, detail="Source refresh not found")
     return ApiResponse(data=run_response(run))
+
+
+@router.post("/valuation-source-refresh/{run_id}/cancel", response_model=ApiResponse[ValuationSourceRefreshRead])
+def cancel_refresh(run_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
+    return ApiResponse(data=run_response(cancel_queued_refresh(db, run_id, user["id"])))

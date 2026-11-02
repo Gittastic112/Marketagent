@@ -8,7 +8,7 @@ import type { ValuationSetupDraft } from "@/lib/api/valuation-drafts";
 import type { AutofillAssumptionDraft } from "@/lib/api/valuation-drafts";
 import type { Company } from "@/lib/api/companies";
 import { archiveValuationDraft, refreshValuationDraft, resetValuationDraftFields, updateValuationDraft } from "@/lib/api/valuation-drafts";
-import { reviewFieldValueIsValid, unresolvedReviewFields } from "@/lib/autofill-review";
+import { reviewFieldValueIsValid, reviewFieldsForModel, unresolvedReviewFields } from "@/lib/autofill-review";
 import { FIELD_GROUPS } from "./autofill-draft-fields";
 
 export type AutofillDraftReviewProps = {
@@ -18,6 +18,7 @@ export type AutofillDraftReviewProps = {
   initialReviewedFields: string[];
   initialEditedFields: string[];
   initialUpdatedAt: string;
+  initialModelType?: string;
   action: (formData: FormData) => void | Promise<void>;
 };
 
@@ -28,6 +29,7 @@ export function useAutofillDraft({
   initialReviewedFields,
   initialEditedFields,
   initialUpdatedAt,
+  initialModelType = "fcff_dcf",
   action,
 }: AutofillDraftReviewProps) {
   const requests = useMemo(createRequestGate, []);
@@ -52,6 +54,7 @@ export function useAutofillDraft({
   }, [draftId]);
 
   const [values, setValues] = useState<Record<string, unknown>>({ ...draft.assumptions });
+  const [modelType, setModelType] = useState(initialModelType);
 
   const [reviewedFields, setReviewedFields] = useState<Set<string>>(new Set(initialReviewedFields));
 
@@ -82,14 +85,19 @@ export function useAutofillDraft({
   );
 
   const reviewFields = useMemo(
-    () => new Set(sourceMetadata.review_fields),
-    [sourceMetadata.review_fields],
+    () => new Set(reviewFieldsForModel(sourceMetadata, modelType)),
+    [sourceMetadata, modelType],
   );
+  const requiredFields = new Set(sourceMetadata.required_fields_by_model?.[modelType] ?? []);
+  const fieldApplies = (field: string) => modelType !== "financial_services"
+    || requiredFields.has(field) || ["current_market_price", "basic_shares"].includes(field);
+  const requiredMissingFields = [...requiredFields].filter(field => values[field] == null || values[field] === "");
 
   const unresolvedFields = unresolvedReviewFields(
     sourceMetadata,
     reviewedFields,
     values,
+    modelType,
   );
 
   const invalidDefaultFields = [...reviewFields].filter(
@@ -97,6 +105,15 @@ export function useAutofillDraft({
   );
 
   const promotionReady = unresolvedFields.length === 0;
+
+  function changeModelType(next: string) {
+    setModelType(next);
+    setDefaultsAccepted(false);
+    setBulkAcceptedFields(new Set());
+    const url = new URL(window.location.href);
+    url.searchParams.set("model_type", next);
+    window.history.replaceState(window.history.state, "", url);
+  }
 
   function updateValue(key: string, nextValue: unknown) {
     setValues((current) => ({ ...current, [key]: nextValue }));
@@ -239,5 +256,5 @@ export function useAutofillDraft({
       setArchiveConfirmationOpen(false);
     }
   }
-  return { company, draft, action, values, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft };
+  return { company, draft, action, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft };
 }

@@ -93,10 +93,10 @@ def test_representative_history_normalizes_reconciles_and_autofills(
     expected_cagr = (
         latest_metrics["revenue"] / periods[0]["metrics"]["revenue"]
     ) ** (1 / (len(periods) - 1)) - 1
-    assert draft["assumptions"]["starting_revenue"] == latest_metrics["revenue"]
+    assert draft["assumptions"]["starting_revenue"] == latest_metrics["revenue"] * 1_000_000
     assert draft["assumptions"]["starting_invested_capital"] == latest_metrics[
         "invested_capital"
-    ]
+    ] * 1_000_000
     assert draft["assumptions"]["current_operating_margin"] == pytest.approx(
         latest_metrics["ebit"] / latest_metrics["revenue"]
     )

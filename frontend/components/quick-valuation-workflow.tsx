@@ -149,7 +149,7 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
       maximumFractionDigits: 2,
     }).format(n);
   };
-  const fmtPct = (n: number | null | undefined) => n != null ? `${(n * 100).toFixed(1)}%` : "—";
+  const fmtPct = (n: number | null | undefined) => n != null && Number.isFinite(n * 100) ? `${(n * 100).toFixed(1)}%` : "Not available";
   const formDefault = (value: number | null | undefined) => value ?? undefined;
   const quickOutputBlocked = valuationOutput?.warnings_json?.some(
     (warning) => warning.severity === "blocking" || warning.severity === "critical",
@@ -285,12 +285,12 @@ export function QuickValuationWorkflow({ companies }: { companies: Company[] }) 
                 <div style={{ fontSize: "0.75rem", color: "var(--text-muted)" }}>Estimate</div>
               </div>
               <div className="metric">
-                <div className="metric-label">Current Price</div>
+                <div className="metric-label">Comparison Price</div>
                 <div className="metric-value">{fmtMoney(valuationOutput.current_market_price)}</div>
               </div>
               <div className="metric">
                 <div className="metric-label">Upside / Downside</div>
-                <div className="metric-value" style={{ color: valuationOutput.upside_downside_pct && valuationOutput.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
+                <div className="metric-value" style={{ color: valuationOutput.upside_downside_pct == null ? "var(--text-muted)" : valuationOutput.upside_downside_pct > 0 ? "var(--success)" : "var(--danger)" }}>
                   {quickOutputBlocked ? "Not shown" : fmtPct(valuationOutput.upside_downside_pct)}
                 </div>
               </div>

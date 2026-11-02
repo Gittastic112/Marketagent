@@ -324,7 +324,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
         {activeTab === "series" && <><Panel title="Import from FRED">
           {!hasUsableData(providerHealthRes) ? <ErrorState message="FRED configuration could not be checked. Reload to retry." /> : fredConfigured ? (
             <RetainedActionForm label="Import fred series" resetOnSuccess action={importFredSeries} className="form-grid">
-              <TextField id="series_id" label="FRED Series ID" name="series_id" placeholder="e.g. CPIAUCSL or FEDFUNDS" required />
+              <TextField id="fred-import-series-id" label="FRED Series ID" name="series_id" placeholder="e.g. CPIAUCSL or FEDFUNDS" required />
               <div className="button-row" style={{ gridColumn: "1 / -1" }}>
                 <button type="submit">Import Series & Observations</button>
               </div>
@@ -354,7 +354,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
 
         <Panel title="Add Observation">
           <RetainedActionForm label="Create macro observation" resetOnSuccess action={createMacroObservation} className="form-grid">
-            <SelectField id="series_id" label="Series" name="series_id" required>
+            <SelectField id="observation-series-id" label="Series" name="series_id" required>
               <option value="">Select series...</option>
               {seriesList.map((series) => (
                 <option key={series.id} value={series.id}>

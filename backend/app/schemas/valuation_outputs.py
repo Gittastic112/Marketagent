@@ -1,7 +1,7 @@
 """Calculation result contracts. No HTTP, ORM, or service dependencies."""
 from datetime import datetime
 from typing import Any, Literal
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class DiagnosticWarning(BaseModel):
@@ -104,7 +104,7 @@ class QuickValuationOutputRead(BaseModel):
     diluted_shares: float
     intrinsic_value_per_share: float
     current_market_price: float
-    upside_downside_pct: float
+    upside_downside_pct: float | None
     terminal_value_pct_of_ev: float
     model_quality_score: float | None = None
     warnings_json: list[dict[str, Any]]
@@ -117,7 +117,7 @@ class DcfProjectionYearRead(BaseModel):
     id: int
     assumption_set_id: int
     year_index: int
-    calendar_year: int
+    calendar_year: int | None = Field(default=None, description="Unavailable without a reviewed fiscal-year anchor; use year_index for relative periods.")
     revenue: float | None = None
     revenue_growth: float | None = None
     ebit_margin: float | None = None
@@ -132,6 +132,14 @@ class DcfProjectionYearRead(BaseModel):
     discount_factor: float | None = None
     pv_fcff: float | None = None
     created_at: datetime
+
+
+    @field_validator("calendar_year", mode="before")
+    @classmethod
+    def withhold_unanchored_calendar_year(cls, value: object) -> None:
+        # Legacy stored years came from a fixed 2024 origin, not reviewed input.
+        # Shape the detached read contract without rewriting historical rows.
+        return None
 
 
 class DcfSensitivityTableRead(BaseModel):

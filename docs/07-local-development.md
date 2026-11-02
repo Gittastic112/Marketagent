@@ -1,6 +1,6 @@
 # Local Development
 
-Reviewed against checked-in configuration: 2026-10-12.
+Reviewed against checked-in configuration: 2026-11-02.
 
 This guide owns setup and troubleshooting. The [runbook](08-execution-runbook.md)
 owns test, build, migration and operational commands. Historical company IDs and
@@ -20,6 +20,11 @@ files. There is no default application login. Set unique LOCAL_AUTH_USERNAME and
 LOCAL_AUTH_PASSWORD values and generate a long random NEXTAUTH_SECRET locally.
 NEXTAUTH_URL defaults to http://localhost:3000. Set a real SEC_USER_AGENT contact
 identity before live SEC access.
+Normal Compose also requires a private POSTGRES_PASSWORD. Use at least 32 random
+URL-safe characters (letters, digits, `_` and `-`) because it forms part of the
+database connection URL. Existing databases need the coordinated rotation in the
+[runbook](08-execution-runbook.md#rotate-the-local-database-password); changing a
+container variable alone does not change the persisted database role password.
 
 | Setting | Boundary |
 |---|---|
@@ -28,6 +33,8 @@ identity before live SEC access.
 | API_BASE_URL | Host Next.js uses http://127.0.0.1:8000; Compose fixes http://backend:8000 |
 | NEXT_PUBLIC_BROWSER_API_BASE_URL | Same-origin /api/backend, never credentials |
 | DATABASE_URL | Host template uses localhost; Compose fixes the postgres service URL |
+| POSTGRES_PASSWORD | Required by normal Compose for PostgreSQL and all database clients; no development fallback |
+| PGADMIN_DEFAULT_PASSWORD | Optional disabled admin service only; no default password. Keep it unset and the service stopped until needed |
 | Provider keys | Optional, server-only; missing configuration must remain visible |
 | GEMINI_API_KEY / GEMINI_MODEL | Gemini key and accessible model ID, backend-only; verify with the runbook's explicit fixed-prompt probe |
 
@@ -96,7 +103,8 @@ Normal and E2E Compose definitions bind published ports to 127.0.0.1. Recreate
 existing services to apply changed bindings, then inspect `docker compose ps`;
 restarting old containers is not enough. The normal runtime was recreated and its
 localhost-only bindings verified on September 21. Checked-in database/admin
-credentials are development defaults. Public deployment is not authorized.
+password defaults have been removed; previously running containers retain their
+old configuration until coordinated rotation/recreation. Public deployment is not authorized.
 
 Do not remove volumes, stamp migrations or prune Docker storage to hide errors.
 Inspect exact targets and obtain explicit data-loss authorization before

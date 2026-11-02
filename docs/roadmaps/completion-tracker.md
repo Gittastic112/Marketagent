@@ -1,6 +1,6 @@
 # Completion tracker: local research/demo release v1
 
-Created October 10, 2026. **Accepted milestones: 2/10 (20%). Next: M03.**
+Created October 10, 2026. **Accepted milestones: 4/10 (40%). Next: M05.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
 Much of the implementation exists; historical tests do not close today's gates.
 
@@ -33,8 +33,8 @@ decision; do not move the denominator to manufacture progress.
 The user explicitly chose: "Make the first release research/demo only and use our
 existing data. I'll handle the Mac settings and backup later." This supersedes the
 original genuine-portfolio release requirement. The ten milestone IDs and weights
-stay fixed; no gate becomes passed merely because its scope changed. M01-M02 remain
-the only accepted milestones (20 acceptance points).
+stay fixed; no gate becomes passed merely because its scope changed. At that scope
+revision only M01-M02 were accepted; November 2 verification additionally closes M03-M04.
 
 | Original check | First-release treatment | Evidence still needed |
 |---|---|---|
@@ -91,13 +91,13 @@ It is not a second progress counter or an instruction to dispatch agents.
 |---|---:|---|---|---|---|
 | M01 | 10% | Measured, lean, reproducible local foundation | None | Accepted October 10 | [Rollout and browser proof](../archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md) |
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
-| M03 | 30% | Reliable recovery and local security | M02 | In progress | [Recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
-| M04 | 40% | Dependable identities, prices and ingestion | M03 | Checks verified; M03 prerequisite open | [Identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
+| M03 | 30% | Reliable recovery and local security | M02 | Accepted November 2 for research/demo scope | [Rotation and scoped acceptance](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
+| M04 | 40% | Dependable identities, prices and ingestion | M03 | Accepted November 2; prerequisite closed | [Acceptance basis](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Evidence review proceeding under delegated authority | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md), [decision log](review-decisions.md) |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | In progress | [Saved sensitivity and browser proof](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | Review and browser defects repaired; company basis still open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
-| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Remote matrix passes on 6e2a6f8b; 36 fresh normal-data views pass; M08 prerequisite open | [October 24 verification](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
+| M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Existing-data audit repairs observed defects; M08 prerequisite open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [prior remote matrix](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
 | M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
@@ -105,11 +105,11 @@ checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoin
 closes M05-06, M06-05, M08-03/06/07 and verifies all M09 technical checks. Its recorded
 official-source morning flow and separate due-cycle test preserve their distinct
 source/fixture boundaries. Final return labels, affected browser flows, measured
-process-cold/warm profiles and normal rollout are verified. Evidence review and local
-credential work remain open; the scope revision above separates deferred host/
+process-cold/warm profiles and normal rollout are verified. Evidence review remains
+open; November 2 closes local credential work. The scope revision separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
-M04 retains verified checks with an open prerequisite. M09's latest integrated
-remote source/browser matrix passes on 6e2a6f8b; 36 fresh desktop/mobile views verify the installed UI and borrowing review using existing data. Cumulative acceptance remains 20 points; the next milestone is M03.
+M04's verified checks are accepted after the M03 prerequisite closes. M09's latest integrated
+remote source/browser matrix passes on 6e2a6f8b. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) records later unit/review corrections, broad existing-data browser checks and explicit data effects. The [October 28 release](../archive/checkpoints/2026/locked-build-and-local-rollout-2026-10-28.md) retains dependency/OS audit evidence. Reviewed-input freeze and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -191,7 +191,7 @@ a second provider factory or a catch-all utilities framework for folder tidiness
 October 18 [maintenance audit](../archive/checkpoints/2026/repository-hygiene-2026-10-18.md)
 adds compact agent navigation, bounded searches and comprehensive generated-file
 exclusions, removes the obsolete tree listing and verified caches, and preserves
-all runtime images/volumes. This maintains M01/M02; acceptance stays at 20 points.
+all runtime images/volumes. That checkpoint maintained M01/M02 at 20 acceptance points.
 
 ## M03: reliable recovery and local security
 
@@ -208,6 +208,8 @@ Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consi
 - [ ] M03-04 Complete host/configuration checks with the operator where access is
   required: least-privilege local administration, DB/admin credential rotation
   with persisted roles, disk encryption and encrypted off-device key/backup recovery.
+  November 2 verifies the in-scope database rotation, app authentication and local
+  ports. Host/off-device obligations remain explicitly deferred; pgAdmin stays disabled.
 - [x] M03-05 Bound expensive PDF parsing and review remaining fixed-host outbound
   clients, uploads, CSV exports and owner access. Test malicious/oversized input,
   cross-owner resources, request forgery and sanitized failure messages.
@@ -219,6 +221,9 @@ Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consi
 
 Gate: repeatable restore evidence and closed local-release security blockers.
 Public deployment remains outside scope even after this gate passes.
+Accepted November 2 under the existing scope revision; see the
+[credential checkpoint](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md).
+The original deferred checkboxes are retained without claiming their completion.
 
 ## M04: dependable identities, prices and ingestion
 
@@ -311,7 +316,11 @@ for NVIDIA, Alphabet and Microsoft; six Alphabet face totals and one unsupported
 NVIDIA commercial-paper zero stay held. Current totals: 33 periods, 929 facts,
 1,003 revisions and 336 normalized values. All 906 earlier facts and all normalized
 amounts/units/warnings remain unchanged. Thirty-six fresh normal browser views pass.
-M05-03/05 stay open for full accounting inputs and Reliance allocation.
+The November [financial follow-up](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+brings selected draft reviews to 274, including 11 unavailable comparison-price
+acknowledgements; 31 initially unavailable fields remain unreviewed. Complete award/dilution/accounting
+inputs and Reliance allocation remain missing, so M05-03/05 and the milestone
+gate stay open. No model is promoted or acceptance percentage increased.
 
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
@@ -343,11 +352,20 @@ delegation, preserving the distinction from independent human certification.
 Owners: deterministic engines, saved-input contracts and valuation panels;
 [Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
 
+November 2 verifies full-unit suggestions, model-specific draft reviews, source
+checks before promotion, queued cancellation and repaired mobile controls. Saved
+sensitivity centers and reverse calculations agree with their saved input basis;
+this does not approve the assumptions. The checkpoint retains failed test-harness
+runs separately from repaired product defects. The later financial pass repairs
+review-only saves and removes fabricated calendar dates without altering stored
+amounts. M06-04/07 remain open for complete
+company-basis proof; no acceptance points are added.
+
 October 24 installs compact mix summaries, readable warnings and a save/cancel
 gate before drafting from saved weights. M06-BRIDGE-01 and M06-DEBT-02 separate
 historical carrying/face amounts, commercial paper and lease treatment from a
-valuation-date equity bridge. All 11 drafts still require review; no saved model
-changes. Local tests/build, 21 existing-data calculations and 36 normal browser
+valuation-date equity bridge. That batch left 11 drafts requiring review; the
+November selected-field review is now applied with remaining source gaps explicit. No saved model changes. Local tests/build, 21 existing-data calculations and 36 normal browser
 views pass; 6e2a6f8b passes all five source CI gates. M06-04/07 remain open;
 no acceptance points are added.
 
@@ -488,7 +506,8 @@ Fresh install/concurrent-write recovery passed before the user requested no more
 disposable datasets. A new populated-backup rehearsal is prepared but not run;
 normal data must not be reset to substitute for that test. The technical local
 rollout is verified, but reviewed-input freeze, actual-use days and final acceptance
-remain open. Off-device recovery and the additional populated-backup rehearsal are
+remain open. The user confirms zero actual-use days and asks for agent function
+testing; those tests do not satisfy M10-04. Off-device recovery and the additional populated-backup rehearsal are
 deferred for this research/demo profile. Future use is never inferred.
 
 - [ ] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
@@ -496,9 +515,11 @@ deferred for this research/demo profile. Future use is never inferred.
   Resolve blockers; do not delete failing tests or relabel failures as deferred.
 - [ ] M10-02 Rehearse fresh install plus an existing populated backup upgrade in
   disposable runtimes; verify all pre-existing user-data and asset fingerprints.
-- [ ] M10-03 Deploy the reviewed local release with a verified backup, confirm
+- [x] M10-03 Deploy the reviewed local release with a verified backup, confirm
   localhost-only bindings/auth, provider settings, explicit worker states and
   source/image identity. Keep a documented rollback path without destructive reset.
+  [November 2 release proof](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+  verifies installed source, final review backup, unchanged settings/data and worker states.
 - [ ] M10-04 Record five business days of actual daily use: startup, source refresh,
   review, valuation, portfolio and briefing, including one restart and one provider
   outage/retry. Record missed runs truthfully. Do not invent future soak evidence.

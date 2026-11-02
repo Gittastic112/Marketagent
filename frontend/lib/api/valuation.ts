@@ -29,7 +29,7 @@ export type DcfProjectionYear = {
   id: number;
   assumption_set_id: number;
   year_index: number;
-  calendar_year: number;
+  calendar_year: number | null;
   revenue: number | null;
   revenue_growth: number | null;
   ebit_margin: number | null;
@@ -159,7 +159,7 @@ export type QuickValuationOutput = {
   diluted_shares: number;
   intrinsic_value_per_share: number;
   current_market_price: number;
-  upside_downside_pct: number;
+  upside_downside_pct: number | null;
   terminal_value_pct_of_ev: number;
   model_quality_score: number | null;
   warnings_json: DiagnosticWarning[];

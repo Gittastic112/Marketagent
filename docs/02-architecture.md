@@ -201,6 +201,14 @@ normalized status/provider and aggregates counts in SQL, retaining the last
 success and consecutive-failure count without loading all historical run objects.
 No cross-user response cache or stale-data substitution is introduced.
 
+Data Health keeps request handling in its server loader and separates diagnostics,
+provider status and processing tables. An explicitly selected audit starts alongside
+the six regular reads; fast mode still skips all three optional audits. One pass
+over the returned run window builds counters, type summaries and latest-by-source
+indexes. Latest attempts use their timestamps, including timezone offsets. Totals
+disclose the endpoint's latest-100-run scope. Failed envelopes remain visible and
+cannot become healthy zero counts, successful empty lists or cached payloads.
+
 The two portfolio list pages use a shared server-only loader with at most four
 valuation requests in flight per page. Management no longer requests analytics
 that it never renders. Failure envelopes and input order are retained; this bound
@@ -299,8 +307,13 @@ The separate source-to-draft path reads annual SEC candidates as **Source Summar
 suggestions, never as promoted company facts. A newer annual basis can populate
 an owned draft; an existing reviewed annual basis is not mixed with differently
 scaled SEC amounts. Sources retain candidate IDs, exact locators, dates, units and
-review requirements. FRED DGS10 supplies an explicitly reviewed USD rate proxy,
-not an INR rate; market inputs retain the stored price's as-of date.
+review requirements. `valuation_input_units` converts explicit source units to
+full currency amounts and full shares before derived inputs. Ambiguous or
+cross-currency amounts remain unavailable; original values and conversion formulas
+are retained. Forecast growth remains an Estimate. FRED DGS10 supplies an
+explicitly reviewed USD rate proxy, not an INR rate; a mismatched stored quote
+cannot silently supply the draft's comparison price. Promotion rechecks source,
+benchmark, method and freshness signatures and applies model-specific review gates.
 
 `valuation_source_refresh` owns a durable ProcessingRun queue. HTTP enqueues and
 returns immediately; the separate worker fetches FRED/SEC/prices, records child
@@ -309,7 +322,9 @@ execution is opt-in via local settings, once per local day, DST-aware and guarde
 by a PostgreSQL advisory lock. Failures remain visible; interrupted jobs need an
 explicit retry, and missed dates are not replayed. No external AI, source approval
 or saved-model writes occur. Draft mutations lock/reload the persisted row before
-their optimistic-version check. This does not add a general-purpose job platform.
+their optimistic-version check. An owned queued job can be cancelled under the
+same worker lock, retaining its audit record and unlocking draft editing; running
+or completed jobs cannot be cancelled. This does not add a general-purpose job platform.
 
 ### AI claim to exact evidence
 

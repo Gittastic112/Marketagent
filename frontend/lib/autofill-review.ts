@@ -8,6 +8,8 @@ const POSITIVE_FIELDS = new Set([
   "cost_of_equity",
   "wacc_start",
   "wacc_terminal",
+  "book_value_of_equity",
+  "current_market_price",
 ]);
 const NONNEGATIVE_FIELDS = new Set([
   "cash",
@@ -31,10 +33,16 @@ const UNIT_INTERVAL_FIELDS = new Set([
   "wacc_start",
   "wacc_terminal",
   "terminal_roic",
+  "probability_of_failure",
 ]);
-const MARGIN_FIELDS = new Set(["current_operating_margin", "target_operating_margin"]);
+const MARGIN_FIELDS = new Set(["current_operating_margin", "target_operating_margin", "target_roe"]);
 
 export function reviewFieldValueIsValid(field: string, value: unknown): boolean {
+  if (field === "current_market_price" && value === null) return true;
+  if (field === "current_market_price" && typeof value !== "number" && typeof value !== "string") return false;
+  if (value == null || typeof value === "boolean" || (typeof value === "string" && !value.trim())) {
+    return false;
+  }
   if (field === "cash_flow_currency" || field === "discount_rate_currency") {
     return typeof value === "string" && /^[A-Za-z]{3}$/.test(value.trim());
   }
@@ -42,7 +50,8 @@ export function reviewFieldValueIsValid(field: string, value: unknown): boolean 
     return value.length > 0 && value.every((item) => typeof item === "number" && Number.isFinite(item));
   }
   if (value && typeof value === "object") {
-    return Object.keys(value).length > 0;
+    const entries = Object.values(value);
+    return entries.length > 0 && entries.every((item) => typeof item === "number" && Number.isFinite(item));
   }
 
   const numberValue = typeof value === "number" ? value : Number(value);
@@ -55,17 +64,23 @@ export function reviewFieldValueIsValid(field: string, value: unknown): boolean 
   if (MARGIN_FIELDS.has(field)) return numberValue >= -1 && numberValue <= 1;
   if (field === "terminal_growth_rate") return numberValue >= -0.2 && numberValue <= 0.2;
   if (field === "beta") return numberValue >= 0 && numberValue <= 5;
+  if (field === "projection_years_count") return Number.isInteger(numberValue) && numberValue >= 1 && numberValue <= 30;
   if (POSITIVE_FIELDS.has(field)) return numberValue > 0;
   if (NONNEGATIVE_FIELDS.has(field)) return numberValue >= 0;
   return true;
+}
+
+export function reviewFieldsForModel(metadata: AutofillSourceMetadata, modelType = "fcff_dcf"): string[] {
+  return modelType === "fcff_dcf" ? metadata.review_fields : metadata.review_fields_by_model?.[modelType] ?? metadata.review_fields;
 }
 
 export function unresolvedReviewFields(
   sourceMetadata: AutofillSourceMetadata,
   reviewedFields: ReadonlySet<string>,
   values: Record<string, unknown>,
+  modelType = "fcff_dcf",
 ): string[] {
-  return sourceMetadata.review_fields.filter(
+  return reviewFieldsForModel(sourceMetadata, modelType).filter(
     (field) => !reviewedFields.has(field) || !reviewFieldValueIsValid(field, values[field]),
   );
 }

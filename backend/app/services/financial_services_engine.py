@@ -77,7 +77,7 @@ class FinancialServicesEngine:
             proj_year = DcfProjectionYear(
                 assumption_set_id=assumption_set.id,
                 year_index=year,
-                calendar_year=2024 + year,
+                calendar_year=None,  # No reviewed fiscal-year anchor is stored.
                 revenue=0.0, # Not applicable
                 revenue_growth=year_growth,
                 ebit_margin=0.0,

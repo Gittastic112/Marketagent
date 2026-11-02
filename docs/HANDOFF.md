@@ -1,119 +1,102 @@
 # Agent Handoff
 
-October 24, 2026: M01-M02 accepted; UI and borrowing reviews installed; 36 fresh normal-data browser views pass.
-The [completion tracker](roadmaps/completion-tracker.md) owns percentage requests.
-Two accepted gates mean 20 acceptance points, not 20% of engineering hours.
-"Next 10%" means M03. October 17 explicitly narrows v1 to research/demo using the
-existing data; apply the tracker's scope revision, not the original portfolio gate.
+November 2, 2026: the [release follow-up](archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+records additional dated reviews, optional comparison prices, installed images,
+existing-data browser proof and the final backup. The earlier
+[broader browser audit](archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md)
+retains the 56-route scope and earlier UI/queued-cancellation fixes.
+The [verified credential rotation](archive/checkpoints/2026/local-credential-rotation-2026-11-02.md)
+closes M03/M04 under the research/demo scope: 40 acceptance points, next M05.
+The user confirmed zero actual-use days. Agent checks do not satisfy five business days.
 
 ## Execution boundary
 
-The user authorized remaining independent work, refactors/worktrees and Git/GitHub
-publication last. Remaining research/demo review choices are now delegated: record
-each choice in the [decision log](roadmaps/review-decisions.md), distinguish agent
-review from personal user approval, and do not repeat routine approval questions.
-The latest request includes M10 preparation, not invented final
-acceptance. Public deployment and broker work remain outside scope. GitHub is
-Allow all actions; user approved only localhost/127.0.0.1 and the macOS OpenSSL read exception. No new agents are
-authorized by the plan alone. Protected environment files must not be read directly
-or indirectly, including by Compose, app settings or browser configuration.
+The user authorized remaining independent work and delegated research/demo choices.
+The latest user instruction authorizes GitHub publication and completion of the
+existing pull requests. Public deployment, broker work and new disposable PostgreSQL/seeded browser
+datasets remain outside scope. SQLite unit fixtures and existing-data checks are allowed.
+Do not read protected environment files directly or through Compose/settings.
+Runtime secrets may be passed in memory, never printed or serialized.
+The shared checkout contains extensive prior edits and untracked files. Preserve them.
+Never reset, clean or stage everything. Publish an explicit snapshot against the
+existing PR head, preserving private/local-only evidence and the shared Git index.
 
-[Draft PR #1](https://github.com/Gittastic112/Marketagent/pull/1) preserves M01.
-[Draft PR #2](https://github.com/Gittastic112/Marketagent/pull/2), based on M01,
-holds subsequent work and owns the latest published head/check results. Publish
-only explicit paths through an isolated Git snapshot: the shared checkout/index
-contains extensive prior changes. Never reset, clean or stage everything.
+## Latest implementation and evidence
 
-## Current evidence
+- The [review](../data/reviews/financial-input-review-20261102.json) and
+  [application](../data/reviews/financial-input-application-20261102.json) record
+  249 selected field reviews and 55 unavailable fields across 11 securities.
+  Ten retained original-report hashes and source/history signatures verify.
+- The [follow-up](../data/reviews/financial-input-followup-20261102.json) adds
+  14 financial fields and explicit unavailable-price reviews for all 11 drafts.
+  Prior decisions remain; complete financial inputs still gate promotion.
+- Comparison price is optional but needs explicit review when unavailable.
+  Supplied draft prices must be positive/finite; missing or overflowing comparisons
+  return null. Detached reads withhold historical placeholders without row rewrites.
+- Bank common book equity/parent income, US carrying-value proxies and India
+  stationary references are recorded separately from hypothetical forecasts.
+  Missing current share denominators, award values and unsupported claims stay null.
+  The [decision register](../data/reviews/research-demo-decisions.json) appends
+  11 delegated decisions and preserves all five personal Apple approvals.
+- Nine draft applications succeeded before the assertion caught a review-only
+  save resetting Reliance's scenario. The service now updates only explicit fields.
+  An exact interrupted-state guard permits the two-company retry; earlier successes
+  are not reapplied. Failed application/test evidence stays retained.
+- New forecasts have no calendar dates without a fiscal anchor. APIs also withhold
+  old hardcoded dates; raw historical integers and calculation amounts stay intact.
+  Migration t2t2t2t2t2t2 only permits null calendar_year, following s1s1s1s1s1s1.
+- Browser proof covers all 11 drafts at desktop/mobile widths, 11 rejected promotion
+  requests, disabled create buttons and unchanged legacy forecast amounts. There
+  are no detected accessibility violations, overflow, duplicate IDs or page errors.
+  The first pass refreshes three bank metadata records without changing values;
+  all 109 tables/assets remain unchanged in the expanded continuation pass.
+- Fresh source tests/builds pass; exact counts, failures and image IDs belong in
+  Current State and the checkpoint. No saved valuation or source history is rewritten.
 
-The [UI/financing checkpoint](archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) owns repairs, borrowing review, 36 normal browser views and five passing source CI gates on 6e2a6f8b.
-The [October 21-22 repair](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) owns installed patches and five passing Next.js CI gates on 767a8526.
-The [latest HDFC checkpoint](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md) owns the application, revision fixes, passing CI on 1ab9bacf and accounting-note review.
-The [India review checkpoint](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
-owns parser v6, four-company promotion, PDF keyboard repair and final browser proof.
-The [US/AI review checkpoint](archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
-owns the later US source decisions, normal-data application and semantic judgments.
-The [October 18 HDFC checkpoint](archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
-owns the delegated unit review/promotion, normalization and repeated-source fixes,
-populated financial UI, local rollout and exact source/image proof. The
-[October 17 checkpoint](archive/checkpoints/2026/release-readiness-2026-10-17.md) retains
-parser v5, broader validation/recovery and original packets. The [October 13 checkpoint](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
-retains the full frontend/workflow matrix and process-cold/warm performance scope.
+## Runtime and recovery
 
-- Parser v6 also separates explicitly scoped current/noncurrent investments;
-  unclassified bank investments stay separate. The 784 retained candidates keep
-  their values/units/locations; 16 scoped labels change. Review warnings remain.
-- All eight previously skipped selected entries now parse. HDFC's 56 selected
-  unit gaps are resolved under delegated review; 64 entries become 60 distinct
-  reported facts across two March 31 periods. Whole-company/note coverage stays open.
-- Normalization keeps missing inputs unavailable and preserves explicit zero.
-  Duplicate source occurrences retain their provenance; conflicting values block
-  promotion. The decision log records the exact duplicate-projection correction.
-- Six actual Gemini responses and four adversarial fixtures now have delegated
-  semantic judgments. Four summaries have constrained acceptance; unsupported
-  regional-to-company edits are rejected and the blocked response stays blocked.
-  Original human verdicts remain blank; this is not independent certification.
-- Source -> candidate -> normalized draft, saved calculation/sensitivity/reverse,
-  event/evidence/thesis, manual recovery and morning-review workflows retain their
-  separately dated browser and genuine-source/fixture boundaries.
+Backend/frontend/both workers use 20261102-final images. The original PostgreSQL
+volume and localhost-only bindings remain; database/client credentials are rotated. The migration preserves all
+application-row fingerprints, changing only Alembic metadata. The Daily Brief
+scheduler is restored; source scheduling and pgAdmin remain stopped, restart=no.
+Six normal project registrations and 49 detached rollback copies remain. Copies
+retain files, logs, settings and images without printing secrets. New quiesced
+backups pass archive/hash checks; no new restore drill or off-device proof is claimed.
 
-## Normal runtime and recovery
+Old integer-only images may fail once null projection dates exist. Do not force a
+downgrade, fabricate dates or delete rows to restore old code. Inspect the retained
+backup/schema and prefer a reviewed forward repair. The previous October 17
+concurrent-write recovery proof remains valid only for its tested scope.
 
-Normal backend/workers use parser v6, exact provenance, reviewed normalization and aggregation v2;
-frontend uses Next.js 16.4.1 with compact industry summaries, readable warnings and protected saved-mix drafting.
-The original PostgreSQL volume/schema and runtime settings are preserved, with
-localhost-only ports. Final rollout/browser reads preserve all 109 table fingerprints
-after the explicit reviewed changes. Fresh quiesced dumps pass archive listing without
-claiming new restore verification. Prior verified backups/rollback images remain.
-No new normal fixture dataset, portfolio rewrite or AI scan. Secrets travel in memory.
+## Immediate next work
 
-Daily Brief scheduling runs. Source refresh and pgAdmin stay stopped with restart=no.
-Disposable verification projects are stopped. Preserve backups, rollback images,
-all persistent volumes and failed artifacts. Twenty-seven rollback copies are retained separately
-from the six-service project; their files/logs/images remain preserved.
+Database rotation is complete and verified. Fresh authentication succeeds; old
+and incorrect passwords fail. Existing sign-in, all reviewed drafts, 109 tables,
+source assets, image versions and the original volume are preserved. The unused
+legacy LOCAL_DEMO_MODE key was removed by Compose; current source has no consumer.
+The credential-rotation receipts and latest runtime-final receipt own exact proof.
+Do not request passwords or repeat this completed maintenance step. Old retained
+containers require current settings and schema review before reuse. The latest
+final-backup contains all completed reviews; no new restore drill is claimed.
 
-Twelve January 2026 US/India benchmark versions retain exact source/import receipts.
-Seven provisional revenue mixes and four single-industry comparisons are installed.
-Existing portfolio checks pass 64 arithmetic comparisons and six browser views;
-partial risk, provisional legacy returns and missing DCF/benchmark evidence remain.
-M07 demo checks and M08's selected review set are verified; prerequisites stay open.
+The [single limitation ledger](agent_capabilities_and_limitations.md#ordered-operator-handoff)
+owns remaining gaps. Available financial review is complete with explicit residuals;
+valuation-date awards/dilution and some accounting scopes need additional issuer
+evidence. The latest consolidated review records supported historical denominators,
+method exclusions and remaining claims. Do not invent inputs or promote a model
+merely to close a milestone. Local-only packets are identified by path/hash.
+Reliance net external-revenue allocation remains unavailable. HDFC's FY2024 bonus
+comparability/EPS and Alphabet's USD1m lease exception remain recorded.
 
-macOS backup finalization is fixed. October 17 verifies fresh concurrent-write
-recovery with both PDF stores. A new populated-backup rehearsal is prepared but
-unrun after the user requested no more disposable datasets. Routine checks now
-reuse existing data without resets or fabricated activity. Remote GitHub CI
-remains isolated; it does not consume this Mac's Docker resources.
-No broad filesystem permission change is needed. Same-disk folders do not prove
-encrypted off-device recovery. Earlier partial folders remain incomplete.
+Normal financial coverage is still 33 periods, 929 facts, 1,003 revisions and 336
+normalized values. M05/M06 complete-basis gates remain open; M07 example and M08
+selected-interpretation reviews retain their dated proof. Host settings/off-device
+recovery are explicitly deferred. M10 actual use and final acceptance remain open.
+No routine financial approval question is needed under the existing delegation.
+GitHub completion uses [PR #2](https://github.com/Gittastic112/Marketagent/pull/2);
+its head, checks and merge record own remote evidence. No public deployment is authorized.
 
-## Next work and operator gates
-
-The user chose a research/demo first release using the existing data on October 17.
-Genuine portfolio records are outside this release. Mac settings and off-device
-backup are explicitly deferred, not passed; local credential rotation remains open.
-The [ordered operator handoff](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-owns the remaining inputs. Continue evidence work under delegated authority;
-do not ask again for routine review, real trades or deferred host/backup setup.
-
-Continue from the [decision log](roadmaps/review-decisions.md) and its versioned
-JSON register. Five explicit user approvals cover Apple cash, debt/leases, shares,
-payouts and US/USD/FCFF setup. M05-MAPPING-16 supersedes only Apple's provisional
-comparison mapping. M05-IN-NOTES-17 and M05-INDIA-BENCHMARK-18 record the latest
-notes/imports. Reliance's net external-revenue weights stay unavailable.
-M05-AMZN-19 adds three sourced after-tax equity losses. Failed Run 145 stays failed;
-Run 146 verifies the committed values and exact provenance refresh. Do not reapply.
-Combined: 33 periods, 929 facts, 1,003 revisions and 336 normalized values across 11
-securities. M05-DEBT-21/M06-DEBT-02 add 23 sourced borrowing facts in Runs 152-159; seven entries stay held. Alphabet's USD1m lease warning remains.
-All 11 still need valuation review. HDFC FY2024/pre-bonus and EPS exceptions remain; no saved models changed.
-
-M10 preparation retains dated recovery evidence and a blank actual-use record.
-Reviewed source/input freeze, five business days of actual research/demo use and
-final acceptance stay open. Off-device recovery and the new disposable rehearsal
-are deferred under the approved scope. Do not count preparation as completion.
-
-Commands belong in the [runbook](08-execution-runbook.md). Run heavy checks sequentially. Browser checks use
-baked runtime source and container-local test artifacts, never protected files.
-Preserve failed runs and timing thresholds; a rerun must explain what changed.
-The retired self-scoring extraction CLI is unavailable, not evaluation evidence.
-Preserve the immutable knowledge corpus. [Knull](../Knull%28readme%29.md) governs
-explicitly assigned parallel batches only.
+Commands belong in the [runbook](08-execution-runbook.md). Heavy checks run
+sequentially. Use the [code map](code-map.md) for affected owners. The immutable
+knowledge corpus has separate rules; [Knull](../Knull%28readme%29.md) applies only
+to assigned parallel batches. Central docs are reconciled by the coordinator.

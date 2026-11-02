@@ -1,12 +1,12 @@
 # Product Roadmap
 
 **Prioritized:** 2026-08-24. Product evidence: see Current State.
-Completion sequencing reviewed: 2026-10-17.
+Completion sequencing reviewed: 2026-11-02.
 
 **Completion requests:** use the [ten-milestone tracker](completion-tracker.md).
 It defines ten acceptance gates for the remaining local release, not an estimate
-of engineering hours or the amount of code already built. M01-M02 are accepted
-at 20 acceptance points; M03 is the next unfinished gate. See the tracker for dated rollout/browser evidence.
+of engineering hours or the amount of code already built. M01-M04 are accepted
+at 40 acceptance points under the research/demo scope; M05 is the next unfinished gate. See the tracker for dated evidence.
 
 October 17 explicitly scopes the first release to local research/demo on the
 existing data. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
@@ -15,6 +15,11 @@ Remaining financial, model and AI review choices are delegated to Codex and
 recorded in the [decision log](review-decisions.md). Each applied choice still
 requires supporting evidence and current-record checks. No new local disposable
 fixture datasets are authorized.
+
+November 2 completes the available selected draft reviews, optional-price repair,
+local installation and backup. GitHub completion is authorized and tracked in
+[PR2](https://github.com/Gittastic112/Marketagent/pull/2). Missing issuer claims and
+actual-use/final acceptance remain distinct from finished engineering checks.
 
 ## Planning Rule
 
@@ -53,8 +58,9 @@ Acceptance gates:
 
 ## Priority 2: Broader Real-Issuer and India Provider Coverage (REFERENCE GATE PASSED, EXPANSION OPEN)
 
-Preserve the certified AAPL/APSEZ reference gate, add broader issuer/layout
-coverage, and improve official India source routing.
+Preserve the dated AAPL/APSEZ reference certification and the reviewed histories
+for all 11 scoped securities. Resolve remaining complete valuation-input scopes;
+broader issuer/layout expansion and new official India adapters are future scope.
 
 Acceptance gates:
 

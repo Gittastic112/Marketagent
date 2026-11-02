@@ -1,6 +1,6 @@
 # Research/demo decision log
 
-Updated October 24, 2026. This is the readable index for the
+Updated November 2, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
 owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
@@ -88,7 +88,7 @@ source references. The helper audit identity error and its correction are retain
 the application was not rerun. These historical amounts do not approve current
 market debt, lease inclusion, forecast assumptions or any saved valuation.
 Fresh checks pass 36 normal browser views and 21 read-only benchmark calculations.
-All 11 drafts still need review, including Alphabet's retained USD1m lease warning.
+That dated batch left all 11 drafts requiring review; the November decisions below supersede that review status while retaining the USD1m lease warning.
 
 The [HDFC checkpoint](../archive/checkpoints/2026/hdfc-reviewed-normalization-2026-10-18.md)
 owns the source, calculation, rollout and browser proof. These are delegated agent
@@ -105,6 +105,25 @@ The source categories are **Computers/Peripherals**, **Software (Internet)** and
 unique mapping among those categories. Revenue shares are not automatically the
 right weights for beta, ROE or sales-to-capital ratios. See the retained source
 evidence and [Damodaran's business-weighting guidance](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/TenQs/TenQsBottomupBetas.htm).
+
+### November 2 selected financial-input decisions
+
+The later [follow-up](../../data/reviews/financial-input-followup-20261102.json)
+adds 14 dated financial field decisions and 11 explicit unavailable comparison-price
+reviews. Its 11 new decision IDs preserve all earlier entries. Current selected
+reviews total 274; 31 initially unavailable fields remain unreviewed. Only existing
+drafts change, and all 11 financial promotion gates remain blocked. The
+[release checkpoint](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+records exact application, browser, runtime and publication boundaries.
+
+The [review](../../data/reviews/financial-input-review-20261102.json) and
+[application](../../data/reviews/financial-input-application-20261102.json) record
+11 appended decision IDs, 249 selected reviews and 55 unavailable fields. Bank
+common equity/parent profit, US carrying proxies and the India stationary reference
+are applied only to drafts. Historical inputs and hypothetical scenarios are
+separate. All 11 promotion attempts remain blocked; source facts and saved models
+are unchanged. The [checkpoint](../archive/checkpoints/2026/financial-input-review-2026-11-02.md)
+retains the interrupted save, exact retry, regression repairs and runtime proof.
 
 ### Imported benchmark versions
 

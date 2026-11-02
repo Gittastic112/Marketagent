@@ -1,0 +1,957 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-02T23:30:11.036325+00:00",
+  "status": "applied_and_verified",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "scope": "Dated source-supported additions and explicit unavailable comparison-price review. No live price or complete valuation claim.",
+  "companies": [
+    {
+      "ticker": "HDFCBANK",
+      "company_id": 8,
+      "draft_id": 5,
+      "decision_id": "M06-HDFCBANK-HISTORICAL-EXTENSION-20261102",
+      "model_type": "financial_services",
+      "source_input_signature": "501f0bcb8f88d20d7a9f4dcb9651790edd22477ad6ffa0c8afee7869917c13ca",
+      "financial_history_signature": "9ee9f79e79ee02e93db0f5e4eb658e51d31fbf925532191a38569c8483552c94",
+      "reviewed_fields_additions": [
+        "current_market_price"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
+      },
+      "sources": [],
+      "packet": null,
+      "uncertainty": [],
+      "assumptions_patch": {
+        "current_market_price": null
+      },
+      "saved_story_sha256": "7ce52dd768f08a65bbdc1786be101542d1c871b31bcfe0d75c5563da24a61317",
+      "current_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "diluted_shares",
+        "current_market_price"
+      ]
+    },
+    {
+      "ticker": "ICICIBANK",
+      "company_id": 10,
+      "draft_id": 6,
+      "decision_id": "M06-ICICIBANK-HISTORICAL-EXTENSION-20261102",
+      "model_type": "financial_services",
+      "source_input_signature": "52c973abc4f4e2b265eb88a7989a37d4773c45d1e68a3bfc32b56b373a5333e9",
+      "financial_history_signature": "949f9be271f7dbeb16e1f3d2cff8cde695c5c4e1025f7aebaa07c9fb23759ca9",
+      "reviewed_fields_additions": [
+        "current_market_price"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
+      },
+      "sources": [],
+      "packet": null,
+      "uncertainty": [],
+      "assumptions_patch": {
+        "current_market_price": null
+      },
+      "saved_story_sha256": "e70f57bc09d9106b083b330ed209318f5d1197d4d940f6d67b107a077f8102be",
+      "current_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "diluted_shares",
+        "current_market_price"
+      ]
+    },
+    {
+      "ticker": "SBIN",
+      "company_id": 11,
+      "draft_id": 7,
+      "decision_id": "M06-SBIN-HISTORICAL-EXTENSION-20261102",
+      "model_type": "financial_services",
+      "source_input_signature": "1b0a8b09c8364fa37c8e9cd983d038ba26138de517d0e9fd334eab24df01b069",
+      "financial_history_signature": "b664cffa470281ada49fe754a545af6fa18dedd4e0172f6ea62a473d44dfcb7b",
+      "reviewed_fields_additions": [
+        "current_market_price"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
+      },
+      "sources": [],
+      "packet": null,
+      "uncertainty": [],
+      "assumptions_patch": {
+        "current_market_price": null
+      },
+      "saved_story_sha256": "81fd65af1330adf90485d0d75ac6a855373a5f8018e2806b9fcbdccdeaa13ceb",
+      "current_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "diluted_shares",
+        "current_market_price"
+      ]
+    },
+    {
+      "ticker": "AAPL",
+      "company_id": 1,
+      "draft_id": 1,
+      "decision_id": "M06-AAPL-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "f3a933a272393a5c4362c4e25f7c5ef3e47b0d928fed543a60c0854e9af34dd5",
+      "financial_history_signature": "8427f35a2cffd01fbd7d622ed5d197f6f7ff2747844c3d58ece62a0704a3e242",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "cross_holdings",
+        "minority_interests",
+        "preferred_stock"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "cross_holdings": "Estimate",
+        "minority_interests": "Estimate",
+        "preferred_stock": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "cross_holdings": "18,763m current marketable securities +77,723m noncurrent marketable securities =96,486m; cash35,934m is separate. Use identified gross reported values as a dated nonoperating-asset proxy. No liquidation or realization-tax deduction is assumed. Keep source amounts separate from this valuation method choice.",
+        "minority_interests": "The explicit consolidation policy identifies only the parent and wholly-owned subsidiaries. Infer no separately owned subsidiary equity within that reported historical consolidation scope. This is a dated scope-based inference, not an encoded zero balance or current NCI appraisal; it does not rest solely on absence of a balance-sheet line.",
+        "preferred_stock": "The FY2025 10-K incorporates the 2020 restated charter as Exhibit3.1. ArticleIII authorizes only common shares. Together with the wholly-owned consolidation scope, select no preferred equity deduction for the September27,2025 historical reference. This is a reported-scope inference, not a current balance or independent appraisal."
+      },
+      "sources": [
+        {
+          "source_id": "AAPL-2025-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+          "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+          "path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html"
+        },
+        {
+          "url": "https://www.sec.gov/Archives/edgar/data/320193/000119312520213158/d49399dex31.htm",
+          "as_of": "2025-09-27",
+          "locator": "Article III; incorporated in FY2025 10-K Exhibit3.1",
+          "basis": "Official web read 2026-11-02. Raw bytes not retained; no original hash claimed."
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/bounded-us-additions-20261102.json",
+        "sha256": "08d79f774b6c86028d7d7fca68cb599425f425683236c744ff70be82f3e80150"
+      },
+      "uncertainty": [
+        "Identified marketable-securities proxy only; does not assert that unquantified nonmarketable assets are zero. No source-certified complete award value: outstanding ESPP rights remain unquantified. Preferred stock can be resolved separately using the officially incorporated articles, pending original retention/hash."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "cross_holdings": 96486000000,
+        "minority_interests": 0,
+        "preferred_stock": 0
+      },
+      "saved_story_sha256": "77e14babe2f81782e78c352ff338c2009dda9389cdd85ee0de0cdff323e6de4a",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "debt_to_capital",
+        "discount_rate_currency",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "current_market_price",
+        "diluted_shares"
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "company_id": 3,
+      "draft_id": 8,
+      "decision_id": "M06-NVDA-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "b3dd4fcce8fbbe5f33f3668e5aa67271180f0512d074a94f4d388a5d3081fb40",
+      "financial_history_signature": "badb0e6984923464101e29df26df7e02e8622728a25929f2a6357beca90c9b47",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "cross_holdings",
+        "minority_interests"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "cross_holdings": "Estimate",
+        "minority_interests": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "cross_holdings": "51,951m marketable securities +22,251m non-marketable equity securities =74,202m; cash10,605m is separate. Use identified gross reported values as a dated nonoperating-asset proxy. No liquidation or realization-tax deduction is assumed. Keep source amounts separate from this valuation method choice.",
+        "minority_interests": "The explicit consolidation policy identifies only the parent and wholly-owned subsidiaries. Infer no separately owned subsidiary equity within that reported historical consolidation scope. This is a dated scope-based inference, not an encoded zero balance or current NCI appraisal; it does not rest solely on absence of a balance-sheet line."
+      },
+      "sources": [
+        {
+          "source_id": "NVDA-2026-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+          "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+          "path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html"
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/bounded-us-additions-20261102.json",
+        "sha256": "08d79f774b6c86028d7d7fca68cb599425f425683236c744ff70be82f3e80150"
+      },
+      "uncertainty": [
+        "The source calls equity-method investments immaterial but does not quantify them. Do not present the identified investment proxy as an exhaustive current market appraisal. Debt still lacks independently quantified finance-lease liability. Combined leasehold-improvement/finance-lease asset amortization is not a liability proxy. January25 ESPP rights are not resolved by a proxy estimate for a purchase period endingAugust31."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "cross_holdings": 74202000000,
+        "minority_interests": 0
+      },
+      "saved_story_sha256": "f0f72340d49abb929b55c97511d439aceaa27c7f0aaafdbdbc92bcd64b58a31d",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt_to_capital",
+        "discount_rate_currency",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares",
+        "debt"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "current_market_price",
+        "diluted_shares",
+        "debt"
+      ]
+    },
+    {
+      "ticker": "GOOG",
+      "company_id": 4,
+      "draft_id": 9,
+      "decision_id": "M06-GOOG-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "a9e64c04312188953cbb44d1a2c2b3d58997193abbf2e8ff58d09b2b103f5a30",
+      "financial_history_signature": "399f9694e608c41529308fdf9ec5884b5e0c8b5eaa40ee09ad3f4cb78accbcdf",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "cross_holdings"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "cross_holdings": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "cross_holdings": "96,135m marketable securities +68,687m nonmarketable securities =164,822m. Nonmarketable independently reconciles64,094m measurement-alternative equity +4,593m equity-method/other. Cash30,708m is separate; no addition for subsequent January2026 gains. Use identified gross reported values as a dated nonoperating-asset proxy. No liquidation or realization-tax deduction is assumed. Keep source amounts separate from this valuation method choice."
+      },
+      "sources": [
+        {
+          "source_id": "GOOG-2025-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+          "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+          "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html"
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/bounded-us-additions-20261102.json",
+        "sha256": "08d79f774b6c86028d7d7fca68cb599425f425683236c744ff70be82f3e80150"
+      },
+      "uncertainty": [
+        "GOOG and GOOGL share issuer balances; never sum the duplicates. Parent-share awards can be refined from the2026 proxy, but Other Bets subsidiary/cash awards still need a consistent treatment with NCI/liabilities. Carrying values are not current market values."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "cross_holdings": 164822000000
+      },
+      "saved_story_sha256": "dfcaa33da80d3a0a966bfd25a99ef1e1d8629b268eaed2b3bed24d2b394d820c",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "debt_to_capital",
+        "discount_rate_currency",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "current_market_price",
+        "diluted_shares"
+      ]
+    },
+    {
+      "ticker": "MSFT",
+      "company_id": 5,
+      "draft_id": 10,
+      "decision_id": "M06-MSFT-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "cd600ab0661afe9f5d81faccc9c88212e81ed5e63206ec61da7f17a4d4a042ec",
+      "financial_history_signature": "1954b3e891827557f5d3574a479e46ea46fee406115eb4625672d3fca188cfa9",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "cross_holdings"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "cross_holdings": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "cross_holdings": "55,908m short-term investments +36,348m equity/other investments -192m short-term derivative assets =92,064m identified debt/equity securities. Independently:55,716m short-term debt +9,108m long-term debt investments +27,240m long-term equity investments. Cash20,935m is separate. Use identified gross reported values as a dated nonoperating-asset proxy. No liquidation or realization-tax deduction is assumed. Keep source amounts separate from this valuation method choice."
+      },
+      "sources": [
+        {
+          "source_id": "MSFT-2026-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+          "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+          "path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html"
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/bounded-us-additions-20261102.json",
+        "sha256": "08d79f774b6c86028d7d7fca68cb599425f425683236c744ff70be82f3e80150"
+      },
+      "uncertainty": [
+        "Exclude192m derivative assets rather than treating operating/financial hedge assets as uncomplicated investment assets. Broader net derivative treatment remains outside this narrow proxy. NCI/preferred remain unsupported. Proxy plan data include acquisition options and target-performance PSAs, so a zero-option fact is not supported."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "cross_holdings": 92064000000
+      },
+      "saved_story_sha256": "481d35228fce951b31d13ea3fc1fea189d0aa79d57bb72581dc6e99f15857eb4",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "debt_to_capital",
+        "discount_rate_currency",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares",
+        "preferred_stock",
+        "minority_interests"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "current_market_price",
+        "diluted_shares",
+        "preferred_stock",
+        "minority_interests"
+      ]
+    },
+    {
+      "ticker": "AMZN",
+      "company_id": 6,
+      "draft_id": 11,
+      "decision_id": "M06-AMZN-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "25e406004ce94fb174b155220ca1e4fe98bc871d9e1ff4dc70801fe99afa76d2",
+      "financial_history_signature": "cf6f481f6d774da2c3eb1a4d95e07e01961ec9bdd6a7b5eb026dec8ace62337e",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "diluted_shares",
+        "employee_options_value",
+        "cross_holdings"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "diluted_shares": "Estimate",
+        "employee_options_value": "User Assumption",
+        "cross_holdings": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "diluted_shares": "Use the Note 8 source-rounded 11.0 billion common shares plus ALL vested/unvested outstanding stock awards as a dated full-issuance denominator. Assume all awards vest without forfeiture or illiquidity discount. Do not add the 222.5 million RSUs again, do not add future ungranted plan capacity, and do not use annual EPS averages. This is a scenario denominator, not an exact share fact.",
+        "employee_options_value": "Paired method exclusion: existing stock awards are represented in the full-issuance denominator, so do not subtract their value again. Zero does not assert that awards have no economic value. Assume no exercise proceeds in this conservative full-issuance illustration. Never apply this field alone or pair it with a basic/weighted-average denominator.",
+        "cross_holdings": "Approximate gross reported-value proxy: 36.219bn marketable securities +45.8bn Anthropic convertible notes +16.2bn private equity +0.659bn equity-method investments +2.7bn warrants. This includes securities beyond literal equity cross-holdings because the engine adds this field as nonoperating assets. Cash86.810bn remains separate. Do not add Anthropic preferred14.8bn again; it is within private equity16.2bn. No liquidation, realization-tax or subsequent-event uplift is assumed. Investment income is below operating income, so retained FCFF margins do not already capitalize it."
+      },
+      "sources": [
+        {
+          "source_id": "AMZN-2025-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+          "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+          "path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html"
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/amazon-dated-followup-20261102.json",
+        "sha256": "2205d067b42b9325cbf262c4bac15bb90687795f962d68dc7305218c106d878f"
+      },
+      "uncertainty": [
+        "Retrospective historical-input research scenario. No current share, investment, price, or fair-value claim. Existing reviewed forecasts remain separately hypothetical."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "diluted_shares": 11000000000,
+        "employee_options_value": 0,
+        "cross_holdings": 101578000000
+      },
+      "saved_story_sha256": "c5a3eb23df364dbdfbc7d10ec400c734f3294a6eb413f04c9c9d496188e066ba",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "debt_to_capital",
+        "diluted_shares",
+        "discount_rate_currency",
+        "employee_options_value",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "minority_interests"
+      ],
+      "nullable_fields_from_initial": [
+        "current_market_price",
+        "minority_interests"
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "company_id": 12,
+      "draft_id": 12,
+      "decision_id": "M06-GOOGL-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "2ec40123a2c67eb53588102d608099d8ec2ff8863427b5ea58e192a9706c90f9",
+      "financial_history_signature": "399f9694e608c41529308fdf9ec5884b5e0c8b5eaa40ee09ad3f4cb78accbcdf",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "cross_holdings"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "cross_holdings": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "cross_holdings": "96,135m marketable securities +68,687m nonmarketable securities =164,822m. Nonmarketable independently reconciles64,094m measurement-alternative equity +4,593m equity-method/other. Cash30,708m is separate; no addition for subsequent January2026 gains. Use identified gross reported values as a dated nonoperating-asset proxy. No liquidation or realization-tax deduction is assumed. Keep source amounts separate from this valuation method choice."
+      },
+      "sources": [
+        {
+          "source_id": "GOOG-2025-sec",
+          "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+          "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+          "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html"
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/us/bounded-us-additions-20261102.json",
+        "sha256": "08d79f774b6c86028d7d7fca68cb599425f425683236c744ff70be82f3e80150"
+      },
+      "uncertainty": [
+        "GOOG and GOOGL share issuer balances; never sum the duplicates. Parent-share awards can be refined from the2026 proxy, but Other Bets subsidiary/cash awards still need a consistent treatment with NCI/liabilities. Carrying values are not current market values."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "cross_holdings": 164822000000
+      },
+      "saved_story_sha256": "c373a69546fa0307d027d95c2e2186546280dea21405c65afbf6cf4eab6c3b01",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "beta",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "debt_to_capital",
+        "discount_rate_currency",
+        "equity_risk_premium",
+        "equity_to_capital",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "pre_tax_cost_of_debt",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "current_market_price",
+        "diluted_shares"
+      ]
+    },
+    {
+      "ticker": "RELIANCE",
+      "company_id": 7,
+      "draft_id": 3,
+      "decision_id": "M06-RELIANCE-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30",
+      "financial_history_signature": "40c6ddf084a8bcd523993024176f988a523757f4edb4e3420e2edb3b99bbd0fe",
+      "reviewed_fields_additions": [
+        "current_market_price",
+        "basic_shares",
+        "diluted_shares",
+        "employee_options_value"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption",
+        "scenario": "Estimate",
+        "basic_shares": "Estimate",
+        "diluted_shares": "Estimate",
+        "employee_options_value": "Estimate"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted.",
+        "parent_awards": "Assume every disclosed outstanding RIL option converts one-for-one. Add 907,052 to the March31 issued13,532,472,634; include unvested options, assume no forfeiture, and credit no exercise proceeds. Zero additional parent option deduction means denominator treatment, not zero economic awards.",
+        "subsidiary_awards": "Jio awards cannot be added as RIL shares. Value Jio ordinary equity at its disclosed March31 consolidated book equity excluding its lower-tier NCI; compute the incremental loss of RIL ownership if all Jio options convert. This is a historical carrying-value proxy with no exercise-proceeds credit, not an option-pricing or market-value estimate.",
+        "jio_parent_book_equity_inr": 3359770000000,
+        "jio_current_ril_fraction": 0.6642601147623517,
+        "formula": "(8939+327038)*10000000 * (5937841645/8939030830) * (10280000/(8939030830+10280000))",
+        "unrounded_incremental_ril_award_loss_inr": 2563605805.092826,
+        "selected_incremental_ril_award_loss_inr": 2564000000,
+        "precision": "Round to nearest INR1 million because book values are rounded and carrying equity is only a proxy.",
+        "nci_no_double_count": "Keep prior aggregate NCI carrying deduction. Add only RIL incremental Jio dilution loss, not full Jio award value. E*(1-p)+E*p*A/(S+A) equals E*(S-H)/(S+A)+E*A/(S+A), where p=H/S. Existing outside owners also bear dilution; this identity keeps their economic share from being deducted twice.",
+        "expense_scope": "Retain share-based employee cost in reported operating margin; do not add it back. Parent awards use denominator only; Jio incremental award claim uses employee_options_value only.",
+        "coverage": "Covers the two material equity-settled award populations disclosed in RIL consolidated note28.2. It does not certify absence of every possible undisclosed/immaterial subsidiary claim."
+      },
+      "sources": [
+        {
+          "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+          "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+          "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf"
+        },
+        {
+          "source_id": "JIO-STANDALONE-2026-WEB",
+          "url": "https://rilstaticasset.akamaized.net/sites/default/files/2026-05/Jio_Platforms_Limited.pdf",
+          "as_of": "2026-03-31",
+          "pdf_pages": [
+            27,
+            28,
+            48
+          ],
+          "original_bytes_sha256": null,
+          "basis": "Read through web tool from issuer-linked CDN. Direct byte retrieval was rejected because this CDN is outside the shell network allowlist. No raw-byte hash or database ingestion is claimed."
+        }
+      ],
+      "packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/india/historical-completion-candidate.json",
+        "sha256": "2453e1ccd53e29373e43c0e721d479996555160659a116e5e3ec97b72c53bba3"
+      },
+      "uncertainty": [
+        "Book equity may differ substantially from economic equity value. Ignoring proceeds and forfeitures is conservative within this proxy; it is not a reliable upper bound for actual fair-value dilution.",
+        "RIL consolidated note28.2 describes an eight-year Jio exercise period whereas the standalone Jio note26 describes seven years. No option-pricing or remaining-life estimate is made; the matched March31 outstanding count agrees.",
+        "These dated inputs cannot be rolled to November2 without official post-March capital/award and ownership reconciliation. No current price comparison is supplied.",
+        "Existing cash, investment, debt and NCI selections remain explicitly historical carrying proxies. This award decision does not transform them into fair values."
+      ],
+      "assumptions_patch": {
+        "current_market_price": null,
+        "scenario": "31 Mar 2026 INR stationary reference with disclosed awards (Estimate)",
+        "basic_shares": 13532472634,
+        "diluted_shares": 13533379686,
+        "employee_options_value": 2564000000
+      },
+      "saved_story_sha256": "0ce47fa88984e2d734e5026047a45fd6f75807ad621230bfc7ceb3f8fd9dd449",
+      "current_reviewed_fields": [
+        "basic_shares",
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "depreciation",
+        "diluted_shares",
+        "discount_rate_currency",
+        "employee_options_value",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "scenario",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "beta",
+        "equity_risk_premium",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital"
+      ],
+      "nullable_fields_from_initial": [
+        "current_market_price",
+        "beta",
+        "equity_risk_premium",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital"
+      ]
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "company_id": 9,
+      "draft_id": 4,
+      "decision_id": "M06-BHARTIARTL-HISTORICAL-EXTENSION-20261102",
+      "model_type": "fcff_dcf",
+      "source_input_signature": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba",
+      "financial_history_signature": "aac752b882771f3f3d911b5908ee82e5c76a3c935ec7418bdca6e52a70d0f969",
+      "reviewed_fields_additions": [
+        "current_market_price"
+      ],
+      "claim_types": {
+        "current_market_price": "User Assumption"
+      },
+      "rationale": {
+        "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
+      },
+      "sources": [],
+      "packet": null,
+      "uncertainty": [],
+      "assumptions_patch": {
+        "current_market_price": null
+      },
+      "saved_story_sha256": "9fd7a8c7d6ed4925b055cb2f45f2d33104bbec105ee249264ff718b3562744c7",
+      "current_reviewed_fields": [
+        "book_value_of_equity",
+        "cash",
+        "cash_flow_currency",
+        "cross_holdings",
+        "current_market_price",
+        "current_operating_margin",
+        "debt",
+        "depreciation",
+        "discount_rate_currency",
+        "minority_interests",
+        "net_income",
+        "operating_leases",
+        "preferred_stock",
+        "projection_years_count",
+        "reinvestment_method",
+        "revenue_growth_years_json",
+        "risk_free_rate",
+        "sales_to_capital_ratio",
+        "scenario",
+        "starting_invested_capital",
+        "starting_revenue",
+        "target_operating_margin",
+        "tax_rate",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "wacc_start",
+        "wacc_terminal"
+      ],
+      "remaining_unreviewed_from_initial": [
+        "employee_options_value",
+        "diluted_shares",
+        "beta",
+        "equity_risk_premium",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital"
+      ],
+      "nullable_fields_from_initial": [
+        "employee_options_value",
+        "diluted_shares",
+        "current_market_price",
+        "beta",
+        "equity_risk_premium",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital"
+      ]
+    }
+  ],
+  "verified_sources": [
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html",
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html",
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html",
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0"
+    }
+  ],
+  "new_financial_field_reviews": 14,
+  "unavailable_comparison_price_reviews": 11,
+  "current_reviewed_field_count": 274,
+  "remaining_unreviewed_fields_from_initial": 31,
+  "models_promoted": 0,
+  "saved_valuations_changed": false,
+  "financial_history_changed": false,
+  "only_drafts_changed": true,
+  "browser_tables_unchanged": 109,
+  "browser_views": 30,
+  "actual_user_use_days": 0,
+  "publication_boundary": "Source packets named by path/hash may be local-only. Compact decisions and URLs are published; originals, copied report tables, browser captures, logs and backups are retained locally. No independent human or complete company-basis certification.",
+  "initial_browser_failure": "The expanding-section test used a shrinking locator list, then timed out. The corrected harness passes all30 views; both passes preserve109 tables. No application repair or repeated financial application was needed.",
+  "receipts": [
+    {
+      "path": "output/milestones/release-publication-20261102/application/application.json",
+      "sha256": "d4171f216460dee1b75e5d97ccf8e5d19225e9f0c4498be9d2cc3d9d77c5ba92"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/application/database-effects.json",
+      "sha256": "4ea0d11ba7e708f3a950d3388af9e1658389dbaccdb8ce56eedc2ca7c096919b"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/browser/results.json",
+      "sha256": "b9dcc78bb17d0b41bab0f4a8710e11ec4a382e3c342665775233b6c4ca27c34a"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/browser/database-effects.json",
+      "sha256": "110c85d4e007164bc8642053acda08b7e4d166dd6fe6c68412f72d0b55b1d35b"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/browser-r2/results.json",
+      "sha256": "83afec62713201c510b6b1c56c6e1a52d3f96f6e4af125fc68b00a2673e2dee1"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/browser-r2/database-effects.json",
+      "sha256": "8ceb1fa13a54c8c148a5923ce1e74b50932c956f9d190ce05ba84e1e8ac185df"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/runtime-final.json",
+      "sha256": "a9c3ebdf71d5e9cdd4f65b8e8fc4a64f362f250916bb22f84eeeb5001b0c3237"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/final-backup/receipt.json",
+      "sha256": "a1c8b963c13cb9d63dc23014dccf8e70ca05c7abef572fca510fd2c4e0766cd9"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/release-final/rollout/receipt.json",
+      "sha256": "3ea1eecf4c0d4a25052e9a1357e8531769f43a9fc0053ff1b128807ef31ca93c"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/release-final/source-manifest.json",
+      "sha256": "7e2fe7f7b8b6bd12ed4faacd1fe8e6d98e9087e77629353aa1766098b71d8cd5"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/rollback-archive/complete.json",
+      "sha256": "900c08663b4a3419680dd0efaf887cfc730789c31b89dba0b557164452f8f1d1"
+    },
+    {
+      "path": "output/milestones/release-publication-20261102/empty-directory-cleanup.json",
+      "sha256": "1e4f0e60a31aaca18d1163324457ee6453e226d0acff874868e2c13ee2971eb4"
+    }
+  ]
+}

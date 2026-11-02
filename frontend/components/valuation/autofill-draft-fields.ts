@@ -53,7 +53,7 @@ export const FIELD_GROUPS: Array<{ title: string; fields: FieldDefinition[]; }> 
       { key: "employee_options_value", label: "Employee Options Value" },
       { key: "diluted_shares", label: "Diluted Shares" },
       { key: "basic_shares", label: "Basic Shares", required: false },
-      { key: "current_market_price", label: "Current Market Price" },
+      { key: "current_market_price", label: "Comparison Price (optional)", required: false },
     ],
   },
   {

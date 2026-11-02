@@ -189,7 +189,8 @@ def test_reviewed_million_scale_is_not_mixed_with_absolute_sec_candidates(db_ses
     db_session.add(FinancialMetric(period_id=period.id, metric_name="revenue", value=2, unit="USD million"))
     db_session.commit()
     result = AssumptionAutofillEngine.draft_assumptions(db_session, company.id)
-    assert result["assumptions"]["starting_revenue"] == 2
+    assert result["assumptions"]["starting_revenue"] == 2_000_000
+    assert result["provenance"]["starting_revenue"]["original_value"] == 2
     assert result["assumptions"]["capex"] is None
 
 

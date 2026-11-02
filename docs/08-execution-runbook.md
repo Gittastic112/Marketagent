@@ -30,6 +30,50 @@ Compose explicitly select the test target. Supported Linux/Python 3.14 environme
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
 
+## Rotate the local database password
+
+This is an operator maintenance step, not an instruction for an agent to read
+protected settings. It changes the existing role password without dropping data.
+Finish active application writes first, retain a fresh verified backup, and keep
+the old password privately until authentication is verified. Do not paste either
+password into chat or commands. Never use `docker compose down -v`.
+
+1. Privately add POSTGRES_PASSWORD to the root `.env`: at least 32 random URL-safe
+   characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
+   separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
+   PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
+2. From the repository root, use the verified November image override and validate
+   configuration without printing it:
+
+   ~~~bash
+   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml config --quiet
+   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml stop frontend backend scheduler source_scheduler
+   docker exec -it market_intel_postgres psql -X -U marketintel -d marketintel
+   ~~~
+
+3. At the database prompt, enter `\password marketintel`, then enter the new
+   password twice at the hidden prompts. Use `\q` to exit. This changes the role;
+   the PostgreSQL container's startup variable alone cannot do that for an existing volume.
+4. Recreate clients and PostgreSQL with the matching private setting, preserving
+   the current image versions and stopped optional services:
+
+   ~~~bash
+   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
+   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml create --no-build source_scheduler pgadmin
+   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml ps --all
+   ~~~
+
+5. Verify backend/frontend/database health, sign-in and an existing company page.
+   Test password authentication with `docker exec -it market_intel_postgres psql
+   -h 127.0.0.1 -U marketintel -d marketintel -W`, then `SELECT 1;` and `\q`.
+   Source scheduling and pgAdmin must remain stopped. Record status only, never
+   credential values. If clients fail, keep them stopped and correct the matching
+   private setting; the same local database prompt can reset the role without a
+   restore or data loss. Recheck all table/asset fingerprints afterward.
+
+The configuration guard is tested; the real rotation is not complete until the
+operator performs the private step and authentication/data preservation pass.
+
 ## Dependency and container updates
 
 Edit direct requirements intentionally, then regenerate locks with Python 3.14,
@@ -228,7 +272,7 @@ audit environment. Do not install audit tooling into normal runtime containers.
 CI runs both on pushes/PRs. Rebuild and run behavioral tests after changes;
 clean advisory results are not a penetration test or a container OS scan.
 
-From root, with local test credentials configured:
+From root, with frontend test dependencies installed:
 
 ~~~bash
 ./scripts/run_browser_workflows.sh valuation-draft.spec.ts
@@ -240,6 +284,12 @@ From root, with local test credentials configured:
 
 These launch separate disposable projects. Read their cleanup targets before
 running. Browser ports default to 13000/18000, not the normal 3000/8000 stack.
+The browser runner supplies disposable authentication defaults; explicitly exported
+test credentials override them. Compose uses `/dev/null` as its environment file,
+and Playwright never loads the repository's private settings. Direct Playwright
+invocations must receive their test credentials through the process environment;
+their default target is also port 13000. The runner checks occupied ports before
+cleanup and uses only the installed Playwright package, without downloading one.
 Fixture mutations send the signed-in page's Origin. A container browser base URL
 must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
 host/Origin guards intact. If shared filesystem trace folders fail, write artifacts

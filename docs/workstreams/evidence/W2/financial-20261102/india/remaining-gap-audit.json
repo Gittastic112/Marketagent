@@ -1,0 +1,678 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-M06-INDIA-GAP-AUDIT-20261102",
+  "reviewed_on": "2026-11-02",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "read_only": true,
+  "sources": {
+    "RELIANCE-2026-direct": {
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+      "verified_sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/RELIANCE-2026-direct.txt",
+      "extracted_text_sha256": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737"
+    },
+    "BHARTIARTL-2026": {
+      "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/BHARTIARTL-2026.pdf",
+      "verified_sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/BHARTIARTL-2026.txt",
+      "extracted_text_sha256": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1"
+    },
+    "HDFCBANK-2026": {
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+      "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2026.txt",
+      "verified_sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+      "extracted_text_sha256": "cab44fec3011243c652b6bc166f4166397539ba0f9cc33d89ee9709f78642263"
+    },
+    "ICICIBANK-2026": {
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+      "sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/ICICIBANK-2026.pdf",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/ICICIBANK-2026.txt",
+      "verified_sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+      "extracted_text_sha256": "66c68a5613198a7be7115e636841fab9a74f57eb5f309a87db7cb9101401f15c"
+    },
+    "SBIN-2026": {
+      "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+      "sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/SBIN-2026.pdf",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/SBIN-2026.txt",
+      "verified_sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+      "extracted_text_sha256": "c0e3c2875a3159e1a5dbdd19ed8021b9023a28dee4fa9609a7ab96184862ea63"
+    }
+  },
+  "additional_primary_web_sources": [
+    {
+      "source_id": "JIO-STANDALONE-2026-WEB",
+      "url": "https://rilstaticasset.akamaized.net/sites/default/files/2026-05/Jio_Platforms_Limited.pdf",
+      "discovery_url": "https://www.ril.com/investors/subsidiaries-associates/financial-statements-of-subsidiaries/financial-statements-of-subsidiaries-2025-26",
+      "as_of": "2026-03-31",
+      "read_on": "2026-11-02",
+      "pdf_pages": [
+        27,
+        28,
+        48
+      ],
+      "facts": {
+        "issued_ordinary_shares": 8939030830,
+        "ril_ordinary_holding": 5937841645,
+        "outstanding_options": 10280000
+      },
+      "original_bytes_sha256": null,
+      "basis": "Read through web tool from issuer-linked CDN. Direct byte retrieval was rejected because this CDN is outside the shell network allowlist. No raw-byte hash or database ingestion is claimed.",
+      "cross_checks": "Exact RIL holding and award count match retained original. Exact share count times INR10 rounds to retained AOC-1 capital INR8,939.03 crore. Only ordinary equity is issued; preference share capital in note9 is authorised."
+    },
+    {
+      "source_id": "AIRTEL-AFRICA-2026-NCI-WEB",
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/30-investments-in-subsidiaries-17304.html",
+      "as_of": "2026-03-31",
+      "read_on": "2026-11-02",
+      "facts": {
+        "amc_subgroup_equity_usd_m": 542,
+        "amc_accumulated_nci_usd_m": 118,
+        "effective_amc_nci_fraction": 0.2215,
+        "excluded_lower_tier_nci_usd_m": 9
+      },
+      "original_bytes_sha256": null
+    },
+    {
+      "source_id": "AIRTEL-AFRICA-2026-PUT-WEB",
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/35-fair-value-of-financial-assets-and-liabilities-17309.html",
+      "as_of": "2026-03-31",
+      "read_on": "2026-11-02",
+      "facts": {
+        "put_carrying_value_usd_m": 515,
+        "put_fair_value_table_usd_m": 517
+      },
+      "original_bytes_sha256": null
+    },
+    {
+      "source_id": "AIRTEL-AFRICA-2026-PUT-TERMS-WEB",
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/directors-report-17269.html",
+      "as_of": "2026-03-31",
+      "read_on": "2026-11-02",
+      "facts": {
+        "put_beneficiaries": [
+          "The Rise Fund II Aurora SARL",
+          "Mastercard Asia/Pacific Pte Ltd"
+        ],
+        "all_amc_minority_investors": [
+          "The Rise Fund II Aurora SARL",
+          "Mastercard Asia/Pacific Pte Ltd",
+          "Qatar Holdings LLC",
+          "Chimetec Holdings LLC"
+        ]
+      },
+      "original_bytes_sha256": null
+    },
+    {
+      "source_id": "AIRTEL-AFRICA-H1-2026-OCTOBER-EVENT-WEB",
+      "url": "https://www.londonstockexchange.com/en/news/article/AAF/half-year-report/22d9-02-fd-9e-d9-4dd185",
+      "as_of": "2026-09-30",
+      "published_on": "2026-10-29",
+      "read_on": "2026-11-02",
+      "facts": {
+        "post_september_listing_extinguishes_put": true,
+        "adjusting_at_september_30": false
+      },
+      "original_bytes_sha256": null,
+      "use": "Date-boundary evidence only. Do not remove March31 put because of an October event."
+    }
+  ],
+  "historical_packets_unchanged": {
+    "review_packet_sha256": "d7112187a294fb723f0f8cd592dc42c7beb4de133cdd9f576e8f332312bdd1f1",
+    "scenario_packet_sha256": "4a31dacec2caa470c4d736f3d93b428fe6fe312b12f0aa94d186722a689e7c4b"
+  },
+  "reliance": {
+    "award_candidate": "historical-completion-candidate.json",
+    "net_external_revenue_weights": {
+      "status": "review_concluded_unavailable",
+      "source_page": 129,
+      "unit": "INR crore",
+      "segments": [
+        "O2C",
+        "Oil and Gas",
+        "Retail",
+        "Digital Services",
+        "Others"
+      ],
+      "gross_external": [
+        658991,
+        19008,
+        365820,
+        59777,
+        72323
+      ],
+      "intersegment": [
+        3410,
+        4853,
+        5265,
+        116387,
+        8199
+      ],
+      "segment_gst": [
+        21429,
+        24,
+        42883,
+        26199,
+        9709
+      ],
+      "mechanical_external_minus_gst": [
+        637562,
+        18984,
+        322937,
+        33578,
+        62614
+      ],
+      "reported_group_net_revenue": 1075675,
+      "exact_missing_disclosure": "Segment revenue from external customers explicitly net of GST, or segment-level GST attributable to external versus intersegment turnover and the related consolidation elimination. The arithmetic sum reconciles but does not establish tax allocation.",
+      "usable_now": "Retain Diversified taxonomy. Gross-external percentages can be calculated as a separate gross-turnover analysis, but cannot be presented as the missing net-external revenue mix or installed as if comparable to net-revenue margin priors."
+    }
+  },
+  "airtel": {
+    "source_input_signature": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba",
+    "shares": {
+      "as_of": "2026-03-31",
+      "fully_paid_issued": 6093282313,
+      "partly_paid_issued": 1110668,
+      "treasury_shares_reported_thousands": 2497,
+      "parent_lti_options_reported_thousands": 3167,
+      "parent_full_conversion_reference_estimate": 6095062981,
+      "formula": "6093282313+1110668-2497000+3167000",
+      "rounding": "Treasury and award counts reported in thousands; result is an estimate, not exact shares.",
+      "method": "Would treat remaining partly-paid shares as fully paid and all parent awards as converted, credit no additional call/exercise proceeds, and remove treasury shares before adding all awards. Does not cover subsidiaries.",
+      "pdf_pages": [
+        238,
+        239,
+        246
+      ],
+      "ready_to_apply": false
+    },
+    "subsidiary_awards": {
+      "as_of": "2026-03-31",
+      "pdf_pages": [
+        246,
+        247
+      ],
+      "Nxtra_options": 60000,
+      "Africa_IPO_executive_options": 2452000,
+      "Africa_performance_awards": 4548000,
+      "Africa_restricted_awards": 1256000,
+      "Africa_deferred_bonus_shares": 713000,
+      "Indus_LTI_options": 1745000,
+      "count_precision": "Rounded to thousand shares; underlying companies differ.",
+      "closed_now": "Population and plan boundaries identified; do not add these numbers to Bharti parent shares.",
+      "required_for_carrying_conversion_proxy": "Matched-date subsidiary issued shares, treasury treatment, performance award share-conversion limits and parent economic ownership; corresponding consolidated ordinary-equity/earnings scope. A fair-value approach alternatively needs subsidiary equity/option valuation assumptions and matched terms."
+    },
+    "nci_put": {
+      "as_of": "2026-03-31",
+      "bharti_put_inr_m": 48729,
+      "bharti_aggregate_nci_inr_m": 469068,
+      "pdf_pages": [
+        218,
+        227,
+        241,
+        258
+      ],
+      "rollforward_inr_m": {
+        "opening": 46397,
+        "finance_cost": 551,
+        "dividend_adjustment": -2423,
+        "remeasurement": -535,
+        "fx": 4739,
+        "closing": 48729
+      },
+      "closed_now": "The put is a redemption obligation over TPG/Mastercard AMC shares; their corresponding minority equity remains recognised until exercise. All AMC NCI is not the same claim population as put holders.",
+      "not_valid": "Subtracting both full INR469068m NCI and INR48729m redemption liability without removing the put-covered equity counts underlying shares twice. Replacing all AMC NCI with the put also drops non-put minority claims.",
+      "exact_missing_disclosure": "March31 carrying amount/ownership attributable specifically to TPG and Mastercard within AMC and Bharti consolidated NCI, including lower-tier/FX and consolidation adjustments. With that mapping, replace the covered equity amount with a consistently selected redemption claim. October extinguishment is a separate later event.",
+      "additional_source_scope_conflict": "Bharti note38 uses a48-month description, whereas Airtel Africa note35 describes the extension to60months and separately reports USD515m carrying/517m fair value. Do not infer an exact INR fair-value replacement by translating either rounded USD number."
+    },
+    "perpetual_bonds": {
+      "source_note": "4(r), FY2026 report",
+      "closed_now": "Network i2i USD1000m perpetual bonds classified as NCI were redeemed in FY2025. Do not carry that historical issue forward as an extra FY2026 claim merely from generic share-rights wording."
+    },
+    "assumptions_patch": {
+    },
+    "reviewed_fields": [
+
+    ],
+    "no_complete_historical_valuation_claim": true
+  },
+  "banks": {
+    "parent_share_scope": [
+      {
+        "ticker": "HDFCBANK",
+        "issued": 15393368328,
+        "options": 233964038,
+        "units": 31719700,
+        "all_parent_awards_convert": 15659052066,
+        "pdf_pages": [
+          475,
+          510,
+          511
+        ],
+        "remaining": "Bank common-book basis presently excludes INR4,545.11crore separate employee-award reserve. A full-conversion equity basis must reconcile that reserve and all subsidiary award claims before promotion.",
+        "source_input_signature": "501f0bcb8f88d20d7a9f4dcb9651790edd22477ad6ffa0c8afee7869917c13ca",
+        "ready_to_apply_as_complete_consolidated_denominator": false,
+        "claim_type": "Estimate",
+        "parent_arithmetic_passed": true
+      },
+      {
+        "ticker": "ICICIBANK",
+        "issued": 7160112569,
+        "options": 145272095,
+        "units": 9952110,
+        "all_parent_awards_convert": 7315336774,
+        "pdf_pages": [
+          141,
+          180,
+          181,
+          182
+        ],
+        "remaining": "Life and General Insurance awards are separate claims on subsidiary shares. Cancelled Securities awards were replaced by parent awards and must not be added again.",
+        "source_input_signature": "52c973abc4f4e2b265eb88a7989a37d4773c45d1e68a3bfc32b56b373a5333e9",
+        "ready_to_apply_as_complete_consolidated_denominator": false,
+        "claim_type": "Estimate",
+        "parent_arithmetic_passed": true
+      },
+      {
+        "ticker": "SBIN",
+        "issued": 9230617586,
+        "options": null,
+        "units": null,
+        "all_parent_awards_convert": null,
+        "pdf_pages": [
+          305,
+          338,
+          354
+        ],
+        "remaining": "Equal reported basic/diluted EPS averages establish no EPS dilution for the period, not proof of zero outstanding or anti-dilutive instruments. Ending issued shares are factual. Group ESOP exercise notes do not provide complete outstanding awards.",
+        "source_input_signature": "1b0a8b09c8364fa37c8e9cd983d038ba26138de517d0e9fd334eab24df01b069",
+        "ready_to_apply_as_complete_consolidated_denominator": false,
+        "claim_type": "Fact",
+        "parent_arithmetic_passed": true
+      }
+    ],
+    "hdfc_subsidiary_awards": {
+      "source_pages": [
+        513,
+        514,
+        515,
+        516,
+        517,
+        521,
+        522,
+        526,
+        527
+      ],
+      "as_of": "2026-03-31",
+      "HDFC_Securities_options": 602704,
+      "HDB_Financial_options": 10526098,
+      "HDFC_ERGO_options": 8206561,
+      "HDFC_Capital_options": 131283,
+      "HDFC_Life_options_sum": 11019288,
+      "HDFC_Life_option_tranche_counts": [
+        68044,
+        725368,
+        85000,
+        130440,
+        262232,
+        20000,
+        255088,
+        59585,
+        120000,
+        170000,
+        149000,
+        4508539,
+        110990,
+        933786,
+        42000,
+        262486,
+        124000,
+        725291,
+        8000,
+        100000,
+        390000,
+        45213,
+        35000,
+        43500,
+        10000,
+        331915,
+        1303811
+      ],
+      "HDFC_Life_PRSU": 702152,
+      "HDFC_AMC_options": 5378785,
+      "HDFC_AMC_PSU": 499090,
+      "closure": "Original parent receipt highlighted Securities only. Full retained group notes additionally disclose HDB, ERGO, Capital, Life and AMC. Parent all-award denominator does not extinguish these subsidiary claims.",
+      "exact_remaining": "Reconcile date-matched subsidiary ordinary share capital/face values, treasury or employee-trust shares, maximum performance share conversion, ownership and parent common-equity/earnings carrying allocation. AOC1 page552 supplies rounded capital/reserves/ownership but has differing subsidiary accounting scopes; it is not by itself the full diluted consolidated bridge."
+    },
+    "icici_subsidiary_awards": {
+      "source_pages": [
+        166,
+        180,
+        181,
+        182,
+        183,
+        184,
+        185,
+        186
+      ],
+      "as_of": "2026-03-31",
+      "Life_options": 24556368,
+      "Life_units": 1664819,
+      "General_options": 10752805,
+      "General_units": 1107145,
+      "Securities_options": 0,
+      "Securities_units": 0,
+      "zero_basis": "Securities tables explicitly show no outstanding options/units; they were cancelled and replaced by ICICI Bank awards in FY2025. This zero does not apply to Life/General claims.",
+      "exact_remaining": "Life and General ordinary shares/treasury and consistent parent-attributable carrying equity/earnings after all-award conversion. Do not combine different subsidiary GAAP AOC1 values with bank consolidation values without reconciliation."
+    },
+    "sbi_subsidiary_scope": {
+      "source_page": 338,
+      "as_of": "2026-03-31",
+      "shares_issued_on_award_exercise": {
+        "SBI_Cards": 243297,
+        "SBI_Life": 957038,
+        "SBI_Funds_Management": 2123601,
+        "SBI_General": 131432,
+        "Yes_Bank_associate": 25641735
+      },
+      "closed_now": "These are exercises during the period, already included in ending ownership and accounting equity. They are not outstanding unexercised grants and must not be added again.",
+      "exact_remaining": "FY2026 share-based-payment and capital notes of Cards, Life, Funds Management and General, plus relevant associate dilution where the carrying/earnings basis is used. Need year-end unexercised/conditional awards and their underlying equity scope, not exercise totals."
+    },
+    "model_requirements": {
+      "required_fields": [
+        "projection_years_count",
+        "book_value_of_equity",
+        "net_income",
+        "target_roe",
+        "cost_of_equity",
+        "terminal_growth_rate",
+        "diluted_shares",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "source_files": [
+        "backend/app/services/assumption_provenance.py",
+        "backend/app/services/financial_services_engine.py"
+      ],
+      "formula": "Parent book equity + PV excess equity returns; divide by diluted_shares.",
+      "critical_behavior": "Bank engine does not deduct employee_options_value, debt, leases or NCI. A nonzero awards field alone has no effect. Subsidiary dilution must be reflected consistently in pro forma parent equity and income, or a separately reviewed engine claim deduction must be implemented. Parent option-share dilution cannot represent subsidiary awards.",
+      "not_required": "No invented operating-company revenue, FCFF margin or WACC components are needed for the bank engine."
+    },
+    "complete_candidate_patches": [
+
+    ]
+  },
+  "checks": [
+    {
+      "name": "Reliance external turnover sum",
+      "actual": 1175919,
+      "expected": 1175919,
+      "passed": true
+    },
+    {
+      "name": "Reliance GST sum",
+      "actual": 100244,
+      "expected": 100244,
+      "passed": true
+    },
+    {
+      "name": "Reliance external-minus-GST arithmetic only",
+      "actual": 1075675,
+      "expected": 1075675,
+      "passed": true,
+      "method_not_approved": true
+    },
+    {
+      "name": "Airtel put rollforward",
+      "actual": 48729,
+      "expected": 48729,
+      "passed": true
+    },
+    {
+      "name": "Bank all-parent-award arithmetic",
+      "passed": true
+    }
+  ],
+  "source_locator_checks": [
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Closing balance 48,729 46,397",
+      "pdf_pages": [
+        258
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "When the Group writes a put option to NCI",
+      "pdf_pages": [
+        217
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "voluntarily redeemed perpetual bonds amounting",
+      "pdf_pages": [
+        227
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Closing balance 2,497 3,937",
+      "pdf_pages": [
+        239
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at end of year 3,167 5.00",
+      "pdf_pages": [
+        193,
+        246
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at end of year 60 5,780",
+      "pdf_pages": [
+        246
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at end of year 2,452 84",
+      "pdf_pages": [
+        246
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at the end of the year 4,548 -",
+      "pdf_pages": [
+        246
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at the end of the year 1,256 -",
+      "pdf_pages": [
+        246
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at the end of the year 713 -",
+      "pdf_pages": [
+        247
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-2026",
+      "anchor": "Outstanding at end of period 1,745 10",
+      "pdf_pages": [
+        247
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "15,39,33,68,328",
+      "pdf_pages": [
+        253,
+        357,
+        475,
+        613,
+        614
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 23,39,64,038",
+      "pdf_pages": [
+        510
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "3,17,19,700",
+      "pdf_pages": [
+        380,
+        381,
+        511
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 6,02,704",
+      "pdf_pages": [
+        513
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 1,05,26,098",
+      "pdf_pages": [
+        514
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 82,06,561",
+      "pdf_pages": [
+        516
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 131,283",
+      "pdf_pages": [
+        517
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 7,02,152",
+      "pdf_pages": [
+        521
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 53,78,785",
+      "pdf_pages": [
+        527
+      ]
+    },
+    {
+      "source_id": "HDFCBANK-2026",
+      "anchor": "Outstanding at the end of the year 4,99,090",
+      "pdf_pages": [
+        527
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "7,121,927,830 equity shares",
+      "pdf_pages": [
+        15,
+        141
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Add: 38,184,739 equity shares",
+      "pdf_pages": [
+        15,
+        141
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 145,272,095",
+      "pdf_pages": [
+        45,
+        181
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 9,952,110",
+      "pdf_pages": [
+        46,
+        182
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 24,556,368",
+      "pdf_pages": [
+        183
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 1,664,819",
+      "pdf_pages": [
+        184
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 10,752,805",
+      "pdf_pages": [
+        184
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-2026",
+      "anchor": "Outstanding at the end of the year 1,107,145",
+      "pdf_pages": [
+        185
+      ]
+    },
+    {
+      "source_id": "SBIN-2026",
+      "anchor": "Number of Equity Shares outstanding at the end of the year 923,06,17,586",
+      "pdf_pages": [
+        285,
+        354
+      ]
+    },
+    {
+      "source_id": "SBIN-2026",
+      "anchor": "SBI Cards and Payment Services Limited has allotted 2,43,297",
+      "pdf_pages": [
+        338
+      ]
+    }
+  ],
+  "model_source_hashes": {
+    "backend/app/services/assumption_provenance.py": "fcd8841e5c09d8b249eb1dbce744e942686217b5939e95ddc60d9efddb97c1d4",
+    "backend/app/services/financial_services_engine.py": "47e5654f16f991b071bcb0dbd4a48412227955519ccbf8215ee902f83932fbeb"
+  }
+}

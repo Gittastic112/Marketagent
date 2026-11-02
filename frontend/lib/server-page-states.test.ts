@@ -54,6 +54,77 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
 
 const company = {id: 7, name: "Mock Data company", ticker: "MOCK", market: "US"};
 
+test("data health failures remain unavailable instead of empty results or healthy zero counts", async () => {
+  const html = await pageHtml("app/data-health/page", () => errorResponse("NETWORK_ERROR", "Mock Data outage"));
+  for (const message of ["Processing runs could not be loaded", "Provider health could not be loaded",
+    "Sources could not be loaded", "Contradiction alerts could not be loaded"]) assert.match(html, new RegExp(message));
+  assert.doesNotMatch(html, /No unreviewed contradictions found|No sources configured|No processing runs recorded|0 runs tracked/);
+  assert.match(html, /Runs unavailable/);
+});
+
+test("data health preserves successful empty states and discloses its recent-run scope", async () => {
+  const html = await pageHtml("app/data-health/page", url =>
+    url === "/api/readiness" || url.startsWith("/data-health/peer-review-receipts")
+      ? errorResponse("NETWORK_ERROR", "Mock Data unavailable check") : success([]));
+  assert.match(html, /No unreviewed contradictions found/);
+  assert.match(html, /No sources configured/);
+  assert.match(html, /No processing runs recorded/);
+  assert.match(html, /latest 100 runs/);
+  assert.doesNotMatch(html, /across the current local database|Processing runs could not be loaded/);
+});
+
+test("a failed evidence audit is unavailable, not an audit that was never requested", async () => {
+  const html = await pageHtml("app/data-health/page", () => errorResponse("NETWORK_ERROR", "Mock Data audit failure"),
+    undefined, {audit: "evidence"});
+  assert.match(html, /Evidence integrity report is unavailable/);
+  assert.match(html, /Unavailable/);
+  assert.doesNotMatch(html, /health-metric-value[^>]*>Not run/);
+});
+
+test("data health does not render stale payloads from failed envelopes", async () => {
+  const html = await pageHtml("app/data-health/page", url => url === "/sources"
+    ? {...errorResponse("NETWORK_ERROR", "Mock Data failure"), data: [{id: 1, name: "Untrusted leftover source"}]}
+    : errorResponse("NETWORK_ERROR", "Mock Data unavailable"));
+  assert.match(html, /Sources could not be loaded/);
+  assert.doesNotMatch(html, /Untrusted leftover source/);
+});
+
+test("populated health tables preserve source links, provider failures, run bounds and partial errors", async () => {
+  const runs = Array.from({length: 100}, (_, index) => ({id: index + 1, run_type: "Mock Data run",
+    source_id: 1, source_type: "mock", status: "success", fetched_count: 3, created_count: 2,
+    skipped_duplicate_count: 1, error_count: 0, started_at: "2026-10-01T12:00:00Z", finished_at: null}));
+  const html = await pageHtml("app/data-health/page", url => {
+    const data = url === "/processing-runs" ? runs : url === "/sources" ? [
+      {id: 1, name: "Mock Data source", source_type: "manual", active: true, reliability_score: 0},
+      {id: 2, name: "Mock Data older source", source_type: "manual", active: false, reliability_score: null},
+    ] : url === "/api/providers/health" ? [{provider_name: "Mock Data provider", capability: "prices", market: "US",
+      requirement_level: "core", status: "failing", freshness_label: "Unavailable", recent_run_count: 2,
+      consecutive_failures: 2, last_failure_at: "2026-10-01T12:00:00Z", failure_reason: "Mock Data timeout"}]
+      : url === "/alerts" ? [{id: 17, company_id: 7, alert_type: "contradiction", review_status: "unreviewed",
+        title: "Mock Data contradiction", summary: "Review the source"}] : null;
+    return data ? {...success(data), meta: {...success(data).meta, is_mock: true}} : errorResponse("NETWORK_ERROR", "Mock Data partial failure");
+  });
+  assert.match(html, /Mock Data provider/);
+  assert.match(html, /2 consecutive failures/);
+  assert.match(html, /Mock Data timeout/);
+  assert.match(html, /href="\/alerts\/17"/);
+  assert.match(html, /No runs in recent window/);
+  assert.match(html, /300 records fetched in this window/);
+  assert.match(html, /Data health rows are mocked/);
+  assert.match(html, /Requested health summaries could not be loaded/);
+  assert.equal((html.match(/<strong>Mock Data run<\/strong>/g) || []).length, 26); // one type row + 25 recent runs
+  assert.doesNotMatch(html, /Provider health could not be loaded|Processing runs could not be loaded/);
+});
+
+test("source health keeps available source rows visible when run history fails", async () => {
+  const html = await pageHtml("app/data-health/page", url => url === "/sources"
+    ? success([{id: 1, name: "Mock Data available source", source_type: "manual", active: true}])
+    : errorResponse("NETWORK_ERROR", "Mock Data unavailable history"));
+  assert.match(html, /Mock Data available source/);
+  assert.match(html, /Runs unavailable/);
+  assert.doesNotMatch(html, /No runs in recent window/);
+});
+
 test("market prices bound rendered rows and preserve the ticker across page links", async () => {
   const requests: string[] = [];
   const prices = Array.from({length: 51}, (_, index) => ({id: index + 1, company_id: 7,

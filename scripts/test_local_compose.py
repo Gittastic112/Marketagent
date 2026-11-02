@@ -1,13 +1,114 @@
 """Guard host exposure without loading environment files or requiring Docker."""
 from pathlib import Path
+import json
+import os
 import re
+import shutil
+import subprocess
+import tempfile
 import unittest
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class BrowserRunnerTests(unittest.TestCase):
+    """Mock Data commands only; never invoke Docker or read normal settings."""
+
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(temporary.cleanup)
+        self.directory = Path(temporary.name)
+        (self.directory / "scripts").mkdir()
+        (self.directory / "frontend").mkdir()
+        shutil.copyfile(ROOT / "scripts/run_browser_workflows.sh", self.directory / "scripts/run_browser_workflows.sh")
+        binary = self.directory / "bin"
+        binary.mkdir()
+        for name in ("docker", "curl", "lsof", "npx"):
+            command = binary / name
+            command.write_text('''#!/usr/bin/env python3
+import json, os, sys
+from pathlib import Path
+name = Path(sys.argv[0]).name
+with open(os.environ["MOCK_COMMAND_LOG"], "a") as log:
+    log.write(json.dumps({"command": name, "args": sys.argv[1:],
+        "auth": {key: os.environ.get(key) for key in
+            ("NEXTAUTH_SECRET", "LOCAL_AUTH_USERNAME", "LOCAL_AUTH_PASSWORD")},
+        "base_url": os.environ.get("E2E_BASE_URL")}) + "\\n")
+if name == "lsof":
+    raise SystemExit(0 if os.environ.get("MOCK_PORT_BUSY") else 1)
+if name == "npx":
+    raise SystemExit(int(os.environ.get("MOCK_BROWSER_EXIT", "0")))
+''')
+            command.chmod(0o755)
+        self.env = {key: value for key, value in os.environ.items()
+                    if key not in {"NEXTAUTH_SECRET", "LOCAL_AUTH_USERNAME", "LOCAL_AUTH_PASSWORD",
+                                   "E2E_FRONTEND_PORT", "E2E_BACKEND_PORT", "E2E_BASE_URL"}}
+        self.env.update(PATH=f"{binary}{os.pathsep}{os.environ['PATH']}",
+                        MOCK_COMMAND_LOG=str(self.directory / "calls.jsonl"))
+
+    def run_script(self):
+        result = subprocess.run(["bash", str(self.directory / "scripts/run_browser_workflows.sh"),
+                                 "valuation-draft.spec.ts"], env=self.env, capture_output=True,
+                                text=True, timeout=10)
+        log = self.directory / "calls.jsonl"
+        calls = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
+        return result, calls
+
+    def test_runs_without_normal_settings_and_uses_empty_compose_environment(self):
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        docker = [call for call in calls if call["command"] == "docker"]
+        self.assertTrue(docker)
+        for call in docker:
+            self.assertEqual(call["args"][:3], ["compose", "--env-file", "/dev/null"])
+            self.assertEqual(call["auth"], {
+                "NEXTAUTH_SECRET": "browser-check-secret-not-for-production",
+                "LOCAL_AUTH_USERNAME": "browser-check-user",
+                "LOCAL_AUTH_PASSWORD": "browser-check-password",
+            })
+        browser = next(call for call in calls if call["command"] == "npx")
+        self.assertEqual(browser["base_url"], "http://127.0.0.1:13000")
+        self.assertEqual(browser["args"], ["--no-install", "playwright", "test", "valuation-draft.spec.ts"])
+
+    def test_explicit_test_settings_reach_both_services_and_browser(self):
+        self.env.update(NEXTAUTH_SECRET="Mock Data test signing key", LOCAL_AUTH_USERNAME="mock-user",
+                        LOCAL_AUTH_PASSWORD="Mock Data password", E2E_FRONTEND_PORT="23000",
+                        E2E_BACKEND_PORT="28000")
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        relevant = [call for call in calls if call["command"] in {"docker", "npx"}]
+        for call in relevant:
+            for key in ("NEXTAUTH_SECRET", "LOCAL_AUTH_USERNAME", "LOCAL_AUTH_PASSWORD"):
+                self.assertEqual(call["auth"][key], self.env[key])
+        browser = next(call for call in calls if call["command"] == "npx")
+        self.assertEqual(browser["base_url"], "http://127.0.0.1:23000")
+
+    def test_port_conflict_exits_without_destroying_existing_test_services(self):
+        self.env.update(MOCK_PORT_BUSY="1", NEXTAUTH_SECRET="Mock Data test signing key",
+                        LOCAL_AUTH_USERNAME="mock-user", LOCAL_AUTH_PASSWORD="Mock Data password")
+        result, calls = self.run_script()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("already allocated", result.stderr)
+        self.assertFalse(any(call["command"] == "docker" for call in calls))
+
+    def test_failed_browser_run_preserves_failure_and_cleans_up_test_project(self):
+        self.env["MOCK_BROWSER_EXIT"] = "7"
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 7, result.stderr)
+        self.assertEqual(calls[-1]["command"], "docker")
+        self.assertIn("down", calls[-1]["args"])
+        self.assertIn("market-intel-e2e", calls[-1]["args"])
+
+
 class LocalComposeTests(unittest.TestCase):
+    def test_normal_services_require_private_database_password(self):
+        source = (ROOT / "docker-compose.yml").read_text()
+        self.assertNotIn("marketintel_password", source)
+        self.assertNotIn("admin_password", source)
+        self.assertEqual(source.count("${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD privately before starting services}"), 4)
+        self.assertIn("PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-}", source)
+
     def test_all_published_ports_are_explicitly_loopback_only(self):
         for name, expected in (("docker-compose.yml", 4), ("docker-compose.e2e.yml", 2)):
             with self.subTest(compose=name):
@@ -68,7 +169,10 @@ class LocalComposeTests(unittest.TestCase):
                     if line.strip() and not line.startswith("#")]
         self.assertEqual(patterns[0], "**")
         includes = {line for line in patterns if line.startswith("!")}
-        self.assertEqual(includes, {"!alembic.ini", "!pyproject.toml", "!backend/", "!backend/**",
+        self.assertEqual(includes, {"!alembic.ini", "!pyproject.toml", "!backend/", "!backend/Dockerfile",
+                                    "!backend/requirements*.txt", "!backend/requirements*.lock",
+                                    "!backend/app/", "!backend/app/**", "!backend/alembic/", "!backend/alembic/**",
+                                    "!backend/scripts/", "!backend/scripts/**", "!backend/tests/", "!backend/tests/**",
                                     "!scripts/", "!scripts/**"})
         for pattern in ("**/.env", "**/.env.*", "**/.venv*", "**/venv", "**/__pycache__"):
             self.assertIn(pattern, patterns)

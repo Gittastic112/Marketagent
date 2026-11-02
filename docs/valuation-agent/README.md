@@ -42,6 +42,9 @@ jobs:
 - Every assumption needs method, source, date/freshness, and review state.
 - A missing current market price may be accepted as unavailable comparison
   data; it must not be displayed as a market fact or used for implied upside.
+  Draft review requires an explicit acknowledgement of unavailable comparison
+  data. Supplied draft prices must be positive; new calculations return null
+  comparison outputs without a price, and reads withhold historical zero placeholders.
 - Model quality is derived from diagnostics. Invalid-unit models cannot display
   a perfect or apparently trustworthy score.
 - Keep intrinsic valuation, relative pricing, and market-event interpretation separate.

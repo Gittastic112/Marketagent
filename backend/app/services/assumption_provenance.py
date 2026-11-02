@@ -37,7 +37,7 @@ INPUT_CONTRACT = {
     "employee_options_value": ("equity_bridge", True, "all"),
     "diluted_shares": ("equity_bridge", True, "all"),
     "basic_shares": ("equity_bridge", False, "all"),
-    "current_market_price": ("market_context", True, "all"),
+    "current_market_price": ("market_context", False, "all"),
     "cash_flow_currency": ("currency", True, "all"),
     "discount_rate_currency": ("currency", True, "all"),
     "currency_override_note": ("currency", False, "all"),
@@ -56,6 +56,30 @@ INPUT_CONTRACT = {
     "book_value_of_equity": ("financial_services", False, "financial_services"),
     "target_roe": ("financial_services", False, "financial_services"),
 }
+
+FINANCIAL_SERVICES_REQUIRED_FIELDS = {
+    "projection_years_count", "book_value_of_equity", "net_income", "target_roe",
+    "cost_of_equity", "terminal_growth_rate", "diluted_shares",
+    "cash_flow_currency", "discount_rate_currency",
+}
+DISTRESS_REQUIRED_FIELDS = {"probability_of_failure", "distress_sale_proceeds"}
+
+
+def review_fields_by_model(review_fields: list[str]) -> dict[str, list[str]]:
+    """Keep review gates on the inputs actually consumed by each engine."""
+    return {
+        "fcff_dcf": list(review_fields),
+        "distressed": sorted(set(review_fields) | DISTRESS_REQUIRED_FIELDS),
+        "financial_services": sorted(FINANCIAL_SERVICES_REQUIRED_FIELDS
+            | (set(review_fields) & {"current_market_price"})),
+    }
+
+
+def required_fields_by_model() -> dict[str, list[str]]:
+    operating = {field for field, (_, required, _) in INPUT_CONTRACT.items() if required}
+    return {"fcff_dcf": sorted(operating),
+        "distressed": sorted(operating | DISTRESS_REQUIRED_FIELDS),
+        "financial_services": sorted(FINANCIAL_SERVICES_REQUIRED_FIELDS)}
 
 
 PLACEHOLDER_SOURCE_TYPES = {
@@ -217,6 +241,8 @@ def _source_metadata(provenance: Dict[str, Any]) -> Dict[str, Any]:
         "requires_review": len(review_fields) > 0,
         "placeholder_fields": placeholder_fields,
         "review_fields": review_fields,
+        "review_fields_by_model": review_fields_by_model(review_fields),
+        "required_fields_by_model": required_fields_by_model(),
         "source_counts_by_type": source_counts_by_type,
         "legacy_fallback_fields": legacy_fallback_fields,
         "stale_source_fields": stale_source_fields,

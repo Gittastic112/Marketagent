@@ -7,6 +7,7 @@ from app.services.financial_statement_identity import FinancialStatementIdentity
 from app.services.valuation_source_inputs import sec_draft_inputs, source_input_signature, stored_market_price, stored_usd_risk_free_rate
 from app.services.assumption_provenance import (INPUT_CONTRACT, PLACEHOLDER_SOURCE_TYPES, DERIVED_NORMALIZED_METRICS, _freshness_metadata, _provenance, _source_metadata, _input_readiness)
 from app.services.assumption_financial_inputs import (financial_history_signature, _extract_latest_actuals, _extract_revenue_history)
+from app.services.valuation_input_units import INPUT_UNIT_POLICY
 
 class AssumptionAutofillEngine:
     INPUT_CONTRACT = INPUT_CONTRACT
@@ -133,7 +134,10 @@ class AssumptionAutofillEngine:
             ),
             None,
         )
-        valuation_currency = (company.currency or actual_reporting_currency or "").upper() or None
+        valuation_currency = (actual_reporting_currency or company.currency or "").upper() or None
+        if market_price is not None and market_price[1].get("currency") != valuation_currency:
+            actuals.pop("current_market_price", None)
+            warnings.append("Stored quote currency differs from the financial reporting currency. A price comparison is unavailable without an explicitly reviewed currency conversion.")
         if valuation_currency is None:
             warnings.append(
                 "The company cash-flow currency is not identified. Currency-specific discount-rate methods are unavailable until it is reviewed."
@@ -437,10 +441,10 @@ class AssumptionAutofillEngine:
         set_val("starting_revenue", "revenue", None, default_val=0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
 
         if "starting_invested_capital" not in draft:
-            if "invested_capital" in actuals and actuals["invested_capital"][0] > 0:
+            if "invested_capital" in actuals and actuals["invested_capital"][0] is not None and actuals["invested_capital"][0] > 0:
                 draft["starting_invested_capital"] = actuals["invested_capital"][0]
                 provenance["starting_invested_capital"] = actuals["invested_capital"][1]
-            elif draft.get("sales_to_capital_ratio") and draft["sales_to_capital_ratio"] > 0:
+            elif draft.get("sales_to_capital_ratio") and draft["sales_to_capital_ratio"] > 0 and draft.get("starting_revenue") is not None:
                 draft["starting_invested_capital"] = draft["starting_revenue"] / draft["sales_to_capital_ratio"]
                 provenance["starting_invested_capital"] = AssumptionAutofillEngine._provenance(
                     "formula",
@@ -466,9 +470,15 @@ class AssumptionAutofillEngine:
             if medium_growth is None:
                 medium_growth = initial_growth
 
-            tgr = draft.get("terminal_growth_rate", 0.03)
+            tgr = draft.get("terminal_growth_rate")
+            terminal_source = provenance.get("terminal_growth_rate")
             if tgr is None:
                 tgr = 0.03
+                terminal_source = AssumptionAutofillEngine._provenance(
+                    "generic_market_default", "3% forecast endpoint while terminal growth is unavailable", "low"
+                )
+            elif terminal_source is None:
+                terminal_source = AssumptionAutofillEngine._provenance("user_input", "User Provided", "high")
 
             growth_values = [initial_growth] * 2 + [medium_growth] * 3 + [
                 medium_growth - ((medium_growth - tgr) / 5) * i for i in range(1, 6)
@@ -478,21 +488,51 @@ class AssumptionAutofillEngine:
             }
 
             if historical_growth:
-                provenance["revenue_growth_years_json"] = historical_growth[1]
-            elif growth_priors.get("industryExpected5Y") is not None:
-                provenance["revenue_growth_years_json"] = industry_provenance(" (2Y/5Y path and decay)", "growth")
+                initial_source = historical_growth[1]
+            elif any(growth_priors.get(key) is not None for key in ("industryExpected2Y", "industryExpected5Y")):
+                initial_source = industry_provenance(" (growth prior)", "growth")
             else:
-                provenance["revenue_growth_years_json"] = AssumptionAutofillEngine._provenance("generic_market_default", "10% decay to terminal", "low")
+                initial_source = AssumptionAutofillEngine._provenance("generic_market_default", "10% initial growth", "low")
+            growth_warning = "Historical growth and industry priors are inputs to a forecast, not evidence that future revenue will follow this path. Review the growth path and its terminal assumption."
+            provenance["revenue_growth_years_json"] = {
+                **initial_source,
+                "label": initial_source["label"] + " (projected revenue path)",
+                "claim_type": "Estimate",
+                "confidence": "low",
+                "requires_review": True,
+                "historical_growth_rate": historical_growth[0] if historical_growth else None,
+                "projection_basis": {
+                    "initial_growth": {"value": initial_growth, "source": initial_source},
+                    "medium_growth": {
+                        "value": medium_growth,
+                        "source": industry_provenance(" (5Y growth prior)", "growth")
+                        if growth_priors.get("industryExpected5Y") is not None else initial_source,
+                    },
+                    "terminal_growth": {"value": tgr, "source": terminal_source},
+                    "formula": "Years 1-2 use initial growth; years 3-5 use medium growth; years 6-10 decline in five equal steps to terminal growth.",
+                },
+                "warnings": " ".join(filter(None, [initial_source.get("warnings"), growth_warning])),
+            }
+            warnings.append(growth_warning)
 
         # Equity Bridge
         set_val("cash", "cash", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("cross_holdings", "cross_holdings", None, None, fallback_type="missing_actual_default", fallback_label="Optional comparison unavailable")
         if draft["cross_holdings"] is None:
-            provenance["cross_holdings"]["requires_review"] = False
+            provenance["cross_holdings"]["requires_review"] = provenance["cross_holdings"].get("unit_alignment_status") == "unavailable"
         set_val("debt", "debt", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("operating_leases", "operating_leases", None, None, fallback_type="missing_actual_default", fallback_label="Optional comparison unavailable")
         if draft["operating_leases"] is None:
-            provenance["operating_leases"]["requires_review"] = False
+            provenance["operating_leases"]["requires_review"] = provenance["operating_leases"].get("unit_alignment_status") == "unavailable"
+        elif draft["operating_leases"] > 0 and provenance["operating_leases"].get("source_type") != "user_input":
+            lease_warning = "The equity bridge subtracts operating leases separately from debt. The engine does not automatically adjust operating profit or reinvestment for lease capitalization. Review consistent lease treatment and prevent double counting before accepting this deduction."
+            provenance["operating_leases"] = {
+                **provenance["operating_leases"],
+                "requires_review": True,
+                "valuation_treatment_warning": lease_warning,
+                "warnings": " ".join(filter(None, [provenance["operating_leases"].get("warnings"), lease_warning])),
+            }
+            warnings.append(lease_warning)
         set_val("minority_interests", "minority_interests", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("preferred_stock", "preferred_stock", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
         set_val("employee_options_value", "employee_options_value", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
@@ -500,7 +540,7 @@ class AssumptionAutofillEngine:
         set_val("basic_shares", "basic_shares", None, None, fallback_type="missing_actual_default", fallback_label="Optional comparison unavailable")
         if draft["basic_shares"] is None:
             provenance["basic_shares"]["requires_review"] = False
-        set_val("current_market_price", "current_market_price", None, 0.0, fallback_type="missing_actual_default", fallback_label="Requires Manual Entry")
+        set_val("current_market_price", "current_market_price", None, None, fallback_type="missing_actual_default", fallback_label="Comparison unavailable; review without a price")
 
         for key in (
             "net_income",
@@ -582,6 +622,11 @@ class AssumptionAutofillEngine:
             )
 
         source_metadata = AssumptionAutofillEngine._source_metadata(provenance)
+        source_metadata["input_unit_policy"] = INPUT_UNIT_POLICY
+        unit_gaps = [key for key, value in provenance.items()
+                     if isinstance(value, dict) and value.get("unit_alignment_status") == "unavailable"]
+        if unit_gaps:
+            warnings.append("Source units could not be aligned for: " + ", ".join(unit_gaps) + ". Suggested values remain unavailable.")
         readiness_rows, readiness_summary = AssumptionAutofillEngine._input_readiness(
             draft,
             provenance,

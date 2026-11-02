@@ -150,7 +150,7 @@ class DcfProjectionYear(Base):
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     assumption_set_id: Mapped[int] = mapped_column(ForeignKey("dcf_assumption_sets.id", ondelete="CASCADE"), index=True)
     year_index: Mapped[int] = mapped_column(index=True)
-    calendar_year: Mapped[int] = mapped_column(index=True)
+    calendar_year: Mapped[Optional[int]] = mapped_column(index=True, nullable=True)
 
     revenue: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     revenue_growth: Mapped[Optional[float]] = mapped_column(Float, nullable=True)

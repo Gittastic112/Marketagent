@@ -11,7 +11,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: marketintel
-      POSTGRES_PASSWORD: marketintel_password
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD privately before starting services}
       POSTGRES_DB: marketintel
     ports:
       - "127.0.0.1:5432:5432"
@@ -36,7 +36,7 @@ services:
     restart: unless-stopped
     init: true
     environment:
-      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      DATABASE_URL: postgresql+psycopg://marketintel:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD privately before starting services}@postgres:5432/marketintel
       APP_ENV: local
       APP_NAME: Market Intelligence Engine
       ALERT_PRIORITY_THRESHOLD: ${ALERT_PRIORITY_THRESHOLD:-70}
@@ -117,7 +117,7 @@ services:
     profiles: ["automation"]
     command: ["python", "-m", "app.workers.daily_brief_scheduler"]
     environment:
-      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      DATABASE_URL: postgresql+psycopg://marketintel:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD privately before starting services}@postgres:5432/marketintel
       APP_ENV: local
       APP_NAME: Market Intelligence Engine Scheduler
       SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
@@ -142,7 +142,7 @@ services:
     profiles: ["automation"]
     command: ["python", "-m", "app.workers.valuation_source_scheduler"]
     environment:
-      DATABASE_URL: postgresql+psycopg://marketintel:marketintel_password@postgres:5432/marketintel
+      DATABASE_URL: postgresql+psycopg://marketintel:${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD privately before starting services}@postgres:5432/marketintel
       APP_ENV: local
       SEC_USER_AGENT: ${SEC_USER_AGENT:-Market Intelligence Engine local research app contact@example.com}
       FRED_API_KEY: ${FRED_API_KEY:-}
@@ -166,7 +166,7 @@ services:
     profiles: ["admin"]
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@local.com
-      PGADMIN_DEFAULT_PASSWORD: admin_password
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-}
     ports:
       - "127.0.0.1:5050:80"
     depends_on:

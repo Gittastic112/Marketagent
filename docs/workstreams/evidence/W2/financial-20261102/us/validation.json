@@ -1,0 +1,56 @@
+{
+  "companies": 6,
+  "reviewed_fields": {
+    "AAPL": 28,
+    "NVDA": 28,
+    "GOOG": 30,
+    "MSFT": 28,
+    "AMZN": 29,
+    "GOOGL": 30
+  },
+  "rejected_fields": {
+    "AAPL": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares",
+      "preferred_stock",
+      "minority_interests"
+    ],
+    "NVDA": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares",
+      "minority_interests",
+      "debt"
+    ],
+    "GOOG": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares"
+    ],
+    "MSFT": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares",
+      "preferred_stock",
+      "minority_interests"
+    ],
+    "AMZN": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares",
+      "minority_interests"
+    ],
+    "GOOGL": [
+      "employee_options_value",
+      "cross_holdings",
+      "current_market_price",
+      "diluted_shares"
+    ]
+  }
+}

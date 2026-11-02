@@ -7,7 +7,7 @@ import { provenanceLabel, reviewFieldValueIsValid } from "@/lib/autofill-review"
 import type { useAutofillDraft } from "./use-autofill-draft";
 import { FIELD_GROUPS, TEXT_FIELDS, RENDERED_FIELDS, provenanceEntry, sourceBadgeClass } from "./autofill-draft-fields";
 
-export function AutofillDraftReviewView({ company, draft, action, values, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft }: ReturnType<typeof useAutofillDraft>) {
+export function AutofillDraftReviewView({ company, draft, action, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft }: ReturnType<typeof useAutofillDraft>) {
   function renderProvenance(key: string) {
     const rawEntry = provenance[key];
     const entry = provenanceEntry(rawEntry);
@@ -49,6 +49,8 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
         {sourceAsOf && sourceParts.length === 0 ? <small>As of {sourceAsOf}{entry.is_stale ? " · stale, review required" : ""}</small> : null}
         {sourceUrl ? <a href={sourceUrl} target="_blank" rel="noreferrer">Open source evidence</a> : null}
         {typeof entry.unit === "string" ? <small>Source unit: {entry.unit}</small> : null}
+        {typeof entry.input_unit === "string" ? <small>Draft input unit: full {entry.input_unit}</small> : null}
+        {typeof entry.unit_conversion_formula === "string" ? <small>{entry.unit_conversion_formula}</small> : null}
         {edited ? (
           <button
             type="button"
@@ -88,7 +90,9 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
           onChange={(event) => toggleReviewed(key, event.target.checked)}
           style={{ margin: 0, width: "16px" }}
         />
-        {valid ? "Reviewed for this valuation" : "Enter a valid value before review"}
+        {valid ? key === "current_market_price" && values[key] === null
+          ? "Reviewed as unavailable; no price comparison" : "Reviewed for this valuation"
+          : "Enter a valid value before review"}
       </label>
     );
   }
@@ -98,6 +102,16 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
       <ValuationSourceRefreshPanel companyId={company.id} beforeQueue={persistDraft}
         onFinished={loadRefreshedDraft} onBusyChange={setPipelineBusy} />
       <fieldset disabled={pipelineBusy} className="valuation-draft-fields">
+        {sourceMetadata.input_unit_policy === "full_currency_and_shares_v1" ? (
+          <section className="panel" style={{ padding: "16px 20px" }}>
+            <strong>Valuation input units</strong>
+            <p className="subtitle" style={{ marginBottom: 0, marginTop: "8px" }}>
+              Enter monetary amounts in full cash-flow currency units and share counts in full shares.
+              Reported thousands, millions, lakhs and crores are converted where the source units are explicit.
+              Prices remain per share; rates use decimals. Source units and conversions appear with each input.
+            </p>
+          </section>
+        ) : null}
         {warnings.length > 0 ? (
           <details className="panel valuation-draft-warnings">
             <summary>
@@ -144,10 +158,10 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
               <strong>Valuation Input Readiness</strong>
               <span className="badge">{sourceMetadata.input_readiness_summary.field_count} tracked inputs</span>
               <span className="badge badge-danger">
-                {sourceMetadata.input_readiness_summary.required_missing_fields.length} required missing
+                {sourceMetadata.required_fields_by_model ? requiredMissingFields.length : sourceMetadata.input_readiness_summary.required_missing_fields.length} required missing
               </span>
               <span className="badge badge-warn">
-                {sourceMetadata.input_readiness_summary.required_review_fields.length} required to review
+                {unresolvedFields.length} required to review
               </span>
             </div>
             <p className="subtitle" style={{ marginBottom: 0, marginTop: "10px" }}>
@@ -203,13 +217,14 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
             </div>
             <div className="field">
               <label htmlFor="model-type">Model Type</label>
-              <select id="model-type" name="model_type" defaultValue="fcff_dcf">
+              <select id="model-type" name="model_type" value={modelType} onChange={event => changeModelType(event.target.value)}>
                 <option value="fcff_dcf">Standard FCFF DCF</option>
                 <option value="distressed">Distressed Company DCF</option>
                 <option value="financial_services">Financial Services (Excess Return)</option>
               </select>
             </div>
           </div>
+          {modelType === "financial_services" ? <p className="basis-note">This equity model uses common book equity, net income, a reviewed ROE forecast and cost of equity. Use the same shareholder scope, currency and full-unit scale. Operating-company revenue, WACC and debt-bridge inputs are not used.</p> : null}
         </section>
 
         <input type="hidden" name="scenario" value="Base" />
@@ -240,7 +255,7 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
           </div>
         </details>
 
-        <details className="panel valuation-draft-group">
+        <details className="panel valuation-draft-group" hidden={modelType === "financial_services"} style={{ display: modelType === "financial_services" ? "none" : undefined }}>
           <summary>
             <span>Revenue Growth Path</span>
             <small>Year-by-year growth assumptions</small>
@@ -261,7 +276,7 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
                   updateValue("revenue_growth_years_json", next);
                 }
               }}
-              required
+              required={modelType !== "financial_services"}
             />
             {renderProvenance("revenue_growth_years_json")}
             {renderReviewControl("revenue_growth_years_json")}
@@ -269,14 +284,14 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
         </details>
 
         {FIELD_GROUPS.map((group) => (
-          <details className="panel valuation-draft-group" key={group.title}>
+          <details className="panel valuation-draft-group" key={group.title} hidden={!group.fields.some(field => fieldApplies(field.key))} style={{ display: group.fields.some(field => fieldApplies(field.key)) ? undefined : "none" }}>
             <summary>
               <span>{group.title}</span>
-              <small>{group.fields.length} assumptions</small>
+              <small>{group.fields.filter(field => fieldApplies(field.key)).length} assumptions</small>
             </summary>
             <div className="form-grid valuation-draft-group-content">
               {group.fields.map((field) => (
-                <div className="field" key={field.key} style={{ alignContent: "start" }}>
+                <div className="field" key={field.key} style={{ alignContent: "start", display: fieldApplies(field.key) ? undefined : "none" }} hidden={!fieldApplies(field.key)}>
                   <label htmlFor={field.key}>{field.label}</label>
                   <input
                     id={field.key}
@@ -286,9 +301,9 @@ export function AutofillDraftReviewView({ company, draft, action, values, review
                     value={typeof values[field.key] === "number" ? (values[field.key] as number) : ""}
                     onChange={(event) => updateValue(
                       field.key,
-                      event.target.value === "" ? "" : Number(event.target.value),
+                      event.target.value === "" ? (field.key === "current_market_price" ? null : "") : Number(event.target.value),
                     )}
-                    required={field.required !== false}
+                    required={modelType === "financial_services" ? requiredFields.has(field.key) : field.required !== false || requiredFields.has(field.key)}
                   />
                   {renderProvenance(field.key)}
                   {renderReviewControl(field.key)}

@@ -19,6 +19,8 @@ export type AutofillSourceMetadata = {
   requires_review: boolean;
   placeholder_fields: string[];
   review_fields: string[];
+  review_fields_by_model?: Record<string, string[]>;
+  required_fields_by_model?: Record<string, string[]>;
   source_counts_by_type: Record<string, number>;
   legacy_fallback_fields?: string[];
   stale_source_fields?: string[];
@@ -29,6 +31,7 @@ export type AutofillSourceMetadata = {
   reporting_currency?: string | null;
   reporting_currency_source?: string | null;
   reporting_currency_confidence?: string | null;
+  input_unit_policy?: "full_currency_and_shares_v1";
   industry_mix_id?: number;
   industry_mix_signature?: string;
   industry_mix_basis?: "revenue";

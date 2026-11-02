@@ -34,3 +34,7 @@ export function queueValuationSourceRefresh(companyId: number) {
 export function fetchValuationRefreshRun(runId: number) {
   return fetchApi<ValuationRefreshRun>(`/valuation-source-refresh/${runId}`);
 }
+
+export function cancelValuationSourceRefresh(runId: number) {
+  return postApi<ValuationRefreshRun>(`/valuation-source-refresh/${runId}/cancel`, {});
+}

@@ -610,13 +610,13 @@ def test_autofill_uses_promoted_financial_metrics_for_company_actuals(client, db
     assert response.status_code == 200
     draft = response_data(response)
     assumptions = draft["assumptions"]
-    assert assumptions["starting_revenue"] == 12345
-    assert assumptions["cash"] == 4000
-    assert assumptions["debt"] == 8250
-    assert assumptions["diluted_shares"] == 1200
+    assert assumptions["starting_revenue"] == 12_345_000_000
+    assert assumptions["cash"] == 4_000_000_000
+    assert assumptions["debt"] == 8_250_000_000
+    assert assumptions["diluted_shares"] == 1_200_000_000
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
-    assert draft["provenance"]["starting_revenue"]["label"] == "Legacy Metrics (FY2026)"
+    assert draft["provenance"]["starting_revenue"]["label"] == "Legacy Metrics (FY2026) (unit conversion)"
     assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 
@@ -752,17 +752,17 @@ def test_autofill_prefers_latest_normalized_metrics_when_available(client, db) -
 
     draft = response_data(response)
     assumptions = draft["assumptions"]
-    assert assumptions["starting_revenue"] == 12345
-    assert assumptions["cash"] == 4000
-    assert assumptions["debt"] == 8250
-    assert assumptions["diluted_shares"] == 1200
-    assert assumptions["basic_shares"] == 1180
-    assert assumptions["minority_interests"] == 45
-    assert assumptions["preferred_stock"] == 12
-    assert assumptions["employee_options_value"] == 18
+    assert assumptions["starting_revenue"] == 12_345_000_000
+    assert assumptions["cash"] == 4_000_000_000
+    assert assumptions["debt"] == 8_250_000_000
+    assert assumptions["diluted_shares"] == 1_200_000_000
+    assert assumptions["basic_shares"] == 1_180_000_000
+    assert assumptions["minority_interests"] == 45_000_000
+    assert assumptions["preferred_stock"] == 12_000_000
+    assert assumptions["employee_options_value"] == 18_000_000
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
-    assert draft["provenance"]["starting_revenue"]["label"] == "Normalized Financials (FY2026)"
+    assert draft["provenance"]["starting_revenue"]["label"] == "Normalized Financials (FY2026) (unit conversion)"
     assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -> None:
