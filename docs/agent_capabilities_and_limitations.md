@@ -166,7 +166,7 @@ broker login or secret value in chat is required.
 | 7. M08-04: interpretation review, verified October 18 | No additional review input is required for this selected set; the user can revisit decision M08-AI-REVIEW-20261018 | Six actual responses and four existing adversarial fixtures now have delegated semantic judgments. Four constrained summaries are accepted, unsupported regional-to-company directions are rejected, and the blocked response stays blocked. Original human fields remain blank. This selected set does not establish statistical accuracy or future injection resistance |
 
 The [November browser audit](archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md)
-repairs observed code/UI defects using existing data. M04/M09 acceptance still depends on preceding in-scope gates. Five
+repairs observed code/UI defects using existing data. M09 acceptance still depends on preceding in-scope gates. Five
 actual business days of research/demo use and final acceptance belong to M10. Its technical
 preparation is now authorized. The user requested no more disposable datasets:
 routine checks use existing data without resets or fabricated activity, and

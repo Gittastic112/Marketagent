@@ -492,7 +492,10 @@ transport/state helpers and query-budget tests.
   October 24 CI on 6e2a6f8b passes all five gates on PR and push runs: 64 browser
   workflows, 1,766 backend tests, 309 frontend tests and six separate PostgreSQL
   checks. The [UI/financing checkpoint](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md)
-  records these results and the new UI's pending normal-data browser check; earlier proof retains its dated scope.
+  records these results and the then-pending normal-data browser check, completed by
+  the [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md)
+  and [release follow-up](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md).
+  Earlier proof retains its dated scope.
 
 Gate: all scoped workflows are usable and truthful across supported viewports,
 with measured performance and no unresolved release-blocking regression.
