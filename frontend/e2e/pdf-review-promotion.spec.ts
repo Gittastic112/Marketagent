@@ -135,7 +135,9 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
     `/api/companies/${company.id}/financial-statements/normalized`);
   await page.goto(`/companies/${company.id}/valuation/draft`);
   await expandDraftSections(page);
-  await expect(page.locator("#starting_revenue:visible")).toHaveValue("1250");
+  // The source retains INR millions; valuation inputs use full INR and shares.
+  await expect(page.locator("#starting_revenue:visible")).toHaveValue("1250000000");
+  await expect(page.locator("#diluted_shares:visible")).toHaveValue("102000000");
   const revenueField = page.locator("#starting_revenue:visible").locator("xpath=..");
   await expect(revenueField).toContainText("Normalized Financials");
   await expect(revenueField).toContainText("FY2026");
@@ -149,9 +151,19 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   const snapshot = snapshots.find(item => item.id === provenance.snapshot_id)!;
   const source = snapshot.metrics.find(item => item.id === provenance.source_record_id)!;
   expect(source.metric_code).toBe("revenue");
-  expect(source.value).toBe(draft.assumptions_json.starting_revenue);
+  expect(source.value).toBe(1250);
+  expect(source.unit).toBe("INR million");
+  expect(provenance.original_value).toBe(source.value);
+  expect(provenance.unit).toBe(source.unit);
+  expect(provenance.input_unit).toBe("INR");
+  expect(provenance.unit_multiplier).toBe(1_000_000);
+  expect(provenance.unit_alignment_status).toBe("converted");
+  expect(provenance.claim_type).toBe("Calculation");
+  expect(draft.assumptions_json.starting_revenue).toBe(1_250_000_000);
+  expect(draft.assumptions_json.diluted_shares).toBe(102_000_000);
   expect(provenance.period_id).toBe(snapshot.period_id);
   expect(draft.source_metadata_json.reporting_currency).toBe("INR");
+  expect(draft.source_metadata_json.input_unit_policy).toBe("full_currency_and_shares_v1");
   expect(draft.source_metadata_json.promotion_ready).toBe(false);
   expect(await backendData<unknown[]>(page, `/companies/${company.id}/valuation-models`)).toHaveLength(0);
 });

@@ -66,7 +66,11 @@ Detailed local evidence is under output/milestones/release-publication-20261102.
 ## Publication and remaining acceptance
 
 [PR #2](https://github.com/Gittastic112/Marketagent/pull/2) owns final GitHub head,
-check-run and merge evidence. Publication uses an explicit delta from its existing
+check-run and merge evidence. The first GitHub run passed four jobs and 63 of 64
+browser scenarios. Its PDF scenario retained an obsolete unscaled draft expectation;
+the corrected test verifies full INR/share inputs, unchanged reported million units
+and conversion provenance. Runtime behavior is unchanged by this test-only repair.
+Publication uses an explicit delta from its existing
 head, preserving unlisted remote blobs and the shared local Git index. Local-only
 working packets are declared in the
 [publication evidence index](../../../workstreams/evidence/W2/financial-20261102/banks/publication-evidence-index.json).
