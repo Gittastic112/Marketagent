@@ -1,4 +1,5 @@
 from datetime import date
+from math import isfinite
 from typing import Dict, Any, Optional
 
 
@@ -63,6 +64,20 @@ FINANCIAL_SERVICES_REQUIRED_FIELDS = {
     "cash_flow_currency", "discount_rate_currency",
 }
 DISTRESS_REQUIRED_FIELDS = {"probability_of_failure", "distress_sale_proceeds"}
+DISCOUNT_COMPONENT_FIELDS = {
+    "risk_free_rate", "beta", "equity_risk_premium", "cost_of_equity",
+    "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital",
+}
+
+
+def unavailable_discount_component(field: str, value: Any, assumptions: Dict[str, Any],
+                                   model_type: str = "fcff_dcf") -> bool:
+    """Null decomposition is reviewable only when the engine uses explicit rates."""
+    return (model_type in {"fcff_dcf", "distressed"}
+        and field in DISCOUNT_COMPONENT_FIELDS and value is None
+        and all(isinstance(assumptions.get(key), (int, float))
+            and not isinstance(assumptions[key], bool) and isfinite(assumptions[key])
+            and 0 < assumptions[key] <= 1 for key in ("wacc_start", "wacc_terminal")))
 
 
 def review_fields_by_model(review_fields: list[str]) -> dict[str, list[str]]:
@@ -262,6 +277,8 @@ def _input_readiness(
     rows: list[Dict[str, Any]] = []
     for field, (category, required, model_scope) in INPUT_CONTRACT.items():
         value = assumptions.get(field)
+        if unavailable_discount_component(field, value, assumptions):
+            required = False
         entry = provenance.get(field, {})
         if not isinstance(entry, dict):
             entry = {}

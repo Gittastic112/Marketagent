@@ -44,6 +44,76 @@ def test_review_requirements_follow_the_selected_model(client, db):
     assert {"probability_of_failure", "distress_sale_proceeds"} <= set(metadata["review_fields_by_model"]["distressed"])
 
 
+def test_direct_discount_rates_allow_reviewed_missing_components_but_not_missing_claims(client, db):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    fields = sorted(set(draft["source_metadata_json"]["review_fields"]) | {
+        "risk_free_rate", "beta", "equity_risk_premium", "cost_of_equity",
+        "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital"})
+    components = {"risk_free_rate", "beta", "equity_risk_premium", "cost_of_equity",
+                  "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital"}
+    patch = {field: _valid_review_value(field) for field in fields}
+    patch.update({field: None for field in components})
+    patch.update(wacc_start=.14, wacc_terminal=.14, terminal_growth_rate=0,
+                 diluted_shares=100, employee_options_value=0,
+                 risk_story="Mock Data: explicit 14% discount-rate assumption; funding decomposition unavailable.")
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": patch, "reviewed_fields": [field for field in fields if field != "beta"]}))
+    assert "beta" in saved["source_metadata_json"]["unresolved_fields"]
+    command = {"name": "Mock Data explicit discount rates", "model_type": "fcff_dcf"}
+    assert client.post(f"/valuation-drafts/{draft['id']}/promote", json=command).status_code == 409
+    for missing in ("wacc_start", "wacc_terminal", "diluted_shares", "employee_options_value"):
+        saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+            "assumptions_patch": {**patch, missing: None}, "reviewed_fields": fields}))
+        assert missing in saved["source_metadata_json"]["unresolved_fields"]
+        assert client.post(f"/valuation-drafts/{draft['id']}/promote", json=command).status_code == 409
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": patch, "reviewed_fields": fields}))
+    assert saved["source_metadata_json"]["promotion_ready"] is True
+    model = response_data(client.post(f"/valuation-drafts/{draft['id']}/promote", json=command))
+    assumptions = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))[0]
+    assert assumptions["wacc_start"] == .14
+    assert assumptions["beta"] is None
+    assert assumptions["cost_of_equity"] is None
+    assert assumptions["outputs"]["intrinsic_value_per_share"] is not None
+
+
+def test_clearing_sourced_financing_component_requires_new_unavailable_review(client, db):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    stored.source_metadata_json = {**stored.source_metadata_json,
+        "review_fields": [f for f in stored.source_metadata_json["review_fields"] if f != "beta"]}
+    db.commit()
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {"beta": None, "wacc_start": .14, "wacc_terminal": .14},
+        "reviewed_fields": []}))
+    assert "beta" in saved["source_metadata_json"]["review_fields"]
+    assert "beta" in saved["source_metadata_json"]["unresolved_fields"]
+
+
+def test_omitted_legacy_funding_keys_need_review_and_can_be_added_and_reviewed(client, db):
+    from app.services.assumption_provenance import DISCOUNT_COMPONENT_FIELDS
+    from app.services.valuation_setup_draft import ValuationSetupDraftService
+
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    stored.assumptions_json = {**{k: v for k, v in stored.assumptions_json.items()
+        if k not in DISCOUNT_COMPONENT_FIELDS}, "wacc_start": .14, "wacc_terminal": .14}
+    stored.source_metadata_json = {**stored.source_metadata_json, "review_fields": []}
+    stored.reviewed_fields_json = []
+    db.commit()
+    assert DISCOUNT_COMPONENT_FIELDS <= set(ValuationSetupDraftService._unresolved_fields(stored))
+    ValuationSetupDraftService._update_status(stored)
+    assert DISCOUNT_COMPONENT_FIELDS <= set(stored.source_metadata_json["review_fields"])
+    db.commit()
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {field: None for field in DISCOUNT_COMPONENT_FIELDS},
+        "reviewed_fields": sorted(DISCOUNT_COMPONENT_FIELDS)}))
+    assert not DISCOUNT_COMPONENT_FIELDS & set(saved["source_metadata_json"]["unresolved_fields"])
+
+
 @pytest.mark.parametrize("model_type", ["fcff_dcf", "distressed", "financial_services"])
 def test_missing_comparison_price_requires_explicit_review_but_allows_valuation(client, db, model_type):
     company, _ = _company_with_actuals(db)
@@ -77,7 +147,8 @@ def test_missing_comparison_price_requires_explicit_review_but_allows_valuation(
 
 
 @pytest.mark.parametrize("missing", [None, "book_value_of_equity", "net_income", "target_roe"])
-def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(client, db, missing):
+@pytest.mark.parametrize("unused_value", [None, 0.0])
+def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(client, db, missing, unused_value):
     company, _ = _company_with_actuals(db)
     draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
     equity_inputs = {"projection_years_count": 10, "book_value_of_equity": 100_000_000,
@@ -90,6 +161,8 @@ def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(clie
         "current_operating_margin": None, "target_operating_margin": None,
         "sales_to_capital_ratio": None, "starting_invested_capital": None,
         "wacc_start": None, "wacc_terminal": None}
+    unused.update(starting_revenue=unused_value, starting_invested_capital=unused_value,
+                  sales_to_capital_ratio=unused_value)
     response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
         "assumptions_patch": {**equity_inputs, **unused}, "reviewed_fields": list(equity_inputs)}))
     response = client.post(f"/valuation-drafts/{draft['id']}/promote", json={
@@ -102,6 +175,14 @@ def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(clie
         model = response_data(response)
         assumptions = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))
         assert assumptions[0]["starting_revenue"] is None
+        assert assumptions[0]["starting_invested_capital"] is None
+        assert assumptions[0]["sales_to_capital_ratio"] is None
+        db.expire_all()
+        retained = db.get(ValuationSetupDraft, draft["id"])
+        assert retained.assumptions_json["starting_revenue"] == unused_value
+        assert retained.assumptions_json["starting_invested_capital"] == unused_value
+        assert retained.source_metadata_json["promotion_excluded_fields"] == [
+            "starting_revenue", "starting_invested_capital", "sales_to_capital_ratio"]
         assert assumptions[0]["outputs"]["intrinsic_value_per_share"] > 0
         assert assumptions[0]["outputs"]["enterprise_value"] is None
 

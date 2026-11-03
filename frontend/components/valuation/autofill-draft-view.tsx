@@ -3,7 +3,7 @@
 import { AlertTriangle, Archive, CheckCircle2, Database, RotateCcw, ShieldCheck } from "lucide-react";
 import { ValuationSourceRefreshPanel } from "./source-refresh-panel";
 import type { Company } from "@/lib/api";
-import { provenanceLabel, reviewFieldValueIsValid } from "@/lib/autofill-review";
+import { DISCOUNT_COMPONENT_FIELDS, provenanceLabel, reviewFieldValueIsValid, unavailableDiscountComponent } from "@/lib/autofill-review";
 import type { useAutofillDraft } from "./use-autofill-draft";
 import { FIELD_GROUPS, TEXT_FIELDS, RENDERED_FIELDS, provenanceEntry, sourceBadgeClass } from "./autofill-draft-fields";
 
@@ -70,7 +70,7 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
 
   function renderReviewControl(key: string) {
     if (!reviewFields.has(key)) return null;
-    const valid = reviewFieldValueIsValid(key, values[key]);
+    const valid = reviewFieldValueIsValid(key, values[key], values, modelType);
     return (
       <label
         style={{
@@ -91,7 +91,10 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
           style={{ margin: 0, width: "16px" }}
         />
         {valid ? key === "current_market_price" && values[key] === null
-          ? "Reviewed as unavailable; no price comparison" : "Reviewed for this valuation"
+          ? "Reviewed as unavailable; no price comparison"
+          : unavailableDiscountComponent(key, values[key], values, modelType)
+            ? "Reviewed as unavailable; use explicit discount rates. Related financing sensitivities are unavailable."
+            : "Reviewed for this valuation"
           : "Enter a valid value before review"}
       </label>
     );
@@ -301,9 +304,10 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
                     value={typeof values[field.key] === "number" ? (values[field.key] as number) : ""}
                     onChange={(event) => updateValue(
                       field.key,
-                      event.target.value === "" ? (field.key === "current_market_price" ? null : "") : Number(event.target.value),
+                      event.target.value === "" ? (field.key === "current_market_price" || DISCOUNT_COMPONENT_FIELDS.has(field.key) ? null : "") : Number(event.target.value),
                     )}
-                    required={modelType === "financial_services" ? requiredFields.has(field.key) : field.required !== false || requiredFields.has(field.key)}
+                    required={!unavailableDiscountComponent(field.key, values[field.key], values, modelType)
+                      && (modelType === "financial_services" ? requiredFields.has(field.key) : field.required !== false || requiredFields.has(field.key))}
                   />
                   {renderProvenance(field.key)}
                   {renderReviewControl(field.key)}

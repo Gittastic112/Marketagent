@@ -8,7 +8,7 @@ import type { ValuationSetupDraft } from "@/lib/api/valuation-drafts";
 import type { AutofillAssumptionDraft } from "@/lib/api/valuation-drafts";
 import type { Company } from "@/lib/api/companies";
 import { archiveValuationDraft, refreshValuationDraft, resetValuationDraftFields, updateValuationDraft } from "@/lib/api/valuation-drafts";
-import { reviewFieldValueIsValid, reviewFieldsForModel, unresolvedReviewFields } from "@/lib/autofill-review";
+import { reviewFieldValueIsValid, reviewFieldsForModel, unresolvedReviewFields, unavailableDiscountComponent } from "@/lib/autofill-review";
 import { FIELD_GROUPS } from "./autofill-draft-fields";
 
 export type AutofillDraftReviewProps = {
@@ -85,10 +85,11 @@ export function useAutofillDraft({
   );
 
   const reviewFields = useMemo(
-    () => new Set(reviewFieldsForModel(sourceMetadata, modelType)),
-    [sourceMetadata, modelType],
+    () => new Set(reviewFieldsForModel(sourceMetadata, modelType, values)),
+    [sourceMetadata, modelType, values],
   );
-  const requiredFields = new Set(sourceMetadata.required_fields_by_model?.[modelType] ?? []);
+  const requiredFields = new Set((sourceMetadata.required_fields_by_model?.[modelType] ?? [])
+    .filter(field => !unavailableDiscountComponent(field, values[field], values, modelType)));
   const fieldApplies = (field: string) => modelType !== "financial_services"
     || requiredFields.has(field) || ["current_market_price", "basic_shares"].includes(field);
   const requiredMissingFields = [...requiredFields].filter(field => values[field] == null || values[field] === "");
@@ -101,7 +102,7 @@ export function useAutofillDraft({
   );
 
   const invalidDefaultFields = [...reviewFields].filter(
-    (field) => !reviewFieldValueIsValid(field, values[field]),
+    (field) => !reviewFieldValueIsValid(field, values[field], values, modelType),
   );
 
   const promotionReady = unresolvedFields.length === 0;
@@ -133,7 +134,7 @@ export function useAutofillDraft({
     setDefaultsAccepted(checked);
     if (checked) {
       const newlyAccepted = [...reviewFields].filter(
-        (field) => reviewFieldValueIsValid(field, values[field]) && !reviewedFields.has(field),
+        (field) => reviewFieldValueIsValid(field, values[field], values, modelType) && !reviewedFields.has(field),
       );
       setBulkAcceptedFields(new Set(newlyAccepted));
       setReviewedFields((current) => new Set([...current, ...newlyAccepted]));
@@ -160,6 +161,11 @@ export function useAutofillDraft({
     const assumptionsPatch = Object.fromEntries(
       [...editedFields].map((field) => [field, values[field]]),
     );
+    for (const field of reviewedFields) {
+      if (values[field] === undefined && unavailableDiscountComponent(field, values[field], values, modelType)) {
+        assumptionsPatch[field] = null;
+      }
+    }
     const saved = await updateValuationDraft(
       draftId,
       assumptionsPatch,

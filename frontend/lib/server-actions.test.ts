@@ -157,3 +157,15 @@ test("draft promotion saves only edited fields and carries the newly saved versi
   assert.equal(conflict.calls.length, 1);
   assert.deepEqual(conflict.pages, []);
 });
+
+test("direct draft creation materializes reviewed missing funding keys without a prior draft save", async () => {
+  const h = actionHarness(call => call.method === "PATCH" ? {updated_at: "v2"} : {id: 19});
+  await h.actions.promoteValuationSetupDraft(form({name: "Mock Data direct-rate model", scenario: "Mock Data",
+    wacc_start: "0.14", wacc_terminal: "0.14", reviewed_field: ["beta", "cost_of_equity"],
+    draft_updated_at: "v1"}), 7, "2");
+  assert.deepEqual(h.calls[0], {method: "PATCH", path: "/valuation-drafts/7", payload: {
+    assumptions_patch: {beta: null, cost_of_equity: null},
+    reviewed_fields: ["beta", "cost_of_equity"], expected_updated_at: "v1"}});
+  assert.equal(h.calls[1].path, "/valuation-drafts/7/promote");
+  assert.equal((h.calls[1].payload as any).expected_updated_at, "v2");
+});
