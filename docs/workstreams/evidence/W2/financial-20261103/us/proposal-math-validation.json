@@ -1,0 +1,721 @@
+{
+  "schema_version": 1,
+  "packet_sha256": "190ced26c8a33b31de877a16a918c374ef965df2aba2129b3cfbb19b01cd652b",
+  "database_connected": false,
+  "normal_data_mutated": false,
+  "new_dataset_created": false,
+  "calculation_cases": 18,
+  "results": [
+    {
+      "ticker": "AAPL",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 959741661959.3083,
+          "equity_value": 992274661959.3083,
+          "diluted_shares": 14983439505.0,
+          "illustrative_value_per_share": 66.22475844936568,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "diluted_shares": 14924864285
+          },
+          "enterprise_value": 959741661959.3083,
+          "equity_value": 992274661959.3083,
+          "diluted_shares": 14924864285.0,
+          "illustrative_value_per_share": 66.48466900677806,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "diluted_shares": 14983439505
+          },
+          "enterprise_value": 959741661959.3083,
+          "equity_value": 992274661959.3083,
+          "diluted_shares": 14983439505.0,
+          "illustrative_value_per_share": 66.22475844936568,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    },
+    {
+      "ticker": "NVDA",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 1771919626434.7776,
+          "equity_value": 1842955626434.7776,
+          "diluted_shares": 26723132784.0,
+          "illustrative_value_per_share": 68.96480443858044,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "diluted_shares": 24496391765,
+            "debt": 12389000000
+          },
+          "enterprise_value": 1771919626434.7776,
+          "equity_value": 1844337626434.7776,
+          "diluted_shares": 24496391765.0,
+          "illustrative_value_per_share": 75.2901751461182,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "diluted_shares": 26723132784,
+            "debt": 13771000000
+          },
+          "enterprise_value": 1771919626434.7776,
+          "equity_value": 1842955626434.7776,
+          "diluted_shares": 26723132784.0,
+          "illustrative_value_per_share": 68.96480443858044,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    },
+    {
+      "ticker": "MSFT",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 1412009492742.3413,
+          "equity_value": 1413696622742.3413,
+          "diluted_shares": 7504694025.0,
+          "illustrative_value_per_share": 188.37498478058754,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "minority_interests": 0
+          },
+          "enterprise_value": 1412009492742.3413,
+          "equity_value": 1418120492742.3413,
+          "diluted_shares": 7504694025.0,
+          "illustrative_value_per_share": 188.96446517582592,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "minority_interests": 22119350000
+          },
+          "enterprise_value": 1412009492742.3413,
+          "equity_value": 1396001142742.3413,
+          "diluted_shares": 7504694025.0,
+          "illustrative_value_per_share": 186.0170631996341,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    },
+    {
+      "ticker": "AMZN",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 642656534937.4192,
+          "equity_value": 737638884937.4192,
+          "diluted_shares": 10953498786.0,
+          "illustrative_value_per_share": 67.34276411115486,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 90.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "reinvestment",
+              "message": "Sales-to-Capital ratio is high (3.72). This implies the company needs very little reinvestment to grow. Ensure this matches industry characteristics (e.g. software or consulting).",
+              "affectedAssumptions": [
+                "sales_to_capital_ratio"
+              ],
+              "suggestedFix": "Compare Sales-to-Capital with industry peers. Asset-heavy businesses rarely exceed 1.5 - 2.0.",
+              "formula": null
+            },
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "minority_interests": 0
+          },
+          "enterprise_value": 642656534937.4192,
+          "equity_value": 741749534937.4192,
+          "diluted_shares": 10953498786.0,
+          "illustrative_value_per_share": 67.71804602612198,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 90.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "reinvestment",
+              "message": "Sales-to-Capital ratio is high (3.72). This implies the company needs very little reinvestment to grow. Ensure this matches industry characteristics (e.g. software or consulting).",
+              "affectedAssumptions": [
+                "sales_to_capital_ratio"
+              ],
+              "suggestedFix": "Compare Sales-to-Capital with industry peers. Asset-heavy businesses rarely exceed 1.5 - 2.0.",
+              "formula": null
+            },
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "minority_interests": 20553250000
+          },
+          "enterprise_value": 642656534937.4192,
+          "equity_value": 721196284937.4192,
+          "diluted_shares": 10953498786.0,
+          "illustrative_value_per_share": 65.84163645128642,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 90.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "reinvestment",
+              "message": "Sales-to-Capital ratio is high (3.72). This implies the company needs very little reinvestment to grow. Ensure this matches industry characteristics (e.g. software or consulting).",
+              "affectedAssumptions": [
+                "sales_to_capital_ratio"
+              ],
+              "suggestedFix": "Compare Sales-to-Capital with industry peers. Asset-heavy businesses rarely exceed 1.5 - 2.0.",
+              "formula": null
+            },
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    },
+    {
+      "ticker": "GOOG",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 785191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.47808508568981,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "employee_options_value": 0
+          },
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 788191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.72061730435934,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "employee_options_value": 6000000000
+          },
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 782191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.23555286702028,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    },
+    {
+      "ticker": "GOOGL",
+      "cases": [
+        {
+          "case": "selected",
+          "override_patch": {},
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 785191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.47808508568981,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "lower_claim_deduction",
+          "override_patch": {
+            "employee_options_value": 0
+          },
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 788191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.72061730435934,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        },
+        {
+          "case": "higher_claim_deduction",
+          "override_patch": {
+            "employee_options_value": 6000000000
+          },
+          "enterprise_value": 647104577027.3527,
+          "equity_value": 782191577027.3527,
+          "diluted_shares": 12369490604.0,
+          "illustrative_value_per_share": 63.23555286702028,
+          "current_market_price": null,
+          "comparison_gap": null,
+          "model_quality_score": 95.0,
+          "warnings": [
+            {
+              "severity": "watch",
+              "module": "supplementary_equity",
+              "message": "FCFE estimate is not available. Supply complete finite cash-flow inputs, explicit cost of equity, terminal growth and positive diluted shares. The one-stage model requires nonnegative cash flow and cost of equity strictly above growth; WACC and missing-value presets are not used.",
+              "affectedAssumptions": [
+                "net_income",
+                "capex",
+                "depreciation",
+                "change_in_nwc",
+                "new_debt_issued",
+                "debt_repaid",
+                "cost_of_equity",
+                "terminal_growth_rate",
+                "diluted_shares"
+              ],
+              "suggestedFix": "Review the listed inputs and the suitability of a stable-growth equity model; enter zero explicitly where supported by evidence.",
+              "formula": "Estimate per share = current equity cash flow \u00d7 (1 + g) / (cost of equity - g) / diluted shares"
+            }
+          ],
+          "projection_count": 10,
+          "relative_years_only": true,
+          "independent_bridge_arithmetic_verified": true
+        }
+      ],
+      "monotonic_claim_stress": true,
+      "company_fact_certification": false
+    }
+  ],
+  "boundary": "Arithmetic/contract check of explicitly hypothetical source-backed scenarios, not approval of unmeasured claims, economic suitability or current fair value. No model saved or promoted."
+}

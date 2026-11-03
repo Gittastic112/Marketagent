@@ -262,6 +262,13 @@ Only the coordinator dispatches one such gate at a time; record the owner until
 cleanup is confirmed. Different ports or worktrees do not prevent destructive
 cross-run cleanup. Build shared images before parallel tests and avoid concurrent
 replacement of image tags. Frontend build/test outputs need separate worktrees.
+Before installing an image, give it a unique release tag and verify that tag resolves
+to the recorded image ID. Never rebuild or retag a release name used by a running
+or retained rollback container. With Docker's containerd image store, replacing the
+last tag can make an intermediate image ID unresolvable even while its container
+snapshot still starts. Preserve that intact container; do not delete it while
+attempting to recover image metadata. Preflight the new tagged image before stopping
+the old service, then verify settings, localhost ports and data after replacement.
 
 ## Browser and release gates
 

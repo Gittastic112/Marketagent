@@ -1,0 +1,604 @@
+{
+  "schema_version": 1,
+  "decision_id": "M06-INDIA-APPROVAL-READY-REFERENCES-20261103",
+  "prepared_on": "2026-11-03",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "status": "Prepared for review and approval; not applied or promoted by this agent",
+  "application_authorized_by_this_packet": false,
+  "normal_runtime_writes": false,
+  "complete_company_input_certification": false,
+  "prior_evidence": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/review-packet.json",
+      "sha256": "d7112187a294fb723f0f8cd592dc42c7beb4de133cdd9f576e8f332312bdd1f1"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/scenario-candidates.json",
+      "sha256": "4a31dacec2caa470c4d736f3d93b428fe6fe312b12f0aa94d186722a689e7c4b"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/historical-completion-candidate.json",
+      "sha256": "2453e1ccd53e29373e43c0e721d479996555160659a116e5e3ec97b72c53bba3"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/remaining-gap-audit.json",
+      "sha256": "8ac35e73bf3439befeb293891d69b1d24e2f3766c3c5efb319a3a56793b4481e"
+    },
+    {
+      "path": "data/reviews/financial-input-followup-20261102.json",
+      "sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce"
+    }
+  ],
+  "distinction": "These conditional historical reference scenarios can be numerically complete without resolving every actual company claim. They must not close a company-fact completeness milestone or be presented as current valuations.",
+  "companies": [
+    {
+      "ticker": "RELIANCE",
+      "company_id": 7,
+      "draft_id": 3,
+      "source_input_signature": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30",
+      "financial_history_signature": "40c6ddf084a8bcd523993024176f988a523757f4edb4e3420e2edb3b99bbd0fe",
+      "historical_reference_date": "2026-03-31",
+      "information_set": "FY2026 reports published after the reference date; retrospective illustration, not an ex-ante backtest",
+      "source": {
+        "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+        "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+        "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+        "verified_sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+        "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/RELIANCE-2026-direct.txt",
+        "extracted_text_sha256": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737"
+      },
+      "decision_id": "M06-RELIANCE-DIRECT-REFERENCE-20261103",
+      "assumptions_patch": {
+      },
+      "reviewed_fields": [
+
+      ],
+      "full_candidate_inputs_for_review_only": {
+        "starting_revenue": 10756750000000,
+        "current_operating_margin": 0.11273014618727775,
+        "cash": 1459770000000,
+        "debt": 4789350000000,
+        "operating_leases": 235790000000,
+        "cross_holdings": 2483320000000,
+        "minority_interests": 1818360000000,
+        "book_value_of_equity": 9040300000000,
+        "net_income": 807750000000,
+        "depreciation": 576880000000,
+        "preferred_stock": 0,
+        "employee_options_value": 2564000000,
+        "diluted_shares": 13533379686,
+        "current_market_price": null,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "scenario": "31 Mar 2026 INR stationary reference with disclosed awards (Estimate)",
+        "projection_years_count": 10,
+        "reinvestment_method": "sales_to_capital",
+        "target_operating_margin": 0.11273014618727775,
+        "revenue_growth_years_json": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0,
+          "9": 0.0,
+          "10": 0.0
+        },
+        "starting_invested_capital": 11940710000000,
+        "sales_to_capital_ratio": 0.9008467670682899,
+        "tax_rate": 0.25,
+        "risk_free_rate": 0.06485365853658576,
+        "wacc_start": 0.14,
+        "wacc_terminal": 0.14,
+        "terminal_growth_rate": 0.0,
+        "terminal_roic": 0.14,
+        "beta": null,
+        "equity_risk_premium": null,
+        "cost_of_equity": null,
+        "pre_tax_cost_of_debt": null,
+        "debt_to_capital": null,
+        "equity_to_capital": null,
+        "basic_shares": 13532472634
+      },
+      "direct_discount_method": {
+        "selected_method": "fixed_nominal_discount_rate",
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "wacc_start": 0.14,
+        "wacc_terminal": 0.14,
+        "justification": "A selected round reference hurdle under delegated scenario design. Not an issuer WACC estimate or observed financing cost.",
+        "method_packet": "direct-rate-review.json",
+        "unconsumed_components_remain_null": [
+          "beta",
+          "equity_risk_premium",
+          "cost_of_equity",
+          "pre_tax_cost_of_debt",
+          "debt_to_capital",
+          "equity_to_capital"
+        ],
+        "required_contract_adapter": "Coordinator maps this explicit method selection to the reviewed method contract; this packet does not invent an API field."
+      },
+      "model_completion_scope": "Numerically complete dated stationary reference using previously reviewed carrying proxies and material disclosed award populations.",
+      "complete_current_company_basis": false,
+      "current_market_price": null,
+      "no_trade_recommendation": true,
+      "source_history_changed": false,
+      "application_requires_user_approval": true,
+      "prior_award_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261102/india/historical-completion-candidate.json",
+        "sha256": "2453e1ccd53e29373e43c0e721d479996555160659a116e5e3ec97b72c53bba3"
+      },
+      "industry_mapping_decision": {
+        "claim_type": "User Assumption",
+        "selected_existing_mapping": "Diversified",
+        "new_mapping_write": false,
+        "reason": "Suitable as a broad comparison category for a conglomerate. It does not assert segment composition or a weighted peer beta.",
+        "source_locator": "RELIANCE-2026-direct PDF129 and data/reviews/industry-and-accounting-review-20261022.json Reliance decision",
+        "true_net_external_revenue_weights": null,
+        "unresolved_fact": "Segment GST is not allocated between external turnover and internal turnover. Subtracting all segment GST from external gross turnover reconciles consolidated revenue mechanically but does not establish the net external mix."
+      },
+      "review_note_append": "M06-RELIANCE-DIRECT-REFERENCE-20261103. Retain the reviewed 31 March 2026 INR stationary reference, including 13,533,379,686 parent all-option shares and INR2,564,000,000 incremental Jio carrying-proxy award loss. Select an explicit 14% fixed nominal INR discount method; six financing decomposition values remain unknown and unused. Preserve all source/provenance and prior reviews. Existing Diversified mapping is an explicit broad comparison choice, not a net-external-revenue allocation. No current-price comparison. This dated reference does not certify current company fair value or all undisclosed claims.",
+      "independent_arithmetic_preview_not_application_output": {
+        "method": "Independent Ruby calculation of the reviewed stationary formulas, no application/runtime/database access",
+        "annual_nopat_inr": 909457500000.0,
+        "enterprise_value_inr": 6496124999999.999,
+        "equity_value_after_selected_claims_inr": 3593150999999.999,
+        "hypothetical_value_per_share_inr": 265.50285910599547,
+        "comparison_price": null,
+        "upside_downside": null,
+        "sensitivities": [
+          {
+            "direct_hurdle": 0.1,
+            "additional_allowance_pct_book": null,
+            "additional_claim_deduction_inr": 2564000000,
+            "hypothetical_value_per_share_inr": 457.5058960626873
+          },
+          {
+            "direct_hurdle": 0.14,
+            "additional_allowance_pct_book": null,
+            "additional_claim_deduction_inr": 2564000000,
+            "hypothetical_value_per_share_inr": 265.50285910599547
+          },
+          {
+            "direct_hurdle": 0.18,
+            "additional_allowance_pct_book": null,
+            "additional_claim_deduction_inr": 2564000000,
+            "hypothetical_value_per_share_inr": 158.83450524116677
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "company_id": 9,
+      "draft_id": 4,
+      "source_input_signature": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba",
+      "financial_history_signature": "aac752b882771f3f3d911b5908ee82e5c76a3c935ec7418bdca6e52a70d0f969",
+      "historical_reference_date": "2026-03-31",
+      "information_set": "FY2026 reports published after the reference date; retrospective illustration, not an ex-ante backtest",
+      "source": {
+        "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+        "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+        "local_path": "output/milestones/m05/review-batches-20261013/originals/BHARTIARTL-2026.pdf",
+        "verified_sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+        "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/BHARTIARTL-2026.txt",
+        "extracted_text_sha256": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1"
+      },
+      "decision_id": "M06-BHARTIARTL-ILLUSTRATIVE-CLAIM-ALLOWANCE-20261103",
+      "assumptions_patch": {
+        "scenario": "31 Mar 2026 INR illustration: full parent dilution + 1% book claim allowance",
+        "basic_shares": 6091895981,
+        "diluted_shares": 6095062981,
+        "employee_options_value": 14905660000
+      },
+      "reviewed_fields": [
+        "scenario",
+        "basic_shares",
+        "diluted_shares",
+        "employee_options_value"
+      ],
+      "full_candidate_inputs_for_review_only": {
+        "starting_revenue": 2109728000000,
+        "current_operating_margin": 0.30120565305100944,
+        "cash": 137222000000,
+        "debt": 1216714000000,
+        "operating_leases": 737403000000,
+        "cross_holdings": 189013000000,
+        "minority_interests": 469068000000,
+        "book_value_of_equity": 1490566000000,
+        "net_income": 266952000000,
+        "depreciation": 527108000000,
+        "preferred_stock": 0,
+        "employee_options_value": 14905660000,
+        "diluted_shares": 6095062981,
+        "current_market_price": null,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "scenario": "31 Mar 2026 INR illustration: full parent dilution + 1% book claim allowance",
+        "projection_years_count": 10,
+        "reinvestment_method": "sales_to_capital",
+        "target_operating_margin": 0.30120565305100944,
+        "revenue_growth_years_json": {
+          "1": 0.0,
+          "2": 0.0,
+          "3": 0.0,
+          "4": 0.0,
+          "5": 0.0,
+          "6": 0.0,
+          "7": 0.0,
+          "8": 0.0,
+          "9": 0.0,
+          "10": 0.0
+        },
+        "starting_invested_capital": 3587516000000,
+        "sales_to_capital_ratio": 0.5880748685162659,
+        "tax_rate": 0.25,
+        "risk_free_rate": 0.06485365853658576,
+        "wacc_start": 0.14,
+        "wacc_terminal": 0.14,
+        "terminal_growth_rate": 0.0,
+        "terminal_roic": 0.14,
+        "beta": null,
+        "equity_risk_premium": null,
+        "cost_of_equity": null,
+        "pre_tax_cost_of_debt": null,
+        "debt_to_capital": null,
+        "equity_to_capital": null,
+        "basic_shares": 6091895981
+      },
+      "direct_discount_method": {
+        "selected_method": "fixed_nominal_discount_rate",
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "wacc_start": 0.14,
+        "wacc_terminal": 0.14,
+        "justification": "A selected round reference hurdle under delegated scenario design. Not an issuer WACC estimate or observed financing cost.",
+        "method_packet": "direct-rate-review.json",
+        "unconsumed_components_remain_null": [
+          "beta",
+          "equity_risk_premium",
+          "cost_of_equity",
+          "pre_tax_cost_of_debt",
+          "debt_to_capital",
+          "equity_to_capital"
+        ],
+        "required_contract_adapter": "Coordinator maps this explicit method selection to the reviewed method contract; this packet does not invent an API field."
+      },
+      "model_completion_scope": "Numerically complete conditional illustration only. Actual subsidiary award and incremental put claims remain unresolved.",
+      "complete_current_company_basis": false,
+      "current_market_price": null,
+      "no_trade_recommendation": true,
+      "source_history_changed": false,
+      "application_requires_user_approval": true,
+      "parent_dilution": {
+        "claim_type": "Estimate",
+        "fully_paid_issued_shares": 6093282313,
+        "partly_paid_issued_shares": 1110668,
+        "treasury_shares_reported_in_thousands": 2497,
+        "outstanding_parent_options_reported_in_thousands": 3167,
+        "formula": "6,093,282,313 + 1,110,668 - 2,497,000 + 3,167,000",
+        "selected_denominator": 6095062981,
+        "assumptions": [
+          "Assume all remaining partly paid shares become fully paid and all reported parent options vest and convert one-for-one.",
+          "Credit no future call or option exercise proceeds. Remove parent treasury shares before adding all parent awards.",
+          "The two award/treasury counts are rounded to thousands. The arithmetic result is an estimate, not an exact current share register.",
+          "Do not add Nxtra, Indus or Airtel Africa awards as Bharti shares. Parent awards receive no separate numerator deduction."
+        ]
+      },
+      "additional_claim_allowance": {
+        "claim_type": "User Assumption",
+        "preferred_rate_of_parent_book_equity": 0.01,
+        "sourced_base_inr": 1490566000000,
+        "selected_amount_inr": 14905660000,
+        "formula": "1,490,566 million INR * 1,000,000 * 1%",
+        "scope": "A hypothetical additional net reduction of Bharti equity after the existing aggregate NCI deduction, for unresolved subsidiary award dilution and incremental AMC minority-put effects.",
+        "rationale": "One percent is deliberately a simple adjustable scenario, scaled to reported parent capital. No evidence establishes 1% as fair value, expected loss, best estimate, materiality threshold, or an adequate reserve.",
+        "stress_rates": [
+          0.0,
+          0.01,
+          0.025,
+          0.05
+        ],
+        "stress_amounts_inr": [
+          0,
+          14905660000,
+          37264150000.0,
+          74528300000.0
+        ],
+        "stress_range_interpretation": "Zero is a hypothetical lower stress endpoint, not absence of claims. Five percent is not an upper bound or confidence interval. Actual additional claims can lie outside this range.",
+        "no_double_count_policy": "Keep the already reviewed INR469,068 million aggregate NCI carrying deduction. Do not add the full INR48,729 million AMC redemption liability on top of that NCI; its covered ownership overlap has not been reconciled. The selected allowance is explicitly an assumed NET incremental claim after NCI, not a second valuation of the covered minorities. This avoids mechanically adding both full amounts but does not prove the real overlap has been measured.",
+        "accounting_truth": "The company recognizes the put liability and continues to report the corresponding NCI until exercise. Reported put redemption liability is not an incremental option premium.",
+        "field_adapter": "The existing employee_options_value field is an equity-bridge subtraction. If used for this combined illustrative allowance, show the scenario-specific label Additional equity-claim allowance (assumed), plus this scope in the model story; never display it as an observed employee option fair value.",
+        "default_unknown_actual_values": {
+          "subsidiary_awards_fair_value_inr": null,
+          "incremental_amc_put_after_nci_inr": null
+        },
+        "no_sbc_addback": "Retain share-based payment expense in the reported operating margin. Do not add it back merely because an allowance is also used for outstanding claims."
+      },
+      "source_locators": [
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 214,
+          "exact_text_anchor": "Equity attributable to owners of the Parent 1,490,566",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 214,
+          "exact_text_anchor": "Non-controlling interests ('NCI') 469,068",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 238,
+          "exact_text_anchor": "6,093,282,313 (March 31,2025",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 238,
+          "exact_text_anchor": "1,110,668 (March 31, 2025 - 392,287,662)",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 238,
+          "exact_text_anchor": "only one class of equity shares",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 238,
+          "exact_text_anchor": "All the FCCBs were converted except for USD 0.2 million",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 239,
+          "exact_text_anchor": "Closing balance 2,497 3,937",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 246,
+          "exact_text_anchor": "overview of all share option plans of the Group",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 246,
+          "exact_text_anchor": "Outstanding at end of year 3,167",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 246,
+          "exact_text_anchor": "Outstanding at end of year 60 5,780",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 247,
+          "exact_text_anchor": "Outstanding at end of period 1,745",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 258,
+          "exact_text_anchor": "Closing balance 48,729 46,397",
+          "verified": true
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_page": 258,
+          "exact_text_anchor": "present value of the redemption amount",
+          "verified": true
+        }
+      ],
+      "review_note_append": "M06-BHARTIARTL-ILLUSTRATIVE-CLAIM-ALLOWANCE-20261103. Retrospective 31 March 2026 INR illustration, not a current company valuation. Parent denominator 6,095,062,981 assumes all partly paid shares and all 3,167 thousand parent options convert, after deducting reported 2,497 thousand treasury shares; no proceeds credited. The INR14,905,660,000 additional equity-claim allowance is an arbitrary 1% of reported parent book equity, selected only for a conditional illustration. It is not employee-option fair value, expected loss or a proven upper bound. Stress the allowance from 0% to 5% of book; actual residual subsidiary awards and incremental AMC puts remain unknown. Keep existing aggregate NCI deduction and do not additionally deduct the full overlapping AMC redemption liability. Keep INR14% direct hurdle, 0% growth, reported margin, 25% assumed tax, and no current-price comparison. Approval is required before applying or promoting this scenario.",
+      "independent_arithmetic_preview_not_application_output": {
+        "method": "Independent Ruby calculation of the reviewed stationary formulas, no application/runtime/database access",
+        "annual_nopat_inr": 476596500000.0,
+        "enterprise_value_inr": 3404260714285.714,
+        "equity_value_after_selected_claims_inr": 1292405054285.7139,
+        "hypothetical_value_per_share_inr": 212.04129609726732,
+        "comparison_price": null,
+        "upside_downside": null,
+        "sensitivities": [
+          {
+            "direct_hurdle": 0.1,
+            "additional_allowance_pct_book": 0.0,
+            "additional_claim_deduction_inr": 0.0,
+            "hypothetical_value_per_share_inr": 437.89785410258423
+          },
+          {
+            "direct_hurdle": 0.1,
+            "additional_allowance_pct_book": 0.01,
+            "additional_claim_deduction_inr": 14905660000.0,
+            "hypothetical_value_per_share_inr": 435.45232399953767
+          },
+          {
+            "direct_hurdle": 0.1,
+            "additional_allowance_pct_book": 0.025,
+            "additional_claim_deduction_inr": 37264150000.0,
+            "hypothetical_value_per_share_inr": 431.7840288449679
+          },
+          {
+            "direct_hurdle": 0.1,
+            "additional_allowance_pct_book": 0.05,
+            "additional_claim_deduction_inr": 74528300000.0,
+            "hypothetical_value_per_share_inr": 425.6702035873516
+          },
+          {
+            "direct_hurdle": 0.14,
+            "additional_allowance_pct_book": 0.0,
+            "additional_claim_deduction_inr": 0.0,
+            "hypothetical_value_per_share_inr": 214.48682620031386
+          },
+          {
+            "direct_hurdle": 0.14,
+            "additional_allowance_pct_book": 0.01,
+            "additional_claim_deduction_inr": 14905660000.0,
+            "hypothetical_value_per_share_inr": 212.04129609726732
+          },
+          {
+            "direct_hurdle": 0.14,
+            "additional_allowance_pct_book": 0.025,
+            "additional_claim_deduction_inr": 37264150000.0,
+            "hypothetical_value_per_share_inr": 208.37300094269753
+          },
+          {
+            "direct_hurdle": 0.14,
+            "additional_allowance_pct_book": 0.05,
+            "additional_claim_deduction_inr": 74528300000.0,
+            "hypothetical_value_per_share_inr": 202.25917568508123
+          },
+          {
+            "direct_hurdle": 0.18,
+            "additional_allowance_pct_book": 0.0,
+            "additional_claim_deduction_inr": 0.0,
+            "hypothetical_value_per_share_inr": 90.36958847683046
+          },
+          {
+            "direct_hurdle": 0.18,
+            "additional_allowance_pct_book": 0.01,
+            "additional_claim_deduction_inr": 14905660000.0,
+            "hypothetical_value_per_share_inr": 87.92405837378394
+          },
+          {
+            "direct_hurdle": 0.18,
+            "additional_allowance_pct_book": 0.025,
+            "additional_claim_deduction_inr": 37264150000.0,
+            "hypothetical_value_per_share_inr": 84.25576321921415
+          },
+          {
+            "direct_hurdle": 0.18,
+            "additional_allowance_pct_book": 0.05,
+            "additional_claim_deduction_inr": 74528300000.0,
+            "hypothetical_value_per_share_inr": 78.14193796159782
+          }
+        ]
+      }
+    }
+  ],
+  "implementation_conditions": [
+    "Use the explicit fixed-discount method review gate described in direct-rate-review.json.",
+    "Withhold funding-component sensitivities and FCFE/DDM when their own inputs are missing.",
+    "Retain actual unknown claim values as unavailable in provenance and visible limitations.",
+    "Label the Airtel combined allowance as an assumption in the scenario and bridge; do not silently mislabel it as measured option value.",
+    "Apply only after user approval through existing ownership/version/source-signature API guards; re-read current draft before any mutation.",
+    "Preserve prior explicit user edits and immutable financial history; retain null comparison price."
+  ],
+  "checks": [
+    {
+      "name": "RELIANCE-2026-direct local_path hash",
+      "expected": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "actual": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "pass": true
+    },
+    {
+      "name": "RELIANCE-2026-direct extracted_text_path hash",
+      "expected": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737",
+      "actual": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737",
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL-2026 local_path hash",
+      "expected": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "actual": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL-2026 extracted_text_path hash",
+      "expected": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1",
+      "actual": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 214 Equity attributable to owners of the Parent 1,490,566",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 214 Non-controlling interests ('NCI') 469,068",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 238 6,093,282,313 (March 31,2025",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 238 1,110,668 (March 31, 2025 - 392,287,662)",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 238 only one class of equity shares",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 238 All the FCCBs were converted except for USD 0.2 million",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 239 Closing balance 2,497 3,937",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 246 overview of all share option plans of the Group",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 246 Outstanding at end of year 3,167",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 246 Outstanding at end of year 60 5,780",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 247 Outstanding at end of period 1,745",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 258 Closing balance 48,729 46,397",
+      "pass": true
+    },
+    {
+      "name": "Airtel PDF 258 present value of the redemption amount",
+      "pass": true
+    },
+    {
+      "name": "Airtel parent all-conversion denominator",
+      "actual": 6095062981,
+      "expected": 6095062981,
+      "pass": true
+    },
+    {
+      "name": "Airtel allowance 1% of reported parent book equity",
+      "actual": 14905660000,
+      "expected": 14905660000,
+      "pass": true
+    },
+    {
+      "name": "Airtel put movement",
+      "actual": 48729,
+      "expected": 48729,
+      "pass": true
+    },
+    {
+      "name": "RELIANCE stationary DCF equals perpetuity",
+      "expected": 6496124999999.999,
+      "actual": 6496124999999.996,
+      "tolerance_inr": 0.01,
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL stationary DCF equals perpetuity",
+      "expected": 3404260714285.714,
+      "actual": 3404260714285.712,
+      "tolerance_inr": 0.01,
+      "pass": true
+    }
+  ]
+}

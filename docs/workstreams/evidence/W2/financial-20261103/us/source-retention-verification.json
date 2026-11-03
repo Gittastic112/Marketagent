@@ -1,0 +1,372 @@
+{
+  "schema_version": 1,
+  "verified_at": "2026-11-03T02:22:26.903028+00:00",
+  "reviewer": "/root/us_review",
+  "mode": "read_only_retained_source_verification",
+  "normal_data_changed": false,
+  "original_reports_copied_into_evidence": false,
+  "proposal_packet_sha256": "190ced26c8a33b31de877a16a918c374ef965df2aba2129b3cfbb19b01cd652b",
+  "successful_originals_verified": 9,
+  "sources": [
+    {
+      "source_id": "AAPL-proxy-2026",
+      "issuer": "Apple",
+      "document_title": "Apple Inc. - DEF 14A",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000130817926000008/aapl014016-def14a.htm",
+      "financial_or_document_date": "2025-09-27",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-proxy-2026.html",
+      "processing_run_id": 172,
+      "acquisition_finished_at": "2026-11-03T02:12:55.289872+00:00",
+      "byte_count": 1248537,
+      "sha256": "18b7685675d4482810b3601facfc966a4d0f5124963ae52e53d61e9cd41c7840",
+      "receipt_sha256": "55f3b2cc0750e61b680e17c59b73ae8dc70980f222f765ca8ebbb30797714ecb",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 10,
+      "reported_facts": {
+        "award_shares": 151604285,
+        "rsu_2022": 142900767,
+        "rsu_2014": 8669882,
+        "options": 24993,
+        "director_rsu": 8643,
+        "weighted_option_exercise_price": 14.12,
+        "espp_future_capacity": 58575220
+      },
+      "locator": {
+        "printed_page": 83,
+        "html_table_indices_zero_based": [
+          256,
+          257
+        ],
+        "notes": [
+          "1: exercise price applies only to options",
+          "2: no acquired options or RSUs at fiscal end",
+          "3: outstanding award components",
+          "4: ESPP capacity separate from outstanding awards"
+        ]
+      }
+    },
+    {
+      "source_id": "AAPL-proxy-2025",
+      "issuer": "Apple",
+      "document_title": "Apple Inc.- DEF14A",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000130817925000008/aapl4359751-def14a.htm",
+      "financial_or_document_date": "2024-09-28",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-proxy-2025.html",
+      "processing_run_id": 173,
+      "acquisition_finished_at": "2026-11-03T02:12:56.226633+00:00",
+      "byte_count": 1230950,
+      "sha256": "b94c6e8b7701a2573c956d00e504baa7cf716d8e79773f4472497cbe72d5d6f9",
+      "receipt_sha256": "1c8209364667ca51758bd31d2dcc4dbd5e53d7ebca3a0594b5803409aa7e26ae",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 3,
+      "reported_facts": {
+        "espp_future_capacity": 66924428
+      },
+      "locator": {
+        "printed_page": 97,
+        "html_table_indices_zero_based": [
+          286,
+          287
+        ],
+        "notes": [
+          "4: ESPP capacity; comparison year for optional reserve-decline proxy"
+        ]
+      }
+    },
+    {
+      "source_id": "AAPL-ESPP-2024-amendment",
+      "issuer": "Apple",
+      "document_title": "Document",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000008/a10-qexhibit10112282024.htm",
+      "financial_or_document_date": "2024-11-06",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-ESPP-2024-amendment.html",
+      "processing_run_id": 174,
+      "acquisition_finished_at": "2026-11-03T02:12:56.516559+00:00",
+      "byte_count": 71435,
+      "sha256": "65fe092cb84ae198fb059bd5a457eeb139b54efbd70c756614a4d71e6dc9e94c",
+      "receipt_sha256": "da6d52e3e3ce6b2c4567ba302bb22d68b72f2f4537c9c5fe3ab4b8a68993df96",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 7,
+      "reported_facts": {
+        "offering_months": 6,
+        "minimum_purchase_price_fraction": 0.85
+      },
+      "locator": {
+        "printed_page": null,
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Sections 2(p), 2(u), 3, 5, 10, 17; offerings and purchasing mechanics, not actual participant rights"
+        ]
+      }
+    },
+    {
+      "source_id": "NVDA-proxy-2026",
+      "issuer": "NVIDIA",
+      "document_title": "nvda-20260512",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/nvda-20260512.htm",
+      "financial_or_document_date": "2026-01-25",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/NVDA-proxy-2026.html",
+      "processing_run_id": 175,
+      "acquisition_finished_at": "2026-11-03T02:12:57.165614+00:00",
+      "byte_count": 1421524,
+      "sha256": "db1037e5ad0ad29792c573051de9e0d4cfa64efe1b1c610413737cbddee01d54",
+      "receipt_sha256": "02138ecaf891ff4438d80fc497229070528fa8efb332f8aa5f5091c693ce30a8",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 9,
+      "reported_facts": {
+        "award_shares": 192391765,
+        "espp_future_capacity": 2226741019,
+        "fiscal_2026_espp_purchases": 13226923,
+        "later_espp_purchase_estimate": 2825984,
+        "later_period_end": "2026-08-31"
+      },
+      "locator": {
+        "printed_page": 69,
+        "html_table_indices_zero_based": [
+          83
+        ],
+        "notes": [
+          "1: fiscal-end ESPP rights cannot be determined",
+          "2: capacity at January 25; separate later purchase-period estimate",
+          "Following paragraph: fiscal-year ESPP purchases; not fiscal-end unexercised rights"
+        ]
+      }
+    },
+    {
+      "source_id": "MSFT-proxy-2026",
+      "issuer": "Microsoft",
+      "document_title": "DEF 14A",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/d61756ddef14a.htm",
+      "financial_or_document_date": "2026-06-30",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-proxy-2026.html",
+      "processing_run_id": 176,
+      "acquisition_finished_at": "2026-11-03T02:12:57.678053+00:00",
+      "byte_count": 2025038,
+      "sha256": "a159026ac635a8462d49288bfa8b8d0b3c806dce71305c2cdc3cd79f162b8664",
+      "receipt_sha256": "5c1f923ebe22610216e69d66caa6c54cf80d91013ed6de8a8a35d9a1ae50ed25",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 8,
+      "reported_facts": {
+        "award_shares": 77694025,
+        "weighted_option_exercise_price": 59.48,
+        "espp_future_capacity_after_exercise": 57250943
+      },
+      "locator": {
+        "printed_page": 61,
+        "html_table_indices_zero_based": [
+          404,
+          405,
+          406,
+          407
+        ],
+        "notes": [
+          "1: target PSAs plus acquisition awards/options",
+          "2: exercise price excludes stock awards",
+          "3: remaining ESPP reserve after June 30 exercise"
+        ]
+      }
+    },
+    {
+      "source_id": "MSFT-ESPP-2025-11K",
+      "issuer": "Microsoft",
+      "document_title": "11-K",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526120090/msft-20251231.htm",
+      "financial_or_document_date": "2025-12-31",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-ESPP-2025-11K.html",
+      "processing_run_id": 177,
+      "acquisition_finished_at": "2026-11-03T02:12:58.203331+00:00",
+      "byte_count": 244330,
+      "sha256": "b88887eed52ea5d204d4ee49850c294a5f5f254669b029d11e3e4c72de0c2fef",
+      "receipt_sha256": "6f8f790199ac935f45ba4aba39e10247eb9998daf0b138023ad81d2b5317fc7c",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 7,
+      "reported_facts": {
+        "purchase_price_fraction": 0.9,
+        "offering_months": 3,
+        "year_2025_shares_purchased": 4894610
+      },
+      "locator": {
+        "printed_page": [
+          4,
+          5
+        ],
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Note 1, Share Purchases: trade-date recognition and later settlement",
+          "Related Party Transactions: annual purchased-share count"
+        ]
+      }
+    },
+    {
+      "source_id": "MSFT-charter-2016",
+      "issuer": "Microsoft",
+      "document_title": "EX-3.1",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312516782569/d305147dex31.htm",
+      "financial_or_document_date": "2016-11-30",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-charter-2016.html",
+      "processing_run_id": 179,
+      "acquisition_finished_at": "2026-11-03T02:12:58.443760+00:00",
+      "byte_count": 60762,
+      "sha256": "6f27f2fcc1790d4c634b25152534d658fdbc7ece51219ee405303eb584fa163e",
+      "receipt_sha256": "8f1953c9b5a754e35099d96b4bded64851bcf881001500c40ba1e117d4fc3b69",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 4,
+      "reported_facts": {
+        "authorized_preferred_shares": 100000000,
+        "authorized_common_shares": 24000000000
+      },
+      "locator": {
+        "printed_page": null,
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Article IV 4.1-4.2: authorized classes; not issued/outstanding balances",
+          "Signature: November 30, 2016"
+        ]
+      }
+    },
+    {
+      "source_id": "AMZN-proxy-2026",
+      "issuer": "Amazon",
+      "document_title": "tm261382-1_nonfiling - none - 10.4724512s",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041026/tm261382-1_def14a.htm",
+      "financial_or_document_date": "2025-12-31",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AMZN-proxy-2026.html",
+      "processing_run_id": 180,
+      "acquisition_finished_at": "2026-11-03T02:12:59.264643+00:00",
+      "byte_count": 1330822,
+      "sha256": "09b2c92275648c69a57c2fc32bb29eb54b41afeccc339add375ff63c5de7407a",
+      "receipt_sha256": "d35c74fe98b6970257edb34e1d7caa90c73d80d13785ffbc78ad8afbc9045762",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 5,
+      "reported_facts": {
+        "award_shares": 222498786
+      },
+      "locator": {
+        "printed_page": 64,
+        "html_table_indices_zero_based": [
+          64
+        ],
+        "notes": [
+          "1: all outstanding table awards are RSUs with no exercise price",
+          "Unapproved-plan outstanding row is a dash; future capacity excluded"
+        ]
+      }
+    },
+    {
+      "source_id": "GOOG-proxy-2026",
+      "issuer": "Alphabet",
+      "document_title": "goog-20260424",
+      "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm",
+      "financial_or_document_date": "2025-12-31",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/GOOG-proxy-2026.html",
+      "processing_run_id": 181,
+      "acquisition_finished_at": "2026-11-03T02:12:59.699522+00:00",
+      "byte_count": 2175849,
+      "sha256": "84aeababf68c7d4ea7f876474dd34d79f7d582f7aa2a378a5020cf38bfb6a63d",
+      "receipt_sha256": "76481ecf597325eca3ec8118c1bc029d09aec4e515d4b9418bb10b9e45a60dbb",
+      "hash_matches_receipt": true,
+      "byte_count_matches_receipt": true,
+      "issuer_date_and_target_fact_checks_passed": true,
+      "verification_rule_count": 7,
+      "reported_facts": {
+        "award_shares": 281490604,
+        "legacy_gsu": 882,
+        "legacy_dividend_equivalents": 6,
+        "gsu": 277446507,
+        "gsu_dividend_equivalents": 1376994,
+        "psu_target": 2649367,
+        "psu_dividend_equivalents": 16848
+      },
+      "locator": {
+        "printed_page": 58,
+        "html_table_indices_zero_based": [
+          179
+        ],
+        "notes": [
+          "1A-1B: parent Class C awards and dividend equivalents",
+          "PSUs at 100% target; no parent A/B awards or stock options under current plans"
+        ]
+      }
+    }
+  ],
+  "existing_annual_sources": [
+    {
+      "source_id": "AAPL-2025-sec",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html",
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+      "hash_unchanged": true
+    },
+    {
+      "source_id": "NVDA-2026-sec",
+      "path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html",
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+      "hash_unchanged": true
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html",
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+      "hash_unchanged": true
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "hash_unchanged": true
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "hash_unchanged": true
+    }
+  ],
+  "existing_review_sha256": "f9ccf16138e8039f982aa3b5390601e97fa1ba770e4bb0d275b9325376438a76",
+  "failed_source": {
+    "source_id": "MSFT-official-FAQ",
+    "url": "https://www.microsoft.com/en-us/investor/FAQ",
+    "processing_run_id": 178,
+    "status": "failed",
+    "error_type": "ValueError",
+    "failure_reason": "Source request failed",
+    "receipt_sha256": "c4c15c19e00ee0a703d13e134f3c692caa6927af0b4ffc022d06c049c4aaf424",
+    "retained_original_exists": false,
+    "usable_as_retained_evidence": false
+  },
+  "required_proposal_correction": {
+    "ticker": "MSFT",
+    "field": "preferred_stock",
+    "selected_value": 0,
+    "classification": "User Assumption",
+    "supersedes_packet_classification": "Estimate",
+    "instruction": "Label this an explicit uncertain assumption of no additional preferred-share deduction. The failed FAQ provides no retained proof. Do not certify a zero historical outstanding balance or say the charter prohibits preferred shares.",
+    "reserve_limit": "The separate 1% book-equity NCI reserve is discretionary and does not empirically measure or prove coverage of any preferred claim."
+  },
+  "interpretation_limits": [
+    "Retaining the proxy verifies reported awards and plan capacities, not the valuation assumptions applied to them.",
+    "Apple and NVIDIA future ESPP capacity is not known outstanding purchase rights. Gross issuance and no exercise proceeds are selected stresses.",
+    "Microsoft target awards and June 30 exercised ESPP rights are supported; issuer NCI remains unquantified.",
+    "Amazon awards are supported; issuer NCI remains unquantified. The Microsoft/Amazon 1% reserves are discretionary; 0%-5% stress is not a bound.",
+    "Alphabet parent awards are supported, while subsidiary/cash claims remain unquantified. The 3bn expense-flow proxy is not a liability or fair-value fact.",
+    "Alphabet known NCI remains 3.4bn, including 0.841bn redeemable NCI once. Additional employee reserve is not a second NCI deduction; expense or economic overlap remains uncertain.",
+    "NVIDIA 13.771bn residual-liability treatment is a scenario classification; the new proxy does not resolve actual finance-lease liability.",
+    "All new source receipts still have human_review_status pending. Hash/fact verification alone does not approve, save, promote, or certify the models."
+  ],
+  "outcome": "All nine successful retained US originals match receipts and narrow fact/date/issuer checks; one failed FAQ remains unusable; scenario approval remains separate."
+}

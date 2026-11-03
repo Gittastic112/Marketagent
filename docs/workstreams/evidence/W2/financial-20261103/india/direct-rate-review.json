@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "decision_id": "M06-INDIA-DIRECT-RATE-METHOD-20261103",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "review_date": "2026-11-03",
+  "status": "Method review complete; coordinator owns implementation, tests and version-guarded application",
+  "normal_runtime_writes": false,
+  "method": "Explicit nominal INR fixed discount rate for a retrospective stationary reference scenario",
+  "claim_type": "User Assumption",
+  "assumptions_patch": {
+    "wacc_start": 0.14,
+    "wacc_terminal": 0.14,
+    "beta": null,
+    "equity_risk_premium": null,
+    "cost_of_equity": null,
+    "pre_tax_cost_of_debt": null,
+    "debt_to_capital": null,
+    "equity_to_capital": null
+  },
+  "reviewed_fields": ["wacc_start", "wacc_terminal"],
+  "review_concluded_not_applicable_fields": ["beta", "equity_risk_premium", "cost_of_equity", "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital"],
+  "must_not_relabel_null_as_fact": true,
+  "company_bindings": [
+    {"ticker": "RELIANCE", "company_id": 7, "draft_id": 3, "source_input_signature": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30"},
+    {"ticker": "BHARTIARTL", "company_id": 9, "draft_id": 4, "source_input_signature": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba"}
+  ],
+  "basis": "The user delegated research/demo numerical method choices. Fourteen percent is a round selected scenario hurdle, not an observed issuer WACC, borrowing cost, country-risk estimate or return forecast. It discounts INR cash flows and exceeds the zero nominal INR terminal-growth assumption. No decomposition can be inferred from a direct hurdle.",
+  "uncertainty": "There is no issuer-risk calibration. A useful reference stress range is 10% to 18%, with zero terminal growth and all other stationary assumptions held fixed; this is a scenario range, not a confidence interval. Future actual margins, reinvestment, financing and asset values can differ substantially.",
+  "consumed_field_analysis": [
+    {"function": "backend/app/services/dcf.py:build_fcff_forecast", "uses": ["wacc_start", "wacc_terminal", "starting_revenue", "revenue_growth_years_json", "current_operating_margin", "target_operating_margin", "tax_rate", "sales_to_capital_ratio", "starting_invested_capital", "projection_years_count"], "does_not_use": ["beta", "equity_risk_premium", "cost_of_equity", "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital"]},
+    {"function": "backend/app/services/dcf.py:calculate_terminal_value", "rate_inputs": ["wacc_terminal", "terminal_growth_rate", "terminal_roic"], "decomposition_required": false},
+    {"function": "backend/app/services/dcf.py:calculate_equity_bridge", "still_required": ["cash", "debt", "minority_interests", "preferred_stock", "employee_options_value", "cross_holdings", "operating_leases", "diluted_shares"], "optional_with_explicit_review": ["current_market_price"]},
+    {"function": "backend/app/services/dcf.py:_calc_value_for_overrides", "hazard": "At initial inspection, funding sensitivity branches manufactured absent beta, ERP, cost of equity, debt weight and borrowing cost. Coordinator changes are in progress. Direct-rate promotion must not expose synthetic funding sensitivities.", "required_change": "Return unavailable sensitivity cells and an explicit reason whenever required decomposition inputs are absent. Keep direct-rate base valuation and the four non-funding sensitivity tables available."},
+    {"function": "backend/app/services/fcfe_ddm_engine.py", "required_behavior": "FCFE/DDM remain unavailable without an explicit reviewed cost_of_equity; do not substitute the fixed FCFF hurdle."}
+  ],
+  "minimal_gate_change": {
+    "owner": "backend/app/services/assumption_provenance.py and valuation_setup_draft.py",
+    "recommendation": "Use an explicit selected fixed-discount method with reviewed finite positive wacc_start/wacc_terminal, currency-matched scenario basis and direct-method provenance. Exclude only unused decomposition fields from this method's required/review field sets. Preserve derived-rate method requirements. Never globally mark all null finance fields reviewed.",
+    "preserve": ["source signatures", "version guards", "ownership checks", "currency checks", "terminal WACC greater than terminal growth", "reviewed economic bridge", "shares", "optional-price explicit review", "saved input history"],
+    "reliance_effect": "Closes the six remaining nonconsumed financing fields without changing the accepted historical shares/awards or inventing financial observations.",
+    "airtel_effect": "Closes only six nonconsumed financing fields. Diluted shares and employee options still require their separate evidence packet."
+  },
+  "tests_proposed_not_run_by_agent": [
+    "Reviewed direct method with six null decomposition fields can promote once all consumed inputs are reviewed; base DCF equals direct numeric calculation.",
+    "Missing, nonfinite or unreviewed direct rates cannot promote; terminal rate at or below growth cannot promote.",
+    "Derived-rate method still requires reviewed decomposition; merely clearing components does not choose direct method.",
+    "Missing shares, options, debt, NCI or other consumed bridge inputs still block.",
+    "Currency mismatch, stale source signature, wrong owner and version conflict still block.",
+    "Absent decomposition makes beta/ERP and debt/cost-of-debt sensitivity tables unavailable without default values; four direct operating sensitivity tables remain calculated.",
+    "Complete decomposition still produces existing funding sensitivity behavior.",
+    "Missing cost of equity leaves FCFE/DDM unavailable, even when FCFF direct rate is valid."
+  ],
+  "review_note_append": "M06-INDIA-DIRECT-RATE-METHOD-20261103: retain the explicit 14% nominal INR stationary-reference hurdle under delegated research method selection. This is a direct scenario assumption, not issuer WACC or a financing decomposition. The six unused component fields remain unavailable and must not be synthesized. Preserve the historical source basis, all bridge and award reviews, and the unavailable comparison price. Funding-component sensitivity and FCFE/DDM outputs remain unavailable when their distinct required inputs are absent."
+}

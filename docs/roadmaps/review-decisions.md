@@ -106,6 +106,30 @@ unique mapping among those categories. Revenue shares are not automatically the
 right weights for beta, ROE or sales-to-capital ratios. See the retained source
 evidence and [Damodaran's business-weighting guidance](https://pages.stern.nyu.edu/~adamodar/New_Home_Page/TenQs/TenQsBottomupBetas.htm).
 
+### November 3 approved historical research scenarios
+
+The user explicitly approved: "Apply the eleven research scenarios."
+[USER-APPROVED-HISTORICAL-SCENARIOS-20261103](../../data/reviews/historical-scenario-application-20261103.json)
+records all 11 saved models, exact approved changes, source/history bindings and
+limitations. The [review report](../workstreams/evidence/W2/financial-20261103/approval/approval-report.html)
+retains the proposed scenario values and 43 alternative stresses. The original
+five personal Apple approvals and every delegated decision remain unchanged.
+
+Eleven additional originals pass hash/issuer/locator checks. Processing Run 178
+retains the failed Microsoft FAQ; preferred equity zero remains an uncertain
+User Assumption. Other discretionary claim reserves and future-capacity issuance
+remain explicit stresses, not measured liabilities, expected losses or bounds.
+Bank parent-share issuance assumes fixed subsidiary ownership and no exercise
+proceeds. Missing facts, comparison prices and unanchored calendar dates remain
+unavailable; no current fair-value or actual-use certification is granted.
+
+The first Apple review save succeeded, then promotion correctly rejected the old
+date-sensitive source fingerprint. A read-only diagnosis reproduced every prior
+signature using the prior day. Normal API refresh changed 53 provenance ages by
+one day and preserved all financial values, review markers and histories. The
+guarded continuation created models 2-12 and assumptions 3-13; all calculations
+match independent references within rounding. Existing model 1 was preserved.
+
 ### November 2 selected financial-input decisions
 
 The later [follow-up](../../data/reviews/financial-input-followup-20261102.json)

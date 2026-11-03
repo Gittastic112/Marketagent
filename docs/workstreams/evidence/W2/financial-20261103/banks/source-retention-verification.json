@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03T02:24:34Z",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer_type": "delegated_agent_evidence_verification",
+  "independent_human_certification": false,
+  "status": "verified_complete",
+  "proposal_path": "docs/workstreams/evidence/W2/financial-20261103/banks/historical-bank-model-proposals.json",
+  "proposal_sha256": "eecd69abe56ea01ec53fd7d25e22e8e5b15eab752ac28bf500b5a42a7020a044",
+  "supersedes": "Only the pending source-retention/original-hash prerequisite for the ICICI/SBI shareholding sources in the historical bank proposal. Original proposal and acquisition receipts are preserved.",
+  "sources": [
+    {
+      "ticker": "ICICIBANK",
+      "source_url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/share-price-and-ownership/2026/SHAREHOLDINGPA-TTERNMARCH312026.pdf",
+      "issuer_index_url": "https://www.icici.bank.in/about-us/shareprice/2026",
+      "processing_run_id": 182,
+      "receipt_path": "output/milestones/model-completion-20261103/acquired-sources/ICICIBANK-shareholding-20260331.json",
+      "receipt_sha256": "9bbe34a73f59104465b86482c3efe19019668e7cd14fe03e0176fa8e251fa106",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/ICICIBANK-shareholding-20260331.pdf",
+      "original_sha256": "05d8535932cf0111d42ca1b2d02421e1201b3126f94c50c1bca4a19f31fd49ef",
+      "original_bytes": 901391,
+      "downloaded_at": "2026-11-03T02:13:01.099548+00:00",
+      "financial_as_of": "2026-03-31",
+      "issuer_identity_basis": "Internal company/security identifiers on PDF1 plus official issuer index link.",
+      "exact_locators": [
+        {
+          "pdf_page": 1,
+          "location": "General information about company",
+          "verification": "ICICI Bank Limited; NSE symbol ICICIBANK; scrip532174; ISIN INE090A01021; report quarter ended31-03-2026."
+        },
+        {
+          "pdf_page": 2,
+          "location": "Declaration, rows1-5",
+          "verification": "No partly-paid shares, convertible securities or warrants. Outstanding ESOPs and depository receipts are present."
+        },
+        {
+          "pdf_page": 4,
+          "location": "TableI, Total row; columnsVII,XC,X,XI",
+          "verification": "Issued7160112569; outstanding award shares155224205; total fully diluted7315336774. The1288570463 depositary-receipt underlying shares are already included."
+        }
+      ],
+      "checks": {
+        "normal_processing_run_matches": true,
+        "download_success": true,
+        "original_sha_matches_receipt_and_expected": true,
+        "original_bytes_match_receipt_and_expected": true,
+        "pdf_magic": true,
+        "source_url_matches_proposal": true,
+        "all_retained_pdf_content_checks_pass": true,
+        "financial_data_not_changed_by_acquisition": true
+      },
+      "content_check_path": "docs/workstreams/evidence/W2/financial-20261103/banks/ICICIBANK-retained-pdf-check.json",
+      "content_check_sha256": "9f5ed4c91db430e2259302de79ec29ea6644e66382e59979d1d1c7fb7bc15368",
+      "content_checks": {
+        "page_count_32": true,
+        "issuer_identity": true,
+        "quarter_date": true,
+        "no_convertibles": true,
+        "no_warrants": true,
+        "awards_present": true,
+        "table_share_counts": true,
+        "full_issuance_sum": true
+      },
+      "selected_page_text_sha256": {
+        "1": "a50816c31847c5a2ee687ca0b0b0818ef391b46e8a0f9ff173c821c845cd6129",
+        "2": "bb6d27b4af5f24e5f7fa9d007ada6a6e0cc017144504ec3aa270eb1fad07045d",
+        "4": "05a8c1ba0853120846e62c62b87df31c58b0591b0315e41d575b18b8672eb459"
+      },
+      "extraction_runtime": {
+        "container": "market_intel_backend",
+        "executable": "/usr/local/bin/python",
+        "pdfplumber_version": "0.11.10",
+        "operation": "Python -B imports only sys/io/json/hashlib/pdfplumber, reads original PDF from stdin, prints bounded checks; no app/settings imports or database access."
+      },
+      "source_retention_status": "verified_complete",
+      "acquisition_human_review_status_preserved": "pending"
+    },
+    {
+      "ticker": "SBIN",
+      "source_url": "https://sbi.bank.in/documents/17836/22946/27042026_SHP_31032026.pdf/489ed27f-e4e8-827c-6db4-3f526755b512?t=1777287547463",
+      "issuer_index_url": "https://sbi.bank.in/web/investor-relations/disclosure-under-regulation-46/disclosure-under-regulation-46-m-of-sebi-lodr-share-holding-pattern",
+      "processing_run_id": 183,
+      "receipt_path": "output/milestones/model-completion-20261103/acquired-sources/SBIN-shareholding-20260331.json",
+      "receipt_sha256": "c53335b0819608d7c85357711465d949ce60317c65772ba29af89ebf81324352",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/SBIN-shareholding-20260331.pdf",
+      "original_sha256": "40038bedbd13150e2db793079a8d1b7998e2afe077e8cad153ce5dcbf5ca77eb",
+      "original_bytes": 465080,
+      "downloaded_at": "2026-11-03T02:13:03.852403+00:00",
+      "financial_as_of": "2026-03-31",
+      "issuer_identity_basis": "Official SBI investor-relations index links this exact source; date/count/GDR basis reconcile with the independently retained SBI annual report. The selected PDF declaration itself has a quarter header rather than a company-name header.",
+      "exact_locators": [
+        {
+          "pdf_page": 1,
+          "location": "Mar26 declaration, first5 rows",
+          "verification": "No partly-paid shares, convertible securities, warrants or outstanding parent ESOPs; depositary receipts exist."
+        },
+        {
+          "pdf_page": 2,
+          "location": "Summary statement, Grand Total row",
+          "verification": "Domestic paid-up9149082766 +81534820 DR underlying shares =9230617586 total shares. Fully diluted total is also9230617586; outstanding ESOP column is blank/dash, corroborated by the explicit No declaration."
+        },
+        {
+          "pdf_page": 305,
+          "location": "Retained SBI FY2026 annual report, Schedule1 capital",
+          "verification": "Subscribed and paid-up9230617586 includes81534820 GDR underlying shares; corroborates the new filing. Issued9231402716 and annual weighted EPS9137560796 are not used."
+        }
+      ],
+      "checks": {
+        "normal_processing_run_matches": true,
+        "download_success": true,
+        "original_sha_matches_receipt_and_expected": true,
+        "original_bytes_match_receipt_and_expected": true,
+        "pdf_magic": true,
+        "source_url_matches_proposal": true,
+        "all_retained_pdf_content_checks_pass": true,
+        "financial_data_not_changed_by_acquisition": true
+      },
+      "content_check_path": "docs/workstreams/evidence/W2/financial-20261103/banks/SBIN-retained-pdf-check.json",
+      "content_check_sha256": "771a81f466ae19eda4ef0b22cdbb7016340572a16ebb6cf346ece007759e9940",
+      "content_checks": {
+        "page_count_9": true,
+        "quarter_date": true,
+        "no_convertibles": true,
+        "no_warrants": true,
+        "no_outstanding_parent_esops": true,
+        "table_share_counts": true,
+        "shares_include_underlying_gdr": true
+      },
+      "selected_page_text_sha256": {
+        "1": "5c9a24a785b1e91524584e3831c31cc87c86fc0bb1a6007f6f7e79203d7257da",
+        "2": "a55d14eee95299a103cf977a20760b67a6dc138ccdc444e38dd86403dab854ef"
+      },
+      "extraction_runtime": {
+        "container": "market_intel_backend",
+        "executable": "/usr/local/bin/python",
+        "pdfplumber_version": "0.11.10",
+        "operation": "Python -B imports only sys/io/json/hashlib/pdfplumber, reads original PDF from stdin, prints bounded checks; no app/settings imports or database access."
+      },
+      "source_retention_status": "verified_complete",
+      "acquisition_human_review_status_preserved": "pending"
+    }
+  ],
+  "scope": "Downloaded originals, bytes/hashes, Processing Run receipt identity, issuer/date/share-count declarations and annual-report reconciliation verified. No source originals, runtime records, financial facts, reviews or saved valuations were changed by this verification.",
+  "review_ready_effect": "The source-retention prerequisite is satisfied for all three bank proposals: HDFC already used a verified retained annual report; ICICI and SBI now have retained verified official shareholding filings.",
+  "unchanged_limits": [
+    "This is delegated research review, not an independent human audit or automatic model approval.",
+    "Apply only through current owned draft/source/version gates; preservation of the old receipt signatures is lineage, not an instruction to bypass changed inputs.",
+    "The bank proposals remain retrospective scenarios with fixed subsidiary ownership, no current price comparison, and explicit parent issuance/equity haircut stresses.",
+    "No complete group economic award valuation or live/current fair-value claim is established."
+  ]
+}

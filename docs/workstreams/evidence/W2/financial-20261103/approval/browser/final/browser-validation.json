@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "report_sha256": "031be4fbe3d3aa3637bbe322b2a21e64083503438aeb8a2215fc0b5a5e86c344",
+  "mode": "Static local HTML in existing isolated browser image; no app access, credentials, database or network",
+  "browser_image": "market-intelligence-m09-browser:20261012",
+  "browser_image_id": "sha256:b6245279ddeb4727f403ae8c08ae9ad552388305d95c381e1120ed26b0dd3c07",
+  "normal_runtime_access": false,
+  "network": "none",
+  "viewports": [
+    {
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "name": "desktop"
+      },
+      "dimensions": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440
+      },
+      "expanded": {
+        "viewport": 1440,
+        "documentWidth": 1440,
+        "bodyWidth": 1440,
+        "duplicateIds": [
+
+        ]
+      },
+      "overview_rows": 11,
+      "company_links": [
+        "Apple",
+        "Reliance Industries",
+        "Bharti Airtel",
+        "HDFC Bank",
+        "ICICI Bank",
+        "State Bank of India",
+        "NVIDIA",
+        "Alphabet Class C",
+        "Microsoft",
+        "Amazon",
+        "Alphabet Class A"
+      ],
+      "table_scroll": {
+        "width": 1210,
+        "scrollWidth": 1210,
+        "scrollLeft": 0
+      },
+      "keyboard_detail_opened": true,
+      "accessibility": {
+        "available": true,
+        "violations": [
+
+        ],
+        "pass_rule_count": 22,
+        "incomplete_rule_count": 0
+      },
+      "page_errors": [
+
+      ],
+      "network_attempts": [
+
+      ],
+      "pass": true
+    },
+    {
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "name": "mobile"
+      },
+      "dimensions": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390
+      },
+      "expanded": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "bodyWidth": 390,
+        "duplicateIds": [
+
+        ]
+      },
+      "overview_rows": 11,
+      "company_links": [
+        "Apple",
+        "Reliance Industries",
+        "Bharti Airtel",
+        "HDFC Bank",
+        "ICICI Bank",
+        "State Bank of India",
+        "NVIDIA",
+        "Alphabet Class C",
+        "Microsoft",
+        "Amazon",
+        "Alphabet Class A"
+      ],
+      "table_scroll": {
+        "width": 360,
+        "scrollWidth": 950,
+        "scrollLeft": 40
+      },
+      "keyboard_detail_opened": true,
+      "accessibility": {
+        "available": true,
+        "violations": [
+
+        ],
+        "pass_rule_count": 23,
+        "incomplete_rule_count": 1
+      },
+      "page_errors": [
+
+      ],
+      "network_attempts": [
+
+      ],
+      "pass": true
+    }
+  ],
+  "visual_review": {
+    "reviewer": "delegated agent",
+    "pass": true,
+    "directly_inspected_final_screenshots": [
+      "mobile-MSFT-open.png",
+      "mobile-table-keyboard-scroll.png"
+    ],
+    "unchanged_inspected_screenshot_hash_checks": [
+      {
+        "name": "desktop-top.png",
+        "unchanged_from_visually_inspected_initial": true
+      },
+      {
+        "name": "desktop-overview.png",
+        "unchanged_from_visually_inspected_initial": true
+      },
+      {
+        "name": "mobile-top.png",
+        "unchanged_from_visually_inspected_initial": true
+      }
+    ],
+    "observations": [
+      "Readable desktop overview with all eleven rows, clear values and limitations.",
+      "Phone text and expanded details remain inside viewport; overview deliberately scrolls horizontally with keyboard support.",
+      "No clipping outside the intended table scroll region, overlapping text or broken source-link wrapping observed."
+    ],
+    "independent_human_certification": false
+  },
+  "all_checks_pass": true,
+  "screenshot_files": [
+    {
+      "name": "desktop-MSFT-open.png",
+      "sha256": "f264f3b0e9437ccbd281b79aa0d1f4a94393fe922f0d5e4ec14972ee645b7a46"
+    },
+    {
+      "name": "desktop-overview.png",
+      "sha256": "c2305bddbaee9b6d97d6af67684be4877f1aeb227f4a2fa790d8f660efa414e6"
+    },
+    {
+      "name": "desktop-top.png",
+      "sha256": "5c6d8de25d27eb2dee09a44103366b5ef1e6ae6dd16b466ff03afb241a9db305"
+    },
+    {
+      "name": "mobile-MSFT-open.png",
+      "sha256": "ce7d69c32075585614bf72ffcbe048fefa5bd390705c844b5235aabd0d747acd"
+    },
+    {
+      "name": "mobile-overview.png",
+      "sha256": "2c00563455e4c6bd2675ab1aa33c1c678c754ce53bad388e2c986304d8e0ea94"
+    },
+    {
+      "name": "mobile-table-keyboard-scroll.png",
+      "sha256": "4eebd5cbed65aad859577166f39ddf688c69def9147a9b41a8f75ecb6a6c1fae"
+    },
+    {
+      "name": "mobile-top.png",
+      "sha256": "8e3f8045518d3ea2c0c4265e1229c7b6ff1f631448ab570d0e02767c573609d6"
+    }
+  ]
+}
