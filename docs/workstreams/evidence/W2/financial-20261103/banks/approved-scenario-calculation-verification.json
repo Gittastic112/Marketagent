@@ -1,0 +1,541 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03T02:41:14.110708+00:00",
+  "scope": "Pure execution of unchanged current DCF, bank, supplementary-equity and diagnostic sources with Pydantic/null-capable output and SimpleNamespace persistence containers. No ORM, settings, session or normal DB imports. Sensitivity generation excluded; the base results and all projection rows are calculated.",
+  "normal_database_writes": false,
+  "application_performed": false,
+  "input_sha256": {
+    "summary": "be9ad33317a6611e9af9e65cb9c481a7347fb88bf13f26635e72d7f64a71c981",
+    "baseline": "58026393b197e3fcace2114658adff5a8113b4f98fe4a4a90e711d39668b6e81",
+    "audit": "13902b234dfcd5b51cd63dd3184394fc2a3447715912778d37cde609a21dd6de"
+  },
+  "source_sha256": {
+    "inputs": "34fbf0689a7255e9bdfca18d019308f0ac47602a37553ad86bdb02db3e0f2776",
+    "outputs": "b35c279e56334e83a39cd88e4ed751e71799af632b3a3932fad6c6f334f19103",
+    "draft_service": "d76b91cef07ad7f145a2fe8f5e89152ea253e40772bddbcf59e05c25c99ead3d",
+    "provenance": "f7a7470ffb29209939bf102e6963d9fedadfd55061ba2bbf4d30910674cbf4f4",
+    "diagnostics_engine": "b003d7ac5ee5836195134661be7425579922c46a20632a95a1ff4ee79c893436",
+    "financial_services_engine": "47e5654f16f991b071bcb0dbd4a48412227955519ccbf8215ee902f83932fbeb",
+    "distressed_engine": "42172cd26bc4a82fe2d237a2817cb07fef8101cd0cddfc5dfae929a5aabe1a31",
+    "relative_valuation_service": "241169e694e5fe3b0561cdddbd171584ae16488d5b996649bcad1b8b7a45a9fc",
+    "fcfe_ddm_engine": "3d65c96d2178e7f4bc9b8201b95ea6261ffabb38fca83277776525eb9d4e7141",
+    "dcf": "8c0fa82555e7bdc528d4c3cf332e1de569f0cfb84ff6167634bbd4fe59054dd6"
+  },
+  "runtime": {
+    "executable": "/usr/local/bin/python",
+    "python": "3.14.6"
+  },
+  "bank_omission_review": "Promotion builds a separate payload; only financial_services removes three unconsumed operating fields before schema validation. Draft values remain intact and promotion metadata records the exclusions. Source/version/review gates still run first. Reviewed regression covers None/zero and missing common-book/income/ROE blocks.",
+  "proposal_count": 11,
+  "all_checks_pass": true,
+  "max_absolute_reference_difference": 3.126388037344441e-13,
+  "companies": [
+    {
+      "ticker": "AAPL",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2025-09-27",
+      "reference_value_per_share": 66.22475844936568,
+      "current_engine_value_per_share": 66.22475844936568,
+      "absolute_difference": 0.0,
+      "equity_value": 992274661959.3083,
+      "enterprise_value": 959741661959.3083,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "77e14babe2f81782e78c352ff338c2009dda9389cdd85ee0de0cdff323e6de4a",
+          "assembled_sha256": "1a6c894708116ab2757f2df2b5f28c5cbab638c675b460c15e3b3822367f08f9"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "model_type": "fcff_dcf",
+      "currency": "INR",
+      "financial_as_of": "2026-03-31",
+      "reference_value_per_share": 265.50285910599547,
+      "current_engine_value_per_share": 265.50285910599524,
+      "absolute_difference": 2.2737367544323206e-13,
+      "equity_value": 3593150999999.996,
+      "enterprise_value": 6496124999999.996,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 36,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "0ce47fa88984e2d734e5026047a45fd6f75807ad621230bfc7ceb3f8fd9dd449",
+          "assembled_sha256": "b614c77ce1f19b00f217851b2e709f2f5810c5bf005e1d3163405c710f93b849"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "model_type": "fcff_dcf",
+      "currency": "INR",
+      "financial_as_of": "2026-03-31",
+      "reference_value_per_share": 212.04129609726732,
+      "current_engine_value_per_share": 212.041296097267,
+      "absolute_difference": 3.126388037344441e-13,
+      "equity_value": 1292405054285.712,
+      "enterprise_value": 3404260714285.712,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 36,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "9fd7a8c7d6ed4925b055cb2f45f2d33104bbec105ee249264ff718b3562744c7",
+          "assembled_sha256": "b99490304da0f9785ec93d37d67393066a1adf2785ad3c84a4e9c49ffc5cc1ac"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "HDFCBANK",
+      "model_type": "financial_services",
+      "currency": "INR",
+      "financial_as_of": "2026-03-31",
+      "reference_value_per_share": 349.89913049594446,
+      "current_engine_value_per_share": 349.8991304959444,
+      "absolute_difference": 5.684341886080802e-14,
+      "equity_value": 5479088702284.122,
+      "enterprise_value": null,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [
+        "starting_revenue",
+        "starting_invested_capital",
+        "sales_to_capital_ratio"
+      ],
+      "retained_draft_excluded_values": {
+        "starting_revenue": 0.0,
+        "starting_invested_capital": 0.0,
+        "sales_to_capital_ratio": 0.3547518752602235
+      },
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 10,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "7ce52dd768f08a65bbdc1786be101542d1c871b31bcfe0d75c5563da24a61317",
+          "assembled_sha256": "47e244fd70716dac4b831e1f592db4ae95893ca9e7b9628823fcfb43ebcfc950"
+        }
+      },
+      "warning_modules": [
+        "financial_services_method"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "ICICIBANK",
+      "model_type": "financial_services",
+      "currency": "INR",
+      "financial_as_of": "2026-03-31",
+      "reference_value_per_share": 493.25306157668444,
+      "current_engine_value_per_share": 493.2530615766844,
+      "absolute_difference": 5.684341886080802e-14,
+      "equity_value": 3608312260240.006,
+      "enterprise_value": null,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [
+        "starting_revenue",
+        "starting_invested_capital",
+        "sales_to_capital_ratio"
+      ],
+      "retained_draft_excluded_values": {
+        "starting_revenue": 0.0,
+        "starting_invested_capital": 0.0,
+        "sales_to_capital_ratio": 0.3547518752602235
+      },
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 10,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "e70f57bc09d9106b083b330ed209318f5d1197d4d940f6d67b107a077f8102be",
+          "assembled_sha256": "0f39af9ab9a51d038208a0a87d9d345d52dab3c83d8a0cacd38e37f1c02318d4"
+        }
+      },
+      "warning_modules": [
+        "financial_services_method"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "SBIN",
+      "model_type": "financial_services",
+      "currency": "INR",
+      "financial_as_of": "2026-03-31",
+      "reference_value_per_share": 625.9248214959692,
+      "current_engine_value_per_share": 625.9248214959692,
+      "absolute_difference": 0.0,
+      "equity_value": 5777672664814.6045,
+      "enterprise_value": null,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [
+        "starting_revenue",
+        "starting_invested_capital",
+        "sales_to_capital_ratio"
+      ],
+      "retained_draft_excluded_values": {
+        "starting_revenue": 0.0,
+        "starting_invested_capital": 0.0,
+        "sales_to_capital_ratio": 0.3547518752602235
+      },
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 10,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "81fd65af1330adf90485d0d75ac6a855373a5f8018e2806b9fcbdccdeaa13ceb",
+          "assembled_sha256": "c91322e152ba18d4e6a3ac27181d4695ecc0dfdd87e9a6c70625f1ca663b642c"
+        }
+      },
+      "warning_modules": [
+        "financial_services_method"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "NVDA",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2026-01-25",
+      "reference_value_per_share": 68.96480443858044,
+      "current_engine_value_per_share": 68.96480443858044,
+      "absolute_difference": 0.0,
+      "equity_value": 1842955626434.7776,
+      "enterprise_value": 1771919626434.7776,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "f0f72340d49abb929b55c97511d439aceaa27c7f0aaafdbdbc92bcd64b58a31d",
+          "assembled_sha256": "b403ef1d5f9ebdd31bc980032fc608bad2c393127755a11c8515030e98b72b23"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "GOOG",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2025-12-31",
+      "reference_value_per_share": 63.47808508568981,
+      "current_engine_value_per_share": 63.47808508568981,
+      "absolute_difference": 0.0,
+      "equity_value": 785191577027.3527,
+      "enterprise_value": 647104577027.3527,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "dfcaa33da80d3a0a966bfd25a99ef1e1d8629b268eaed2b3bed24d2b394d820c",
+          "assembled_sha256": "ec9aa0bb7ae2716d819e0fe37cba7431cadacd97c1fe5f3a54af0c4c540e2dac"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "MSFT",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2026-06-30",
+      "reference_value_per_share": 188.37498478058754,
+      "current_engine_value_per_share": 188.37498478058754,
+      "absolute_difference": 0.0,
+      "equity_value": 1413696622742.3413,
+      "enterprise_value": 1412009492742.3413,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "481d35228fce951b31d13ea3fc1fea189d0aa79d57bb72581dc6e99f15857eb4",
+          "assembled_sha256": "dc4d9fe2b4eb628e570fd8d239d023b58323fc77e5106ad0d574c19d0df6d53f"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "AMZN",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2025-12-31",
+      "reference_value_per_share": 67.34276411115486,
+      "current_engine_value_per_share": 67.34276411115486,
+      "absolute_difference": 0.0,
+      "equity_value": 737638884937.4192,
+      "enterprise_value": 642656534937.4192,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "c5a3eb23df364dbdfbc7d10ec400c734f3294a6eb413f04c9c9d496188e066ba",
+          "assembled_sha256": "1839f68eb30b3748309b3e2ca12a52882976e968b71462805edf45767d25cc16"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "reinvestment",
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    },
+    {
+      "ticker": "GOOGL",
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "financial_as_of": "2025-12-31",
+      "reference_value_per_share": 63.47808508568981,
+      "current_engine_value_per_share": 63.47808508568981,
+      "absolute_difference": 0.0,
+      "equity_value": 785191577027.3527,
+      "enterprise_value": 647104577027.3527,
+      "projection_count": 10,
+      "projection_years_requested": 10,
+      "promotion_excluded_fields": [],
+      "retained_draft_excluded_values": {},
+      "unresolved_fields": [],
+      "numeric_selected_differences": [],
+      "review_payload_count": 37,
+      "narrative_checks": {
+        "story_text": {
+          "old_prefix_retained": true,
+          "old_sha256": "c373a69546fa0307d027d95c2e2186546280dea21405c65afbf6cf4eab6c3b01",
+          "assembled_sha256": "e5e50f7a2b8dc2211b49cd215fcf0f3539dc7c390a3912d5f5e5bce3cfceb398"
+        },
+        "risk_story": {
+          "old_prefix_retained": true,
+          "old_sha256": "13beb3b0cbce3bb5c6635da875ec7dc4fe168ece0746ed1809466de4346f1610",
+          "assembled_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97"
+        }
+      },
+      "warning_modules": [
+        "supplementary_equity"
+      ],
+      "blocking_warnings": [],
+      "checks": {
+        "reference_matches": true,
+        "no_unresolved_model_reviews": true,
+        "selected_numeric_inputs_match": true,
+        "input_object_unchanged_by_calculation": true,
+        "draft_inputs_preserved_by_omission": true,
+        "saved_bank_exclusions_are_null": true,
+        "all_calendar_years_unknown": true,
+        "no_market_price_or_upside": true,
+        "narrative_baseline_prefixes_retained": true
+      },
+      "all_checks_pass": true
+    }
+  ],
+  "limitations": "This is arithmetic/assembly validation, not persistence or ownership testing. Root owns the route regression, runtime rollout and current-version guarded application. Approval does not change issuer-fact limitations or actual-use acceptance."
+}

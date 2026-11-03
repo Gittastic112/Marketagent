@@ -105,7 +105,10 @@ def test_funding_sensitivity_uses_explicit_zero_inputs(field):
     ("pre_tax_cost_of_debt", "debt_ratio_vs_cost_of_debt", "x"),
 ])
 def test_sensitivity_axis_center_retains_saved_zero(field, kind, axis):
-    table = next(t for t in generate_sensitivity_tables(inputs(**{field: 0})) if t.table_type == kind)
+    # A funding grid needs explicit inputs; this test isolates zero preservation.
+    funding = dict(beta=1.2, equity_risk_premium=.05, risk_free_rate=.04,
+                   pre_tax_cost_of_debt=.05, debt_to_capital=.4, tax_rate=.25)
+    table = next(t for t in generate_sensitivity_tables(inputs(**(funding | {field: 0}))) if t.table_type == kind)
     assert getattr(table, axis + "_axis_json")["values"][2] == 0
 
 

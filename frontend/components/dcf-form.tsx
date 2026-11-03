@@ -205,7 +205,7 @@ export function DcfForm({
                     <TextField id="operating_leases" label="Operating Leases" name="operating_leases" type="number" step="0.01" defaultValue={latestAssumptionSet?.operating_leases?.toString() || "0"} />
                   </div>
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
-                    <TextField id="employee_options_value" label="Options Value" name="employee_options_value" type="number" step="0.01" defaultValue={latestAssumptionSet?.employee_options_value?.toString() || "0"} />
+                    <TextField id="employee_options_value" label="Options / Additional Equity-Claim Allowance" name="employee_options_value" type="number" step="0.01" defaultValue={latestAssumptionSet?.employee_options_value?.toString() || "0"} />
                     <TextField id="diluted_shares" label="Diluted Shares" name="diluted_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.diluted_shares?.toString()} required />
                   </div>
                   <TextField id="current_market_price" label="Current Market Price" name="current_market_price" type="number" step="0.01" defaultValue={latestAssumptionSet?.current_market_price?.toString()} required />

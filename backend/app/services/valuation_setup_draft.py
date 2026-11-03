@@ -15,7 +15,7 @@ from app.services.dcf import calculate_dcf
 from app.services.industry_mapping import IndustryMappingService
 from app.services.valuation_source_inputs import source_input_signature
 from app.services.valuation_input_units import INPUT_UNIT_POLICY, MONEY_FIELDS, SHARE_FIELDS
-from app.services.assumption_provenance import review_fields_by_model
+from app.services.assumption_provenance import DISCOUNT_COMPONENT_FIELDS, review_fields_by_model, required_fields_by_model, unavailable_discount_component
 
 
 def _review_basis(value: Any) -> Any:
@@ -168,7 +168,7 @@ class ValuationSetupDraftService:
         unknown = sorted(set(assumptions_patch) - cls.ASSUMPTION_FIELDS)
         if unknown:
             raise HTTPException(status_code=422, detail=f"Unknown assumption fields: {', '.join(unknown)}")
-        unknown_reviews = sorted(set(reviewed_fields) - set(draft.assumptions_json or {}))
+        unknown_reviews = sorted(set(reviewed_fields) - (set(draft.assumptions_json or {}) | set(assumptions_patch)))
         if unknown_reviews:
             raise HTTPException(status_code=422, detail=f"Unknown reviewed fields: {', '.join(unknown_reviews)}")
 
@@ -391,6 +391,13 @@ class ValuationSetupDraftService:
                 for key, value in cls._normalize_assumptions(draft.assumptions_json).items()
                 if key in cls.ASSUMPTION_FIELDS
             }
+            excluded_fields = []
+            if model_type == "financial_services":
+                # These operating inputs are not consumed by the equity engine.
+                # Keep their original values in the draft, not in the bank model.
+                excluded_fields = ["starting_revenue", "starting_invested_capital", "sales_to_capital_ratio"]
+                for field in excluded_fields:
+                    payload.pop(field, None)
             try:
                 validated = DcfAssumptionSetWrite.model_validate(payload)
             except ValidationError as exc:
@@ -415,6 +422,9 @@ class ValuationSetupDraftService:
             db.add_all(sensitivity_tables)
             draft.status = "promoted"
             draft.promoted_model_id = model.id
+            if excluded_fields:
+                draft.source_metadata_json = {**(draft.source_metadata_json or {}),
+                    "promotion_excluded_fields": excluded_fields}
             db.commit()
             db.refresh(model)
             return model
@@ -478,22 +488,42 @@ class ValuationSetupDraftService:
         source_metadata["promotion_ready"] = not unresolved
         source_metadata["requires_review"] = bool(unresolved)
         source_metadata["unresolved_fields"] = unresolved
+        source_metadata["review_fields"] = sorted(set(source_metadata.get("review_fields", [])) | {
+            field for field in DISCOUNT_COMPONENT_FIELDS
+            if unavailable_discount_component(field, (draft.assumptions_json or {}).get(field), draft.assumptions_json or {})
+        })
         source_metadata["review_fields_by_model"] = review_fields_by_model(source_metadata.get("review_fields", []))
+        source_metadata["required_fields_by_model"] = {
+            model: [field for field in fields if not unavailable_discount_component(
+                field, (draft.assumptions_json or {}).get(field), draft.assumptions_json or {}, model)]
+            for model, fields in required_fields_by_model().items()
+        }
         draft.source_metadata_json = source_metadata
 
     @classmethod
     def _unresolved_fields(cls, draft: ValuationSetupDraft, model_type: str = "fcff_dcf") -> list[str]:
-        required = review_fields_by_model((draft.source_metadata_json or {}).get("review_fields", []))[model_type]
+        required = set(review_fields_by_model((draft.source_metadata_json or {}).get("review_fields", []))[model_type])
         reviewed = set(draft.reviewed_fields_json or [])
         assumptions = draft.assumptions_json or {}
-        return [
+        required.update(field for field in DISCOUNT_COMPONENT_FIELDS
+            if unavailable_discount_component(field, assumptions.get(field), assumptions, model_type))
+        unresolved = {
             field
             for field in required
-            if field not in reviewed or not cls._valid_value(field, assumptions.get(field))
-        ]
+            if field not in reviewed or not (cls._valid_value(field, assumptions.get(field))
+                or unavailable_discount_component(field, assumptions.get(field), assumptions, model_type))
+        }
+        # A source-backed field may not need a second review, but clearing its
+        # required value must never bypass promotion validation.
+        unresolved.update(field for field in required_fields_by_model()[model_type]
+            if not (cls._valid_value(field, assumptions.get(field))
+                or unavailable_discount_component(field, assumptions.get(field), assumptions, model_type)))
+        return sorted(unresolved)
 
     @classmethod
     def _valid_value(cls, field: str, value: Any) -> bool:
+        if field == "reinvestment_method":
+            return value == "sales_to_capital"
         # Missing comparison data is reviewable, never a zero-valued company input.
         if field == "current_market_price" and value is None:
             return True

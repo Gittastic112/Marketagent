@@ -454,7 +454,7 @@ export function AdvancedWorkspace({
             <TextField id="operating_leases" label="Operating Leases" name="operating_leases" type="number" step="0.01" defaultValue={latestAssumptionSet?.operating_leases?.toString()} />
             <TextField id="minority_interests" label="Minority Interests" name="minority_interests" type="number" step="0.01" defaultValue={latestAssumptionSet?.minority_interests?.toString()} />
             <TextField id="preferred_stock" label="Preferred Stock" name="preferred_stock" type="number" step="0.01" defaultValue={savedNumber("preferred_stock")} />
-            <TextField id="employee_options_value" label="Employee Options Value" name="employee_options_value" type="number" step="0.01" defaultValue={savedNumber("employee_options_value")} />
+            <TextField id="employee_options_value" label="Options / Additional Equity-Claim Allowance" name="employee_options_value" type="number" step="0.01" defaultValue={savedNumber("employee_options_value")} />
             <TextField id="diluted_shares" label="Diluted Shares Outstanding" name="diluted_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.diluted_shares?.toString()} required />
             <TextField id="basic_shares" label="Basic Shares Outstanding" name="basic_shares" type="number" step="0.01" defaultValue={latestAssumptionSet?.basic_shares?.toString()} />
             <TextField id="current_market_price" label={`Comparison Price (${cashFlowCurrency}, User Assumption, optional)`} name="current_market_price" type="number" min="0.000001" step="any" defaultValue={latestAssumptionSet?.current_market_price?.toString()} />

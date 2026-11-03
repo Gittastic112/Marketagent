@@ -43,6 +43,8 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice, currency = 
     const values = table.values_json || {};
     const errors = table.x_axis_json?.cell_errors;
     const method = sensitivityMethod(table.x_axis_json);
+    const unavailableReason = typeof table.x_axis_json?.unavailable_reason === "string"
+      ? table.x_axis_json.unavailable_reason : null;
     const reasons = [...new Set(yValues.flatMap(y => xValues.map(x => sensitivityCell(values, errors, x, y).reason)).filter((reason): reason is string => Boolean(reason)))];
 
     // Helper to format axis labels based on typical magnitude
@@ -105,7 +107,8 @@ export function SensitivityTablesPanel({ tables, currentMarketPrice, currency = 
               </tbody>
             </table>
           </div>
-          {(!xValues.length || !yValues.length) && <p className="p-3 text-sm">The saved grid has no valid axes. Save a new reviewed calculation.</p>}
+          {(!xValues.length || !yValues.length) && <p className="p-3 text-sm">{unavailableReason
+            ? `Not available: ${unavailableReason}` : "The saved grid has no valid axes. Save a new reviewed calculation."}</p>}
           {reasons.length > 0 && <details className="p-3 text-xs"><summary className="cursor-pointer">Why some cells are unavailable</summary><ul className="mt-2 list-disc pl-4">{reasons.map(reason => <li key={reason}>{reason}</li>)}</ul></details>}
         </CardContent>
       </Card>

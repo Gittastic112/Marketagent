@@ -147,6 +147,15 @@ class _SensitivityUnavailable(ValueError):
     """Stable per-cell diagnostic, safe to retain in saved sensitivity JSON."""
 
 
+def _missing_funding_inputs(assumptions, overrides) -> list[str]:
+    needed = {"debt_to_capital", "pre_tax_cost_of_debt", "tax_rate"}
+    if assumptions.cost_of_equity is None:
+        needed |= {"risk_free_rate", "beta", "equity_risk_premium"}
+    if {"beta", "equity_risk_premium"}.intersection(overrides):
+        needed |= {"beta", "equity_risk_premium"}
+    return sorted(key for key in needed if getattr(assumptions, key) is None)
+
+
 def _calc_value_for_overrides(base_set: DcfAssumptionSet, overrides: dict[str, float]) -> float:
     # Clone scalar inputs only; never mutate a saved ORM object or its relations.
     from copy import deepcopy
@@ -179,17 +188,21 @@ def _calc_value_for_overrides(base_set: DcfAssumptionSet, overrides: dict[str, f
     row.terminal_roic = _if_missing(base_set.terminal_roic, base_set.wacc_terminal)
     funding = {"beta", "equity_risk_premium", "cost_of_equity", "debt_to_capital", "pre_tax_cost_of_debt"}
     if funding.intersection(overrides):
-        beta = _if_missing(base_set.beta, 1.0)
-        erp = _if_missing(base_set.equity_risk_premium, .05)
-        coe = _if_missing(base_set.cost_of_equity, _if_missing(base_set.risk_free_rate, .04) + beta * erp)
-        debt = _if_missing(base_set.debt_to_capital, 0.0)
-        cod = _if_missing(base_set.pre_tax_cost_of_debt, .05)
-        tax = _if_missing(base_set.tax_rate, .21)
-        shocked_coe = overrides.get("cost_of_equity", coe + overrides.get("beta", beta) * overrides.get("equity_risk_premium", erp) - beta * erp)
+        missing = _missing_funding_inputs(base_set, overrides)
+        if missing:
+            raise _SensitivityUnavailable("MISSING_FUNDING_INPUT: explicit " + ", ".join(missing) + " required; saved discount rates remain usable.")
+        beta, erp = base_set.beta, base_set.equity_risk_premium
+        coe = base_set.cost_of_equity if base_set.cost_of_equity is not None else base_set.risk_free_rate + beta * erp
+        debt = base_set.debt_to_capital
+        cod, tax = base_set.pre_tax_cost_of_debt, base_set.tax_rate
+        shocked_coe = overrides.get("cost_of_equity", coe)
+        if {"beta", "equity_risk_premium"}.intersection(overrides) and "cost_of_equity" not in overrides:
+            shocked_coe = coe + overrides.get("beta", beta) * overrides.get("equity_risk_premium", erp) - beta * erp
         shocked_debt = overrides.get("debt_to_capital", debt)
         shocked_cod = overrides.get("pre_tax_cost_of_debt", cod)
         if (not 0 <= shocked_debt <= 1 or not 0 <= shocked_cod <= 1 or not 0 <= shocked_coe <= 1
-            or not 0 <= overrides.get("beta", beta) <= 5 or not 0 <= overrides.get("equity_risk_premium", erp) <= 1):
+            or (beta is not None and not 0 <= overrides.get("beta", beta) <= 5)
+            or (erp is not None and not 0 <= overrides.get("equity_risk_premium", erp) <= 1)):
             raise _SensitivityUnavailable("FUNDING_RANGE: funding weights and rates are invalid.")
         before = coe * (1 - debt) + cod * (1 - tax) * debt
         after = shocked_coe * (1 - shocked_debt) + shocked_cod * (1 - tax) * shocked_debt
@@ -237,6 +250,12 @@ def _build_table(assumption_set: DcfAssumptionSet, table_type: str, x_name: str,
 
     values = {}
     errors = {}
+    funding_axes = {"beta", "equity_risk_premium", "cost_of_equity", "debt_to_capital", "pre_tax_cost_of_debt"}
+    missing = _missing_funding_inputs(assumption_set, {x_key, y_key}) if funding_axes.intersection({x_key, y_key}) else []
+    unavailable_reason = None
+    if missing:
+        unavailable_reason = "MISSING_FUNDING_INPUT: explicit " + ", ".join(missing) + " required; no funding sensitivity is calculated."
+        x_steps, y_steps = [], []
     for y_val in y_steps:
         y_str = str(round(y_val, 4))
         values[y_str] = {}
@@ -259,12 +278,14 @@ def _build_table(assumption_set: DcfAssumptionSet, table_type: str, x_name: str,
         "currency": assumption_set.cash_flow_currency, "claim_type": "Calculation",
         "funding": "Changes in weighted funding cost shift both saved WACCs equally; saved equity-cost residual and terminal ROIC are retained.",
         "basis": "Saved assumptions with canonical FCFF forecast, terminal value and equity bridge. Not a probability distribution.",
-        "defaulted_fields": [key for key in ("tax_rate", "target_operating_margin", "terminal_growth_rate", "terminal_roic", "beta", "equity_risk_premium", "risk_free_rate", "cost_of_equity", "pre_tax_cost_of_debt", "debt_to_capital") if getattr(assumption_set, key) is None]}
+        "funding_input_policy": "explicit_required_v1",
+        "defaulted_fields": [key for key in ("tax_rate", "target_operating_margin", "terminal_growth_rate", "terminal_roic") if getattr(assumption_set, key) is None]}
 
     return DcfSensitivityTable(
         assumption_set_id=assumption_set.id,
         table_type=table_type,
-        x_axis_json={"name": x_name, "values": x_steps, "method": method, "cell_errors": errors},
+        x_axis_json={"name": x_name, "values": x_steps, "method": method, "cell_errors": errors,
+                     **({"unavailable_reason": unavailable_reason} if unavailable_reason else {})},
         y_axis_json={"name": y_name, "values": y_steps},
         values_json=values
     )

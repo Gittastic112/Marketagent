@@ -50,7 +50,7 @@ export const FIELD_GROUPS: Array<{ title: string; fields: FieldDefinition[]; }> 
       { key: "operating_leases", label: "Operating Leases", required: false },
       { key: "minority_interests", label: "Minority Interests" },
       { key: "preferred_stock", label: "Preferred Stock" },
-      { key: "employee_options_value", label: "Employee Options Value" },
+      { key: "employee_options_value", label: "Options / Additional Equity-Claim Allowance" },
       { key: "diluted_shares", label: "Diluted Shares" },
       { key: "basic_shares", label: "Basic Shares", required: false },
       { key: "current_market_price", label: "Comparison Price (optional)", required: false },

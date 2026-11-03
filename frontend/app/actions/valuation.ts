@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { AutofillAssumptionDraft } from "@/lib/api/valuation-drafts";
 import { serverDeleteApi, serverPatchApi, serverPostApi } from "@/lib/server-api";
-import { unresolvedReviewFields } from "@/lib/autofill-review";
+import { unavailableDiscountComponent, unresolvedReviewFields } from "@/lib/autofill-review";
 import { buildValuationModelPayload, buildDcfAssumptionSetPayload, getRequiredFormId } from "@/lib/form-payloads";
 import { logAction, actionFormString, createRecord, formActionError } from "./shared";
 import type { FormActionState } from "./shared";
@@ -123,6 +123,12 @@ export async function promoteValuationSetupDraft(formData: FormData, draftId: nu
   const reviewedFields = formData
     .getAll("reviewed_field")
     .filter((value): value is string => typeof value === "string");
+  for (const field of reviewedFields) {
+    if (unavailableDiscountComponent(field, payload[field as keyof typeof payload], payload,
+      actionFormString(formData, "model_type") || "fcff_dcf")) {
+      assumptionsPatch[field] = null;
+    }
+  }
   const savedDraft = await serverPatchApi<{ updated_at: string; }>(`/valuation-drafts/${draftId}`, {
     assumptions_patch: assumptionsPatch,
     reviewed_fields: reviewedFields,

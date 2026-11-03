@@ -1,0 +1,523 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-03T02:05:26Z",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer_type": "delegated_agent_research_review",
+  "independent_human_certification": false,
+  "normal_database_writes": false,
+  "application_files_changed": false,
+  "provider_ingestion_performed": false,
+  "prior_receipts": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/banks/review.json",
+      "sha256": "303b559ae6b2aa88c82a69f585b0ea5f296b14b8ba66635dbe8a1e48c086708e"
+    },
+    {
+      "path": "data/reviews/financial-input-followup-20261102.json",
+      "sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce"
+    }
+  ],
+  "companies": [
+    {
+      "ticker": "HDFCBANK",
+      "company_id": 8,
+      "draft_id": 5,
+      "decision_id": "M06-HDFCBANK-HISTORICAL-FULL-ISSUANCE-20261103",
+      "model_type": "financial_services",
+      "model_name": "HDFCBANK FY2026 retrospective research, parent full issuance",
+      "historical_financial_as_of": "2026-03-31",
+      "reporting_period": "FY2026",
+      "prior_basis": {
+        "source_input_signature": "501f0bcb8f88d20d7a9f4dcb9651790edd22477ad6ffa0c8afee7869917c13ca",
+        "financial_history_signature": "9ee9f79e79ee02e93db0f5e4eb658e51d31fbf925532191a38569c8483552c94",
+        "saved_story_sha256": "7ce52dd768f08a65bbdc1786be101542d1c871b31bcfe0d75c5563da24a61317"
+      },
+      "assumptions_patch": {
+        "diluted_shares": 15659052066,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "diluted_shares"
+      ],
+      "preserve_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "rejected_fields": [
+
+      ],
+      "complete_model_inputs": {
+        "book_value_of_equity": 5815143600000,
+        "net_income": 760259700000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": 15659052066,
+        "current_market_price": null,
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "share_facts": {
+        "paid_up_shares": 15393368328,
+        "outstanding_parent_options": 233964038,
+        "outstanding_parent_units": 31719700,
+        "full_issuance_shares": 15659052066
+      },
+      "claim_types": {
+        "reported_share_counts": "Fact",
+        "summed_denominator": "Calculation",
+        "full_issuance_no_proceeds_method": "User Assumption",
+        "fixed_subsidiary_ownership": "User Assumption",
+        "valuation_and_sensitivity": "Calculation"
+      },
+      "denominator_method": "All counts already reflect the 1:1 FY2026 bonus. Add each outstanding parent option/unit once; do not double the counts again. ADS underlying shares are already included in paid-up shares.",
+      "historical_model_completion": "Review-ready complete research proposal; apply only through normal current-version/source gates after required primary-source retention. No application performed here.",
+      "current_value_or_all_group_claims_certification": false,
+      "subsidiary_scope": "Consolidated Schedule18.4 separately discloses HDFC Securities, HDB Financial Services, HDFC ERGO, HDFC Capital, HDFC Life and HDFC AMC awards (PDF513-529). Those are claims on those entities, not parent-bank share units. PDF548 provides group entity net-assets/profit context. Their future issuance is not numerically modeled in this fixed-ownership scenario.",
+      "additional_story_text": "Retrospective historical research scenario using FY2026 reported parent earnings and March31 2026 consolidated common-book inputs, reviewed November3 2026. This is not a current quote-based valuation or a simulation of information available on March31. Parent denominator 15659052066 equals 15393368328 paid-up shares plus 233964038 outstanding options plus 31719700 units, all on the same historical capital basis. Assume full issuance without exercise proceeds; do not deduct a separate parent option value or subtract existing NCI again. Hold the reported subsidiary ownership/parent-income scope constant in the forecast. Subsidiary awards exist and future ownership dilution is not modeled; that is a forecast assumption, not a zero-claim fact. Nominal INR cost of equity15%, terminal ROE15%, book growth3% and10 relative years remain low-confidence User Assumptions, not company guidance. Reported parent book and earnings remain unchanged, including their accounting and nonrecurring-item limits. The selected book basis excludes separately presented award reserves; no new reserve deduction or reclassification is made, and an accounting reserve is not an award fair value. No market comparison is supplied. Parent-share issuance and aggregate-equity-haircut sensitivities show this scenario's dependence on omitted future dilution.",
+      "uncertainty": [
+        "Reported FY2026 parent profit includes identified disposal and tax items; the model deliberately starts from reported profit and fades ROE, rather than claiming normalized recurring profit.",
+        "FY2024 pre-bonus per-share comparisons remain unsuitable without a separate adjustment.",
+        "Full issuance with no proceeds is conservative for the parent-share denominator conditional on fixed aggregate equity. It is not a proven lower bound on the economic value of the entire banking group.",
+        "Future subsidiary awards, capital requirements, payout constraints, new grants, repurchases and business changes are not forecast independently.",
+        "Do not add a parent option-value deduction, another NCI deduction, depositary-receipt shares or weighted EPS shares on top of this method.",
+        "Freshness and historical basis remain visible. Calendar forecast years and market comparison remain unavailable; use relative years."
+      ],
+      "sources": [
+        {
+          "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+          "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+          "local_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf",
+          "raw_document_id": 19,
+          "asset_id": 10,
+          "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2026.json",
+          "extracted_sha256": "156283ddd67ada8616f2ad418e85491ef1ab403ac4ef13c0ed035f39dbe52686",
+          "as_of": "2026-03-31",
+          "monetary_scale": 10000000,
+          "text_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2026.txt",
+          "text_sha256": "cab44fec3011243c652b6bc166f4166397539ba0f9cc33d89ee9709f78642263",
+          "locators": [
+            {
+              "pdf_page": 475,
+              "printed_page": 480,
+              "note": "Schedule 1: exact fully paid equity shares, face value INR1."
+            },
+            {
+              "pdf_page": 509,
+              "printed_page": 514,
+              "note": "Schedule 18.1: 1:1 bonus issued August 28, 2025; retrospective share/per-share adjustment."
+            },
+            {
+              "pdf_page": 510,
+              "printed_page": 515,
+              "note": "Schedule 18.4 HDFC Bank: each option/unit converts to one equity share; bonus adjustment; closing options 233964038."
+            },
+            {
+              "pdf_page": 511,
+              "printed_page": 516,
+              "note": "Schedule 18.4 HDFC Bank: closing units 31719700."
+            },
+            {
+              "pdf_page": 612,
+              "printed_page": 617,
+              "note": "Outstanding ADS/convertibles: underlying ADS shares already allotted; no other convertible instruments except parent options/units."
+            }
+          ]
+        }
+      ],
+      "reference_calculation": {
+        "equity_value_inr": 5479088702284.123,
+        "per_share_value_inr": 349.89913049594446,
+        "starting_roe": 0.13073790645513897,
+        "terminal_excess_return_value_inr": 0.0,
+        "equity_value_exact_rational": "268170521698665811552689024/48944365800625",
+        "formula": "Book + sum((linearly_faded_ROE-15%)*opening_book/(1.15^year)); opening_book grows3%; terminal excess return=0 because terminal_ROE=15%. Divide once by the selected historical parent denominator.",
+        "sensitivity": [
+          {
+            "shock_percent": 1,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 346.43478266925194,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 346.400139190985
+          },
+          {
+            "shock_percent": 5,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 333.2372671389947,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 332.4041739711472
+          },
+          {
+            "shock_percent": 10,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 318.09011863267676,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 314.90921744635
+          }
+        ],
+        "sensitivity_scope": "Separate illustrative stresses, not probabilities or measured issuer dilution. The equity haircut is an explicit value-loss sensitivity that may illustrate unmodeled child dilution; it does not claim a child ownership percentage or child award fair value. Do not apply both mechanically as one claim."
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "company_id": 10,
+      "draft_id": 6,
+      "decision_id": "M06-ICICIBANK-HISTORICAL-FULL-ISSUANCE-20261103",
+      "model_type": "financial_services",
+      "model_name": "ICICIBANK FY2026 retrospective research, parent full issuance",
+      "historical_financial_as_of": "2026-03-31",
+      "reporting_period": "FY2026",
+      "prior_basis": {
+        "source_input_signature": "52c973abc4f4e2b265eb88a7989a37d4773c45d1e68a3bfc32b56b373a5333e9",
+        "financial_history_signature": "949f9be271f7dbeb16e1f3d2cff8cde695c5c4e1025f7aebaa07c9fb23759ca9",
+        "saved_story_sha256": "e70f57bc09d9106b083b330ed209318f5d1197d4d940f6d67b107a077f8102be"
+      },
+      "assumptions_patch": {
+        "diluted_shares": 7315336774,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "diluted_shares"
+      ],
+      "preserve_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "rejected_fields": [
+
+      ],
+      "complete_model_inputs": {
+        "book_value_of_equity": 3603783482000,
+        "net_income": 542077028000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": 7315336774,
+        "current_market_price": null,
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "share_facts": {
+        "paid_up_shares": 7160112569,
+        "outstanding_parent_options": 145272095,
+        "outstanding_parent_units": 9952110,
+        "full_issuance_shares": 7315336774
+      },
+      "claim_types": {
+        "reported_share_counts": "Fact",
+        "summed_denominator": "Calculation",
+        "full_issuance_no_proceeds_method": "User Assumption",
+        "fixed_subsidiary_ownership": "User Assumption",
+        "valuation_and_sensitivity": "Calculation"
+      },
+      "denominator_method": "Add the disclosed parent options and units to March31 paid-up shares. ICICI Securities replacement awards are already in the bank plan counts. Do not add depositary-receipt shares or old Securities awards a second time.",
+      "historical_model_completion": "Review-ready complete research proposal; apply only through normal current-version/source gates after required primary-source retention. No application performed here.",
+      "current_value_or_all_group_claims_certification": false,
+      "subsidiary_scope": "Consolidated Schedule18.3 discloses ICICI Prudential Life and ICICI Lombard awards separately. FY2026 diluted EPS applies a INR237.9million subsidiary/associate award adjustment (rounded source figure). This is an annual weighted EPS adjustment, not a March31 full-issuance book-equity haircut. Keep reported parent earnings and explicitly hold child ownership constant in the forecast; do not pretend those claims are zero.",
+      "additional_story_text": "Retrospective historical research scenario using FY2026 reported parent earnings and March31 2026 consolidated common-book inputs, reviewed November3 2026. This is not a current quote-based valuation or a simulation of information available on March31. Parent denominator 7315336774 equals 7160112569 paid-up shares plus 145272095 outstanding options plus 9952110 units, all on the same historical capital basis. Assume full issuance without exercise proceeds; do not deduct a separate parent option value or subtract existing NCI again. Hold the reported subsidiary ownership/parent-income scope constant in the forecast. Subsidiary awards exist and future ownership dilution is not modeled; that is a forecast assumption, not a zero-claim fact. Nominal INR cost of equity15%, terminal ROE15%, book growth3% and10 relative years remain low-confidence User Assumptions, not company guidance. Reported parent book and earnings remain unchanged, including their accounting and nonrecurring-item limits. The selected book basis excludes separately presented award reserves; no new reserve deduction or reclassification is made, and an accounting reserve is not an award fair value. No market comparison is supplied. Parent-share issuance and aggregate-equity-haircut sensitivities show this scenario's dependence on omitted future dilution.",
+      "uncertainty": [
+        "ICICI Securities FY2025/FY2026 scheme/consolidation changes affect comparability.",
+        "Full issuance with no proceeds is conservative for the parent-share denominator conditional on fixed aggregate equity. It is not a proven lower bound on the economic value of the entire banking group.",
+        "Future subsidiary awards, capital requirements, payout constraints, new grants, repurchases and business changes are not forecast independently.",
+        "Do not add a parent option-value deduction, another NCI deduction, depositary-receipt shares or weighted EPS shares on top of this method.",
+        "Freshness and historical basis remain visible. Calendar forecast years and market comparison remain unavailable; use relative years."
+      ],
+      "sources": [
+        {
+          "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+          "sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+          "local_path": "output/milestones/m05/review-batches-20261013/originals/ICICIBANK-2026.pdf",
+          "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/ICICIBANK-2026.json",
+          "extracted_sha256": "c7183df6e1f6f212d743201b097fdf3901a6b223b717312001ac550fea80cab6",
+          "as_of": "2026-03-31",
+          "monetary_scale": 1000,
+          "text_path": "output/milestones/m05/review-batches-20261013/extracted/ICICIBANK-2026.txt",
+          "text_sha256": "66c68a5613198a7be7115e636841fab9a74f57eb5f309a87db7cb9101401f15c",
+          "locators": [
+            {
+              "pdf_page": 141,
+              "printed_page": 276,
+              "note": "Schedule1: 7121927830 opening paid-up shares +38184739 issued during FY2026 =7160112569. Forfeited-capital money is not an outstanding share count."
+            },
+            {
+              "pdf_page": 180,
+              "printed_page": 315,
+              "note": "Schedule18.3: ICICI Securities predecessor awards were cancelled and replaced with bank awards under the scheme; do not add old Securities awards again."
+            },
+            {
+              "pdf_page": 181,
+              "printed_page": 316,
+              "note": "Schedule18.3 ICICI Bank: closing parent options 145272095."
+            },
+            {
+              "pdf_page": 182,
+              "printed_page": 317,
+              "note": "Schedule18.3 ICICI Bank: closing parent units 9952110."
+            },
+            {
+              "pdf_page": 172,
+              "printed_page": 307,
+              "note": "EPS reconciles reported parent profit and a separate weighted subsidiary/associate-award dilution impact; the research model retains reported profit, not the diluted-EPS numerator."
+            }
+          ]
+        },
+        {
+          "id": "ICICIBANK-SHP-20260331",
+          "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/share-price-and-ownership/2026/SHAREHOLDINGPA-TTERNMARCH312026.pdf",
+          "issuer_index_url": "https://www.icici.bank.in/about-us/shareprice/2026",
+          "pdf_pages": [
+            1,
+            2,
+            4
+          ],
+          "basis": "March31 2026 filing. Declaration: no partly paid shares, convertibles or warrants; outstanding ESOPs exist. TableI gives issued shares7160112569, outstanding ESOPs155224205, fully diluted shares7315336774. This exactly corroborates the annual-report sum.",
+          "sha256": null,
+          "retention_status": "Read in primary official web source; original acquisition/hash and Processing Run proposed to coordinator, not performed by this agent.",
+          "required_before_normal_application": true
+        }
+      ],
+      "reference_calculation": {
+        "equity_value_inr": 3608312260240.006,
+        "per_share_value_inr": 493.25306157668444,
+        "starting_roe": 0.15041886692348183,
+        "terminal_excess_return_value_inr": 0.0,
+        "equity_value_exact_rational": "101548769233138435803353081176/28143010335359375",
+        "formula": "Book + sum((linearly_faded_ROE-15%)*opening_book/(1.15^year)); opening_book grows3%; terminal excess return=0 because terminal_ROE=15%. Divide once by the selected historical parent denominator.",
+        "sensitivity": [
+          {
+            "shock_percent": 1,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 488.3693678977074,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 488.3205309609176
+          },
+          {
+            "shock_percent": 5,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 469.76482054922326,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 468.5904084978502
+          },
+          {
+            "shock_percent": 10,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 448.41187416062223,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 443.92775541901597
+          }
+        ],
+        "sensitivity_scope": "Separate illustrative stresses, not probabilities or measured issuer dilution. The equity haircut is an explicit value-loss sensitivity that may illustrate unmodeled child dilution; it does not claim a child ownership percentage or child award fair value. Do not apply both mechanically as one claim."
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "company_id": 11,
+      "draft_id": 7,
+      "decision_id": "M06-SBIN-HISTORICAL-FULL-ISSUANCE-20261103",
+      "model_type": "financial_services",
+      "model_name": "SBIN FY2026 retrospective research, parent full issuance",
+      "historical_financial_as_of": "2026-03-31",
+      "reporting_period": "FY2026",
+      "prior_basis": {
+        "source_input_signature": "1b0a8b09c8364fa37c8e9cd983d038ba26138de517d0e9fd334eab24df01b069",
+        "financial_history_signature": "b664cffa470281ada49fe754a545af6fa18dedd4e0172f6ea62a473d44dfcb7b",
+        "saved_story_sha256": "81fd65af1330adf90485d0d75ac6a855373a5f8018e2806b9fcbdccdeaa13ceb"
+      },
+      "assumptions_patch": {
+        "diluted_shares": 9230617586,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "diluted_shares"
+      ],
+      "preserve_reviewed_fields": [
+        "book_value_of_equity",
+        "cash_flow_currency",
+        "cost_of_equity",
+        "current_market_price",
+        "discount_rate_currency",
+        "net_income",
+        "projection_years_count",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "rejected_fields": [
+
+      ],
+      "complete_model_inputs": {
+        "book_value_of_equity": 5961308694000,
+        "net_income": 832987824000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": 9230617586,
+        "current_market_price": null,
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "share_facts": {
+        "paid_up_shares": 9230617586,
+        "outstanding_parent_options": 0,
+        "outstanding_parent_units": 0,
+        "full_issuance_shares": 9230617586
+      },
+      "claim_types": {
+        "reported_share_counts": "Fact",
+        "summed_denominator": "Calculation",
+        "full_issuance_no_proceeds_method": "User Assumption",
+        "fixed_subsidiary_ownership": "User Assumption",
+        "valuation_and_sensitivity": "Calculation"
+      },
+      "denominator_method": "Use the exact paid-up count. The official March31 filing affirmatively reports no outstanding parent ESOPs/convertibles/warrants and the same fully diluted count. Zero is supported by that filing, not inferred from equal EPS. GDR underlying shares are included once.",
+      "historical_model_completion": "Review-ready complete research proposal; apply only through normal current-version/source gates after required primary-source retention. No application performed here.",
+      "current_value_or_all_group_claims_certification": false,
+      "subsidiary_scope": "Annual report PDF338 identifies child/associate award issuance at SBI Cards, SBI Life, SBI Funds Management, SBI General and Yes Bank. Their future issuance is outside the fixed-ownership forecast; current consolidated parent book/profit already incorporates ownership changes through the reporting date.",
+      "additional_story_text": "Retrospective historical research scenario using FY2026 reported parent earnings and March31 2026 consolidated common-book inputs, reviewed November3 2026. This is not a current quote-based valuation or a simulation of information available on March31. Parent denominator 9230617586 equals 9230617586 paid-up shares plus 0 outstanding options plus 0 units, all on the same historical capital basis. Assume full issuance without exercise proceeds; do not deduct a separate parent option value or subtract existing NCI again. Hold the reported subsidiary ownership/parent-income scope constant in the forecast. Subsidiary awards exist and future ownership dilution is not modeled; that is a forecast assumption, not a zero-claim fact. Nominal INR cost of equity15%, terminal ROE15%, book growth3% and10 relative years remain low-confidence User Assumptions, not company guidance. Reported parent book and earnings remain unchanged, including their accounting and nonrecurring-item limits. The selected book basis excludes separately presented award reserves; no new reserve deduction or reclassification is made, and an accounting reserve is not an award fair value. No market comparison is supplied. Parent-share issuance and aggregate-equity-haircut sensitivities show this scenario's dependence on omitted future dilution.",
+      "uncertainty": [
+        "Reported earnings include the identified Yes Bank disposal gain; no tax-normalized recurring-profit claim is made.",
+        "Full issuance with no proceeds is conservative for the parent-share denominator conditional on fixed aggregate equity. It is not a proven lower bound on the economic value of the entire banking group.",
+        "Future subsidiary awards, capital requirements, payout constraints, new grants, repurchases and business changes are not forecast independently.",
+        "Do not add a parent option-value deduction, another NCI deduction, depositary-receipt shares or weighted EPS shares on top of this method.",
+        "Freshness and historical basis remain visible. Calendar forecast years and market comparison remain unavailable; use relative years."
+      ],
+      "sources": [
+        {
+          "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+          "sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+          "local_path": "output/milestones/m05/review-batches-20261013/originals/SBIN-2026.pdf",
+          "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/SBIN-2026.json",
+          "extracted_sha256": "8ae028c16673b6b32a403f40228e2b05316d18aecc90114fc79eceb78c08c435",
+          "as_of": "2026-03-31",
+          "monetary_scale": 1000,
+          "text_path": "output/milestones/m05/review-batches-20261013/extracted/SBIN-2026.txt",
+          "text_sha256": "c0e3c2875a3159e1a5dbdd19ed8021b9023a28dee4fa9609a7ab96184862ea63",
+          "locators": [
+            {
+              "pdf_page": 305,
+              "printed_page": 303,
+              "note": "Schedule1: exact subscribed/paid-up9230617586; issued9231402716 is a different figure. Paid-up count includes81534820 shares underlying8153482 GDRs."
+            },
+            {
+              "pdf_page": 170,
+              "printed_page": 168,
+              "note": "Capital augmentation: July21 2025 QIP issued305997552 shares; ending shares differ from annual weighted average."
+            },
+            {
+              "pdf_page": 354,
+              "printed_page": 352,
+              "note": "EPS annual weighted basic/diluted count is9137560796; not used as the point-date denominator."
+            },
+            {
+              "pdf_page": 338,
+              "printed_page": 336,
+              "note": "Group entities issued shares under their own ESOPs during FY2026; parent absence of ESOPs does not imply absence throughout the group."
+            }
+          ]
+        },
+        {
+          "id": "SBIN-SHP-20260331",
+          "url": "https://sbi.bank.in/documents/17836/22946/27042026_SHP_31032026.pdf/489ed27f-e4e8-827c-6db4-3f526755b512?t=1777287547463",
+          "issuer_index_url": "https://sbi.bank.in/web/investor-relations/disclosure-under-regulation-46/disclosure-under-regulation-46-m-of-sebi-lodr-share-holding-pattern",
+          "pdf_pages": [
+            1,
+            2
+          ],
+          "basis": "Mar26 declaration affirmatively reports no outstanding ESOPs, convertibles, warrants or partly-paid shares. Summary total fully diluted shares9230617586 includes81534820 depository-receipt underlying shares. It matches the annual-report paid-up count.",
+          "sha256": null,
+          "retention_status": "Read in primary official web source after initial fetch timeouts; original acquisition/hash and Processing Run proposed to coordinator, not performed by this agent.",
+          "required_before_normal_application": true
+        }
+      ],
+      "reference_calculation": {
+        "equity_value_inr": 5777672664814.6045,
+        "per_share_value_inr": 625.9248214959692,
+        "starting_roe": 0.1397323753487878,
+        "terminal_excess_return_value_inr": 0.0,
+        "equity_value_exact_rational": "162601101520200761464891774632/28143010335359375",
+        "formula": "Book + sum((linearly_faded_ROE-15%)*opening_book/(1.15^year)); opening_book grows3%; terminal excess return=0 because terminal_ROE=15%. Divide once by the selected historical parent denominator.",
+        "sensitivity": [
+          {
+            "shock_percent": 1,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 619.7275460356132,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 619.6655732810095
+          },
+          {
+            "shock_percent": 5,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 596.1188776152088,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 594.6285804211708
+          },
+          {
+            "shock_percent": 10,
+            "additional_parent_share_issuance_with_fixed_equity_per_share_inr": 569.0225649963357,
+            "separate_aggregate_equity_haircut_with_fixed_shares_per_share_inr": 563.3323393463724
+          }
+        ],
+        "sensitivity_scope": "Separate illustrative stresses, not probabilities or measured issuer dilution. The equity haircut is an explicit value-loss sensitivity that may illustrate unmodeled child dilution; it does not claim a child ownership percentage or child award fair value. Do not apply both mechanically as one claim."
+      }
+    }
+  ],
+  "processing_run_requests": [
+    {
+      "id": "ICICIBANK-SHP-20260331",
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/share-price-and-ownership/2026/SHAREHOLDINGPA-TTERNMARCH312026.pdf",
+      "issuer_index_url": "https://www.icici.bank.in/about-us/shareprice/2026",
+      "pdf_pages": [
+        1,
+        2,
+        4
+      ],
+      "basis": "March31 2026 filing. Declaration: no partly paid shares, convertibles or warrants; outstanding ESOPs exist. TableI gives issued shares7160112569, outstanding ESOPs155224205, fully diluted shares7315336774. This exactly corroborates the annual-report sum.",
+      "sha256": null,
+      "retention_status": "Read in primary official web source; original acquisition/hash and Processing Run proposed to coordinator, not performed by this agent.",
+      "required_before_normal_application": true
+    },
+    {
+      "id": "SBIN-SHP-20260331",
+      "url": "https://sbi.bank.in/documents/17836/22946/27042026_SHP_31032026.pdf/489ed27f-e4e8-827c-6db4-3f526755b512?t=1777287547463",
+      "issuer_index_url": "https://sbi.bank.in/web/investor-relations/disclosure-under-regulation-46/disclosure-under-regulation-46-m-of-sebi-lodr-share-holding-pattern",
+      "pdf_pages": [
+        1,
+        2
+      ],
+      "basis": "Mar26 declaration affirmatively reports no outstanding ESOPs, convertibles, warrants or partly-paid shares. Summary total fully diluted shares9230617586 includes81534820 depository-receipt underlying shares. It matches the annual-report paid-up count.",
+      "sha256": null,
+      "retention_status": "Read in primary official web source after initial fetch timeouts; original acquisition/hash and Processing Run proposed to coordinator, not performed by this agent.",
+      "required_before_normal_application": true
+    }
+  ],
+  "gate_audit": {
+    "status": "No irrelevant bank input currently required by the inspected model-specific gates.",
+    "source_paths": [
+      "backend/app/services/assumption_provenance.py:61",
+      "backend/app/services/assumption_provenance.py:83",
+      "backend/app/services/valuation_setup_draft.py:446",
+      "backend/app/services/financial_services_engine.py:26"
+    ],
+    "required_fields": [
+      "projection_years_count",
+      "book_value_of_equity",
+      "net_income",
+      "target_roe",
+      "cost_of_equity",
+      "terminal_growth_rate",
+      "diluted_shares",
+      "cash_flow_currency",
+      "discount_rate_currency"
+    ],
+    "optional_comparison": "current_market_price=null is already explicitly reviewed in all3 drafts.",
+    "no_waivers": "Keep ownership, version, source/history, valid-input and review gates. Do not mark FCFF inputs reviewed merely to create a bank model. Bank engine does not consume employee_options_value or an enterprise-value debt/NCI bridge."
+  },
+  "application_invariants": [
+    "Read current owned draft, source signatures and optimistic version before applying. Existing signatures in this packet are lineage, not authorization to bypass a changed basis.",
+    "Retain new official shareholding originals, hashes, locators and Processing Run outcome before normal application; do not invent an original hash. SBI zero-award fact specifically depends on that new declaration.",
+    "Append the explicit scenario scope to existing story/provenance; preserve prior decisions and actual financial history.",
+    "Only diluted_shares receives a new field review. Preserve already-reviewed unavailable comparison price and other existing reviewed bank inputs.",
+    "Normal historical research promotion is defensible under the stated scenario; a current/all-group-claims-complete valuation is not asserted.",
+    "Show source/date/method limits and sensitivity with the saved result. Verify no fabricated calendar dates, price or upside and no second award/NCI deduction."
+  ]
+}

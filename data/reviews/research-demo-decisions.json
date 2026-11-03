@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-11-02T23:30:11.036325+00:00",
+  "updated_at": "2026-11-03T03:00:50.773986+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -551,6 +551,19 @@
         "normal_financial_records_changed": false,
         "normal_valuation_models_changed": false,
         "numerical_assumptions_approved": false
+      }
+    },
+    {
+      "receipt_path": "data/reviews/historical-scenario-application-20261103.json",
+      "sha256": "51482d4629fea12c6f027320f6737b1f4840f53b0ddc928b5d79f98f5bab9c6e",
+      "receipt": {
+        "decision_id": "USER-APPROVED-HISTORICAL-SCENARIOS-20261103",
+        "recorded_at": "2026-11-03T03:00:50.743081+00:00",
+        "user_reply": "Apply the eleven research scenarios",
+        "approval_scope": "Apply the eleven named historical research scenarios, discretionary reserves and dilution stresses with the approved limits; no company-fact completeness or actual-use certification.",
+        "reviewer": "user_approved_scenarios_with_agent_source_and_calculation_review",
+        "models_created": 11,
+        "company_fact_certification": false
       }
     }
   ],

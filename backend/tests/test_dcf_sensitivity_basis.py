@@ -40,6 +40,47 @@ def test_every_grid_center_matches_independent_saved_base():
     assert {key: getattr(row, key) for key in original} == original
 
 
+def test_direct_rates_keep_base_and_operating_grids_without_inventing_funding_inputs():
+    row = assumptions(beta=None, equity_risk_premium=None, risk_free_rate=None,
+        cost_of_equity=None, debt_to_capital=None, equity_to_capital=None, pre_tax_cost_of_debt=None)
+    output, _, tables = calculate_dcf(row)
+    assert output.intrinsic_value_per_share == pytest.approx(reference())
+    assert len(tables) == 6
+    for table in tables[:4]:
+        x, y = table.x_axis_json["values"][2], table.y_axis_json["values"][2]
+        assert table.values_json[str(round(y, 4))][str(round(x, 4))] == pytest.approx(reference())
+    for table in tables[4:]:
+        assert table.x_axis_json["values"] == []
+        assert table.y_axis_json["values"] == []
+        assert table.values_json == {}
+        assert "MISSING_FUNDING_INPUT" in table.x_axis_json["unavailable_reason"]
+    with pytest.raises(ValueError, match="MISSING_FUNDING_INPUT"):
+        _calc_value_for_overrides(row, {"beta": 1.2, "equity_risk_premium": .05})
+
+
+@pytest.mark.parametrize("field", ["cost_of_equity", "debt_to_capital", "pre_tax_cost_of_debt", "tax_rate"])
+def test_partial_funding_inputs_do_not_silently_default(field):
+    changes = {field: None}
+    if field == "cost_of_equity":
+        changes["risk_free_rate"] = None
+    with pytest.raises(ValueError, match="MISSING_FUNDING_INPUT"):
+        _calc_value_for_overrides(assumptions(**changes), {"debt_to_capital": .4})
+
+
+def test_explicit_capm_inputs_allow_funding_shocks_without_an_invented_equity_cost():
+    row = assumptions(cost_of_equity=None)
+    assert _calc_value_for_overrides(row, {"debt_to_capital": .4}) == pytest.approx(reference())
+    # Explicit CAPM: .04 + 1.2 * .05 = .10. Debt shock .4 -> .5 changes
+    # funding cost by .1 * (.05 * .75 - .10) = -.00625, preserving WACC fade.
+    assert _calc_value_for_overrides(row, {"debt_to_capital": .5}) == pytest.approx(reference(.11375, .09375))
+    assert row.cost_of_equity is None
+
+
+def test_explicit_equity_cost_does_not_require_an_unused_risk_free_rate():
+    row = assumptions(risk_free_rate=None)
+    assert _calc_value_for_overrides(row, {"debt_to_capital": .5, "pre_tax_cost_of_debt": .06}) == pytest.approx(reference(.1105, .0905))
+
+
 @pytest.mark.parametrize("overrides,delta", [
     ({"debt_to_capital": .5, "pre_tax_cost_of_debt": .06}, -.0095),
     ({"beta": 1.4, "equity_risk_premium": .06}, .0144),

@@ -1,0 +1,845 @@
+{
+  "schema_version": 1,
+  "decision_id": "POST-APPLICATION-INDEPENDENT-ARTIFACT-AUDIT-20261103",
+  "reviewer_type": "delegated_agent_independent_artifact_review",
+  "status": "passed",
+  "normal_database_read": false,
+  "normal_database_write": false,
+  "application_or_source_changes": false,
+  "boundary": "Read-only audit of retained normal-API response artifacts, not a new database query, browser audit, human certification or company-fact completeness certification. Approval report and immutable source packets are preserved.",
+  "user_approval": {
+    "decision_id": "USER-APPROVED-HISTORICAL-SCENARIOS-20261103",
+    "user_reply": "Apply the eleven research scenarios",
+    "scope": "Apply the eleven named historical research scenarios, discretionary reserves and dilution stresses with the approved limits; no company-fact completeness or actual-use certification.",
+    "recorded_at": "2026-11-03T02:46:14.754006+00:00"
+  },
+  "application_recorded_at": "2026-11-03T02:52:15.505Z",
+  "inputs": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261103/approval/approval-summary.json",
+      "sha256": "be9ad33317a6611e9af9e65cb9c481a7347fb88bf13f26635e72d7f64a71c981"
+    },
+    {
+      "path": "output/milestones/model-completion-20261103/approved-application-plan.json",
+      "sha256": "715d79a33c560bff4c54e97a05f3af0efd47902bdc3058f4dc25069980cdcafb"
+    },
+    {
+      "path": "output/milestones/model-completion-20261103/application-r2/application.json",
+      "sha256": "29590fb6d0dc422730d3ed9940cab73e8ee8d16e67233b68b69b046c7ae09fc8"
+    },
+    {
+      "path": "output/milestones/model-completion-20261103/source-basis-date-diagnosis.json",
+      "sha256": "540dc4ab991d6f7de2fed583c382e4f278bf1af568d53140984722222638231d"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261103/approval/approval-report.html",
+      "sha256": "031be4fbe3d3aa3637bbe322b2a21e64083503438aeb8a2215fc0b5a5e86c344"
+    }
+  ],
+  "source_date_rollover": "Independent comparison confirms before/refreshed financial assumptions, reviews and edit markers are identical. Provenance leaf changes are only age_days +1. Diagnosis matches every prior-day source signature and unchanged financial-history/industry/mix basis. Refreshed and saved draft signatures match the current date diagnosis; no financial value was refreshed silently.",
+  "source_provenance_age_increment_count": 53,
+  "selected_model_count": 11,
+  "company_check_count": 209,
+  "aggregate_checks": {
+    "application_status_success_without_failures": true,
+    "all_eleven_unique_proposals_applied_and_promoted": true,
+    "plan_and_application_bind_immutable_approved_packet": true,
+    "approval_report_unchanged": true,
+    "all_company_checks_pass": true
+  },
+  "maximum_absolute_per_share_delta": 3.126388037344441e-13,
+  "companies": [
+    {
+      "ticker": "AAPL",
+      "model_id": 2,
+      "assumption_id": 3,
+      "draft_id": 1,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2025-09-27",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 6,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 66.22475844936568,
+      "saved_value_per_share": 66.22475844936568,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 4,
+      "retained_review_count": 37,
+      "saved_story_sha256": "2a4a3d98526cf3e1eae6b720f34e6eac197be8ce793b52225cf73a2221400032",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "f3a933a272393a5c4362c4e25f7c5ef3e47b0d928fed543a60c0854e9af34dd5",
+      "source_signature_after": "ec2a2361c0846dc4814fcd60697f27a1f912b94d44f49e6b8ef95484fab02073",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/AAPL-before.json",
+          "sha256": "8f37dd94d33ba479271227c3e8279039b543bb0ea43cc050b4b73d5fbe4e6aa1"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/AAPL-refreshed.json",
+          "sha256": "7b43671e9cbd2ed1e2d382af7e78ad0b3b812de1bca9c5b798ad784e84072963"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/AAPL-reviewed.json",
+          "sha256": "7b43671e9cbd2ed1e2d382af7e78ad0b3b812de1bca9c5b798ad784e84072963"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/AAPL-model.json",
+          "sha256": "5e6b993b5d894e8ff6c8486c3b0791c07802b6ab4db4ee5ab6a125564cc9ca96"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "RELIANCE",
+      "model_id": 3,
+      "assumption_id": 4,
+      "draft_id": 3,
+      "model_type": "fcff_dcf",
+      "currency": "INR",
+      "as_of": "2026-03-31",
+      "exact_selected_non_narrative_field_count": 36,
+      "exact_plan_patch_field_count": 1,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 265.50285910599547,
+      "saved_value_per_share": 265.50285910599524,
+      "absolute_delta": 2.2737367544323206e-13,
+      "provenance_age_increments": 0,
+      "retained_review_count": 36,
+      "saved_story_sha256": "547dfbcba65d4f5eb4ea63f69b2196b63908bb07ce0789cfb875c605eef1e2f5",
+      "saved_risk_story_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_signature_before": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30",
+      "source_signature_after": "8eece19021e09700ddf03e540ea547873b08e4aa114d22f80e38b6fb298653ac",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/RELIANCE-before.json",
+          "sha256": "dd93cdc96b8f355d3e9c987f09f805244157962511b00f2c3c0104a85f2c5f5f"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/RELIANCE-refreshed.json",
+          "sha256": "37a923ef5ceb5d7d707a00bca074d5b169c25b3bebe36663c3028e70e0dbcb07"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/RELIANCE-reviewed.json",
+          "sha256": "d79ae4c090dc33ce44f7cd1c76b871c5b51529160de89e11746045f53c40145c"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/RELIANCE-model.json",
+          "sha256": "a140c9dfaf8ddccd68db098277f8e7df847ae7ff35f12c4e3da7948a42a63fcc"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "model_id": 4,
+      "assumption_id": 5,
+      "draft_id": 4,
+      "model_type": "fcff_dcf",
+      "currency": "INR",
+      "as_of": "2026-03-31",
+      "exact_selected_non_narrative_field_count": 36,
+      "exact_plan_patch_field_count": 5,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 212.04129609726732,
+      "saved_value_per_share": 212.041296097267,
+      "absolute_delta": 3.126388037344441e-13,
+      "provenance_age_increments": 1,
+      "retained_review_count": 36,
+      "saved_story_sha256": "feb9aab3f18ed095a6e4c02001fcbd10116e076bcf530caa0db8c6e14564cb9a",
+      "saved_risk_story_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_signature_before": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba",
+      "source_signature_after": "94f6a2619132cd119a9b35b6ddcfed70583a072620a6246b1a4e905c20e955b4",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/BHARTIARTL-before.json",
+          "sha256": "01bf2f1bdcf86f07c305bd762bc72adb8e1d2faf8ffc4df13e88f21498d28c89"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/BHARTIARTL-refreshed.json",
+          "sha256": "4ced1a08bde3ee20d5fe942d5f4425fbbb1a1940031dded1da4a221b94714d4b"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/BHARTIARTL-reviewed.json",
+          "sha256": "e318b23e150c665e1c9ce372169b54cf1d230e86caf5d7f10386e9abe4ed0555"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/BHARTIARTL-model.json",
+          "sha256": "b7fd1f7a11bf7ced4338f2926c163905af86bee63152503786d4b0bcf02f847b"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "HDFCBANK",
+      "model_id": 5,
+      "assumption_id": 6,
+      "draft_id": 5,
+      "model_type": "financial_services",
+      "currency": "INR",
+      "as_of": "2026-03-31",
+      "exact_selected_non_narrative_field_count": 10,
+      "exact_plan_patch_field_count": 3,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 349.89913049594446,
+      "saved_value_per_share": 349.8991304959444,
+      "absolute_delta": 5.684341886080802e-14,
+      "provenance_age_increments": 11,
+      "retained_review_count": 10,
+      "saved_story_sha256": "4c02cc306f4d1880e82a9725f1adec6fa6baa11846d1a63272219490efcc22ab",
+      "saved_risk_story_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_signature_before": "501f0bcb8f88d20d7a9f4dcb9651790edd22477ad6ffa0c8afee7869917c13ca",
+      "source_signature_after": "c4e46295d48479539d7e4e4489a4d446a5c80e15af1dca6a0ebb3641d4c6075f",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/HDFCBANK-before.json",
+          "sha256": "f7cda367192663f9d406e30fd6ec3385f95b2427e1e8be7978087cc7c32e95dc"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/HDFCBANK-refreshed.json",
+          "sha256": "bb8d6009bbcecc9a2ccc5c32944454344038ed4dbab4d020f0492ec6f889189f"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/HDFCBANK-reviewed.json",
+          "sha256": "0483e11b00033f971de01b198a7d40055c47a52f81ecc0f6ca3661fcf34e2f22"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/HDFCBANK-model.json",
+          "sha256": "ba1b474ab86bee3199f5bd744abfb3227f5d00a4527e4be71e7ebf7010de368a"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "model_id": 6,
+      "assumption_id": 7,
+      "draft_id": 6,
+      "model_type": "financial_services",
+      "currency": "INR",
+      "as_of": "2026-03-31",
+      "exact_selected_non_narrative_field_count": 10,
+      "exact_plan_patch_field_count": 3,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 493.25306157668444,
+      "saved_value_per_share": 493.2530615766844,
+      "absolute_delta": 5.684341886080802e-14,
+      "provenance_age_increments": 12,
+      "retained_review_count": 10,
+      "saved_story_sha256": "37402b954bd2d90fe046f63768658d3e734a4cc43fd64eebbcaef6f04a5bac15",
+      "saved_risk_story_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_signature_before": "52c973abc4f4e2b265eb88a7989a37d4773c45d1e68a3bfc32b56b373a5333e9",
+      "source_signature_after": "def8fb1f83761e36e9db8f7c0afe54280b06fc84258f580a8b00aeb14ae872a3",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/ICICIBANK-before.json",
+          "sha256": "212ea87f60dd62742971fd85dca313f985af8cd9d5bbe3805eb061d311572d2a"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/ICICIBANK-refreshed.json",
+          "sha256": "865ccaa31671f36bf9660bc3633d3b282f692d7abd41acbc68d98cc9d1c01421"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/ICICIBANK-reviewed.json",
+          "sha256": "a513859ff84daddb01ea64a0a8d4141b91f19a9c28326105a3dbe7ecea599085"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/ICICIBANK-model.json",
+          "sha256": "f056c350f0af0cbf1a1228a7d34b02e516dd6f9880535a2049850ca14aa92e33"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "model_id": 7,
+      "assumption_id": 8,
+      "draft_id": 7,
+      "model_type": "financial_services",
+      "currency": "INR",
+      "as_of": "2026-03-31",
+      "exact_selected_non_narrative_field_count": 10,
+      "exact_plan_patch_field_count": 3,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 625.9248214959692,
+      "saved_value_per_share": 625.9248214959692,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 11,
+      "retained_review_count": 10,
+      "saved_story_sha256": "19089d1354c98426ea98109b6cdceecac73351b60f77f74785cb77e7359d64aa",
+      "saved_risk_story_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source_signature_before": "1b0a8b09c8364fa37c8e9cd983d038ba26138de517d0e9fd334eab24df01b069",
+      "source_signature_after": "2bfd1fad76cec4b573dbf6d3ed91795fb29a4ba4c66e8442d487762e551007fe",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/SBIN-before.json",
+          "sha256": "5361527dc7f8c544a0ed89eb1597577587466844f79890c7e7ea9cf8ddf5265a"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/SBIN-refreshed.json",
+          "sha256": "82bfa82d4c9e6702df94486c1c8f86e15291d0059218c82d9a6aae90f7b94c51"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/SBIN-reviewed.json",
+          "sha256": "aaca70fd44239a51f99a1d2d46dfa3b9ebb541c3ddcd96d1b1486ee32e55734d"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/SBIN-model.json",
+          "sha256": "9acd6c1a0e1ea03a936fcea1282fce2de7e0b938d1ed19f3be95657d8c4ec984"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "model_id": 8,
+      "assumption_id": 9,
+      "draft_id": 8,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2026-01-25",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 7,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 68.96480443858044,
+      "saved_value_per_share": 68.96480443858044,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 4,
+      "retained_review_count": 37,
+      "saved_story_sha256": "d0b51eaacbec59b66307f0617b9125641bfee8fa5823c68e59e7c254753694ca",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "b3dd4fcce8fbbe5f33f3668e5aa67271180f0512d074a94f4d388a5d3081fb40",
+      "source_signature_after": "01cc1d4645ea8a8fa42f9fd60f9c8cb4ca91a95e74fde2990716f2aab4743c1d",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/NVDA-before.json",
+          "sha256": "7abcc5dfd8b26e2f65522012354066b1aaa585e893a4c796606553598dbef1d6"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/NVDA-refreshed.json",
+          "sha256": "8127b3edd619cac3f129e609b943da3758798fe9d8ffe4b5d9cfa6c2f948a320"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/NVDA-reviewed.json",
+          "sha256": "142bb5114045e19ee68b921a07c35ef2eee6ae03063de84f15386d1a6c31874c"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/NVDA-model.json",
+          "sha256": "85164335cba0ab833a56520e266a6dc9a401e7ed86a0fab6e072f0398218386b"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "GOOG",
+      "model_id": 9,
+      "assumption_id": 10,
+      "draft_id": 9,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2025-12-31",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 6,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 63.47808508568981,
+      "saved_value_per_share": 63.47808508568981,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 3,
+      "retained_review_count": 37,
+      "saved_story_sha256": "7fc09d3d346daff0671361a7ea4ef5743c0949bc55e003d496783f31ff761e16",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "a9e64c04312188953cbb44d1a2c2b3d58997193abbf2e8ff58d09b2b103f5a30",
+      "source_signature_after": "5886601989f1f6133599438750080c4842e9600df76e3da0d6d74267ab06d1ef",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOG-before.json",
+          "sha256": "f26f33abde41dbe9b377346232d4c42ba55e54fa1e5b263f08a1abf7d5ddd4b7"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOG-refreshed.json",
+          "sha256": "172d46c18da52795c8b350a3a493ab9f77f4065cda97fd5c6717df877a68527a"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOG-reviewed.json",
+          "sha256": "789efc61305c4fc85fc5efcf60bfc3fa66435d3aabe791a6312d819e663eb279"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOG-model.json",
+          "sha256": "d2b29b1eb74cad5d08ef16ac91a69c8f83db9c1089961d6ae98b32607bd5ef73"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "model_id": 10,
+      "assumption_id": 11,
+      "draft_id": 10,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2026-06-30",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 8,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 188.37498478058754,
+      "saved_value_per_share": 188.37498478058754,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 4,
+      "retained_review_count": 37,
+      "saved_story_sha256": "d1bd26ccad6e65ea9d550a83fa44cf548d2de492d68329834fc087893fd22378",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "cd600ab0661afe9f5d81faccc9c88212e81ed5e63206ec61da7f17a4d4a042ec",
+      "source_signature_after": "f5968902d00c7ed7085079c51f1c5c7526d31e2db9dfe7d53815ed7687563ec1",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/MSFT-before.json",
+          "sha256": "670cbd2f5724f850ae923e4443f363ab733117007cfc057d47314664ddcf4760"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/MSFT-refreshed.json",
+          "sha256": "2dfee1d4733f914ebca59f8877381272746e5633363b6c4ffb4778e1dc201c26"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/MSFT-reviewed.json",
+          "sha256": "c73dec2ea3ec235db19a22f0379eaa5ff26b4bad0c62e7596bde9419cf1051aa"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/MSFT-model.json",
+          "sha256": "686c34e30fa5df7c0dddac814330fe4829678f09cd3a9fb1e6cad59e2a7ee319"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "model_id": 11,
+      "assumption_id": 12,
+      "draft_id": 11,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2025-12-31",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 7,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 67.34276411115486,
+      "saved_value_per_share": 67.34276411115486,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 0,
+      "retained_review_count": 37,
+      "saved_story_sha256": "7edb8da92350d3b7ba38b4045c8eb6e90fc5827bc23d49755bbd1dfd3756759b",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "25e406004ce94fb174b155220ca1e4fe98bc871d9e1ff4dc70801fe99afa76d2",
+      "source_signature_after": "15f2471150838f1bc2ae0ed627d36618c0cea2b6b55319d077e589a7131bdc58",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/AMZN-before.json",
+          "sha256": "14fe75a26e12647f86b1cab18b3cf8c0ba7943df1ef4be2a02326e1cd021c345"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/AMZN-refreshed.json",
+          "sha256": "1871896a7d6cae68e6e6e9b7b872b476b26a8cc15080ab2464bc4834cddbd2db"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/AMZN-reviewed.json",
+          "sha256": "2b4cbe644344058702374d2632ce4eaf555c11c7d4d16153d6856ab2b64c175c"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/AMZN-model.json",
+          "sha256": "a9bb3ba5c17077d1654d98464e4ed32db67035356413db037359525b827b7dff"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "model_id": 12,
+      "assumption_id": 13,
+      "draft_id": 12,
+      "model_type": "fcff_dcf",
+      "currency": "USD",
+      "as_of": "2025-12-31",
+      "exact_selected_non_narrative_field_count": 51,
+      "exact_plan_patch_field_count": 6,
+      "selected_mismatch_fields": [
+
+      ],
+      "plan_patch_mismatch_fields": [
+
+      ],
+      "draft_mismatch_fields": [
+
+      ],
+      "approved_reference_value_per_share": 63.47808508568981,
+      "saved_value_per_share": 63.47808508568981,
+      "absolute_delta": 0.0,
+      "provenance_age_increments": 3,
+      "retained_review_count": 37,
+      "saved_story_sha256": "cb131aaf8c9ccd836a25c2955293e370b919c83bf4141a9f5305de890767923f",
+      "saved_risk_story_sha256": "e8d669920d4717b463d66720d7fe766af3ac6892595fd00f7fd692358aa65e97",
+      "source_signature_before": "2ec40123a2c67eb53588102d608099d8ec2ff8863427b5ea58e192a9706c90f9",
+      "source_signature_after": "5e1191c710ea8d1e47b15274e0f591f8dbecf850dc729fdd4cb9c31cf56010c9",
+      "artifact_hashes": [
+        {
+          "kind": "before",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOGL-before.json",
+          "sha256": "3902e9fd19bc895f8212a78d57d0dc8e1e9107885bc116d210c754c2580595f9"
+        },
+        {
+          "kind": "refreshed",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOGL-refreshed.json",
+          "sha256": "7edea3af7088d72c6e1cd6c2b90c4b6214afbc9432341c9b3c0767f3e691be59"
+        },
+        {
+          "kind": "reviewed",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOGL-reviewed.json",
+          "sha256": "88683f499345711cc705020bafbb32173f4d143e85791ce4c0f59309656cd288"
+        },
+        {
+          "kind": "model",
+          "path": "output/milestones/model-completion-20261103/application-r2/GOOGL-model.json",
+          "sha256": "c39f1f024c6cba70362600e21bc111ef7323e32a6cfaacbbd181c2331cd97429"
+        }
+      ],
+      "checks": {
+        "draft_and_model_identifiers_match_plan": true,
+        "saved_name_and_type_match_approval": true,
+        "currency_matches_approval": true,
+        "all_selected_non_narrative_values_exact": true,
+        "all_plan_patch_values_exact_in_saved_model": true,
+        "reviewed_draft_matches_baseline_plus_explicit_patch": true,
+        "baseline_story_and_risk_prefixes_preserved": true,
+        "approved_narrative_appended_once": true,
+        "approval_record_and_asof_retained": true,
+        "all_prior_and_approved_reviews_retained": true,
+        "refresh_preserved_all_values_reviews_and_edits": true,
+        "source_provenance_changed_only_by_one_day_age": true,
+        "date_diagnosis_reconciles_exact_prior_signature": true,
+        "refreshed_source_and_history_bindings_retained": true,
+        "reference_calculation_matches_within_one_nanocurrency_unit": true,
+        "market_price_and_upside_remain_unavailable": true,
+        "ten_relative_years_no_invented_calendar_dates": true,
+        "persisted_model_assumption_output_linkage": true,
+        "no_blocking_output_warning": true
+      }
+    }
+  ]
+}

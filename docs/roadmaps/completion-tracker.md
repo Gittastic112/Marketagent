@@ -93,8 +93,8 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | Accepted November 2 for research/demo scope | [Rotation and scoped acceptance](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Accepted November 2; prerequisite closed | [Acceptance basis](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Evidence review proceeding under delegated authority | [Parser and review packets](../archive/checkpoints/2026/release-readiness-2026-10-17.md), [decision log](review-decisions.md) |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | Review and browser defects repaired; company basis still open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Eleven historical research scenarios approved; complete issuer facts remain open | [Decision log](review-decisions.md), [applied scenarios](../../data/reviews/historical-scenario-application-20261103.json) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | Eleven models saved and verified; complete company basis remains open | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Existing-data audit repairs observed defects; M08 prerequisite open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [prior remote matrix](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
@@ -351,6 +351,15 @@ delegation, preserving the distinction from independent human certification.
 
 Owners: deterministic engines, saved-input contracts and valuation panels;
 [Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
+
+November 3: the user approved eleven named historical research scenarios, now
+saved as models 2-12. Independent calculations and 82 normal desktop/mobile views
+pass, including six scenarios per model. Direct-rate review, absent funding keys,
+required-value gates and bank promotion are repaired. Unavailable funding grids
+do not invent financing inputs. The approval explicitly does not certify complete
+company facts, current fair value or actual use. It therefore closes the selected
+research-model work without silently closing the broader M05/M06 company-basis
+acceptance gates or adding cumulative acceptance points.
 
 November 2 verifies full-unit suggestions, model-specific draft reviews, source
 checks before promotion, queued cancellation and repaired mobile controls. Saved

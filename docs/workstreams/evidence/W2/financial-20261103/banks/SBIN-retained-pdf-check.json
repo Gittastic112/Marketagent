@@ -1,0 +1,18 @@
+{
+  "ticker": "SBIN",
+  "checks": {
+    "page_count_9": true,
+    "quarter_date": true,
+    "no_convertibles": true,
+    "no_warrants": true,
+    "no_outstanding_parent_esops": true,
+    "table_share_counts": true,
+    "shares_include_underlying_gdr": true
+  },
+  "executable": "/usr/local/bin/python",
+  "pdfplumber_version": "0.11.10",
+  "selected_page_text_sha256": {
+    "1": "5c9a24a785b1e91524584e3831c31cc87c86fc0bb1a6007f6f7e79203d7257da",
+    "2": "a55d14eee95299a103cf977a20760b67a6dc138ccdc444e38dd86403dab854ef"
+  }
+}

@@ -1,0 +1,316 @@
+{
+  "schema_version": 1,
+  "report_id": "MODEL-SCENARIO-APPROVAL-20261103",
+  "proposal_count": 11,
+  "alternative_stress_case_count": 43,
+  "checks": [
+    {
+      "name": "AAPL prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "AAPL exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "AAPL only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "AAPL finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "AAPL no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "RELIANCE exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "RELIANCE only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "RELIANCE finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "RELIANCE no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "BHARTIARTL finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "BHARTIARTL no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "HDFCBANK exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "HDFCBANK only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "HDFCBANK finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "HDFCBANK no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "ICICIBANK exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "ICICIBANK only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "ICICIBANK finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "ICICIBANK no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "SBIN exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "SBIN only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "SBIN finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "SBIN no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "NVDA prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "NVDA exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "NVDA only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "NVDA finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "NVDA no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "GOOG prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "GOOG exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "GOOG only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "GOOG finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "GOOG no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "MSFT prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "MSFT exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "MSFT only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "MSFT finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "MSFT no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "AMZN prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "AMZN exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "AMZN only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "AMZN finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "AMZN no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "GOOGL prior narratives preserved and appended once",
+      "pass": true
+    },
+    {
+      "name": "GOOGL exact draft binding",
+      "pass": true
+    },
+    {
+      "name": "GOOGL only explicit proposed changes",
+      "pass": true,
+      "unexplained_fields": [
+
+      ]
+    },
+    {
+      "name": "GOOGL finite reference and stresses",
+      "pass": true
+    },
+    {
+      "name": "GOOGL no quote or price comparison",
+      "pass": true
+    },
+    {
+      "name": "All 11 draft tickers represented once",
+      "pass": true
+    },
+    {
+      "name": "US math bound to exact proposal packet",
+      "pass": true
+    },
+    {
+      "name": "Eleven overview body rows",
+      "pass": true
+    },
+    {
+      "name": "Eleven company sections with stable IDs",
+      "pass": true
+    },
+    {
+      "name": "Every selected value rendered from exact JSON input",
+      "pass": true
+    },
+    {
+      "name": "No JavaScript or externally loaded styles/media",
+      "pass": true
+    },
+    {
+      "name": "Semantic captions, row and column headers",
+      "pass": true
+    },
+    {
+      "name": "All official source links use HTTPS",
+      "pass": true
+    }
+  ],
+  "browser_render_checked": true,
+  "application_calculation_rerun": false,
+  "normal_runtime_writes": false,
+  "generated_files": [
+    {
+      "path": "approval-summary.json",
+      "sha256": "be9ad33317a6611e9af9e65cb9c481a7347fb88bf13f26635e72d7f64a71c981"
+    },
+    {
+      "path": "approval-report.html",
+      "sha256": "031be4fbe3d3aa3637bbe322b2a21e64083503438aeb8a2215fc0b5a5e86c344"
+    }
+  ],
+  "browser_receipt": "browser/final/browser-validation.json",
+  "browser_receipt_sha256": "d5a6960bbbdd26eea2b38531a0a7bf9c90a369d8621e3a79a475a93a74635358",
+  "visual_review": {
+    "reviewer": "delegated agent",
+    "pass": true,
+    "directly_inspected_final_screenshots": [
+      "mobile-MSFT-open.png",
+      "mobile-table-keyboard-scroll.png"
+    ],
+    "unchanged_inspected_screenshot_hash_checks": [
+      {
+        "name": "desktop-top.png",
+        "unchanged_from_visually_inspected_initial": true
+      },
+      {
+        "name": "desktop-overview.png",
+        "unchanged_from_visually_inspected_initial": true
+      },
+      {
+        "name": "mobile-top.png",
+        "unchanged_from_visually_inspected_initial": true
+      }
+    ],
+    "observations": [
+      "Readable desktop overview with all eleven rows, clear values and limitations.",
+      "Phone text and expanded details remain inside viewport; overview deliberately scrolls horizontally with keyboard support.",
+      "No clipping outside the intended table scroll region, overlapping text or broken source-link wrapping observed."
+    ],
+    "independent_human_certification": false
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "ticker": "ICICIBANK",
+  "checks": {
+    "page_count_32": true,
+    "issuer_identity": true,
+    "quarter_date": true,
+    "no_convertibles": true,
+    "no_warrants": true,
+    "awards_present": true,
+    "table_share_counts": true,
+    "full_issuance_sum": true
+  },
+  "executable": "/usr/local/bin/python",
+  "pdfplumber_version": "0.11.10",
+  "selected_page_text_sha256": {
+    "1": "a50816c31847c5a2ee687ca0b0b0818ef391b46e8a0f9ff173c821c845cd6129",
+    "2": "bb6d27b4af5f24e5f7fa9d007ada6a6e0cc017144504ec3aa270eb1fad07045d",
+    "4": "05a8c1ba0853120846e62c62b87df31c58b0591b0315e41d575b18b8672eb459"
+  }
+}

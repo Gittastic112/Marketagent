@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 
 import {
+  DISCOUNT_COMPONENT_FIELDS,
   provenanceLabel,
   reviewFieldValueIsValid,
   reviewFieldsForModel,
@@ -55,6 +56,13 @@ test("missing amounts cannot be accepted as an explicit zero", () => {
   assert.equal(reviewFieldValueIsValid("revenue_growth_years_json", { "1": NaN }), false);
 });
 
+test("clearing a required source-backed input blocks promotion even outside the review list", () => {
+  const metadata = {promotion_ready: true, requires_review: false, placeholder_fields: [],
+    review_fields: [], required_fields_by_model: {fcff_dcf: ["diluted_shares"]}, source_counts_by_type: {}};
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(), {diluted_shares: null}), ["diluted_shares"]);
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(), {diluted_shares: 100}), []);
+});
+
 test("unavailable comparison price needs explicit acknowledgement, without inventing an amount", () => {
   const metadata = { promotion_ready: false, requires_review: true,
     placeholder_fields: ["current_market_price"], review_fields: ["current_market_price"],
@@ -73,6 +81,43 @@ test("provenance label supports structured and legacy provenance", () => {
   assert.equal(provenanceLabel({ label: "Normalized Financials" }), "Normalized Financials");
   assert.equal(provenanceLabel("Manual entry"), "Manual entry");
   assert.equal(provenanceLabel(undefined), "Unknown source");
+});
+
+test("unavailable funding components need review and explicit rates, while bank equity cost and claims remain required", () => {
+  const values = { wacc_start: .14, wacc_terminal: .14, beta: null,
+    risk_free_rate: .05, equity_risk_premium: .04, cost_of_equity: .09,
+    pre_tax_cost_of_debt: .07, debt_to_capital: .2, equity_to_capital: .8 };
+  const metadata = { promotion_ready: false, requires_review: true, placeholder_fields: [],
+    review_fields: ["wacc_start", "wacc_terminal", "beta"], source_counts_by_type: {} };
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(["wacc_start", "wacc_terminal"]), values), ["beta"]);
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(metadata.review_fields), values), []);
+  for (const rate of [null, 0, -1, NaN, Infinity, 1.1]) {
+    assert.ok(unresolvedReviewFields(metadata, new Set(metadata.review_fields), {...values, wacc_start: rate}).includes("beta"));
+  }
+  const bank = {...metadata, review_fields_by_model: {financial_services: ["cost_of_equity"]}};
+  assert.deepEqual(unresolvedReviewFields(bank, new Set(["cost_of_equity"]), {...values, cost_of_equity: null}, "financial_services"), ["cost_of_equity"]);
+  for (const field of ["diluted_shares", "employee_options_value", "minority_interests", "debt"]) {
+    assert.deepEqual(unresolvedReviewFields({...metadata, review_fields: [field]}, new Set([field, "beta"]), {...values, [field]: null}), [field]);
+  }
+});
+
+test("clearing a sourced component adds explicit unavailable review immediately", () => {
+  const metadata = {promotion_ready: true, requires_review: false, placeholder_fields: [],
+    review_fields: [], source_counts_by_type: {}};
+  const values = {wacc_start: .14, wacc_terminal: .14, beta: null,
+    risk_free_rate: .05, equity_risk_premium: .04, cost_of_equity: .09,
+    pre_tax_cost_of_debt: .07, debt_to_capital: .2, equity_to_capital: .8};
+  assert.deepEqual(reviewFieldsForModel(metadata, "fcff_dcf", values), ["beta"]);
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(), values), ["beta"]);
+  assert.deepEqual(unresolvedReviewFields(metadata, new Set(["beta"]), values), []);
+});
+
+test("omitted legacy funding keys require the same explicit review as null components", () => {
+  const metadata = {promotion_ready: true, requires_review: false, placeholder_fields: [],
+    review_fields: [], source_counts_by_type: {}};
+  const values = {wacc_start: .14, wacc_terminal: .14};
+  assert.deepEqual(new Set(unresolvedReviewFields(metadata, new Set(), values)), DISCOUNT_COMPONENT_FIELDS);
+  assert.deepEqual(unresolvedReviewFields(metadata, DISCOUNT_COMPONENT_FIELDS, values), []);
 });
 
 test("selected model uses its server-provided review inputs", () => {

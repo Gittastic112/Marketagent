@@ -36,8 +36,22 @@ const UNIT_INTERVAL_FIELDS = new Set([
   "probability_of_failure",
 ]);
 const MARGIN_FIELDS = new Set(["current_operating_margin", "target_operating_margin", "target_roe"]);
+export const DISCOUNT_COMPONENT_FIELDS = new Set([
+  "risk_free_rate", "beta", "equity_risk_premium", "cost_of_equity",
+  "pre_tax_cost_of_debt", "debt_to_capital", "equity_to_capital",
+]);
 
-export function reviewFieldValueIsValid(field: string, value: unknown): boolean {
+export function unavailableDiscountComponent(
+  field: string, value: unknown, values: Record<string, unknown>, modelType = "fcff_dcf",
+): boolean {
+  return ["fcff_dcf", "distressed"].includes(modelType) && DISCOUNT_COMPONENT_FIELDS.has(field)
+    && value == null && ["wacc_start", "wacc_terminal"].every(key =>
+      typeof values[key] === "number" && Number.isFinite(values[key]) && values[key] > 0 && values[key] <= 1);
+}
+
+export function reviewFieldValueIsValid(field: string, value: unknown, values: Record<string, unknown> = {}, modelType = "fcff_dcf"): boolean {
+  if (field === "reinvestment_method") return value === "sales_to_capital";
+  if (unavailableDiscountComponent(field, value, values, modelType)) return true;
   if (field === "current_market_price" && value === null) return true;
   if (field === "current_market_price" && typeof value !== "number" && typeof value !== "string") return false;
   if (value == null || typeof value === "boolean" || (typeof value === "string" && !value.trim())) {
@@ -70,8 +84,10 @@ export function reviewFieldValueIsValid(field: string, value: unknown): boolean 
   return true;
 }
 
-export function reviewFieldsForModel(metadata: AutofillSourceMetadata, modelType = "fcff_dcf"): string[] {
-  return modelType === "fcff_dcf" ? metadata.review_fields : metadata.review_fields_by_model?.[modelType] ?? metadata.review_fields;
+export function reviewFieldsForModel(metadata: AutofillSourceMetadata, modelType = "fcff_dcf", values: Record<string, unknown> = {}): string[] {
+  const fields = modelType === "fcff_dcf" ? metadata.review_fields : metadata.review_fields_by_model?.[modelType] ?? metadata.review_fields;
+  return [...new Set([...fields, ...[...DISCOUNT_COMPONENT_FIELDS].filter(field =>
+    unavailableDiscountComponent(field, values[field], values, modelType))])];
 }
 
 export function unresolvedReviewFields(
@@ -80,9 +96,13 @@ export function unresolvedReviewFields(
   values: Record<string, unknown>,
   modelType = "fcff_dcf",
 ): string[] {
-  return reviewFieldsForModel(sourceMetadata, modelType).filter(
-    (field) => !reviewedFields.has(field) || !reviewFieldValueIsValid(field, values[field]),
+  const unresolved = reviewFieldsForModel(sourceMetadata, modelType, values).filter(
+    (field) => !reviewedFields.has(field) || !reviewFieldValueIsValid(field, values[field], values, modelType),
   );
+  const missingRequired = (sourceMetadata.required_fields_by_model?.[modelType] ?? []).filter(
+    field => !reviewFieldValueIsValid(field, values[field], values, modelType),
+  );
+  return [...new Set([...unresolved, ...missingRequired])];
 }
 
 export function provenanceLabel(entry: AssumptionProvenance | string | undefined): string {

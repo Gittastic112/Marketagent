@@ -140,7 +140,25 @@ test("late narrative suggestions cannot replace edits and copying estimates requ
   await sections.getByRole("button", {name: "Sensitivity Tables", exact: true}).click();
   await expect(page.locator(".sensitivity-card:visible")).toHaveCount(6);
   expect(latest.sensitivity_tables).toHaveLength(6);
+  expect(latest.sensitivity_tables!.map(table => table.table_type).sort()).toEqual([
+    "beta_vs_equity_risk_premium", "debt_ratio_vs_cost_of_debt",
+    "revenue_growth_vs_target_margin", "sales_to_capital_vs_margin",
+    "terminal_roc_vs_terminal_growth", "wacc_vs_terminal_growth",
+  ]);
   for (const table of latest.sensitivity_tables ?? []) {
+    if (["beta_vs_equity_risk_premium", "debt_ratio_vs_cost_of_debt"].includes(table.table_type)) {
+      expect(table.x_axis_json.values).toEqual([]);
+      expect(table.y_axis_json.values).toEqual([]);
+      expect(table.values_json).toEqual({});
+      expect(table.x_axis_json.unavailable_reason).toContain("MISSING_FUNDING_INPUT");
+      const card = page.locator(".sensitivity-card:visible").filter({has: page.getByRole("heading", {
+        name: `${table.y_axis_json.name} vs ${table.x_axis_json.name}`, exact: true,
+      })});
+      await expect(card.getByText(`Not available: ${table.x_axis_json.unavailable_reason}`, {exact: true})).toBeVisible();
+      continue;
+    }
+    expect(table.x_axis_json.values).toHaveLength(5);
+    expect(table.y_axis_json.values).toHaveLength(5);
     const x = Number(table.x_axis_json.values[2].toFixed(4));
     const y = Number(table.y_axis_json.values[2].toFixed(4));
     const values = table.values_json as Record<string, Record<string, number | null>>;
