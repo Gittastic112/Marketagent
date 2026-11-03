@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.models import MarketPrice, PortfolioBenchmarkConfig, PortfolioSnapshot
 from app.services.fx_rates import FxRateUnavailable, convert_amount
 from app.services.portfolio_cash_flows import normalize_external_cash_flows
+from app.services.portfolio_replay import snapshot_replay_is_verified
 
 
 @dataclass(frozen=True)
@@ -32,7 +33,7 @@ def _price_point(
     if config.benchmark_company_id is not None:
         query = query.where(MarketPrice.company_id == config.benchmark_company_id)
     price = db.scalar(query.order_by(MarketPrice.as_of_date.desc(), MarketPrice.id.desc()).limit(1))
-    if price is None:
+    if price is None or price.price <= 0:
         return None
     try:
         price_base, fx = convert_amount(
@@ -104,6 +105,7 @@ def calculate_benchmark_opportunity_cost(
         or end.calculation_status != "complete"
         or start.total_portfolio_value is None
         or end.total_portfolio_value is None
+        or start.base_currency != end.base_currency
     ):
         warnings.append("Complete snapshots are required on both comparison boundaries.")
         return {
@@ -192,8 +194,11 @@ def calculate_benchmark_opportunity_cost(
         if Decimal(start.total_portfolio_value) > 0
         else None
     )
+    replay_verified = snapshot_replay_is_verified(start, db) and snapshot_replay_is_verified(end, db)
+    if not replay_verified:
+        warnings.append("Legacy snapshot history or subsequently changed activity is unverified for transaction replay; benchmark comparison is provisional.")
     return {
-        "calculation_status": "complete",
+        "calculation_status": "complete" if replay_verified else "partial",
         "portfolio_id": portfolio_id,
         "start_date": start_date,
         "end_date": end_date,

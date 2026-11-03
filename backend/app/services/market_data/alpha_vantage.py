@@ -1,8 +1,9 @@
+import asyncio
 import logging
-from datetime import datetime, timezone
-from decimal import Decimal
+from datetime import date, datetime, timezone
+from decimal import Decimal, InvalidOperation
 
-import httpx
+from app.providers.fixed_json import FixedJsonError, fetch_json
 
 from app.services.market_data.base import (
     MarketDataProvider,
@@ -11,6 +12,7 @@ from app.services.market_data.base import (
     MarketHistoryResult,
     MarketQuoteResult,
 )
+from app.services.market_data.sessions import history_window
 
 logger = logging.getLogger(__name__)
 
@@ -57,48 +59,18 @@ class AlphaVantageProvider(MarketDataProvider):
 
     async def _get_json(self, params: dict[str, str], *, capability: str) -> dict:
         try:
-            async with httpx.AsyncClient(timeout=10.0) as client:
-                response = await client.get(self.base_url, params=params)
-            if response.status_code == 429:
-                raise MarketDataProviderError(
-                    code="PROVIDER_RATE_LIMITED",
-                    message=f"Alpha Vantage rate-limited the {capability} request.",
-                    provider=self.provider_name,
-                    status_code=429,
-                    retryable=True,
-                )
-            response.raise_for_status()
-            data = response.json()
-            if not isinstance(data, dict):
-                raise ValueError("Provider response was not an object")
+            if self.base_url != "https://www.alphavantage.co/query":
+                raise FixedJsonError("invalid_endpoint")
+            data = await asyncio.to_thread(fetch_json, self.base_url, params, max_bytes=5_000_000, timeout=10)
             self._raise_payload_error(data, capability=capability)
             return data
         except MarketDataProviderError:
             raise
-        except httpx.TimeoutException as exc:
-            raise MarketDataProviderError(
-                code="PROVIDER_TIMEOUT",
-                message=f"Alpha Vantage timed out while fetching {capability}.",
-                provider=self.provider_name,
-                status_code=504,
-                retryable=True,
-            ) from exc
-        except httpx.HTTPError as exc:
-            raise MarketDataProviderError(
-                code="PROVIDER_UNAVAILABLE",
-                message=f"Alpha Vantage could not provide {capability}.",
-                provider=self.provider_name,
-                status_code=502,
-                retryable=True,
-            ) from exc
-        except (TypeError, ValueError) as exc:
-            raise MarketDataProviderError(
-                code="PROVIDER_INVALID_RESPONSE",
-                message=f"Alpha Vantage returned invalid {capability} data.",
-                provider=self.provider_name,
-                status_code=502,
-                retryable=False,
-            ) from exc
+        except FixedJsonError as error:
+            code, status = ("PROVIDER_RATE_LIMITED", 429) if error.status_code == 429 else (
+                ("PROVIDER_TIMEOUT", 504) if error.kind == "timeout" else ("PROVIDER_UNAVAILABLE", 502))
+            raise MarketDataProviderError(code=code, status_code=status, provider=self.provider_name,
+                message=f"Alpha Vantage could not provide {capability} within its processing limits.") from None
 
     async def get_quote(self, request: MarketDataRequest) -> MarketQuoteResult:
         self._require_key()
@@ -126,14 +98,14 @@ class AlphaVantageProvider(MarketDataProvider):
                 raise ValueError("price must be positive")
             change_percent = Decimal(quote.get("10. change percent", "0").replace("%", ""))
             volume = int(quote.get("06. volume", "0"))
-        except (KeyError, TypeError, ValueError) as exc:
+        except (KeyError, TypeError, ValueError, InvalidOperation):
             raise MarketDataProviderError(
                 code="PROVIDER_INVALID_RESPONSE",
                 message="Alpha Vantage returned an invalid quote payload.",
                 provider=self.provider_name,
                 status_code=502,
                 retryable=False,
-            ) from exc
+            ) from None
 
         currency, warnings = self._currency(request)
         warnings.append("Alpha Vantage did not supply a quote timestamp or delay classification.")
@@ -159,6 +131,8 @@ class AlphaVantageProvider(MarketDataProvider):
         days: int = 365,
     ) -> list[MarketHistoryResult]:
         self._require_key()
+        observed_at = datetime.now(timezone.utc)
+        window = history_window(request, days, now=observed_at)
 
         ticker = request.ticker
         # TIME_SERIES_DAILY requires outputsize=full for >100 days
@@ -182,10 +156,13 @@ class AlphaVantageProvider(MarketDataProvider):
             )
 
         currency, warnings = self._currency(request)
-        observed_at = datetime.now(timezone.utc)
         results: list[MarketHistoryResult] = []
-        for date_str, daily_data in list(time_series.items())[:days]:
+        warnings.append(window.warning)
+        for date_str, daily_data in sorted(time_series.items()):
             try:
+                day = date.fromisoformat(date_str)
+                if not window.start <= day < window.end:
+                    continue
                 results.append(
                     MarketHistoryResult(
                         provider_name=self.provider_name,
@@ -193,7 +170,7 @@ class AlphaVantageProvider(MarketDataProvider):
                         market=request.market,
                         exchange=request.exchange,
                         ticker=request.ticker,
-                        date=date_str,
+                        date=day,
                         close_price=Decimal(daily_data["4. close"]),
                         currency=currency,
                         observed_at=observed_at,
@@ -202,10 +179,10 @@ class AlphaVantageProvider(MarketDataProvider):
                         warnings=warnings,
                     )
                 )
-            except (KeyError, TypeError, ValueError):
+            except (KeyError, TypeError, ValueError, InvalidOperation):
                 logger.warning(
                     "Skipped invalid Alpha Vantage history row",
-                    extra={"provider": self.provider_name, "ticker": ticker, "date": date_str},
+                    extra={"provider": self.provider_name},
                 )
 
         if not results:

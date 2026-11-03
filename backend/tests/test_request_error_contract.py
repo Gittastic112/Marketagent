@@ -71,9 +71,8 @@ def test_validation_context_exceptions_are_json_safe(client) -> None:
     assert response.status_code == 422
     payload = response.json()
     assert payload["errors"][0]["code"] == "VALIDATION_ERROR"
-    assert payload["detail"][0]["ctx"]["error"] == (
-        "Review notes are required for rejection or revision"
-    )
+    assert "Review notes are required" in payload["detail"][0]["msg"]
+    assert "ctx" not in payload["detail"][0] and "input" not in payload["detail"][0]
 
 
 def test_request_ids_are_unique_when_not_supplied(client) -> None:

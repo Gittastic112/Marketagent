@@ -36,15 +36,29 @@ Audit, clean, archive, and relink project documentation without losing useful co
 
 ## Workflow
 
-1. Inventory docs with `find docs -maxdepth 3 -type f`.
+1. Inventory docs with `rg --files docs -g '*.md'`, including archive indexes;
+   also inspect root/nested instructions, frontend guidance and knowledge-base docs.
 2. Classify each doc: current, reference, roadmap, archive, needs-review, duplicate.
 3. Preserve important context.
 4. Move dated evidence into `docs/archive/checkpoints/YYYY/`, superseded plans
    into `docs/archive/plans/`, and uncertain material into `docs/archive/needs-review/`.
-5. Keep only the prioritized roadmap and feature register active in `docs/roadmaps/`.
+5. Keep the roadmap and feature register as product planning owners. An explicitly
+   requested batch plan owns assignments/acceptance, not a competing product status.
 6. Update `docs/README.md` and any direct references.
 7. Run `python3 scripts/check_docs.py`.
 8. Scan active docs for old paths and stale claims.
+9. Record validation scope precisely: compile, unit, container, browser, and
+   manual checks are different evidence. Keep a full-baseline count until the
+   full baseline is actually rerun.
+10. For command examples, verify whether paths are repository-relative or
+    container-working-directory-relative. Correct operational commands in every
+    affected current doc. Preserve historical checkpoint commands as dated
+    evidence; link the runbook rather than turning old receipts into new instructions.
+11. During parallel work, edit only the assigned evidence directory. Propose shared
+    doc changes there; the coordinator reconciles current references after integration.
+12. If a runtime is unavailable, record the exact blocked check and any narrower
+    checks actually run. Do not refresh product verification dates or weaken a
+    validator to obtain a pass. Existing archives/source originals stay preserved.
 
 ## Acceptance criteria
 
@@ -53,6 +67,8 @@ Audit, clean, archive, and relink project documentation without losing useful co
 - No active Markdown links are broken.
 - No stale moved-file references remain in active docs.
 - Current status and handoff files replace old content instead of accumulating history.
+- Checkpoints state pending runtime commands without presenting them as passed.
+- Copied commands resolve from the working directory stated in the doc.
 
 ## Common mistakes
 

@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerParseFilingSections } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import type { EventEvidenceReference, FilingSection, FinancialExtractionCandidate, RawDocument } from "@/lib/api";
@@ -132,12 +133,12 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
         ) : null}
 
         <Panel title="Parse Document">
-          <form action={triggerParse}>
+          <RetainedActionForm label="Trigger parse" action={triggerParse}>
             <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
               Extracts standard sections (e.g., &quot;Item 1A&quot;) and computes text diffs against the previous comparable filing.
             </p>
             <button type="submit">Run Parser &amp; Diff Engine</button>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         {sections.length === 0 ? (

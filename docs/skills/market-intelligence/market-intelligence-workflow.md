@@ -52,6 +52,22 @@ Build source-backed intelligence workflows for events, evidence, scoring, alerts
     bodies, provider payloads, document bytes, or another user's alerts.
 11. Record locator precision explicitly as document, page, section, or none.
     Do not imply exact-passage support when only a document link exists.
+12. Keep AI evidence phases distinct: a source marker declares provenance, a
+    deterministic lexical candidate proposes an exact span, the validator proves
+    stored-text identity, and human review decides whether the claim is usable.
+13. Scheduled Daily Brief generation remains deterministic and no-external-AI;
+    external AI checks belong only to explicit refresh actions.
+14. Unified search may combine shared evidence and private research only when
+    every model retains its ownership and claim-type semantics. Index user
+    messages as assumptions; index assistant output only through an approved,
+    successful, reviewed, and unblocked AI record.
+15. For private-source comparison, retain exact quotes, duplicate/exclusion coverage,
+    source scope and immutable analyst receipts. Unknown or incompatible periods
+    cannot silently become corroboration; opposing directions are not verified
+    contradictions. Hash/version changes invalidate current review applicability.
+16. When adding reviewed research to a scheduled snapshot, preserve owner scope,
+    claim types, as-generated dates and stale/exclusion states. Do not rewrite old
+    briefs or call AI from deterministic scheduled reads/generation.
 
 ## Acceptance criteria
 
@@ -62,6 +78,8 @@ Build source-backed intelligence workflows for events, evidence, scoring, alerts
 - Missing evidence is an explicit missing/partial state.
 - Evidence responses include claim type, confidence, source timestamp, and
   locator precision.
+- Selecting a passage candidate cannot validate or approve an AI output.
+- Searchability cannot turn a narrative or reviewed AI interpretation into a fact.
 
 ## Common mistakes
 

@@ -79,8 +79,8 @@ test("alert review exposes complete and missing evidence states", async ({ page 
 
   await page.goto(`/alerts/${alert.id}`);
   await expect(page.getByRole("heading", { name: `Review margin evidence ${unique}` })).toBeVisible();
-  await expect(page.getByText("complete evidence", { exact: true })).toBeVisible();
-  await expect(page.getByText("Source Summary", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main").getByText("complete evidence", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main").getByText("Source Summary", { exact: true })).toBeVisible();
 
   await page.getByRole("button", { name: "View Evidence Trail" }).click();
   const evidenceDialog = page.getByRole("dialog");
@@ -104,8 +104,8 @@ test("alert review exposes complete and missing evidence states", async ({ page 
   });
 
   await page.goto(`/alerts/${unlinkedAlert.id}`);
-  await expect(page.getByText("missing evidence", { exact: true })).toBeVisible();
-  await expect(page.getByText("No source document is linked.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main").getByText("missing evidence", { exact: true })).toBeVisible();
+  await expect(page.getByRole("main").getByText("No source document is linked.", { exact: true })).toBeVisible();
   await page.getByRole("button", { name: "View Evidence Trail" }).click();
   await expect(page.getByRole("dialog")).toContainText("No complete source chain is stored for this claim.");
 });

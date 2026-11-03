@@ -53,6 +53,7 @@ def search_stored_evidence(
         meta=ApiMeta(
             source="stored_corpus",
             last_updated=max(timestamps) if timestamps else None,
+            is_mock=any(item.get("is_mock", False) for item in results),
             confidence="medium",
             processing_time_ms=processing_time_ms,
             warnings=warnings,

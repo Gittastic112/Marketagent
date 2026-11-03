@@ -1,51 +1,55 @@
 import ipaddress
 import socket
 from urllib.parse import urlparse
-from fastapi import HTTPException
 
 from app.core.config import get_settings
 
 def is_internal_ip(ip_str: str) -> bool:
     try:
         ip = ipaddress.ip_address(ip_str)
-        # Block private networks, loopback, link-local, multicast, etc.
-        return ip.is_private or ip.is_loopback or ip.is_link_local or ip.is_multicast or ip.is_unspecified or ip.is_reserved
+        return not ip.is_global or ip.is_multicast
     except ValueError:
-        return False
+        return True
 
-def validate_safe_url(url: str) -> str:
-    """
-    Validates that a URL is safe to fetch (prevents SSRF).
-    Raises ValueError or HTTPException if the URL points to localhost or an internal network.
+def public_url_addresses(url: str) -> tuple[str, ...]:
+    """Reject ambiguous URLs and every non-public DNS answer, including IPv6.
+
+    Validation alone is not a DNS-rebinding defense. Untrusted fetchers must
+    connect to one of these addresses, retaining the original TLS server name.
     """
     if not url:
         raise ValueError("URL cannot be empty")
-
+    if len(url) > 4000 or any(ord(char) <= 32 or ord(char) == 127 for char in url) or "\\" in url:
+        raise ValueError("URL contains unsupported characters")
     parsed = urlparse(url)
-
     if parsed.scheme not in ("http", "https"):
-        raise ValueError(f"Invalid URL scheme: {parsed.scheme}. Only http and https are allowed.")
-
+        raise ValueError("Invalid URL scheme. Only http and https are allowed.")
     hostname = parsed.hostname
     if not hostname:
         raise ValueError("URL must contain a hostname")
-
-    if hostname.lower() in ("localhost", "docker.internal"):
+    if parsed.username is not None or parsed.password is not None or parsed.fragment:
+        raise ValueError("URL credentials and fragments are not allowed")
+    if hostname.rstrip(".").lower() in ("localhost", "docker.internal", "host.docker.internal", "gateway.docker.internal"):
         raise ValueError("Localhost URLs are not allowed")
-
-    # Check if the hostname is an IP address or resolves to an internal IP
+    port = parsed.port or (443 if parsed.scheme == "https" else 80)
     try:
-        # socket.gethostbyname will resolve the hostname to an IP address
-        # This prevents DNS rebinding to internal IPs, though a robust defense
-        # would do this resolution immediately before fetching.
-        # For our local-first tool, checking at ingestion setup is sufficient.
-        ip = socket.gethostbyname(hostname)
-        if is_internal_ip(ip):
-            raise ValueError(f"URL resolves to an internal or private IP address: {ip}")
+        literal = ipaddress.ip_address(hostname)
+        addresses = (str(literal),)
+    except ValueError:
+        addresses = ()
+    try:
+        if not addresses:
+            answers = socket.getaddrinfo(hostname, port, type=socket.SOCK_STREAM)
+            addresses = tuple(dict.fromkeys(answer[4][0] for answer in answers))
     except socket.gaierror:
-        # If we can't resolve the host, we let it pass here and fail at fetch time
-        pass
+        raise ValueError("URL hostname could not be resolved") from None
+    if not addresses or any(is_internal_ip(ip) for ip in addresses):
+        raise ValueError("URL resolves to an internal or private IP address")
+    return addresses
 
+
+def validate_safe_url(url: str) -> str:
+    public_url_addresses(url)
     return url
 
 def escape_csv_formula(value: str | None) -> str:
@@ -60,7 +64,7 @@ def escape_csv_formula(value: str | None) -> str:
     if not value_str:
         return value_str
 
-    if value_str.startswith(("=", "+", "-", "@", "\t", "\r")):
+    if value_str.startswith(("=", "+", "-", "@", "\t", "\r", "\n")) or value_str.lstrip().startswith(("=", "+", "-", "@")):
         return f"'{value_str}"
 
     return value_str

@@ -1,10 +1,23 @@
 from datetime import date, datetime, timezone
 
+import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from app.db.base import Base
-from app.models import Alert, Company, Event, RawDocument, Source, ThesisNote, DailyBrief
+from app.models import (
+    Alert,
+    Company,
+    DailyBrief,
+    Event,
+    MarketPrice,
+    Portfolio,
+    PortfolioHolding,
+    RawDocument,
+    Source,
+    ThesisNote,
+    User,
+)
 from app.services.morning_briefing_engine import MorningBriefingEngine
 
 
@@ -65,6 +78,9 @@ def test_generate_daily_brief_ranks_events_and_preserves_evidence() -> None:
 
         session.add_all([company, source, raw_document, high_priority_event, lower_priority_event, alert, thesis_note])
         session.commit()
+        raw_document_id = raw_document.id
+        high_priority_event_id = high_priority_event.id
+        lower_priority_event_id = lower_priority_event.id
 
         session.add_all(
             [
@@ -96,6 +112,12 @@ def test_generate_daily_brief_ranks_events_and_preserves_evidence() -> None:
     assert len(high_mat) > 0
     assert high_mat[0]["headline"] == "Risk factor language changed"
     assert high_mat[0]["priority"] == "high"
+    assert high_mat[0]["raw_document_id"] == raw_document_id
+    assert high_mat[0]["source_name"] == "SEC EDGAR"
+    assert high_mat[0]["claim_type"] == "Source Summary"
+    assert high_mat[0]["evidence_status"] == "source_linked"
+    assert brief["source_event_ids"] == [high_priority_event_id, lower_priority_event_id]
+    assert brief["source_raw_document_ids"] == [raw_document_id]
 
 
 def test_generate_daily_brief_respects_last_review_date() -> None:
@@ -112,11 +134,12 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
             payload_json={},
             review_status="reviewed",
             created_at=datetime(2026, 1, 1, tzinfo=timezone.utc),
+            reviewed_at=datetime(2026, 3, 1, tzinfo=timezone.utc),
         )
         session.add(old_brief)
         session.commit()
 
-        # Event created before the review should be ignored
+        # Event created after brief creation but before the actual review should be ignored.
         company = Company(ticker="AAPL", name="Apple Inc.")
         event_old = Event(
             company=company,
@@ -124,7 +147,7 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
             information_speed="medium",
             title="Old Event",
             priority_score=90,
-            created_at=datetime(2025, 12, 1, tzinfo=timezone.utc),
+            created_at=datetime(2026, 2, 1, tzinfo=timezone.utc),
         )
         # Event created after review should be included
         event_new = Event(
@@ -133,7 +156,7 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
             information_speed="medium",
             title="New Event",
             priority_score=90,
-            created_at=datetime(2026, 2, 1, tzinfo=timezone.utc),
+            created_at=datetime(2026, 4, 1, tzinfo=timezone.utc),
         )
         session.add_all([company, event_old, event_new])
         session.commit()
@@ -146,3 +169,139 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
     high_mat = new_brief["high_materiality_events"]
     assert len(high_mat) == 1
     assert high_mat[0]["headline"] == "New Event"
+    assert new_brief["last_reviewed_at"].startswith("2026-03-01")
+
+
+def test_briefing_never_invents_zero_portfolio_move_and_keeps_source_context() -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        user = User(id=USER_ID, email="brief-owner@example.invalid", name="Brief Owner")
+        company = Company(ticker="MOVE", name="Move Company")
+        source = Source(name="Official Filing Source", source_type="filing", reliability_score=95)
+        document = RawDocument(
+            company=company,
+            source=source,
+            document_type="filing",
+            title="MOVE annual filing",
+            url="https://example.invalid/move-filing",
+            published_at=datetime(2026, 8, 22, tzinfo=timezone.utc),
+            raw_text="Revenue growth slowed.",
+            content_hash="brief-move-source",
+        )
+        event = Event(
+            company=company,
+            raw_document=document,
+            event_type="SEC Filing",
+            information_speed="slow",
+            title="MOVE filing update",
+            description="Revenue growth slowed.",
+            priority_score=90,
+            created_at=datetime(2026, 8, 22, tzinfo=timezone.utc),
+        )
+        portfolio = Portfolio(user_id=USER_ID, name="Core", base_currency="USD")
+        session.add_all([user, company, source, document, event, portfolio])
+        session.flush()
+        session.add(PortfolioHolding(
+            portfolio_id=portfolio.id,
+            company_id=company.id,
+            ticker="MOVE",
+            quantity=4,
+            average_cost=95,
+            currency="USD",
+            as_of_date=date(2026, 8, 23),
+        ))
+        only_price = MarketPrice(
+            company_id=company.id,
+            ticker="MOVE",
+            price=100,
+            currency="USD",
+            as_of_date=date(2026, 8, 23),
+            provider_name="manual",
+        )
+        session.add(only_price)
+        session.commit()
+
+        unavailable = MorningBriefingEngine.build_briefing_payload(
+            session,
+            USER_ID,
+            [event],
+            [],
+            allow_generation=False,
+            as_of_date=date(2026, 8, 23),
+        )
+
+        move = unavailable["new_since_last_review"]["portfolio_moves"][0]
+        assert move["move_percent"] is None
+        assert move["calculation_status"] == "not_available"
+        assert move["source_market_price_ids"] == [only_price.id]
+        assert move["affected_portfolios"] == [
+            {"portfolio_id": portfolio.id, "portfolio_name": "Core"}
+        ]
+        assert unavailable["calculation_status"] == "partial"
+        assert unavailable["high_materiality_events"][0]["raw_document_id"] == document.id
+        assert unavailable["new_since_last_review"]["filings"][0]["event_id"] == event.id
+
+        previous_price = MarketPrice(
+            company_id=company.id,
+            ticker="MOVE",
+            price=95,
+            currency="USD",
+            as_of_date=date(2026, 8, 22),
+            provider_name="manual",
+        )
+        session.add(previous_price)
+        session.commit()
+
+        complete = MorningBriefingEngine.build_briefing_payload(
+            session,
+            USER_ID,
+            [event],
+            [],
+            allow_generation=False,
+            as_of_date=date(2026, 8, 23),
+        )
+        move = complete["new_since_last_review"]["portfolio_moves"][0]
+        assert move["move_percent"] == pytest.approx((100 / 95 - 1) * 100)
+        assert move["calculation_status"] == "complete"
+        assert move["source_market_price_ids"] == [previous_price.id, only_price.id]
+
+
+def test_briefing_exposes_valuation_generation_failure(monkeypatch) -> None:
+    engine = create_engine("sqlite+pysqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    with Session(engine) as session:
+        company = Company(ticker="FAIL", name="Failure Company")
+        event = Event(
+            company=company,
+            event_type="manual_event",
+            information_speed="fast",
+            title="Material event",
+            description="Material evidence",
+            priority_score=90,
+        )
+        session.add_all([company, event])
+        session.commit()
+
+        def fail_mapping(**_kwargs):
+            raise RuntimeError("provider unavailable")
+
+        monkeypatch.setattr(
+            "app.services.morning_briefing_engine.map_event_to_dcf_variables",
+            fail_mapping,
+        )
+        payload = MorningBriefingEngine.build_briefing_payload(
+            session,
+            USER_ID,
+            [event],
+            [],
+            allow_generation=True,
+            include_portfolio_moves=False,
+            as_of_date=date(2026, 8, 23),
+        )
+
+    assert payload["valuation_analysis_status"] == "failed"
+    assert payload["valuation_relevance"] == []
+    assert any("Valuation mapping failed" in warning for warning in payload["warnings"])

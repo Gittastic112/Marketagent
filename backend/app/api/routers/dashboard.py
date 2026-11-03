@@ -1,3 +1,4 @@
+import logging
 from time import perf_counter
 
 from fastapi import APIRouter, Depends
@@ -12,16 +13,16 @@ from app.models import (
     Company,
     Event,
     Portfolio,
+    PortfolioSnapshot,
     ProcessingRun,
-    RawDocument,
     ThesisAssumption,
     ThesisNote,
 )
 from app.services.morning_briefing_engine import MorningBriefingEngine
-from app.services.portfolio_analytics import calculate_portfolio_analytics
 
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 DASHBOARD_QUERY_BUDGET = 20
 DASHBOARD_RESPONSE_BUDGET_MS = 1_000
 
@@ -46,10 +47,6 @@ def get_dashboard_overview(
             .options(
                 noload("*"),
                 selectinload(Event.company).options(noload("*")),
-                selectinload(Event.raw_document).options(
-                    noload("*"),
-                    selectinload(RawDocument.source).options(noload("*")),
-                ),
                 selectinload(Event.corroborates).options(noload("*")),
                 selectinload(Event.contradicts).options(noload("*")),
             )
@@ -62,7 +59,6 @@ def get_dashboard_overview(
             select(Alert)
             .options(
                 noload("*"),
-                selectinload(Alert.company).options(noload("*")),
                 selectinload(Alert.portfolio_impacts).options(noload("*")),
             )
             .where(Alert.user_id == user_id)
@@ -100,24 +96,27 @@ def get_dashboard_overview(
         .order_by(Portfolio.id)
         .limit(1)
     )
-    analytics = None
+    portfolio_snapshot = None
     warnings: list[str] = []
     if portfolio is not None:
-        try:
-            analytics = calculate_portfolio_analytics(
-                db,
-                portfolio.id,
-                user_id=user_id,
+        portfolio_snapshot = db.scalar(
+            select(PortfolioSnapshot)
+            .options(noload("*"))
+            .where(PortfolioSnapshot.portfolio_id == portfolio.id)
+            .order_by(PortfolioSnapshot.snapshot_date.desc(), PortfolioSnapshot.id.desc())
+            .limit(1)
+        )
+        if portfolio_snapshot is not None and portfolio_snapshot.calculation_status != "complete":
+            warnings.append(
+                "The latest portfolio snapshot is partial; missing prices or FX remain unavailable."
             )
-            if analytics["total_invested_value"] is None and analytics["top_positions"]:
-                warnings.append("Default portfolio analytics are partial until every holding has a dated market price.")
-        except ValueError:
-            warnings.append("Default portfolio analytics are unavailable until holdings have dated market prices.")
 
     processing_time_ms = round((perf_counter() - started_at) * 1_000)
     if processing_time_ms > DASHBOARD_RESPONSE_BUDGET_MS:
-        warnings.append(
-            f"Dashboard generation exceeded the {DASHBOARD_RESPONSE_BUDGET_MS} ms local budget."
+        logger.warning(
+            "Dashboard overview took %s ms, above the %s ms local budget.",
+            processing_time_ms,
+            DASHBOARD_RESPONSE_BUDGET_MS,
         )
 
     return ApiResponse(
@@ -126,10 +125,19 @@ def get_dashboard_overview(
             "events": events,
             "alerts": alerts,
             "thesis_notes": thesis_notes,
-            "daily_brief": MorningBriefingEngine.build_briefing_payload(db, user_id, events[:10], thesis_notes),
+            "daily_brief": MorningBriefingEngine.build_briefing_payload(
+                db,
+                user_id,
+                events[:10],
+                thesis_notes,
+                allow_generation=False,
+                include_portfolio_moves=False,
+                persisted_alerts=alerts,
+            ),
             "processing_runs": processing_runs,
             "default_portfolio": portfolio,
-            "portfolio_analytics": analytics,
+            "default_portfolio_snapshot": portfolio_snapshot,
+            "portfolio_analytics": None,
         },
         meta=ApiMeta(
             source="internal",

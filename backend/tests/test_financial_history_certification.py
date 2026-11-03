@@ -1,4 +1,10 @@
 from datetime import date
+import hashlib
+import json
+from types import SimpleNamespace
+from pathlib import Path
+
+import pytest
 
 from app.models import (
     Company,
@@ -303,6 +309,9 @@ def test_certification_accepts_exact_xbrl_payload_locator(db):
     )
     db.add(document)
     db.flush()
+    payload = document.raw_payload_json
+    payload_hash = hashlib.sha256(json.dumps(payload["companyfacts"], sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    document.raw_payload_json = {**payload, "payload_sha256": payload_hash}
     candidate = FinancialExtractionCandidate(
         company_id=company.id,
         raw_document_id=document.id,
@@ -318,7 +327,7 @@ def test_certification_accepts_exact_xbrl_payload_locator(db):
             "namespace": "us-gaap",
             "concept": "Revenues",
             "unit": "USD",
-            "payload_sha256": "abc123",
+            "payload_sha256": payload_hash,
             "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000320193.json",
             "start": observation["start"],
             "end": observation["end"],
@@ -335,5 +344,78 @@ def test_certification_accepts_exact_xbrl_payload_locator(db):
 
     assert _candidate_has_exact_locator(candidate) is True
 
+    candidate.unit = None
+    assert _candidate_has_exact_locator(candidate) is False
+    candidate.unit = "INR"
+    assert _candidate_has_exact_locator(candidate) is False
+    candidate.unit = "USD"
+    candidate.fiscal_year = 2024
+    assert _candidate_has_exact_locator(candidate) is False
+    candidate.fiscal_year = 2023
+
+    # A matching stored hash string is insufficient if the retained bytes changed.
+    document.raw_payload_json = {**document.raw_payload_json, "companyfacts": {}}
+    assert _candidate_has_exact_locator(candidate) is False
+    document.raw_payload_json = {**payload, "payload_sha256": payload_hash}
+
     candidate.source_locator_json = {**candidate.source_locator_json, "accession": "wrong"}
     assert _candidate_has_exact_locator(candidate) is False
+
+
+@pytest.mark.parametrize("change", ["missing_unit", "page_only", "wrong_page", "bad_hash", "bad_box", "wrong_owner"])
+def test_pdf_locator_cannot_pass_on_page_number_alone(change):
+    content = b"Mock Data PDF bytes, geometry validation only"
+    digest = hashlib.sha256(content).hexdigest()
+    asset = SimpleNamespace(content=content, sha256=digest, size_bytes=len(content), page_count=2)
+    document = SimpleNamespace(company_id=1, asset=asset, raw_text="Mock Data", raw_payload_json={"sha256": digest})
+    locator = {"type": "pdf_table_cell", "page": 1, "coordinate_system": "pdfplumber_top_left_points",
+               "page_width": 612, "page_height": 792, "cell_bbox": {"x0": 10, "top": 20, "x1": 110, "bottom": 40},
+               "table": 1, "row": 2, "column": 2, "cell": "P1:T1:R2:C2"}
+    candidate = SimpleNamespace(company_id=1, raw_document=document, source_page=1, unit="INR million",
+        source_locator_json=locator, source_text="Revenue | FY2026 | 100", source_cell_reference="P1:T1:R2:C2")
+    assert _candidate_has_exact_locator(candidate)
+    if change == "missing_unit": candidate.unit = None
+    if change == "page_only": candidate.source_locator_json = {}
+    if change == "wrong_page": candidate.source_page = 3
+    if change == "bad_hash": asset.sha256 = "0" * 64
+    if change == "bad_box": locator["cell_bbox"]["x1"] = 700
+    if change == "wrong_owner": candidate.company_id = 2
+    assert not _candidate_has_exact_locator(candidate)
+
+
+def test_stored_pdf_parser_candidates_keep_verifiable_locators():
+    from app.services.pdf_financial_extraction import parse_pdf_financial_tables
+
+    content = (Path(__file__).parent / "fixtures" / "financial_statement_table.pdf").read_bytes()
+    parsed = parse_pdf_financial_tables(content)
+    digest = hashlib.sha256(content).hexdigest()
+    asset = SimpleNamespace(content=content, sha256=digest, size_bytes=len(content), page_count=parsed.page_count)
+    document = SimpleNamespace(company_id=1, asset=asset, raw_payload_json={"sha256": digest}, raw_text="Mock Data")
+    hashes = {}
+    for item in parsed.candidates:
+        candidate = SimpleNamespace(company_id=1, raw_document=document, source_page=item.source_page,
+            unit=item.unit, source_locator_json=item.source_locator_json, source_text=item.source_text,
+            source_cell_reference=item.source_cell_reference, metric_code=item.metric_code, fiscal_year=item.fiscal_year)
+        if item.metric_code == "diluted_shares":
+            # The fixture does not declare a share scale. Geometry is retained,
+            # but missing units must block certification until explicitly reviewed.
+            assert item.unit is None
+            assert not _candidate_has_exact_locator(candidate, source_hashes=hashes)
+            candidate.unit = "million shares"  # Mock Data reviewer-supplied basis.
+        assert _candidate_has_exact_locator(candidate, source_hashes=hashes)
+    assert len(hashes) == 1
+
+
+@pytest.mark.parametrize("change", [None, "left_region", "invalid_region", "bool_region", "wrong_cell"])
+def test_facing_page_locator_keeps_absolute_geometry_and_region_identity(change):
+    from app.services.financial_history_certification import _pdf_location_is_bounded
+
+    locator = {"type": "pdf_text_row", "page": 1, "region": 2,
+        "coordinate_system": "pdfplumber_top_left_points", "page_width": 1200, "page_height": 840,
+        "bounding_box": {"x0": 630, "top": 100, "x1": 1100, "bottom": 120},
+        "line": 5, "value_index": 1, "fiscal_year": 2026, "cell_reference": "P1:S2:L5:Y2026"}
+    if change == "left_region": locator["region"] = 1
+    if change == "invalid_region": locator["region"] = 3
+    if change == "bool_region": locator["region"] = True
+    if change == "wrong_cell": locator["cell_reference"] = "P1:L5:Y2026"
+    assert _pdf_location_is_bounded(locator, 1) is (change is None)

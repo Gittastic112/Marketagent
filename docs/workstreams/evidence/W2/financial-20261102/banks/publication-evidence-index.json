@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "recorded_date": "2026-11-02",
+  "purpose": "Publication selection only; does not modify immutable financial reviews, source originals, Git, runtime or private settings.",
+  "candidate_manifest": "output/milestones/release-publication-20261102/candidate-manifest.json",
+  "base_commit": "3de1aaba6a7ee7c7b1391731b774b1c8ae409e5c",
+  "raw_us_evidence": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/review.json",
+      "bytes": 330138,
+      "sha256": "f9ccf16138e8039f982aa3b5390601e97fa1ba770e4bb0d275b9325376438a76",
+      "publication": "local_only",
+      "scope": "Immutable application-review working packet: field decisions and retained provenance, including about 1915 words of issuer narrative excerpts. The public consolidated review retains the numeric decisions and this hash. Not independent certification."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/source-tables.json",
+      "bytes": 334869,
+      "sha256": "b6d31b772528ddbe66357871bebc72c14f2a10eda460a6f5ef9302b95b87e474",
+      "publication": "local_only",
+      "scope": "Retained extraction of 58 issuer financial tables. Source URLs, locators, numbers and hashes can be published in compact decision records without distributing the copied table collection."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/inline-facts.json",
+      "bytes": 513138,
+      "sha256": "eaaa13777e5fa2ff2d49ab7223fbe4951bb74f182b57a4251c2158c5e15ec880",
+      "publication": "local_only",
+      "scope": "Retained extraction of 1567 inline financial facts and contexts. Numeric facts are not treated as secret or inherently copyrighted; this bulk working artifact is unnecessary for source-code publication."
+    }
+  ],
+  "recommended_include_evidence": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/banks/review.json",
+      "sha256": "303b559ae6b2aa88c82a69f585b0ea5f296b14b8ba66635dbe8a1e48c086708e",
+      "bytes": 35935
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/REVIEW.md",
+      "sha256": "ffe0827e852aaba76caec6097e8ecc77b56b53e3018d41425681c5a1c71a7826",
+      "bytes": 4109
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/review-packet.json",
+      "sha256": "d7112187a294fb723f0f8cd592dc42c7beb4de133cdd9f576e8f332312bdd1f1",
+      "bytes": 30009
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/scenario-candidates.json",
+      "sha256": "4a31dacec2caa470c4d736f3d93b428fe6fe312b12f0aa94d186722a689e7c4b",
+      "bytes": 23144
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/scenario-backend-verification.json",
+      "sha256": "4aa3aeb90ba33df103c886143738c8f7a70d919c06fea1bae25b6b08dd8fdfc7",
+      "bytes": 846
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/validation.json",
+      "sha256": "563a3c18a4c22ca565339c841d6d8a1688580407caee47b8fe616173f9915e83",
+      "bytes": 1129
+    }
+  ],
+  "recommended_include_this_index": "docs/workstreams/evidence/W2/financial-20261102/banks/publication-evidence-index.json",
+  "recommended_local_only_evidence": [
+    "docs/workstreams/evidence/W2/financial-20261102/banks/calendar-proposal.py",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/calendar-year-audit.json",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/calendar-year-proposal.md",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/calendar-year-proposal.patch",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/publication-readiness-audit-20261102.json",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/review.md",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/review.py",
+    "docs/workstreams/evidence/W2/financial-20261102/us/README.md",
+    "docs/workstreams/evidence/W2/financial-20261102/us/build_review.py",
+    "docs/workstreams/evidence/W2/financial-20261102/us/inline-facts.json",
+    "docs/workstreams/evidence/W2/financial-20261102/us/inline_evidence.py",
+    "docs/workstreams/evidence/W2/financial-20261102/us/inspect_sources.py",
+    "docs/workstreams/evidence/W2/financial-20261102/us/missing-inputs-audit.md",
+    "docs/workstreams/evidence/W2/financial-20261102/us/review.json",
+    "docs/workstreams/evidence/W2/financial-20261102/us/source-tables.json"
+  ],
+  "not_in_original_candidate_but_local_only": [
+    "docs/workstreams/evidence/W2/financial-20261102/us/amazon-dated-followup-20261102.json",
+    "docs/workstreams/evidence/W2/financial-20261102/us/build_dated_followup_20261102.py",
+    "docs/workstreams/evidence/W2/financial-20261102/banks/optional-comparison-price-audit-20261102.json"
+  ],
+  "markdown_link_dependencies": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/README.md",
+      "targets": [
+        "review.json",
+        "validation.json",
+        "source-tables.json",
+        "inline-facts.json"
+      ],
+      "recommendation": "Omit this working README with the raw packets; alternatively author a separate publication summary that explicitly names local-only evidence and does not link to excluded files."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/us/missing-inputs-audit.md",
+      "targets": [
+        "review.json"
+      ],
+      "recommendation": "Keep local unchanged, or publish a separately named summary with source URLs and no hard link to the excluded raw review."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/banks/review.md",
+      "targets": [
+        "review.json",
+        "review.py"
+      ],
+      "recommendation": "Keep local: it links a working reproduction script and contains the pre-repair hardcoded calendar-year observation. Public checkpoint and banks/review.json retain decisions without presenting this observation as current source."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/banks/calendar-year-proposal.md",
+      "targets": [
+        "calendar-year-proposal.patch",
+        "calendar-year-audit.json",
+        "calendar-proposal.py"
+      ],
+      "recommendation": "Keep proposal and generator local; implemented migration/source/tests and final checkpoint are the publication evidence."
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/REVIEW.md",
+      "targets": [
+        "review-packet.json"
+      ],
+      "recommendation": "Both are explicitly included; link resolves."
+    },
+    {
+      "path": "skills/README.md",
+      "targets": [
+        "playwright/",
+        "pdf/",
+        "spreadsheets/",
+        "excel-live-control/"
+      ],
+      "recommendation": "Coordinator will revise the published index to distinguish the existing published security package from local helpers, without hard links to excluded packages."
+    }
+  ],
+  "exclusions": [
+    {
+      "paths": [
+        "backend/.DS_Store",
+        "docs/.DS_Store",
+        "docs/valuation-agent/.DS_Store",
+        "frontend/app/.DS_Store",
+        "skills/.DS_Store",
+        "skills/pdf/.DS_Store",
+        "skills/playwright/.DS_Store",
+        "skills/security-review/.DS_Store"
+      ],
+      "files": 8,
+      "bytes": 73760,
+      "reason": "Desktop Finder metadata is irrelevant and can disclose local filenames. Ignore rules did not keep it out of the manually assembled candidate."
+    },
+    {
+      "prefixes": [
+        "skills/spreadsheets/",
+        "skills/excel-live-control/"
+      ],
+      "reason": "New local helper copies, not application runtime. No LICENSE/NOTICE or redistribution notice located in these package trees. Do not assert redistribution permission based solely on local presence."
+    },
+    {
+      "prefixes": [
+        "skills/pdf/",
+        "skills/playwright/"
+      ],
+      "reason": "Unrelated local helper additions. Apache license files are present, and Playwright includes its source attribution notice; omitted for scope, not described as unlicensed."
+    },
+    {
+      "prefix": "scripts/retired/local/",
+      "reason": "README explicitly identifies this archive as local/ignored and warns about absolute paths, connection defaults and rewrite/reset instructions. Preserve every file locally; publish the inventories and remove only the three proven obsolete remote active paths."
+    }
+  ],
+  "verified_remote_retirements": [
+    {
+      "remote_old_path": "backend/refactor_routers.py",
+      "retained_local_path": "scripts/retired/local/2026-10-25/backend/refactor_routers.py.txt",
+      "remote_blob_sha": "0de946e07c7b47ab179c379d3fa9a3053ea8dbd6",
+      "retained_blob_sha": "0de946e07c7b47ab179c379d3fa9a3053ea8dbd6",
+      "sha256": "cb782ba79fd60a9064c4e0283f8e40db69de5819b0ee7e430e7dd2e32be96848",
+      "bytes": 2898,
+      "byte_identical": true,
+      "publication_action": "Remove obsolete remote active path; retain the exact local ignored archive untouched. Do not add the archive copy.",
+      "inventory": "scripts/retired/inventory-2026-10-25.json"
+    },
+    {
+      "remote_old_path": "backend/test_endpoints.py",
+      "retained_local_path": "scripts/retired/local/2026-10-25/backend/test_endpoints.py.txt",
+      "remote_blob_sha": "408f212d5ad505c1af2cf91621ad0bd91525b84f",
+      "retained_blob_sha": "408f212d5ad505c1af2cf91621ad0bd91525b84f",
+      "sha256": "1dbf2a51581bba19bb05f1a76a59fd8ab76b042afca87d3a849c0794b512fa1d",
+      "bytes": 590,
+      "byte_identical": true,
+      "publication_action": "Remove obsolete remote active path; retain the exact local ignored archive untouched. Do not add the archive copy.",
+      "inventory": "scripts/retired/inventory-2026-10-25.json"
+    },
+    {
+      "remote_old_path": "backend/test_pydantic.py",
+      "retained_local_path": "scripts/retired/local/2026-10-25/backend/test_pydantic.py.txt",
+      "remote_blob_sha": "a83a1772092845965d9fa9573e31425151065085",
+      "retained_blob_sha": "a83a1772092845965d9fa9573e31425151065085",
+      "sha256": "b1f82252bf1cd531ee5f9cda1b6f5cf018d2af85834859aac668f89391d538da",
+      "bytes": 405,
+      "byte_identical": true,
+      "publication_action": "Remove obsolete remote active path; retain the exact local ignored archive untouched. Do not add the archive copy.",
+      "inventory": "scripts/retired/inventory-2026-10-25.json"
+    }
+  ],
+  "required_publication_notes": [
+    "The public consolidated review includes relative receipt paths and hashes whose originals may intentionally remain local-only. This index declares that boundary; do not imply the remote repository contains every receipt/source original.",
+    "Do not change immutable receipt hashes or rewrite originals to sanitize them. Add a separately named compact public summary if required.",
+    "Do not copy output/backups/runtime/settings, private PDF uploads, screenshots or logs into Git to satisfy a local link.",
+    "Source-code publication does not certify financial completeness, actual-use days, live providers or final release acceptance."
+  ],
+  "validation": {
+    "json_parse": true,
+    "git_operations": false,
+    "runtime_operations": false,
+    "protected_file_reads": false,
+    "source_originals_modified": false
+  }
+}

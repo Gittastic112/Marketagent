@@ -1,10 +1,11 @@
 from hashlib import sha256
 from pathlib import Path
+import pytest
 
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from datetime import date
+from datetime import UTC, date, datetime
 
 from app.models import (
     DocumentAsset,
@@ -12,8 +13,10 @@ from app.models import (
     EventEvidenceReference,
     FinancialExtractionCandidate,
     FinancialStatementPeriod,
+    PeerValuationSet,
     RawDocument,
 )
+from app.models.user import User
 from helpers import response_data
 
 
@@ -63,6 +66,48 @@ def test_evidence_integrity_reports_valid_exact_reference(client: TestClient) ->
     assert report["error_count"] == 0
     assert report["financial_certification_status"] == "not_available"
     assert report["issues"] == []
+
+
+def test_evidence_integrity_supports_fast_metadata_scope(client: TestClient) -> None:
+    _source_records(client, ticker="FAST")
+
+    response = client.get("/data-health/evidence-integrity?deep=false")
+    report = response_data(response)
+
+    assert report["verification_scope"] == "metadata"
+    assert report["asset_content_verification_status"] == "not_run"
+    assert report["limitations"] == [
+        "Asset byte/hash verification and PDF-region geometry checks were not run in metadata scope."
+    ]
+    assert response.json()["meta"]["warnings"] == report["limitations"]
+
+
+def test_evidence_integrity_uses_ingestion_time_for_xbrl_retrieval_snapshots(
+    client: TestClient,
+) -> None:
+    company = response_data(client.post(
+        "/companies",
+        json={"ticker": "XBRL", "name": "XBRL Co"},
+    ))
+    source = response_data(client.post(
+        "/sources",
+        json={"name": "SEC Company Facts", "source_type": "sec"},
+    ))
+    response_data(client.post("/raw-documents", json={
+        "company_id": company["id"],
+        "source_id": source["id"],
+        "document_type": "xbrl_facts",
+        "title": "XBRL SEC Company Facts",
+        "content_hash": "sec-companyfacts:test-snapshot",
+    }))
+
+    report = response_data(client.get("/data-health/evidence-integrity"))
+
+    assert report["status"] == "healthy"
+    assert not any(
+        issue["code"] == "DOCUMENT_SOURCE_TIMESTAMP_MISSING"
+        for issue in report["issues"]
+    )
 
 
 def test_evidence_integrity_rejects_pdf_geometry_that_does_not_match_asset(
@@ -198,3 +243,209 @@ def test_evidence_integrity_detects_promoted_financial_period_mismatch(
     assert "FINANCIAL_PERIOD_END_MISMATCH" in codes
     assert report["checked_financial_candidates"] == 1
     assert report["financial_certification_status"] == "blocked"
+
+
+def _peer_members() -> list[dict]:
+    return [
+        {
+            "identifier": f"HEALTH{index}",
+            "included": True,
+            "multiples": {"pe": 10.0 + index},
+            "sourceName": "Reviewed filing",
+            "sourceUrl": f"https://filings.example.com/health-{index}",
+            "sourceAsOf": date.today().isoformat(),
+            "claimType": "Fact",
+        }
+        for index in range(1, 4)
+    ]
+
+
+def _create_peer_set(client: TestClient, company_id: int, name: str) -> dict:
+    return response_data(client.post(
+        "/api/valuation/relative/peer-sets",
+        json={"companyId": company_id, "name": name, "members": _peer_members()},
+    ))
+
+
+def _review_peer_set(client: TestClient, peer_set: dict) -> dict:
+    diagnostics = peer_set["diagnostics"]
+    return response_data(client.post(
+        f"/api/valuation/relative/peer-sets/{peer_set['id']}/review",
+        json={
+            "acknowledged": True,
+            "expectedVersion": peer_set["version"],
+            "expectedDiagnosticsSha256": diagnostics["acknowledgementSha256"],
+            "acknowledgedWarningCodes": diagnostics["warningCodes"],
+        },
+    ))
+
+
+def test_peer_review_receipt_health_classifies_owned_sets(
+    client: TestClient,
+    db_session: Session,
+) -> None:
+    company = response_data(client.post(
+        "/companies",
+        json={"ticker": "PEERHEALTH", "name": "Peer Health Co"},
+    ))
+    current = _review_peer_set(client, _create_peer_set(client, company["id"], "Current"))
+    missing = _create_peer_set(client, company["id"], "Missing")
+    stale = _review_peer_set(client, _create_peer_set(client, company["id"], "Stale"))
+    draft = _create_peer_set(client, company["id"], "Draft")
+    archived = _create_peer_set(client, company["id"], "Archived")
+
+    missing_record = db_session.get(PeerValuationSet, missing["id"])
+    missing_record.review_status = "reviewed"
+    missing_record.reviewed_at = datetime.now(UTC)
+    stale_record = db_session.get(PeerValuationSet, stale["id"])
+    stale_record.review_warning_codes_json = []
+    archived_record = db_session.get(PeerValuationSet, archived["id"])
+    archived_record.is_active = False
+    db_session.add(User(id="other_peer_health_user", email="peer-health@example.com", name="Other"))
+    db_session.add(PeerValuationSet(
+        company_id=company["id"],
+        user_id="other_peer_health_user",
+        name="Other owner's stale set",
+        peer_identifiers_json=_peer_members(),
+        aggregate_metrics_json={},
+        aggregation_method="median",
+        version=1,
+        review_status="reviewed",
+        reviewed_at=datetime.now(UTC),
+        is_active=True,
+    ))
+    db_session.commit()
+
+    response = client.get("/data-health/peer-review-receipts")
+    report = response_data(response)
+
+    assert report["status"] == "attention_required"
+    assert report["checked_set_count"] == 5
+    assert report["active_reviewed_set_count"] == 3
+    assert report["ready_for_valuation_count"] == 1
+    assert report["missing_receipt_count"] == 1
+    assert report["stale_receipt_count"] == 1
+    assert report["draft_set_count"] == 1
+    assert report["archived_set_count"] == 1
+    assert [item["peer_set_id"] for item in report["sets_requiring_attention"]] == [
+        missing["id"],
+        stale["id"],
+    ]
+    assert {item["receipt_status"] for item in report["sets_requiring_attention"]} == {
+        "missing",
+        "stale",
+    }
+    assert current["id"] not in {
+        item["peer_set_id"] for item in report["sets_requiring_attention"]
+    }
+    assert draft["id"] not in {
+        item["peer_set_id"] for item in report["sets_requiring_attention"]
+    }
+    assert archived["id"] not in {
+        item["peer_set_id"] for item in report["sets_requiring_attention"]
+    }
+    assert response.json()["meta"]["warnings"] == [
+        "2 active reviewed peer set(s) need diagnostic re-acknowledgement."
+    ]
+
+
+def test_peer_review_receipt_health_has_explicit_empty_state(client: TestClient) -> None:
+    response = client.get("/data-health/peer-review-receipts")
+    report = response_data(response)
+
+    assert response.status_code == 200
+    assert report["status"] == "healthy"
+    assert report["checked_set_count"] == 0
+    assert report["sets_requiring_attention"] == []
+    assert response.json()["meta"]["warnings"] == []
+
+
+@pytest.mark.parametrize("storage", ["member", "target"])
+def test_receipt_health_does_not_call_conflicting_evidence_ready(client, db_session, storage):
+    company = response_data(client.post("/companies", json={"ticker": "CONFLICT", "name": "Conflict"}))
+    reviewed = _review_peer_set(client, _create_peer_set(client, company["id"], "Conflicting"))
+    record = db_session.get(PeerValuationSet, reviewed["id"])
+    if storage == "member":
+        record.peer_identifiers_json = [{**m, "sourceName": "Conflicting source"} for m in record.peer_identifiers_json]
+    else:
+        from app.models import PeerValuationTargetProfile
+        record.target_profile = PeerValuationTargetProfile(
+            source_name="Target filing", source_url="https://example.com/target",
+            source_as_of=date.today(), claim_type="Fact", currency="USD",
+        )
+    db_session.commit()
+    report = response_data(client.get("/data-health/peer-review-receipts"))
+    assert report["ready_for_valuation_count"] == 0
+    assert report["storage_blocked_count"] == 1
+    item = report["sets_requiring_attention"][0]
+    assert f"{storage}_storage_mismatch" in item["blockers"]
+    assert "repair" in item["action"].lower()
+
+
+def test_receipt_health_cursor_pages_cover_owned_sets_without_duplicates(client, db_session):
+    company = response_data(client.post("/companies", json={"ticker": "PAGES", "name": "Pages"}))
+    ids = [_create_peer_set(client, company["id"], f"Draft {i}")["id"] for i in range(3)]
+    first = response_data(client.get("/data-health/peer-review-receipts?limit=2"))
+    assert first["total_owned_set_count"] == 3
+    assert first["checked_set_count"] == 2
+    assert first["next_after_id"] == ids[1]
+    assert first["has_more"] is True
+    assert first["scope"] == "page"
+    second = response_data(client.get(f"/data-health/peer-review-receipts?limit=2&after_id={first['next_after_id']}"))
+    assert second["checked_set_count"] == 1
+    assert second["draft_set_count"] == 1
+    assert second["next_after_id"] is None
+    assert second["has_more"] is False
+    assert second["total_owned_set_count"] == 3
+
+
+@pytest.mark.parametrize("query", ["limit=0", "limit=101", "after_id=-1", "after_id=abc"])
+def test_receipt_health_rejects_invalid_paging(client, query):
+    assert client.get(f"/data-health/peer-review-receipts?{query}").status_code == 422
+
+
+def test_receipt_health_cursor_beyond_last_is_empty_not_global_success(client):
+    company = response_data(client.post("/companies", json={"ticker": "ENDPAGE", "name": "End"}))
+    _create_peer_set(client, company["id"], "Draft")
+    report = response_data(client.get("/data-health/peer-review-receipts?after_id=99999"))
+    assert report["checked_set_count"] == 0
+    assert report["total_owned_set_count"] == 1
+    assert report["scope"] == "page"
+    assert report["has_more"] is False
+
+
+def test_receipt_audit_is_read_only_and_uses_bounded_queries(client, db_session):
+    from sqlalchemy import event
+    company = response_data(client.post("/companies", json={"ticker": "READONLY", "name": "Read only"}))
+    created = _create_peer_set(client, company["id"], "Unchanged")
+    reviewed = _review_peer_set(client, created)
+    for i in range(3):
+        _create_peer_set(client, company["id"], f"Page {i}")
+    statements = []
+    def capture(conn, cursor, statement, parameters, context, executemany):
+        statements.append(statement)
+    event.listen(db_session.bind, "before_cursor_execute", capture)
+    try:
+        report = response_data(client.get("/data-health/peer-review-receipts?limit=1"))
+    finally:
+        event.remove(db_session.bind, "before_cursor_execute", capture)
+    assert report["checked_set_count"] == 1
+    assert len(statements) <= 4
+    assert all(s.lstrip().upper().startswith("SELECT") for s in statements)
+    assert any("LIMIT" in s.upper() for s in statements)
+    current = response_data(client.get(f"/api/valuation/relative/peer-sets/{created['id']}"))
+    assert current["version"] == reviewed["version"]
+    assert current["reviewReceipt"] == reviewed["reviewReceipt"]
+
+
+def test_receipt_cursor_does_not_leak_other_owner_counts(client, db_session):
+    company = response_data(client.post("/companies", json={"ticker": "OWNCURSOR", "name": "Owned"}))
+    owned = _create_peer_set(client, company["id"], "Owned")
+    db_session.add(User(id="private_cursor_user", email="cursor@example.com", name="Private"))
+    db_session.add(PeerValuationSet(company_id=company["id"], user_id="private_cursor_user", name="Private", peer_identifiers_json=[]))
+    db_session.commit()
+    report = response_data(client.get(f"/data-health/peer-review-receipts?after_id={owned['id']}&limit=1"))
+    assert report["checked_set_count"] == 0
+    assert report["total_owned_set_count"] == 1
+    assert report["has_more"] is False
+    assert report["next_after_id"] is None

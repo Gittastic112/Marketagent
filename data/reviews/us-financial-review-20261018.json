@@ -1,0 +1,4435 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-US-08",
+  "reviewed_at": "2026-10-18T17:35:43.367859+00:00",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "decision": "Approve the exact selected historical source facts for existing-candidate review and promotion. Preserve every held candidate unchanged.",
+  "independent_human_certification": false,
+  "scope": "355 existing annual candidates for AAPL/AMZN/GOOG/GOOGL/MSFT/NVDA; selected three-year histories only, not full statement/note or valuation certification.",
+  "columns": [
+    "candidate_id",
+    "fiscal_year",
+    "metric_code",
+    "value",
+    "unit",
+    "period_end",
+    "expected_updated_at",
+    "reference_id",
+    "verification_basis"
+  ],
+  "companies": {
+    "AAPL": {
+      "company_id": 1,
+      "raw_document_id": 5,
+      "companyfacts_sha256": "2d1974cf68b105aa4ae1a9da58bc95488993216dde40f8470bcf17eef4c8a472",
+      "rows": [
+        [
+          168,
+          2023,
+          "basic_shares",
+          "15744231000.0",
+          "shares",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544832",
+          "AAPL-2025-sec:t23:r31:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          169,
+          2023,
+          "book_equity",
+          "62146000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544837",
+          "AAPL-2024-sec:t25:r41:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          170,
+          2023,
+          "buybacks",
+          "77550000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544838",
+          "AAPL-2025-sec:t27:r33:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          171,
+          2023,
+          "capex",
+          "10959000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544839",
+          "AAPL-2025-sec:t27:r25:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          172,
+          2023,
+          "cash",
+          "29965000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544840",
+          "AAPL-2024-sec:t25:r5:c7:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          173,
+          2023,
+          "commercial_paper",
+          "5985000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544841",
+          "AAPL-2024-sec:t25:r25:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          174,
+          2023,
+          "current_assets",
+          "143566000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544842",
+          "AAPL-2024-sec:t25:r11:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          175,
+          2023,
+          "current_liabilities",
+          "145308000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544843",
+          "AAPL-2024-sec:t25:r27:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          176,
+          2023,
+          "depreciation",
+          "11519000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544844",
+          "AAPL-2025-sec:t27:r9:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          177,
+          2023,
+          "diluted_shares",
+          "15812547000.0",
+          "shares",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544845",
+          "AAPL-2025-sec:t23:r32:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          178,
+          2023,
+          "dividends",
+          "15025000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544846",
+          "AAPL-2025-sec:t27:r32:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          179,
+          2023,
+          "ebit",
+          "114301000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544847",
+          "AAPL-2025-sec:t23:r20:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          181,
+          2023,
+          "long_term_debt_current",
+          "9822000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544849",
+          "AAPL-2024-sec:t25:r26:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          182,
+          2023,
+          "long_term_debt_issued",
+          "5228000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544850",
+          "AAPL-2025-sec:t27:r34:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          183,
+          2023,
+          "long_term_debt_noncurrent",
+          "95281000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544851",
+          "AAPL-2024-sec:t25:r30:c5:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          184,
+          2023,
+          "long_term_debt_repaid",
+          "11151000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544851",
+          "AAPL-2025-sec:t27:r35:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          185,
+          2023,
+          "long_term_debt_total",
+          "105103000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544852",
+          "AAPL-2024-sec:t45:r13:c9:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          186,
+          2023,
+          "net_income",
+          "96995000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544853",
+          "AAPL-2025-sec:t23:r24:c11:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          187,
+          2023,
+          "operating_lease_current",
+          "1410000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544854",
+          "AAPL-2024-sec:t42:r9:c10:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          188,
+          2023,
+          "operating_lease_noncurrent",
+          "10408000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544855",
+          "AAPL-2024-sec:t42:r10:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          189,
+          2023,
+          "operating_leases",
+          "11818000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544856",
+          "calculation:AAPL:2023:operating_leases",
+          "verified_calculation"
+        ],
+        [
+          190,
+          2023,
+          "pre_tax_income",
+          "113736000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544857",
+          "AAPL-2025-sec:t23:r22:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          191,
+          2023,
+          "revenue",
+          "383285000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544858",
+          "AAPL-2025-sec:t23:r7:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          192,
+          2023,
+          "tax_expense",
+          "16741000000.0",
+          "USD",
+          "2023-09-30",
+          "2026-10-11 19:20:03.544859",
+          "AAPL-2025-sec:t23:r23:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          193,
+          2024,
+          "basic_shares",
+          "15343783000.0",
+          "shares",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544860",
+          "AAPL-2025-sec:t23:r31:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          194,
+          2024,
+          "book_equity",
+          "56950000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544861",
+          "AAPL-2025-sec:t25:r41:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          195,
+          2024,
+          "buybacks",
+          "94949000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544862",
+          "AAPL-2025-sec:t27:r33:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          196,
+          2024,
+          "capex",
+          "9447000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544863",
+          "AAPL-2025-sec:t27:r25:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          197,
+          2024,
+          "cash",
+          "29943000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544864",
+          "AAPL-2025-sec:t25:r5:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          198,
+          2024,
+          "commercial_paper",
+          "9967000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544865",
+          "AAPL-2025-sec:t25:r25:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          199,
+          2024,
+          "current_assets",
+          "152987000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544866",
+          "AAPL-2025-sec:t25:r11:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          200,
+          2024,
+          "current_liabilities",
+          "176392000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544867",
+          "AAPL-2025-sec:t25:r27:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          201,
+          2024,
+          "depreciation",
+          "11445000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544868",
+          "AAPL-2025-sec:t27:r9:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          202,
+          2024,
+          "diluted_shares",
+          "15408095000.0",
+          "shares",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544869",
+          "AAPL-2025-sec:t23:r32:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          203,
+          2024,
+          "dividends",
+          "15234000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544870",
+          "AAPL-2025-sec:t27:r32:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          204,
+          2024,
+          "ebit",
+          "123216000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544871",
+          "AAPL-2025-sec:t23:r20:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          205,
+          2024,
+          "long_term_debt_current",
+          "10912000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544872",
+          "AAPL-2025-sec:t25:r26:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          206,
+          2024,
+          "long_term_debt_issued",
+          "0.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544873",
+          "AAPL-2025-sec:t27:r34:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          207,
+          2024,
+          "long_term_debt_noncurrent",
+          "85750000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544873",
+          "AAPL-2025-sec:t25:r30:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          208,
+          2024,
+          "long_term_debt_repaid",
+          "9958000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544874",
+          "AAPL-2025-sec:t27:r35:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          209,
+          2024,
+          "long_term_debt_total",
+          "96662000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544875",
+          "AAPL-2025-sec:t43:r13:c9:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          210,
+          2024,
+          "net_income",
+          "93736000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544876",
+          "AAPL-2025-sec:t23:r24:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          211,
+          2024,
+          "operating_lease_current",
+          "1488000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544877",
+          "AAPL-2025-sec:t40:r9:c10:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          212,
+          2024,
+          "operating_lease_noncurrent",
+          "10046000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544879",
+          "AAPL-2025-sec:t40:r10:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          213,
+          2024,
+          "operating_leases",
+          "11534000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544880",
+          "calculation:AAPL:2024:operating_leases",
+          "verified_calculation"
+        ],
+        [
+          214,
+          2024,
+          "pre_tax_income",
+          "123485000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544881",
+          "AAPL-2025-sec:t23:r22:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          215,
+          2024,
+          "revenue",
+          "391035000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544882",
+          "AAPL-2025-sec:t23:r7:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          216,
+          2024,
+          "tax_expense",
+          "29749000000.0",
+          "USD",
+          "2024-09-28",
+          "2026-10-11 19:20:03.544883",
+          "AAPL-2025-sec:t23:r23:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          217,
+          2025,
+          "basic_shares",
+          "14948500000.0",
+          "shares",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544884",
+          "AAPL-2025-sec:t23:r31:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          218,
+          2025,
+          "book_equity",
+          "73733000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544885",
+          "AAPL-2025-sec:t25:r41:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          219,
+          2025,
+          "buybacks",
+          "90711000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544886",
+          "AAPL-2025-sec:t27:r33:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          220,
+          2025,
+          "capex",
+          "12715000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544887",
+          "AAPL-2025-sec:t27:r25:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          221,
+          2025,
+          "cash",
+          "35934000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544888",
+          "AAPL-2025-sec:t25:r5:c3:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          222,
+          2025,
+          "commercial_paper",
+          "7979000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544888",
+          "AAPL-2025-sec:t25:r25:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          223,
+          2025,
+          "current_assets",
+          "147957000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544889",
+          "AAPL-2025-sec:t25:r11:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          224,
+          2025,
+          "current_liabilities",
+          "165631000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544890",
+          "AAPL-2025-sec:t25:r27:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          225,
+          2025,
+          "depreciation",
+          "11698000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544891",
+          "AAPL-2025-sec:t27:r9:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          226,
+          2025,
+          "diluted_shares",
+          "15004697000.0",
+          "shares",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544892",
+          "AAPL-2025-sec:t23:r32:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          227,
+          2025,
+          "dividends",
+          "15421000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544893",
+          "AAPL-2025-sec:t27:r32:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          228,
+          2025,
+          "ebit",
+          "133050000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544894",
+          "AAPL-2025-sec:t23:r20:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          229,
+          2025,
+          "long_term_debt_current",
+          "12350000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544895",
+          "AAPL-2025-sec:t25:r26:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          230,
+          2025,
+          "long_term_debt_issued",
+          "4481000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544896",
+          "AAPL-2025-sec:t27:r34:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          231,
+          2025,
+          "long_term_debt_noncurrent",
+          "78328000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544897",
+          "AAPL-2025-sec:t25:r30:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          232,
+          2025,
+          "long_term_debt_repaid",
+          "10932000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544898",
+          "AAPL-2025-sec:t27:r35:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          233,
+          2025,
+          "long_term_debt_total",
+          "90678000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544899",
+          "AAPL-2025-sec:t43:r13:c4:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          234,
+          2025,
+          "net_income",
+          "112010000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544900",
+          "AAPL-2025-sec:t23:r24:c3:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          235,
+          2025,
+          "operating_lease_current",
+          "1579000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544900",
+          "AAPL-2025-sec:t40:r9:c6:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          236,
+          2025,
+          "operating_lease_noncurrent",
+          "10911000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544901",
+          "AAPL-2025-sec:t40:r10:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          237,
+          2025,
+          "operating_leases",
+          "12490000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544902",
+          "calculation:AAPL:2025:operating_leases",
+          "verified_calculation"
+        ],
+        [
+          238,
+          2025,
+          "pre_tax_income",
+          "132729000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544903",
+          "AAPL-2025-sec:t23:r22:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          239,
+          2025,
+          "revenue",
+          "416161000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544904",
+          "AAPL-2025-sec:t23:r7:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          240,
+          2025,
+          "tax_expense",
+          "20719000000.0",
+          "USD",
+          "2025-09-27",
+          "2026-10-11 19:20:03.544905",
+          "AAPL-2025-sec:t23:r23:c2:2025",
+          "verified_exact_original_fact"
+        ]
+      ]
+    },
+    "AMZN": {
+      "company_id": 6,
+      "raw_document_id": 8,
+      "companyfacts_sha256": "9ed7d44b3b63e1ddaa71cffd3828101a8f998b7c8198b3c62e218ff3ed440f84",
+      "rows": [
+        [
+          496,
+          2023,
+          "basic_shares",
+          "10304000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963350",
+          "AMZN-2025-sec:t36:r27:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          497,
+          2023,
+          "book_equity",
+          "201875000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963351",
+          "AMZN-2024-sec:t40:r33:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          499,
+          2023,
+          "cash",
+          "73387000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963353",
+          "AMZN-2024-sec:t40:r6:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          500,
+          2023,
+          "current_assets",
+          "172351000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963354",
+          "AMZN-2024-sec:t40:r10:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          501,
+          2023,
+          "current_liabilities",
+          "164917000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963355",
+          "AMZN-2024-sec:t40:r21:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          503,
+          2023,
+          "diluted_shares",
+          "10492000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963356",
+          "AMZN-2025-sec:t36:r28:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          504,
+          2023,
+          "ebit",
+          "36852000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963357",
+          "AMZN-2025-sec:t36:r15:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          505,
+          2023,
+          "interest_expense",
+          "3182000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963358",
+          "AMZN-2025-sec:t36:r17:c2:2023",
+          "agent_checked_comparative_interest_expense_concept_change"
+        ],
+        [
+          506,
+          2023,
+          "long_term_debt_current",
+          "8494000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963359",
+          "AMZN-2024-sec:t58:r13:c8:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          507,
+          2023,
+          "long_term_debt_issued",
+          "0.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963361",
+          "AMZN-2025-sec:t35:r32:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          508,
+          2023,
+          "long_term_debt_noncurrent",
+          "58314000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963362",
+          "AMZN-2024-sec:t40:r23:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          509,
+          2023,
+          "long_term_debt_repaid",
+          "3676000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963362",
+          "AMZN-2025-sec:t35:r33:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          511,
+          2023,
+          "net_income",
+          "30425000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963364",
+          "AMZN-2025-sec:t36:r23:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          512,
+          2023,
+          "operating_lease_current",
+          "8419000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963365",
+          "AMZN-2024-sec:t53:r8:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          513,
+          2023,
+          "operating_lease_noncurrent",
+          "67220000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963366",
+          "AMZN-2024-sec:t53:r9:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          514,
+          2023,
+          "operating_leases",
+          "75639000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963367",
+          "AMZN-2024-sec:t53:r7:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          515,
+          2023,
+          "pre_tax_income",
+          "37557000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963368",
+          "AMZN-2025-sec:t36:r20:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          517,
+          2023,
+          "revenue",
+          "574785000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963370",
+          "AMZN-2025-sec:t36:r6:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          519,
+          2023,
+          "tax_expense",
+          "7120000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:24.963372",
+          "AMZN-2025-sec:t36:r21:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          520,
+          2024,
+          "basic_shares",
+          "10473000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963373",
+          "AMZN-2025-sec:t36:r27:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          521,
+          2024,
+          "book_equity",
+          "285970000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963374",
+          "AMZN-2025-sec:t38:r33:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          523,
+          2024,
+          "cash",
+          "78779000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963375",
+          "AMZN-2025-sec:t38:r6:c3:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          524,
+          2024,
+          "current_assets",
+          "190867000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963376",
+          "AMZN-2025-sec:t38:r10:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          525,
+          2024,
+          "current_liabilities",
+          "179431000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963377",
+          "AMZN-2025-sec:t38:r21:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          527,
+          2024,
+          "diluted_shares",
+          "10721000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963379",
+          "AMZN-2025-sec:t36:r28:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          528,
+          2024,
+          "ebit",
+          "68593000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963380",
+          "AMZN-2025-sec:t36:r15:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          529,
+          2024,
+          "long_term_debt_current",
+          "5017000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963381",
+          "AMZN-2025-sec:t57:r14:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          530,
+          2024,
+          "long_term_debt_issued",
+          "0.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963382",
+          "AMZN-2025-sec:t35:r32:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          531,
+          2024,
+          "long_term_debt_noncurrent",
+          "52623000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963383",
+          "AMZN-2025-sec:t38:r23:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          532,
+          2024,
+          "long_term_debt_repaid",
+          "9182000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963384",
+          "AMZN-2025-sec:t35:r33:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          534,
+          2024,
+          "net_income",
+          "59248000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963386",
+          "AMZN-2025-sec:t36:r23:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          535,
+          2024,
+          "operating_lease_current",
+          "10546000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963387",
+          "AMZN-2025-sec:t52:r8:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          536,
+          2024,
+          "operating_lease_noncurrent",
+          "69050000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963388",
+          "AMZN-2025-sec:t52:r9:c3:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          537,
+          2024,
+          "operating_leases",
+          "79596000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963389",
+          "AMZN-2025-sec:t52:r7:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          538,
+          2024,
+          "pre_tax_income",
+          "68614000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963390",
+          "AMZN-2025-sec:t36:r20:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          540,
+          2024,
+          "revenue",
+          "637959000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963392",
+          "AMZN-2025-sec:t36:r6:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          542,
+          2024,
+          "tax_expense",
+          "9265000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:24.963393",
+          "AMZN-2025-sec:t36:r21:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          543,
+          2025,
+          "basic_shares",
+          "10656000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963394",
+          "AMZN-2025-sec:t36:r27:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          544,
+          2025,
+          "book_equity",
+          "411065000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963395",
+          "AMZN-2025-sec:t38:r33:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          545,
+          2025,
+          "cash",
+          "86810000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963396",
+          "AMZN-2025-sec:t38:r6:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          546,
+          2025,
+          "current_assets",
+          "229083000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963397",
+          "AMZN-2025-sec:t38:r10:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          547,
+          2025,
+          "current_liabilities",
+          "218005000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963398",
+          "AMZN-2025-sec:t38:r21:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          549,
+          2025,
+          "diluted_shares",
+          "10827000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963400",
+          "AMZN-2025-sec:t36:r28:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          550,
+          2025,
+          "ebit",
+          "79975000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963400",
+          "AMZN-2025-sec:t36:r15:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          551,
+          2025,
+          "long_term_debt_current",
+          "2748000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963401",
+          "AMZN-2025-sec:t57:r14:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          552,
+          2025,
+          "long_term_debt_issued",
+          "15673000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963402",
+          "AMZN-2025-sec:t35:r32:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          553,
+          2025,
+          "long_term_debt_noncurrent",
+          "65648000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963403",
+          "AMZN-2025-sec:t38:r23:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          554,
+          2025,
+          "long_term_debt_repaid",
+          "5021000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963404",
+          "AMZN-2025-sec:t35:r33:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          556,
+          2025,
+          "net_income",
+          "77670000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963406",
+          "AMZN-2025-sec:t36:r23:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          557,
+          2025,
+          "operating_lease_current",
+          "12655000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963407",
+          "AMZN-2025-sec:t53:r8:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          558,
+          2025,
+          "operating_lease_noncurrent",
+          "76597000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963408",
+          "AMZN-2025-sec:t53:r9:c3:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          559,
+          2025,
+          "operating_leases",
+          "89252000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963409",
+          "AMZN-2025-sec:t53:r7:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          560,
+          2025,
+          "pre_tax_income",
+          "97311000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963410",
+          "AMZN-2025-sec:t36:r20:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          562,
+          2025,
+          "revenue",
+          "716924000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963411",
+          "AMZN-2025-sec:t36:r6:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          564,
+          2025,
+          "tax_expense",
+          "19087000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:24.963413",
+          "AMZN-2025-sec:t36:r21:c8:2025",
+          "verified_exact_original_fact"
+        ]
+      ]
+    },
+    "GOOG": {
+      "company_id": 4,
+      "raw_document_id": 6,
+      "companyfacts_sha256": "67e9eb51a09725a55b786cc0a569efcfb9906ad170e445e4775bc2126e22ae7d",
+      "rows": [
+        [
+          280,
+          2023,
+          "basic_shares",
+          "12630000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874426",
+          "GOOG-2025-sec:t146:r11:c11:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          281,
+          2023,
+          "book_equity",
+          "283379000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874427",
+          "GOOG-2024-sec:t83:r39:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          282,
+          2023,
+          "buybacks",
+          "61504000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874429",
+          "GOOG-2025-sec:t86:r32:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          283,
+          2023,
+          "capex",
+          "32251000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874430",
+          "GOOG-2025-sec:t86:r22:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          284,
+          2023,
+          "cash",
+          "24048000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874432",
+          "GOOG-2024-sec:t83:r6:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          286,
+          2023,
+          "current_assets",
+          "171530000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874439",
+          "GOOG-2024-sec:t83:r11:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          287,
+          2023,
+          "current_liabilities",
+          "81814000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874440",
+          "GOOG-2024-sec:t83:r27:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          288,
+          2023,
+          "diluted_shares",
+          "12722000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874442",
+          "GOOG-2025-sec:t146:r35:c11:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          289,
+          2023,
+          "dividends",
+          "0.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874443",
+          "GOOG-2025-sec:t86:r33:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          290,
+          2023,
+          "ebit",
+          "84293000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874445",
+          "GOOG-2025-sec:t80:r11:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          291,
+          2023,
+          "interest_expense",
+          "308000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874446",
+          "GOOG-2025-sec:t137:r5:c2:2023",
+          "agent_checked_comparative_interest_expense_concept_change"
+        ],
+        [
+          295,
+          2023,
+          "net_income",
+          "73795000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874453",
+          "GOOG-2025-sec:t80:r17:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          296,
+          2023,
+          "operating_lease_current",
+          "2791000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874455",
+          "GOOG-2024-sec:t127:r6:c4:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          297,
+          2023,
+          "operating_lease_noncurrent",
+          "12460000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874456",
+          "GOOG-2024-sec:t83:r30:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          298,
+          2023,
+          "operating_leases",
+          "15251000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874458",
+          "GOOG-2024-sec:t127:r8:c4:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          299,
+          2023,
+          "pre_tax_income",
+          "85717000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874459",
+          "GOOG-2025-sec:t80:r13:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          300,
+          2023,
+          "revenue",
+          "307394000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874461",
+          "GOOG-2025-sec:t80:r4:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          301,
+          2023,
+          "tax_expense",
+          "11922000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:20:10.874462",
+          "GOOG-2025-sec:t80:r14:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          302,
+          2024,
+          "basic_shares",
+          "12319000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874464",
+          "GOOG-2025-sec:t148:r13:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          303,
+          2024,
+          "book_equity",
+          "325084000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874465",
+          "GOOG-2025-sec:t78:r39:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          304,
+          2024,
+          "buybacks",
+          "62222000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874467",
+          "GOOG-2025-sec:t86:r32:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          305,
+          2024,
+          "capex",
+          "52535000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874468",
+          "GOOG-2025-sec:t86:r22:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          306,
+          2024,
+          "cash",
+          "23466000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874470",
+          "GOOG-2025-sec:t78:r6:c3:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          308,
+          2024,
+          "current_assets",
+          "163711000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874473",
+          "GOOG-2025-sec:t78:r11:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          309,
+          2024,
+          "current_liabilities",
+          "89122000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874475",
+          "GOOG-2025-sec:t78:r27:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          310,
+          2024,
+          "diluted_shares",
+          "12447000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874476",
+          "GOOG-2025-sec:t148:r36:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          311,
+          2024,
+          "dividends",
+          "7363000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874478",
+          "GOOG-2025-sec:t86:r33:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          312,
+          2024,
+          "ebit",
+          "112390000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874479",
+          "GOOG-2025-sec:t80:r11:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          314,
+          2024,
+          "long_term_debt_noncurrent",
+          "10883000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874482",
+          "GOOG-2025-sec:t78:r28:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          316,
+          2024,
+          "net_income",
+          "100118000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874485",
+          "GOOG-2025-sec:t80:r17:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          317,
+          2024,
+          "operating_lease_current",
+          "2887000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874487",
+          "GOOG-2025-sec:t123:r7:c4:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          318,
+          2024,
+          "operating_lease_noncurrent",
+          "11691000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874488",
+          "GOOG-2025-sec:t78:r30:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          319,
+          2024,
+          "operating_leases",
+          "14578000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874490",
+          "GOOG-2025-sec:t123:r9:c4:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          320,
+          2024,
+          "pre_tax_income",
+          "119815000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874491",
+          "GOOG-2025-sec:t80:r13:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          321,
+          2024,
+          "revenue",
+          "350018000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874493",
+          "GOOG-2025-sec:t80:r4:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          322,
+          2024,
+          "tax_expense",
+          "19697000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:20:10.874494",
+          "GOOG-2025-sec:t80:r14:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          323,
+          2025,
+          "basic_shares",
+          "12116000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874496",
+          "GOOG-2025-sec:t150:r10:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          324,
+          2025,
+          "book_equity",
+          "415265000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874497",
+          "GOOG-2025-sec:t78:r39:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          325,
+          2025,
+          "buybacks",
+          "45709000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874499",
+          "GOOG-2025-sec:t86:r32:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          326,
+          2025,
+          "capex",
+          "91447000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874500",
+          "GOOG-2025-sec:t86:r22:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          327,
+          2025,
+          "cash",
+          "30708000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874502",
+          "GOOG-2025-sec:t78:r6:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          329,
+          2025,
+          "current_assets",
+          "206038000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874506",
+          "GOOG-2025-sec:t78:r11:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          330,
+          2025,
+          "current_liabilities",
+          "102745000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874508",
+          "GOOG-2025-sec:t78:r27:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          331,
+          2025,
+          "diluted_shares",
+          "12230000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874509",
+          "GOOG-2025-sec:t150:r36:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          332,
+          2025,
+          "dividends",
+          "10049000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874511",
+          "GOOG-2025-sec:t86:r33:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          333,
+          2025,
+          "ebit",
+          "129039000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874512",
+          "GOOG-2025-sec:t80:r11:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          335,
+          2025,
+          "long_term_debt_noncurrent",
+          "46547000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874515",
+          "GOOG-2025-sec:t78:r28:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          337,
+          2025,
+          "net_income",
+          "132170000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874518",
+          "GOOG-2025-sec:t80:r17:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          338,
+          2025,
+          "operating_lease_current",
+          "3209000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874520",
+          "GOOG-2025-sec:t123:r7:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          339,
+          2025,
+          "operating_lease_noncurrent",
+          "12744000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874522",
+          "GOOG-2025-sec:t78:r30:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          341,
+          2025,
+          "pre_tax_income",
+          "158826000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874524",
+          "GOOG-2025-sec:t80:r13:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          342,
+          2025,
+          "revenue",
+          "402836000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874526",
+          "GOOG-2025-sec:t80:r4:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          343,
+          2025,
+          "tax_expense",
+          "26656000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:20:10.874527",
+          "GOOG-2025-sec:t80:r14:c8:2025",
+          "verified_exact_original_fact"
+        ]
+      ]
+    },
+    "GOOGL": {
+      "company_id": 12,
+      "raw_document_id": 9,
+      "companyfacts_sha256": "67e9eb51a09725a55b786cc0a569efcfb9906ad170e445e4775bc2126e22ae7d",
+      "rows": [
+        [
+          604,
+          2023,
+          "basic_shares",
+          "12630000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138934",
+          "GOOG-2025-sec:t146:r11:c11:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          605,
+          2023,
+          "book_equity",
+          "283379000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138936",
+          "GOOG-2024-sec:t83:r39:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          606,
+          2023,
+          "buybacks",
+          "61504000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138938",
+          "GOOG-2025-sec:t86:r32:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          607,
+          2023,
+          "capex",
+          "32251000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138940",
+          "GOOG-2025-sec:t86:r22:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          608,
+          2023,
+          "cash",
+          "24048000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138942",
+          "GOOG-2024-sec:t83:r6:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          610,
+          2023,
+          "current_assets",
+          "171530000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138946",
+          "GOOG-2024-sec:t83:r11:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          611,
+          2023,
+          "current_liabilities",
+          "81814000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138948",
+          "GOOG-2024-sec:t83:r27:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          612,
+          2023,
+          "diluted_shares",
+          "12722000000.0",
+          "shares",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138950",
+          "GOOG-2025-sec:t146:r35:c11:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          613,
+          2023,
+          "dividends",
+          "0.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138952",
+          "GOOG-2025-sec:t86:r33:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          614,
+          2023,
+          "ebit",
+          "84293000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138954",
+          "GOOG-2025-sec:t80:r11:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          615,
+          2023,
+          "interest_expense",
+          "308000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138956",
+          "GOOG-2025-sec:t137:r5:c2:2023",
+          "agent_checked_comparative_interest_expense_concept_change"
+        ],
+        [
+          619,
+          2023,
+          "net_income",
+          "73795000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138965",
+          "GOOG-2025-sec:t80:r17:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          620,
+          2023,
+          "operating_lease_current",
+          "2791000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138967",
+          "GOOG-2024-sec:t127:r6:c4:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          621,
+          2023,
+          "operating_lease_noncurrent",
+          "12460000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138968",
+          "GOOG-2024-sec:t83:r30:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          622,
+          2023,
+          "operating_leases",
+          "15251000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138970",
+          "GOOG-2024-sec:t127:r8:c4:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          623,
+          2023,
+          "pre_tax_income",
+          "85717000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138972",
+          "GOOG-2025-sec:t80:r13:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          624,
+          2023,
+          "revenue",
+          "307394000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138974",
+          "GOOG-2025-sec:t80:r4:c3:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          625,
+          2023,
+          "tax_expense",
+          "11922000000.0",
+          "USD",
+          "2023-12-31",
+          "2026-10-11 19:21:21.138976",
+          "GOOG-2025-sec:t80:r14:c2:2023",
+          "verified_exact_original_fact"
+        ],
+        [
+          626,
+          2024,
+          "basic_shares",
+          "12319000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138978",
+          "GOOG-2025-sec:t148:r13:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          627,
+          2024,
+          "book_equity",
+          "325084000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138980",
+          "GOOG-2025-sec:t78:r39:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          628,
+          2024,
+          "buybacks",
+          "62222000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138982",
+          "GOOG-2025-sec:t86:r32:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          629,
+          2024,
+          "capex",
+          "52535000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138984",
+          "GOOG-2025-sec:t86:r22:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          630,
+          2024,
+          "cash",
+          "23466000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138986",
+          "GOOG-2025-sec:t78:r6:c3:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          632,
+          2024,
+          "current_assets",
+          "163711000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138989",
+          "GOOG-2025-sec:t78:r11:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          633,
+          2024,
+          "current_liabilities",
+          "89122000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138991",
+          "GOOG-2025-sec:t78:r27:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          634,
+          2024,
+          "diluted_shares",
+          "12447000000.0",
+          "shares",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138993",
+          "GOOG-2025-sec:t148:r36:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          635,
+          2024,
+          "dividends",
+          "7363000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138995",
+          "GOOG-2025-sec:t86:r33:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          636,
+          2024,
+          "ebit",
+          "112390000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.138997",
+          "GOOG-2025-sec:t80:r11:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          638,
+          2024,
+          "long_term_debt_noncurrent",
+          "10883000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139002",
+          "GOOG-2025-sec:t78:r28:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          640,
+          2024,
+          "net_income",
+          "100118000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139006",
+          "GOOG-2025-sec:t80:r17:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          641,
+          2024,
+          "operating_lease_current",
+          "2887000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139007",
+          "GOOG-2025-sec:t123:r7:c4:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          642,
+          2024,
+          "operating_lease_noncurrent",
+          "11691000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139009",
+          "GOOG-2025-sec:t78:r30:c2:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          643,
+          2024,
+          "operating_leases",
+          "14578000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139012",
+          "GOOG-2025-sec:t123:r9:c4:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          644,
+          2024,
+          "pre_tax_income",
+          "119815000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139013",
+          "GOOG-2025-sec:t80:r13:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          645,
+          2024,
+          "revenue",
+          "350018000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139015",
+          "GOOG-2025-sec:t80:r4:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          646,
+          2024,
+          "tax_expense",
+          "19697000000.0",
+          "USD",
+          "2024-12-31",
+          "2026-10-11 19:21:21.139017",
+          "GOOG-2025-sec:t80:r14:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          647,
+          2025,
+          "basic_shares",
+          "12116000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139019",
+          "GOOG-2025-sec:t150:r10:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          648,
+          2025,
+          "book_equity",
+          "415265000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139021",
+          "GOOG-2025-sec:t78:r39:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          649,
+          2025,
+          "buybacks",
+          "45709000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139022",
+          "GOOG-2025-sec:t86:r32:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          650,
+          2025,
+          "capex",
+          "91447000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139024",
+          "GOOG-2025-sec:t86:r22:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          651,
+          2025,
+          "cash",
+          "30708000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139025",
+          "GOOG-2025-sec:t78:r6:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          653,
+          2025,
+          "current_assets",
+          "206038000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139029",
+          "GOOG-2025-sec:t78:r11:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          654,
+          2025,
+          "current_liabilities",
+          "102745000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139036",
+          "GOOG-2025-sec:t78:r27:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          655,
+          2025,
+          "diluted_shares",
+          "12230000000.0",
+          "shares",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139037",
+          "GOOG-2025-sec:t150:r36:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          656,
+          2025,
+          "dividends",
+          "10049000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139039",
+          "GOOG-2025-sec:t86:r33:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          657,
+          2025,
+          "ebit",
+          "129039000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139040",
+          "GOOG-2025-sec:t80:r11:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          659,
+          2025,
+          "long_term_debt_noncurrent",
+          "46547000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139044",
+          "GOOG-2025-sec:t78:r28:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          661,
+          2025,
+          "net_income",
+          "132170000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139047",
+          "GOOG-2025-sec:t80:r17:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          662,
+          2025,
+          "operating_lease_current",
+          "3209000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139048",
+          "GOOG-2025-sec:t123:r7:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          663,
+          2025,
+          "operating_lease_noncurrent",
+          "12744000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139050",
+          "GOOG-2025-sec:t78:r30:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          665,
+          2025,
+          "pre_tax_income",
+          "158826000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139054",
+          "GOOG-2025-sec:t80:r13:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          666,
+          2025,
+          "revenue",
+          "402836000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139056",
+          "GOOG-2025-sec:t80:r4:c11:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          667,
+          2025,
+          "tax_expense",
+          "26656000000.0",
+          "USD",
+          "2025-12-31",
+          "2026-10-11 19:21:21.139058",
+          "GOOG-2025-sec:t80:r14:c8:2025",
+          "verified_exact_original_fact"
+        ]
+      ]
+    },
+    "MSFT": {
+      "company_id": 5,
+      "raw_document_id": 7,
+      "companyfacts_sha256": "75bebe2eebf09fd5c1383646a761563922c8eb0f2cdb107a13e526572a5140c3",
+      "rows": [
+        [
+          387,
+          2024,
+          "basic_shares",
+          "7431000000.0",
+          "shares",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032476",
+          "MSFT-2026-sec:t25:r45:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          388,
+          2024,
+          "book_equity",
+          "268477000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032477",
+          "MSFT-2025:t18:r41:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          389,
+          2024,
+          "buybacks",
+          "17254000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032478",
+          "MSFT-2026-sec:t28:r34:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          390,
+          2024,
+          "capex",
+          "44477000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032479",
+          "MSFT-2026-sec:t28:r43:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          391,
+          2024,
+          "cash",
+          "18315000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032480",
+          "MSFT-2025:t18:r5:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          393,
+          2024,
+          "current_assets",
+          "159734000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032482",
+          "MSFT-2025:t18:r11:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          394,
+          2024,
+          "current_liabilities",
+          "125286000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032483",
+          "MSFT-2025:t18:r28:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          395,
+          2024,
+          "diluted_shares",
+          "7469000000.0",
+          "shares",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032483",
+          "MSFT-2026-sec:t25:r46:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          396,
+          2024,
+          "dividends",
+          "21771000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032484",
+          "MSFT-2026-sec:t28:r35:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          397,
+          2024,
+          "ebit",
+          "109433000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032485",
+          "MSFT-2026-sec:t25:r29:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          398,
+          2024,
+          "interest_expense",
+          "2935000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032486",
+          "MSFT-2026-sec:t31:r8:c12:2024",
+          "agent_checked_comparative_interest_expense_concept_change"
+        ],
+        [
+          399,
+          2024,
+          "long_term_debt_current",
+          "2249000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032487",
+          "MSFT-2025:t18:r23:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          400,
+          2024,
+          "long_term_debt_noncurrent",
+          "42688000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032488",
+          "MSFT-2025:t18:r29:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          401,
+          2024,
+          "long_term_debt_total",
+          "44937000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032489",
+          "MSFT-2025:t43:r19:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          402,
+          2024,
+          "net_income",
+          "88136000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032490",
+          "MSFT-2026-sec:t25:r37:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          403,
+          2024,
+          "operating_lease_noncurrent",
+          "15497000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032491",
+          "MSFT-2025:t18:r33:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          404,
+          2024,
+          "operating_leases",
+          "19077000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032492",
+          "MSFT-2025:t53:r7:c4:2024",
+          "agent_checked_official_HTML_table_header_row_and_million_scale"
+        ],
+        [
+          405,
+          2024,
+          "pre_tax_income",
+          "107787000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032493",
+          "MSFT-2026-sec:t25:r33:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          406,
+          2024,
+          "revenue",
+          "245122000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032494",
+          "MSFT-2026-sec:t25:r12:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          407,
+          2024,
+          "stock_issuances",
+          "2002000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032495",
+          "MSFT-2026-sec:t28:r33:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          408,
+          2024,
+          "tax_expense",
+          "19651000000.0",
+          "USD",
+          "2024-06-30",
+          "2026-10-11 19:20:18.032497",
+          "MSFT-2026-sec:t25:r34:c12:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          409,
+          2025,
+          "basic_shares",
+          "7433000000.0",
+          "shares",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032498",
+          "MSFT-2026-sec:t25:r45:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          410,
+          2025,
+          "book_equity",
+          "343479000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032499",
+          "MSFT-2026-sec:t27:r60:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          411,
+          2025,
+          "buybacks",
+          "18420000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032500",
+          "MSFT-2026-sec:t28:r34:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          412,
+          2025,
+          "capex",
+          "64551000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032501",
+          "MSFT-2026-sec:t28:r43:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          413,
+          2025,
+          "cash",
+          "30242000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032502",
+          "MSFT-2026-sec:t27:r9:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          415,
+          2025,
+          "current_assets",
+          "191131000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032503",
+          "MSFT-2026-sec:t27:r19:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          416,
+          2025,
+          "current_liabilities",
+          "141218000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032504",
+          "MSFT-2026-sec:t27:r41:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          417,
+          2025,
+          "diluted_shares",
+          "7465000000.0",
+          "shares",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032505",
+          "MSFT-2026-sec:t25:r46:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          418,
+          2025,
+          "dividends",
+          "24082000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032506",
+          "MSFT-2026-sec:t28:r35:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          419,
+          2025,
+          "ebit",
+          "128528000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032507",
+          "MSFT-2026-sec:t25:r29:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          420,
+          2025,
+          "long_term_debt_current",
+          "2999000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032508",
+          "MSFT-2026-sec:t27:r34:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          421,
+          2025,
+          "long_term_debt_noncurrent",
+          "40152000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032509",
+          "MSFT-2026-sec:t27:r42:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          422,
+          2025,
+          "long_term_debt_total",
+          "43151000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032510",
+          "MSFT-2026-sec:t52:r26:c18:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          423,
+          2025,
+          "net_income",
+          "101832000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032511",
+          "MSFT-2026-sec:t25:r37:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          424,
+          2025,
+          "operating_lease_noncurrent",
+          "17437000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032512",
+          "MSFT-2026-sec:t27:r46:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          425,
+          2025,
+          "operating_leases",
+          "22861000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032513",
+          "MSFT-2026-sec:t65:r16:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          426,
+          2025,
+          "pre_tax_income",
+          "123627000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032514",
+          "MSFT-2026-sec:t25:r33:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          427,
+          2025,
+          "revenue",
+          "281724000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032515",
+          "MSFT-2026-sec:t25:r12:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          428,
+          2025,
+          "stock_issuances",
+          "2056000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032516",
+          "MSFT-2026-sec:t28:r33:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          429,
+          2025,
+          "tax_expense",
+          "21795000000.0",
+          "USD",
+          "2025-06-30",
+          "2026-10-11 19:20:18.032517",
+          "MSFT-2026-sec:t25:r34:c8:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          430,
+          2026,
+          "basic_shares",
+          "7429000000.0",
+          "shares",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032518",
+          "MSFT-2026-sec:t25:r45:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          431,
+          2026,
+          "book_equity",
+          "442387000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032519",
+          "MSFT-2026-sec:t27:r60:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          432,
+          2026,
+          "buybacks",
+          "22271000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032520",
+          "MSFT-2026-sec:t28:r34:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          433,
+          2026,
+          "capex",
+          "115948000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032521",
+          "MSFT-2026-sec:t28:r43:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          434,
+          2026,
+          "cash",
+          "20935000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032522",
+          "MSFT-2026-sec:t27:r9:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          435,
+          2026,
+          "current_assets",
+          "207710000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032522",
+          "MSFT-2026-sec:t27:r19:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          436,
+          2026,
+          "current_liabilities",
+          "168825000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032523",
+          "MSFT-2026-sec:t27:r41:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          437,
+          2026,
+          "diluted_shares",
+          "7453000000.0",
+          "shares",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032524",
+          "MSFT-2026-sec:t25:r46:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          438,
+          2026,
+          "dividends",
+          "26445000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032525",
+          "MSFT-2026-sec:t28:r35:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          439,
+          2026,
+          "ebit",
+          "155237000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032526",
+          "MSFT-2026-sec:t25:r29:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          440,
+          2026,
+          "long_term_debt_current",
+          "9227000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032527",
+          "MSFT-2026-sec:t27:r34:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          441,
+          2026,
+          "long_term_debt_noncurrent",
+          "31067000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032528",
+          "MSFT-2026-sec:t27:r42:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          442,
+          2026,
+          "long_term_debt_total",
+          "40294000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032529",
+          "MSFT-2026-sec:t52:r26:c14:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          443,
+          2026,
+          "net_income",
+          "133749000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032530",
+          "MSFT-2026-sec:t25:r37:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          444,
+          2026,
+          "operating_lease_noncurrent",
+          "16532000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032531",
+          "MSFT-2026-sec:t27:r46:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          445,
+          2026,
+          "operating_leases",
+          "21925000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032532",
+          "MSFT-2026-sec:t65:r16:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          446,
+          2026,
+          "pre_tax_income",
+          "165934000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032533",
+          "MSFT-2026-sec:t25:r33:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          447,
+          2026,
+          "revenue",
+          "331839000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032534",
+          "MSFT-2026-sec:t25:r12:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          448,
+          2026,
+          "stock_issuances",
+          "2009000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032535",
+          "MSFT-2026-sec:t28:r33:c4:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          449,
+          2026,
+          "tax_expense",
+          "32185000000.0",
+          "USD",
+          "2026-06-30",
+          "2026-10-11 19:20:18.032536",
+          "MSFT-2026-sec:t25:r34:c4:2026",
+          "verified_exact_original_fact"
+        ]
+      ]
+    },
+    "NVDA": {
+      "company_id": 3,
+      "raw_document_id": 4,
+      "companyfacts_sha256": "c8d2deb79257bf637db44c1166c78aa5f344a138d9e9071ba49c532054ee6e6f",
+      "rows": [
+        [
+          49,
+          2024,
+          "basic_shares",
+          "24690000000.0",
+          "shares",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843168",
+          "NVDA-2026-sec:t21:r25:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          50,
+          2024,
+          "book_equity",
+          "42978000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843169",
+          "NVDA-2025-sec:t24:r36:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          51,
+          2024,
+          "buybacks",
+          "9533000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843170",
+          "NVDA-2026-sec:t25:r33:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          52,
+          2024,
+          "cash",
+          "7280000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843171",
+          "NVDA-2025-sec:t24:r5:c7:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          54,
+          2024,
+          "current_assets",
+          "44345000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843173",
+          "NVDA-2025-sec:t24:r10:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          55,
+          2024,
+          "current_debt",
+          "1250000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843174",
+          "NVDA-2025-sec:t24:r23:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          56,
+          2024,
+          "current_liabilities",
+          "10631000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843175",
+          "NVDA-2025-sec:t24:r24:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          57,
+          2024,
+          "debt_repaid",
+          "1250000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843176",
+          "NVDA-2026-sec:t25:r37:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          58,
+          2024,
+          "depreciation",
+          "1508000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843176",
+          "NVDA-2026-sec:t25:r8:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          59,
+          2024,
+          "diluted_shares",
+          "24940000000.0",
+          "shares",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843177",
+          "NVDA-2026-sec:t21:r26:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          60,
+          2024,
+          "dividends",
+          "395000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843178",
+          "NVDA-2026-sec:t25:r35:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          61,
+          2024,
+          "ebit",
+          "32972000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843179",
+          "NVDA-2026-sec:t21:r11:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          62,
+          2024,
+          "interest_expense",
+          "257000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843180",
+          "NVDA-2026-sec:t21:r13:c8:2024",
+          "agent_checked_comparative_interest_expense_concept_change"
+        ],
+        [
+          64,
+          2024,
+          "long_term_debt_noncurrent",
+          "8459000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843182",
+          "NVDA-2025-sec:t24:r25:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          66,
+          2024,
+          "net_income",
+          "29760000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843184",
+          "NVDA-2026-sec:t21:r18:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          67,
+          2024,
+          "operating_lease_current",
+          "228000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843185",
+          "NVDA-2025-sec:t44:r11:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          68,
+          2024,
+          "operating_lease_noncurrent",
+          "1119000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843186",
+          "NVDA-2025-sec:t24:r26:c5:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          69,
+          2024,
+          "operating_leases",
+          "1347000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843187",
+          "calculation:NVDA:2024:operating_leases",
+          "verified_calculation"
+        ],
+        [
+          70,
+          2024,
+          "pre_tax_income",
+          "33818000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843188",
+          "NVDA-2026-sec:t21:r16:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          71,
+          2024,
+          "revenue",
+          "60922000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843188",
+          "NVDA-2026-sec:t21:r4:c11:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          72,
+          2024,
+          "tax_expense",
+          "4058000000.0",
+          "USD",
+          "2024-01-28",
+          "2026-10-11 19:19:57.843189",
+          "NVDA-2026-sec:t21:r17:c8:2024",
+          "verified_exact_original_fact"
+        ],
+        [
+          73,
+          2025,
+          "basic_shares",
+          "24555000000.0",
+          "shares",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843190",
+          "NVDA-2026-sec:t21:r25:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          74,
+          2025,
+          "book_equity",
+          "79327000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843191",
+          "NVDA-2026-sec:t23:r37:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          75,
+          2025,
+          "buybacks",
+          "33706000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843192",
+          "NVDA-2026-sec:t25:r33:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          76,
+          2025,
+          "cash",
+          "8589000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843193",
+          "NVDA-2026-sec:t23:r5:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          78,
+          2025,
+          "current_assets",
+          "80126000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843195",
+          "NVDA-2026-sec:t23:r10:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          79,
+          2025,
+          "current_debt",
+          "0.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843196",
+          "NVDA-2026-sec:t23:r24:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          80,
+          2025,
+          "current_liabilities",
+          "18047000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843197",
+          "NVDA-2026-sec:t23:r25:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          81,
+          2025,
+          "debt_repaid",
+          "1250000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843198",
+          "NVDA-2026-sec:t25:r37:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          82,
+          2025,
+          "depreciation",
+          "1864000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843199",
+          "NVDA-2026-sec:t25:r8:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          83,
+          2025,
+          "diluted_shares",
+          "24804000000.0",
+          "shares",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843200",
+          "NVDA-2026-sec:t21:r26:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          84,
+          2025,
+          "dividends",
+          "834000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843200",
+          "NVDA-2026-sec:t25:r35:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          85,
+          2025,
+          "ebit",
+          "81453000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843201",
+          "NVDA-2026-sec:t21:r11:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          87,
+          2025,
+          "long_term_debt_noncurrent",
+          "8463000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843203",
+          "NVDA-2026-sec:t23:r26:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          89,
+          2025,
+          "net_income",
+          "72880000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843206",
+          "NVDA-2026-sec:t21:r18:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          90,
+          2025,
+          "operating_lease_current",
+          "288000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843207",
+          "NVDA-2025-sec:t44:r11:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          91,
+          2025,
+          "operating_lease_noncurrent",
+          "1519000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843208",
+          "NVDA-2026-sec:t23:r27:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          92,
+          2025,
+          "operating_leases",
+          "1807000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843209",
+          "NVDA-2025-sec:t62:r13:c2:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          93,
+          2025,
+          "pre_tax_income",
+          "84026000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843210",
+          "NVDA-2026-sec:t21:r16:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          94,
+          2025,
+          "revenue",
+          "130497000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843211",
+          "NVDA-2026-sec:t21:r4:c7:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          95,
+          2025,
+          "tax_expense",
+          "11146000000.0",
+          "USD",
+          "2025-01-26",
+          "2026-10-11 19:19:57.843211",
+          "NVDA-2026-sec:t21:r17:c5:2025",
+          "verified_exact_original_fact"
+        ],
+        [
+          96,
+          2026,
+          "basic_shares",
+          "24359000000.0",
+          "shares",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843212",
+          "NVDA-2026-sec:t21:r25:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          97,
+          2026,
+          "book_equity",
+          "157293000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843213",
+          "NVDA-2026-sec:t23:r37:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          98,
+          2026,
+          "buybacks",
+          "40086000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843214",
+          "NVDA-2026-sec:t25:r33:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          99,
+          2026,
+          "cash",
+          "10605000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843215",
+          "NVDA-2026-sec:t23:r5:c3:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          100,
+          2026,
+          "current_assets",
+          "125605000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843216",
+          "NVDA-2026-sec:t23:r10:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          101,
+          2026,
+          "current_debt",
+          "999000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843217",
+          "NVDA-2026-sec:t23:r24:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          102,
+          2026,
+          "current_liabilities",
+          "32163000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843218",
+          "NVDA-2026-sec:t23:r25:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          103,
+          2026,
+          "debt_repaid",
+          "0.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843219",
+          "NVDA-2026-sec:t25:r37:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          104,
+          2026,
+          "depreciation",
+          "2843000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843219",
+          "NVDA-2026-sec:t25:r8:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          105,
+          2026,
+          "diluted_shares",
+          "24514000000.0",
+          "shares",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843220",
+          "NVDA-2026-sec:t21:r26:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          106,
+          2026,
+          "dividends",
+          "974000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843221",
+          "NVDA-2026-sec:t25:r35:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          107,
+          2026,
+          "ebit",
+          "130387000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843222",
+          "NVDA-2026-sec:t21:r11:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          109,
+          2026,
+          "long_term_debt_noncurrent",
+          "7469000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843224",
+          "NVDA-2026-sec:t23:r26:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          111,
+          2026,
+          "net_income",
+          "120067000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843226",
+          "NVDA-2026-sec:t21:r18:c3:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          112,
+          2026,
+          "operating_lease_current",
+          "372000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843226",
+          "NVDA-2026-sec:t58:r14:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          113,
+          2026,
+          "operating_lease_noncurrent",
+          "2572000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843227",
+          "NVDA-2026-sec:t23:r27:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          114,
+          2026,
+          "operating_leases",
+          "2944000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843228",
+          "NVDA-2026-sec:t58:r13:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          115,
+          2026,
+          "pre_tax_income",
+          "141450000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843229",
+          "NVDA-2026-sec:t21:r16:c2:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          116,
+          2026,
+          "revenue",
+          "215938000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843230",
+          "NVDA-2026-sec:t21:r4:c3:2026",
+          "verified_exact_original_fact"
+        ],
+        [
+          117,
+          2026,
+          "tax_expense",
+          "21383000000.0",
+          "USD",
+          "2026-01-25",
+          "2026-10-11 19:19:57.843231",
+          "NVDA-2026-sec:t21:r17:c2:2026",
+          "verified_exact_original_fact"
+        ]
+      ]
+    }
+  },
+  "held_candidates": [
+    {
+      "candidate_id": 180,
+      "ticker": "AAPL",
+      "fiscal_year": 2023,
+      "metric_code": "interest_expense",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 548,
+      "ticker": "AMZN",
+      "fiscal_year": 2025,
+      "metric_code": "depreciation",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 555,
+      "ticker": "AMZN",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_definition_difference"
+    },
+    {
+      "candidate_id": 561,
+      "ticker": "AMZN",
+      "fiscal_year": 2025,
+      "metric_code": "preferred_stock",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 563,
+      "ticker": "AMZN",
+      "fiscal_year": 2025,
+      "metric_code": "short_term_borrowings",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 522,
+      "ticker": "AMZN",
+      "fiscal_year": 2024,
+      "metric_code": "buybacks",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 526,
+      "ticker": "AMZN",
+      "fiscal_year": 2024,
+      "metric_code": "depreciation",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 533,
+      "ticker": "AMZN",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_definition_difference"
+    },
+    {
+      "candidate_id": 539,
+      "ticker": "AMZN",
+      "fiscal_year": 2024,
+      "metric_code": "preferred_stock",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 541,
+      "ticker": "AMZN",
+      "fiscal_year": 2024,
+      "metric_code": "short_term_borrowings",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 498,
+      "ticker": "AMZN",
+      "fiscal_year": 2023,
+      "metric_code": "buybacks",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 502,
+      "ticker": "AMZN",
+      "fiscal_year": 2023,
+      "metric_code": "depreciation",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 510,
+      "ticker": "AMZN",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_definition_difference"
+    },
+    {
+      "candidate_id": 516,
+      "ticker": "AMZN",
+      "fiscal_year": 2023,
+      "metric_code": "preferred_stock",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 518,
+      "ticker": "AMZN",
+      "fiscal_year": 2023,
+      "metric_code": "short_term_borrowings",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 328,
+      "ticker": "GOOG",
+      "fiscal_year": 2025,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 334,
+      "ticker": "GOOG",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 336,
+      "ticker": "GOOG",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 340,
+      "ticker": "GOOG",
+      "fiscal_year": 2025,
+      "metric_code": "operating_leases",
+      "reason": "hold_reported_total_exceeds_current_plus_noncurrent_by_USD_1_million"
+    },
+    {
+      "candidate_id": 307,
+      "ticker": "GOOG",
+      "fiscal_year": 2024,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 313,
+      "ticker": "GOOG",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 315,
+      "ticker": "GOOG",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 285,
+      "ticker": "GOOG",
+      "fiscal_year": 2023,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 292,
+      "ticker": "GOOG",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 293,
+      "ticker": "GOOG",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_noncurrent",
+      "reason": "hold_fact_context_or_concept_requires_review"
+    },
+    {
+      "candidate_id": 294,
+      "ticker": "GOOG",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 652,
+      "ticker": "GOOGL",
+      "fiscal_year": 2025,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 658,
+      "ticker": "GOOGL",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 660,
+      "ticker": "GOOGL",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 664,
+      "ticker": "GOOGL",
+      "fiscal_year": 2025,
+      "metric_code": "operating_leases",
+      "reason": "hold_reported_total_exceeds_current_plus_noncurrent_by_USD_1_million"
+    },
+    {
+      "candidate_id": 631,
+      "ticker": "GOOGL",
+      "fiscal_year": 2024,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 637,
+      "ticker": "GOOGL",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 639,
+      "ticker": "GOOGL",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 609,
+      "ticker": "GOOGL",
+      "fiscal_year": 2023,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 616,
+      "ticker": "GOOGL",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 617,
+      "ticker": "GOOGL",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_noncurrent",
+      "reason": "hold_fact_context_or_concept_requires_review"
+    },
+    {
+      "candidate_id": 618,
+      "ticker": "GOOGL",
+      "fiscal_year": 2023,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 414,
+      "ticker": "MSFT",
+      "fiscal_year": 2025,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 392,
+      "ticker": "MSFT",
+      "fiscal_year": 2024,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 108,
+      "ticker": "NVDA",
+      "fiscal_year": 2026,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 110,
+      "ticker": "NVDA",
+      "fiscal_year": 2026,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 77,
+      "ticker": "NVDA",
+      "fiscal_year": 2025,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 86,
+      "ticker": "NVDA",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 88,
+      "ticker": "NVDA",
+      "fiscal_year": 2025,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 53,
+      "ticker": "NVDA",
+      "fiscal_year": 2024,
+      "metric_code": "commercial_paper",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 63,
+      "ticker": "NVDA",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_current",
+      "reason": "hold_no_independent_selected_reference"
+    },
+    {
+      "candidate_id": 65,
+      "ticker": "NVDA",
+      "fiscal_year": 2024,
+      "metric_code": "long_term_debt_total",
+      "reason": "hold_no_independent_selected_reference"
+    }
+  ],
+  "original_sources": [
+    {
+      "source_id": "AAPL-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html"
+    },
+    {
+      "source_id": "AAPL-2024-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm",
+      "sha256": "147973a09b33b00f6f9ef5e53357aa8dc01415cb013f5269bd983d7970670476",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2024-sec.html"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html"
+    },
+    {
+      "source_id": "AMZN-2024-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000004/amzn-20241231.htm",
+      "sha256": "e20c7637f54438c7d3cf34d04671c1c4282844177132d4aa53236271fa85900c",
+      "path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2024-sec.html"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html"
+    },
+    {
+      "source_id": "GOOG-2024-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm",
+      "sha256": "461eafc9a47e4be5f97726b4124f87754c4d22c96e73092af6075367de907192",
+      "path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2024-sec.html"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+      "path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html"
+    },
+    {
+      "source_id": "MSFT-2025",
+      "url": "https://www.microsoft.com/investor/reports/ar25/index.html",
+      "sha256": "564154a15ac28c0f7f72f304ae26b74c29cfca9f3eafe8d59595776769d621ca",
+      "path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2025.html"
+    },
+    {
+      "source_id": "NVDA-2026-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+      "path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html"
+    },
+    {
+      "source_id": "NVDA-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000023/nvda-20250126.htm",
+      "sha256": "a2d2d68d1df0a7e784aff8dba23a501486a1e96a61bc1f074c097f862bdf115d",
+      "path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2025-sec.html"
+    }
+  ],
+  "explicit_source_zero_candidate_ids": [
+    79,
+    103,
+    206,
+    507,
+    530
+  ],
+  "manual_scope_review": {
+    "MSFT_FY2024": {
+      "candidate_ids": [
+        388,
+        391,
+        393,
+        394,
+        399,
+        400,
+        401,
+        403,
+        404
+      ],
+      "basis": "Official annual report tables 18, 43 and 53 have explicit June 30 2024 columns and million-scale dollar amounts. Rows distinguish balance-sheet cash, current/noncurrent carrying debt and operating lease liabilities. Matching SEC candidate units are USD; original HTML omits inline-XBRL tags."
+    },
+    "interest_expense_comparatives": {
+      "candidate_ids": [
+        62,
+        291,
+        398,
+        505,
+        615
+      ],
+      "basis": "The older companyfacts InterestExpense concepts and newer report InterestExpenseNonoperating comparatives have identical values, currencies and annual dates. Accept the specifically reported interest-expense line, not an assertion that it includes all borrowing or lease costs."
+    },
+    "explicit_zeros": {
+      "basis": "Five original selected inline facts use ixt:fixed-zero with the matching concept, unit and period. These are source-encoded zeros, not assumptions about blank cells."
+    }
+  },
+  "accounting_treatment": [
+    "Keep balance-sheet cash distinct from cash-flow closing cash including restricted cash. No valuation-available-cash amount is approved.",
+    "Basic/diluted shares are historical issuer weighted averages. They do not establish shares outstanding on a valuation date. GOOG and GOOGL retain distinct company records and the shared issuer basis; do not sum class diluted denominators.",
+    "Cash capex excludes noncash lease additions; do not substitute broad depreciation or combined PPE/intangible purchases for a narrower metric. Unselected Amazon depreciation remains pending.",
+    "Keep commercial paper, current/noncurrent term debt, operating leases and finance leases separate. Avoid adding a total to its components. Complete valuation financing-claim coverage remains open.",
+    "Cash dividends and buybacks retain their cash-flow definitions and positive outflow magnitude convention. Apple dividends include dividend equivalents, separate from declared amounts.",
+    "Reported historical tax expense and effective tax rates are not forecast or marginal tax assumptions. Unsupported NCI, preferred stock, cross-holdings, net borrowing and working-capital changes stay missing.",
+    "Amazon face debt of USD67.182bn/58.000bn/68.836bn differs from carrying debt of USD66.808bn/57.640bn/68.396bn for FY2023/2024/2025. Keep those definitions separate and hold the three generic total-debt candidates; do not overwrite source face values.",
+    "Alphabet FY2025 reports operating lease total USD15.954bn but current USD3.209bn plus noncurrent USD12.744bn equals USD15.953bn. Preserve the USD1m difference without asserting an unproven rounding explanation; withhold the total from promotion.",
+    "Alphabet FY2023 debt has a changed comparative concept including capital-lease wording. Hold those two ticker records until financing-claim scope is reconciled."
+  ],
+  "application_requirements": [
+    "Recheck exact candidate values, units, timestamps, periods and source payload hashes before writes.",
+    "Use supported candidate review/promotion with current versions, retain source revisions and Processing Runs.",
+    "No saved valuation, forecast, portfolio, prior reviewed history or source payload changes.",
+    "Verify final metrics, exact report dates, normalized missing-input behavior and unrelated table/record fingerprints."
+  ],
+  "evidence": [
+    {
+      "path": "output/milestones/m05/review-batches-20261013/prepared-reference.json",
+      "sha256": "0a360323d372a985628bd961c0dc5142e9eab9e307f8683d65abe9ec7b276b5e"
+    },
+    {
+      "path": "output/milestones/m05/review-batches-20261013/reconciliation.json",
+      "sha256": "ebb9b3637c640a3ba0921d99d5cbb74aaed9678fa1b6e2089a8ffd32c4ddb377"
+    },
+    {
+      "path": "output/milestones/review-continuation-20261018/us-original-cell-audit.json",
+      "sha256": "dbf5cf7ff504ff85378d2eb28f409ea2046bd9c5b413bfaca3afc1b169a7af54"
+    },
+    {
+      "path": "output/milestones/review-continuation-20261018/us-candidate-source-preflight.json",
+      "sha256": "57d03b7fff500680c284108f05cff13e632540936bc71f1d5b32173925ed0b01"
+    }
+  ]
+}

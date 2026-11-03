@@ -74,8 +74,11 @@ class DamodaranGrowthBenchmark(Base):
     country = Column(String(100), nullable=True)
 
     expected_revenue_growth = Column(Float, nullable=True)
+    expected_revenue_growth_2y = Column(Float, nullable=True)
+    expected_revenue_growth_5y = Column(Float, nullable=True)
     expected_ebit_growth = Column(Float, nullable=True)
     expected_eps_growth = Column(Float, nullable=True)
+    historical_net_income_growth = Column(Float, nullable=True)
     historical_revenue_growth = Column(Float, nullable=True)
     historical_ebit_growth = Column(Float, nullable=True)
 
@@ -93,6 +96,18 @@ class DamodaranFinancingFlowsBenchmark(Base):
     debt_to_equity = Column(Float, nullable=True)
     debt_to_capital = Column(Float, nullable=True)
     effective_tax_rate = Column(Float, nullable=True)
+
+    number_of_firms = Column(Integer, nullable=True)
+    dividends_usd_millions = Column(Float, nullable=True)
+    buybacks_usd_millions = Column(Float, nullable=True)
+    equity_issuance_usd_millions = Column(Float, nullable=True)
+    net_equity_change_usd_millions = Column(Float, nullable=True)
+    net_equity_change_to_book_equity = Column(Float, nullable=True)
+    debt_repaid_usd_millions = Column(Float, nullable=True)
+    debt_raised_usd_millions = Column(Float, nullable=True)
+    net_debt_change_usd_millions = Column(Float, nullable=True)
+    net_debt_change_to_total_debt = Column(Float, nullable=True)
+    lease_debt_change_usd_millions = Column(Float, nullable=True)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
 

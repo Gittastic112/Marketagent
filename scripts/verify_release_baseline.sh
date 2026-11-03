@@ -3,7 +3,8 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 PROJECT_NAME="market-intel-release-check"
-COMPOSE=(docker compose -p "$PROJECT_NAME" -f "$ROOT_DIR/docker-compose.e2e.yml")
+COMPOSE=(docker compose --env-file /dev/null -p "$PROJECT_NAME" -f "$ROOT_DIR/docker-compose.e2e.yml")
+TEST_COMPOSE=(docker compose --env-file /dev/null -f "$ROOT_DIR/docker-compose.test.yml")
 
 cleanup() {
   "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
@@ -17,6 +18,11 @@ export E2E_FRONTEND_PORT="${E2E_FRONTEND_PORT:-13000}"
 export E2E_BACKEND_PORT="${E2E_BACKEND_PORT:-18000}"
 
 python3 -m unittest scripts.test_check_secrets
+python3 -m unittest scripts.test_check_docs
+python3 -m unittest scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata
+python3 -m unittest scripts.test_dependency_locks scripts.test_container_scan scripts.test_legacy_financial_evaluator
+python3 "$ROOT_DIR/scripts/check_dependency_locks.py"
+python3 "$ROOT_DIR/scripts/check_docs.py"
 python3 "$ROOT_DIR/scripts/check_secrets.py" "$ROOT_DIR"
 python3 "$ROOT_DIR/scripts/validate_project_skills.py"
 
@@ -25,19 +31,23 @@ cleanup
 "${COMPOSE[@]}" up --detach postgres-e2e backend-e2e frontend-e2e
 
 for _ in $(seq 1 90); do
-  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null \
+  if curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null \
     && curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null; then
     break
   fi
   sleep 2
 done
 
-curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/health" >/dev/null
+curl --fail --silent "http://127.0.0.1:${E2E_BACKEND_PORT}/api/readiness" >/dev/null
 curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" >/dev/null
 "${COMPOSE[@]}" exec -T backend-e2e alembic heads
 "${COMPOSE[@]}" exec -T backend-e2e alembic current
-"${COMPOSE[@]}" exec -T backend-e2e pytest -q backend/tests
-"${COMPOSE[@]}" exec -T frontend-e2e npm test
+# Unit tests need the approved reference files without baking them into runtime images.
+"${TEST_COMPOSE[@]}" run --rm --build backend-tests
+# Source guards inspect repository configuration outside the frontend build context.
+"${COMPOSE[@]}" run --rm --no-deps \
+  --volume "$ROOT_DIR:/repository:ro" --env REPOSITORY_ROOT=/repository \
+  frontend-e2e npm test
 "${COMPOSE[@]}" exec -T frontend-e2e npm run typecheck
 
 printf 'Release baseline verification passed.\n'

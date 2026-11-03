@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 
 from app.api.dependencies import get_current_user, get_db
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.services.assumption_methodology import AssumptionMethodologyService
 from app.models.assumption_methodology import ValuationAssumptionProvenance
 from app.models.dcf import ValuationModel
@@ -16,15 +16,21 @@ def get_assumption_methods(
     assumption_key: str,
     country: str,
     industry: Optional[str] = None,
+    currency: Optional[str] = None,
     db: Session = Depends(get_db)
 ) -> Any:
-    methods = AssumptionMethodologyService.get_available_methods(db, assumption_key, country, industry)
-    default = AssumptionMethodologyService.get_default_method(db, assumption_key, country, industry)
+    methods = AssumptionMethodologyService.get_available_methods(
+        db, assumption_key, country, industry, currency
+    )
+    default = AssumptionMethodologyService.get_default_method(
+        db, assumption_key, country, industry, currency
+    )
 
     return ApiResponse(data={
         "assumption_key": assumption_key,
         "country": country,
         "industry": industry,
+        "currency": currency,
         "default_method": default["method_key"] if default else "user_custom",
         "selected_method": default["method_key"] if default else "user_custom",
         "methods": methods,
@@ -40,9 +46,14 @@ def get_assumption_methods(
 def get_country_methods(
     country: str,
     industry: Optional[str] = None,
+    currency: Optional[str] = None,
     db: Session = Depends(get_db)
 ) -> Any:
-    return ApiResponse(data=AssumptionMethodologyService.build_country_assumption_pack(db, country, industry))
+    return ApiResponse(
+        data=AssumptionMethodologyService.build_country_assumption_pack(
+            db, country, industry, currency
+        )
+    )
 
 class SelectMethodRequest(BaseModel):
     assumption_key: str

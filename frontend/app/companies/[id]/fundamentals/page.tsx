@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { RefreshCw } from "lucide-react";
@@ -11,12 +12,16 @@ import type {
   NormalizedSnapshotRead,
 } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
-import { summarizeApiMetas } from "@/lib/data-state-meta";
+import { summarizeApiMetas, hasUsableData } from "@/lib/data-state-meta";
+import { ApiError } from "@/lib/api/contract";
+import { ErrorState } from "@/components/page";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
-import { PartialDataNotice } from "@/components/ui/data-states";
+import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
 import { ScreenerUpload } from "@/components/screener-upload";
+import { formatNumber } from "@/lib/formatting";
+import { financialIdentityFormula, financialMetricLabel } from "@/lib/financial-evidence";
 
 export default async function FundamentalsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -28,14 +33,15 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   let company: Company;
   try {
     company = await serverFetchApi<Company>(`/companies/${companyId}`);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    return <ErrorState message="Company fundamentals could not be loaded. Reload to retry." />;
   }
 
   const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse] = await Promise.all([
-    serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`).catch(() => ({ data: [], meta: null })),
-    serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`).catch(() => ({ data: [], meta: null })),
+    serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`),
+    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`),
+    serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`),
     serverFetchApiResponse<NormalizedCoverage>(`/api/companies/${companyId}/financial-statements/normalized/coverage`),
     serverFetchApiResponse<FinancialReconciliation>(
       `/api/companies/${companyId}/financial-statements/normalized/reconciliation`,
@@ -68,7 +74,14 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   return (
     <div className="space-y-6">
       <DataHealthUpdater segment="fundamentals" isStale={dataState.someStale || dataState.allStale} />
-      {dataState.someStale && <PartialDataNotice message="Some fundamentals data is cached because the backend is unreachable." />}
+      <DataStateNotices metas={[
+        periodsRes.meta,
+        extractedCandidatesRes.meta,
+        normalizedSnapshotsRes.meta,
+        coverageResponse.meta,
+        reconciliationResponse.meta,
+        identityResponse.meta,
+      ]} />
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Fundamentals: {company.ticker}</h1>
@@ -89,7 +102,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             {coverage ? (
               <p className="mt-1 text-sm text-gray-600">
                 {coverage.normalized_period_count} of {coverage.period_count} periods normalized ({coverage.coverage_percent}%).
-                {" "}{coverage.trust_ready_period_count} periods are ready for valuation use.
+                {" "}{coverage.trust_ready_period_count} periods pass normalization and currency checks.
+                {" "}Complete valuation inputs still need review.
               </p>
             ) : (
               <p className="mt-1 text-sm text-red-700">
@@ -98,17 +112,17 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             )}
           </div>
           {coverage && coverage.needs_backfill_count > 0 ? (
-            <form action={backfillNormalizedFinancialsAction}>
+            <RetainedActionForm label="Backfill normalized financials" action={backfillNormalizedFinancialsAction}>
               <input type="hidden" name="company_id" value={companyId} />
               <button className="secondary-button" title="Backfill normalized financials" type="submit">
                 <RefreshCw size={16} />
                 Backfill {coverage.needs_backfill_count} period{coverage.needs_backfill_count === 1 ? "" : "s"}
               </button>
-            </form>
+            </RetainedActionForm>
           ) : null}
         </div>
         {coverage && coverage.status !== "complete" && coverage.status !== "no_data" ? (
-          <div className="mt-4 overflow-x-auto">
+          <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial normalization coverage" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -142,11 +156,11 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         {reconciliation ? (
           <>
             <p className="mt-1 text-sm text-gray-600">
-              {reconciliation.exact_count} exact matches, {reconciliation.mismatch_count} mismatches, and{" "}
+              Among comparable normalized metrics: {reconciliation.exact_count} exact matches, {reconciliation.mismatch_count} mismatches, and{" "}
               {reconciliation.missing_normalized_count + reconciliation.normalized_only_count} coverage gaps.
             </p>
             {reconciliationIssues.length > 0 ? (
-              <div className="mt-4 overflow-x-auto">
+              <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial source reconciliation details" tabIndex={0}>
                 <table className="min-w-full divide-y divide-gray-200 text-sm">
                   <thead>
                     <tr className="text-left text-gray-600">
@@ -178,9 +192,13 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                   </tbody>
                 </table>
               </div>
-            ) : (
+            ) : reconciliation.exact_count > 0 ? (
               <p className="mt-3 text-sm text-green-700">
                 All comparable source metrics match the latest normalized snapshots.
+              </p>
+            ) : (
+              <p className="mt-3 text-sm text-gray-600">
+                No comparable reviewed metrics are available. Review and normalize source candidates before checking their agreement.
               </p>
             )}
           </>
@@ -219,7 +237,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           ) : null}
         </div>
         {identityReport && identityReport.periods.length > 0 ? (
-          <div className="mt-4 overflow-x-auto">
+          <div className="mt-4 overflow-x-auto" role="region" aria-label="Financial statement identity checks" tabIndex={0}>
             <table className="min-w-full divide-y divide-gray-200 text-sm">
               <thead>
                 <tr className="text-left text-gray-600">
@@ -237,7 +255,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                     <td className="py-2 pr-4 text-gray-900">{period.period_type} {period.year}</td>
                     <td className="px-4 py-2 text-gray-900">
                       {check.label}
-                      <span className="block text-xs text-gray-500">{check.formula}</span>
+                      <span className="block text-xs text-gray-500">{financialIdentityFormula(check.formula)}</span>
                     </td>
                     <td className={`px-4 py-2 ${check.status === "passed" ? "text-green-700" : check.status === "failed" ? "text-red-700" : "text-amber-700"}`}>
                       {check.status.replaceAll("_", " ")}
@@ -252,8 +270,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                       {check.delta !== null
                         ? `${check.delta.toLocaleString()} (tolerance ${check.tolerance?.toLocaleString()})`
                         : check.ambiguous_metrics.length > 0
-                          ? `Duplicate metrics: ${check.ambiguous_metrics.join(", ")}`
-                          : `Missing: ${check.missing_metrics.join(", ")}`}
+                          ? `Duplicate metrics: ${check.ambiguous_metrics.map(financialMetricLabel).join(", ")}`
+                          : `Missing: ${check.missing_metrics.map(financialMetricLabel).join(", ")}`}
                     </td>
                   </tr>
                 ))) }
@@ -274,9 +292,9 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           )}
 
           <div className="mt-4 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Financial periods" tabIndex={0}>
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {periods.length === 0 ? (
+                {!hasUsableData(periodsRes) ? <ErrorState message="Financial periods could not be loaded. Reload to retry." /> : periods.length === 0 ? (
                   <p className="text-sm text-gray-500">No financial periods found. (API ingestion needed)</p>
                 ) : (
                   <table className="min-w-full divide-y divide-gray-300">
@@ -309,14 +327,14 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                           </td>
                           <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                             <div className="flex justify-end gap-3">
-                              <form action={normalizeFinancialPeriodAction}>
+                              <RetainedActionForm label="Normalize financial period" action={normalizeFinancialPeriodAction}>
                                 <input type="hidden" name="company_id" value={companyId} />
                                 <input type="hidden" name="period_id" value={period.id} />
                                 <button type="submit" className="text-blue-600 hover:text-blue-900">
                                   Normalize
                                 </button>
-                              </form>
-                              <form action={async (data) => {
+                              </RetainedActionForm>
+                              <RetainedActionForm label="Review and save record" action={async (data) => {
                                 "use server";
                                 await deleteFinancialStatementPeriod(data, companyId.toString());
                               }}>
@@ -324,7 +342,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                                 <button type="submit" className="text-red-600 hover:text-red-900">
                                   Delete
                                 </button>
-                              </form>
+                              </RetainedActionForm>
                             </div>
                           </td>
                         </tr>
@@ -350,36 +368,57 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             </Link>
           </div>
           <div className="mt-4 flow-root">
-            <FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} />
+            {hasUsableData(extractedCandidatesRes) ? <FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} />
+              : <ErrorState message="Financial candidates could not be loaded. Reload to retry." />}
           </div>
         </div>
       </div>
 
       <div className="bg-white shadow sm:rounded-lg overflow-hidden">
         <div className="px-4 py-5 sm:p-6">
-          <h3 className="text-base font-semibold leading-6 text-gray-900">Valuation-Ready Normalized Metrics</h3>
+          <h3 className="text-base font-semibold leading-6 text-gray-900">Normalized Metrics</h3>
           <p className="text-sm text-gray-500">
-            Metrics mapped to Damodaran's standard framework for DCF input.
+            Check coverage and missing inputs before using these figures in a valuation.
           </p>
           <div className="mt-4 flow-root">
-            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Normalized financial metrics" tabIndex={0}>
               <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                {normalizedSnapshots.length === 0 ? (
+                {!hasUsableData(normalizedSnapshotsRes) ? <ErrorState message="Normalized metrics could not be loaded. Reload to retry." /> : normalizedSnapshots.length === 0 ? (
                   <p className="text-sm text-gray-500">No normalized snapshots found. Click "Normalize" on a period above.</p>
                 ) : (
                   <table className="min-w-full divide-y divide-gray-300">
                     <thead>
                       <tr>
-                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Period ID</th>
-                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Metrics Count</th>
+                        <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Period</th>
+                        <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Values and basis</th>
                         <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Last Updated</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {normalizedSnapshots.map((snapshot) => (
                         <tr key={snapshot.id}>
-                          <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">{snapshot.period_id}</td>
-                          <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{snapshot.metrics?.length || 0}</td>
+                          <td className="whitespace-nowrap py-4 pl-4 pr-3 align-top text-sm font-medium text-gray-900">
+                            {periods.find(period => period.id === snapshot.period_id)?.report_date ?? `Period ${snapshot.period_id}`}
+                          </td>
+                          <td className="px-3 py-4 align-top text-sm text-gray-700">
+                            {snapshot.metrics.length === 0 ? "No normalized metrics" : (
+                              <details>
+                                <summary className="cursor-pointer whitespace-nowrap font-medium text-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-600">
+                                  Show {snapshot.metrics.length} metrics and their basis
+                                </summary>
+                                <dl className="mt-3 w-80 space-y-4 break-words sm:w-96">
+                                  {snapshot.metrics.map(metric => (
+                                    <div key={metric.id}>
+                                      <dt className="font-semibold text-gray-900">{metric.metric_code.replaceAll("_", " ")}</dt>
+                                      <dd className="tabular-nums">{formatNumber(metric.value, 6)} {metric.unit ?? "Unit unavailable"}</dd>
+                                      <dd className="mt-1 text-xs">{metric.provenance_notes || "Source basis unavailable. Review the original filing before use."}</dd>
+                                      {metric.warnings && <dd className="mt-1 text-xs text-amber-800">Limitations: {metric.warnings}</dd>}
+                                    </div>
+                                  ))}
+                                </dl>
+                              </details>
+                            )}
+                          </td>
                           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{new Date(snapshot.updated_at).toLocaleString()}</td>
                         </tr>
                       ))}

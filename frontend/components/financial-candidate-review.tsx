@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { createRequestGate } from "@/lib/latest-request";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ExternalLink } from "lucide-react";
@@ -9,7 +10,8 @@ import {
   reviewFinancialCandidate,
   overrideFinancialCandidate,
   promoteFinancialCandidates,
-} from "@/lib/api";
+  listExtractedFinancialCandidates,
+} from "@/lib/api/financials";
 import { financialEvidenceHref, financialEvidenceLocatorLabel } from "@/lib/financial-evidence";
 
 export function FinancialCandidateReview({
@@ -28,6 +30,9 @@ export function FinancialCandidateReview({
   const [editUnit, setEditUnit] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+  const gate = useMemo(createRequestGate, [companyId]);
+  const busy = useRef(false);
+  useEffect(() => () => gate.invalidate(), [gate]);
 
   const unreviewedCount = candidates.filter((c) => c.review_status === "needs_review").length;
   const canPromote = candidates.some((c) => c.review_status === "reviewed" || c.review_status === "overridden");
@@ -41,45 +46,75 @@ export function FinancialCandidateReview({
   }, [promotionNoticeKey]);
 
   async function handleReview(candidateId: number, status: "needs_review" | "reviewed" | "rejected") {
+    if (busy.current) return;
+    const candidate = candidates.find(item => item.id === candidateId);
+    if (!candidate) return;
+    busy.current = true; setIsSubmitting(true);
+    const current = gate.begin();
     try {
       setError(null);
-      const updated = await reviewFinancialCandidate(candidateId, status);
-      setCandidates(candidates.map((c) => (c.id === candidateId ? updated : c)));
+      const updated = await reviewFinancialCandidate(candidateId, status, candidate.updated_at);
+      if (!current()) return;
+      setCandidates(rows => rows.map((c) => (c.id === candidateId ? updated : c)));
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update status");
-    }
+      if (current()) setError(err instanceof Error ? err.message : "Failed to update status");
+    } finally {busy.current = false; if (current()) setIsSubmitting(false);}
   }
 
   async function handleOverride(candidateId: number) {
-    if (typeof editValue !== "number" || !Number.isFinite(editValue) || !editUnit.trim()) return;
+    if (busy.current || typeof editValue !== "number" || !Number.isFinite(editValue) || !editUnit.trim()) return;
+    const candidate = candidates.find(item => item.id === candidateId);
+    if (!candidate) return;
+    busy.current = true; setIsSubmitting(true);
+    const current = gate.begin();
     try {
       setError(null);
-      const updated = await overrideFinancialCandidate(candidateId, editValue, editUnit.trim());
-      setCandidates(candidates.map((c) => (c.id === candidateId ? updated : c)));
+      const updated = await overrideFinancialCandidate(candidateId, editValue, editUnit.trim(), candidate.updated_at);
+      if (!current()) return;
+      setCandidates(rows => rows.map((c) => (c.id === candidateId ? updated : c)));
       setEditingId(null);
       setEditValue("");
       setEditUnit("");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to override value");
-    }
+      if (current()) setError(err instanceof Error ? err.message : "Failed to override value");
+    } finally {busy.current = false; if (current()) setIsSubmitting(false);}
   }
 
   async function handlePromote() {
+    if (busy.current) return;
+    busy.current = true;
+    const current = gate.begin();
     setIsSubmitting(true);
     try {
       setError(null);
       setNotice(null);
-      const result = await promoteFinancialCandidates(companyId);
+      const result = await promoteFinancialCandidates(companyId, candidates.filter(c => c.review_status === "reviewed" || c.review_status === "overridden"));
+      if (!current()) return;
       const successMessage = `Successfully promoted ${result.promoted_count} candidates.`;
       window.sessionStorage.setItem(promotionNoticeKey, successMessage);
       window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to promote candidates");
+      if (current()) setError(err instanceof Error ? err.message : "Failed to promote candidates");
     } finally {
-      setIsSubmitting(false);
+      busy.current = false;
+      if (current()) setIsSubmitting(false);
     }
+  }
+
+  async function reloadCandidates() {
+    if (busy.current) return;
+    busy.current = true; setIsSubmitting(true);
+    const current = gate.begin();
+    try {
+      const rows = await listExtractedFinancialCandidates(companyId);
+      if (!current()) return;
+      setCandidates(rows); setEditingId(null); setEditValue(""); setEditUnit(""); setError(null);
+      setNotice("Current candidates loaded. Review their source, value and unit before continuing.");
+      router.refresh();
+    } catch (err) {if (current()) setError(err instanceof Error ? err.message : "Candidates unavailable. Retry explicitly.");}
+    finally {busy.current = false; if (current()) setIsSubmitting(false);}
   }
 
   if (candidates.length === 0) {
@@ -88,7 +123,7 @@ export function FinancialCandidateReview({
         {error ? <p className="text-sm text-red-700" role="alert">{error}</p> : null}
         {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
         <p className="text-sm text-gray-500">
-          No extracted candidates yet. Add or select a filing, then run extraction.
+          No candidates awaiting review. Add or select a filing to extract more source entries.
         </p>
       </div>
     );
@@ -96,6 +131,8 @@ export function FinancialCandidateReview({
 
   return (
     <div className="space-y-4">
+      <fieldset disabled={isSubmitting} style={{display: "contents"}}>
+      <legend className="sr-only">Review extracted financial evidence</legend>
       {unreviewedCount > 0 && (
         <div className="rounded-md bg-yellow-50 p-4">
           <div className="flex">
@@ -113,10 +150,10 @@ export function FinancialCandidateReview({
         </div>
       )}
 
-      {error ? <p className="text-sm text-red-700">{error}</p> : null}
+      {error ? <div role="alert" className="text-sm text-red-700">{error} <button type="button" className="btn btn-secondary" onClick={() => void reloadCandidates()}>Reload candidates (discard unsaved correction)</button></div> : null}
       {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
 
-      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Extracted financial candidates" tabIndex={0}>
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <table className="min-w-full divide-y divide-gray-300">
             <thead>
@@ -159,6 +196,8 @@ export function FinancialCandidateReview({
                       <div className="flex flex-wrap items-center gap-2">
                         <input
                           type="number"
+                          step="any"
+                          aria-label="Corrected value"
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value === "" ? "" : Number(e.target.value))}
                           className="block w-24 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
@@ -244,7 +283,7 @@ export function FinancialCandidateReview({
                         </button>
                       </div>
                     )}
-                    {(candidate.review_status === "reviewed" || candidate.review_status === "overridden") && editingId !== candidate.id && (
+                    {["reviewed", "overridden", "rejected"].includes(candidate.review_status) && editingId !== candidate.id && (
                        <div className="flex gap-3">
                          <button
                            onClick={() => handleReview(candidate.id, "needs_review")}
@@ -274,6 +313,7 @@ export function FinancialCandidateReview({
           {isSubmitting ? "Promoting..." : "Promote Reviewed Candidates"}
         </button>
       </div>
+      </fieldset>
     </div>
   );
 }

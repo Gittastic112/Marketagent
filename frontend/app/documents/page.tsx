@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import {
   deleteRawDocumentWithState,
   updateRawDocument
@@ -38,13 +40,13 @@ export default async function DocumentsPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Source material" title="Raw Documents" status={`${documents.length} stored`} />
+        <PageHeader eyebrow="Source material" title="Raw Documents" status={hasUsableData(docsRes) ? `${documents.length} stored` : "Documents unavailable"} />
         <DataStateNotices
           metas={[docsRes.meta, companiesRes.meta, sourcesRes.meta]}
           mockMessage="One or more document inputs are using mock data. Treat affected source trails as placeholders."
         />
         <Panel title="Stored Documents">
-          {documents.length === 0 ? (
+          {!hasUsableData(docsRes) ? <ErrorState message="Documents could not be loaded. Reload to retry." /> : documents.length === 0 ? (
             <EmptyState label="No raw documents yet." />
           ) : (
             <div className="table-wrap">
@@ -71,7 +73,7 @@ export default async function DocumentsPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updateRawDocument} className="inline-form">
+                            <RetainedActionForm label="Update raw document" action={updateRawDocument} className="inline-form">
                               <input name="id" type="hidden" value={document.id} />
                               <SelectField defaultValue={document.source_id} id={`doc-source-${document.id}`} label="Source" name="source_id" required>
                                 {sourceOptions(sources)}
@@ -84,10 +86,17 @@ export default async function DocumentsPage() {
                               <TextField defaultValue={document.content_hash} id={`doc-hash-${document.id}`} label="Hash" name="content_hash" required />
                               <TextField className="field field-full" defaultValue={document.title} id={`doc-title-${document.id}`} label="Title" name="title" required />
                               <TextField className="field field-full" defaultValue={document.url ?? ""} id={`doc-url-${document.id}`} label="URL" name="url" type="url" />
+                              <TextField
+                                defaultValue={document.published_at?.slice(0, 16) ?? ""}
+                                id={`doc-published-${document.id}`}
+                                label="Source publication time"
+                                name="published_at"
+                                type="datetime-local"
+                              />
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           <a className="secondary-button" href={`/documents/${document.id}/sections`}>Sections &amp; Diffs</a>
                           <a className="secondary-button" href={`/documents/${document.id}/ai`}>AI Summaries</a>

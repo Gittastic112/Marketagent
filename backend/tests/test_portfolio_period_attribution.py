@@ -49,7 +49,8 @@ def test_period_price_attribution_uses_beginning_quantity_and_fx(db):
 
     result = calculate_period_attribution(db, portfolio.id, start.snapshot_date, end.snapshot_date)
 
-    assert result["calculation_status"] == "complete"
+    assert result["calculation_status"] == "partial"
+    assert "legacy_unverified_replay" in result["blockers"]
     assert result["total_change"] == 20
     assert result["price_movement"] == 20
     assert result["fx_impact"] == 0
@@ -57,8 +58,8 @@ def test_period_price_attribution_uses_beginning_quantity_and_fx(db):
     assert result["position_change"] == 0
     assert result["cash_change"] == 0
     assert result["unexplained_change"] == 0
-    assert result["blockers"] == []
-    assert result["confidence"] == "high"
+    assert result["blockers"] == ["legacy_unverified_replay"]
+    assert result["confidence"] == "low"
     assert "Total change" in result["formula"]
     assert result["source_snapshot_ids"] == [start.id, end.id]
 
@@ -128,7 +129,8 @@ def test_period_attribution_reconciles_position_and_internal_cash_changes(db):
     assert result["external_cash_flow"] == 0
     assert result["internal_cash_change"] == -100
     assert result["unexplained_change"] == 0
-    assert result["calculation_status"] == "complete"
+    assert result["calculation_status"] == "partial"
+    assert "legacy_unverified_replay" in result["blockers"]
 
 
 def test_period_attribution_separates_external_cash_flow(db):

@@ -1,7 +1,9 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices, PrototypeBadge } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
+import { hasUsableData } from "@/lib/data-state-meta";
 import type { NarrativeCluster, NarrativeClaim, NarrativeMention, EventRecord } from "@/lib/api";
 import { createNarrativeCluster, createNarrativeClaim, deleteNarrativeClusterWithState, extractNarratives } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
@@ -18,9 +20,9 @@ export default async function NarrativesPage() {
   try {
     const [clustersRes, eventsRes, claimsRes, mentionsRes] = await Promise.all([
       serverFetchApiResponse<NarrativeCluster[]>("/narrative-clusters"),
-      serverFetchApiResponse<EventRecord[]>("/events").catch(() => ({ data: [], meta: null })),
-      serverFetchApiResponse<NarrativeClaim[]>("/narrative-claims").catch(() => ({ data: [], meta: null })),
-      serverFetchApiResponse<NarrativeMention[]>("/narrative-mentions").catch(() => ({ data: [], meta: null })),
+      serverFetchApiResponse<EventRecord[]>("/events"),
+      serverFetchApiResponse<NarrativeClaim[]>("/narrative-claims"),
+      serverFetchApiResponse<NarrativeMention[]>("/narrative-mentions"),
     ]);
     const clusters = clustersRes.data || [];
     const events = eventsRes.data || [];
@@ -37,7 +39,7 @@ export default async function NarrativesPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Market Stories" title="Narrative Intelligence" badge={<PrototypeBadge />} status={`${clusters.length} active narratives`} />
+        <PageHeader eyebrow="Market Stories" title="Narrative Intelligence" badge={<PrototypeBadge />} status={hasUsableData(clustersRes) ? `${clusters.length} active narratives` : "Narratives unavailable"} />
         <DataStateNotices
           metas={narrativeMetas}
           mockMessage="One or more narrative panels are using mock data. Treat affected narrative claims as placeholders."
@@ -52,7 +54,7 @@ export default async function NarrativesPage() {
                 Extract narratives from recent events using AI.
               </p>
             </div>
-            <form action={extractNarratives}>
+            <RetainedActionForm label="Extract narratives" action={extractNarratives}>
               <label style={{ display: "flex", gap: "0.5rem", maxWidth: "28rem", marginBottom: "0.75rem", fontSize: "0.85rem" }}>
                 <input
                   type="checkbox"
@@ -63,29 +65,30 @@ export default async function NarrativesPage() {
                 <span>{AI_DISCLOSURES.narrativeExtraction}</span>
               </label>
               <button type="submit" className="button">Run Narrative Extraction</button>
-            </form>
+            </RetainedActionForm>
           </div>
         </Panel>
 
         {/* Create New Narrative Cluster */}
         <Panel title="Track a New Narrative">
-          <form action={createNarrativeCluster} className="form-grid">
+          <RetainedActionForm label="Create narrative cluster" resetOnSuccess action={createNarrativeCluster} className="form-grid">
             <TextField id="narrative-name" label="Narrative Name" name="name" placeholder="e.g. AI Capex Supercycle" required />
             <TextAreaField className="field field-wide" id="narrative-desc" label="Description" name="description" placeholder="Describe the market narrative or thesis being tracked" rows={2} />
             <div className="button-row">
               <button type="submit">Create Narrative</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
-        {clusters.length === 0 ? (
+        {!hasUsableData(clustersRes) ? <ErrorState message="Narratives could not be loaded. Reload to retry." /> : clusters.length === 0 ? (
           <Panel title="Narratives">
             <EmptyState label="No narratives being tracked yet. Create one above to start." />
           </Panel>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             {clusterDetails.map(({ cluster, claims, mentions }) => (
-              <Panel key={cluster.id} title={cluster.name}>
+              <div key={cluster.id} id={`narrative-${cluster.id}`} className="anchored-record">
+              <Panel title={cluster.name}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
                   <div>
                     {cluster.description && (
@@ -93,8 +96,8 @@ export default async function NarrativesPage() {
                     )}
                     <div style={{ display: "flex", gap: "1rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                       <span>Created {formatDate(cluster.created_at)}</span>
-                      <span>{claims.length} claim{claims.length !== 1 ? "s" : ""}</span>
-                      <span>{mentions.length} mention{mentions.length !== 1 ? "s" : ""}</span>
+                      <span>{hasUsableData(claimsRes) ? `${claims.length} claims` : "Claims unavailable"}</span>
+                      <span>{hasUsableData(mentionsRes) ? `${mentions.length} mentions` : "Mentions unavailable"}</span>
                     </div>
                   </div>
                   <DeleteRecordForm action={deleteNarrativeClusterWithState} recordId={cluster.id} />
@@ -105,7 +108,7 @@ export default async function NarrativesPage() {
                   <h4 style={{ fontSize: "0.85rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-secondary)", marginBottom: "0.75rem" }}>
                     Claims & Evidence
                   </h4>
-                  {claims.length === 0 ? (
+                  {!hasUsableData(claimsRes) ? <ErrorState message="Claims could not be loaded. Reload to retry." /> : claims.length === 0 ? (
                     <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontStyle: "italic" }}>No claims recorded yet.</p>
                   ) : (
                     <div className="brief-list">
@@ -119,7 +122,7 @@ export default async function NarrativesPage() {
                   )}
 
                   {/* Add Claim Form */}
-                  <form action={async (data) => {
+                  <RetainedActionForm label="Review and save record" action={async (data) => {
                     "use server";
                     const { createNarrativeClaim } = await import("@/app/actions");
                     data.set("cluster_id", cluster.id.toString());
@@ -137,7 +140,7 @@ export default async function NarrativesPage() {
                       style={{ flex: 1, fontSize: "0.85rem" }}
                     />
                     <button type="submit" className="secondary-button" style={{ fontSize: "0.85rem", whiteSpace: "nowrap" }}>+ Claim</button>
-                  </form>
+                  </RetainedActionForm>
                 </div>
 
                 {/* Mentions Section */}
@@ -145,7 +148,7 @@ export default async function NarrativesPage() {
                   <h4 style={{ fontSize: "0.85rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-secondary)", marginBottom: "0.75rem" }}>
                     Linked Mentions
                   </h4>
-                  {mentions.length === 0 ? (
+                  {!hasUsableData(mentionsRes) ? <ErrorState message="Mentions could not be loaded. Reload to retry." /> : mentions.length === 0 ? (
                     <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", fontStyle: "italic" }}>No mentions linked yet. Import events and link them to this narrative.</p>
                   ) : (
                     <div className="brief-list">
@@ -162,7 +165,7 @@ export default async function NarrativesPage() {
                                 {mention.context_text && <p style={{ fontSize: "0.85rem", margin: "0.25rem 0 0 0" }}>{mention.context_text}</p>}
                               </>
                             ) : (
-                              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Event #{mention.event_id} (context: {mention.context_text || "none"})</p>
+                              <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)" }}>Event #{mention.event_id} {hasUsableData(eventsRes) ? `(context: ${mention.context_text || "none"})` : "could not be loaded. Reload to retry."}</p>
                             )}
                             <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>Added {formatDate(mention.created_at)}</span>
                           </div>
@@ -172,6 +175,7 @@ export default async function NarrativesPage() {
                   )}
                 </div>
               </Panel>
+              </div>
             ))}
           </div>
         )}

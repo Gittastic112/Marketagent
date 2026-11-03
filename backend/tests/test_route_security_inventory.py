@@ -9,6 +9,12 @@ def test_every_application_route_is_explicitly_public_or_authenticated() -> None
     inventory = build_route_security_inventory(app)
 
     assert inventory
+    documented = {(method.upper(), path) for path, methods in app.openapi()["paths"].items()
+        for method in methods if method in {"get", "post", "put", "patch", "delete", "head", "options"}}
+    # Compatibility endpoints deliberately hidden from OpenAPI remain protected.
+    inventoried = {(item.method, item.path) for item in inventory}
+    assert documented <= inventoried
+    assert ("POST", "/calculate") in inventoried
     assert all(item.classification in {"public", "authenticated"} for item in inventory)
     assert not [
         item
@@ -21,6 +27,7 @@ def test_every_application_route_is_explicitly_public_or_authenticated() -> None
         if item.classification == "public"
     } == {
         ("GET", "/api/health"),
+        ("GET", "/api/readiness"),
         ("GET", "/health"),
     }
 
@@ -30,6 +37,7 @@ def test_direct_backend_requests_cannot_bypass_authentication() -> None:
     try:
         with TestClient(app) as client:
             assert client.get("/api/health").status_code == 200
+            assert client.get("/api/readiness").status_code in {200, 503}
             assert client.get("/health").status_code == 200
             assert client.get("/companies").status_code == 401
             assert client.post("/companies", json={}).status_code == 401

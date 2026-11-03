@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { PageHeader, Panel, ErrorState, LoadingState } from "@/components/page";
-import { fetchApiResponse, postApi, postFormApi } from "@/lib/api";
+import { fetchApiResponse, postApi, postFormApi, type ApiErrorDetail } from "@/lib/api";
 
 type DamodaranFile = {
   id: number;
@@ -26,7 +26,7 @@ type DamodaranFile = {
 export default function AdminDamodaranPage() {
   const [files, setFiles] = useState<DamodaranFile[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<any[] | null>(null);
+  const [error, setError] = useState<ApiErrorDetail[] | null>(null);
 
   // Upload Form State
   const [uploading, setUploading] = useState(false);
@@ -50,8 +50,8 @@ export default function AdminDamodaranPage() {
       const res = await fetchApiResponse<DamodaranFile[]>("/api/admin/damodaran/files");
       setFiles(res.data || []);
       setError(res.errors?.length ? res.errors : null);
-    } catch (err: any) {
-      setError([{ message: err.message || "Failed to fetch files" }]);
+    } catch (err: unknown) {
+      setError([{ code: "damodaran_files_failed", message: err instanceof Error ? err.message : "Failed to fetch files" }]);
     } finally {
       setLoading(false);
     }
@@ -75,8 +75,8 @@ export default function AdminDamodaranPage() {
       setUploadSuccess(`Parsed and recorded metadata for ${fileToUpload.name}. Typed benchmark rows were not imported.`);
       setFileToUpload(null);
       fetchFiles(); // Refresh list
-    } catch (err: any) {
-      setUploadError(err.message);
+    } catch (err: unknown) {
+      setUploadError(err instanceof Error ? err.message : "Failed to inspect workbook");
     } finally {
       setUploading(false);
     }
@@ -89,8 +89,8 @@ export default function AdminDamodaranPage() {
       setRollbackMessage(`Import #${fileId} was rolled back.`);
       setRollbackTarget(null);
       await fetchFiles();
-    } catch (err: any) {
-      setRollbackError(`Failed to rollback: ${err.message}`);
+    } catch (err: unknown) {
+      setRollbackError(`Failed to rollback: ${err instanceof Error ? err.message : "Unknown error"}`);
     }
   };
 
@@ -117,8 +117,9 @@ export default function AdminDamodaranPage() {
 
         <form onSubmit={handleUpload} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Dataset Type</label>
+            <label className="text-sm font-medium" htmlFor="damodaran-dataset-code">Dataset Type</label>
             <select
+              id="damodaran-dataset-code"
               value={datasetCode}
               onChange={(e) => setDatasetCode(e.target.value)}
               className="border border-gray-300 rounded p-2 text-sm w-full max-w-xs"
@@ -131,8 +132,9 @@ export default function AdminDamodaranPage() {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Excel File</label>
+            <label className="text-sm font-medium" htmlFor="damodaran-workbook">Excel File</label>
             <input
+              id="damodaran-workbook"
               type="file"
               accept=".xls,.xlsx"
               onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
@@ -158,7 +160,7 @@ export default function AdminDamodaranPage() {
         ) : files.length === 0 ? (
           <p className="text-sm text-gray-500 italic p-4">No datasets have been imported yet.</p>
         ) : (
-          <div className="overflow-x-auto">
+          <div tabIndex={0} className="overflow-x-auto">
             <table className="w-full text-sm text-left border-collapse">
               <thead className="bg-gray-50 text-gray-700">
                 <tr>

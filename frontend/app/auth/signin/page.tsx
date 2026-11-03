@@ -79,7 +79,7 @@ function SignInForm() {
     <div className="page-container" style={{ display: "grid", minHeight: "70vh", placeItems: "center" }}>
       <form className="panel" onSubmit={submit} style={{ display: "grid", gap: "16px", maxWidth: "400px", padding: "24px", width: "100%" }}>
         <div>
-          <h1 style={{ fontSize: "24px", margin: 0 }}>Sign in</h1>
+          <h1 style={{ fontSize: "28px", margin: 0 }}>Sign in</h1>
         </div>
         <div className="field">
           <label htmlFor="username">Username</label>

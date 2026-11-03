@@ -103,11 +103,14 @@ def test_weighted_industry_mix_persists_and_drives_blended_autofill(client, db) 
         client.post(f"/companies/{company.id}/valuation-models/autofill", json={"base_assumptions": {}})
     )
     assert draft["assumptions"]["target_operating_margin"] == 0.16
-    assert draft["assumptions"]["sales_to_capital_ratio"] == 1.4
+    # 60 revenue / 1.0 + 40 revenue / 2.0 requires 80 capital in total.
+    assert draft["assumptions"]["sales_to_capital_ratio"] == pytest.approx(1.25)
     provenance = draft["provenance"]["target_operating_margin"]
     assert provenance["source_type"] == "industry_benchmark_blend"
     assert provenance["claim_type"] == "Estimate"
     assert provenance["industry_mix_basis"] == "revenue"
+    assert provenance["aggregation_version"] == 2
+    assert provenance["aggregation_methods"]["reinvestmentPriors"]["suggestedSalesToCapital"] == "revenue_weighted_harmonic_ratio"
     assert draft["source_metadata"]["industry_mix_signature"]
 
 
@@ -188,3 +191,32 @@ def test_existing_draft_refreshes_when_mix_weights_change_but_primary_industry_d
     assert reopened["id"] == first["id"]
     assert reopened["assumptions_json"]["target_operating_margin"] == pytest.approx(0.17)
     assert reopened["source_metadata_json"]["industry_mix_signature"] != first_signature
+
+
+def test_old_blend_draft_reopens_with_correct_ratio_and_preserves_manual_inputs(client, db) -> None:
+    import hashlib
+    import json
+    from app.models.dcf import ValuationSetupDraft
+    from app.services.industry_mapping import IndustryMappingService
+
+    company = _company_and_benchmarks(db)
+    assert client.put(f"/companies/{company.id}/industry-allocations", json=_payload()).status_code == 200
+    first = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    draft = db.get(ValuationSetupDraft, first["id"])
+    context = IndustryMappingService.industry_mix_context(db, company.id)
+    old_payload = {key: context[key] for key in ("basis", "as_of_date", "source_document_id", "allocations")}
+    old_signature = hashlib.sha256(json.dumps(old_payload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    draft.source_metadata_json = {**draft.source_metadata_json, "industry_mix_signature": old_signature}
+    draft.assumptions_json = {**draft.assumptions_json, "sales_to_capital_ratio": 1.4, "target_operating_margin": 0.23}
+    draft.edited_fields_json = ["target_operating_margin"]
+    draft.reviewed_fields_json = ["target_operating_margin", "sales_to_capital_ratio"]
+    db.commit()
+
+    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+
+    assert reopened["id"] == first["id"]
+    assert reopened["assumptions_json"]["sales_to_capital_ratio"] == pytest.approx(1.25)
+    assert reopened["assumptions_json"]["target_operating_margin"] == 0.23
+    assert "sales_to_capital_ratio" not in reopened["reviewed_fields_json"]
+    assert "target_operating_margin" in reopened["reviewed_fields_json"]
+    assert reopened["source_metadata_json"]["industry_mix_signature"] != old_signature

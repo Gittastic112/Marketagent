@@ -1,13 +1,12 @@
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.ai_errors import ai_output_meta, public_ai_error
 from app.api.dependencies import get_current_user
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.db.session import get_db
 from app.models.ai import AiOutput
 from app.models.company import Company
@@ -15,18 +14,11 @@ from app.models.dcf import DcfAssumptionSet, DcfOutput, ValuationModel
 from app.services.ai_contract import AIExecutionError, require_privacy_disclosure
 from app.services.memo_writer import ValuationMemoAgent
 from app.services.narrative_to_numbers import NarrativeToNumbersAgent
+from app.schemas.valuation_ai import NarrativeRequest, ValuationAIRequest as MemoRequest
+from app.services.valuation_ai_basis import explanation_evidence, latest_scenario, require_memo_basis, utc, valuation_basis
 
 
 router = APIRouter()
-
-
-class NarrativeRequest(BaseModel):
-    narrative_text: str
-    privacy_disclosure_version: str
-
-
-class MemoRequest(BaseModel):
-    privacy_disclosure_version: str
 
 
 def get_owned_valuation(db: Session, valuation_id: int, user_id: str) -> ValuationModel:
@@ -46,15 +38,24 @@ def get_scenario(
     *,
     valuation_id: int,
     scenario: str,
+    request: MemoRequest | None = None,
+    assumption_set_id: int | None = None,
 ) -> DcfAssumptionSet:
-    assumption_set = db.scalar(
+    latest = latest_scenario(db, valuation_id, scenario)
+    assumption_set = latest if assumption_set_id is None else db.scalar(
         select(DcfAssumptionSet).where(
             DcfAssumptionSet.valuation_model_id == valuation_id,
             DcfAssumptionSet.scenario == scenario,
+            DcfAssumptionSet.id == assumption_set_id,
         )
     )
     if assumption_set is None:
         raise HTTPException(status_code=404, detail="Scenario not found")
+    if request and request.assumption_set_id is not None and (
+        request.assumption_set_id != assumption_set.id
+        or utc(request.assumptions_updated_at) != utc(assumption_set.updated_at)
+    ):
+        raise HTTPException(status_code=409, detail="Saved assumptions changed. Reload the latest version before requesting AI. No provider request was sent.")
     return assumption_set
 
 
@@ -67,7 +68,7 @@ def narrative_to_numbers(
     current_user: dict = Depends(get_current_user),
 ) -> ApiResponse[dict[str, Any]]:
     valuation = get_owned_valuation(db, valuation_id, current_user["id"])
-    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario)
+    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario, request=request)
     current_assumptions = {
         "revenue_growth": assumption_set.revenue_growth_years_json,
         "target_margin": assumption_set.target_operating_margin,
@@ -83,11 +84,13 @@ def narrative_to_numbers(
             assumption_set_id=assumption_set.id,
             narrative_text=request.narrative_text,
             current_assumptions=current_assumptions,
+            saved_basis=valuation_basis(assumption_set),
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc
     assert agent.last_ai_output is not None
-    return ApiResponse(data=suggestions, meta=ai_output_meta(agent.last_ai_output))
+    return ApiResponse(data={**suggestions, "evidence": explanation_evidence(db, agent.last_ai_output, assumption_set)},
+                       meta=ai_output_meta(agent.last_ai_output))
 
 
 @router.post("/valuation/{valuation_id}/scenarios/{scenario}/ai/memo")
@@ -100,7 +103,11 @@ def generate_valuation_memo(
 ) -> ApiResponse[dict[str, Any]]:
     valuation = get_owned_valuation(db, valuation_id, current_user["id"])
     company = db.get(Company, valuation.company_id)
-    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario)
+    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario, request=request)
+    try:
+        require_memo_basis(assumption_set)
+    except ValueError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     output = db.scalar(select(DcfOutput).where(DcfOutput.assumption_set_id == assumption_set.id))
     if output is None:
         raise HTTPException(
@@ -126,6 +133,8 @@ def generate_valuation_memo(
             "provider_name": agent.last_ai_output.provider_name,
             "is_mock": agent.last_ai_output.is_mock,
             "confidence_label": agent.last_ai_output.confidence_label,
+            "created_at": agent.last_ai_output.created_at,
+            "evidence": explanation_evidence(db, agent.last_ai_output, assumption_set),
         },
         meta=ai_output_meta(agent.last_ai_output),
     )
@@ -135,11 +144,12 @@ def generate_valuation_memo(
 def get_valuation_memo(
     valuation_id: int,
     scenario: str,
+    assumption_set_id: int | None = None,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ) -> ApiResponse[dict[str, Any]]:
     valuation = get_owned_valuation(db, valuation_id, current_user["id"])
-    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario)
+    assumption_set = get_scenario(db, valuation_id=valuation.id, scenario=scenario, assumption_set_id=assumption_set_id)
     ai_output = db.scalar(
         select(AiOutput)
         .where(
@@ -161,6 +171,7 @@ def get_valuation_memo(
             "provider_name": ai_output.provider_name,
             "is_mock": ai_output.is_mock,
             "confidence_label": ai_output.confidence_label,
+            "evidence": explanation_evidence(db, ai_output, assumption_set),
         },
         meta=ai_output_meta(ai_output),
     )

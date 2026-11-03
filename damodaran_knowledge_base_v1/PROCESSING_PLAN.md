@@ -1,6 +1,14 @@
 # Damodaran Knowledge Base Processing Plan
 
-Last reconciled: `2026-08-08`
+Documentation reconciled: `2026-09-22`. Earlier intake history remains below.
+
+The September 22 US intake adds three unique originals and verifies three
+duplicates: 64 canonical raw files, 64 catalog rows, 44 processing-ledger rows,
+and no pending inbox files. Existing source bytes remain unchanged. Six dated
+US mirrors are scoped separately from India; see
+[the intake reference](reference/us_benchmark_intake_2026.md). No company mapping
+or doctrine was auto-approved. Application counts and tests below are historical;
+use [application Current State](../docs/00-current-state.md) for newer evidence.
 
 ## Objective
 
@@ -8,7 +16,7 @@ Maintain a source-backed valuation knowledge layer that an agent can enter in
 minutes, audit deterministically, and use without confusing doctrine, dated
 benchmarks, empirical estimates, or company-specific examples.
 
-## Current checkpoint
+## Historical intake checkpoint
 
 The repository did not contain the required `raw/inbox/` directory. The folder
 `Data for Model/` was therefore processed as the legacy intake location.
@@ -62,7 +70,7 @@ The literal `raw/inbox/` is now empty and ready for future intake.
 - added a deterministic integrity auditor and focused unit tests
 - rewrote the start/index/manifest docs around the actual repository state
 
-## Next implementation phases
+## Application phases and historical evidence
 
 ### Phase A: Resolve unsafe application regressions
 
@@ -155,7 +163,7 @@ Completed slice on `2026-08-08`:
 - [x] live idempotence proof for eleven importers and Data Health mirror-hash
   visibility
 
-Current active versions are Capex `#39`, ROE `#40`, Margin `#41`, Working
+In that historical database, active versions were Capex `#39`, ROE `#40`, Margin `#41`, Working
 Capital `#42`, Dividend `#43`, FCFE `#44`, Volatility `#45`, PE `#46`, PBV
 `#47`, PS `#48`, EV/EBITDA `#49`, and Country Statistics `#50`. Active typed
 provenance is complete for twelve current sources, with no partial, missing, or
@@ -163,7 +171,7 @@ mismatched active source. Current source-specific typed replacement paths are
 closed. New analytical breadth still requires an exact source contract and the
 same preserved-version tests.
 
-Do not mark the two unchecked phase-wide items complete until every approved
+Do not mark the unchecked phase-wide items complete until every approved
 source-specific importer uses the preserved-version contract. In particular,
 do not infer a historical source hash by hashing today's mirror.
 
@@ -202,7 +210,6 @@ For every future inbox batch:
 From the repository root:
 
 ```bash
-cd "/Users/mananmaheshwari/Documents/Codex/Market Intelligence App/market-intelligence-md-files copy"
 python3 damodaran_knowledge_base_v1/tools/audit_kb.py
 sed -n '1,220p' damodaran_knowledge_base_v1/INDEX.md
 sed -n '1,260p' damodaran_knowledge_base_v1/AGENTS.md

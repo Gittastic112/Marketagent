@@ -1,4 +1,6 @@
-import { expect, type Page } from "@playwright/test";
+import { expect, type BrowserContext, type Page } from "@playwright/test";
+
+let authenticatedCookies: Awaited<ReturnType<BrowserContext["cookies"]>> | null = null;
 
 type BackendOptions = {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -14,12 +16,22 @@ export async function signIn(page: Page): Promise<void> {
     );
   }
 
+  // Authenticate through the UI once per worker. Each test still gets a fresh
+  // context, without repeatedly hitting the normal sign-in throttle.
+  if (authenticatedCookies) {
+    await page.context().addCookies(authenticatedCookies);
+    await page.goto("/");
+    await expect(page).toHaveURL("/");
+    return;
+  }
+
   await page.goto("/auth/signin");
   await expect(page.getByRole("button", { name: "Sign in" })).toBeEnabled();
   await page.getByLabel("Username").fill(username);
   await page.getByLabel("Password").fill(password);
   await page.getByRole("button", { name: "Sign in" }).click();
   await expect(page).toHaveURL("/");
+  authenticatedCookies = await page.context().cookies();
 }
 
 export async function backendData<T>(
@@ -27,10 +39,16 @@ export async function backendData<T>(
   path: string,
   options: BackendOptions = {},
 ): Promise<T> {
+  const method = options.method || "GET";
   const response = await page.request.fetch(`/api/backend${path}`, {
-    method: options.method || "GET",
+    method,
     data: options.data,
-    headers: { accept: "application/json" },
+    // APIRequestContext does not add the browser's Origin header automatically.
+    // Fixture mutations must obey the same origin boundary as real UI actions.
+    headers: {
+      accept: "application/json",
+      ...(method === "GET" ? {} : { origin: new URL(page.url()).origin }),
+    },
   });
   const body = await response.json().catch(() => null);
   expect(
@@ -38,7 +56,16 @@ export async function backendData<T>(
     `Backend ${options.method || "GET"} ${path} failed: ${JSON.stringify(body)}`,
   ).toBeTruthy();
   expect(body?.errors || []).toEqual([]);
+  if (response.status() === 204) return undefined as T;
   return body.data as T;
+}
+
+export async function expandDraftSections(page: Page): Promise<void> {
+  await page.locator("details.valuation-draft-group").first().waitFor({ state: "visible" });
+  const closedSections = page.locator("details.valuation-draft-group:not([open]) > summary");
+  while (await closedSections.count()) {
+    await closedSections.first().click();
+  }
 }
 
 export async function createCompany(

@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.models.decision_journal import DecisionLog, OutcomeReview
 from typing import Dict, Any
@@ -40,6 +42,10 @@ class ForecastLearningEngine:
         """
         Creates an OutcomeReview for a past decision to serve as a structured calibration dataset.
         """
+        # Serialize outcome creation so an old tab cannot replace an existing review.
+        db.scalar(select(DecisionLog).where(DecisionLog.id == decision_log_id).with_for_update())
+        if db.scalar(select(OutcomeReview.id).where(OutcomeReview.decision_log_id == decision_log_id)) is not None:
+            raise HTTPException(status_code=409, detail="This decision already has an outcome review. Reload to inspect the saved review.")
         review = OutcomeReview(
             decision_log_id=decision_log_id,
             what_happened=outcome_data.get("what_happened", ""),

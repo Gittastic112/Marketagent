@@ -1,0 +1,344 @@
+{
+  "audit_date": "2026-10-10",
+  "scripts": [
+    {
+      "path": "append_data_states.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 3130,
+      "sha256": "35bd779eb8afcf9327defa7dc3082b91767eb277fce0401c84532d6653f88eba",
+      "calls": [
+        "f.write",
+        "open"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/append_data_states.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "check_imports.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 2832,
+      "sha256": "a589d1c354be2d6c1f0fd4a19f0398d1dce52945f91a483b62295e08b2be7bae",
+      "calls": [
+        "ast.parse",
+        "ast.walk",
+        "check_imports",
+        "errors.append",
+        "exports.add",
+        "f.read",
+        "file.endswith",
+        "get_exports",
+        "isinstance",
+        "module.replace",
+        "module.startswith",
+        "open",
+        "os.path.exists",
+        "os.path.join",
+        "os.walk",
+        "print",
+        "set",
+        "tf.read"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/check_imports.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "create_table.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 974,
+      "sha256": "1009daefab0da9dbd2f9dfa20fd5a0af23cc82e194318054d4fa7e014491bf54",
+      "calls": [
+        "conn.execute",
+        "create_engine",
+        "engine.begin",
+        "load_dotenv",
+        "os.environ.get",
+        "print",
+        "text"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/create_table.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "reset_db.sh",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 990,
+      "sha256": "7b67f111b842148e38bdb2b729b10023485691e9826a78a868ffe4ac8ac53ef1",
+      "calls": [],
+      "destructive_markers": [
+        "down -v"
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/reset_db.sh.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "run_alembic.py",
+      "tracked": true,
+      "last_commit": "691bc63 feat: complete Phase 1, Phase 3, and Phase 4 of runbook (backend)",
+      "bytes": 373,
+      "sha256": "01411519dc6e074d7ce351fe4712648aa71fcc77e0d01d98cebd10bf0ed122ae",
+      "calls": [
+        "CommandLine",
+        "CommandLine().main"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/run_alembic.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "split_agents.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 1866,
+      "sha256": "27529d8368fe16cd65b9699539ef08b8eac67db005c0c500a61a528b35f67a48",
+      "calls": [
+        "content.find",
+        "content.replace",
+        "f.read",
+        "f.write",
+        "get_section",
+        "open",
+        "os.makedirs",
+        "print",
+        "remove_section"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/split_agents.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 147,
+      "sha256": "1a35b2bb07c4db6df02287f5b8e34cde3c34510d55b20074193ba6bd5b426f6a",
+      "calls": [
+        "e.read",
+        "print",
+        "urllib.request.urlopen",
+        "urllib.request.urlopen('http://127.0.0.1:8000/api/health').read"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/test.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_db.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 1107,
+      "sha256": "aba3ba788828958fae9a3f1def46536c91934521fc32156ac5985fae18f55c95",
+      "calls": [
+        "SessionLocal",
+        "create_engine",
+        "db.scalars",
+        "db.scalars(select(Company)).all",
+        "db.scalars(select(PortfolioHolding)).all",
+        "os.path.dirname",
+        "os.path.join",
+        "print",
+        "select",
+        "sessionmaker",
+        "sys.path.append",
+        "traceback.print_exc",
+        "type"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_db.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_endpoints.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 342,
+      "sha256": "60a834908ad3034fbbcf49d6dbe4d867bba447f817f143543e7cea57528df135",
+      "calls": [
+        "print",
+        "urllib.request.urlopen"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/test_endpoints.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_health.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 710,
+      "sha256": "7ced487662b9eeb2c053fcd4b75a11caf2f1522e59ab0fc348a12ff18708c897",
+      "calls": [
+        "print",
+        "s.close",
+        "s.connect",
+        "s.recv",
+        "s.sendall",
+        "socket.socket",
+        "urllib.request.Request"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_health.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_imports.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 357,
+      "sha256": "b8e2f309c1c2533563549b54fffc6143dce4a518a7956dda11e419cd79254f32",
+      "calls": [
+        "os.path.abspath",
+        "print",
+        "sys.path.append",
+        "traceback.print_exc"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_imports.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_main.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 104,
+      "sha256": "f5925a4ece254b1f4a6958624fe6391339051585b2e8a04354a6df1f17a1e46f",
+      "calls": [
+        "print",
+        "sys.path.append"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_main.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_models.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 237,
+      "sha256": "22584ec515062dfbd84b87a5d1e1092c6f017d60c6622cdbc94da1cd5a4a332f",
+      "calls": [
+        "print",
+        "sys.path.append",
+        "traceback.print_exc"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_models.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_pydantic.py",
+      "tracked": true,
+      "last_commit": "691bc63 feat: complete Phase 1, Phase 3, and Phase 4 of runbook (backend)",
+      "bytes": 369,
+      "sha256": "35cf9177b7776ca1eb1b885afb12f2ee97473578efd2850c218aa44c124457cc",
+      "calls": [
+        "MySettings",
+        "SettingsConfigDict",
+        "print",
+        "sys.exit"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_pydantic.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "test_schemas.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 226,
+      "sha256": "ecff4521fd76800f60f26ef3112b7e5761e4a2e05de23c333796f050ad4d2a2e",
+      "calls": [
+        "ApiMeta",
+        "ApiMeta().model_dump",
+        "Field",
+        "print"
+      ],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/test_schemas.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "frontend/fetch_test.js",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 286,
+      "sha256": "ffaa60f2982f173cdb1cda7070a549103aa30063188cf2465e7a513b4ba1e835",
+      "calls": [],
+      "destructive_markers": [],
+      "retained_at": "scripts/retired/local/2026-10-10/frontend/fetch_test.js.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "frontend/rewrite_api.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 713,
+      "sha256": "dfa01218135a618f7de2c31245cbcd41f5d8f6b49dec925ef3915bb6f3f21aa1",
+      "calls": [
+        "f.read",
+        "f.write",
+        "match.group",
+        "open",
+        "re.sub",
+        "return_type.startswith"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/frontend/rewrite_api.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    },
+    {
+      "path": "frontend/rewrite_server_api.py",
+      "tracked": false,
+      "last_commit": "",
+      "bytes": 2364,
+      "sha256": "7c0850b8ae1dfeafd5dbcebb97f9c15fcca150a1998ff60a716ab430d3118081",
+      "calls": [
+        "f.read",
+        "f.write",
+        "open",
+        "re.sub"
+      ],
+      "destructive_markers": [
+        "open("
+      ],
+      "retained_at": "scripts/retired/local/2026-10-10/frontend/rewrite_server_api.py.txt",
+      "current_callers": [],
+      "classification": "retired one-off diagnostic or rewrite recipe; not current runtime/test tooling"
+    }
+  ]
+}

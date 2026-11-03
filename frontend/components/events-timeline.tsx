@@ -44,7 +44,7 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
               <div style={{ fontWeight: 600, color: "var(--text)" }}>
                 {event.company_id ? (
-                  <Link href={`/companies/${event.company_id}`} style={{ color: "var(--accent)", marginRight: "0.5rem" }}>
+                  <Link href={`/companies/${event.company_id}`} style={{ color: "var(--accent)", marginRight: "0.5rem", textDecoration: "underline" }}>
                     {event.company_id} {/* Ideally we'd map company_id to ticker here */}
                   </Link>
                 ) : null}

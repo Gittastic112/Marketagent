@@ -1,0 +1,647 @@
+{
+  "schema_version": 1,
+  "reviewed_at": "2026-11-02T20:49:11.795396+00:00",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "independent_human_certification": false,
+  "scope": "Source-backed historical financial inputs and explicit carrying-value research/demo proxies; no saved model promotion or current valuation claim.",
+  "source_snapshot_path": "output/milestones/valuation-browser-20261102/r2/normal-inputs-after.json",
+  "source_snapshot_sha256": "10d9f77e0e8ae39ce212752f4606f8e73681ba7ba55e85027fa20c76cc0dc8f0",
+  "sources": {
+    "RELIANCE-2026-direct": {
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+      "verified_sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/RELIANCE-2026-direct.txt",
+      "extracted_text_sha256": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737"
+    },
+    "BHARTIARTL-2026": {
+      "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/BHARTIARTL-2026.pdf",
+      "verified_sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/BHARTIARTL-2026.txt",
+      "extracted_text_sha256": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1"
+    }
+  },
+  "companies": [
+    {
+      "ticker": "RELIANCE",
+      "company_id": 7,
+      "decision_id": "M06-IN-INPUTS-20261102-RELIANCE",
+      "source_input_signature": "e743cb87498c0d7a7de829cea2a1d053146e9bb8bf447142a92a50c1f3f61c30",
+      "latest_period_id": 23,
+      "source_as_of": "2026-03-31",
+      "source_id": "RELIANCE-2026-direct",
+      "assumptions_patch": {
+        "starting_revenue": 10756750000000,
+        "current_operating_margin": 0.11273014618727775,
+        "cash": 1459770000000,
+        "debt": 4789350000000,
+        "operating_leases": 235790000000,
+        "cross_holdings": 2483320000000,
+        "minority_interests": 1818360000000,
+        "book_value_of_equity": 9040300000000,
+        "net_income": 807750000000,
+        "depreciation": 576880000000,
+        "preferred_stock": 0,
+        "employee_options_value": null,
+        "diluted_shares": null,
+        "current_market_price": null,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR"
+      },
+      "reviewed_fields": [
+        "starting_revenue",
+        "current_operating_margin",
+        "cash",
+        "debt",
+        "operating_leases",
+        "cross_holdings",
+        "minority_interests",
+        "book_value_of_equity",
+        "net_income",
+        "depreciation",
+        "preferred_stock",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "rejected_fields": {
+        "employee_options_value": "Outstanding parent and Jio awards invalidate zero; current claim value and consistent denominator unavailable.",
+        "diluted_shares": "Annual weighted EPS denominator does not establish a March 31/current fully diluted denominator; issued shares and awards need one consistent treatment.",
+        "current_market_price": "Stored quote is a different-date comparison and not approved for the historical financial review."
+      },
+      "review_status": "source_and_explicit_historical_proxy_review_complete; valuation_promotion_withheld",
+      "forecast_fields_reviewed": false,
+      "source_locators": [
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            114
+          ],
+          "exact_text_anchor": "Payable to Department of Telecommunication"
+        },
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            125
+          ],
+          "exact_text_anchor": "Gross Debt 3,74,421"
+        },
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            101
+          ],
+          "exact_text_anchor": "Total Expenses 9,81,475"
+        },
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            77,
+            117
+          ],
+          "exact_text_anchor": "Total 9,07,052 1,65,824"
+        },
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            71,
+            111
+          ],
+          "exact_text_anchor": "13,53,24,72,634 Equity Shares"
+        },
+        {
+          "source_id": "RELIANCE-2026-direct",
+          "pdf_pages": [
+            129
+          ],
+          "exact_text_anchor": "External Turnover 6,58,991"
+        }
+      ],
+      "rationale_and_limits": [
+        "Historical March 31 2026 INR carrying-basis review. Debt includes the interest-bearing spectrum deferred payment principal, which is separate from borrowings in this issuer. Current deferred amount 4,962 crore is within other financial liabilities and is added once; lease liabilities remain separate.",
+        "Cash is the reported cash-and-equivalents balance used as a historical carrying proxy, not a claim that all cash is surplus or distributable. Cross-holdings adopts the separate current plus noncurrent investment carrying amounts as a historical proxy, not their current fair value. These do not overlap the balance-sheet cash line. Associates/JV carrying investments are included in the report's total; no extra 16,226 crore addition.",
+        "Minority interests use the reported consolidated carrying value as an explicit historical proxy, not market value. Parent book equity = issued equity capital plus other equity = total equity less NCI.",
+        "Reported operating EBIT excludes all financial/other income and after-tax associate profit. Segment result is not interchangeable with this EBIT because its footnote includes interest/other income. Margin is the calculated reported margin, not a forecast target.",
+        "Preference-share capital is authorized but the issued/subscribed/paid-up table lists only ordinary equity and its total. Zero is accepted for the parent's issued preferred-stock claim only; subsidiary claims and other financial liabilities are not certified absent.",
+        "Lease liability is explicitly separate. No duplicate full lease-expense add-back is approved because the statements already capitalize right-of-use leases and disclose D&A/finance cost separately. Forecast reinvestment must still fund replacement lease rights; this patch does not approve an operating lease forecast.",
+        "Ordinary shares issued March 31 were 13,532,472,634; annual diluted EPS used 13,532,736,424 weighted shares. Those are different bases. Parent options outstanding 907,052 at INR10 exercise and Jio awards 10,280,000 are nonzero; grant-date values are not valuation-date award claims. No current diluted denominator or zero award deduction is approved.",
+        "Existing broad Diversified comparison remains a provisional taxonomy. The five external gross turnover amounts sum to 1,175,919 crore; the five GST rows sum to 100,244 crore and internal turnover to 138,114 crore. Subtracting GST from external gross mechanically reconciles 1,075,675 crore but the source does not expressly allocate the GST row between external/internal sales. Do not install those inferred net-external weights."
+      ],
+      "preserve_user_edits": true,
+      "full_model_promotion_authorized": false,
+      "field_basis": {
+        "starting_revenue": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "current_operating_margin": {
+          "claim_type": "Calculation",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "(reported revenue - operating expenses including D&A and exceptional charges, excluding finance/other income/associate profit) / reported revenue. No forecast assertion.",
+          "canonical_unit": "fraction"
+        },
+        "cash": {
+          "claim_type": "User Assumption",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "debt": {
+          "claim_type": "User Assumption",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "operating_leases": {
+          "claim_type": "User Assumption",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "cross_holdings": {
+          "claim_type": "User Assumption",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "minority_interests": {
+          "claim_type": "User Assumption",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "book_value_of_equity": {
+          "claim_type": "Calculation",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Equity attributable to the parent, excludes NCI. No bank-model or forecast-ROE approval.",
+          "canonical_unit": "INR"
+        },
+        "net_income": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "depreciation": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "preferred_stock": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Parent issued/paid-up equity schedule contains only ordinary shares; preference capital is authorized, not issued. Subsidiary claims are not inferred absent.",
+          "canonical_unit": "INR"
+        },
+        "employee_options_value": {
+          "claim_type": "Not available",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Outstanding parent and Jio awards invalidate zero; current claim value and consistent denominator unavailable.",
+          "canonical_unit": "INR"
+        },
+        "diluted_shares": {
+          "claim_type": "Not available",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Annual weighted EPS denominator does not establish a March 31/current fully diluted denominator; issued shares and awards need one consistent treatment.",
+          "canonical_unit": "shares"
+        },
+        "current_market_price": {
+          "claim_type": "Not available",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Stored quote is a different-date comparison and not approved for the historical financial review.",
+          "canonical_unit": "INR"
+        },
+        "cash_flow_currency": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "currency_code"
+        },
+        "discount_rate_currency": {
+          "claim_type": "Source Summary",
+          "source_id": "RELIANCE-2026-direct",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "currency_code"
+        }
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "company_id": 9,
+      "decision_id": "M06-IN-INPUTS-20261102-BHARTIARTL",
+      "source_input_signature": "b2b6ccb4a1a13a73ed36b4a64e95cb2d60828f4e1a1ece77cc6b84f0d32632ba",
+      "latest_period_id": 26,
+      "source_as_of": "2026-03-31",
+      "source_id": "BHARTIARTL-2026",
+      "assumptions_patch": {
+        "starting_revenue": 2109728000000,
+        "current_operating_margin": 0.30120565305100944,
+        "cash": 137222000000,
+        "debt": 1216714000000,
+        "operating_leases": 737403000000,
+        "cross_holdings": 189013000000,
+        "minority_interests": 469068000000,
+        "book_value_of_equity": 1490566000000,
+        "net_income": 266952000000,
+        "depreciation": 527108000000,
+        "preferred_stock": 0,
+        "employee_options_value": null,
+        "diluted_shares": null,
+        "current_market_price": null,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR"
+      },
+      "reviewed_fields": [
+        "starting_revenue",
+        "current_operating_margin",
+        "cash",
+        "debt",
+        "operating_leases",
+        "cross_holdings",
+        "minority_interests",
+        "book_value_of_equity",
+        "net_income",
+        "depreciation",
+        "preferred_stock",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "rejected_fields": {
+        "employee_options_value": "Multiple nonzero parent/subsidiary award plans; grant-date disclosures do not establish the current outstanding claim.",
+        "diluted_shares": "End-period issued/partly-paid and award structure differ materially from annual EPS weights; no silently reused current denominator.",
+        "current_market_price": "Different-date stored comparison not approved for historical review."
+      },
+      "review_status": "source_and_explicit_historical_proxy_review_complete; valuation_promotion_withheld",
+      "forecast_fields_reviewed": false,
+      "source_locators": [
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            214
+          ],
+          "exact_text_anchor": "Investment in joint ventures and associates 7 40,622"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            240
+          ],
+          "exact_text_anchor": "Deferred payment liabilities*^ 906,430"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            238
+          ],
+          "exact_text_anchor": "Cash and cash equivalents as per balance sheet 137,222"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            257
+          ],
+          "exact_text_anchor": "Borrowings 1,216,714 1,483,123"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            258
+          ],
+          "exact_text_anchor": "Borrowings - fixed rate Level 1 70,738"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            258
+          ],
+          "exact_text_anchor": "Other financial liabilities- Put"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            238
+          ],
+          "exact_text_anchor": "6,093,282,313 (March 31,2025"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            193,
+            246
+          ],
+          "exact_text_anchor": "Outstanding at end of year 3,167"
+        },
+        {
+          "source_id": "BHARTIARTL-2026",
+          "pdf_pages": [
+            214
+          ],
+          "exact_text_anchor": "Exceptional items (net) 32 34,175"
+        }
+      ],
+      "rationale_and_limits": [
+        "Historical March 31 2026 INR carrying-basis review. The 1,216,714 million borrowing total already includes spectrum/AGR deferred liabilities; adding 906,430 million again would double count. The debt carrying total excludes 23,806 million accrued interest, separately identified by note 18. The liquidity schedule's 1,240,520 million includes accrued interest and is a different scope.",
+        "Aggregate disclosed borrowing fair value is 65,887+1,009,938+159,521=1,235,346 million, distinct from carrying 1,216,714 million. Retain as an alternative dated source calculation, not a current price or silent substitution.",
+        "Balance-sheet cash 137,222 million excludes mobile-money trust funds. Cash-flow closing 243,847 =137,222+132,061 trust balance-25,436 overdraft; the 132,061 million is expressly unavailable to the group. Do not add it to valuation cash or net overdraft twice. Other bank balances are not all excess cash.",
+        "Investment carrying proxy includes separate associates/JV 40,622 million plus current/noncurrent financial investments 148,391 million. The prior generic investment fields omit the associate line. This is a book proxy; no current fair-value or free-disposal/tax claim.",
+        "Reported operating EBIT after exceptional items is 635,462 million; pre-exceptional EBIT is 669,637 million. Use reported margin for historical current_operating_margin; no blanket assertion all exceptional/regulatory costs are nonrecurring. Tax credits including deferred-tax reversal 30,952 million are already in the tax line and must not be adjusted as pretax charges.",
+        "Preference shares 1,000 at INR100 are authorized only; issued and paid-up capital lists ordinary shares only. Zero parent preferred-stock claim is supported by issued scope, not by rounding the authorized INR100,000 to zero million.",
+        "Period diluted EPS shares 6,016,357,000 are below end-period issued fully-paid shares 6,093,282,313 plus 1,110,668 partly-paid shares. Neither annual EPS nor nominal capital alone establishes the diluted economic denominator. Parent LTI awards 3,167,000 plus Nxtra/Africa/Indus claims remain; zero employee award value is rejected.",
+        "An NCI put liability of 48,729 million is separately disclosed in financial liabilities (note 38). Current NCI fair value/put treatment must be reconciled before a complete equity bridge; do not add the put liability to NCI carrying value blindly. The source lacks a sufficient reconciliation for that valuation choice.",
+        "Existing reviewed external-customer segment mix remains supported and need not change. India benchmark comparisons are not Africa country risk. The 18.6% historical revenue CAGR is not approved as forward organic growth because Indus consolidation changes comparability."
+      ],
+      "preserve_user_edits": true,
+      "full_model_promotion_authorized": false,
+      "field_basis": {
+        "starting_revenue": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "current_operating_margin": {
+          "claim_type": "Calculation",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "(reported revenue - operating expenses including D&A and exceptional charges, excluding finance/other income/associate profit) / reported revenue. No forecast assertion.",
+          "canonical_unit": "fraction"
+        },
+        "cash": {
+          "claim_type": "User Assumption",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "debt": {
+          "claim_type": "User Assumption",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "operating_leases": {
+          "claim_type": "User Assumption",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "cross_holdings": {
+          "claim_type": "User Assumption",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "minority_interests": {
+          "claim_type": "User Assumption",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Adopt the March 31 2026 reported carrying amount (or sum of reported components) as an explicit historical research/demo proxy. Not current fair value. See rationale and limits.",
+          "canonical_unit": "INR"
+        },
+        "book_value_of_equity": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Equity attributable to the parent, excludes NCI. No bank-model or forecast-ROE approval.",
+          "canonical_unit": "INR"
+        },
+        "net_income": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "depreciation": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "INR"
+        },
+        "preferred_stock": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Parent issued/paid-up equity schedule contains only ordinary shares; preference capital is authorized, not issued. Subsidiary claims are not inferred absent.",
+          "canonical_unit": "INR"
+        },
+        "employee_options_value": {
+          "claim_type": "Not available",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Multiple nonzero parent/subsidiary award plans; grant-date disclosures do not establish the current outstanding claim.",
+          "canonical_unit": "INR"
+        },
+        "diluted_shares": {
+          "claim_type": "Not available",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "End-period issued/partly-paid and award structure differ materially from annual EPS weights; no silently reused current denominator.",
+          "canonical_unit": "shares"
+        },
+        "current_market_price": {
+          "claim_type": "Not available",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Different-date stored comparison not approved for historical review.",
+          "canonical_unit": "INR"
+        },
+        "cash_flow_currency": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "currency_code"
+        },
+        "discount_rate_currency": {
+          "claim_type": "Source Summary",
+          "source_id": "BHARTIARTL-2026",
+          "as_of": "2026-03-31",
+          "basis": "Reported source amount in full units; latest fiscal year. Review packet source locators apply.",
+          "canonical_unit": "currency_code"
+        }
+      }
+    }
+  ],
+  "arithmetic_checks": [
+    {
+      "name": "Reliance borrowing plus spectrum financing",
+      "operands": [
+        270751,
+        103670,
+        99552,
+        4962
+      ],
+      "result": 478935,
+      "formula": "noncurrent borrowing + current borrowing + noncurrent deferred spectrum + current deferred spectrum",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance lease carrying liability",
+      "operands": [
+        16198,
+        7381
+      ],
+      "result": 23579,
+      "formula": "noncurrent leases + current leases",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance operating EBIT",
+      "operands": [
+        1075675,
+        981475,
+        27061
+      ],
+      "result": 121261,
+      "formula": "revenue - (total expenses - finance costs)",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel borrowing carrying amount",
+      "operands": [
+        1000849,
+        215865
+      ],
+      "result": 1216714,
+      "formula": "noncurrent borrowing + current borrowing; already includes deferred spectrum/AGR",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel lease carrying liability",
+      "operands": [
+        644996,
+        92407
+      ],
+      "result": 737403,
+      "formula": "noncurrent leases + current leases",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel reported operating EBIT after exceptional items",
+      "operands": [
+        2109728,
+        912983,
+        527108,
+        34175
+      ],
+      "result": 635462,
+      "formula": "revenue - operating expenses - D&A - exceptional charge",
+      "status": "pass"
+    }
+  ],
+  "application_policy": "Parent applies only through owned/versioned API after rechecking signature and user-edited fields. Manual patches are User Assumptions in the application; immutable evidence distinguishes Fact/Calculation source cells from the historical proxy choice. Record decision/source/date in story_text. Rejected values are null and unreviewed. Do not force promotion.",
+  "independent_arithmetic_checks": [
+    {
+      "name": "Reliance borrowing components equal reported gross debt",
+      "actual": 374421,
+      "expected": 374421,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance deferred-payment components equal disclosed total",
+      "actual": 104514,
+      "expected": 104514,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance leases match financial-instruments table",
+      "actual": 23579,
+      "expected": 23579,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance operating EBIT agrees through profit bridge",
+      "actual": 121261,
+      "expected": 121261,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance parent equity reconciles independently",
+      "actual": 904030,
+      "expected": 904030,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel borrowing components equal capital-risk table",
+      "actual": 1216714,
+      "expected": 1216714,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel leases match maturity/reconciliation table",
+      "actual": 737403,
+      "expected": 737403,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel operating EBIT agrees through profit bridge",
+      "actual": 635462,
+      "expected": 635462,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel cash-flow closing bridge excludes unavailable trust cash",
+      "actual": 243847,
+      "expected": 243847,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel parent equity reconciles independently",
+      "actual": 1490566,
+      "expected": 1490566,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel fair borrowing alternatives reconcile",
+      "actual": 1235346,
+      "expected": 1235346,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance segment external turnover matches total",
+      "actual": 1175919,
+      "expected": 1175919,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance GST rows match total",
+      "actual": 100244,
+      "expected": 100244,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance intersegment rows match elimination",
+      "actual": 138114,
+      "expected": 138114,
+      "status": "pass"
+    }
+  ]
+}

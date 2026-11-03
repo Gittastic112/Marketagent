@@ -1,0 +1,1106 @@
+{
+  "schema_version": 1,
+  "decision_ids": [
+    "M05-MAPPING-16",
+    "M05-IN-NOTES-17"
+  ],
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "reviewed_at": "2026-10-22T21:30:25.470684+00:00",
+  "independent_human_certification": false,
+  "scope": "Existing local research/demo securities and retained official annual reports. No current valuation, financial-statement certification or trading decision.",
+  "supersedes": {
+    "M05-AAPL-04B": "Only the provisional Apple comparison mapping; prior receipt and five personal approvals remain unchanged."
+  },
+  "sources": {
+    "AAPL-2025-sec": {
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html"
+    },
+    "NVDA-2026-sec": {
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html"
+    },
+    "MSFT-2026-sec": {
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html"
+    },
+    "GOOG-2025-sec": {
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html"
+    },
+    "AMZN-2025-sec": {
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html"
+    },
+    "BHARTIARTL-2026": {
+      "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/BHARTIARTL-2026.pdf"
+    },
+    "RELIANCE-2026-direct": {
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf"
+    },
+    "ICICIBANK-2026": {
+      "sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/ICICIBANK-2026.pdf"
+    },
+    "SBIN-2026": {
+      "sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+      "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/SBIN-2026.pdf"
+    },
+    "HDFCBANK-2026": {
+      "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf"
+    }
+  },
+  "reported_us_revenue_cells": [
+    {
+      "source_id": "AAPL-2025-sec",
+      "table": 23,
+      "row": 5,
+      "label": "Products",
+      "value": "307003",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AAPL-2025-sec",
+      "table": 23,
+      "row": 6,
+      "label": "Services",
+      "value": "109158",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AAPL-2025-sec",
+      "table": 23,
+      "row": 7,
+      "label": "Total net sales",
+      "value": "416161",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "NVDA-2026-sec",
+      "table": 12,
+      "row": 6,
+      "label": "Compute & Networking",
+      "value": "193479",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "NVDA-2026-sec",
+      "table": 12,
+      "row": 7,
+      "label": "Graphics",
+      "value": "22459",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "NVDA-2026-sec",
+      "table": 12,
+      "row": 8,
+      "label": "Total",
+      "value": "215938",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 7,
+      "label": "Server products and cloud services",
+      "value": "129425",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 8,
+      "label": "Microsoft 365 Commercial products and cloud services",
+      "value": "101997",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 9,
+      "label": "XBOX",
+      "value": "21790",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 10,
+      "label": "LinkedIn",
+      "value": "19817",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 11,
+      "label": "Windows and Devices",
+      "value": "17084",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 12,
+      "label": "Search advertising",
+      "value": "15176",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 13,
+      "label": "Microsoft 365 Consumer products and cloud services",
+      "value": "9175",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 14,
+      "label": "Dynamics products and cloud services",
+      "value": "9006",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 15,
+      "label": "Enterprise and partner services",
+      "value": "8260",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 16,
+      "label": "Other",
+      "value": "109",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "table": 77,
+      "row": 19,
+      "label": "Total",
+      "value": "331839",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 163,
+      "row": 5,
+      "label": "Google Services",
+      "value": "342721",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 163,
+      "row": 6,
+      "label": "Google Cloud",
+      "value": "58705",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 163,
+      "row": 7,
+      "label": "Other Bets",
+      "value": "1537",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "table": 163,
+      "row": 9,
+      "label": "Total revenues",
+      "value": "402836",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 70,
+      "row": 5,
+      "label": "Net sales",
+      "value": "426305",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 70,
+      "row": 10,
+      "label": "Net sales",
+      "value": "161894",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 70,
+      "row": 15,
+      "label": "Net sales",
+      "value": "128725",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "table": 70,
+      "row": 20,
+      "label": "Net sales",
+      "value": "716924",
+      "unit": "USD million",
+      "claim_type": "Fact"
+    }
+  ],
+  "checks": [
+    {
+      "name": "AAPL allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "307003",
+        "109158"
+      ],
+      "expected": "416161",
+      "actual": "416161",
+      "status": "pass"
+    },
+    {
+      "name": "NVDA allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "193479",
+        "22459"
+      ],
+      "expected": "215938",
+      "actual": "215938",
+      "status": "pass"
+    },
+    {
+      "name": "MSFT allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "129425",
+        "101997",
+        "21790",
+        "19817",
+        "17084",
+        "15176",
+        "9175",
+        "9006",
+        "8260",
+        "109"
+      ],
+      "expected": "331839",
+      "actual": "331839",
+      "status": "pass"
+    },
+    {
+      "name": "Alphabet segments less hedging reconcile to consolidated revenue",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "342721",
+        "58705",
+        "1537",
+        "-127"
+      ],
+      "expected": "402836",
+      "actual": "402836",
+      "status": "pass"
+    },
+    {
+      "name": "GOOG allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "342721",
+        "58705",
+        "1537"
+      ],
+      "expected": "402963",
+      "actual": "402963",
+      "status": "pass"
+    },
+    {
+      "name": "GOOGL allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "342721",
+        "58705",
+        "1537"
+      ],
+      "expected": "402963",
+      "actual": "402963",
+      "status": "pass"
+    },
+    {
+      "name": "AMZN allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "426305",
+        "161894",
+        "128725"
+      ],
+      "expected": "716924",
+      "actual": "716924",
+      "status": "pass"
+    },
+    {
+      "name": "BHARTIARTL-2026 page 250 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "Revenue from external customers",
+        "1,103,292",
+        "564,308",
+        "187,403",
+        "146,923",
+        "77,695",
+        "30,107",
+        "2,109,728",
+        "238,809",
+        "451,727",
+        "All amounts are in millions of Indian Rupee"
+      ],
+      "pdf_page": 250,
+      "status": "pass"
+    },
+    {
+      "name": "BHARTIARTL allocation denominator",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "1103292",
+        "564308",
+        "187403",
+        "146923",
+        "77695",
+        "30107"
+      ],
+      "expected": "2109728",
+      "actual": "2109728",
+      "status": "pass"
+    },
+    {
+      "name": "RELIANCE-2026-direct page 129 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "External Turnover",
+        "6,58,991",
+        "19,008",
+        "3,65,820",
+        "59,777",
+        "72,323",
+        "11,75,919",
+        "1,38,114",
+        "GST Recovered",
+        "1,00,244",
+        "10,75,675",
+        "80,775"
+      ],
+      "pdf_page": 129,
+      "status": "pass"
+    },
+    {
+      "name": "ICICIBANK-2026 page 198 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "Retail banking",
+        "Wholesale banking",
+        "Treasury",
+        "Life insurance",
+        "General insurance",
+        "not comparable"
+      ],
+      "pdf_page": 198,
+      "status": "pass"
+    },
+    {
+      "name": "SBIN-2026 page 347 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "Treasury",
+        "Corporate / Wholesale Banking",
+        "Retail Banking",
+        "Insurance Business",
+        "Other Banking Business"
+      ],
+      "pdf_page": 347,
+      "status": "pass"
+    },
+    {
+      "name": "Reliance FY2026 external turnover",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "658991",
+        "19008",
+        "365820",
+        "59777",
+        "72323"
+      ],
+      "expected": "1175919",
+      "actual": "1175919",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance gross segment revenue less inter-segment elimination",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "662401",
+        "23861",
+        "371085",
+        "176164",
+        "80522",
+        "-138114"
+      ],
+      "expected": "1175919",
+      "actual": "1175919",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance consolidated gross revenue less GST",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "1175919",
+        "-100244"
+      ],
+      "expected": "1075675",
+      "actual": "1075675",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance reported segment net revenue less elimination",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "640972",
+        "23837",
+        "328202",
+        "149965",
+        "70813",
+        "-138114"
+      ],
+      "expected": "1075675",
+      "actual": "1075675",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance segment result to pretax before associates",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "139828",
+        "-27061",
+        "10395"
+      ],
+      "expected": "123162",
+      "actual": "123162",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance pretax to after-tax before associate profit",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "123162",
+        "-9736",
+        "-17816"
+      ],
+      "expected": "95610",
+      "actual": "95610",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance group profit to parent profit",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "95610",
+        "144",
+        "-14979"
+      ],
+      "expected": "80775",
+      "actual": "80775",
+      "status": "pass"
+    },
+    {
+      "name": "Reliance depreciation amortisation and depletion",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "9788",
+        "5586",
+        "6217",
+        "28349",
+        "7409",
+        "339"
+      ],
+      "expected": "57688",
+      "actual": "57688",
+      "status": "pass"
+    },
+    {
+      "name": "BHARTIARTL-2026 page 249 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "266,952",
+        "5,808,741",
+        "6,016,357",
+        "2,955",
+        "204,661",
+        "45.96",
+        "44.37",
+        "30,952",
+        "1,377"
+      ],
+      "pdf_page": 249,
+      "status": "pass"
+    },
+    {
+      "name": "Airtel FY2026 EPS dilution thousand shares",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "5808741",
+        "2955",
+        "204661"
+      ],
+      "expected": "6016357",
+      "actual": "6016357",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel segment results to pretax",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "689212",
+        "-198739",
+        "-4571",
+        "-34175"
+      ],
+      "expected": "451727",
+      "actual": "451727",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel FY2026 basic EPS",
+      "kind": "rounded_decimal_reconciliation",
+      "profit_inr_million": "266952",
+      "shares_thousands": "5808741",
+      "calculated": "45.95694660856801843979616237",
+      "reported": "45.96",
+      "status": "pass"
+    },
+    {
+      "name": "Airtel FY2026 diluted EPS",
+      "kind": "rounded_decimal_reconciliation",
+      "profit_inr_million": "266952",
+      "shares_thousands": "6016357",
+      "calculated": "44.37103715753569809770264630",
+      "reported": "44.37",
+      "status": "pass"
+    },
+    {
+      "name": "ICICIBANK-2026 page 199 source labels/values",
+      "kind": "source_text",
+      "tokens": [
+        "1,623,942.0",
+        "878,472.8",
+        "1,384,303.6",
+        "75,167.3",
+        "654,720.5",
+        "288,906.1",
+        "199,701.3",
+        "1,984,030.0",
+        "3,121,183.6",
+        "244,889.8",
+        "83,784.2",
+        "770,573.3",
+        "773,201.8",
+        "193,839.3",
+        "579,362.5",
+        "Includes share of net profit of minority shareholders."
+      ],
+      "pdf_page": 199,
+      "status": "pass"
+    },
+    {
+      "name": "ICICI gross segment revenue less transfer elimination",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "1623942",
+        "878472.8",
+        "1384303.6",
+        "75167.3",
+        "654720.5",
+        "288906.1",
+        "199701.3",
+        "-1984030"
+      ],
+      "expected": "3121183.6",
+      "actual": "3121183.6",
+      "status": "pass"
+    },
+    {
+      "name": "ICICI segment results less adjustment",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "232442.3",
+        "244889.8",
+        "172509.4",
+        "17027.3",
+        "18076.8",
+        "36589.7",
+        "83784.2",
+        "-34746.2"
+      ],
+      "expected": "770573.3",
+      "actual": "770573.3",
+      "status": "pass"
+    },
+    {
+      "name": "ICICI operating profit including associates",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "770573.3",
+        "2628.5"
+      ],
+      "expected": "773201.8",
+      "actual": "773201.8",
+      "status": "pass"
+    },
+    {
+      "name": "ICICI profit including minority interests",
+      "kind": "exact_decimal_reconciliation",
+      "terms": [
+        "773201.8",
+        "-193839.3"
+      ],
+      "expected": "579362.5",
+      "actual": "579362.5",
+      "status": "pass"
+    }
+  ],
+  "country_currency": {
+    "US": "United States / USD cash flows and matching discount-rate currency",
+    "India": "India / INR cash flows and matching discount-rate currency",
+    "country_risk": "Review actual operating exposure separately; incorporation, benchmark universe and currency are different choices."
+  },
+  "weighted_mappings": [
+    {
+      "company_id": 1,
+      "ticker": "AAPL",
+      "source_id": "AAPL-2025-sec",
+      "as_of_date": "2025-09-27",
+      "basis": "revenue",
+      "revenue_denominator": "416161",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 USD millions. Services is a broad internet-services comparison proxy, not a disclosed software-only business or uniquely correct taxonomy. Software (System & Application) remains an alternative comparison. Supersedes M05-AAPL-04B only for this provisional mapping. No forecast, beta, current share denominator or saved valuation is approved. Source AAPL-2025-sec, SHA256 45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Products",
+          "industry_name": "Computers/Peripherals",
+          "reported_revenue": "307003",
+          "weight_percent": 73.770248,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Services",
+          "industry_name": "Software (Internet)",
+          "reported_revenue": "109158",
+          "weight_percent": 26.229752,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 3,
+      "ticker": "NVDA",
+      "source_id": "NVDA-2026-sec",
+      "as_of_date": "2026-01-25",
+      "basis": "revenue",
+      "revenue_denominator": "215938",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 USD millions. Both reportable segments use Semiconductor as a broad comparison, including systems/networking/software activities. No separate software revenue is invented. The common taxonomy preserves its own prior rather than implying two independent peer universes. Source NVDA-2026-sec, SHA256 761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Compute and Networking",
+          "industry_name": "Semiconductor",
+          "reported_revenue": "193479",
+          "weight_percent": 89.599329,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Graphics",
+          "industry_name": "Semiconductor",
+          "reported_revenue": "22459",
+          "weight_percent": 10.400671,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 5,
+      "ticker": "MSFT",
+      "source_id": "MSFT-2026-sec",
+      "as_of_date": "2026-06-30",
+      "basis": "revenue",
+      "revenue_denominator": "331839",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 USD millions, product/service revenue disclosure. Categories are comparison proxies: Windows includes devices, Xbox includes hardware, and server/cloud mixes infrastructure and software. No unsupported split within a reported line. Geographic risk remains separate. Source MSFT-2026-sec, SHA256 32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Server products and cloud services",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "129425",
+          "weight_percent": 39.002348,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Microsoft 365 Commercial products and cloud services",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "101997",
+          "weight_percent": 30.736893,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "XBOX",
+          "industry_name": "Software (Entertainment)",
+          "reported_revenue": "21790",
+          "weight_percent": 6.566437,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "LinkedIn",
+          "industry_name": "Software (Internet)",
+          "reported_revenue": "19817",
+          "weight_percent": 5.971872,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Windows and Devices",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "17084",
+          "weight_percent": 5.14828,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Search advertising",
+          "industry_name": "Software (Internet)",
+          "reported_revenue": "15176",
+          "weight_percent": 4.573302,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Microsoft 365 Consumer products and cloud services",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "9175",
+          "weight_percent": 2.764895,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Dynamics products and cloud services",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "9006",
+          "weight_percent": 2.713967,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Enterprise and partner services",
+          "industry_name": "Computer Services",
+          "reported_revenue": "8260",
+          "weight_percent": 2.489159,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Other",
+          "industry_name": "Diversified",
+          "reported_revenue": "109",
+          "weight_percent": 0.032847,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 4,
+      "ticker": "GOOG",
+      "source_id": "GOOG-2025-sec",
+      "as_of_date": "2025-12-31",
+      "basis": "revenue",
+      "revenue_denominator": "402963",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 issuer-level USD millions before USD127m hedging loss: segments 402963, consolidated 402836. Hedging is not a negative business allocation. Cloud and Other Bets are broad comparison proxies. GOOG/GOOGL share the issuer mix, never summed class share denominators. Source GOOG-2025-sec, SHA256 5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Google Services",
+          "industry_name": "Software (Internet)",
+          "reported_revenue": "342721",
+          "weight_percent": 85.05024,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Google Cloud",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "58705",
+          "weight_percent": 14.568335,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Other Bets",
+          "industry_name": "Diversified",
+          "reported_revenue": "1537",
+          "weight_percent": 0.381425,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 12,
+      "ticker": "GOOGL",
+      "source_id": "GOOG-2025-sec",
+      "as_of_date": "2025-12-31",
+      "basis": "revenue",
+      "revenue_denominator": "402963",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 issuer-level USD millions before USD127m hedging loss: segments 402963, consolidated 402836. Hedging is not a negative business allocation. Cloud and Other Bets are broad comparison proxies. GOOG/GOOGL share the issuer mix, never summed class share denominators. Source GOOG-2025-sec, SHA256 5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Google Services",
+          "industry_name": "Software (Internet)",
+          "reported_revenue": "342721",
+          "weight_percent": 85.05024,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Google Cloud",
+          "industry_name": "Software (System & Application)",
+          "reported_revenue": "58705",
+          "weight_percent": 14.568335,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Other Bets",
+          "industry_name": "Diversified",
+          "reported_revenue": "1537",
+          "weight_percent": 0.381425,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 6,
+      "ticker": "AMZN",
+      "source_id": "AMZN-2025-sec",
+      "as_of_date": "2025-12-31",
+      "basis": "revenue",
+      "revenue_denominator": "716924",
+      "source_document_id": null,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 reportable-segment USD millions. Retail segments also include seller, advertising and subscription services; reported sales mix gross principal sales and net service fees. AWS includes infrastructure/software. These broad proxies do not assert identical margins or an economic-value/beta allocation. Source AMZN-2025-sec, SHA256 a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "North America",
+          "industry_name": "Retail (General)",
+          "reported_revenue": "426305",
+          "weight_percent": 59.463067,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "International",
+          "industry_name": "Retail (General)",
+          "reported_revenue": "161894",
+          "weight_percent": 22.581752,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "AWS",
+          "industry_name": "Computer Services",
+          "reported_revenue": "128725",
+          "weight_percent": 17.955181,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    },
+    {
+      "company_id": 9,
+      "ticker": "BHARTIARTL",
+      "source_id": "BHARTIARTL-2026",
+      "as_of_date": "2026-03-31",
+      "basis": "revenue",
+      "revenue_denominator": "2109728",
+      "source_document_id": 14,
+      "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 INR million external-customer revenue only. Excludes inter-segment revenue, whose INR238809m elimination is not allocated twice. India industry comparisons are not Africa country-risk estimates. Towers use a telecom proxy; cloud, money services and DTH/IPTV remain mixed activities requiring review. Source BHARTIARTL-2026, SHA256 b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+      "allocations": [
+        {
+          "segment_name": "Mobile Services India",
+          "industry_name": "Telecom (Wireless)",
+          "reported_revenue": "1103292",
+          "weight_percent": 52.295462,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Mobile Services Africa",
+          "industry_name": "Telecom (Wireless)",
+          "reported_revenue": "564308",
+          "weight_percent": 26.747903,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Airtel Business",
+          "industry_name": "Telecom. Services",
+          "reported_revenue": "187403",
+          "weight_percent": 8.882804,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Passive Infrastructure Services",
+          "industry_name": "Telecom. Services",
+          "reported_revenue": "146923",
+          "weight_percent": 6.964073,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Homes Services",
+          "industry_name": "Telecom. Services",
+          "reported_revenue": "77695",
+          "weight_percent": 3.682702,
+          "mapping_claim_type": "User Assumption"
+        },
+        {
+          "segment_name": "Digital TV Services",
+          "industry_name": "Cable TV",
+          "reported_revenue": "30107",
+          "weight_percent": 1.427056,
+          "mapping_claim_type": "User Assumption"
+        }
+      ]
+    }
+  ],
+  "single_industry_comparisons": [
+    {
+      "company_id": 7,
+      "ticker": "RELIANCE",
+      "industry": "Diversified",
+      "source_id": "RELIANCE-2026-direct",
+      "pdf_pages": [
+        129
+      ],
+      "decision": "Keep separate O2C, E&P, retail and telecom comparisons in the receipt. Save only a broad Diversified taxonomy comparison. Do not install a mechanical revenue mix: reported external turnover is gross of GST, segment net revenue still includes inter-segment turnover, and the appropriate net-external allocation is not established."
+    },
+    {
+      "company_id": 8,
+      "ticker": "HDFCBANK",
+      "industry": "Bank (Money Center)",
+      "source_id": "HDFCBANK-2026",
+      "pdf_pages": [
+        548,
+        549
+      ],
+      "decision": "Single bank-led-group comparison, not a claim that 100% of revenue is banking. Keep insurance/subsidiaries, minority interests and inter-segment transfers distinct. Do not revenue-weight bank ROE or use bank deposits/debt as an operating-company enterprise-value deduction. Equity/FCFE/excess-return basis requires separate reviewed inputs."
+    },
+    {
+      "company_id": 10,
+      "ticker": "ICICIBANK",
+      "industry": "Bank (Money Center)",
+      "source_id": "ICICIBANK-2026",
+      "pdf_pages": [
+        198,
+        199
+      ],
+      "decision": "Single bank-led-group comparison, not a claim that 100% of revenue is banking. Keep insurance/subsidiaries, minority interests and inter-segment transfers distinct. Do not revenue-weight bank ROE or use bank deposits/debt as an operating-company enterprise-value deduction. Equity/FCFE/excess-return basis requires separate reviewed inputs."
+    },
+    {
+      "company_id": 11,
+      "ticker": "SBIN",
+      "industry": "Bank (Money Center)",
+      "source_id": "SBIN-2026",
+      "pdf_pages": [
+        347
+      ],
+      "decision": "Single bank-led-group comparison, not a claim that 100% of revenue is banking. Keep insurance/subsidiaries, minority interests and inter-segment transfers distinct. Do not revenue-weight bank ROE or use bank deposits/debt as an operating-company enterprise-value deduction. Equity/FCFE/excess-return basis requires separate reviewed inputs."
+    }
+  ],
+  "aggregation_policy": {
+    "version": 2,
+    "margin_and_sales_based_ratios": "Revenue-weighted arithmetic mean only with every component present. Explicit zeros/negative values retained where meaningful.",
+    "sales_to_capital": "Total revenue divided by sum(revenue_i / sales_to_capital_i). Positive finite ratios required.",
+    "returns_and_capital_structure": "Multi-industry ROE/ROC/debt ratios unavailable without matching denominator weights. A single taxonomy may retain its unblended prior.",
+    "growth": "Multi-industry multi-year growth unavailable without matched base periods and compounding.",
+    "financing": "Absolute industry totals are context only and cannot be blended or inherited from the first industry.",
+    "beta_wacc": "No automatic primary-industry or revenue-weighted beta/WACC for a mix. Economic business-value weights and matching leverage/currency need separate review.",
+    "weights": "Exact reported revenue basis, percentages rounded to six decimals with final-row residual. No missing component is silently omitted."
+  },
+  "accounting_treatments": [
+    {
+      "ticker": "RELIANCE",
+      "source_id": "RELIANCE-2026-direct",
+      "pdf_pages": [
+        129
+      ],
+      "decision": "Preserve the exact revenue/GST/elimination and parent-profit bridges. Segment result includes specified interest/other income. The INR57688 crore depreciation/amortisation/depletion total is not pure PPE depreciation, and INR144271 crore segment capital expenditure is not automatically cash capex. Do not infer minority-interest fair value or excess cash from these reported subtotals."
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "source_id": "BHARTIARTL-2026",
+      "pdf_pages": [
+        249,
+        250
+      ],
+      "decision": "Accept historical parent EPS and the employee-option/partly-paid-share dilution bridge. Weighted average shares are not current issued shares or a current option valuation. Preserve exceptional pretax charge INR34175m separately from INR30952m deferred-tax-liability reversal and INR1377m Pillar Two charge. Tax-line items must not be tax-adjusted again. Segment profit includes associates and excludes specified finance/exceptional costs, so it is not directly FCFF EBIT."
+    },
+    {
+      "ticker": "ICICIBANK",
+      "source_id": "ICICIBANK-2026",
+      "pdf_pages": [
+        198,
+        199
+      ],
+      "decision": "Gross segment revenue and transfer-price elimination reconcile to the consolidated total. Preserve bank/insurance/other scope, source-defined transfer pricing and explicit FY2025/FY2026 consolidation comparability warning. Net profit in this segment schedule is before minority interests, so it must not replace the parent EPS numerator."
+    },
+    {
+      "ticker": "SBIN",
+      "source_id": "SBIN-2026",
+      "pdf_pages": [
+        334,
+        347
+      ],
+      "decision": "Keep Treasury, Wholesale, Retail, Insurance and Other Banking separate. Reported basic/diluted EPS uses profit attributable to equity shareholders and period-weighted shares. Do not convert gross banking revenue weights into ROE, parent-equity or regulatory-capital weights."
+    }
+  ],
+  "still_unavailable": [
+    "Reliance net external revenue allocation by segment after appropriate GST/consolidation treatment.",
+    "Current valuation-date cash restrictions, minority/cross-holding fair values, options/issued shares and reviewed forecast paths remain company-specific M06 inputs.",
+    "Industry sample sizes may be very small (India integrated oil/gas has one firm); a loaded benchmark is not an independent peer set.",
+    "January 5 2026 benchmarks are dated estimates, not live company facts. Unsupported adjusted margins, ROC, growth and non-imported columns stay unavailable."
+  ],
+  "normal_data_application": "Prepared only. Separate version-checked application receipt records actual database writes."
+}

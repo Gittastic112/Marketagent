@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { EmptyState, PageHeader, Panel } from "@/components/page";
+import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { hasUsableData } from "@/lib/data-state-meta";
 
 import { DataStateNotices } from "@/components/ui/data-states";
 import type { IntelligenceReviewItem } from "@/lib/api";
@@ -9,14 +10,14 @@ import { serverFetchApiResponse } from "@/lib/server-api";
 export const dynamic = "force-dynamic";
 
 export default async function IntelligenceReviewPage() {
-  const itemsRes = await serverFetchApiResponse<IntelligenceReviewItem[]>("/intelligence/review").catch(() => ({ data: [], meta: null }));
+  const itemsRes = await serverFetchApiResponse<IntelligenceReviewItem[]>("/intelligence/review");
   const items = itemsRes.data || [];
   return (
     <>
-      <PageHeader eyebrow="Evidence review" title="Contradictions & Language Changes" status={`${items.length} items`} />
+      <PageHeader eyebrow="Evidence review" title="Contradictions & Language Changes" status={hasUsableData(itemsRes) ? `${items.length} items` : "Review queue unavailable"} />
       <DataStateNotices metas={[itemsRes.meta]} />
       <Panel title="Review Queue">
-        {items.length === 0 ? (
+        {!hasUsableData(itemsRes) ? <ErrorState message="Review queue could not be loaded. Reload to retry." /> : items.length === 0 ? (
           <EmptyState label="No explicit contradictions or filing language changes are waiting for review." />
         ) : (
           <div className="table-wrap">

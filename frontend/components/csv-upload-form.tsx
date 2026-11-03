@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import { postApiFormData } from "@/lib/api";
 
 interface CsvUploadFormProps {
@@ -9,6 +9,7 @@ interface CsvUploadFormProps {
 }
 
 export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
+  const fileInputId = useId();
   const [file, setFile] = useState<File | null>(null);
   const [status, setStatus] = useState<"idle" | "uploading" | "success" | "error">("idle");
   const [message, setMessage] = useState<string>("");
@@ -28,17 +29,18 @@ export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
       setStatus("success");
       setMessage(`Successfully imported ${response.imported_count} records.`);
       setFile(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus("error");
-      setMessage(err.message || "Failed to import CSV");
+      setMessage(err instanceof Error ? err.message : "Failed to import CSV");
     }
   };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
-      <label className="text-sm font-medium">{label}</label>
+      <label className="text-sm font-medium" htmlFor={fileInputId}>{label}</label>
       <div className="flex items-center gap-2">
         <input
+          id={fileInputId}
           type="file"
           accept=".csv"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
@@ -54,7 +56,7 @@ export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
         </button>
       </div>
       {message && (
-        <p className={`text-xs mt-1 ${status === "success" ? "text-green-600" : "text-red-600"}`}>
+        <p aria-live="polite" className={`text-xs mt-1 ${status === "success" ? "text-green-600" : "text-red-600"}`}>
           {message}
         </p>
       )}

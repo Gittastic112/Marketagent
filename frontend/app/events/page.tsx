@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import { createEvent, deleteEventWithState, extractEvents, updateEvent, addEventCorroboration, removeEventCorroboration, addEventContradiction, removeEventContradiction } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
@@ -15,31 +17,30 @@ export default async function EventsPage() {
       serverFetchApiResponse<EventRecord[]>("/events"),
       serverFetchApiResponse<Company[]>("/companies"),
       serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries"),
-      serverFetchApiResponse<ScoringConfig>("/scoring-config").catch(() => ({ data: { id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 }, meta: null }))
+      serverFetchApiResponse<ScoringConfig>("/scoring-config")
     ]);
     const events = eventsRes.data || [];
     const companies = companiesRes.data || [];
     const documents = documentsRes.data || [];
-    const scoringConfig = scoringConfigRes.data || { id: 0, weight_credibility: 0.35, weight_novelty: 0.25, weight_impact: 0.35, weight_speed: 0.05 };
 
     return (
       <>
-        <PageHeader eyebrow="Normalized signal" title="Events" status={`${events.length} events`} />
+        <PageHeader eyebrow="Normalized signal" title="Events" status={hasUsableData(eventsRes) ? `${events.length} events` : "Events unavailable"} />
         <DataStateNotices
           metas={[eventsRes.meta, companiesRes.meta, documentsRes.meta, scoringConfigRes.meta]}
           mockMessage="One or more event inputs are using mock data. Treat affected scores and signals as placeholders."
         />
         <Panel title="Extract Events">
-          <form action={extractEvents} className="brief-list">
+          <RetainedActionForm label="Extract events" action={extractEvents} className="brief-list">
             <div className="brief-item">
               <div className="button-row">
                 <button type="submit">Extract events</button>
               </div>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Add Event">
-          <form action={createEvent} className="form-grid">
+          <RetainedActionForm label="Create event" resetOnSuccess action={createEvent} className="form-grid">
             <SelectField id="company_id" label="Company" name="company_id">
               <option value="">Unlinked</option>
               {companies.map((company) => (
@@ -67,10 +68,10 @@ export default async function EventsPage() {
             <div className="button-row">
               <button type="submit">Add event</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Events">
-          {events.length === 0 ? (
+          {!hasUsableData(eventsRes) ? <ErrorState message="Events could not be loaded. Reload to retry." /> : events.length === 0 ? (
             <EmptyState label="No events yet." />
           ) : (
             <div className="table-wrap">
@@ -123,7 +124,7 @@ export default async function EventsPage() {
                           </details>
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updateEvent} className="inline-form">
+                            <RetainedActionForm label="Update event" action={updateEvent} className="inline-form">
                               <input name="id" type="hidden" value={event.id} />
                               <SelectField defaultValue={event.company_id ?? ""} id={`event-company-${event.id}`} label="Company" name="company_id">
                                 <option value="">Unlinked</option>
@@ -152,9 +153,9 @@ export default async function EventsPage() {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
-                          <details className="edit-panel">
+                          <details className="edit-panel event-ai-panel">
                             <summary>DCF Impact Prediction</summary>
                             <DcfImpactPredictor eventId={event.id} eventText={`${event.title}\n${event.description || ""}`} />
                           </details>
@@ -167,18 +168,18 @@ export default async function EventsPage() {
                                   {event.corroborates.map((c) => (
                                     <li key={c.id}>
                                       {c.title}
-                                      <form action={removeEventCorroboration} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
+                                      <RetainedActionForm label="Remove event corroboration" action={removeEventCorroboration} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                         <input type="hidden" name="event_id" value={event.id} />
                                         <input type="hidden" name="target_event_id" value={c.id} />
                                         <button type="submit" className="text-red-500" title="Remove link">✕</button>
-                                      </form>
+                                      </RetainedActionForm>
                                     </li>
                                   ))}
                                 </ul>
                               ) : (
                                 <p className="text-sm text-gray-500">No corroborating events.</p>
                               )}
-                              <form action={addEventCorroboration} className="inline-form mt-2">
+                              <RetainedActionForm label="Add event corroboration" action={addEventCorroboration} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />
                                 <SelectField id={`add-corr-${event.id}`} label="" name="target_event_id" required>
                                   <option value="">Select event...</option>
@@ -187,7 +188,7 @@ export default async function EventsPage() {
                                   ))}
                                 </SelectField>
                                 <button type="submit" className="secondary-button text-sm">Add Corroboration</button>
-                              </form>
+                              </RetainedActionForm>
                             </div>
 
                             <div className="section-block mt-4">
@@ -197,18 +198,18 @@ export default async function EventsPage() {
                                   {event.contradicts.map((c) => (
                                     <li key={c.id}>
                                       {c.title}
-                                      <form action={removeEventContradiction} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
+                                      <RetainedActionForm label="Remove event contradiction" action={removeEventContradiction} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                         <input type="hidden" name="event_id" value={event.id} />
                                         <input type="hidden" name="target_event_id" value={c.id} />
                                         <button type="submit" className="text-red-500" title="Remove link">✕</button>
-                                      </form>
+                                      </RetainedActionForm>
                                     </li>
                                   ))}
                                 </ul>
                               ) : (
                                 <p className="text-sm text-gray-500">No contradicting events.</p>
                               )}
-                              <form action={addEventContradiction} className="inline-form mt-2">
+                              <RetainedActionForm label="Add event contradiction" action={addEventContradiction} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />
                                 <SelectField id={`add-contra-${event.id}`} label="" name="target_event_id" required>
                                   <option value="">Select event...</option>
@@ -217,7 +218,7 @@ export default async function EventsPage() {
                                   ))}
                                 </SelectField>
                                 <button type="submit" className="secondary-button text-sm">Add Contradiction</button>
-                              </form>
+                              </RetainedActionForm>
                             </div>
                           </details>
                           <DeleteRecordForm action={deleteEventWithState} recordId={event.id} />

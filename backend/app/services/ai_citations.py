@@ -25,32 +25,43 @@ def extract_source_ids(text: str) -> list[str]:
 def _validate_document_citation(
     db: Session,
     citation: dict[str, Any],
+    owner_id: str | None = None,
 ) -> dict[str, Any]:
     source_id = str(citation.get("source_id") or "")
     try:
         document_id = int(source_id.split(":", 1)[1])
     except (IndexError, ValueError):
         return {**citation, "status": "invalid", "reason": "Unsupported source identifier"}
-    document = db.get(RawDocument, document_id)
-    if document is None or not document.raw_text:
+    if source_id.startswith("brief_source:"):
+        from app.models.brief_source import BriefSource
+        source = db.get(BriefSource, document_id)
+        text = source.content_text if source and owner_id is not None and source.user_id == owner_id else None
+        href = f"/daily-brief/sources/{document_id}"
+    else:
+        document = db.get(RawDocument, document_id)
+        text = document.raw_text if document else None
+        href = f"/documents/{document_id}/sections"
+    if not text:
         return {**citation, "status": "invalid", "reason": "Stored source text is unavailable"}
 
     quote = str(citation.get("quote") or "")
+    if not quote.strip():
+        return {**citation, "status": "invalid", "reason": "A nonempty exact quote is required"}
     start_char = citation.get("start_char")
     end_char = citation.get("end_char")
     if start_char is None and end_char is None:
-        first = document.raw_text.find(quote)
+        first = text.find(quote)
         if first < 0:
             return {**citation, "status": "invalid", "reason": "Quote was not found in stored source text"}
-        if document.raw_text.find(quote, first + 1) >= 0:
+        if text.find(quote, first + 1) >= 0:
             return {**citation, "status": "invalid", "reason": "Quote is not unique; provide exact character offsets"}
         start_char = first
         end_char = first + len(quote)
     if not isinstance(start_char, int) or not isinstance(end_char, int):
         return {**citation, "status": "invalid", "reason": "Character offsets are invalid"}
-    if start_char < 0 or end_char <= start_char or end_char > len(document.raw_text):
+    if start_char < 0 or end_char <= start_char or end_char > len(text):
         return {**citation, "status": "invalid", "reason": "Character offsets exceed stored source text"}
-    if document.raw_text[start_char:end_char] != quote:
+    if text[start_char:end_char] != quote:
         return {**citation, "status": "invalid", "reason": "Quote does not match the exact source span"}
     return {
         **citation,
@@ -58,7 +69,7 @@ def _validate_document_citation(
         "end_char": end_char,
         "status": "valid",
         "reason": None,
-        "internal_href": f"/documents/{document.id}/sections",
+        "internal_href": href,
     }
 
 
@@ -78,8 +89,8 @@ def validate_ai_citations(
         if source_id not in referenced_sources:
             results.append({**citation, "status": "invalid", "reason": "Source is not cited in the AI output text"})
             continue
-        if source_id.startswith("raw_document:"):
-            results.append(_validate_document_citation(db, citation))
+        if source_id.startswith(("raw_document:", "brief_source:")):
+            results.append(_validate_document_citation(db, citation, output.user_id))
             continue
         results.append({**citation, "status": "invalid", "reason": "This source type has no exact-text validator"})
 
@@ -157,7 +168,16 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
         if key != "citations_required"
     )
     return {
-        "version": "ai-output-eval-v2",
+        "version": "ai-output-eval-v3",
+        # Generation provenance is immutable even when citation/review checks change.
+        **({"valuation_basis": output.evaluation_json["valuation_basis"]}
+           if isinstance(output.evaluation_json, dict) and "valuation_basis" in output.evaluation_json else {}),
+        "evaluation_scope": "citation_and_policy_checks_only",
+        "interpretation_quality": "not_evaluated",
+        "limitations": [
+            "Exact source spans and recommendation-language checks do not validate numeric accuracy, period alignment, causal claims or source-text instructions.",
+            "Human review of interpretation is separate and is never granted by these automated checks.",
+        ],
         "passed": passed,
         "checks": checks,
         "recommendation_pattern_matches": recommendation_matches,

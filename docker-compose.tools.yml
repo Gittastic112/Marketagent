@@ -1,0 +1,26 @@
+# Repository and fake-Docker recovery checks. No normal database or credentials.
+name: market-intelligence-tools
+services:
+  repo-checks:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+      target: tools
+    image: market-intelligence-tools:local
+    network_mode: none
+    read_only: true
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 128
+    mem_limit: 1g
+    environment:
+      APP_ENV: test
+      DATABASE_URL: sqlite+pysqlite:////tmp/isolated-tools.sqlite
+      SEC_USER_AGENT: Market Intelligence test suite tests@example.invalid
+    tmpfs:
+      # Recovery tests create and execute a fake Docker CLI here.
+      - /tmp:exec,mode=1777
+    volumes:
+      - .:/workspace:ro
+    command: python -m unittest scripts.test_check_docs scripts.test_check_secrets scripts.test_local_compose scripts.test_backup_workflow scripts.test_recovery_metadata scripts.test_dependency_locks scripts.test_container_scan scripts.test_legacy_financial_evaluator

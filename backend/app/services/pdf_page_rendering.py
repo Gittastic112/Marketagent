@@ -1,11 +1,13 @@
 from __future__ import annotations
 
+import base64
 from dataclasses import dataclass
 from io import BytesIO
 from math import isfinite
 from typing import Any, Mapping
 
 import pypdfium2 as pdfium
+from app.services.pdf_jobs import run_pdf_job
 
 
 MIN_RENDER_SCALE = 0.5
@@ -93,6 +95,14 @@ def parse_pdf_region_geometry(
 
 
 def get_pdf_page_size(content: bytes, page_number: int) -> tuple[float, float]:
+    result = run_pdf_job("size", content, {"page_number": page_number})
+    if (not isinstance(result, list) or len(result) != 2
+        or any(type(value) not in (int, float) or not isfinite(value) or value <= 0 for value in result)):
+        raise ValueError("PDF parser returned invalid page dimensions")
+    return float(result[0]), float(result[1])
+
+
+def _get_pdf_page_size(content: bytes, page_number: int) -> tuple[float, float]:
     if page_number < 1:
         raise ValueError("Page number must be at least 1")
     try:
@@ -129,6 +139,18 @@ def validate_pdf_region_against_asset(
 
 
 def render_pdf_page_png(content: bytes, page_number: int, scale: float) -> bytes:
+    if not isfinite(scale):
+        raise ValueError("Render scale must be finite")
+    encoded = run_pdf_job("render", content, {"page_number": page_number, "scale": scale})
+    if not isinstance(encoded, str):
+        raise ValueError("PDF parser returned an invalid page image")
+    result = base64.b64decode(encoded, validate=True)
+    if not result.startswith(b"\x89PNG\r\n\x1a\n"):
+        raise ValueError("PDF parser returned an invalid page image")
+    return result
+
+
+def _render_pdf_page_png(content: bytes, page_number: int, scale: float) -> bytes:
     if page_number < 1:
         raise ValueError("Page number must be at least 1")
     if scale < MIN_RENDER_SCALE or scale > MAX_RENDER_SCALE:

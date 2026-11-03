@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import UTC, date, datetime
 from hashlib import sha256
 from pathlib import Path
@@ -12,6 +12,7 @@ from sqlalchemy.orm import Session
 from app.core.config import PROJECT_ROOT
 from app.models.accounting import DamodaranGoodwillBenchmark, DamodaranRdBenchmark
 from app.models.damodaran import DamodaranDatasetFile
+from app.models.assumption_methodology import AssumptionMethodValue
 from app.models.damodaran_fundamentals import (
     CountryMarketStats,
     DamodaranCapexBenchmark,
@@ -39,7 +40,7 @@ FreshnessStatus = Literal[
     "user_assumed_recent",
 ]
 
-INVENTORY_VERSION = "2026-08-08.6"
+INVENTORY_VERSION = "2026-09-22.1"
 DEFAULT_DATA_ROOT = PROJECT_ROOT / "data" / "damodaran" / "raw"
 CURRENT_SOURCE_MAX_AGE_DAYS = 550
 
@@ -133,10 +134,13 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
         action_required="Implement a versioned R&D importer before using industry R&D priors.",
     ),
     _india(
-        "betaIndia.xls", "raw/datasets/betaIndia.xls", "beta and operating risk", "unsupported",
-        missing_metrics="levered beta|unlevered beta|cash-corrected beta|D/E|standard deviations",
-        limitations="WACC accepts user or reviewed beta inputs; this workbook is not ingested.",
-        action_required="Add a dated beta benchmark schema and importer before automated beta selection.",
+        "betaIndia.xls", "raw/datasets/betaIndia.xls", "beta and operating risk", "partial",
+        ingestion_available=True,
+        destination_tables="assumption_method_values",
+        supported_metrics="levered beta|unlevered beta|cash-corrected beta|versioned source provenance",
+        missing_metrics="D/E|effective tax rate|cash to firm value|standard deviations|historical beta series",
+        limitations="Imported betas are industry priors and still require review for company leverage and business mix.",
+        action_required="Use the active source version as a reviewed prior; do not treat it as a company regression beta.",
     ),
     _india(
         "capexIndia.xls", "raw/datasets/capexIndia.xls", "reinvestment", "partial",
@@ -157,11 +161,14 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
         action_required="No implementation work required; preserve the active source version on every refresh.",
     ),
     _india(
-        "countrytaxrates.xls", "raw/datasets/countrytaxrates.xls", "country tax rates", "unsupported",
+        "countrytaxrates.xls", "raw/datasets/countrytaxrates.xls", "country tax rates", "partial",
         geography="Global",
-        missing_metrics="corporate tax rate|global-minimum-tax-adjusted rate",
-        limitations="Country tax context is currently manual and this workbook is not ingested.",
-        action_required="Add a dated country tax table before provider-backed tax autofill.",
+        ingestion_available=True,
+        destination_tables="assumption_method_values",
+        supported_metrics="corporate tax rate|versioned source provenance",
+        missing_metrics="global-minimum-tax-adjusted rate",
+        limitations="Country marginal tax is a terminal-rate reference, not a substitute for reviewed company effective tax.",
+        action_required="Use as a reviewed country prior and preserve the active source version.",
     ),
     _india(
         "dbtfundIndia.xls", "raw/datasets/dbtfundIndia.xls", "capital structure", "partial",
@@ -195,10 +202,12 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
         action_required="Use current fields as dated priors; add policy drivers only with an explicit consumer.",
     ),
     _india(
-        "finflowsIndia.xls", "raw/datasets/finflowsIndia.xls", "financing flows", "unsupported",
-        missing_metrics="dividends|buybacks|equity issuance|net equity change|debt raised|debt repaid|lease debt change",
-        limitations="The existing financing benchmark table does not represent these cash-flow fields.",
-        action_required="Define a financing-flow schema before ingestion.",
+        "finflowsIndia.xls", "raw/datasets/finflowsIndia.xls", "financing flows", "supported",
+        ingestion_available=True,
+        destination_tables="damodaran_industry_financing_flows",
+        supported_metrics="firm count|dividends|buybacks|equity issuance|net equity change|net equity change to book equity|debt raised|debt repaid|net debt change|net debt change to total debt|lease debt change|versioned source provenance",
+        limitations="Industry aggregate financing flows are context only; company payout inputs still require company facts.",
+        action_required="Use for financing-policy comparison, never as company cash-flow autofill.",
     ),
     _india(
         "fundgrEBIndia.xls", "raw/datasets/fundgrEBIndia(1).xls", "fundamental EBIT growth", "partial",
@@ -222,11 +231,12 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
         action_required="Implement versioned goodwill ingestion before industry acquisition diagnostics.",
     ),
     _india(
-        "histgrIndia.xls", "raw/datasets/histgrIndia.xls", "historical and expected growth", "partial",
+        "histgrIndia.xls", "raw/datasets/histgrIndia.xls", "historical and expected growth", "supported",
+        ingestion_available=True,
         destination_tables="damodaran_industry_fundamental_growth",
-        missing_metrics="five-year net-income CAGR|five-year revenue CAGR|two-year revenue growth|five-year revenue growth|five-year EPS growth",
-        limitations="A growth destination exists, but no source-specific importer populates it.",
-        action_required="Implement dated historical/consensus growth ingestion and keep it separate from forecasts.",
+        supported_metrics="five-year net-income CAGR|five-year revenue CAGR|two-year expected revenue growth|five-year expected revenue growth|five-year expected EPS growth|versioned source provenance",
+        limitations="Historical and consensus growth are evidence-backed priors, not automatic company forecasts.",
+        action_required="Require review when applying these dated industry priors to a company forecast.",
     ),
     _india(
         "insholdGlobal.xls", "raw/datasets/insholdGlobal.xls", "global ownership", "unsupported",
@@ -359,10 +369,12 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
     ),
     _india(
         "taxrateIndia.xls", "raw/datasets/taxrateIndia.xls", "industry tax rates", "partial",
-        destination_tables="damodaran_industry_financing_flows",
-        missing_metrics="taxable income|accrual taxes|cash taxes|cash to accrual taxes|effective tax-rate variants",
-        limitations="A related field exists, but no source-specific importer populates it.",
-        action_required="Add a dated tax benchmark schema before industry tax-rate autofill.",
+        ingestion_available=True,
+        destination_tables="assumption_method_values",
+        supported_metrics="average effective tax rate across all companies|versioned source provenance",
+        missing_metrics="taxable income|accrual taxes|cash taxes|cash to accrual taxes|money-making-company and aggregate variants",
+        limitations="The imported effective rate is a reality check; terminal tax should normally use a reviewed marginal rate.",
+        action_required="Review the company tax position before selecting the industry effective-rate prior.",
     ),
     _india(
         "totalbetaIndia.xls", "raw/datasets/totalbetaIndia.xls", "total beta", "unsupported",
@@ -379,10 +391,12 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
         action_required="Preserve the source population choice and active version in every downstream calculation.",
     ),
     _india(
-        "waccIndia.xls", "raw/datasets/waccIndia.xls", "cost of capital", "unsupported",
-        missing_metrics="beta|cost of equity|capital weights|cost of debt|tax rate|WACC|local-currency WACC",
-        limitations="The valuation engine calculates company WACC, but this industry benchmark workbook is not ingested.",
-        action_required="Add a dated WACC benchmark table only as a reality check, never as automatic company WACC.",
+        "waccIndia.xls", "raw/datasets/waccIndia.xls", "cost of capital", "supported",
+        ingestion_available=True,
+        destination_tables="assumption_method_values",
+        supported_metrics="equity risk premium|USD risk-free rate|inflation-parity INR risk-free rate|country default spread|industry cost of equity|capital weights|industry cost of debt|USD WACC|local-currency WACC|versioned source provenance",
+        limitations="Industry WACC and component costs are priors; company capital structure and currency consistency still require review.",
+        action_required="Use only as a dated benchmark with exact currency and source provenance.",
     ),
     _india(
         "wcdataIndia.xls", "raw/datasets/wcdataIndia.xls", "working capital", "partial",
@@ -396,13 +410,35 @@ DAMODARAN_APPLICATION_COVERAGE: tuple[DamodaranCoverageSpec, ...] = (
 )
 
 
+# These inspected US snapshots share the corresponding typed column contracts,
+# not the India values or geography. Originals and exact dates stay independent.
+_US_VARIANTS = (
+    ("betaIndia.xls", "betasUS-2026-01-05.xls", "raw/datasets/betas.xls"),
+    ("waccIndia.xls", "waccUS-2026-01-05.xls", "raw/datasets/waccUS-2026-01-05.xls"),
+    ("marginIndia.xls", "marginUS-2026-01-05.xls", "raw/datasets/marginUS-2026-01-05.xls"),
+    ("capexIndia.xls", "capexUS-2026-01-05.xls", "raw/datasets/capexUS-2026-01-05.xls"),
+    ("roeIndia.xls", "roeUS-2026-01-05.xls", "raw/datasets/roe(1).xls"),
+    ("wcdataIndia.xls", "wcdataUS-2026-01-05.xls", "raw/datasets/wcdata.xls"),
+)
+DAMODARAN_APPLICATION_COVERAGE += tuple(
+    replace(next(spec for spec in DAMODARAN_APPLICATION_COVERAGE if spec.source_filename == original),
+        source_filename=filename, canonical_path=canonical, geography="United States",
+        **({"supported_metrics": _items("equity risk premium|USD workbook risk-free rate|workbook default spread|industry cost of equity|capital weights|industry cost of debt|USD WACC|versioned source provenance")}
+           if original == "waccIndia.xls" else {}))
+    for original, filename, canonical in _US_VARIANTS
+)
+
+
 _DATASET_ROW_MODELS: dict[str, type] = {
     "R&DIndia.xls": DamodaranRdBenchmark,
+    "betaIndia.xls": AssumptionMethodValue,
     "capexIndia.xls": DamodaranCapexBenchmark,
     "countrystats.xls": CountryMarketStats,
+    "countrytaxrates.xls": AssumptionMethodValue,
     "dbtfundIndia.xls": DamodaranFinancingFlowsBenchmark,
     "divfcfeIndia.xls": DamodaranFCFEBenchmark,
     "divfundIndia.xls": DamodaranDividendBenchmark,
+    "finflowsIndia.xls": DamodaranFinancingFlowsBenchmark,
     "fundgrEBIndia.xls": DamodaranGrowthBenchmark,
     "fundgrIndia.xls": DamodaranGrowthBenchmark,
     "goodwillIndia.xls": DamodaranGoodwillBenchmark,
@@ -413,10 +449,12 @@ _DATASET_ROW_MODELS: dict[str, type] = {
     "peIndia.xls": DamodaranPricingBenchmark,
     "psIndia.xls": DamodaranPricingBenchmark,
     "roeIndia.xls": DamodaranRoeBenchmark,
-    "taxrateIndia.xls": DamodaranFinancingFlowsBenchmark,
+    "taxrateIndia.xls": AssumptionMethodValue,
     "vebitdaIndia.xls": DamodaranPricingBenchmark,
+    "waccIndia.xls": AssumptionMethodValue,
     "wcdataIndia.xls": DamodaranWcBenchmark,
 }
+_DATASET_ROW_MODELS.update({filename: _DATASET_ROW_MODELS[original] for original, filename, _ in _US_VARIANTS})
 
 
 def _typed_record_count(

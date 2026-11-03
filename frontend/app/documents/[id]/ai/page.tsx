@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerGenerateAiSummary } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { serverFetchApiResponse } from "@/lib/server-api";
@@ -44,7 +45,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
         />
 
         <Panel title="Generate AI Summary">
-          <form action={triggerSummary}>
+          <RetainedActionForm label="Trigger summary" action={triggerSummary}>
             <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
               AI must be configured unless explicit demo mode is enabled. Provider failures are shown as failures and never replaced by mock text.
             </p>
@@ -58,14 +59,15 @@ export default async function DocumentAiPage({ params }: PageProps) {
               <span>{AI_DISCLOSURES.documentSummary}</span>
             </label>
             <button type="submit">Generate Summary</button>
-          </form>
+          </RetainedActionForm>
         </Panel>
 
         {aiOutputs.length === 0 ? (
           <EmptyState label="No AI summaries generated yet." />
         ) : (
           aiOutputs.map((output) => (
-            <Panel key={output.id} title={`${output.is_mock ? "Mock Data" : "Summary"} by ${output.model_name}`}>
+            <div key={output.id} id={`ai-output-${output.id}`} className="anchored-record">
+            <Panel title={`${output.is_mock ? "Mock Data" : "Summary"} by ${output.model_name}`}>
               <div style={{ display: "flex", gap: "2rem", flexDirection: "column" }}>
                 <div>
                   <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Metadata</h4>
@@ -74,7 +76,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
                   <p><strong>Provider:</strong> {output.provider_name}</p>
                   <p><strong>Source scope:</strong> {output.source_scope}</p>
                   <p><strong>Transmission:</strong> {output.transmission_scope}</p>
-                  <p><strong>Review Status:</strong> <span style={{ textTransform: "capitalize" }}>{output.human_review_status}</span></p>
+                  <p><strong>Review Status:</strong> <span style={{ textTransform: "capitalize" }}>{output.human_review_status.replaceAll("_", " ")}</span></p>
                   <p><strong>Input Hash:</strong> {output.input_hash.substring(0, 12)}...</p>
                 </div>
 
@@ -103,6 +105,7 @@ export default async function DocumentAiPage({ params }: PageProps) {
                 <AiOutputReviewControls initialOutput={output} />
               </div>
             </Panel>
+            </div>
           ))
         )}
       </>

@@ -1,0 +1,1103 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-HDFCBANK-15",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewed_at": "2026-10-22T20:06:13.144172+00:00",
+  "independent_human_certification": false,
+  "decision": "Accept the source distinctions and reconciliations below for historical research. Keep reported profit unchanged and recurring profit/current option value/valuation unavailable until their separate bases are complete.",
+  "source": {
+    "source_id": "HDFCBANK-2026",
+    "raw_document_id": 19,
+    "asset_id": 10,
+    "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+    "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+    "fiscal_period_ends": [
+      "2025-03-31",
+      "2026-03-31"
+    ],
+    "currency": "INR",
+    "monetary_unit": "INR crore",
+    "scale": 10000000,
+    "publication_date": null,
+    "read_pdf_pages": [
+      471,
+      472,
+      473,
+      475,
+      476,
+      477,
+      495,
+      509,
+      510,
+      511,
+      512,
+      513,
+      532,
+      534,
+      538,
+      540,
+      541,
+      548,
+      549
+    ],
+    "visually_checked_pdf_pages": [
+      475,
+      532,
+      534,
+      538,
+      540,
+      548
+    ],
+    "local_source": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf"
+  },
+  "earnings_items": [
+    {
+      "claim_type": "Source Summary",
+      "name": "HDBFS share disposal gain",
+      "value": "7000.27",
+      "unit": "INR crore",
+      "pdf_pages": [
+        473,
+        534
+      ],
+      "basis": "Consolidated gain before tax, net of IPO expenses; gross OFS consideration INR10000 crore is different. The subsidiary fresh issue INR2500 crore is a separate financing event.",
+      "treatment": "Identify as a disposal gain when assessing recurrence; no after-tax parent-profit deduction is authorized without the attributable tax basis."
+    },
+    {
+      "claim_type": "Source Summary",
+      "name": "Floating provision",
+      "value": "9000.00",
+      "unit": "INR crore",
+      "pdf_pages": [
+        473,
+        495,
+        532
+      ],
+      "basis": "Current-year provision expense; source policy limits use to extraordinary contingencies and specific non-performing-account provisions.",
+      "treatment": "Retain as a risk cost in reported earnings. A discretionary buffer is not automatically excess cash or an add-back to recurring profit."
+    },
+    {
+      "claim_type": "Source Summary",
+      "name": "New Labour Codes employee-cost impact",
+      "value": "1037.28",
+      "unit": "INR crore",
+      "pdf_pages": [
+        538
+      ],
+      "basis": "Estimated incremental group expense in payments/provisions for employees; issuer says later clarifications may require additional accounting.",
+      "treatment": "Keep the estimate and uncertainty visible. Do not assume all future labour-cost effects disappear or double-count subcomponents as additional charges."
+    },
+    {
+      "claim_type": "Source Summary",
+      "name": "Income-tax provision write-back",
+      "value": "1190.28",
+      "unit": "INR crore",
+      "pdf_pages": [
+        532
+      ],
+      "basis": "Tax charge is net of a provision write-back after favourable orders; this is a tax benefit, not a pretax operating gain.",
+      "treatment": "Identify separately when reviewing recurrence. Do not apply an assumed tax rate to this already-tax-line benefit."
+    },
+    {
+      "claim_type": "Source Summary",
+      "name": "Estimated Pillar Two tax expense",
+      "value": "93.72",
+      "unit": "INR crore",
+      "pdf_pages": [
+        532
+      ],
+      "basis": "Included in current income-tax provision. Historical issuer disclosure, not current tax-law advice.",
+      "treatment": "Do not automatically label a new tax expense nonrecurring."
+    }
+  ],
+  "shares": {
+    "claim_type": "Source Summary",
+    "pdf_pages": [
+      475,
+      509,
+      510,
+      511,
+      512,
+      513
+    ],
+    "ending_actual_fy2025": 7652221674,
+    "bonus_shares_issued_fy2026": 7677039761,
+    "actual_shares_from_exercises_fy2026": 64106893,
+    "ending_actual_fy2026": 15393368328,
+    "fy2026_parent_options_outstanding_bonus_adjusted": 233964038,
+    "fy2026_parent_option_weighted_exercise_price_inr": "772.53",
+    "fy2026_parent_units_outstanding_bonus_adjusted": 31719700,
+    "fy2026_parent_unit_exercise_price_inr": "1.00",
+    "fy2026_option_grant_date_weighted_fair_value_inr": "292.15",
+    "fy2026_unit_grant_date_weighted_fair_value_inr": "937.54",
+    "treatment": "Actual dated issued shares, bonus-adjusted option/RSU movements and EPS weighted-average shares are different series. Subsidiary awards are claims on subsidiary shares, not additional HDFC Bank shares. Grant-date fair values for new grants and the consolidated accounting reserve do not establish the current value of outstanding awards. No current or fully diluted valuation denominator is auto-populated."
+  },
+  "equity_scope": {
+    "claim_type": "Calculation",
+    "pdf_pages": [
+      471,
+      475,
+      476,
+      548,
+      549
+    ],
+    "fy2026": {
+      "net_assets": "608444.43",
+      "minority_interest": "22384.96",
+      "net_assets_less_minority": "586059.47",
+      "employee_award_reserve": "4545.11",
+      "capital_and_reserves_subtotal": "581514.36"
+    },
+    "fy2025": {
+      "net_assets": "538148.43",
+      "minority_interest": "16359.04",
+      "net_assets_less_minority": "521789.39",
+      "employee_award_reserve": "3805.19",
+      "capital_and_reserves_subtotal": "517984.20"
+    },
+    "unit": "INR crore",
+    "treatment": "These are separate accounting subtotals, not interchangeable model inputs. Choose the common-equity and award-claim treatment explicitly before a model; do not deduct minority interests again from a parent-only basis. Subsidiaries already included in consolidated results/net assets cannot be added again as cross-holdings. Consolidated accounting equity is not standalone regulatory or distributable capital."
+  },
+  "industry_weighting": {
+    "claim_type": "AI Interpretation",
+    "pdf_pages": [
+      540,
+      541,
+      548,
+      549
+    ],
+    "fy2026_gross_segment_revenue": "722946.41",
+    "fy2026_intersegment_elimination": "227483.60",
+    "fy2026_external_total": "495462.81",
+    "unit": "INR crore",
+    "decision": "Withhold a mechanical revenue-weighted bank/insurance blend. Segment revenue includes internal funding/transfer charges, and the source does not allocate the full elimination by sector in this table. Net-asset entity shares include minority interests and inter-company elimination; they are not reviewed business-value weights.",
+    "company_mapping_or_benchmark_weights_changed": false
+  },
+  "reconciliation": {
+    "checks": [
+      {
+        "name": "FY2026 actual issued share roll-forward",
+        "claim_type": "Calculation",
+        "terms": [
+          "7652221674",
+          "7677039761",
+          "64106893"
+        ],
+        "calculated": "15393368328",
+        "expected": "15393368328",
+        "difference": "0",
+        "unit": "shares",
+        "pdf_pages": [
+          475,
+          509
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 bonus-adjusted option roll-forward",
+        "claim_type": "Calculation",
+        "terms": [
+          "282749020",
+          "39333316",
+          "-80542270",
+          "-5454290",
+          "-2121738"
+        ],
+        "calculated": "233964038",
+        "expected": "233964038",
+        "difference": "0",
+        "unit": "options",
+        "pdf_pages": [
+          510
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 bonus-adjusted unit roll-forward",
+        "claim_type": "Calculation",
+        "terms": [
+          "29770856",
+          "12103168",
+          "-8382710",
+          "-1417772",
+          "-353842"
+        ],
+        "calculated": "31719700",
+        "expected": "31719700",
+        "difference": "0",
+        "unit": "units",
+        "pdf_pages": [
+          511
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 option plan reconciliation",
+        "claim_type": "Calculation",
+        "terms": [
+          "8961100",
+          "21432440",
+          "87535624",
+          "81471576",
+          "88822",
+          "81884",
+          "24966",
+          "285600",
+          "34082026"
+        ],
+        "calculated": "233964038",
+        "expected": "233964038",
+        "difference": "0",
+        "unit": "options",
+        "pdf_pages": [
+          510,
+          511
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 total income-tax charge",
+        "claim_type": "Calculation",
+        "terms": [
+          "25374.31",
+          "-2452.32"
+        ],
+        "calculated": "22921.99",
+        "expected": "22921.99",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          532
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 provisions including tax",
+        "claim_type": "Calculation",
+        "terms": [
+          "22921.99",
+          "14425.67",
+          "20.31",
+          "800.50",
+          "9000.00",
+          "2409.74"
+        ],
+        "calculated": "49578.21",
+        "expected": "49578.21",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          532
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 segment revenue after elimination",
+        "claim_type": "Calculation",
+        "terms": [
+          "722946.41",
+          "-227483.60"
+        ],
+        "calculated": "495462.81",
+        "expected": "495462.81",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          540
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 segment result to profit before minority",
+        "claim_type": "Calculation",
+        "terms": [
+          "104505.88",
+          "-2364.43",
+          "-22921.99"
+        ],
+        "calculated": "79219.46",
+        "expected": "79219.46",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          540
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 parent-attributable profit",
+        "claim_type": "Calculation",
+        "terms": [
+          "79219.46",
+          "-3193.49"
+        ],
+        "calculated": "76025.97",
+        "expected": "76025.97",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          472,
+          548
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 consolidated net assets",
+        "claim_type": "Calculation",
+        "terms": [
+          "4908040.84",
+          "-4299596.41"
+        ],
+        "calculated": "608444.43",
+        "expected": "608444.43",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          540,
+          548
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 net assets excluding minority interest",
+        "claim_type": "Calculation",
+        "terms": [
+          "608444.43",
+          "-22384.96"
+        ],
+        "calculated": "586059.47",
+        "expected": "586059.47",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          548
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 capital and reserves subtotal",
+        "claim_type": "Calculation",
+        "terms": [
+          "1539.34",
+          "579975.02"
+        ],
+        "calculated": "581514.36",
+        "expected": "581514.36",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          475,
+          476
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 net assets excluding minority and employee awards",
+        "claim_type": "Calculation",
+        "terms": [
+          "586059.47",
+          "-4545.11"
+        ],
+        "calculated": "581514.36",
+        "expected": "581514.36",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          548
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2026 balance-sheet equity components",
+        "claim_type": "Calculation",
+        "terms": [
+          "1539.34",
+          "579975.02",
+          "4545.11",
+          "22384.96"
+        ],
+        "calculated": "608444.43",
+        "expected": "608444.43",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          548
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 total income-tax charge",
+        "claim_type": "Calculation",
+        "terms": [
+          "20942.26",
+          "1859.62"
+        ],
+        "calculated": "22801.88",
+        "expected": "22801.88",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          532
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 provisions including tax",
+        "claim_type": "Calculation",
+        "terms": [
+          "22801.88",
+          "15543.54",
+          "-158.30",
+          "309.96",
+          "0.00",
+          "-1520.59"
+        ],
+        "calculated": "36976.49",
+        "expected": "36976.49",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          532
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 segment revenue after elimination",
+        "claim_type": "Calculation",
+        "terms": [
+          "697842.44",
+          "-226926.51"
+        ],
+        "calculated": "470915.93",
+        "expected": "470915.93",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          541
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 segment result to profit before minority",
+        "claim_type": "Calculation",
+        "terms": [
+          "98586.17",
+          "-2344.12",
+          "-22801.88"
+        ],
+        "calculated": "73440.17",
+        "expected": "73440.17",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          541
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 parent-attributable profit",
+        "claim_type": "Calculation",
+        "terms": [
+          "73440.17",
+          "-2647.92"
+        ],
+        "calculated": "70792.25",
+        "expected": "70792.25",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          472,
+          549
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 consolidated net assets",
+        "claim_type": "Calculation",
+        "terms": [
+          "4392417.42",
+          "-3854268.99"
+        ],
+        "calculated": "538148.43",
+        "expected": "538148.43",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          541,
+          549
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 net assets excluding minority interest",
+        "claim_type": "Calculation",
+        "terms": [
+          "538148.43",
+          "-16359.04"
+        ],
+        "calculated": "521789.39",
+        "expected": "521789.39",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          549
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 capital and reserves subtotal",
+        "claim_type": "Calculation",
+        "terms": [
+          "765.22",
+          "517218.98"
+        ],
+        "calculated": "517984.20",
+        "expected": "517984.20",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          475,
+          476
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 net assets excluding minority and employee awards",
+        "claim_type": "Calculation",
+        "terms": [
+          "521789.39",
+          "-3805.19"
+        ],
+        "calculated": "517984.20",
+        "expected": "517984.20",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          549
+        ],
+        "passed": true
+      },
+      {
+        "name": "FY2025 balance-sheet equity components",
+        "claim_type": "Calculation",
+        "terms": [
+          "765.22",
+          "517218.98",
+          "3805.19",
+          "16359.04"
+        ],
+        "calculated": "538148.43",
+        "expected": "538148.43",
+        "difference": "0.00",
+        "unit": "INR crore",
+        "pdf_pages": [
+          471,
+          549
+        ],
+        "passed": true
+      }
+    ],
+    "passed_count": 24,
+    "failed_count": 0,
+    "comparison": "Exact Decimal arithmetic at reported precision; no relaxed tolerance.",
+    "source_text_checks": [
+      {
+        "pdf_page": 475,
+        "reported_text": "15,39,33,68,328",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 475,
+        "reported_text": "7,65,22,21,674",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 475,
+        "reported_text": "1,539.34",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 475,
+        "reported_text": "765.22",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "7,67,70,39,761",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "6,41,06,893",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "2,228.30",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "1,179.83",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "255.79",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 509,
+        "reported_text": "52.76",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "28,27,49,020",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "3,93,33,316",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "8,05,42,270",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "54,54,290",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "21,21,738",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "23,39,64,038",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 510,
+        "reported_text": "772.53",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "2,97,70,856",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "1,21,03,168",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "83,82,710",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "14,17,772",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "3,53,842",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 511,
+        "reported_text": "3,17,19,700",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 512,
+        "reported_text": "292.15",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 512,
+        "reported_text": "937.54",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 512,
+        "reported_text": "Fair Value on the grant date",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 513,
+        "reported_text": "6,02,704",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 513,
+        "reported_text": "HDFC Securities Limited",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "25,374.31",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "(2,452.32)",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "14,425.67",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "20.31",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "800.50",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "9,000.00",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "2,409.74",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "49,578.21",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "1,190.28",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "93.72",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "20,942.26",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "1,859.62",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "15,543.54",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "(158.30)",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "309.96",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "(1,520.59)",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 532,
+        "reported_text": "36,976.49",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "2,500.00",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "10,000.00",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "13,51,35,135",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "740",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "7,000.27",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 534,
+        "reported_text": "before tax and net of IPO",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 538,
+        "reported_text": "1,037.28",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 538,
+        "reported_text": "estimated incremental impact",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "1,539.34",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "4,545.11",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "579,975.02",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "22,384.96",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "765.22",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "3,805.19",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "517,218.98",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 471,
+        "reported_text": "16,359.04",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "608,444.43",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "79,219.46",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "22,384.96",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "3,193.49",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "(35,589.64)",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 548,
+        "reported_text": "(7,636.82)",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 549,
+        "reported_text": "538,148.43",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 549,
+        "reported_text": "73,440.17",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 549,
+        "reported_text": "16,359.04",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 549,
+        "reported_text": "2,647.92",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "722,946.41",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "227,483.60",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "495,462.81",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "104,505.88",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "2,364.43",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "22,921.99",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "79,219.46",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "4,299,596.41",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 540,
+        "reported_text": "608,444.43",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "697,842.44",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "226,926.51",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "470,915.93",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "98,586.17",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "2,344.12",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "22,801.88",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "73,440.17",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 541,
+        "reported_text": "3,854,268.99",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 472,
+        "reported_text": "76,025.97",
+        "present_in_retained_text": true
+      },
+      {
+        "pdf_page": 472,
+        "reported_text": "70,792.25",
+        "present_in_retained_text": true
+      }
+    ],
+    "prior_eps_exception_unchanged": "M05-HDFCBANK-12 FY2025 basic EPS exception remains separate and is not cleared by these checks."
+  },
+  "remaining_inputs": [
+    "Item-specific attributable tax, minority-interest effects and a reviewed sustainable credit/employee-cost basis before a recurring parent-earnings estimate.",
+    "A matched date, share price, outstanding award tranches and reviewed dilution/option methodology before valuing award claims or selecting a current denominator.",
+    "Regulatory/consolidated capital, sustainable reinvestment/payout, currency/discount-rate and forecast basis before an excess-return valuation.",
+    "A comparable FY2024 combined full-year series before using merger-crossing growth.",
+    "Business/capital weights and compatible benchmark-country/ratio coverage before adopting blended priors."
+  ],
+  "normal_database_writes": false,
+  "reported_profit_changed": false,
+  "saved_valuations_changed": false,
+  "new_disposable_dataset_created": false,
+  "source_report_downloaded_again": false,
+  "evidence_directory": "output/milestones/hdfc-latest-20261022/",
+  "text_sha256": {
+    "471": "24b720eb49e835d57058f2ceaf86f0f0ac28958e9487580303cdbfbd921d3922",
+    "472": "abd6c56258f12c5a11a0c7f6d3ca53b2e5d6aac9f51037c1658191000753ddb7",
+    "473": "3699e5b76c417598102edd254351e1911d9c060108286eb3f396625a668cb157",
+    "475": "56c0b0b0050c06aa797383bbeaa7880ea96f3a27fc135c5669914955ad3cf81e",
+    "476": "726daf6d95ef87032512e5a6d3313f85073cb4cb878765cd608b8fb4c5a565a3",
+    "477": "995311dd29de1331ea68b0ab12f74e292f303270bcfd135fd3d1b6a45e749772",
+    "495": "0c05566d597149a104470c36ef42eed0177acab496545bb57e67140c64bf5ca2",
+    "509": "c9488cc1402793d3f77a92b54f882dc050135e9f549aea4caf42c37cfdc7de71",
+    "510": "5b94df4ca2af573de1ab70c52626b177f67b47a06443c496fb627aa534565dd3",
+    "511": "1a46fb61253ce7c4c5897edacf0fd0c68f76b0b8c96789a75b8b35ccb6540ac4",
+    "512": "05c4b301234ab1b7243e681b2fe698273e9097b72ff4582dbbc51d7540386505",
+    "513": "362f044c108f93fbcf572940c259eebe0242a76f70c76f8aca7a5ff37288076d",
+    "532": "7e5b3cf99685b47cb34525f8e1b3d72695aff46d25ce067e8fda8d7b4c4fe22b",
+    "534": "52acf274d71a07b94ef7b4ccd2dddc992439cd6f170dc6d7ff63654c3d549449",
+    "538": "a3e16cc3f0ba2bd522837fcf88544c3968526ea0c690870df31d8676341b03bc",
+    "540": "020f2d48a757610476180bc71f0d1397f57f328012bcc1547591fbba2764613c",
+    "541": "353f5e90086ccb568453e5188b6f7296878692a4a8fa5be321c9fb77d838144a",
+    "548": "48fd65470edfe64344406f7c28752674335280f309ec26acc7a9eed45800ec99",
+    "549": "d47f69225b38f82bb5b311dbecea4f5f05c894462e6b099c11e1f0dda49ae482"
+  },
+  "text_sha256_basis": "UTF-8 text after universal newline normalization to LF; source PDF SHA-256 above is over original bytes."
+}

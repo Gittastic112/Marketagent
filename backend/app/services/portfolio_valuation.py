@@ -1,11 +1,13 @@
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, time, timedelta
+from math import isfinite
 from typing import Any
 
-from sqlalchemy import select, func
-from sqlalchemy.orm import Session
+from sqlalchemy import case, func, or_, select
+from sqlalchemy.orm import Session, selectinload
 
-from app.models import Alert, DcfAssumptionSet, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding, ThesisNote, ValuationModel
+from app.models import Alert, DcfAssumptionSet, DcfOutput, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding, ThesisNote, ValuationModel
 from app.services.fx_rates import FxRateUnavailable, convert_amount
+from app.services.portfolio_replay import replay_portfolio
 
 
 def get_latest_price(
@@ -32,36 +34,150 @@ def calculate_portfolio_valuation(
     user_id: str | None = None,
 ) -> dict[str, Any]:
     target_date = as_of_date or date.today()
-    portfolio = db.scalar(select(Portfolio).where(Portfolio.id == portfolio_id))
+    portfolio_query = select(Portfolio).where(Portfolio.id == portfolio_id)
+    if user_id is not None:
+        portfolio_query = portfolio_query.where(Portfolio.user_id == user_id)
+    portfolio = db.scalar(portfolio_query)
     if not portfolio:
         raise ValueError(f"Portfolio {portfolio_id} not found")
+    # Internal snapshot/attribution callers omit an explicit owner. They must still
+    # use this portfolio's private context, never global latest research records.
+    user_id = portfolio.user_id
 
-    holdings = db.scalars(
-        select(PortfolioHolding).where(
+    replayed_holdings, replayed_cash, replay_basis = (None, None, {
+        "method": "current-declared-balances-v1", "status": "not_assessed", "claim_type": "User Assumption",
+        "blockers": [], "limitations": ["Current declared balances do not establish historical ownership or activity."]})
+    if as_of_date is not None:
+        replayed_holdings, replayed_cash, replay_basis = replay_portfolio(db, portfolio, target_date)
+    holdings = replayed_holdings if replayed_holdings is not None else list(db.scalars(
+        select(PortfolioHolding)
+        .options(selectinload(PortfolioHolding.company))
+        .where(
             PortfolioHolding.portfolio_id == portfolio_id,
             PortfolioHolding.quantity > 0,
+            PortfolioHolding.as_of_date <= target_date,
         )
-    ).all()
+        .order_by(PortfolioHolding.id)
+    ))
+
+    company_ids = sorted({
+        holding.company_id for holding in holdings if holding.company_id is not None
+    })
+    unlinked_tickers = sorted({
+        holding.ticker.upper() for holding in holdings if holding.company_id is None
+    })
+    price_filters = []
+    if company_ids:
+        price_filters.append(MarketPrice.company_id.in_(company_ids))
+    if unlinked_tickers:
+        price_filters.append(
+            (MarketPrice.company_id.is_(None))
+            & (MarketPrice.ticker.in_(unlinked_tickers))
+        )
+    price_records = []
+    if price_filters:
+        # Rank in SQL so a current valuation does not materialize years of prices.
+        # Linked company identity wins; unlinked tickers remain a separate namespace.
+        ranked_prices = select(
+            MarketPrice.id,
+            func.row_number().over(
+                partition_by=(MarketPrice.company_id, case(
+                    (MarketPrice.company_id.is_(None), func.upper(MarketPrice.ticker)),
+                    else_=None,
+                )),
+                order_by=(MarketPrice.as_of_date.desc(), MarketPrice.id.desc()),
+            ).label("position"),
+        ).where(MarketPrice.as_of_date <= target_date, or_(*price_filters)).subquery()
+        price_records = list(db.scalars(
+            select(MarketPrice)
+            .join(ranked_prices, ranked_prices.c.id == MarketPrice.id)
+            .where(ranked_prices.c.position == 1)
+        ))
+    latest_price_by_company: dict[int, MarketPrice] = {}
+    latest_price_by_ticker: dict[str, MarketPrice] = {}
+    for price in price_records:
+        if price.company_id is not None:
+            latest_price_by_company.setdefault(price.company_id, price)
+        else:
+            latest_price_by_ticker.setdefault(price.ticker.upper(), price)
+
+    latest_valuation_by_company: dict[int, tuple[DcfAssumptionSet, DcfOutput | None]] = {}
+    if company_ids:
+        valuation_query = (
+            select(ValuationModel.company_id, DcfAssumptionSet, DcfOutput)
+            .join(DcfAssumptionSet, DcfAssumptionSet.valuation_model_id == ValuationModel.id)
+            .outerjoin(DcfOutput, DcfOutput.assumption_set_id == DcfAssumptionSet.id)
+            .where(
+                ValuationModel.company_id.in_(company_ids),
+                DcfAssumptionSet.scenario == "Base",
+            )
+            .order_by(
+                ValuationModel.company_id,
+                DcfAssumptionSet.id.desc(),
+                DcfOutput.id.desc(),
+            )
+        )
+        if user_id is not None:
+            valuation_query = valuation_query.where(ValuationModel.user_id == user_id)
+        if as_of_date is not None:
+            cutoff = datetime.combine(target_date, time.max, tzinfo=UTC)
+            valuation_query = valuation_query.where(DcfAssumptionSet.created_at <= cutoff,
+                or_(DcfOutput.id.is_(None), DcfOutput.created_at <= cutoff))
+        for company_id, assumption_set, output in db.execute(valuation_query):
+            latest_valuation_by_company.setdefault(company_id, (assumption_set, output))
+
+    thesis_status_by_company: dict[int, str] = {}
+    if company_ids:
+        for company_id, status in db.execute(
+            select(ThesisNote.company_id, ThesisNote.status)
+            .where(
+                ThesisNote.company_id.in_(company_ids),
+                ThesisNote.user_id == user_id,
+                ThesisNote.status != "archived",
+            )
+            .order_by(ThesisNote.company_id, ThesisNote.updated_at.desc())
+        ):
+            thesis_status_by_company.setdefault(company_id, status)
+
+    alert_count_by_company: dict[int, int] = {}
+    if company_ids:
+        active_alerts_query = (
+            select(Alert.company_id, func.count(Alert.id))
+            .where(
+                Alert.company_id.in_(company_ids),
+                Alert.review_status == "unreviewed",
+            )
+            .group_by(Alert.company_id)
+        )
+        if user_id is not None:
+            active_alerts_query = active_alerts_query.where(Alert.user_id == user_id)
+        alert_count_by_company = {
+            company_id: count
+            for company_id, count in db.execute(active_alerts_query)
+            if company_id is not None
+        }
 
     total_market_value = 0.0
     total_cost_basis = 0.0
-    missing_fx_pairs: set[str] = set()
+    missing_fx_pairs: set[str] = set(replay_basis.get("missing_cost_fx_pairs", []))
     stale_threshold = timedelta(days=5)
 
     holdings_valuation = []
 
     for holding in holdings:
-        # Ignore holding as_of_date for current valuation, use target_date
         qty = float(holding.quantity)
         avg_cost = float(holding.average_cost)
         total_cost = qty * avg_cost
 
-        latest_price = get_latest_price(
-            db,
-            holding.ticker,
-            target_date,
-            company_id=holding.company_id,
+        latest_price = (
+            latest_price_by_company.get(holding.company_id)
+            if holding.company_id is not None
+            else latest_price_by_ticker.get(holding.ticker.upper())
         )
+        if replayed_holdings is not None and latest_price and latest_price.adjustment_state not in {"not_applicable", "unadjusted"}:
+            replay_basis["status"] = "partial"
+            replay_basis["blockers"] = sorted(set(replay_basis["blockers"]) | {"PRICE_ADJUSTMENT_BASIS_UNSUPPORTED"})
+            latest_price = None
 
         market_price = None
         market_price_as_of = None
@@ -75,17 +191,14 @@ def calculate_portfolio_valuation(
         cost_fx = None
         is_stale = True
 
-        try:
-            converted_cost, cost_fx = convert_amount(
-                db,
-                total_cost,
-                holding.currency,
-                portfolio.base_currency,
-                holding.as_of_date,
-            )
-            total_cost_base = float(converted_cost)
-        except FxRateUnavailable:
-            missing_fx_pairs.add(f"{holding.currency.upper()}/{portfolio.base_currency.upper()}")
+        if getattr(holding, "is_replayed", False):
+            total_cost_base = float(holding.cost_basis_base) if holding.cost_basis_base is not None else None
+        else:
+            try:
+                converted_cost, cost_fx = convert_amount(db, total_cost, holding.currency, portfolio.base_currency, holding.as_of_date)
+                total_cost_base = float(converted_cost)
+            except FxRateUnavailable:
+                missing_fx_pairs.add(f"{holding.currency.upper()}/{portfolio.base_currency.upper()}")
 
         if latest_price:
             market_price = float(latest_price.price)
@@ -113,40 +226,19 @@ def calculate_portfolio_valuation(
             if market_value_base is not None:
                 total_market_value += market_value_base
 
-            # Phase 18: Trigger divergence alert check for the company if a new price is pulled
-            from app.services.valuation_alert_service import check_price_valuation_divergence
-            check_price_valuation_divergence(db, holding.company_id)
-
-        # Check valuation staleness
-        base_valuation = db.scalar(
-            select(DcfAssumptionSet)
-            .join(ValuationModel, ValuationModel.id == DcfAssumptionSet.valuation_model_id)
-            .where(ValuationModel.company_id == holding.company_id)
-            .where(DcfAssumptionSet.scenario == "Base")
-            .order_by(DcfAssumptionSet.id.desc())
-            .limit(1)
+        base_valuation = latest_valuation_by_company.get(holding.company_id)
+        assumption_set = base_valuation[0] if base_valuation else None
+        dcf_output = base_valuation[1] if base_valuation else None
+        is_valuation_stale = assumption_set.is_stale if assumption_set else False
+        stale_valuation_reason = assumption_set.stale_reason if assumption_set else None
+        raw_intrinsic_value = (
+            float(dcf_output.intrinsic_value_per_share)
+            if dcf_output and dcf_output.intrinsic_value_per_share is not None
+            else None
         )
-        is_valuation_stale = base_valuation.is_stale if base_valuation else False
-        stale_valuation_reason = base_valuation.stale_reason if base_valuation else None
-        intrinsic_value = float(base_valuation.implied_share_price) if base_valuation and base_valuation.implied_share_price is not None else None
 
-        active_thesis = db.scalar(
-            select(ThesisNote.status)
-            .where(ThesisNote.company_id == holding.company_id)
-            .where(ThesisNote.status != "archived")
-            .order_by(ThesisNote.updated_at.desc())
-            .limit(1)
-        )
-        thesis_status = active_thesis
-
-        active_alerts_query = (
-            select(func.count(Alert.id))
-            .where(Alert.company_id == holding.company_id)
-            .where(Alert.review_status == "unreviewed")
-        )
-        if user_id is not None:
-            active_alerts_query = active_alerts_query.where(Alert.user_id == user_id)
-        active_alerts_count = db.scalar(active_alerts_query)
+        thesis_status = thesis_status_by_company.get(holding.company_id)
+        active_alerts_count = alert_count_by_company.get(holding.company_id, 0)
 
         if total_cost_base is not None:
             total_cost_basis += total_cost_base
@@ -154,7 +246,38 @@ def calculate_portfolio_valuation(
             unrealized_pnl_base = market_value_base - total_cost_base
 
         expected_return = None
-        if intrinsic_value is not None and market_price is not None and market_price > 0:
+        valuation_currency = assumption_set.cash_flow_currency if assumption_set else None
+        market_currency = (latest_price.currency or holding.currency) if latest_price else None
+        valuation_status = "trusted"
+        valuation_status_reason = None
+        if assumption_set is None or dcf_output is None:
+            valuation_status = "unavailable"
+            valuation_status_reason = "No completed Base DCF output is available."
+        elif assumption_set.is_stale:
+            valuation_status = "stale"
+            valuation_status_reason = assumption_set.stale_reason or "Base DCF assumptions are stale."
+        elif (dcf_output.model_quality_score is None
+              or not isfinite(float(dcf_output.model_quality_score))
+              or float(dcf_output.model_quality_score) < 60):
+            valuation_status = "untrusted"
+            valuation_status_reason = "The latest Base DCF output does not meet the 60/100 quality gate."
+        elif dcf_output.warnings_json:
+            valuation_status = "untrusted"
+            valuation_status_reason = "The latest Base DCF output has unresolved diagnostic warnings."
+        elif raw_intrinsic_value is None or not isfinite(raw_intrinsic_value) or raw_intrinsic_value <= 0:
+            valuation_status = "untrusted"
+            valuation_status_reason = "The latest Base DCF output has no finite positive intrinsic value per share."
+        elif not valuation_currency or not market_currency:
+            valuation_status = "untrusted"
+            valuation_status_reason = "Saved cash-flow and market-price currencies are required for a safe comparison."
+        elif valuation_currency.upper() != market_currency.upper():
+            valuation_status = "untrusted"
+            valuation_status_reason = (
+                f"DCF currency {valuation_currency.upper()} does not match market-price currency {market_currency.upper()}."
+            )
+        dcf_is_trusted = valuation_status == "trusted"
+        intrinsic_value = raw_intrinsic_value if dcf_is_trusted else None
+        if intrinsic_value is not None and market_price is not None and isfinite(market_price) and market_price > 0 and not is_stale:
             expected_return = (intrinsic_value - market_price) / market_price
 
         holdings_valuation.append({
@@ -182,12 +305,17 @@ def calculate_portfolio_valuation(
             "cost_fx_rate_to_base": float(cost_fx.rate) if cost_fx else None,
             "cost_fx_rate_as_of": cost_fx.as_of_date if cost_fx else None,
             "cost_fx_observation_id": cost_fx.observation_id if cost_fx else None,
-            "cost_fx_is_stale": cost_fx.is_stale if cost_fx else False,
+            "cost_fx_is_stale": cost_fx.is_stale if cost_fx else getattr(holding, "cost_fx_is_stale", False),
+            "cost_fx_observation_ids": sorted(getattr(holding, "cost_fx_ids", [])),
+            "source_transaction_ids": getattr(holding, "transaction_ids", []),
             "weight_percent": None,  # Will calculate after total_market_value is known
             "is_stale_price": is_stale,
             "is_valuation_stale": is_valuation_stale,
             "stale_valuation_reason": stale_valuation_reason,
+            "valuation_status": valuation_status,
+            "valuation_status_reason": valuation_status_reason,
             "intrinsic_value": intrinsic_value,
+            "dcf_output_id": dcf_output.id if dcf_output else None,
             "expected_return": expected_return,
             "thesis_status": thesis_status,
             "active_alerts_count": active_alerts_count or 0,
@@ -225,7 +353,7 @@ def calculate_portfolio_valuation(
     # Sort holdings by weight descending
     holdings_valuation.sort(key=lambda x: x["weight_percent"] or 0, reverse=True)
 
-    cash_records = list(db.scalars(
+    cash_records = replayed_cash if replayed_cash is not None else list(db.scalars(
         select(PortfolioCashBalance)
         .where(PortfolioCashBalance.portfolio_id == portfolio_id)
         .where(PortfolioCashBalance.as_of_date <= target_date)
@@ -276,6 +404,12 @@ def calculate_portfolio_valuation(
     elif not has_holdings and latest_cash_by_currency and cash_complete:
         total_portfolio_value = total_cash_value
 
+    if replayed_holdings is not None and replay_basis["status"] != "complete":
+        total_portfolio_value = total_cash_value = total_unrealized_pnl = total_unrealized_pnl_percent = None
+        has_complete_market_value = has_complete_cost_basis = False
+    elif replayed_holdings == [] and replay_basis["status"] == "complete":
+        has_complete_market_value = has_complete_cost_basis = True
+
     return {
         "portfolio_id": portfolio.id,
         "as_of_date": target_date,
@@ -289,4 +423,5 @@ def calculate_portfolio_valuation(
         "missing_fx_pairs": sorted(missing_fx_pairs),
         "cash_balances": cash_valuations,
         "holdings": holdings_valuation,
+        "replay_basis": replay_basis,
     }

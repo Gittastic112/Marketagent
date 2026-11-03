@@ -1,0 +1,670 @@
+{
+  "schema_version": 1,
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "decision_id": "M05-US-09",
+  "review_decision_id": "M05-US-08",
+  "review_sha256": "bade01d427c1073a78bf2d054c502d0db315379ab3dd31f14dd2a4078be732fa",
+  "started_at": "2026-10-18T17:39:46.969859+00:00",
+  "completed_at": "2026-10-18T17:39:50.583803+00:00",
+  "status": "success",
+  "environment_files_read": false,
+  "new_disposable_database_created": false,
+  "companies": {
+    "AAPL": {
+      "processing_run_id": 100,
+      "status": "success",
+      "promoted_candidates": 72,
+      "periods": [
+        {
+          "period_id": 3,
+          "year": 2023,
+          "report_date": "2023-09-30",
+          "reported_metrics": 24,
+          "normalized_snapshot_id": 3,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 5
+        },
+        {
+          "period_id": 4,
+          "year": 2024,
+          "report_date": "2024-09-28",
+          "reported_metrics": 24,
+          "normalized_snapshot_id": 4,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 5
+        },
+        {
+          "period_id": 5,
+          "year": 2025,
+          "report_date": "2025-09-27",
+          "reported_metrics": 24,
+          "normalized_snapshot_id": 5,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 5
+        }
+      ],
+      "reported_metrics": 72,
+      "normalized_metrics": 45
+    },
+    "AMZN": {
+      "processing_run_id": 101,
+      "status": "success",
+      "promoted_candidates": 55,
+      "periods": [
+        {
+          "period_id": 6,
+          "year": 2023,
+          "report_date": "2023-12-31",
+          "reported_metrics": 19,
+          "normalized_snapshot_id": 6,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 7,
+          "year": 2024,
+          "report_date": "2024-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 7,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 8,
+          "year": 2025,
+          "report_date": "2025-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 8,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        }
+      ],
+      "reported_metrics": 55,
+      "normalized_metrics": 36
+    },
+    "GOOG": {
+      "processing_run_id": 102,
+      "status": "success",
+      "promoted_candidates": 53,
+      "periods": [
+        {
+          "period_id": 9,
+          "year": 2023,
+          "report_date": "2023-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 9,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 10,
+          "year": 2024,
+          "report_date": "2024-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 10,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 11,
+          "year": 2025,
+          "report_date": "2025-12-31",
+          "reported_metrics": 17,
+          "normalized_snapshot_id": 11,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "net_income",
+            "nopat",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        }
+      ],
+      "reported_metrics": 53,
+      "normalized_metrics": 37
+    },
+    "GOOGL": {
+      "processing_run_id": 103,
+      "status": "success",
+      "promoted_candidates": 53,
+      "periods": [
+        {
+          "period_id": 12,
+          "year": 2023,
+          "report_date": "2023-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 12,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 13,
+          "year": 2024,
+          "report_date": "2024-12-31",
+          "reported_metrics": 18,
+          "normalized_snapshot_id": 13,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 14,
+          "year": 2025,
+          "report_date": "2025-12-31",
+          "reported_metrics": 17,
+          "normalized_snapshot_id": 14,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "net_income",
+            "nopat",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        }
+      ],
+      "reported_metrics": 53,
+      "normalized_metrics": 37
+    },
+    "MSFT": {
+      "processing_run_id": 104,
+      "status": "success",
+      "promoted_candidates": 61,
+      "periods": [
+        {
+          "period_id": 15,
+          "year": 2024,
+          "report_date": "2024-06-30",
+          "reported_metrics": 21,
+          "normalized_snapshot_id": 15,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 16,
+          "year": 2025,
+          "report_date": "2025-06-30",
+          "reported_metrics": 20,
+          "normalized_snapshot_id": 16,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        },
+        {
+          "period_id": 17,
+          "year": 2026,
+          "report_date": "2026-06-30",
+          "reported_metrics": 20,
+          "normalized_snapshot_id": 17,
+          "normalized_codes": [
+            "basic_shares",
+            "capex",
+            "cash",
+            "diluted_shares",
+            "ebit",
+            "effective_tax_rate",
+            "lease_liabilities",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 4
+        }
+      ],
+      "reported_metrics": 61,
+      "normalized_metrics": 39
+    },
+    "NVDA": {
+      "processing_run_id": 105,
+      "status": "success",
+      "promoted_candidates": 61,
+      "periods": [
+        {
+          "period_id": 18,
+          "year": 2024,
+          "report_date": "2024-01-28",
+          "reported_metrics": 21,
+          "normalized_snapshot_id": 18,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "debt",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "invested_capital",
+            "lease_liabilities",
+            "net_debt",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "roic",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 9
+        },
+        {
+          "period_id": 19,
+          "year": 2025,
+          "report_date": "2025-01-26",
+          "reported_metrics": 20,
+          "normalized_snapshot_id": 19,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "debt",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "invested_capital",
+            "lease_liabilities",
+            "net_debt",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "roic",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 9
+        },
+        {
+          "period_id": 20,
+          "year": 2026,
+          "report_date": "2026-01-25",
+          "reported_metrics": 20,
+          "normalized_snapshot_id": 20,
+          "normalized_codes": [
+            "basic_shares",
+            "cash",
+            "debt",
+            "depreciation",
+            "diluted_shares",
+            "ebit",
+            "ebitda",
+            "effective_tax_rate",
+            "invested_capital",
+            "lease_liabilities",
+            "net_debt",
+            "net_income",
+            "nopat",
+            "operating_leases",
+            "revenue",
+            "roe",
+            "roic",
+            "working_capital"
+          ],
+          "independent_decimal_checks": 9
+        }
+      ],
+      "reported_metrics": 61,
+      "normalized_metrics": 54
+    }
+  },
+  "changed_tables": [
+    "financial_extraction_candidates",
+    "financial_metrics",
+    "financial_statement_periods",
+    "normalized_financial_metrics",
+    "normalized_financial_snapshots",
+    "processing_runs",
+    "source_fact_revisions"
+  ],
+  "unchanged_tables": 102,
+  "unrelated_records_unchanged": true,
+  "promoted_candidates": 355,
+  "normalized_metric_count": 248,
+  "period_count": 18,
+  "source_fact_revisions": 355,
+  "local_application_receipt_sha256": "2e738442cd7669d78a2e740da60f14111fe2692eca81348c0e456953c99c4b8b",
+  "review_path": "data/reviews/us-financial-review-20261018.json",
+  "browser": {
+    "completed_at": "2026-10-18T17:45:07.186Z",
+    "mode": "read_only_existing_normal_data",
+    "checked_reported_values": 355,
+    "companies": [
+      {
+        "ticker": "AAPL",
+        "company_id": 1,
+        "reported_metrics": 72,
+        "periods": 3,
+        "normalized_metrics": 45,
+        "pending_candidates": 51,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 451,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 921,
+            "keyboard_scroll_verified": true,
+            "accessibility_violations": 0
+          }
+        ]
+      },
+      {
+        "ticker": "AMZN",
+        "company_id": 6,
+        "reported_metrics": 55,
+        "periods": 3,
+        "normalized_metrics": 36,
+        "pending_candidates": 60,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 739,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 407,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          }
+        ]
+      },
+      {
+        "ticker": "GOOG",
+        "company_id": 4,
+        "reported_metrics": 53,
+        "periods": 3,
+        "normalized_metrics": 37,
+        "pending_candidates": 50,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 366,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 523,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          }
+        ]
+      },
+      {
+        "ticker": "GOOGL",
+        "company_id": 12,
+        "reported_metrics": 53,
+        "periods": 3,
+        "normalized_metrics": 37,
+        "pending_candidates": 50,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 477,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 419,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          }
+        ]
+      },
+      {
+        "ticker": "MSFT",
+        "company_id": 5,
+        "reported_metrics": 61,
+        "periods": 3,
+        "normalized_metrics": 39,
+        "pending_candidates": 45,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 402,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 458,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          }
+        ]
+      },
+      {
+        "ticker": "NVDA",
+        "company_id": 3,
+        "reported_metrics": 61,
+        "periods": 3,
+        "normalized_metrics": 54,
+        "pending_candidates": 56,
+        "views": [
+          {
+            "width": 1440,
+            "ready_ms": 461,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          },
+          {
+            "width": 390,
+            "ready_ms": 680,
+            "keyboard_scroll_verified": false,
+            "accessibility_violations": 0
+          }
+        ]
+      }
+    ],
+    "browser_errors": 0,
+    "backend_writes": 0,
+    "new_dataset_created": false
+  },
+  "post_browser": {
+    "verified_at": "2026-10-18T17:46:18.003144+00:00",
+    "all_table_fingerprints_unchanged": true,
+    "table_count": 109,
+    "environment_files_read": false,
+    "normal_browser_data_writes": 0
+  },
+  "limitations": [
+    "Selected historical facts only; incomplete statements, accounting bridges, forecasts and current share-class inputs remain gaps.",
+    "47 selected candidates and all older unselected candidates retain their previous review state.",
+    "No FCFF, FCFE or reinvestment value is manufactured from missing inputs.",
+    "Existing portfolio records, saved valuations, HDFC facts, original source documents and all unrelated records remain unchanged.",
+    "This receipt is delegated agent review, not personal user approval or independent human certification."
+  ]
+}

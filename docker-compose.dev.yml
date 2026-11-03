@@ -1,12 +1,13 @@
 services:
   backend:
-    command: sh -c "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload"
+    command: sh -c "alembic upgrade head && uvicorn app.main:app --app-dir backend --host 0.0.0.0 --port 8000 --reload --reload-dir backend/app"
     volumes:
       - ./backend:/workspace/backend
       - ./scripts:/workspace/scripts
-      - ./data:/workspace/data
+      - ./data:/workspace/data:ro
 
   frontend:
+    mem_limit: 2g
     build:
       target: deps
     command: npm run dev -- --hostname 0.0.0.0

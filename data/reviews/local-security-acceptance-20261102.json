@@ -1,0 +1,84 @@
+{
+  "decision_id": "M03-M04-SCOPED-ACCEPTANCE-20261102",
+  "recorded_at": "2026-11-02T22:40:41.287445+00:00",
+  "scope": "Existing October 17 local research/demo release profile",
+  "operator_action": "Private database-role and matching client credential rotation, reported complete by user",
+  "verified": {
+    "new_credentials_authenticate": true,
+    "previous_and_incorrect_credentials_rejected": true,
+    "unchanged_application_tables": 109,
+    "source_assets_preserved": true,
+    "existing_volume_and_images_preserved": true,
+    "local_only_ports": true,
+    "existing_app_login_works": true,
+    "selected_reviews_preserved": 11,
+    "backend_source_files_match": 450,
+    "source_scheduler_and_pgadmin_stopped": true
+  },
+  "milestones_accepted": [
+    "M03",
+    "M04"
+  ],
+  "accepted_total": 4,
+  "acceptance_points": 40,
+  "next_milestone": "M05",
+  "engineering_effort_percentage_claimed": false,
+  "deferred_checks_remain_unchecked": [
+    "M03-04 host protection and off-device components",
+    "M03-07 off-device recovery",
+    "M10-02 additional populated-backup rehearsal"
+  ],
+  "actual_use_days": 0,
+  "final_user_acceptance": false,
+  "new_live_provider_probe": false,
+  "provider_connectivity_evidence_is_dated": true,
+  "git_github_work": "deferred",
+  "protected_files_read": false,
+  "credential_values_recorded": false,
+  "receipt_files": [
+    {
+      "path": "output/milestones/financial-review-20261102/credential-rotation/receipt.json",
+      "sha256": "c73f566e0023c83516c15a98bd7152c88a00c74aaaa7652da75bc55cd2539ca9"
+    },
+    {
+      "path": "output/milestones/financial-review-20261102/credential-rotation/authentication.json",
+      "sha256": "232e54309c54cc9b797626f860cb461c56d4010e7f7be1e873a47bc41de46d86"
+    },
+    {
+      "path": "output/milestones/financial-review-20261102/credential-rotation/browser.json",
+      "sha256": "2702cd3197a314f4fcc5fc5a19c59f270ceedec8e6de5df7b81b6987e22a9b5b"
+    },
+    {
+      "path": "output/milestones/financial-review-20261102/credential-rotation/browser-preservation.json",
+      "sha256": "73dd9cfef976d4dc0adde32e5078502564c1985e81b7eec18f9f8791ad2537cb"
+    },
+    {
+      "path": "output/milestones/financial-review-20261102/release/runtime-proof-after-rotation.json",
+      "sha256": "d404393765c36fe61e06b1b2f8bb0b2f2eb24c236327ff8b7b6608f04b6604aa"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/m03-recovery-2026-10-11.md",
+      "sha256": "1540ef6b3017879ef09f0d101d99e9449f6952dacf2debee7dfb849263a01547"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/m03-security-2026-10-11.md",
+      "sha256": "c19079cf937bc84c6f93ea79b3bf2f386593322ee267d8b8587b83af5f62fb15"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md",
+      "sha256": "9eaf588be8f5603ae7f4ec651245c4bbeeb552f2b064b87eebaeef4bf3cb4e76"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/locked-build-and-local-rollout-2026-10-28.md",
+      "sha256": "e10b77eb5722916a7f616128f2b44ad975a0a5d616c09ab803c70f68e796ec16"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/m04-ingestion-2026-10-11.md",
+      "sha256": "121cebdabd2ad0d925d88800b719670a88364ade2458f38a7f6f30867961aeac"
+    },
+    {
+      "path": "docs/archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md",
+      "sha256": "e35e537b4ced64f34f1963977f4f0b4fe9acfa23ffe23ab8e1c7a8084889c90a"
+    }
+  ]
+}

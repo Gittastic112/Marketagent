@@ -23,15 +23,17 @@ class Portfolio(Base):
         onupdate=func.now(),
     )
 
-    holdings = relationship("PortfolioHolding", back_populates="portfolio", lazy="selectin")
-    transactions = relationship("PortfolioTransaction", back_populates="portfolio", lazy="selectin")
-    cash_balances = relationship("PortfolioCashBalance", back_populates="portfolio", lazy="selectin")
-    snapshots = relationship("PortfolioSnapshot", back_populates="portfolio", lazy="selectin")
+    # Flat ownership/identity reads must not fetch financial history. Services
+    # declare their read graph explicitly when they need related records.
+    holdings = relationship("PortfolioHolding", back_populates="portfolio", lazy="select")
+    transactions = relationship("PortfolioTransaction", back_populates="portfolio", lazy="select")
+    cash_balances = relationship("PortfolioCashBalance", back_populates="portfolio", lazy="select")
+    snapshots = relationship("PortfolioSnapshot", back_populates="portfolio", lazy="select")
     benchmark_config = relationship(
         "PortfolioBenchmarkConfig",
         back_populates="portfolio",
         cascade="all, delete-orphan",
-        lazy="selectin",
+        lazy="select",
         uselist=False,
     )
 
@@ -67,7 +69,7 @@ class PortfolioBenchmarkConfig(Base):
         onupdate=func.now(),
     )
 
-    portfolio = relationship("Portfolio", back_populates="benchmark_config", lazy="selectin")
+    portfolio = relationship("Portfolio", back_populates="benchmark_config", lazy="select")
 
 
 class PortfolioHolding(Base):
@@ -88,8 +90,8 @@ class PortfolioHolding(Base):
         onupdate=func.now(),
     )
 
-    portfolio = relationship("Portfolio", back_populates="holdings", lazy="selectin")
-    company = relationship("Company", back_populates="portfolio_holdings", lazy="selectin")
+    portfolio = relationship("Portfolio", back_populates="holdings", lazy="select")
+    company = relationship("Company", back_populates="portfolio_holdings", lazy="select")
 
 
 class PortfolioTransaction(Base):
@@ -113,8 +115,8 @@ class PortfolioTransaction(Base):
         onupdate=func.now(),
     )
 
-    portfolio = relationship("Portfolio", back_populates="transactions", lazy="selectin")
-    company = relationship("Company", back_populates="portfolio_transactions", lazy="selectin")
+    portfolio = relationship("Portfolio", back_populates="transactions", lazy="select")
+    company = relationship("Company", back_populates="portfolio_transactions", lazy="select")
 
 
 class PortfolioCashBalance(Base):
@@ -132,7 +134,7 @@ class PortfolioCashBalance(Base):
         onupdate=func.now(),
     )
 
-    portfolio = relationship("Portfolio", back_populates="cash_balances", lazy="selectin")
+    portfolio = relationship("Portfolio", back_populates="cash_balances", lazy="select")
 
 
 class PortfolioSnapshot(Base):
@@ -157,4 +159,4 @@ class PortfolioSnapshot(Base):
     payload_json: Mapped[dict[str, Any] | None] = mapped_column(JSON)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    portfolio = relationship("Portfolio", back_populates="snapshots", lazy="selectin")
+    portfolio = relationship("Portfolio", back_populates="snapshots", lazy="select")

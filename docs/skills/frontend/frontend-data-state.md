@@ -37,8 +37,9 @@ Keep frontend pages honest about backend capability, source freshness, and missi
 ## Workflow
 
 1. Verify the backend route exists.
-2. Use centralized API helpers and types.
-   Browser writes, including multipart uploads, must use the same-origin `/api/backend` proxy path. Server-rendered reads/actions must use the cookie-forwarding server helper.
+2. Use the owning domain under `frontend/lib/api/`, shared transport/envelopes and
+   existing helpers. `frontend/lib/api.ts` is compatibility-only.
+   Browser writes, including multipart uploads, must use the same-origin `/api/backend` proxy path. Server-rendered reads/actions must use the signed-identity server helper, never forward raw session cookies to FastAPI.
 3. Reuse existing UI/data-state components.
 4. Display source, freshness, warnings, and confidence where relevant.
 5. If backend support is missing, show not available/not configured rather than fake data.
@@ -51,6 +52,14 @@ Keep frontend pages honest about backend capability, source freshness, and missi
 10. Use metadata/summary endpoints for lists and pickers when detail records can
     contain large filing text or binary-adjacent payloads. Fetch the full body
     only in the detail workflow that needs it.
+11. Server-rendered authenticated reads must cross the Next.js dynamic request
+    boundary before reading runtime auth/API configuration. Transport and auth
+    failures are unavailable states, not stale-data fallbacks.
+12. Label lexical or AI-generated evidence matches as candidates. Selecting a
+    candidate must not imply validation, approval, or semantic support.
+13. Search results must show record type, claim type, shared/private scope,
+    review state, mock state, source timestamp, and an unavailable state. Keep
+    private excerpts bounded and provide a stable destination link.
 
 ## Acceptance criteria
 
@@ -60,6 +69,8 @@ Keep frontend pages honest about backend capability, source freshness, and missi
 - Valuation and intelligence outputs show assumptions/source context.
 - Multipart requests do not set `Content-Type` manually and do not bypass the authenticated proxy.
 - A successful normalized snapshot is not labeled valuation-ready when currency confidence or freshness is unresolved.
+- Candidate, validated, reviewed, stale, mock, and unavailable states remain visually distinct.
+- Shared, private, user-authored, and reviewed-AI results remain visibly distinct.
 
 ## Common mistakes
 
@@ -84,5 +95,6 @@ Keep frontend pages honest about backend capability, source freshness, and missi
 
 - `docs/00-current-state.md`
 - `docs/02-architecture.md`
-- `frontend/lib/api.ts`
+- [Domain clients](../../../frontend/lib/api/)
+- `frontend/lib/server-api.ts`
 - `frontend/lib/data-state-meta.ts`

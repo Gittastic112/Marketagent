@@ -1,0 +1,2171 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-10-24T16:37:58.089248+00:00",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "review_path": "data/reviews/industry-and-accounting-review-20261022.json",
+  "review_sha256": "8342a1338b3a2ec7547def6e89a123e772adfc098df3dd189293b3086e104a37",
+  "status": "applied_and_verified",
+  "applied_at": "2026-10-22T21:38:39.768411+00:00",
+  "decision_ids": [
+    "M05-MAPPING-16",
+    "M05-IN-NOTES-17",
+    "M05-INDIA-BENCHMARK-18"
+  ],
+  "imports": [
+    {
+      "run_id": 126,
+      "dataset_file_id": 7,
+      "filename": "betaIndia.xls",
+      "sha256": "63fad7617385e82f36622eec9893bf45f7063504938c8b29ede3d7c1d73155b2",
+      "source_as_of": "2026-01-05",
+      "rows": 280,
+      "verified_attributes": 5600
+    },
+    {
+      "run_id": 127,
+      "dataset_file_id": 8,
+      "filename": "waccIndia.xls",
+      "sha256": "56a6a79b1f6fb9f28d4e835aeab95d21243570c20df6dbea43d531a635b7c935",
+      "source_as_of": "2026-01-05",
+      "rows": 654,
+      "verified_attributes": 13080
+    },
+    {
+      "run_id": 128,
+      "dataset_file_id": 9,
+      "filename": "marginIndia.xls",
+      "sha256": "48cb509eb2dc5a64649d20b84b0d15c7e05e1384fd93463afceba49734ef8934",
+      "source_as_of": "2026-01-05",
+      "rows": 94,
+      "verified_attributes": 658
+    },
+    {
+      "run_id": 129,
+      "dataset_file_id": 10,
+      "filename": "capexIndia.xls",
+      "sha256": "0d195d2bc0a284a3c579a4728faf78f15c6bd7c8c3fc748c2dea85e211af0c1b",
+      "source_as_of": "2026-01-05",
+      "rows": 94,
+      "verified_attributes": 470
+    },
+    {
+      "run_id": 130,
+      "dataset_file_id": 11,
+      "filename": "roeIndia.xls",
+      "sha256": "5608b78e268d7100c6d1ce171b8ee31913317158f22305cb6316d445cb4b675d",
+      "source_as_of": "2026-01-05",
+      "rows": 94,
+      "verified_attributes": 658
+    },
+    {
+      "run_id": 131,
+      "dataset_file_id": 12,
+      "filename": "wcdataIndia.xls",
+      "sha256": "323c251a42e1fa91442ce386e3e46300b01c4a287fba22a7628cabcd0cb6f30e",
+      "source_as_of": "2026-01-05",
+      "rows": 94,
+      "verified_attributes": 470
+    }
+  ],
+  "mappings": [
+    {
+      "ticker": "AAPL",
+      "run_id": 132,
+      "mix": {
+        "id": 1,
+        "company_id": 1,
+        "basis": "revenue",
+        "as_of_date": "2025-09-27",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 USD millions. Services is a broad internet-services comparison proxy, not a disclosed software-only business or uniquely correct taxonomy. Software (System & Application) remains an alternative comparison. Supersedes M05-AAPL-04B only for this provisional mapping. No forecast, beta, current share denominator or saved valuation is approved. Source AAPL-2025-sec, SHA256 45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Computers/Peripherals",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Products, Services",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Products, Services",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 1,
+            "segment_name": "Products",
+            "industry_name": "Computers/Peripherals",
+            "weight_percent": 73.770248,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.141172+00:00",
+            "updated_at": "2026-10-22 21:38:34.141174+00:00"
+          },
+          {
+            "id": 2,
+            "segment_name": "Services",
+            "industry_name": "Software (Internet)",
+            "weight_percent": 26.229752,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.141175+00:00",
+            "updated_at": "2026-10-22 21:38:34.141175+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.132318+00:00",
+        "updated_at": "2026-10-22 21:38:34.134129+00:00"
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "run_id": 133,
+      "mix": {
+        "id": 2,
+        "company_id": 3,
+        "basis": "revenue",
+        "as_of_date": "2026-01-25",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 USD millions. Both reportable segments use Semiconductor as a broad comparison, including systems/networking/software activities. No separate software revenue is invented. The common taxonomy preserves its own prior rather than implying two independent peer universes. Source NVDA-2026-sec, SHA256 761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Semiconductor",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": true,
+            "industryRoeAdjustedForRd": true,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "revenueGrowthPriors.industryExpected2Y is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "revenueGrowthPriors.industryExpected5Y is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "returnPriors.industryRoc is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "returnPriors.suggestedTerminalRoc is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "capitalStructurePriors.industryDebtSignals is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable because benchmark data is missing or invalid for: Compute and Networking, Graphics"
+        ],
+        "allocations": [
+          {
+            "id": 3,
+            "segment_name": "Compute and Networking",
+            "industry_name": "Semiconductor",
+            "weight_percent": 89.599329,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.192558+00:00",
+            "updated_at": "2026-10-22 21:38:34.192559+00:00"
+          },
+          {
+            "id": 4,
+            "segment_name": "Graphics",
+            "industry_name": "Semiconductor",
+            "weight_percent": 10.400671,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.192560+00:00",
+            "updated_at": "2026-10-22 21:38:34.192561+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.190352+00:00",
+        "updated_at": "2026-10-22 21:38:34.190690+00:00"
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "run_id": 134,
+      "mix": {
+        "id": 3,
+        "company_id": 5,
+        "basis": "revenue",
+        "as_of_date": "2026-06-30",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 USD millions, product/service revenue disclosure. Categories are comparison proxies: Windows includes devices, Xbox includes hardware, and server/cloud mixes infrastructure and software. No unsupported split within a reported line. Geographic risk remains separate. Source MSFT-2026-sec, SHA256 32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Software (System & Application)",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Server products and cloud services, Microsoft 365 Commercial products and cloud services, XBOX, LinkedIn, Windows and Devices, Search advertising, Microsoft 365 Consumer products and cloud services, Dynamics products and cloud services, Enterprise and partner services, Other",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Server products and cloud services, Microsoft 365 Commercial products and cloud services, XBOX, LinkedIn, Windows and Devices, Search advertising, Microsoft 365 Consumer products and cloud services, Dynamics products and cloud services, Enterprise and partner services, Other",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 5,
+            "segment_name": "Server products and cloud services",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 39.002348,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223563+00:00",
+            "updated_at": "2026-10-22 21:38:34.223564+00:00"
+          },
+          {
+            "id": 6,
+            "segment_name": "Microsoft 365 Commercial products and cloud services",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 30.736893,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223565+00:00",
+            "updated_at": "2026-10-22 21:38:34.223566+00:00"
+          },
+          {
+            "id": 7,
+            "segment_name": "XBOX",
+            "industry_name": "Software (Entertainment)",
+            "weight_percent": 6.566437,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223566+00:00",
+            "updated_at": "2026-10-22 21:38:34.223567+00:00"
+          },
+          {
+            "id": 8,
+            "segment_name": "LinkedIn",
+            "industry_name": "Software (Internet)",
+            "weight_percent": 5.971872,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223567+00:00",
+            "updated_at": "2026-10-22 21:38:34.223568+00:00"
+          },
+          {
+            "id": 9,
+            "segment_name": "Windows and Devices",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 5.14828,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223568+00:00",
+            "updated_at": "2026-10-22 21:38:34.223569+00:00"
+          },
+          {
+            "id": 10,
+            "segment_name": "Search advertising",
+            "industry_name": "Software (Internet)",
+            "weight_percent": 4.573302,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223569+00:00",
+            "updated_at": "2026-10-22 21:38:34.223570+00:00"
+          },
+          {
+            "id": 11,
+            "segment_name": "Microsoft 365 Consumer products and cloud services",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 2.764895,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223570+00:00",
+            "updated_at": "2026-10-22 21:38:34.223571+00:00"
+          },
+          {
+            "id": 12,
+            "segment_name": "Dynamics products and cloud services",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 2.713967,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223571+00:00",
+            "updated_at": "2026-10-22 21:38:34.223572+00:00"
+          },
+          {
+            "id": 13,
+            "segment_name": "Enterprise and partner services",
+            "industry_name": "Computer Services",
+            "weight_percent": 2.489159,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223572+00:00",
+            "updated_at": "2026-10-22 21:38:34.223573+00:00"
+          },
+          {
+            "id": 14,
+            "segment_name": "Other",
+            "industry_name": "Diversified",
+            "weight_percent": 0.032847,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.223573+00:00",
+            "updated_at": "2026-10-22 21:38:34.223573+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.221194+00:00",
+        "updated_at": "2026-10-22 21:38:34.221504+00:00"
+      }
+    },
+    {
+      "ticker": "GOOG",
+      "run_id": 135,
+      "mix": {
+        "id": 4,
+        "company_id": 4,
+        "basis": "revenue",
+        "as_of_date": "2025-12-31",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 issuer-level USD millions before USD127m hedging loss: segments 402963, consolidated 402836. Hedging is not a negative business allocation. Cloud and Other Bets are broad comparison proxies. GOOG/GOOGL share the issuer mix, never summed class share denominators. Source GOOG-2025-sec, SHA256 5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Software (Internet)",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Google Services, Google Cloud, Other Bets",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Google Services, Google Cloud, Other Bets",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 15,
+            "segment_name": "Google Services",
+            "industry_name": "Software (Internet)",
+            "weight_percent": 85.05024,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.317842+00:00",
+            "updated_at": "2026-10-22 21:38:34.317845+00:00"
+          },
+          {
+            "id": 16,
+            "segment_name": "Google Cloud",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 14.568335,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.317846+00:00",
+            "updated_at": "2026-10-22 21:38:34.317846+00:00"
+          },
+          {
+            "id": 17,
+            "segment_name": "Other Bets",
+            "industry_name": "Diversified",
+            "weight_percent": 0.381425,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.317847+00:00",
+            "updated_at": "2026-10-22 21:38:34.317847+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.315420+00:00",
+        "updated_at": "2026-10-22 21:38:34.315785+00:00"
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "run_id": 136,
+      "mix": {
+        "id": 5,
+        "company_id": 12,
+        "basis": "revenue",
+        "as_of_date": "2025-12-31",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 issuer-level USD millions before USD127m hedging loss: segments 402963, consolidated 402836. Hedging is not a negative business allocation. Cloud and Other Bets are broad comparison proxies. GOOG/GOOGL share the issuer mix, never summed class share denominators. Source GOOG-2025-sec, SHA256 5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Software (Internet)",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Google Services, Google Cloud, Other Bets",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Google Services, Google Cloud, Other Bets",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 18,
+            "segment_name": "Google Services",
+            "industry_name": "Software (Internet)",
+            "weight_percent": 85.05024,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.351204+00:00",
+            "updated_at": "2026-10-22 21:38:34.351206+00:00"
+          },
+          {
+            "id": 19,
+            "segment_name": "Google Cloud",
+            "industry_name": "Software (System & Application)",
+            "weight_percent": 14.568335,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.351206+00:00",
+            "updated_at": "2026-10-22 21:38:34.351207+00:00"
+          },
+          {
+            "id": 20,
+            "segment_name": "Other Bets",
+            "industry_name": "Diversified",
+            "weight_percent": 0.381425,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.351207+00:00",
+            "updated_at": "2026-10-22 21:38:34.351208+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.348894+00:00",
+        "updated_at": "2026-10-22 21:38:34.349198+00:00"
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "run_id": 137,
+      "mix": {
+        "id": 6,
+        "company_id": 6,
+        "basis": "revenue",
+        "as_of_date": "2025-12-31",
+        "source_document_id": null,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2025 reportable-segment USD millions. Retail segments also include seller, advertising and subscription services; reported sales mix gross principal sales and net service fees. AWS includes infrastructure/software. These broad proxies do not assert identical margins or an economic-value/beta allocation. Source AMZN-2025-sec, SHA256 a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Retail (General)",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: North America, International, AWS",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: North America, International, AWS",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 21,
+            "segment_name": "North America",
+            "industry_name": "Retail (General)",
+            "weight_percent": 59.463067,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.383142+00:00",
+            "updated_at": "2026-10-22 21:38:34.383144+00:00"
+          },
+          {
+            "id": 22,
+            "segment_name": "International",
+            "industry_name": "Retail (General)",
+            "weight_percent": 22.581752,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.383145+00:00",
+            "updated_at": "2026-10-22 21:38:34.383145+00:00"
+          },
+          {
+            "id": 23,
+            "segment_name": "AWS",
+            "industry_name": "Computer Services",
+            "weight_percent": 17.955181,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.383146+00:00",
+            "updated_at": "2026-10-22 21:38:34.383147+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.380670+00:00",
+        "updated_at": "2026-10-22 21:38:34.381152+00:00"
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "run_id": 138,
+      "mix": {
+        "id": 7,
+        "company_id": 9,
+        "basis": "revenue",
+        "as_of_date": "2026-03-31",
+        "source_document_id": 14,
+        "notes": "M05-MAPPING-16. Agent review under delegated authority. FY2026 INR million external-customer revenue only. Excludes inter-segment revenue, whose INR238809m elimination is not allocated twice. India industry comparisons are not Africa country-risk estimates. Towers use a telecom proxy; cloud, money services and DTH/IPTV remain mixed activities requiring review. Source BHARTIARTL-2026, SHA256 b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2. Full receipt: data/reviews/industry-and-accounting-review-20261022.json.",
+        "primary_industry": "Telecom (Wireless)",
+        "total_weight_percent": 100.0,
+        "claim_type": "User Assumption",
+        "coverage_status": "partial",
+        "benchmark_field_coverage": {
+          "revenueGrowthPriors": {
+            "industryHistorical5Y": false,
+            "industryExpected2Y": false,
+            "industryExpected5Y": false,
+            "suggestedYears1To2": false,
+            "suggestedYears3To5": false
+          },
+          "marginPriors": {
+            "industryUnadjustedOperatingMargin": true,
+            "industryLeaseAdjustedMargin": false,
+            "industryLeaseRdAdjustedMargin": false,
+            "suggestedTargetMargin": true
+          },
+          "reinvestmentPriors": {
+            "industrySalesToCapital": true,
+            "industryNetCapexToSales": true,
+            "industryWorkingCapitalToSales": true,
+            "suggestedSalesToCapital": true
+          },
+          "returnPriors": {
+            "industryRoc": false,
+            "industryRoe": false,
+            "industryRoeAdjustedForRd": false,
+            "suggestedTerminalRoc": false
+          },
+          "capitalStructurePriors": {
+            "industryDebtSignals": false,
+            "suggestedTargetDebtRatio": false
+          }
+        },
+        "warnings": [
+          "revenueGrowthPriors.industryHistorical5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected2Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.industryExpected5Y is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears1To2 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "revenueGrowthPriors.suggestedYears3To5 is unavailable: multi-year growth requires matched base periods and compounding, not an arithmetic average of rates.",
+          "marginPriors.industryLeaseAdjustedMargin is unavailable because benchmark data is missing or invalid for: Mobile Services India, Mobile Services Africa, Airtel Business, Passive Infrastructure Services, Homes Services, Digital TV Services",
+          "marginPriors.industryLeaseRdAdjustedMargin is unavailable because benchmark data is missing or invalid for: Mobile Services India, Mobile Services Africa, Airtel Business, Passive Infrastructure Services, Homes Services, Digital TV Services",
+          "returnPriors.industryRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoe is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.industryRoeAdjustedForRd is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "returnPriors.suggestedTerminalRoc is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.industryDebtSignals is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "capitalStructurePriors.suggestedTargetDebtRatio is unavailable: revenue weights do not establish capital or equity weights for this ratio.",
+          "Financing-flow industry totals are unavailable for a revenue-weighted blend; inspect each industry's context separately."
+        ],
+        "allocations": [
+          {
+            "id": 24,
+            "segment_name": "Mobile Services India",
+            "industry_name": "Telecom (Wireless)",
+            "weight_percent": 52.295462,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428434+00:00",
+            "updated_at": "2026-10-22 21:38:34.428436+00:00"
+          },
+          {
+            "id": 25,
+            "segment_name": "Mobile Services Africa",
+            "industry_name": "Telecom (Wireless)",
+            "weight_percent": 26.747903,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428437+00:00",
+            "updated_at": "2026-10-22 21:38:34.428437+00:00"
+          },
+          {
+            "id": 26,
+            "segment_name": "Airtel Business",
+            "industry_name": "Telecom. Services",
+            "weight_percent": 8.882804,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428438+00:00",
+            "updated_at": "2026-10-22 21:38:34.428438+00:00"
+          },
+          {
+            "id": 27,
+            "segment_name": "Passive Infrastructure Services",
+            "industry_name": "Telecom. Services",
+            "weight_percent": 6.964073,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428438+00:00",
+            "updated_at": "2026-10-22 21:38:34.428439+00:00"
+          },
+          {
+            "id": 28,
+            "segment_name": "Homes Services",
+            "industry_name": "Telecom. Services",
+            "weight_percent": 3.682702,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428439+00:00",
+            "updated_at": "2026-10-22 21:38:34.428440+00:00"
+          },
+          {
+            "id": 29,
+            "segment_name": "Digital TV Services",
+            "industry_name": "Cable TV",
+            "weight_percent": 1.427056,
+            "benchmark_availability": {
+              "margins": true,
+              "capex": true,
+              "workingCapital": true,
+              "returns": true,
+              "growth": false,
+              "multiples": false,
+              "payout": false,
+              "macro": false,
+              "volatility": false
+            },
+            "created_at": "2026-10-22 21:38:34.428440+00:00",
+            "updated_at": "2026-10-22 21:38:34.428441+00:00"
+          }
+        ],
+        "created_at": "2026-10-22 21:38:34.426157+00:00",
+        "updated_at": "2026-10-22 21:38:34.426446+00:00"
+      }
+    }
+  ],
+  "single_industry_comparisons": [
+    {
+      "company_id": 7,
+      "ticker": "RELIANCE",
+      "industry": "Diversified",
+      "run_id": 139
+    },
+    {
+      "company_id": 8,
+      "ticker": "HDFCBANK",
+      "industry": "Bank (Money Center)",
+      "run_id": 140
+    },
+    {
+      "company_id": 10,
+      "ticker": "ICICIBANK",
+      "industry": "Bank (Money Center)",
+      "run_id": 141
+    },
+    {
+      "company_id": 11,
+      "ticker": "SBIN",
+      "industry": "Bank (Money Center)",
+      "run_id": 142
+    }
+  ],
+  "changed_tables": [
+    "assumption_method_values",
+    "companies",
+    "company_industry_allocations",
+    "company_industry_mixes",
+    "damodaran_dataset_files",
+    "damodaran_industry_capex_benchmarks",
+    "damodaran_industry_margin_benchmarks",
+    "damodaran_industry_roe_benchmarks",
+    "damodaran_industry_working_capital_benchmarks",
+    "processing_runs"
+  ],
+  "unchanged_table_count": 99,
+  "reported_financials_saved_valuations_and_portfolio_tables_unchanged": true,
+  "workbook_numeric_cell_checks": {
+    "status": "success",
+    "sources": 6,
+    "typed_rows": 1310,
+    "independent_numeric_checks": 1968,
+    "counts": {
+      "betaIndia.xls": 280,
+      "waccIndia.xls": 654,
+      "marginIndia.xls": 94,
+      "capexIndia.xls": 94,
+      "roeIndia.xls": 94,
+      "wcdataIndia.xls": 94
+    },
+    "database_created": false,
+    "source_files_changed": false
+  },
+  "normal_calculation_checks": [
+    {
+      "ticker": "AAPL",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 2.512072762625008,
+      "actual": 2.512072762625008,
+      "status": "pass"
+    },
+    {
+      "ticker": "AAPL",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.1755401373057033,
+      "actual": 0.1755401373057033,
+      "status": "pass"
+    },
+    {
+      "ticker": "AAPL",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.0041001033412673,
+      "actual": 0.0041001033412673,
+      "status": "pass"
+    },
+    {
+      "ticker": "NVDA",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 1.206668138058751,
+      "actual": 1.206668138058751,
+      "status": "pass"
+    },
+    {
+      "ticker": "NVDA",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.35327791914252643,
+      "actual": 0.35327791914252643,
+      "status": "pass"
+    },
+    {
+      "ticker": "NVDA",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.22617981053567593,
+      "actual": 0.22617981053567593,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOG",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 1.3692805277583613,
+      "actual": 1.3692805277583613,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOG",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.08026771042393908,
+      "actual": 0.08026771042393908,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOG",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.14052151416879177,
+      "actual": 0.14052151416879177,
+      "status": "pass"
+    },
+    {
+      "ticker": "MSFT",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 1.5274189034285786,
+      "actual": 1.5274189034285786,
+      "status": "pass"
+    },
+    {
+      "ticker": "MSFT",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.293101794571505,
+      "actual": 0.293101794571505,
+      "status": "pass"
+    },
+    {
+      "ticker": "MSFT",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.10443982023877361,
+      "actual": 0.10443982023877361,
+      "status": "pass"
+    },
+    {
+      "ticker": "AMZN",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 3.7231772002416585,
+      "actual": 3.7231772002416585,
+      "status": "pass"
+    },
+    {
+      "ticker": "AMZN",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.06911321627275217,
+      "actual": 0.06911321627275217,
+      "status": "pass"
+    },
+    {
+      "ticker": "AMZN",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.023163697861431378,
+      "actual": 0.023163697861431378,
+      "status": "pass"
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 0.5910939935359153,
+      "actual": 0.5910939935359153,
+      "status": "pass"
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.23317815002803208,
+      "actual": 0.23317815002803208,
+      "status": "pass"
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": -0.48877897834314615,
+      "actual": -0.48877897834314615,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOGL",
+      "group": "reinvestmentPriors",
+      "field": "industrySalesToCapital",
+      "expected": 1.3692805277583613,
+      "actual": 1.3692805277583613,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOGL",
+      "group": "marginPriors",
+      "field": "industryUnadjustedOperatingMargin",
+      "expected": 0.08026771042393908,
+      "actual": 0.08026771042393908,
+      "status": "pass"
+    },
+    {
+      "ticker": "GOOGL",
+      "group": "reinvestmentPriors",
+      "field": "industryWorkingCapitalToSales",
+      "expected": 0.14052151416879177,
+      "actual": 0.14052151416879177,
+      "status": "pass"
+    }
+  ],
+  "browser": {
+    "completed_at": "2026-10-22T21:41:17.544Z",
+    "status": "success",
+    "mode": "read_only_existing_normal_data",
+    "verified_securities": 11,
+    "views": [
+      {
+        "ticker": "AAPL",
+        "width": 1440,
+        "ready_ms": 468,
+        "weighted_mix": true,
+        "allocation_count": 2,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "NVDA",
+        "width": 1440,
+        "ready_ms": 396,
+        "weighted_mix": true,
+        "allocation_count": 2,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "MSFT",
+        "width": 1440,
+        "ready_ms": 779,
+        "weighted_mix": true,
+        "allocation_count": 10,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "GOOG",
+        "width": 1440,
+        "ready_ms": 553,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "GOOGL",
+        "width": 1440,
+        "ready_ms": 880,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "AMZN",
+        "width": 1440,
+        "ready_ms": 498,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "BHARTIARTL",
+        "width": 1440,
+        "ready_ms": 1073,
+        "weighted_mix": true,
+        "allocation_count": 6,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "RELIANCE",
+        "width": 1440,
+        "ready_ms": 947,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "HDFCBANK",
+        "width": 1440,
+        "ready_ms": 499,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "ICICIBANK",
+        "width": 1440,
+        "ready_ms": 598,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "SBIN",
+        "width": 1440,
+        "ready_ms": 394,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "AAPL",
+        "width": 390,
+        "ready_ms": 361,
+        "weighted_mix": true,
+        "allocation_count": 2,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "NVDA",
+        "width": 390,
+        "ready_ms": 527,
+        "weighted_mix": true,
+        "allocation_count": 2,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "MSFT",
+        "width": 390,
+        "ready_ms": 483,
+        "weighted_mix": true,
+        "allocation_count": 10,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "GOOG",
+        "width": 390,
+        "ready_ms": 416,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "GOOGL",
+        "width": 390,
+        "ready_ms": 477,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "AMZN",
+        "width": 390,
+        "ready_ms": 660,
+        "weighted_mix": true,
+        "allocation_count": 3,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "BHARTIARTL",
+        "width": 390,
+        "ready_ms": 389,
+        "weighted_mix": true,
+        "allocation_count": 6,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "RELIANCE",
+        "width": 390,
+        "ready_ms": 394,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "HDFCBANK",
+        "width": 390,
+        "ready_ms": 583,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "ICICIBANK",
+        "width": 390,
+        "ready_ms": 1101,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "ticker": "SBIN",
+        "width": 390,
+        "ready_ms": 633,
+        "weighted_mix": false,
+        "allocation_count": 0,
+        "keyboard_verified": true,
+        "accessibility_violations": 0
+      }
+    ],
+    "browser_errors": 0,
+    "backend_writes": 0,
+    "new_dataset_created": false
+  },
+  "remaining_valuation_review": [
+    {
+      "ticker": "AAPL",
+      "company_id": 1,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Computers/Peripherals",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "company_id": 3,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Semiconductor",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "revenue_growth_years_json",
+        "target_operating_margin",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "change_in_nwc",
+        "new_debt_issued",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "GOOG",
+      "company_id": 4,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Software (Internet)",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "company_id": 5,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Software (System & Application)",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "company_id": 6,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Retail (General)",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "dividends",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "RELIANCE",
+      "company_id": 7,
+      "country": "India",
+      "currency": "INR",
+      "industry": "Diversified",
+      "has_weighted_mix": false,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "current_operating_margin",
+        "tax_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "dividends",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "book_value_of_equity",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "not_available",
+        "applicable_check_count": 0,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "HDFCBANK",
+      "company_id": 8,
+      "country": "India",
+      "currency": "INR",
+      "industry": "Bank (Money Center)",
+      "has_weighted_mix": false,
+      "valuation_approved": false,
+      "supported_model_boundary": "Bank equity/excess-return inputs require separate review; the generic FCFF draft is not bank-model approval.",
+      "required_review_fields": [
+        "starting_revenue",
+        "revenue_growth_years_json",
+        "target_operating_margin",
+        "current_operating_margin",
+        "tax_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "cash",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "diluted_shares",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "dividends",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "book_value_of_equity",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "not_available",
+        "applicable_check_count": 0,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "company_id": 9,
+      "country": "India",
+      "currency": "INR",
+      "industry": "Telecom (Wireless)",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "current_operating_margin",
+        "tax_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "dividends",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "not_available",
+        "applicable_check_count": 0,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "company_id": 10,
+      "country": "India",
+      "currency": "INR",
+      "industry": "Bank (Money Center)",
+      "has_weighted_mix": false,
+      "valuation_approved": false,
+      "supported_model_boundary": "Bank equity/excess-return inputs require separate review; the generic FCFF draft is not bank-model approval.",
+      "required_review_fields": [
+        "starting_revenue",
+        "revenue_growth_years_json",
+        "target_operating_margin",
+        "current_operating_margin",
+        "tax_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "cash",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "book_value_of_equity",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "not_available",
+        "applicable_check_count": 0,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "company_id": 11,
+      "country": "India",
+      "currency": "INR",
+      "industry": "Bank (Money Center)",
+      "has_weighted_mix": false,
+      "valuation_approved": false,
+      "supported_model_boundary": "Bank equity/excess-return inputs require separate review; the generic FCFF draft is not bank-model approval.",
+      "required_review_fields": [
+        "starting_revenue",
+        "revenue_growth_years_json",
+        "target_operating_margin",
+        "current_operating_margin",
+        "tax_rate",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "cash",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "capex",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "dividends",
+        "buybacks",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "book_value_of_equity",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "not_available",
+        "applicable_check_count": 0,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "company_id": 12,
+      "country": "United States",
+      "currency": "USD",
+      "industry": "Software (Internet)",
+      "has_weighted_mix": true,
+      "valuation_approved": false,
+      "supported_model_boundary": "FCFF subject to reviewed accounting, bridge, forecast and discount-rate inputs.",
+      "required_review_fields": [
+        "target_operating_margin",
+        "sales_to_capital_ratio",
+        "starting_invested_capital",
+        "risk_free_rate",
+        "equity_risk_premium",
+        "beta",
+        "cost_of_equity",
+        "pre_tax_cost_of_debt",
+        "debt_to_capital",
+        "equity_to_capital",
+        "wacc_start",
+        "wacc_terminal",
+        "terminal_growth_rate",
+        "terminal_roic",
+        "minority_interests",
+        "preferred_stock",
+        "debt",
+        "employee_options_value",
+        "current_market_price"
+      ],
+      "unavailable_fields": [
+        "cross_holdings",
+        "operating_leases",
+        "story_text",
+        "growth_story",
+        "margin_story",
+        "reinvestment_story",
+        "risk_story",
+        "currency_override_note",
+        "depreciation",
+        "change_in_nwc",
+        "new_debt_issued",
+        "debt_repaid",
+        "stock_issuances",
+        "company_age",
+        "probability_of_failure",
+        "distress_sale_proceeds",
+        "target_roe"
+      ],
+      "statement_identity": {
+        "status": "partial",
+        "applicable_check_count": 3,
+        "failed_check_count": 0,
+        "valuation_trust_status": "limited"
+      }
+    }
+  ],
+  "scope_note": "A saved comparison is a provisional User Assumption. This does not approve forecasts, current valuation bridges or a unique taxonomy. Amazon subsequently adds three separately reviewed facts in its own receipt."
+}

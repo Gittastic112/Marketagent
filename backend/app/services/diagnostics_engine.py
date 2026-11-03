@@ -1,6 +1,6 @@
 from typing import Any, Optional
 from app.models.dcf import DcfAssumptionSet
-from app.api.schemas import DiagnosticWarning, DcfOutputCreate
+from app.schemas.valuation_outputs import DiagnosticWarning, DcfOutputCreate
 
 # Financial services sectors/industries that should NOT use FCFF.
 # These companies should use equity-based models (PBV/ROE, Excess Return, DDM).
@@ -138,9 +138,9 @@ class DiagnosticsEngine:
     @staticmethod
     def check_terminal_value_discipline(assumption_set: DcfAssumptionSet, terminal_fcff: float) -> list[DiagnosticWarning]:
         warnings = []
-        wacc_terminal = assumption_set.wacc_terminal or 0.10
+        wacc_terminal = assumption_set.wacc_terminal if assumption_set.wacc_terminal is not None else 0.10
         terminal_growth_rate = assumption_set.terminal_growth_rate or 0.0
-        terminal_roic = assumption_set.terminal_roic or wacc_terminal
+        terminal_roic = assumption_set.terminal_roic if assumption_set.terminal_roic is not None else wacc_terminal
 
         if terminal_growth_rate >= wacc_terminal:
             warnings.append(DiagnosticWarning(
@@ -179,7 +179,7 @@ class DiagnosticsEngine:
         warnings = []
         # In a more advanced build, we would look year by year.
         # For now, we check the global sales_to_capital_ratio.
-        s2c = assumption_set.sales_to_capital_ratio or 1.0
+        s2c = assumption_set.sales_to_capital_ratio if assumption_set.sales_to_capital_ratio is not None else 1.0
         if s2c <= 0:
             warnings.append(DiagnosticWarning(
                 severity="critical",
@@ -201,8 +201,8 @@ class DiagnosticsEngine:
     @staticmethod
     def check_roic_vs_wacc(assumption_set: DcfAssumptionSet) -> list[DiagnosticWarning]:
         warnings = []
-        wacc_terminal = assumption_set.wacc_terminal or 0.10
-        terminal_roic = assumption_set.terminal_roic or wacc_terminal
+        wacc_terminal = assumption_set.wacc_terminal if assumption_set.wacc_terminal is not None else 0.10
+        terminal_roic = assumption_set.terminal_roic if assumption_set.terminal_roic is not None else wacc_terminal
         terminal_growth_rate = assumption_set.terminal_growth_rate or 0.0
 
         if terminal_growth_rate > 0 and terminal_roic < wacc_terminal:

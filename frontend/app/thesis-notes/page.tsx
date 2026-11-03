@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import Link from "next/link";
 import { createThesisNote, deleteThesisNoteWithState, updateThesisNote } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
@@ -19,14 +21,14 @@ export default async function ThesisNotesPage() {
 
     return (
       <>
-        <PageHeader eyebrow="Research memory" title="Thesis Notes" status={`${thesisNotes.length} notes`} />
+        <PageHeader eyebrow="Research memory" title="Thesis Notes" status={hasUsableData(notesRes) ? `${thesisNotes.length} notes` : "Thesis notes unavailable"} />
         <DataStateNotices
           metas={[notesRes.meta, companiesRes.meta]}
           partialMessage="Company linkages failed to load. Thesis notes may display missing company names."
           mockMessage="Thesis note data is mocked. Treat affected thesis state as placeholder material."
         />
         <Panel title="Add Thesis Note">
-          <form action={createThesisNote} className="form-grid">
+          <RetainedActionForm label="Create thesis note" resetOnSuccess action={createThesisNote} className="form-grid">
             <SelectField disabled={companies.length === 0} id="company_id" label="Company" name="company_id" required>
               <option value="">Select company</option>
               {companies.map((company) => (
@@ -45,10 +47,10 @@ export default async function ThesisNotesPage() {
             <div className="button-row">
               <button disabled={companies.length === 0} type="submit">Add thesis note</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Thesis Notes">
-          {thesisNotes.length === 0 ? (
+          {!hasUsableData(notesRes) ? <ErrorState message="Thesis notes could not be loaded. Reload to retry." /> : thesisNotes.length === 0 ? (
             <EmptyState label="No thesis notes yet." />
           ) : (
             <div className="table-wrap">
@@ -83,7 +85,7 @@ export default async function ThesisNotesPage() {
                           <span className={driftBadge}>{note.thesis_drift_score.toFixed(2)}</span>
                         </td>
                         <td>
-                          <ReviewStateBadge state={note.thesis_drift_score > 0.5 ? "needs_review" : "reviewed"} />
+                          <ReviewStateBadge state={note.thesis_drift_score > 0.5 ? "needs_review" : "unreviewed"} />
                         </td>
                         <td style={{ maxWidth: "260px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                           {note.thesis_text}
@@ -92,7 +94,7 @@ export default async function ThesisNotesPage() {
                           <div className="action-stack">
                             <details className="edit-panel">
                               <summary>Edit</summary>
-                              <form action={updateThesisNote} className="inline-form">
+                              <RetainedActionForm label="Update thesis note" action={updateThesisNote} className="inline-form">
                                 <input name="id" type="hidden" value={note.id} />
                                 <SelectField defaultValue={note.company_id} id={`note-company-${note.id}`} label="Company" name="company_id" required>
                                   {companies.map((company) => (
@@ -111,7 +113,7 @@ export default async function ThesisNotesPage() {
                                 <div className="button-row">
                                   <button className="secondary-button" type="submit">Save</button>
                                 </div>
-                              </form>
+                              </RetainedActionForm>
                             </details>
                             <DeleteRecordForm action={deleteThesisNoteWithState} recordId={note.id} />
                           </div>

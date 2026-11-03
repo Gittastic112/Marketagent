@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-BRIDGE-20",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "status": "applied_and_verified",
+  "recorded_at": "2026-10-24T19:35:19.981870+00:00",
+  "review_path": "data/reviews/financing-bridge-review-20261024.json",
+  "review_sha256": "7be927aaae89036818335e221ce961dc0596a1ccc7c315d00940127545e4e958",
+  "candidate_ids": [
+    340,
+    664
+  ],
+  "processing_runs": [
+    147,
+    148,
+    149,
+    150
+  ],
+  "post_application_audit": "Initial strict provenance equality failed; preserved in local apply-receipt.json. Independent backup comparison verifies source-link enrichment only. No application rerun.",
+  "previous_reported_facts_unchanged": 904,
+  "new_reported_facts": 2,
+  "new_source_revisions": 2,
+  "previous_normalized_values_units_warnings_unchanged": 332,
+  "new_normalized_values": 4,
+  "normalized_provenance_refreshed": 22,
+  "source_reference_checks": 34,
+  "component_discrepancy_warning_retained": true,
+  "valuation_input_requires_review": true,
+  "saved_valuations_unchanged": true,
+  "changed_tables": [
+    "financial_extraction_candidates",
+    "financial_metrics",
+    "normalized_financial_metrics",
+    "normalized_financial_snapshots",
+    "processing_runs",
+    "source_fact_revisions"
+  ],
+  "backup_comparison_sha256": "7cc81f3f701f9102f7d82e526aa851120f6689b3732c141566e96da80ee8520f",
+  "database_restore_performed": false,
+  "new_disposable_dataset_created": false,
+  "verification_run_id": 151
+}

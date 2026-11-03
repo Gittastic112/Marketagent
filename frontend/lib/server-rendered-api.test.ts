@@ -72,14 +72,26 @@ test("backend requests use signed internal identity instead of recursive session
   const internalAuthSource = readFileSync(path.resolve("lib/internal-auth.ts"), "utf8");
   const nextConfigSource = readFileSync(path.resolve("next.config.mjs"), "utf8");
 
-  assert.match(serverApiSource, /getServerSession\(authOptions\)/);
+  assert.match(serverApiSource, /readServerIdentity\(secret\)/);
+  assert.match(serverApiSource, /await connection\(\)/);
+  assert.match(serverApiSource, /process\.env\["NEXTAUTH_SECRET"\]/);
+  assert.match(serverApiSource, /process\.env\["API_BASE_URL"\]/);
   assert.match(serverApiSource, /createBackendAuthHeaders/);
   assert.match(serverApiSource, /AbortSignal\.timeout/);
   assert.doesNotMatch(serverApiSource, /\bCookie:/);
+  assert.doesNotMatch(serverApiSource, /getServerSession/);
+  assert.doesNotMatch(serverApiSource, /cache\(async/);
+  assert.doesNotMatch(serverApiSource, /const SERVER_API_BASE_URL/);
+
+  const serverAuthSource = readFileSync(path.resolve("lib/server-auth.ts"), "utf8");
+  assert.match(serverAuthSource, /await cookies\(\)/);
+  assert.match(serverAuthSource, /findNextAuthSessionToken/);
+  assert.match(serverAuthSource, /decode\(\{ token: encryptedToken, secret \}\)/);
+  assert.doesNotMatch(serverAuthSource, /console\.|logger\./);
 
   assert.match(backendProxySource, /getToken\(\{ req: request, secret \}\)/);
-  assert.match(backendProxySource, /headers\.delete\(INTERNAL_USER_HEADER\)/);
-  assert.match(backendProxySource, /headers\.delete\(INTERNAL_SIGNATURE_HEADER\)/);
+  assert.match(backendProxySource, /backendRequestHeaders\(request.headers\)/);
+  assert.match(backendProxySource, /redirect: "error"/);
   assert.match(backendProxySource, /createBackendAuthHeaders/);
   assert.match(backendProxySource, /AbortSignal\.timeout/);
   assert.match(backendProxySource, /export async function PUT/);
@@ -109,6 +121,13 @@ test("company setup and SEC import expose resilient configured states", () => {
   assert.doesNotMatch(dataSource, /id="sec-fetch-source-id"/);
 });
 
+test("dashboard creation links open the existing company and thesis forms", () => {
+  const source = readFileSync(path.resolve("app/page.tsx"), "utf8");
+  assert.match(source, /href="\/companies"[^>]*>Add Company/);
+  assert.match(source, /href="\/thesis-notes"[^>]*>Write Thesis/);
+  assert.doesNotMatch(source, /href="\/(?:companies|thesis-notes)\/new"/);
+});
+
 test("portfolio management separates opening balances, security activity, and cash activity", () => {
   const source = readFileSync(path.resolve("app/portfolio/manage/page.tsx"), "utf8");
 
@@ -120,7 +139,7 @@ test("portfolio management separates opening balances, security activity, and ca
 });
 
 test("financial extraction actions use registered backend routes", () => {
-  const actionsSource = readFileSync(path.resolve("app/actions.ts"), "utf8");
+  const actionsSource = readFileSync(path.resolve("app/actions/financials.ts"), "utf8");
   const adminSource = readFileSync(path.resolve("app/admin/damodaran/page.tsx"), "utf8");
 
   assert.match(actionsSource, /\/api\/filings\/\$\{filingId\}\/extract-financials/);

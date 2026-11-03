@@ -1,0 +1,361 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-HDFCBANK-13",
+  "review_decision_id": "M05-HDFCBANK-12",
+  "review_sha256": "424a6fcf50d45a18cfbd1c6a41c60b855c335f23e35fb3ab675f85cdff726af1",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "verified_at": "2026-10-22T19:43:41.534178+00:00",
+  "status": "applied_and_verified_after_scoped_flag_repair",
+  "source": {
+    "company_id": 8,
+    "raw_document_id": 19,
+    "asset_id": 10,
+    "original_sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848"
+  },
+  "processing_runs": {
+    "intake": 122,
+    "review": 123,
+    "promotion": {
+      "id": 124,
+      "status": "failed_post_commit_verification",
+      "promotion_committed": true
+    },
+    "legacy_active_flag_reconciliation": 125
+  },
+  "promotion": {
+    "source_occurrences": 64,
+    "new_period": 2026,
+    "new_facts": 30,
+    "new_source_revisions": 64,
+    "fy2025_numeric_changes": [
+      "basic_eps",
+      "diluted_eps",
+      "basic_shares",
+      "diluted_shares"
+    ],
+    "fy2025_unit_label_changes": {
+      "advances": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "balances_with_banks": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "borrowings": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "cash_and_balances_with_rbi": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "deposits": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "employee_awards": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "fixed_assets": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "investments": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "minority_interests": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "other_assets": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "other_liabilities_provisions": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "policyholder_funds": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "reserves_surplus": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "share_capital": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "total_assets": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "total_liabilities_equity": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "group_profit": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "interest_earned": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "interest_expended": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "net_income_nci": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "net_income_parent": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "operating_expenses": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "other_income": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "provisions_contingencies": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "total_expenses": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      },
+      "total_income": {
+        "from": "INR crores",
+        "to": "INR crore",
+        "scale_unchanged": 10000000
+      }
+    },
+    "unit_scales_unchanged": true,
+    "candidate_ids": [
+      1388,
+      1389,
+      1390,
+      1391,
+      1392,
+      1393,
+      1394,
+      1395,
+      1396,
+      1397,
+      1398,
+      1399,
+      1400,
+      1401,
+      1402,
+      1403,
+      1404,
+      1405,
+      1406,
+      1407,
+      1408,
+      1409,
+      1410,
+      1411,
+      1412,
+      1413,
+      1414,
+      1415,
+      1416,
+      1417,
+      1418,
+      1419,
+      1420,
+      1421,
+      1422,
+      1423,
+      1424,
+      1425,
+      1426,
+      1427,
+      1428,
+      1429,
+      1430,
+      1431,
+      1432,
+      1433,
+      1434,
+      1435,
+      1436,
+      1437,
+      1438,
+      1439,
+      1440,
+      1441,
+      1442,
+      1443,
+      1444,
+      1445,
+      1446,
+      1447,
+      1448,
+      1449,
+      1450,
+      1451
+    ],
+    "hdfc_periods": 3,
+    "hdfc_facts": 90,
+    "hdfc_revisions": 128,
+    "hdfc_normalized_values": 12
+  },
+  "existing_history": {
+    "fy2024_unchanged": true,
+    "all_prior_source_values_units_and_ids_preserved": true,
+    "two_legacy_active_flags_retired_under": "M05-HDFCBANK-14",
+    "earlier_revision_numbers_unchanged": true
+  },
+  "verification": {
+    "all_scoped_counts": {
+      "periods": 33,
+      "facts": 901,
+      "revisions": 975,
+      "normalized": 332
+    },
+    "unrelated_records_unchanged": true,
+    "post_browser_table_fingerprints_unchanged": 109,
+    "reported_value_comparisons": 60,
+    "normal_browser_views": [
+      {
+        "view": "fundamentals",
+        "width": 1440,
+        "ready_ms": 393,
+        "keyboard_details_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "source_evidence",
+        "metric": "basic_eps",
+        "width": 1440,
+        "ready_ms": 2105,
+        "rendered_page": 472,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "source_evidence",
+        "metric": "basic_shares",
+        "width": 1440,
+        "ready_ms": 1401,
+        "rendered_page": 546,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "fundamentals",
+        "width": 390,
+        "ready_ms": 369,
+        "keyboard_details_verified": true,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "source_evidence",
+        "metric": "basic_eps",
+        "width": 390,
+        "ready_ms": 1701,
+        "rendered_page": 472,
+        "accessibility_violations": 0
+      },
+      {
+        "view": "source_evidence",
+        "metric": "basic_shares",
+        "width": 390,
+        "ready_ms": 1898,
+        "rendered_page": 546,
+        "accessibility_violations": 0
+      }
+    ],
+    "browser_errors": 0,
+    "backend_writes_during_browser": 0,
+    "pure_backend_tests": 37,
+    "frontend_tests": 304,
+    "build_and_typecheck": "pass",
+    "full_remote_ci_for_changed_source": "recorded_in_PR_2_and_checkpoint"
+  },
+  "repair": {
+    "decision_id": "M05-HDFCBANK-14",
+    "status": "success",
+    "processing_run_id": 125,
+    "repaired_at": "2026-10-22T19:35:45.011000+00:00",
+    "changes": [
+      {
+        "revision_id": 61,
+        "candidate_id": 728,
+        "fact": "basic_eps",
+        "value": 92.81,
+        "unit": "INR/share",
+        "old_superseded_at": null,
+        "current_revision_id": 940,
+        "current_candidate_id": 1444,
+        "current_value": 46.41
+      },
+      {
+        "revision_id": 63,
+        "candidate_id": 730,
+        "fact": "diluted_eps",
+        "value": 92.39,
+        "unit": "INR/share",
+        "old_superseded_at": null,
+        "current_revision_id": 942,
+        "current_candidate_id": 1446,
+        "current_value": 46.2
+      }
+    ],
+    "values_units_source_ids_unchanged": true,
+    "deleted_rows": 0,
+    "failed_run_124_preserved": true
+  },
+  "runtime_source_hashes": {
+    "accounting_normalization.py": "ac08f4e3dc075fa6586ed55bc51654fa7f666e2680a7958cfdc04f6e41f0a220",
+    "source_fact_history.py": "b282d1999a4ab199b60d6408bd3090115b417db2cc589c20390c03dd32026732"
+  },
+  "source_scope": "Selected as-reported historical facts, bonus-adjusted FY2025/FY2026 shares/EPS and explicit exception. No current valuation, complete notes, forecast or independent human certification.",
+  "local_evidence": "output/milestones/hdfc-latest-20261022/",
+  "evidence_sha256": {
+    "verified-application.json": "9c9feb348ae2c29b48c285bd76ff15c5c1b55865bda0985a868481d7c7993198",
+    "legacy-flag-repair.json": "05199a5dbce2e81706e6dc6ce46f66039ccc960bb0dd7a443d1dad3396d464e2",
+    "runtime-final.json": "acf49ea9045aab41f25d245a60d79bae5db697291273b3b1232646ce24af1bea",
+    "browser/results.json": "bbab3b1d596064a4c734bf5a6d9353eecffc6d9f7b6038c58f1783201b9ecabe",
+    "runtime-plan.json": "94d24387452bfbb44ea6bdb2278c636a49736c3719b70bf7c5d570b8f8ccca65"
+  },
+  "environment_files_read": false,
+  "new_disposable_database_created": false,
+  "valuation_and_portfolio_records_changed": false
+}

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.services.industry_assumption import IndustryAssumptionService
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 
 router = APIRouter(prefix="/api/valuation/benchmarks", tags=["benchmarks"])
 

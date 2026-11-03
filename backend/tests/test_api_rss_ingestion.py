@@ -145,7 +145,7 @@ def test_post_rss_feed_ingestion_fetches_source_base_url(client: TestClient, mon
         assert url == "https://example.com/feed.xml"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.rss_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.providers.rss_provider.fetch_public_text", lambda url, **kwargs: fake_get(url, **kwargs).text)
     client.patch("/sources/1", json={"base_url": "https://example.com/feed.xml"})
 
     response = client.post("/ingest/rss-feed", json={"source_id": 1})
@@ -172,7 +172,7 @@ def test_post_active_rss_feed_ingestion_runs_only_active_rss_sources(client: Tes
         calls.append(url)
         return FakeResponse(RSS_XML.replace("https://example.com/nvda-supply", f"{url}/nvda-supply"))
 
-    monkeypatch.setattr("app.services.rss_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.providers.rss_provider.fetch_public_text", lambda url, **kwargs: fake_get(url, **kwargs).text)
 
     client.patch("/sources/1", json={"base_url": "https://example.com/feed.xml", "active": True})
     client.post("/sources", json={"name": "Inactive RSS", "source_type": "rss", "base_url": "https://example.com/inactive.xml", "active": False})

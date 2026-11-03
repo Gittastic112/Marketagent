@@ -1,7 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.api.errors import PublicApiError
+from app.api.dependencies import get_current_user
+from app.models.dcf import DcfAssumptionSet, ValuationModel
+from app.schemas.real_options import SavedRealOptionRequest, SavedRealOptionResponse
+from app.services.saved_real_options import calculate_saved_real_option
 
 from app.api.schemas import (
     ApiResponse,
@@ -20,6 +25,22 @@ from app.models.real_options import IndustryVolatilityBenchmark
 from app.models.damodaran import DamodaranDatasetFile
 
 router = APIRouter()
+
+
+@router.post("/api/valuation/options/assumptions/{assumption_id}/calculate", response_model=ApiResponse[SavedRealOptionResponse])
+def calculate_owned_real_option(assumption_id: int, request: SavedRealOptionRequest,
+                               db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    row = db.scalar(select(DcfAssumptionSet).join(ValuationModel).where(
+        DcfAssumptionSet.id == assumption_id, ValuationModel.user_id == current_user["id"]))
+    if row is None:
+        raise HTTPException(status_code=404, detail="Assumption set not found")
+    try:
+        result = calculate_saved_real_option(row, request)
+    except (ValueError, ArithmeticError) as exc:
+        raise PublicApiError(status_code=422, code="REAL_OPTION_BASIS_INVALID",
+            message=str(exc) if isinstance(exc, ValueError) else "The option inputs do not produce a finite calculation.") from None
+    return ApiResponse(data=result, meta={"source": "saved_dcf_and_user_option_assumptions", "confidence": "medium",
+        "warnings": result.warnings})
 
 @router.get(
     "/volatility",
@@ -91,6 +112,7 @@ def get_volatility_benchmark(
 @router.post(
     "/api/valuation/options/eligibility",
     response_model=ApiResponse[OptionEligibilityTestResponse],
+    deprecated=True,
 )
 @router.post(
     "/eligibility",
@@ -114,14 +136,17 @@ def run_eligibility_test(request: OptionEligibilityTestRequest):
         eligibilityPassed=result["eligibilityPassed"],
         eligibilityScore=result["eligibilityScore"],
         recommendation=result["recommendation"],
-        warnings=result["warnings"]
+        warnings=[*result["warnings"],
+            "Experimental legacy checklist: weighted scores are not verified suitability or evidence approval."]
     )
 
-    return ApiResponse(data=data)
+    return ApiResponse(data=data, meta={"source": "experimental_legacy_option_checklist",
+        "confidence": "low", "warnings": data.warnings})
 
 @router.post(
     "/api/valuation/options/calculate",
     response_model=ApiResponse[RealOptionCalculateResponse],
+    deprecated=True,
 )
 @router.post(
     "/calculate",
@@ -162,7 +187,10 @@ def calculate_real_option(request: RealOptionCalculateRequest):
         adjusted_option_value=calc_result["adjusted_option_value"],
         option_delta=calc_result["option_delta"],
         option_adjusted_intrinsic_value=integration_result["option_adjusted_intrinsic_value"],
-        warnings=integration_result["warnings"]
+        warnings=[*integration_result["warnings"],
+            "Experimental legacy calculation from custom User Assumptions. The base value, currency, monetary scale and eligibility are not verified against a saved model.",
+            "Use the owned saved-assumption endpoint for version, currency, total-equity and diluted-share checks. No result is saved or approved here."]
     )
 
-    return ApiResponse(data=data)
+    return ApiResponse(data=data, meta={"source": "experimental_legacy_custom_option",
+        "confidence": "low", "warnings": data.warnings})

@@ -1,65 +1,46 @@
-import { FinancialPeriod } from "@/lib/api";
-import { Panel } from "@/components/page";
+import type { ApiResponse } from "@/lib/api/contract";
+import type { FinancialStatementPeriod } from "@/lib/api/financials";
+import { DataStateNotices, EmptyState, ErrorState, Panel } from "@/components/page";
+import { formatNumber } from "@/lib/formatting";
 
-export function FinancialTrends({ trends }: { trends: FinancialPeriod[] }) {
-  if (!trends || trends.length === 0) {
-    return (
-      <Panel title="Financial Trends">
-        <div className="text-sm text-[var(--color-neutral-500)] p-4 text-center border border-dashed border-[var(--border-color)] rounded-lg">
-          No financial data available.
-        </div>
-      </Panel>
-    );
-  }
+const metrics = ["Revenue", "Net Income", "EPS (Basic)", "Total Assets", "Total Liabilities"];
 
-  // Display top 5 recent periods
-  const recentTrends = trends.slice(0, 5);
+export function FinancialTrends({ response, companyId }: {
+  response: ApiResponse<FinancialStatementPeriod[]>;
+  companyId: number;
+}) {
+  const failed = response.errors.length > 0 || response.meta.status !== "success";
+  const recent = failed ? [] : [...(response.data || [])]
+    .sort((a, b) => b.year - a.year || (b.quarter ?? 0) - (a.quarter ?? 0)).slice(0, 5);
 
   return (
     <Panel title="Financial Trends">
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-left">
-          <thead className="bg-[var(--surface-color)] border-b border-[var(--border-color)]">
-            <tr>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)]">Period</th>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)] text-right">Revenue</th>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)] text-right">Net Income</th>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)] text-right">EPS</th>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)] text-right">Assets</th>
-              <th className="px-4 py-2 font-medium text-[var(--color-neutral-600)] text-right">Liabilities</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--border-color)]">
-            {recentTrends.map((period, idx) => {
-              const label = period.period_type === "quarterly" ? `Q${period.quarter} ${period.year}` : `FY ${period.year}`;
-              
-              const revenue = period.metrics.find(m => m.metric_name === "Revenue")?.value;
-              const netIncome = period.metrics.find(m => m.metric_name === "Net Income")?.value;
-              const eps = period.metrics.find(m => m.metric_name === "EPS (Basic)")?.value;
-              const assets = period.metrics.find(m => m.metric_name === "Total Assets")?.value;
-              const liabilities = period.metrics.find(m => m.metric_name === "Total Liabilities")?.value;
-              
-              const formatValue = (val: number | undefined) => {
-                if (val === undefined) return "—";
-                if (Math.abs(val) >= 1e9) return `$${(val / 1e9).toFixed(2)}B`;
-                if (Math.abs(val) >= 1e6) return `$${(val / 1e6).toFixed(2)}M`;
-                return `$${val.toFixed(2)}`;
-              };
-
-              return (
-                <tr key={idx} className="hover:bg-[var(--surface-color)]">
-                  <td className="px-4 py-3 font-medium">{label}</td>
-                  <td className="px-4 py-3 text-right">{formatValue(revenue)}</td>
-                  <td className="px-4 py-3 text-right">{formatValue(netIncome)}</td>
-                  <td className="px-4 py-3 text-right">{eps !== undefined ? `$${eps.toFixed(2)}` : "—"}</td>
-                  <td className="px-4 py-3 text-right">{formatValue(assets)}</td>
-                  <td className="px-4 py-3 text-right">{formatValue(liabilities)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {failed ? <ErrorState message="Financial history could not be loaded." errors={response.errors} /> : <>
+        <DataStateNotices metas={[response.meta]} />
+        {recent.length === 0 ? <EmptyState label="No recorded financial periods." /> : <>
+          <p className="muted">Recorded metrics may be unreviewed. Values retain their stored units without currency conversion or rescaling.</p>
+          <div tabIndex={0} className="table-wrap">
+            <table>
+              <thead><tr><th>Period and basis</th>{metrics.map(name => <th key={name}>{name}</th>)}</tr></thead>
+              <tbody>{recent.map(period => <tr key={period.id}>
+                <td>{period.period_type === "quarterly" ? `Q${period.quarter} ${period.year}` : `FY ${period.year}`}
+                  <div className="muted">Report date: {period.report_date}</div>
+                  <div className="muted">{period.currency || "Currency unknown"} · Currency basis: {period.currency_source || "unknown"}
+                    {" "}({period.currency_confidence || "unknown"} confidence)</div>
+                </td>
+                {metrics.map(name => {
+                  const matches = period.metrics.filter(metric => metric.metric_name === name);
+                  const metric = matches.length === 1 ? matches[0] : null;
+                  return <td key={name}>{metric && Number.isFinite(metric.value)
+                    ? <>{formatNumber(metric.value, 6)}<div className="muted">{metric.unit || "Unit unknown"}</div></>
+                    : matches.length > 1 ? "Conflicting records" : "Not available"}</td>;
+                })}
+              </tr>)}</tbody>
+            </table>
+          </div>
+        </>}
+      </>}
+      <a href={`/companies/${companyId}/fundamentals`}>Review financial sources and normalized coverage</a>
     </Panel>
   );
 }

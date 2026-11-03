@@ -65,7 +65,7 @@ class PortfolioAttributionEngine:
             elif transaction.transaction_type == "sell":
                 activity["sales"] += gross_value
             elif transaction.transaction_type == "dividend":
-                activity["dividends"] += gross_value
+                activity["dividends"] += quantity
             elif transaction.transaction_type == "deposit":
                 activity["deposits"] += quantity
             elif transaction.transaction_type == "withdrawal":
@@ -100,8 +100,8 @@ class PortfolioAttributionEngine:
             total_unrealized_pnl = None
 
         warnings = [
-            "Historical FX rates are not stored, so FX impact is not available.",
-            "Opportunity cost is not available because no benchmark series is configured.",
+            "This activity summary does not calculate historical FX impact; inspect dated period attribution.",
+            "This activity summary does not calculate benchmark opportunity cost; inspect the configured period comparison.",
         ]
         if price_movement is not None:
             warnings.append(

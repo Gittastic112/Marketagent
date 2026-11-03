@@ -1,5 +1,4 @@
-import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from decimal import Decimal
 
 import yfinance as yf
@@ -11,6 +10,8 @@ from app.services.market_data.base import (
     MarketHistoryResult,
     MarketQuoteResult,
 )
+from app.services.market_data.sessions import history_window
+from app.services.market_data.yfinance_jobs import run_yfinance_job
 
 
 class YFinanceMarketProvider(MarketDataProvider):
@@ -54,24 +55,26 @@ class YFinanceMarketProvider(MarketDataProvider):
                 adjustment_state="not_applicable",
                 warnings=[self._warning, "Quote timestamp and delay classification were not supplied."],
             )
-        except Exception as exc:
+        except Exception:
             raise MarketDataProviderError(
                 code="PROVIDER_UNAVAILABLE",
                 message="yfinance could not return a usable market quote.",
                 provider=self.provider_name,
                 status_code=502,
                 retryable=True,
-            ) from exc
+            ) from None
 
     async def get_quote(self, request: MarketDataRequest) -> MarketQuoteResult:
-        return await asyncio.to_thread(self._fetch_quote, request)
+        return await run_yfinance_job("quote", request)
 
     def _fetch_history(self, request: MarketDataRequest, days: int) -> list[MarketHistoryResult]:
         provider_symbol = self.provider_symbol(request)
         try:
             ticker_obj = yf.Ticker(provider_symbol)
-            start = datetime.now(timezone.utc).date() - timedelta(days=days)
-            history = ticker_obj.history(start=start.isoformat(), auto_adjust=False)
+            window = history_window(request, days, now=datetime.now(timezone.utc))
+            history = ticker_obj.history(
+                start=window.start.isoformat(), end=window.end.isoformat(), auto_adjust=False,
+            )
             if history.empty:
                 raise ValueError("history was empty")
             currency = ticker_obj.fast_info.get("currency") or request.currency
@@ -91,26 +94,31 @@ class YFinanceMarketProvider(MarketDataProvider):
                     observed_at=observed_at,
                     price_type="end_of_day",
                     adjustment_state="unadjusted",
-                    warnings=[self._warning],
+                    warnings=[
+                        self._warning,
+                        window.warning,
+                    ],
                 )
                 for index, row in history.iterrows()
-                if row.get("Close") is not None and row["Close"] > 0
+                if window.start <= index.date() < window.end and row.get("Close") is not None and row["Close"] > 0
             ]
             if not results:
                 raise ValueError("history contained no positive closing prices")
             return results
-        except Exception as exc:
+        except MarketDataProviderError:
+            raise
+        except Exception:
             raise MarketDataProviderError(
                 code="PROVIDER_UNAVAILABLE",
                 message="yfinance could not return usable market-price history.",
                 provider=self.provider_name,
                 status_code=502,
                 retryable=True,
-            ) from exc
+            ) from None
 
     async def get_historical_prices(
         self,
         request: MarketDataRequest,
         days: int = 365,
     ) -> list[MarketHistoryResult]:
-        return await asyncio.to_thread(self._fetch_history, request, days)
+        return await run_yfinance_job("history", request, days)

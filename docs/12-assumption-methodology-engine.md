@@ -1,8 +1,8 @@
 # Assumption Methodology Engine
 
-**Audited:** 2026-08-08
+**Source reviewed:** 2026-10-22. Runtime validation is recorded in Current State.
 
-**Status:** partial; review required
+**Status:** source-backed benchmark methods are built; review required
 
 ## Purpose
 
@@ -24,22 +24,71 @@ value inspectable.
 
 API routes are mounted under `/api/assumptions`:
 
-- `GET /methods/{assumption_key}?country=...&industry=...`
-- `GET /country/{country}?industry=...`
+- `GET /methods/{assumption_key}?country=...&industry=...&currency=...`
+- `GET /country/{country}?industry=...&currency=...`
 - `POST /valuations/{valuation_id}/select-method`
 
 The write route owner-scopes the valuation and records selected method, applied
 value, source label, confidence, review status, and notes.
 
-## Important Limitation
+## Current Source Contract
 
-The service still contains hardcoded India ERP and risk-free fallback values for
-an unseeded database. They are visibly named fallback methods and require review,
-but they are not acceptable as current source-backed defaults. Treat this as
-technical debt. A future change should seed/version approved source records and
-return only `user_custom` or not-configured when no approved record exists.
+The service has no hardcoded country-rate fallback table. An unseeded database
+returns only `user_custom` and no default. Active January 2026 workbook versions
+supply country-separated India/US priors for beta, ERP/cost of capital, borrowing
+cost, financing weights and related assumptions. Methods retain dataset ID,
+SHA-256, source date, canonical path, sheet, row and column when source-backed.
+Labels preserve workbook scope: the India WACC workbook's D10/D11 inputs are
+Global weighted averages, not independently verified India-specific rates.
 
-Do not add more hardcoded market assumptions to `FALLBACK_METHODS`.
+`betaIndia.xls`, `waccIndia.xls`, `taxrateIndia.xls`, and
+`countrytaxrates.xls` are seeded by the same versioned importer used by the full
+Damodaran ingestion command. Missing workbook cells remain missing rather than
+being filled with guessed numbers.
+
+The explicit `--market US` intake also loads six dated US contracts through the
+existing parsers. Margin, reinvestment, ROE and working-capital datasets supplement
+the beta/WACC priors; they are not company facts or automatically approved industry
+mappings. The stored FRED DGS10 observation supplies a dated USD risk-free proxy
+through the separate source-to-draft workflow, not a universal currency fallback.
+See [source boundaries](04-data-sources-and-ingestion.md) and
+[intake commands](08-execution-runbook.md#us-benchmark-intake).
+
+## Revenue-weighted prior calculations
+
+Aggregation version 2 records the method for every blended field. Margins,
+net-capex/sales and working-capital/sales use revenue weights. Sales-to-capital
+uses `1 / sum(revenue_weight / component_sales_to_capital)`: combine the implied
+capital before dividing revenue. Every component must be present and finite;
+capital ratios must be positive. An absent component withholds the field rather
+than redistributing its weight. Accepted percentage-rounding differences are
+normalized to the actual total.
+
+Revenue weights do not establish equity/capital weights or matched growth periods.
+Multi-industry ROE, ROC, capital-structure ratios and multi-year growth therefore
+remain unavailable. Absolute industry financing totals are not blended. Multiple
+segments mapped to one taxonomy retain that single industry's own prior/context.
+The aggregation version participates in the draft's source signature so old
+autofilled values refresh, while explicit manual edits remain protected.
+
+The October 22 review installs seven provisional mixes and four single-industry
+comparisons across the scoped securities. Reliance's net external-revenue split
+is withheld; bank comparisons do not claim that all group revenue is banking.
+The [decision log](roadmaps/review-decisions.md) owns exact source scopes and proxy
+choices. None approves a company forecast, current share count or valuation.
+
+## Important Limitations
+
+- Benchmark methods are estimates and require review before promotion.
+- Industry beta, capital structure, cost of debt, and WACC are not company facts.
+- The single DCF tax field defaults to reviewed company effective tax when
+  available, otherwise the country marginal rate. Industry effective tax remains
+  an inspectable alternative/reality check.
+- Revenue-weighted multi-industry companies do not yet receive a synthetic
+  blended beta or WACC. Those fields remain review-required until an explicit
+  blending method is implemented.
+- Company financial, bridge, share, price, payout, and special-case inputs still
+  require reviewed company evidence or user input.
 
 ## Usage Rules
 
@@ -49,3 +98,4 @@ Do not add more hardcoded market assumptions to `FALLBACK_METHODS`.
 4. Require review before applying a default to a valuation.
 5. Never hide stale, unknown-date, fallback, or unavailable states.
 6. Keep methodology selection separate from deterministic valuation formulas.
+7. Never use aggregate industry financing flows as company cash-flow inputs.

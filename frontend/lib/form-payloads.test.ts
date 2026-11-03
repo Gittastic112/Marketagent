@@ -16,8 +16,70 @@ import {
   buildSourcePayload,
   buildThesisNotePayload,
   buildMarketPricePayload,
+  buildDcfAssumptionSetPayload,
   getRequiredFormId
 } from "./form-payloads.ts";
+
+test("versioned DCF form distinguishes omitted fields from explicit clears and zero", () => {
+  const form = new FormData();
+  form.set("scenario", "Base");
+  form.set("base_assumption_set_id", "7");
+  form.set("base_assumption_set_updated_at", "2026-09-10T00:00:00Z");
+  form.set("net_income", "0");
+  form.set("currency_override_note", "");
+  const payload = buildDcfAssumptionSetPayload(form);
+  assert.equal(payload.base_assumption_set_id, 7);
+  assert.equal(payload.base_assumption_set_updated_at, "2026-09-10T00:00:00Z");
+  assert.equal(payload.net_income, 0);
+  assert.equal(payload.currency_override_note, null);
+  for (const field of ["book_value_of_equity", "target_roe", "probability_of_failure", "projection_years_count", "reinvestment_story"]) {
+    assert.equal(field in payload, false, field);
+  }
+});
+
+test("DCF numeric inputs reject nonfinite text and preserve zero for backend validation", () => {
+  const form = new FormData(); form.set("scenario", "Base");
+  form.set("projection_years", "0");
+  assert.equal(buildDcfAssumptionSetPayload(form).projection_years_count, 0);
+  for (const value of ["NaN", "Infinity", "invalid"]) {
+    form.set("net_income", value);
+    assert.throws(() => buildDcfAssumptionSetPayload(form), /finite number/);
+  }
+});
+
+test("DCF payload preserves every rendered payout and equity-bridge input", () => {
+  const formData = new FormData();
+  formData.set("scenario", "Base");
+  formData.set("projection_years", "7");
+  formData.set("capex", "120");
+  formData.set("depreciation", "80");
+  formData.set("change_in_nwc", "25");
+  formData.set("dividends", "30");
+  formData.set("buybacks", "15");
+  formData.set("stock_issuances", "5");
+  formData.set("new_debt_issued", "40");
+  formData.set("debt_repaid", "10");
+  formData.set("company_age", "18");
+  formData.set("cash_flow_currency", " inr ");
+  formData.set("discount_rate_currency", " usd ");
+  formData.set("currency_override_note", " USD contract cash flows ");
+
+  const payload = buildDcfAssumptionSetPayload(formData);
+
+  assert.equal(payload.projection_years_count, 7);
+  assert.equal(payload.capex, 120);
+  assert.equal(payload.depreciation, 80);
+  assert.equal(payload.change_in_nwc, 25);
+  assert.equal(payload.dividends, 30);
+  assert.equal(payload.buybacks, 15);
+  assert.equal(payload.stock_issuances, 5);
+  assert.equal(payload.new_debt_issued, 40);
+  assert.equal(payload.debt_repaid, 10);
+  assert.equal(payload.company_age, 18);
+  assert.equal(payload.cash_flow_currency, "INR");
+  assert.equal(payload.discount_rate_currency, "USD");
+  assert.equal(payload.currency_override_note, "USD contract cash flows");
+});
 
 test("company form payload trims text and treats blank optional fields as null", () => {
   const formData = new FormData();
@@ -143,6 +205,7 @@ test("raw document metadata update does not erase stored source text", () => {
   formData.set("document_type", "filing");
   formData.set("title", "10-K");
   formData.set("url", "https://example.com/10-k");
+  formData.set("published_at", "2026-07-30T12:00");
   formData.set("content_hash", "hash-1");
 
   assert.deepEqual(buildRawDocumentMetadataPayload(formData), {
@@ -151,6 +214,7 @@ test("raw document metadata update does not erase stored source text", () => {
     document_type: "filing",
     title: "10-K",
     url: "https://example.com/10-k",
+    published_at: "2026-07-30T12:00",
     content_hash: "hash-1"
   });
 });

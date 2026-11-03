@@ -12,10 +12,14 @@ import { serverFetchApi, serverPostApi } from "@/lib/server-api";
 
 export default async function DraftValuationPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ model_type?: string }>;
 }) {
   const { id } = await params;
+  const requestedModelType = (await searchParams).model_type;
+  const modelType = ["fcff_dcf", "financial_services", "distressed"].includes(requestedModelType || "") ? requestedModelType! : "fcff_dcf";
   const companyId = Number.parseInt(id, 10);
   const company = await serverFetchApi<Company>(`/companies/${companyId}`);
 
@@ -73,12 +77,14 @@ export default async function DraftValuationPage({
         </Link>
       </header>
       <AutofillDraftReview
+        key={persistedDraft.id}
         company={company}
         draft={draft}
         draftId={persistedDraft.id}
         initialReviewedFields={persistedDraft.reviewed_fields_json}
         initialEditedFields={persistedDraft.edited_fields_json}
         initialUpdatedAt={persistedDraft.updated_at}
+        initialModelType={modelType}
         action={createModelAction}
       />
     </div>

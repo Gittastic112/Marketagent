@@ -14,6 +14,7 @@ const tabDefinitions = [
   { segment: "thesis", label: "Thesis" },
   { segment: "decisions", label: "Decisions" },
   { segment: "valuation", label: "Valuation" },
+  { segment: "valuation/peers", label: "Comps" },
   { segment: "evidence", label: "Evidence" },
 ] as const;
 
@@ -21,6 +22,9 @@ const tabDefinitions = [
 export function CompanyTabs({ companyId }: { companyId: string }) {
   const pathname = usePathname();
   const base = `/companies/${companyId}`;
+  const activeSegment = tabDefinitions.filter(tab => tab.segment
+    ? pathname === `${base}/${tab.segment}` || pathname.startsWith(`${base}/${tab.segment}/`)
+    : pathname === base).sort((a, b) => b.segment.length - a.segment.length)[0]?.segment;
 
   let staleSegments: Record<string, boolean> = {};
   try {
@@ -34,9 +38,7 @@ export function CompanyTabs({ companyId }: { companyId: string }) {
     <nav className="company-tabs" aria-label="Company workspace">
       {tabDefinitions.map((tab) => {
         const href = tab.segment ? `${base}/${tab.segment}` : base;
-        const active = tab.segment
-          ? pathname === href || pathname.startsWith(`${href}/`)
-          : pathname === base;
+        const active = tab.segment === activeSegment;
         return (
           <Link
             href={href}

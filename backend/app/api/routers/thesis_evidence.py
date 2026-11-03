@@ -6,7 +6,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.db.session import get_db
 from app.models import Event
 from app.models.thesis_note import ThesisNote

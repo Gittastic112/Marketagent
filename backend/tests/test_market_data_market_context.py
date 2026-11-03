@@ -130,7 +130,7 @@ def test_market_ingest_passes_market_context_to_provider(monkeypatch) -> None:
                 )
             ]
 
-    monkeypatch.setattr("app.api.routers.market.get_market_data_provider", lambda: FakeProvider())
+    monkeypatch.setattr("app.services.market_data.ingestion.get_market_data_provider", lambda: FakeProvider())
 
     with _client_with_db() as (client, db):
         db.add(

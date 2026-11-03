@@ -1,0 +1,61 @@
+import { expect, test } from "@playwright/test";
+import { backendData, createCompany, signIn } from "./helpers";
+import AxeBuilder from "@axe-core/playwright";
+
+test("decision journal saves text, evidence dates, zero prices and an explicit outcome review", async ({page}) => {
+  await signIn(page);
+  const suffix = Date.now().toString().slice(-7);
+  const company = await createCompany(page, {ticker: `DJ${suffix}`, local_symbol: `DJ${suffix}`,
+    name: "Mock Data decision journal", market: "IN", primary_exchange: "NSE", country: "India", currency: "INR"});
+  await page.goto(`/companies/${company.id}/evidence`);
+  await page.getByRole("link", {name: "+ Log Evidence", exact: true}).click();
+  await expect(page).toHaveURL(`/companies/${company.id}/decisions#evidence-entry`);
+  let interruptSave = true;
+  await page.route(`**/companies/${company.id}/decisions`, route => {
+    if (route.request().method() === "POST" && interruptSave) return route.abort("failed");
+    return route.continue();
+  });
+  await page.getByLabel("Market Belief", {exact: true}).fill("Mock Data market interpretation");
+  await page.getByLabel("My Belief", {exact: true}).fill("Mock Data independent interpretation");
+  await page.getByRole("button", {name: "Save Perception"}).click();
+  await expect(page.getByRole("alert").filter({hasText: "Your entries are retained"})).toBeVisible();
+  await expect(page.getByLabel("My Belief", {exact: true})).toHaveValue("Mock Data independent interpretation");
+  interruptSave = false;
+  await page.getByRole("button", {name: "Save Perception"}).click();
+  await expect(page.getByRole("main").getByText("Mock Data independent interpretation", {exact: true})).toBeVisible();
+  await page.getByLabel("New Evidence", {exact: true}).fill("Mock Data source passage needs further review");
+  await page.getByLabel("Date Discovered", {exact: true}).fill("2026-01-15");
+  await page.getByLabel("Source URL (optional)", {exact: true}).fill("https://example.invalid/mock-source");
+  await page.getByRole("button", {name: "Add Evidence", exact: true}).click();
+  await expect(page.getByRole("main").getByText("Mock Data source passage needs further review", {exact: true})).toBeVisible();
+  const evidence = await backendData<Array<{company_id: number; date_discovered: string}>>(page, `/evidence?company_id=${company.id}`);
+  expect(evidence).toHaveLength(1);
+  expect(evidence[0].company_id).toBe(company.id);
+  expect(evidence[0].date_discovered.slice(0, 10)).toBe("2026-01-15");
+  await expect(page.getByRole("link", {name: "Open recorded source"})).toHaveAttribute("href", "https://example.invalid/mock-source");
+  await page.goto(`/companies/${company.id}/evidence`);
+  await expect(page.getByRole("row").filter({hasText: "Mock Data source passage needs further review"})).toBeVisible();
+  await expect(page.getByRole("link", {name: "View Source", exact: true})).toHaveAttribute("href", "https://example.invalid/mock-source");
+  await page.goto(`/companies/${company.id}/decisions`);
+  await page.getByLabel("Decision", {exact: true}).selectOption("Pass");
+  await page.getByLabel(/Price at Time/).fill("0");
+  await page.getByLabel("Rationale", {exact: true}).fill("Mock Data: record a research decision, no trading instruction");
+  await page.getByRole("button", {name: "Record Decision"}).click();
+  await expect(page.getByRole("main").getByText("Mock Data: record a research decision, no trading instruction", {exact: true})).toBeVisible();
+  await expect(page.getByRole("main").getByText(/Recorded price: 0.*currency not recorded/)).toBeVisible();
+  await page.getByRole("main").getByText("Review this decision", {exact: true}).click();
+  await page.getByLabel("What Happened?", {exact: true}).fill("Mock Data: source evidence remained incomplete");
+  await page.getByLabel("Information missed", {exact: true}).check();
+  await page.getByRole("button", {name: "Save Review", exact: true}).click();
+  await expect(page.getByRole("main").getByText("Mock Data: source evidence remained incomplete", {exact: true})).toBeVisible();
+  const decisions = await backendData<Array<{price_at_time: number; outcome_review: {information_unavailable_or_misinterpreted: boolean}}>>(
+    page, `/decisions?company_id=${company.id}`);
+  expect(decisions).toHaveLength(1);
+  expect(decisions[0].price_at_time).toBe(0);
+  expect(decisions[0].outcome_review.information_unavailable_or_misinterpreted).toBe(true);
+  await page.setViewportSize({width: 390, height: 844});
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
+  const accessibility = await new AxeBuilder({page}).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze();
+  expect(accessibility.violations.map(item => ({rule: item.id, targets: item.nodes.map(node => node.target)}))).toEqual([]);
+  await page.screenshot({path: test.info().outputPath("decision-journal-mobile.png"), fullPage: true});
+});

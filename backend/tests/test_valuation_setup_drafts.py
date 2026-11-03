@@ -1,5 +1,7 @@
 from datetime import date
 
+import pytest
+
 from app.models import (
     Company,
     DamodaranDatasetFile,
@@ -14,6 +16,213 @@ from app.models import (
     ValuationSetupDraft,
 )
 from helpers import response_data
+
+
+@pytest.mark.parametrize("patch", [{}, {"cash": 25}])
+def test_partial_save_and_review_preserve_scenario_projection_and_reinvestment(client, db, patch):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    chosen = {"scenario": "Reviewed stationary reference", "projection_years_count": 7,
+              "reinvestment_method": "roic"}
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": chosen, "reviewed_fields": []}))
+    reviewed = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": patch, "reviewed_fields": ["projection_years_count"],
+        "expected_updated_at": saved["updated_at"]}))
+    for field, value in chosen.items():
+        assert reviewed["assumptions_json"][field] == value
+    assert reviewed["reviewed_fields_json"] == ["projection_years_count"]
+
+
+def test_review_requirements_follow_the_selected_model(client, db):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    metadata = draft["source_metadata_json"]
+    bank = metadata["review_fields_by_model"]["financial_services"]
+    assert {"book_value_of_equity", "net_income", "target_roe", "cost_of_equity"} <= set(bank)
+    assert not {"starting_revenue", "revenue_growth_years_json", "debt", "wacc_start"} & set(bank)
+    assert {"probability_of_failure", "distress_sale_proceeds"} <= set(metadata["review_fields_by_model"]["distressed"])
+
+
+@pytest.mark.parametrize("model_type", ["fcff_dcf", "distressed", "financial_services"])
+def test_missing_comparison_price_requires_explicit_review_but_allows_valuation(client, db, model_type):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    assert draft["assumptions_json"]["current_market_price"] is None
+    assert "current_market_price" not in draft["source_metadata_json"]["required_fields_by_model"][model_type]
+    reviewed = draft["source_metadata_json"]["review_fields_by_model"][model_type]
+    assert "current_market_price" in reviewed
+    patch = {field: _valid_review_value(field) for field in reviewed}
+    patch.update(current_market_price=None, projection_years_count=10,
+                 cash_flow_currency="INR", discount_rate_currency="INR",
+                 book_value_of_equity=1000, net_income=100, target_roe=0.12,
+                 cost_of_equity=0.10, terminal_growth_rate=0.02,
+                 probability_of_failure=0.1, distress_sale_proceeds=10)
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": patch,
+        "reviewed_fields": [field for field in reviewed if field != "current_market_price"]}))
+    command = {"name": "Mock Data valuation without comparison price", "model_type": model_type}
+    blocked = client.post(f"/valuation-drafts/{draft['id']}/promote", json=command)
+    assert blocked.status_code == 409
+    assert "current_market_price" in blocked.json()["detail"]
+    assert db.query(ValuationModel).filter_by(company_id=company.id).count() == 0
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {}, "reviewed_fields": reviewed}))
+    model = response_data(client.post(f"/valuation-drafts/{draft['id']}/promote", json=command))
+    saved = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))[0]
+    assert saved["current_market_price"] is None
+    assert saved["outputs"]["intrinsic_value_per_share"] > 0
+    assert saved["outputs"]["current_market_price"] is None
+    assert saved["outputs"]["upside_downside_pct"] is None
+
+
+@pytest.mark.parametrize("missing", [None, "book_value_of_equity", "net_income", "target_roe"])
+def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(client, db, missing):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    equity_inputs = {"projection_years_count": 10, "book_value_of_equity": 100_000_000,
+        "net_income": 10_000_000, "target_roe": 0.12, "cost_of_equity": 0.10,
+        "terminal_growth_rate": 0.03, "diluted_shares": 10_000_000,
+        "cash_flow_currency": "INR", "discount_rate_currency": "INR", "current_market_price": 10}
+    if missing:
+        equity_inputs[missing] = None
+    unused = {"starting_revenue": None, "revenue_growth_years_json": None,
+        "current_operating_margin": None, "target_operating_margin": None,
+        "sales_to_capital_ratio": None, "starting_invested_capital": None,
+        "wacc_start": None, "wacc_terminal": None}
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {**equity_inputs, **unused}, "reviewed_fields": list(equity_inputs)}))
+    response = client.post(f"/valuation-drafts/{draft['id']}/promote", json={
+        "name": "Mock Data equity-input bank model", "model_type": "financial_services"})
+    if missing:
+        assert response.status_code == 409
+        assert missing in response.json()["detail"]
+        assert db.query(ValuationModel).filter_by(company_id=company.id).count() == 0
+    else:
+        model = response_data(response)
+        assumptions = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))
+        assert assumptions[0]["starting_revenue"] is None
+        assert assumptions[0]["outputs"]["intrinsic_value_per_share"] > 0
+        assert assumptions[0]["outputs"]["enterprise_value"] is None
+
+
+@pytest.mark.parametrize("change", ["review_policy", "financials", "industry", "currency"])
+def test_promotion_rejects_changed_source_basis(client, db, change):
+    company, snapshot = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    reviewed = draft["source_metadata_json"]["review_fields"]
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {field: _valid_review_value(field) for field in reviewed},
+        "reviewed_fields": reviewed,
+    }))
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    if change == "review_policy":
+        stored.source_metadata_json = {**stored.source_metadata_json,
+            "source_input_signature": "legacy-review-policy"}
+    elif change == "financials":
+        db.query(NormalizedFinancialMetric).filter_by(snapshot_id=snapshot.id,
+            metric_code="revenue").one().value = 1100
+    elif change == "industry":
+        company.damodaran_industry = "Retail (General)"
+    else:
+        company.currency = "USD"
+    db.commit()
+
+    response = client.post(f"/valuation-drafts/{draft['id']}/promote", json={
+        "name": "Mock Data stale draft", "model_type": "fcff_dcf"})
+    assert response.status_code == 409
+    assert "Refresh" in response.json()["detail"]
+    assert db.query(ValuationModel).filter_by(company_id=company.id).count() == 0
+    assert db.get(ValuationSetupDraft, draft["id"]).promoted_model_id is None
+
+
+@pytest.mark.parametrize("change", ["benchmark", "freshness"])
+def test_promotion_rechecks_generated_basis_without_overwriting_draft(client, db, monkeypatch, change):
+    from app.services import assumption_provenance
+    from app.services.valuation_setup_draft import ValuationSetupDraftService
+
+    company, _ = _company_with_actuals(db)
+    dataset = DamodaranDatasetFile(uploaded_filename="Mock Data margins.xls",
+        dataset_code="margin", country="India", source_file_type="xls")
+    db.add(dataset)
+    db.flush()
+    margin = DamodaranMarginBenchmark(dataset_file_id=dataset.id,
+        industry_name=company.damodaran_industry, country="India", ebit_margin=0.20)
+    db.add(margin)
+    db.commit()
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    reviewed = draft["source_metadata_json"]["review_fields"]
+    patch = {field: _valid_review_value(field) for field in reviewed
+        if not ValuationSetupDraftService._valid_value(field, draft["assumptions_json"].get(field))}
+    saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": patch, "reviewed_fields": reviewed}))
+    if change == "benchmark":
+        margin.ebit_margin = 0.15
+        db.commit()
+    else:
+        class FutureDate(date):
+            @classmethod
+            def today(cls):
+                return cls(2030, 1, 1)
+        monkeypatch.setattr(assumption_provenance, "date", FutureDate)
+
+    response = client.post(f"/valuation-drafts/{draft['id']}/promote", json={
+        "name": "Mock Data changed source", "model_type": "fcff_dcf"})
+    assert response.status_code == 409
+    assert "Refresh" in response.json()["detail"]
+    db.expire_all()
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    assert stored.assumptions_json == saved["assumptions_json"]
+    assert stored.reviewed_fields_json == saved["reviewed_fields_json"]
+    assert db.query(ValuationModel).filter_by(company_id=company.id).count() == 0
+
+
+def test_legacy_growth_review_is_invalidated_without_losing_user_edits(client, db):
+    company, _ = _company_with_actuals(db)
+    older = FinancialStatementPeriod(company_id=company.id, year=2025,
+        period_type="annual", report_date=date(2025, 3, 31), currency="INR")
+    db.add(older)
+    db.flush()
+    db.add(FinancialMetric(period_id=older.id, metric_name="revenue", value=800, unit="INR million"))
+    db.commit()
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {"starting_revenue": 1250},
+        "reviewed_fields": ["starting_revenue", "revenue_growth_years_json"],
+    }))
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    stored.source_metadata_json = {**stored.source_metadata_json,
+        "source_input_signature": "legacy-review-policy"}
+    old_growth = {**stored.provenance_json["revenue_growth_years_json"],
+        "claim_type": "Calculation", "requires_review": False}
+    stored.provenance_json = {**stored.provenance_json, "revenue_growth_years_json": old_growth}
+    db.commit()
+
+    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    assert reopened["id"] == draft["id"]
+    assert reopened["assumptions_json"]["starting_revenue"] == 1250
+    assert "starting_revenue" in reopened["reviewed_fields_json"]
+    assert "revenue_growth_years_json" not in reopened["reviewed_fields_json"]
+    assert "revenue_growth_years_json" in reopened["source_metadata_json"]["unresolved_fields"]
+    assert reopened["provenance_json"]["revenue_growth_years_json"]["claim_type"] == "Estimate"
+
+
+def test_new_unit_policy_preserves_manual_values_but_requires_scale_review(client, db):
+    company, _ = _company_with_actuals(db)
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
+        "assumptions_patch": {"starting_revenue": 1250}, "reviewed_fields": ["starting_revenue"]}))
+    stored = db.get(ValuationSetupDraft, draft["id"])
+    stored.source_metadata_json = {key: value for key, value in stored.source_metadata_json.items()
+        if key != "input_unit_policy"}
+    stored.source_metadata_json = {**stored.source_metadata_json, "source_input_signature": "legacy-unit-policy"}
+    db.commit()
+    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    assert reopened["assumptions_json"]["starting_revenue"] == 1250
+    assert "starting_revenue" not in reopened["reviewed_fields_json"]
+    assert "starting_revenue" in reopened["source_metadata_json"]["unresolved_fields"]
+    assert reopened["provenance_json"]["starting_revenue"]["unit_policy_review_required"] is True
+    assert any("Manual values need review" in warning for warning in reopened["warnings_json"])
 
 
 def _valid_review_value(field: str):
@@ -98,7 +307,7 @@ def test_create_and_reopen_owned_valuation_setup_draft(client, db) -> None:
     created = response_data(created_response)
     assert created["company_id"] == company.id
     assert created["status"] == "draft"
-    assert created["assumptions_json"]["starting_revenue"] == 1000
+    assert created["assumptions_json"]["starting_revenue"] == 1_000_000_000
     assert created["provenance_json"]["starting_revenue"]["source_table"] == "normalized_financial_metrics"
     assert created["assumptions_json"]["basic_shares"] is None
     assert "basic_shares" not in created["source_metadata_json"]["review_fields"]
@@ -219,7 +428,7 @@ def test_draft_refresh_invalidates_review_when_source_value_changes(client, db) 
     db.commit()
 
     refreshed = response_data(client.post(f"/valuation-drafts/{draft['id']}/refresh", json={}))
-    assert refreshed["assumptions_json"][source_field] == 1100
+    assert refreshed["assumptions_json"][source_field] == 1_100_000_000
     assert source_field not in refreshed["reviewed_fields_json"]
 
 
@@ -376,7 +585,7 @@ def test_reset_field_restores_latest_source_value(client, db) -> None:
         )
     )
 
-    assert reset["assumptions_json"]["starting_revenue"] == 1000
+    assert reset["assumptions_json"]["starting_revenue"] == 1_000_000_000
     assert reset["provenance_json"]["starting_revenue"]["source_table"] == "normalized_financial_metrics"
     assert "starting_revenue" not in reset["edited_fields_json"]
     assert "starting_revenue" not in reset["reviewed_fields_json"]

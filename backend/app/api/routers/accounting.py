@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import List, Optional, Any, Dict
 from app.db.session import get_db
-from app.api.schemas import ApiResponse
+from app.schemas.common import ApiResponse
 from app.services.accounting_normalization import AccountingNormalizationService, GoodwillDiagnosticsService
 
 router = APIRouter(prefix="/api/valuation/accounting", tags=["accounting"])

@@ -10,7 +10,7 @@ def test_current_market_regime_is_enveloped_and_idempotent(client: TestClient) -
     second_response = client.get("/market-regime/current")
 
     assert first_response.status_code == 200
-    assert first_response.json()["meta"]["source"] == "manual"
+    assert first_response.json()["meta"]["source"] == "market_regime_inputs"
     first = response_data(first_response)
     second = response_data(second_response)
     assert first["id"] == second["id"]
@@ -100,8 +100,33 @@ def test_market_regime_marks_old_complete_inputs_stale(client: TestClient) -> No
         )
         assert response.status_code == 200
 
-    current = response_data(client.get("/market-regime/current"))
+    current_response = client.get("/market-regime/current")
+    current = response_data(current_response)
     assert current["calculation_status"] == "stale"
     assert current["mode"] == "Stale"
     assert current["confidence"] == "low"
     assert "Stale inputs" in current["warnings"][0]
+    assert current_response.json()["meta"]["is_stale"] is True
+
+
+def test_declared_provider_input_is_not_mislabeled_as_fact(client: TestClient) -> None:
+    response = client.post(
+        "/market-regime/inputs",
+        json={
+            "metric_name": "macro",
+            "value": 10,
+            "as_of_date": date.today().isoformat(),
+            "source_url": "https://provider.example/macro",
+            "source_name": "Declared external provider",
+            "input_type": "provider",
+            "methodology": "Provider value normalized to the documented regime scale.",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.json()["meta"]["source"] == "declared_provider_input"
+    current = response_data(client.get("/market-regime/current"))
+    source = next(item for item in current["input_sources"] if item["metric_name"] == "macro")
+    assert source["claim_type"] == "Source Summary"
+    assert source["evidence_state"] == "declared_source"
+    assert source["source_record_id"] is None

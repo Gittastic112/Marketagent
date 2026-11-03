@@ -1,10 +1,12 @@
 from sqlalchemy import select
+from datetime import date, timedelta
+from math import isfinite
 from sqlalchemy.orm import Session
 
 from app.models.alert import Alert, AlertPortfolioImpact
-from app.models.dcf import DcfAssumptionSet, ValuationAssumptionChangeLog
+from app.models.dcf import DcfAssumptionSet, ValuationAssumptionChangeLog, ValuationModel
 from app.models.event import Event
-from app.models.portfolio import PortfolioHolding
+from app.models.portfolio import Portfolio, PortfolioHolding
 
 
 def generate_valuation_alert(
@@ -23,10 +25,22 @@ def generate_valuation_alert(
     assumption_set = db.scalar(select(DcfAssumptionSet).where(DcfAssumptionSet.id == assumption_set_id))
     if not assumption_set:
         raise ValueError(f"Assumption Set {assumption_set_id} not found")
+    model = db.get(ValuationModel, assumption_set.valuation_model_id)
+    if model is None or not model.user_id:
+        raise ValueError("Owned valuation model not found")
+    if event.company_id != model.company_id:
+        raise ValueError("Event and valuation must refer to the same company")
 
     change_log = None
-    if change_log_id:
-        change_log = db.scalar(select(ValuationAssumptionChangeLog).where(ValuationAssumptionChangeLog.id == change_log_id))
+    if change_log_id is not None:
+        change_log = db.scalar(select(ValuationAssumptionChangeLog).where(
+            ValuationAssumptionChangeLog.id == change_log_id,
+            ValuationAssumptionChangeLog.valuation_model_id == model.id,
+            ValuationAssumptionChangeLog.assumption_set_id == assumption_set.id,
+            ValuationAssumptionChangeLog.event_id == event.id,
+        ))
+        if change_log is None:
+            raise ValueError("Change log does not match the valuation and event")
 
     company_id = event.company_id
 
@@ -39,6 +53,7 @@ def generate_valuation_alert(
         summary = change_log.rationale
 
     alert = Alert(
+        user_id=model.user_id,
         event_id=event.id,
         company_id=company_id,
         alert_type="valuation_stale" if not change_log else "assumption_broken",
@@ -53,9 +68,11 @@ def generate_valuation_alert(
     db.add(alert)
     db.flush()
 
-    # Link to Portfolio impacts if this company is held in any portfolios
+    # Private model context can only affect portfolios belonging to its owner.
     holdings = db.scalars(
-        select(PortfolioHolding).where(PortfolioHolding.company_id == company_id)
+        select(PortfolioHolding)
+        .join(Portfolio, Portfolio.id == PortfolioHolding.portfolio_id)
+        .where(PortfolioHolding.company_id == company_id, Portfolio.user_id == model.user_id)
     ).all()
 
     for holding in holdings:
@@ -70,13 +87,15 @@ def generate_valuation_alert(
     db.commit()
     return alert
 
-def check_price_valuation_divergence(db: Session, company_id: int | None) -> list[Alert]:
+def check_price_valuation_divergence(
+    db: Session, company_id: int | None, *, user_id: str | None = None, commit: bool = True,
+) -> list[Alert]:
     """
     Checks if there's a material divergence between the current market price and
     the intrinsic value, or if the market price has moved significantly but the
     intrinsic value has remained unchanged. Generates alerts accordingly.
     """
-    if company_id is None:
+    if company_id is None or user_id is None:
         return []
 
     from app.models.market_price import MarketPrice
@@ -86,10 +105,11 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
     latest_price_record = db.scalar(
         select(MarketPrice)
         .where(MarketPrice.company_id == company_id)
+        .where(MarketPrice.as_of_date <= date.today())
         .order_by(MarketPrice.as_of_date.desc(), MarketPrice.id.desc())
         .limit(1)
     )
-    if not latest_price_record:
+    if not latest_price_record or date.today() - latest_price_record.as_of_date > timedelta(days=5):
         return []
 
     # Get the active assumption set
@@ -97,11 +117,12 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
         select(DcfAssumptionSet)
         .join(ValuationModel, ValuationModel.id == DcfAssumptionSet.valuation_model_id)
         .where(ValuationModel.company_id == company_id)
+        .where(ValuationModel.user_id == user_id)
         .where(DcfAssumptionSet.scenario == "Base")
         .order_by(DcfAssumptionSet.id.desc())
         .limit(1)
     )
-    if not latest_assumption_set:
+    if not latest_assumption_set or latest_assumption_set.is_stale:
         return []
 
     # Get the corresponding output
@@ -109,12 +130,19 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
         select(DcfOutput)
         .where(DcfOutput.assumption_set_id == latest_assumption_set.id)
     )
-    if not latest_output or not latest_output.intrinsic_value_per_share:
+    if (not latest_output or latest_output.intrinsic_value_per_share is None
+        or latest_output.model_quality_score is None or latest_output.model_quality_score < 60
+        or latest_output.warnings_json):
         return []
 
     alerts_created = []
     current_price = float(latest_price_record.price)
     intrinsic_value = latest_output.intrinsic_value_per_share
+    currency = (latest_assumption_set.cash_flow_currency or "").upper()
+    if (not currency or currency != latest_price_record.currency.upper()
+        or not isfinite(current_price) or current_price <= 0
+        or not isfinite(intrinsic_value) or intrinsic_value < 0):
+        return []
 
     # Check for major upside/downside divergence (e.g. > 30% difference)
     divergence_pct = (intrinsic_value - current_price) / current_price if current_price > 0 else 0
@@ -124,21 +152,27 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
         existing_alert = db.scalar(
             select(Alert)
             .where(Alert.company_id == company_id)
+            .where(Alert.user_id == user_id)
             .where(Alert.alert_type == "valuation_divergence")
             .where(Alert.review_status != "resolved")
             .limit(1)
         )
 
         if not existing_alert:
-            direction = "Upside" if divergence_pct > 0 else "Downside"
+            direction = "above" if divergence_pct > 0 else "below"
             alert = Alert(
+                user_id=user_id,
                 company_id=company_id,
                 alert_type="valuation_divergence",
                 severity="medium",
-                title=f"Material Valuation {direction}: {abs(divergence_pct)*100:.1f}%",
-                summary=f"Market price is ${current_price:.2f} but intrinsic value is ${intrinsic_value:.2f}.",
-                why_it_matters="Significant gap between price and value implies either a market opportunity or broken assumptions.",
-                what_changed="Price moved or assumptions changed significantly.",
+                title=f"Saved estimate {abs(divergence_pct)*100:.1f}% {direction} observed price",
+                summary=f"Observed price: {currency} {current_price:.2f}; saved valuation estimate: {currency} {intrinsic_value:.2f}.",
+                why_it_matters="Calculation from saved User Assumptions. Review the inputs and source age; this is not a forecast or recommendation.",
+                what_changed="The current price-to-saved-estimate gap exceeds the 30% review threshold.",
+                score_explanation_json={"claim_type":"Calculation", "basis":"User Assumption",
+                    "market_price_id":latest_price_record.id, "dcf_output_id":latest_output.id,
+                    "assumption_set_id":latest_assumption_set.id, "price_as_of":latest_price_record.as_of_date.isoformat(),
+                    "formula":"(saved intrinsic value per share - market price) / market price"},
                 confidence_bucket="medium",
                 review_status="unreviewed"
             )
@@ -147,7 +181,8 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
 
             # Associate with portfolios
             holdings = db.scalars(
-                select(PortfolioHolding).where(PortfolioHolding.company_id == company_id)
+                select(PortfolioHolding).join(Portfolio, Portfolio.id == PortfolioHolding.portfolio_id)
+                .where(PortfolioHolding.company_id == company_id, Portfolio.user_id == user_id)
             ).all()
 
             for holding in holdings:
@@ -161,5 +196,6 @@ def check_price_valuation_divergence(db: Session, company_id: int | None) -> lis
 
             alerts_created.append(alert)
 
-    db.commit()
+    if commit:
+        db.commit()
     return alerts_created

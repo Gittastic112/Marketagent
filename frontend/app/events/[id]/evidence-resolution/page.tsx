@@ -75,6 +75,17 @@ export default async function EvidenceResolutionPage({
         partialMessage="Some event evidence metadata is unavailable."
       />
 
+      {event.company_id && <Panel title="Continue company review">
+        <p>Inspect the original evidence, revisit your thesis, then decide which assumptions need review. These links do not approve evidence or change a saved valuation.</p>
+        <nav className="button-row" aria-label="Next research steps" style={{flexWrap: "wrap"}}>
+          <Link href={`/companies/${event.company_id}`}>Company and portfolio context</Link>
+          <Link href={`/companies/${event.company_id}/thesis`}>Review company thesis</Link>
+          <Link href={`/companies/${event.company_id}/valuation`}>Inspect saved valuations</Link>
+          <Link href={`/companies/${event.company_id}/valuation/draft`}>Review valuation input sources</Link>
+          <Link href={`/companies/${event.company_id}/decisions`}>Record next review action</Link>
+        </nav>
+      </Panel>}
+
       {requested.saved === "1" ? (
         <div className="success-message" role="status" style={{ marginBottom: "1rem" }}>
           Exact source evidence linked to the event.

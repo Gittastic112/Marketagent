@@ -1,8 +1,9 @@
-import { PageHeader, Panel, EmptyState } from "@/components/page";
+import { PageHeader, Panel, EmptyState, ErrorState } from "@/components/page";
+import { DataStateNotices } from "@/components/ui/data-states";
 import type { Company, EvidenceLedgerItem } from "@/lib/api";
-import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import Link from "next/link";
-import { Suspense } from "react";
+import { hasUsableData } from "@/lib/data-state-meta";
 
 export const dynamic = "force-dynamic";
 
@@ -12,17 +13,14 @@ export default async function EvidenceLedgerPage({ params }: { params: Promise<{
   const companyRes = await serverFetchApiResponse<Company>(`/companies/${companyId}`);
   const company = companyRes.data;
 
+  if (!hasUsableData(companyRes)) return <ErrorState message="Company evidence could not be loaded. Reload to retry." />;
+
   if (!company) {
     return <EmptyState label="Company not found." />;
   }
 
-  // Fallback to empty array if backend is not yet migrated
-  let evidenceItems: EvidenceLedgerItem[] = [];
-  try {
-    evidenceItems = await serverFetchApi<EvidenceLedgerItem[]>(`/evidence?company_id=${companyId}`);
-  } catch (e) {
-    console.warn("Evidence ledger API failed, possibly unmigrated.", e);
-  }
+  const evidenceRes = await serverFetchApiResponse<EvidenceLedgerItem[]>(`/evidence?company_id=${companyId}`);
+  const evidenceItems = evidenceRes?.data || [];
 
   return (
     <>
@@ -35,14 +33,17 @@ export default async function EvidenceLedgerPage({ params }: { params: Promise<{
       <PageHeader
         eyebrow={`${company.name} (${company.ticker})`}
         title="Evidence Ledger"
-        status={`${evidenceItems.length} items logged`}
+        status={hasUsableData(evidenceRes) ? `${evidenceItems.length} items logged` : "Evidence unavailable"}
       />
+      <DataStateNotices metas={[companyRes.meta, evidenceRes?.meta]}
+        mockMessage="Mock Data: these evidence records are test inputs, not verified company facts." />
+      <p className="muted">User Assumption: manually recorded evidence and its interpretation require source review.</p>
 
       <Panel title="Accumulating Evidence">
-        {evidenceItems.length === 0 ? (
+        {!hasUsableData(evidenceRes) ? <ErrorState message="Evidence could not be loaded. Reload to retry; this does not mean the ledger is empty." /> : evidenceItems.length === 0 ? (
           <EmptyState label="No evidence items logged for this company yet." />
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap" tabIndex={0} role="region" aria-label="Recorded company evidence">
             <table>
               <thead>
                 <tr>
@@ -68,8 +69,8 @@ export default async function EvidenceLedgerPage({ params }: { params: Promise<{
                     <td style={{ maxWidth: "400px", whiteSpace: "normal" }}>{item.evidence_text}</td>
                     <td>{item.confidence}</td>
                     <td>
-                      {item.source_link ? (
-                        <a href={item.source_link} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent)" }}>View Source</a>
+                      {item.source_link && /^https?:\/\//i.test(item.source_link) ? (
+                        <a href={item.source_link} target="_blank" rel="noopener noreferrer" className="text-link">View Source</a>
                       ) : (
                         <span className="muted">Manual</span>
                       )}
@@ -81,7 +82,7 @@ export default async function EvidenceLedgerPage({ params }: { params: Promise<{
           </div>
         )}
         <div style={{ marginTop: "1.5rem", padding: "0 1.5rem 1.5rem" }}>
-          <button className="btn btn-primary">+ Log Evidence</button>
+          <Link href={`/companies/${company.id}/decisions#evidence-entry`} className="btn btn-primary">+ Log Evidence</Link>
         </div>
       </Panel>
     </>

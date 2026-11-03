@@ -104,7 +104,7 @@ export default async function EventEvidencePage({ params, searchParams }: PagePr
             </Link>
           </aside>
 
-          <section className="financial-evidence-stage" aria-label="Rendered event evidence">
+          <section tabIndex={0} className="financial-evidence-stage" aria-label="Rendered event evidence">
             {geometry && pageImageHref ? (
               <div
                 className="financial-evidence-page"

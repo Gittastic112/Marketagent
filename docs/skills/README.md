@@ -1,68 +1,57 @@
-# Project Skill Library
+# Project workflow routing
 
-This directory is the reusable knowledge layer for future coding agents working on the Market Intelligence Engine. These are project skills, not product features.
+Read the root/nested agent rules, handoff and code map once. Then choose the
+smallest relevant workflow below. Do not load this entire library for every task.
+Hard rules live in AGENTS.md; commands live in the execution runbook; status and
+limitations have their own canonical owners in the [documentation map](../README.md).
 
-Use skills when a task repeats a known workflow, touches risky architecture, or requires project-specific judgment. Code and tests still beat docs.
+## What is implicit, explicit and actually available
 
-Cross-skill invariants cover typed source locators, mandatory reporting units,
-normalized coverage and reconciliation, valuation source age, traced workbook/PDF
-uploads, authenticated binary streaming, processing-run lifecycles, escaped
-filing diffs, same-origin multipart writes, and non-secret auth readiness.
+- `docs/skills` contains project workflow references. Agents select them by task
+  relevance or a direct request. They are not automatically installed Codex skills.
+- The repository package [security-review](../../skills/security-review/SKILL.md)
+  supplies skill metadata and a thin entrypoint to the canonical security workflow.
+  Its policy allows implicit invocation when the package is installed and the task
+  matches. A user can also invoke it explicitly in a session that exposes it.
+- Repository presence, metadata and installation are different facts. Check the
+  session's available-skills list. Do not claim installation, global availability
+  or a permissions change from reading these files. No global skill was installed
+  or changed by this documentation batch.
 
-## Skills Index
+## Choose by the work, not by keywords
 
-| Skill | Category | Purpose | Use When |
-|---|---|---|---|
-| [architecture-overview](architecture/architecture-overview.md) | Architecture | Map modules, boundaries, and trusted docs before work starts | Any task spans backend, frontend, database, ingestion, valuation, or docs |
-| [documentation-workflow](documentation/documentation-workflow.md) | Documentation | Audit, classify, archive, consolidate, and relink docs safely | Cleaning docs, handoffs, roadmaps, or agent instructions |
-| [backend-api-change](backend/backend-api-change.md) | Backend | Change routes/services/schemas/tests without API drift | Adding or modifying backend endpoints or response shapes |
-| [frontend-data-state](frontend/frontend-data-state.md) | Frontend | Keep UI honest about loading, empty, stale, mock, partial, and not-configured states | Building or auditing frontend pages/components |
-| [data-ingestion-workflow](data-ingestion/data-ingestion-workflow.md) | Data ingestion | Add or debug ingestion while preserving provenance and processing runs | SEC, RSS, provider, manual filing, market data, or macro ingestion work |
-| [financial-statement-extraction](data-ingestion/financial-statement-extraction.md) | Data ingestion | Handle text/PDF/workbook/XBRL candidate extraction and review safely | Financial extraction, candidate review, normalized financials, or autofill inputs |
-| [valuation-workflow](valuation/valuation-workflow.md) | Valuation | Build valuation features with deterministic formulas and source-labeled assumptions | DCF, WACC, scenarios, sensitivity, reverse DCF, FCFE/DDM, relative valuation |
-| [market-intelligence-workflow](market-intelligence/market-intelligence-workflow.md) | Market intelligence | Build evidence, scoring, alert, thesis, narrative, and portfolio-impact flows | Event extraction, alerts, evidence, daily brief, research workspace, thesis impact |
-| [security-review](security/security-review.md) | Security | Review secrets, external input, APIs, AI, and private financial data risks | Any task touches external data, files, AI, auth, broker, exports, or deployment |
-| [local-operations](operations/local-operations.md) | Operations | Run Docker, migrations, tests, and troubleshooting safely | Local setup, test failures, Alembic issues, service health, handoff verification |
-| [skill-maintenance](documentation/skill-maintenance.md) | Documentation | Create, update, archive, and validate project skills | Adding or changing reusable project workflows |
+| Task | Primary workflow | Add only when needed |
+|---|---|---|
+| Find an owner or change runtime boundaries | [Architecture](architecture/architecture-overview.md) | Security for identity/data-flow changes |
+| Change API behavior/contracts | [Backend](backend/backend-api-change.md) | Relevant domain workflow and security |
+| Change presentation/forms/data states | [Frontend](frontend/frontend-data-state.md) | Domain behavior and security for input/auth changes |
+| Ingest a source/provider | [Ingestion](data-ingestion/data-ingestion-workflow.md) | Security; extraction for financial statements |
+| Extract/review/normalize financials | [Financial extraction](data-ingestion/financial-statement-extraction.md) | Ingestion only for new source transport |
+| Change valuation math or assumptions | [Valuation](valuation/valuation-workflow.md) | Backend/frontend only for those layers |
+| Change evidence, research or briefs | [Market intelligence](market-intelligence/market-intelligence-workflow.md) | Security for private sources, AI or owned evidence |
+| Review auth, uploads, URLs, private data or external calls | [Security](security/security-review.md) | The affected domain workflow |
+| Run services, tests, migration or recovery | [Operations](operations/local-operations.md) | Security if operational boundaries change |
+| Assign/integrate concurrent agents | [Parallel workstreams](operations/parallel-workstreams.md) | Assigned domain workflow; current allocations are in [Knull](../../Knull%28readme%29.md) |
+| Restructure docs, handoffs or plans | [Documentation](documentation/documentation-workflow.md) | Skill maintenance only if workflow guidance changes |
+| Maintain this library/package | [Skill maintenance](documentation/skill-maintenance.md) | Documentation for links and ownership |
 
-## Recommended Reading Order
+A narrow task does not need architecture history, every financial manual and the
+operations workflow just to find one command. Load more context when the actual
+code reveals another boundary.
 
-1. [architecture-overview](architecture/architecture-overview.md)
-2. [documentation-workflow](documentation/documentation-workflow.md) when changing docs or handoffs
-3. [security-review](security/security-review.md) before external inputs, AI, imports, or credentials
-4. Task-specific skill:
-   - backend -> [backend-api-change](backend/backend-api-change.md)
-   - frontend -> [frontend-data-state](frontend/frontend-data-state.md)
-   - ingestion -> [data-ingestion-workflow](data-ingestion/data-ingestion-workflow.md)
-   - financial extraction -> [financial-statement-extraction](data-ingestion/financial-statement-extraction.md)
-   - valuation -> [valuation-workflow](valuation/valuation-workflow.md)
-   - market intelligence -> [market-intelligence-workflow](market-intelligence/market-intelligence-workflow.md)
-5. [local-operations](operations/local-operations.md) for verification and handoff
-6. [skill-maintenance](documentation/skill-maintenance.md) when editing this skill library
+## Maintenance contract
 
-## Skill Format
+Keep these standard sections so the existing validator can inspect every workflow:
+Purpose; When to use; When NOT to use; Prerequisites; Inputs; Outputs; Workflow;
+Acceptance criteria; Common mistakes; Do not do; Related skills; References.
+Empty filler is not useful: one clear sentence is enough where appropriate.
 
-Every project skill uses:
+Link deep domain guidance and commands instead of copying them. Update a workflow
+when its reusable behavior changes; do not edit every file just to refresh dates.
+Preserve source/review/privacy invariants and exact evidence distinctions in their
+owning workflow. Archive superseded material, retain useful source references,
+and run documentation, skill and ownership checks from the runbook.
 
-- Purpose
-- When to use
-- When NOT to use
-- Prerequisites
-- Inputs
-- Outputs
-- Workflow
-- Acceptance criteria
-- Common mistakes
-- Do not do
-- Related skills
-- References
-
-## Maintenance Rules
-
-- Keep skills concise. Put deep reference material in canonical docs, not in skills.
-- Update skills when a repeated workflow changes.
-- Archive stale skills rather than deleting them.
-- Do not let skills claim a capability works unless code and tests support it.
-- Prefer root `AGENTS.md` for hard rules and `docs/skills` for reusable workflows.
-
-See [skill-system-audit.md](skill-system-audit.md) for the audit that produced this library.
+[The audit](skill-system-audit.md) records reviewed families, changes, retained
+references and validation limits. Parallel agents propose library changes in their
+own evidence directories; only the coordinator updates shared workflow files.

@@ -17,17 +17,21 @@ The bridge that allows the Frontend to talk to the Backend, or the Backend to ta
 A specific URL in the API that does one specific job. For example, the `GET /api/health` endpoint checks if the server is running.
 
 ### Database (PostgreSQL)
-Where all your companies, documents, events, and portfolio data are permanently stored.
+Where application records and uploaded filing/research PDF bytes are persisted.
+Runtime benchmark mirrors and the separate knowledge corpus live on disk. Neither
+storage location guarantees recovery without verified backups.
 
 ### Migration (Alembic)
-A version-control file for the database. When we want to add a new table (like "narratives"), Alembic creates a "migration" script to safely update the database schema without losing old data.
+A versioned database change script. Generated migrations require review and
+testing; Alembic does not guarantee safety or prevent data loss.
 
 ---
 
 ## Infrastructure
 
 ### Docker
-A tool that runs software in isolated boxes (Containers). It ensures the app runs exactly the same way on your Mac as it does on a server.
+A tool that packages software into containers. It improves reproducibility;
+host architecture, configuration, networking and stored data can still differ.
 
 ### Docker Compose
 A tool that lets you start the whole system (Frontend, Backend, Database) with a single command: `docker compose up`.
@@ -36,17 +40,21 @@ A tool that lets you start the whole system (Frontend, Backend, Database) with a
 A running instance of a Docker image. Think of it as a mini virtual machine dedicated to running just one part of the app.
 
 ### Environment Variable (.env)
-A secret setting stored outside the code. We use this for passwords, database URLs, and API keys so they don't accidentally get shared online.
+A process setting, sometimes loaded from a local .env file. Some values are
+secrets, others are ordinary configuration. Keep credential values out of commits.
 
 ### CORS (Cross-Origin Resource Sharing)
-A security feature in web browsers. It dictates whether the Frontend (running on port 3000) is allowed to ask the Backend (running on port 8000) for data.
+A browser rule for requests between different origins. Normal app requests use
+the same-origin frontend proxy; backend CORS settings are not authentication or
+a substitute for the app's signed identity and ownership checks.
 
 ---
 
 ## Data & Ingestion
 
 ### Ingestion
-The process of the app automatically downloading external data (like news or filings) and saving it into the database.
+Bringing provider data or user-supplied files/text into audited storage. It may
+be explicit or scheduled; ingestion does not mean the contents have been reviewed.
 
 ### Processing Run
 A record in the database that tracks an ingestion job. It logs when the job started, how many items it found, and if it threw any errors.
@@ -58,17 +66,20 @@ The SEC requires anyone downloading their data to politely identify themselves. 
 A unique 10-digit number the SEC uses to identify companies. Tickers (like AAPL) can change, but CIKs are permanent.
 
 ### Mock Data
-Fake data used by developers to design the Frontend before the Backend is actually built. The app must strictly label mock data so users don't mistake it for real intelligence.
+Synthetic data for isolated tests or explicitly enabled demonstrations. It is
+useful even after the backend is built, but must never be confused with real sources.
 
 ### Stale Data
-Data that hasn't been successfully updated recently. If the app fails to download today's news, yesterday's news is considered "stale" and must be flagged with a warning.
+Stored data older than its freshness threshold. A failed fetch is separately
+unavailable; it does not prove the age or validity of earlier stored data.
 
 ---
 
 ## Intelligence & Finance
 
 ### Source-backed AI
-An AI rule: The AI is not allowed to invent answers. Every claim the AI makes must link directly back to a raw document (like a filing or news article) stored in the database.
+AI output linked to stored evidence and subject to review. Exact citation checks
+can verify a text span exists, but do not prove the claim follows from that text.
 
 ### Scoring Model
 The math used to rank if a piece of news actually matters. We use scores for Credibility, Impact, and Novelty to filter out noise.

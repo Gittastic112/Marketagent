@@ -42,6 +42,8 @@ class MockAIProvider(BaseAIProvider):
             }
         elif "impacts" in properties:
             mock_data = {"impacts": []}
+        elif "impacted_variables" in properties:
+            mock_data = {"impacted_variables": []}
         else:
             mock_data = {
                 "target_operating_margin": 0.15,

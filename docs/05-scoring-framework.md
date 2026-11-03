@@ -8,20 +8,30 @@ The core philosophy is: **Scoring should be explainable. The score is not useful
 The current MVP has deterministic, rule-based scoring focused on individual **events** (like a filing or news article).
 
 ### 1.1 Credibility score
-Measures whether the claim is reliable based on the source (e.g., SEC vs unknown blog).
+Uses the source's recorded reliability score as a credibility heuristic. It does
+not independently verify a claim or turn source reputation into a probability.
 
 ### 1.2 Novelty score
-Checks for duplicate documents, recycled language, or first-seen events.
+Checks existing event counts for the same document, company and event type.
+It is not a semantic recycled-language detector.
 
 ### 1.3 Impact score
 Measures potential thesis-changing impact based on active thesis notes or high-importance event types.
 
 ### 1.4 Priority score
-A weighted combination of the above, used to decide if an alert should be generated.
+A bounded, rounded combination of credibility, novelty, impact and information
+speed. Defaults in [scoring.py](../backend/app/services/scoring.py) are
+0.35 × credibility + 0.25 × novelty + 0.35 × impact + 0.05 × speed bonus.
+Speed bonuses are slow=60, medium=75 and fast=80. The first stored ScoringConfig
+row by ID overrides these weights. These are deterministic heuristics, not
+calibrated probabilities or proof that a claim is true.
 
 ---
 
 ## 2. Planned Score Expansion (Entity Level)
+
+Private inbox AI high/medium/low importance is a separate model judgment, not this
+deterministic event score or the planned entity-level scoring system below.
 
 To support the dashboard and company intelligence pages, the scoring framework will expand from just scoring *events* to scoring *companies* and *narratives* across multiple dimensions.
 
@@ -56,7 +66,9 @@ All new score API endpoints must return the formula's inputs, weightings, direct
 ---
 
 ## 3. Future Portfolio-Aware Alert Priority
-After portfolio holdings and manual prices exist, add a second ranking layer without changing the existing objective event score.
+The formula below is an unimplemented proposal, not the existing portfolio
+impact/exposure calculation. Holdings and manual prices already exist. Any new
+ranking layer must preserve the event score and disclose its own inputs.
 
 **Suggested Portfolio Priority Formula:**
 ```text

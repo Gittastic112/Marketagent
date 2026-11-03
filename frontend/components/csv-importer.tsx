@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useId, useRef, useState } from "react";
 import { Panel } from "@/components/page";
 import { unwrapCsvTransferResponse } from "@/lib/csv-transfer";
 
@@ -46,6 +46,7 @@ export function CsvImporter({ title, endpoint }: CsvImporterProps) {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputId = useId();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] || null;
@@ -128,8 +129,9 @@ export function CsvImporter({ title, endpoint }: CsvImporterProps) {
     <Panel title={title}>
       <form onSubmit={handlePreview} className="form-grid">
         <div className="field">
-          <label>CSV File</label>
+          <label htmlFor={fileInputId}>CSV File</label>
           <input
+            id={fileInputId}
             type="file"
             accept=".csv"
             onChange={handleFileChange}

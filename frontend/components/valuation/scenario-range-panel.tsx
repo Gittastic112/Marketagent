@@ -1,112 +1,36 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getDcfScenarios, DcfScenarioOutput } from "@/lib/api";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency, formatPercent } from "@/lib/formatting";
-import { Loader2, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useCallback } from "react";
+import { getDcfScenarios, type DcfAssumptionSet } from "@/lib/api";
+import { useLatestResource } from "@/lib/use-latest-resource";
+import { scenarioDisplay } from "@/lib/scenario-display";
+import { DiagnosticPanel } from "@/components/valuation/diagnostic-panel";
 
-interface ScenarioRangePanelProps {
-  modelId: number;
-  assumptionId: number;
-  currentMarketPrice?: number | null;
-}
-
-export function ScenarioRangePanel({ modelId, assumptionId, currentMarketPrice }: ScenarioRangePanelProps) {
-  const [scenarios, setScenarios] = useState<DcfScenarioOutput[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      setLoading(true);
-      try {
-        const data = await getDcfScenarios(modelId, assumptionId);
-        if (mounted) {
-          setScenarios(data);
-          setError(null);
-        }
-      } catch (err: any) {
-        if (mounted) setError(err.message || "Failed to load scenarios");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    }
-    load();
-    return () => { mounted = false; };
-  }, [modelId, assumptionId]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center p-12">
-        <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-        <span className="ml-3 text-sm text-gray-500">Generating scenario range...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <Alert>
-        <AlertCircle className="h-4 w-4" />
-        <AlertTitle>Error</AlertTitle>
-        <AlertDescription>{error}</AlertDescription>
-      </Alert>
-    );
-  }
-
-  // Sort scenarios by intrinsic value
-  const sortedScenarios = [...scenarios].sort((a, b) =>
-    (b.output.intrinsic_value_per_share || 0) - (a.output.intrinsic_value_per_share || 0)
-  );
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Valuation Range</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Comparing automated scenarios generated from your base assumptions.
-          </p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {sortedScenarios.map((scenario) => {
-          const val = scenario.output.intrinsic_value_per_share || 0;
-          let diffPct = null;
-          let isUndervalued = false;
-          if (currentMarketPrice && currentMarketPrice > 0) {
-            diffPct = (val - currentMarketPrice) / currentMarketPrice;
-            isUndervalued = val > currentMarketPrice;
-          }
-
-          return (
-            <Card key={scenario.scenario_name} className="overflow-hidden border border-gray-200 dark:border-gray-800">
-              <CardHeader className="bg-gray-50 dark:bg-gray-900 py-3 border-b border-gray-200 dark:border-gray-800">
-                <CardTitle className="text-md font-semibold text-gray-900 dark:text-gray-100">
-                  {scenario.scenario_name}
-                </CardTitle>
-                <CardDescription className="text-xs line-clamp-2" title={scenario.description}>
-                  {scenario.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-4 flex flex-col items-center justify-center space-y-2">
-                <div className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white tabular-nums">
-                  {formatCurrency(val, "INR", 0)}
-                </div>
-                {diffPct !== null && (
-                  <div className={`text-sm font-medium ${isUndervalued ? 'text-green-600' : 'text-red-600'}`}>
-                    {diffPct > 0 ? "+" : ""}{formatPercent(diffPct, 1)} vs Market
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          )
-        })}
-      </div>
+export function ScenarioRangePanel({ modelId, assumptions, modelType }: { modelId: number; assumptions: DcfAssumptionSet; modelType?: string }) {
+  const loader = useCallback(() => getDcfScenarios(modelId, assumptions.id),
+    [modelId, assumptions.id, assumptions.updated_at]);
+  const resource = useLatestResource(loader);
+  const retry = () => { void resource.reload().catch(() => { /* Error is displayed below. */ }); };
+  if (resource.status === "loading") return <p role="status">Calculating scenarios from saved assumptions...</p>;
+  if (resource.status === "error") return <div role="alert"><p>{resource.error}</p><button type="button" onClick={retry}>Retry scenarios</button></div>;
+  const rows = scenarioDisplay(resource.data ?? [], assumptions, modelType);
+  return <section aria-label="Scenario valuation range">
+    <h3>Scenario valuation range</h3>
+    <p style={{ color: "var(--text-secondary)" }}>Estimates from deterministic shocks to saved User Assumptions, not probabilities or forecast returns. Unsaved edits are excluded. Currency: {assumptions.cash_flow_currency ?? "Not configured"}.</p>
+    <button type="button" onClick={retry}>Recalculate scenarios</button>
+    {!rows.length && <p>No scenarios returned. Retry or inspect the saved model.</p>}
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: "1rem", marginTop: "1rem" }}>
+      {rows.map((row, index) => <article key={row.scenario_name + index} className="valuation-output-card" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
+        <h4>{row.scenario_name}</h4><p>{row.description}</p>
+        <p>Estimate per share: <strong>{row.value}</strong></p>
+        <p>Gap to saved comparison price: {row.gap}</p>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Calculation: intrinsic value / saved price − 1. The saved price is a User Assumption, not a live quote.</p>
+        {row.state.reasons.map(reason => <p key={reason}>{reason}</p>)}
+        <details><summary>Diagnostics and calculation basis</summary>
+          <p>Saved assumption #{assumptions.id}. Calculated: {row.output.created_at ?? "Not available"}. Transient scenario, not a saved output record.</p>
+          <DiagnosticPanel warnings={row.state.diagnosticWarnings.map(w => ({ ...w, suggestedFix: w.suggestedFix ?? undefined, formula: w.formula ?? undefined }))} />
+        </details>
+      </article>)}
     </div>
-  );
+  </section>;
 }

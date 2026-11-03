@@ -1,0 +1,851 @@
+{
+  "schema_version": 1,
+  "decision_id": "M06-BANK-INPUTS-20261102",
+  "reviewer": "Codex",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "reviewed_on": "2026-11-02",
+  "independent_human_certification": false,
+  "normal_database_writes": false,
+  "provider_calls": 0,
+  "snapshot_sha256": "10d9f77e0e8ae39ce212752f4606f8e73681ba7ba55e85027fa20c76cc0dc8f0",
+  "methodology": {
+    "source": "https://www.stern.nyu.edu/~adamodar/pdfiles/papers/finfirm09.pdf",
+    "retrieved_on": "2026-11-02",
+    "basis": "Equity value is book equity plus discounted excess equity returns. ROE equal to cost of equity implies no terminal excess returns. The report supplies method, not these banks' numerical assumptions."
+  },
+  "companies": [
+    {
+      "ticker": "HDFCBANK",
+      "company_id": 8,
+      "decision_id": "M06-HDFCBANK-20261102",
+      "model_type": "financial_services",
+      "source": {
+        "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+        "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+        "local_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf",
+        "raw_document_id": 19,
+        "asset_id": 10,
+        "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2026.json",
+        "extracted_sha256": "156283ddd67ada8616f2ad418e85491ef1ab403ac4ef13c0ed035f39dbe52686",
+        "as_of": "2026-03-31",
+        "monetary_scale": 10000000
+      },
+      "period_id": 33,
+      "source_input_signature": "501f0bcb8f88d20d7a9f4dcb9651790edd22477ad6ffa0c8afee7869917c13ca",
+      "financial_history_signature": "9ee9f79e79ee02e93db0f5e4eb658e51d31fbf925532191a38569c8483552c94",
+      "assumptions_patch": {
+        "book_value_of_equity": 5815143600000,
+        "net_income": 760259700000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": null,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "book_value_of_equity",
+        "net_income",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "rejected_fields": [
+        "diluted_shares",
+        "current_market_price"
+      ],
+      "illustrative_assumptions_patch": {
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "illustrative_reviewed_fields": [
+        "projection_years_count",
+        "cost_of_equity",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "decisions": [
+        {
+          "field": "book_value_of_equity",
+          "decision": "approve_selected_historical_common_book_basis",
+          "claim_type": "Calculation",
+          "value": 5815143600000,
+          "formula": "(1539.34 + 579975.02) \u00d7 10000000",
+          "source_fact_ids": [
+            889,
+            888
+          ],
+          "pdf_pages": [
+            471,
+            475,
+            476
+          ],
+          "basis": "Consolidated equity capital plus reserves/surplus belonging to parent common shareholders. Separate minority interests and separately presented employee-award reserve are excluded. This is an accounting book basis, not regulatory or distributable capital. No second NCI subtraction or addition of already-consolidated subsidiaries.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P471:L8:Y2026",
+              "reference_ids": [
+                "HDFCBANK-2026:p471:l10:2026"
+              ]
+            },
+            {
+              "source_cell_reference": "P471:L10:Y2026",
+              "reference_ids": [
+                "HDFCBANK-2026:p471:l13:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "net_income",
+          "decision": "approve_reported_parent_earnings_only",
+          "claim_type": "Calculation",
+          "value": 760259700000,
+          "formula": "76025.97 \u00d7 10000000",
+          "source_fact_ids": [
+            898
+          ],
+          "pdf_pages": [
+            472
+          ],
+          "basis": "Parent-attributable reported consolidated FY2026 earnings, not group profit before NCI and not a certified recurring-profit estimate. Starting engine ROE uses ending book equity, not reported average-equity ROE.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P472:L19:Y2026",
+              "reference_ids": [
+                "HDFCBANK-2026:p472:l20:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "diluted_shares",
+          "decision": "reject_current_value_use_of_EPS_weighted_average",
+          "value": null,
+          "historical_weighted_diluted_shares": 15427952775,
+          "historical_paid_up_shares": 15393368328,
+          "source_fact_ids": [
+            905
+          ],
+          "pdf_pages": [
+            475,
+            546
+          ],
+          "basis": "Weighted diluted shares are an EPS period denominator. Exact paid-up shares are a date-specific count and do not by themselves quantify outstanding award claims. Clear the current valuation denominator rather than approving a proxy as fully diluted.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P546:L29:Y2026",
+              "reference_ids": [
+                "HDFCBANK-2026:p546:l32:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "current_market_price",
+          "decision": "clear_unmatched_comparison",
+          "value": null,
+          "claim_type": "User Assumption",
+          "basis": "No price/date/award bridge matched to this historical accounting basis has been reviewed. Do not compare this illustration with an unreviewed stored current quote."
+        },
+        {
+          "field": "cash_flow_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "Source Summary",
+          "basis": "Reporting currency and exact source units"
+        },
+        {
+          "field": "discount_rate_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "User Assumption",
+          "basis": "Use a nominal INR equity hurdle to match INR earnings/book growth; no FX inference."
+        },
+        {
+          "field": "projection_years_count",
+          "value": 10,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Ten relative forecast years is a chosen transition period, not company guidance."
+        },
+        {
+          "field": "cost_of_equity",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Explicit 15% nominal INR research hurdle, rounded near the existing 15.034195% draft CAPM calculation. This is not a newly verified company cost of equity or current market rate."
+        },
+        {
+          "field": "target_roe",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Fade to the chosen 15% equity hurdle: terminal economic excess returns are zero. This may increase or decrease historical ROE and is not a guaranteed or management forecast."
+        },
+        {
+          "field": "terminal_growth_rate",
+          "value": 0.03,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "3% nominal INR book-equity growth is a deliberately explicit scenario assumption, not observed or promised growth. It remains below the 15% hurdle."
+        }
+      ],
+      "remaining_gaps": [
+        "A dated fully diluted common-share/award-claim basis is not established; do not promote a current valuation.",
+        "Sustainable regulatory capital and payout constraints are not implemented by this constant-growth excess-return engine.",
+        "Remaining recurring-profit, valuation-date and award assumptions do not become company facts through review.",
+        "Reported FY2026 profit includes HDBFS pretax disposal gain INR7000.27 crore, tax write-back INR1190.28 crore and other identified items; attributable after-tax recurring adjustments remain unavailable.",
+        "FY2024 remains pre-bonus and is not a comparable per-share series.",
+        "Parent options 233964038 and units 31719700 are outstanding at FY2026 end; their current economic value is not the INR4545.11 crore accounting reserve."
+      ],
+      "promotion_authorized": false,
+      "reference_calculation": {
+        "basis": "Calculation under explicit illustration assumptions; no current/share valuation",
+        "starting_roe_on_ending_book": "0.1307379064551389582193636628",
+        "terminal_excess_return": "0",
+        "pv_excess_returns": "-336054897715.8776237782726059",
+        "equity_value": "5479088702284.122376221727394",
+        "per_share_value": null,
+        "projection": [
+          {
+            "relative_year": 1,
+            "roe": "0.1326641158096250623974272965",
+            "opening_book_equity": "5815143600000.00",
+            "excess_return": "-100810656000.0000000000000003",
+            "pv_excess_return": "-87661440000.00000000000000026"
+          },
+          {
+            "relative_year": 2,
+            "roe": "0.1345903251641111665754909302",
+            "opening_book_equity": "5989597908000.0000",
+            "excess_return": "-92297756160.00000000000000040",
+            "pv_excess_return": "-69790363826.08695652173913074"
+          },
+          {
+            "relative_year": 3,
+            "roe": "0.1365165345185972707535545640",
+            "opening_book_equity": "6169285845240.000000",
+            "excess_return": "-83183352739.19999999999999990",
+            "pv_excess_return": "-54694404694.13988657844990542"
+          },
+          {
+            "relative_year": 4,
+            "roe": "0.1384427438730833749316181977",
+            "opening_book_equity": "6354364420597.20000000",
+            "excess_return": "-73439017132.60800000000000000",
+            "pv_excess_return": "-41988996398.73099367140626284"
+          },
+          {
+            "relative_year": 5,
+            "roe": "0.1403689532275694791096818314",
+            "opening_book_equity": "6544995353215.1160000000",
+            "excess_return": "-63035156372.15520000000000011",
+            "pv_excess_return": "-31339613254.12530687068728319"
+          },
+          {
+            "relative_year": 6,
+            "roe": "0.1422951625820555832877454651",
+            "opening_book_equity": "6741345213811.569480000000",
+            "excess_return": "-51940968850.65588480000000023",
+            "pv_excess_return": "-22455514192.52108944473593167"
+          },
+          {
+            "relative_year": 7,
+            "roe": "0.1442213719365416874658090988",
+            "opening_book_equity": "6943585570225.91656440000000",
+            "excess_return": "-40124398437.13167100800000035",
+            "pv_excess_return": "-15084247577.15003617048565851"
+          },
+          {
+            "relative_year": 8,
+            "roe": "0.1461475812910277916438727326",
+            "opening_book_equity": "7151893137332.694061332000000",
+            "excess_return": "-27552086926.83041409215999976",
+            "pv_excess_return": "-9006826089.544659278608827824"
+          },
+          {
+            "relative_year": 9,
+            "roe": "0.1480737906455138958219363663",
+            "opening_book_equity": "7366449931452.674883171960000",
+            "excess_return": "-14189324767.31766325746239988",
+            "pv_excess_return": "-4033491683.578695242159605505"
+          },
+          {
+            "relative_year": 10,
+            "roe": "0.1500000000000000000000000000",
+            "opening_book_equity": "7587443429396.255129667118800",
+            "excess_return": "0E-43",
+            "pv_excess_return": "0E-23"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "company_id": 10,
+      "decision_id": "M06-ICICIBANK-20261102",
+      "model_type": "financial_services",
+      "source": {
+        "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+        "sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+        "local_path": "output/milestones/m05/review-batches-20261013/originals/ICICIBANK-2026.pdf",
+        "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/ICICIBANK-2026.json",
+        "extracted_sha256": "c7183df6e1f6f212d743201b097fdf3901a6b223b717312001ac550fea80cab6",
+        "as_of": "2026-03-31",
+        "monetary_scale": 1000
+      },
+      "period_id": 29,
+      "source_input_signature": "52c973abc4f4e2b265eb88a7989a37d4773c45d1e68a3bfc32b56b373a5333e9",
+      "financial_history_signature": "949f9be271f7dbeb16e1f3d2cff8cde695c5c4e1025f7aebaa07c9fb23759ca9",
+      "assumptions_patch": {
+        "book_value_of_equity": 3603783482000,
+        "net_income": 542077028000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": null,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "book_value_of_equity",
+        "net_income",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "rejected_fields": [
+        "diluted_shares",
+        "current_market_price"
+      ],
+      "illustrative_assumptions_patch": {
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "illustrative_reviewed_fields": [
+        "projection_years_count",
+        "cost_of_equity",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "decisions": [
+        {
+          "field": "book_value_of_equity",
+          "decision": "approve_selected_historical_common_book_basis",
+          "claim_type": "Calculation",
+          "value": 3603783482000,
+          "formula": "(14322344 + 3589461138) \u00d7 1000",
+          "source_fact_ids": [
+            766,
+            765
+          ],
+          "pdf_pages": [
+            137,
+            141,
+            142
+          ],
+          "basis": "Consolidated equity capital plus reserves/surplus belonging to parent common shareholders. Separate minority interests and separately presented employee-award reserve are excluded. This is an accounting book basis, not regulatory or distributable capital. No second NCI subtraction or addition of already-consolidated subsidiaries.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P137:L9:Y2026",
+              "reference_ids": [
+                "ICICIBANK-2026:p137:l10:2026"
+              ]
+            },
+            {
+              "source_cell_reference": "P137:L11:Y2026",
+              "reference_ids": [
+                "ICICIBANK-2026:p137:l13:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "net_income",
+          "decision": "approve_reported_parent_earnings_only",
+          "claim_type": "Calculation",
+          "value": 542077028000,
+          "formula": "542077028 \u00d7 1000",
+          "source_fact_ids": [
+            776
+          ],
+          "pdf_pages": [
+            138
+          ],
+          "basis": "Parent-attributable reported consolidated FY2026 earnings, not group profit before NCI and not a certified recurring-profit estimate. Starting engine ROE uses ending book equity, not reported average-equity ROE.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P138:L23:Y2026",
+              "reference_ids": [
+                "ICICIBANK-2026:p138:l27:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "diluted_shares",
+          "decision": "reject_current_value_use_of_EPS_weighted_average",
+          "value": null,
+          "historical_weighted_diluted_shares": 7246882558,
+          "historical_paid_up_shares": 7160112569,
+          "source_fact_ids": [
+            785
+          ],
+          "pdf_pages": [
+            141,
+            172
+          ],
+          "basis": "Weighted diluted shares are an EPS period denominator. Exact paid-up shares are a date-specific count and do not by themselves quantify outstanding award claims. Clear the current valuation denominator rather than approving a proxy as fully diluted.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P172:L33:Y2026",
+              "reference_ids": [
+                "ICICIBANK-2026:p172:l38:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "current_market_price",
+          "decision": "clear_unmatched_comparison",
+          "value": null,
+          "claim_type": "User Assumption",
+          "basis": "No price/date/award bridge matched to this historical accounting basis has been reviewed. Do not compare this illustration with an unreviewed stored current quote."
+        },
+        {
+          "field": "cash_flow_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "Source Summary",
+          "basis": "Reporting currency and exact source units"
+        },
+        {
+          "field": "discount_rate_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "User Assumption",
+          "basis": "Use a nominal INR equity hurdle to match INR earnings/book growth; no FX inference."
+        },
+        {
+          "field": "projection_years_count",
+          "value": 10,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Ten relative forecast years is a chosen transition period, not company guidance."
+        },
+        {
+          "field": "cost_of_equity",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Explicit 15% nominal INR research hurdle, rounded near the existing 15.034195% draft CAPM calculation. This is not a newly verified company cost of equity or current market rate."
+        },
+        {
+          "field": "target_roe",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Fade to the chosen 15% equity hurdle: terminal economic excess returns are zero. This may increase or decrease historical ROE and is not a guaranteed or management forecast."
+        },
+        {
+          "field": "terminal_growth_rate",
+          "value": 0.03,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "3% nominal INR book-equity growth is a deliberately explicit scenario assumption, not observed or promised growth. It remains below the 15% hurdle."
+        }
+      ],
+      "remaining_gaps": [
+        "A dated fully diluted common-share/award-claim basis is not established; do not promote a current valuation.",
+        "Sustainable regulatory capital and payout constraints are not implemented by this constant-growth excess-return engine.",
+        "Remaining recurring-profit, valuation-date and award assumptions do not become company facts through review.",
+        "EPS diluted numerator INR541839.1 million differs from reported parent earnings INR542077.028 million because of subsidiary/associate award effects; do not combine without review.",
+        "FY2025/FY2026 ICICI Securities consolidation and award changes affect comparability."
+      ],
+      "promotion_authorized": false,
+      "reference_calculation": {
+        "basis": "Calculation under explicit illustration assumptions; no current/share valuation",
+        "starting_roe_on_ending_book": "0.1504188669234818364151656323",
+        "terminal_excess_return": "0",
+        "pv_excess_returns": "4528778240.006005200840893581",
+        "equity_value": "3608312260240.006005200840894",
+        "per_share_value": null,
+        "projection": [
+          {
+            "relative_year": 1,
+            "roe": "0.1503769802311336527736490691",
+            "opening_book_equity": "3603783482000",
+            "excess_return": "1358555130.000000000000000087",
+            "pv_excess_return": "1181352286.956521739130434858"
+          },
+          {
+            "relative_year": 2,
+            "roe": "0.1503350935387854691321325058",
+            "opening_book_equity": "3711896986460.00",
+            "excess_return": "1243832696.799999999999999832",
+            "pv_excess_return": "940516216.8620037807183363569"
+          },
+          {
+            "relative_year": 3,
+            "roe": "0.1502932068464372854906159426",
+            "opening_book_equity": "3823253896053.8000",
+            "excess_return": "1121004217.990999999999999945",
+            "pv_excess_return": "737078469.9538094846716527953"
+          },
+          {
+            "relative_year": 4,
+            "roe": "0.1502513201540891018490993794",
+            "opening_book_equity": "3937951512935.414000",
+            "excess_return": "989686581.0263400000000000636",
+            "pv_excess_return": "565856514.8216823124560018374"
+          },
+          {
+            "relative_year": 5,
+            "roe": "0.1502094334617409182075828162",
+            "opening_book_equity": "4056090058323.47642000",
+            "excess_return": "849480982.0476085000000001898",
+            "pv_excess_return": "422342181.3524150592968710038"
+          },
+          {
+            "relative_year": 6,
+            "roe": "0.1501675467693927345660662529",
+            "opening_book_equity": "4177772760073.1807126000",
+            "excess_return": "699972329.2072294039999999057",
+            "pv_excess_return": "302617354.2907739207483665935"
+          },
+          {
+            "relative_year": 7,
+            "roe": "0.1501256600770445509245496897",
+            "opening_book_equity": "4303105942875.376133978000",
+            "excess_return": "540728624.3125847145900000347",
+            "pv_excess_return": "203279918.4257590032853158608"
+          },
+          {
+            "relative_year": 8,
+            "roe": "0.1500837733846963672830331265",
+            "opening_book_equity": "4432199121161.63741799734000",
+            "excess_return": "371300322.0279748373518001716",
+            "pv_excess_return": "121378733.9005981294978987942"
+          },
+          {
+            "relative_year": 9,
+            "roe": "0.1500418866923481836415165632",
+            "opening_book_equity": "4565165094796.486540537260200",
+            "excess_return": "191219665.8444070412361768601",
+            "pv_excess_return": "54356563.44244177103601548208"
+          },
+          {
+            "relative_year": 10,
+            "roe": "0.1500000000000000000000000000",
+            "opening_book_equity": "4702120047640.381136753378006",
+            "excess_return": "0E-43",
+            "pv_excess_return": "0E-23"
+          }
+        ]
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "company_id": 11,
+      "decision_id": "M06-SBIN-20261102",
+      "model_type": "financial_services",
+      "source": {
+        "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+        "sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+        "local_path": "output/milestones/m05/review-batches-20261013/originals/SBIN-2026.pdf",
+        "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/SBIN-2026.json",
+        "extracted_sha256": "8ae028c16673b6b32a403f40228e2b05316d18aecc90114fc79eceb78c08c435",
+        "as_of": "2026-03-31",
+        "monetary_scale": 1000
+      },
+      "period_id": 32,
+      "source_input_signature": "1b0a8b09c8364fa37c8e9cd983d038ba26138de517d0e9fd334eab24df01b069",
+      "financial_history_signature": "b664cffa470281ada49fe754a545af6fa18dedd4e0172f6ea62a473d44dfcb7b",
+      "assumptions_patch": {
+        "book_value_of_equity": 5961308694000,
+        "net_income": 832987824000,
+        "cash_flow_currency": "INR",
+        "discount_rate_currency": "INR",
+        "diluted_shares": null,
+        "current_market_price": null
+      },
+      "reviewed_fields": [
+        "book_value_of_equity",
+        "net_income",
+        "cash_flow_currency",
+        "discount_rate_currency"
+      ],
+      "rejected_fields": [
+        "diluted_shares",
+        "current_market_price"
+      ],
+      "illustrative_assumptions_patch": {
+        "projection_years_count": 10,
+        "cost_of_equity": 0.15,
+        "target_roe": 0.15,
+        "terminal_growth_rate": 0.03
+      },
+      "illustrative_reviewed_fields": [
+        "projection_years_count",
+        "cost_of_equity",
+        "target_roe",
+        "terminal_growth_rate"
+      ],
+      "decisions": [
+        {
+          "field": "book_value_of_equity",
+          "decision": "approve_selected_historical_common_book_basis",
+          "claim_type": "Calculation",
+          "value": 5961308694000,
+          "formula": "(9230618 + 5952078076) \u00d7 1000",
+          "source_fact_ids": [
+            857,
+            856
+          ],
+          "pdf_pages": [
+            304,
+            305,
+            306
+          ],
+          "basis": "Consolidated equity capital plus reserves/surplus belonging to parent common shareholders. Separate minority interests and separately presented employee-award reserve are excluded. This is an accounting book basis, not regulatory or distributable capital. No second NCI subtraction or addition of already-consolidated subsidiaries.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P304:L10:Y2026",
+              "reference_ids": [
+                "SBIN-2026:p304:l11:2026"
+              ]
+            },
+            {
+              "source_cell_reference": "P304:L11:Y2026",
+              "reference_ids": [
+                "SBIN-2026:p304:l13:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "net_income",
+          "decision": "approve_reported_parent_earnings_only",
+          "claim_type": "Calculation",
+          "value": 832987824000,
+          "formula": "832987824 \u00d7 1000",
+          "source_fact_ids": [
+            866
+          ],
+          "pdf_pages": [
+            313
+          ],
+          "basis": "Parent-attributable reported consolidated FY2026 earnings, not group profit before NCI and not a certified recurring-profit estimate. Starting engine ROE uses ending book equity, not reported average-equity ROE.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P313:L24:Y2026",
+              "reference_ids": [
+                "SBIN-2026:p313:l28:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "diluted_shares",
+          "decision": "reject_current_value_use_of_EPS_weighted_average",
+          "value": null,
+          "historical_weighted_diluted_shares": 9137560796,
+          "historical_paid_up_shares": 9230617586,
+          "source_fact_ids": [
+            875
+          ],
+          "pdf_pages": [
+            305,
+            354
+          ],
+          "basis": "Weighted diluted shares are an EPS period denominator. Exact paid-up shares are a date-specific count and do not by themselves quantify outstanding award claims. Clear the current valuation denominator rather than approving a proxy as fully diluted.",
+          "source_occurrences": [
+            {
+              "source_cell_reference": "P354:L30:Y2026",
+              "reference_ids": [
+                "SBIN-2026:p354:l32:2026"
+              ]
+            }
+          ]
+        },
+        {
+          "field": "current_market_price",
+          "decision": "clear_unmatched_comparison",
+          "value": null,
+          "claim_type": "User Assumption",
+          "basis": "No price/date/award bridge matched to this historical accounting basis has been reviewed. Do not compare this illustration with an unreviewed stored current quote."
+        },
+        {
+          "field": "cash_flow_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "Source Summary",
+          "basis": "Reporting currency and exact source units"
+        },
+        {
+          "field": "discount_rate_currency",
+          "decision": "approve",
+          "value": "INR",
+          "claim_type": "User Assumption",
+          "basis": "Use a nominal INR equity hurdle to match INR earnings/book growth; no FX inference."
+        },
+        {
+          "field": "projection_years_count",
+          "value": 10,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Ten relative forecast years is a chosen transition period, not company guidance."
+        },
+        {
+          "field": "cost_of_equity",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Explicit 15% nominal INR research hurdle, rounded near the existing 15.034195% draft CAPM calculation. This is not a newly verified company cost of equity or current market rate."
+        },
+        {
+          "field": "target_roe",
+          "value": 0.15,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "Fade to the chosen 15% equity hurdle: terminal economic excess returns are zero. This may increase or decrease historical ROE and is not a guaranteed or management forecast."
+        },
+        {
+          "field": "terminal_growth_rate",
+          "value": 0.03,
+          "claim_type": "User Assumption",
+          "decision": "approved_for_research_illustration_only",
+          "confidence": "low",
+          "basis": "3% nominal INR book-equity growth is a deliberately explicit scenario assumption, not observed or promised growth. It remains below the 15% hurdle."
+        }
+      ],
+      "remaining_gaps": [
+        "A dated fully diluted common-share/award-claim basis is not established; do not promote a current valuation.",
+        "Sustainable regulatory capital and payout constraints are not implemented by this constant-growth excess-return engine.",
+        "Remaining recurring-profit, valuation-date and award assumptions do not become company facts through review.",
+        "FY2026 QIP makes 9230617586 ending paid-up shares differ from 9137560796 weighted-average shares. Equal basic/diluted EPS does not establish no future or point-in-time dilution."
+      ],
+      "promotion_authorized": false,
+      "reference_calculation": {
+        "basis": "Calculation under explicit illustration assumptions; no current/share valuation",
+        "starting_roe_on_ending_book": "0.1397323753487878009224261118",
+        "terminal_excess_return": "0",
+        "pv_excess_returns": "-183636029185.3953206113539929",
+        "equity_value": "5777672664814.604679388646007",
+        "per_share_value": null,
+        "projection": [
+          {
+            "relative_year": 1,
+            "roe": "0.1407591378139090208301835006",
+            "opening_book_equity": "5961308694000",
+            "excess_return": "-55087632090.00000000000000026",
+            "pv_excess_return": "-47902288773.91304347826086979"
+          },
+          {
+            "relative_year": 2,
+            "roe": "0.1417859002790302407379408894",
+            "opening_book_equity": "6140147954820.00",
+            "excess_return": "-50435787602.40000000000000037",
+            "pv_excess_return": "-38136701400.68052930056710803"
+          },
+          {
+            "relative_year": 3,
+            "roe": "0.1428126627441514606456982783",
+            "opening_book_equity": "6324352393464.6000",
+            "excess_return": "-45455253576.66299999999999986",
+            "pv_excess_return": "-29887567075.96811046272704848"
+          },
+          {
+            "relative_year": 4,
+            "roe": "0.1438394252092726805534556671",
+            "opening_book_equity": "6514082965268.538000",
+            "excess_return": "-40130495300.53961999999999997",
+            "pv_excess_return": "-22944740935.33949349809356025"
+          },
+          {
+            "relative_year": 5,
+            "roe": "0.1448661876743939004612130559",
+            "opening_book_equity": "6709505454226.59414000",
+            "excess_return": "-34445341799.62984050000000009",
+            "pv_excess_return": "-17125422582.17367992973649793"
+          },
+          {
+            "relative_year": 6,
+            "roe": "0.1458929501395151203689704447",
+            "opening_book_equity": "6910790617853.3919642000",
+            "excess_return": "-28382961642.89498857200000021",
+            "pv_excess_return": "-12270737571.92270631487206466"
+          },
+          {
+            "relative_year": 7,
+            "roe": "0.1469197126046363402767278335",
+            "opening_book_equity": "7118114336388.993723126000",
+            "excess_return": "-21925837869.13637867187000034",
+            "pv_excess_return": "-8242734586.356774459337973937"
+          },
+          {
+            "relative_year": 8,
+            "roe": "0.1479464750697575601844852224",
+            "opening_book_equity": "7331657766480.66353481978000",
+            "excess_return": "-15055742003.47364668801739974",
+            "pv_excess_return": "-4921748767.505784169923543697"
+          },
+          {
+            "relative_year": 9,
+            "roe": "0.1489732375348787800922426112",
+            "opening_book_equity": "7551607499475.083440864373400",
+            "excess_return": "-7753707131.788928044328960868",
+            "pv_excess_return": "-2204087491.535198997835326091"
+          },
+          {
+            "relative_year": 10,
+            "roe": "0.1500000000000000000000000000",
+            "opening_book_equity": "7778155724459.335944090304602",
+            "excess_return": "0E-43",
+            "pv_excess_return": "0E-23"
+          }
+        ]
+      }
+    }
+  ],
+  "checks": [
+    {
+      "ticker": "HDFCBANK",
+      "original_hash_matches": true,
+      "extracted_original_hash_matches": true,
+      "persisted_source_amounts_match_prior_review": true,
+      "exact_paid_up_share_schedule_checked": true,
+      "book_equity_calculation": "5815143600000.00",
+      "parent_profit_calculation": "760259700000.00"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "original_hash_matches": true,
+      "extracted_original_hash_matches": true,
+      "persisted_source_amounts_match_prior_review": true,
+      "exact_paid_up_share_schedule_checked": true,
+      "book_equity_calculation": "3603783482000",
+      "parent_profit_calculation": "542077028000"
+    },
+    {
+      "ticker": "SBIN",
+      "original_hash_matches": true,
+      "extracted_original_hash_matches": true,
+      "persisted_source_amounts_match_prior_review": true,
+      "exact_paid_up_share_schedule_checked": true,
+      "book_equity_calculation": "5961308694000",
+      "parent_profit_calculation": "832987824000"
+    }
+  ]
+}

@@ -26,6 +26,7 @@ from app.services.pdf_page_rendering import (
     MIN_RENDER_SCALE,
     render_pdf_page_png,
 )
+from app.services.pdf_jobs import PdfJobError
 
 
 router = APIRouter(tags=["pdf-filings"])
@@ -207,6 +208,8 @@ def render_document_asset_page(
         raise HTTPException(status_code=404, detail="Document page not found")
     try:
         content = render_pdf_page_png(asset.content, page_number, scale)
+    except PdfJobError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=str(exc)) from None
     except (IndexError, ValueError) as exc:
         raise HTTPException(status_code=422, detail="Document page could not be rendered safely") from exc
     return Response(

@@ -4,9 +4,11 @@ import type { AuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
+import { createLocalLoginGuard } from "./local-login";
 
 const localUsername = process.env.LOCAL_AUTH_USERNAME;
 const localPassword = process.env.LOCAL_AUTH_PASSWORD;
+const allowLocalLogin = createLocalLoginGuard();
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -20,7 +22,7 @@ export const authOptions: AuthOptions = {
         if (!localUsername || !localPassword) {
           return null;
         }
-        if (credentials?.username === localUsername && credentials?.password === localPassword) {
+        if (allowLocalLogin(credentials?.username, credentials?.password, localUsername, localPassword)) {
           return { id: "local-user", name: localUsername, email: "local-user@local.invalid" };
         }
         return null;

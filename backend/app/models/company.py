@@ -44,19 +44,21 @@ class Company(Base):
         onupdate=func.now(),
     )
 
-    raw_documents = relationship("RawDocument", back_populates="company", lazy="selectin")
-    events = relationship("Event", back_populates="company", lazy="selectin")
-    alerts = relationship("Alert", back_populates="company", lazy="selectin")
-    thesis_notes = relationship("ThesisNote", back_populates="company", lazy="selectin")
-    portfolio_holdings = relationship("PortfolioHolding", back_populates="company", lazy="selectin")
-    portfolio_transactions = relationship("PortfolioTransaction", back_populates="company", lazy="selectin")
-    market_prices = relationship("MarketPrice", back_populates="company", lazy="selectin")
-    market_data = relationship("CompanyMarketData", back_populates="company", lazy="selectin", uselist=False)
+    # A company identity must not recursively load its entire research/portfolio
+    # history. Workflows opt into eager loading the relationships they actually use.
+    raw_documents = relationship("RawDocument", back_populates="company", lazy="select")
+    events = relationship("Event", back_populates="company", lazy="select")
+    alerts = relationship("Alert", back_populates="company", lazy="select")
+    thesis_notes = relationship("ThesisNote", back_populates="company", lazy="select")
+    portfolio_holdings = relationship("PortfolioHolding", back_populates="company", lazy="select")
+    portfolio_transactions = relationship("PortfolioTransaction", back_populates="company", lazy="select")
+    market_prices = relationship("MarketPrice", back_populates="company", lazy="select")
+    market_data = relationship("CompanyMarketData", back_populates="company", lazy="select", uselist=False)
     exposure_tags = relationship("ExposureTag", secondary="company_exposure_tags", back_populates="companies", lazy="selectin")
 
-    macro_inputs = relationship("CompanyMacroInput", back_populates="company", lazy="selectin")
-    macro_results = relationship("CompanyMacroSensitivityResult", back_populates="company", lazy="selectin")
-    macro_segments = relationship("CompanyMacroSegmentExposure", back_populates="company", lazy="selectin")
+    macro_inputs = relationship("CompanyMacroInput", back_populates="company", lazy="select")
+    macro_results = relationship("CompanyMacroSensitivityResult", back_populates="company", lazy="select")
+    macro_segments = relationship("CompanyMacroSegmentExposure", back_populates="company", lazy="select")
 
 class ExposureTag(Base):
     __tablename__ = "exposure_tags"
@@ -66,7 +68,7 @@ class ExposureTag(Base):
     description: Mapped[str | None] = mapped_column(String(255))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
-    companies = relationship("Company", secondary="company_exposure_tags", back_populates="exposure_tags", lazy="selectin")
+    companies = relationship("Company", secondary="company_exposure_tags", back_populates="exposure_tags", lazy="select")
 
 class CompanyExposureTag(Base):
     __tablename__ = "company_exposure_tags"

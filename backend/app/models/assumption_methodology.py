@@ -15,6 +15,11 @@ class AssumptionMethodValue(Base):
     __tablename__ = "assumption_method_values"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    dataset_file_id: Mapped[int | None] = mapped_column(
+        ForeignKey("damodaran_dataset_files.id"),
+        index=True,
+        nullable=True,
+    )
     assumption_key: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     method_key: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
 
@@ -41,6 +46,8 @@ class AssumptionMethodValue(Base):
     confidence: Mapped[str] = mapped_column(String(50), nullable=False, default="high")
     is_default_candidate: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     notes: Mapped[str] = mapped_column(String(1000), nullable=True)
+
+    dataset_file = relationship("DamodaranDatasetFile")
 
 
 class ValuationAssumptionProvenance(Base):

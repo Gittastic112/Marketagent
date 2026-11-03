@@ -42,6 +42,10 @@ export function DcfForm({
     e.preventDefault();
     setIsPending(true);
     const formData = new FormData(e.currentTarget);
+    if (latestAssumptionSet) {
+      formData.set("base_assumption_set_id", String(latestAssumptionSet.id));
+      formData.set("base_assumption_set_updated_at", latestAssumptionSet.updated_at);
+    }
     const { createDcfAssumptionSet } = await import("@/app/actions");
     await createDcfAssumptionSet(formData, modelId.toString(), companyId.toString());
     setIsPending(false);

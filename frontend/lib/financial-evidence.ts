@@ -1,5 +1,23 @@
 import type { EventEvidenceReference, FinancialExtractionCandidate } from "@/lib/api";
 
+const financialMetricLabels: Record<string, string> = {
+  net_income: "Net income",
+  pre_tax_income: "Profit before tax",
+  tax_expense: "Tax expense",
+  equity_method_income_after_tax: "After-tax income from equity-method investments",
+  net_income_parent: "Profit attributable to parent shareholders",
+  net_income_nci: "Profit attributable to minority shareholders",
+};
+
+export function financialMetricLabel(metric: string): string {
+  const fallback = metric.replaceAll("_", " ");
+  return financialMetricLabels[metric] ?? fallback.charAt(0).toUpperCase() + fallback.slice(1);
+}
+
+export function financialIdentityFormula(formula: string): string {
+  return formula.replace(/\b[a-z][a-z0-9_]*\b/g, financialMetricLabel);
+}
+
 export type PdfEvidenceBox = {
   x0: number;
   top: number;
@@ -31,10 +49,11 @@ function parseBox(
   pageWidth: number,
   pageHeight: number,
   label: string,
+  boxField: "bounding_box" | "cell_bbox" = "bounding_box",
 ): PdfEvidenceBox | null {
   const locatorPage = finiteNumber(locator.page);
   const coordinateSystem = locator.coordinate_system;
-  const box = record(locator.bounding_box);
+  const box = record(locator[boxField]);
   if (
     locatorPage !== pageNumber
     || coordinateSystem !== "pdfplumber_top_left_points"
@@ -89,7 +108,12 @@ export function financialEvidenceGeometry(
   const pageHeight = finiteNumber(dimensionSource.page_height);
   if (pageWidth === null || pageHeight === null || pageWidth <= 0 || pageHeight <= 0) return null;
 
-  const rootBox = parseBox(locator, pageNumber, pageWidth, pageHeight, "Reported row");
+  const isTableCell = locator.type === "pdf_table_cell";
+  const rootBox = parseBox(
+    locator, pageNumber, pageWidth, pageHeight,
+    isTableCell ? "Reported cell" : "Reported row",
+    isTableCell ? "cell_bbox" : "bounding_box",
+  );
   const componentBoxes = componentRecords
     .map((component, index) => parseBox(
       component,
@@ -97,6 +121,7 @@ export function financialEvidenceGeometry(
       pageWidth,
       pageHeight,
       `Component ${index + 1}`,
+      component.type === "pdf_table_cell" ? "cell_bbox" : "bounding_box",
     ))
     .filter((box): box is PdfEvidenceBox => box !== null);
   const boxes = componentBoxes.length > 0 ? componentBoxes : rootBox ? [rootBox] : [];

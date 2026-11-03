@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user
@@ -9,9 +9,13 @@ from app.api.schemas import (
     EventEvidenceBackfillReportRead,
     EventEvidenceBackfillRequest,
     EvidenceIntegrityReportRead,
+    PeerReviewReceiptHealthRead,
 )
 from app.db.session import get_db
-from app.services.evidence_integrity import build_evidence_integrity_report
+from app.services.evidence_integrity import (
+    build_evidence_integrity_report,
+    build_peer_review_receipt_health,
+)
 from app.services.damodaran_coverage import build_damodaran_coverage_report
 from app.services.event_evidence_backfill import (
     execute_event_evidence_backfill,
@@ -20,6 +24,40 @@ from app.services.event_evidence_backfill import (
 
 
 router = APIRouter(prefix="/data-health", tags=["data-health"])
+
+
+@router.get(
+    "/peer-review-receipts",
+    response_model=ApiResponse[PeerReviewReceiptHealthRead],
+)
+def get_peer_review_receipt_health(
+    limit: int = Query(default=50, ge=1, le=100),
+    after_id: int = Query(default=0, ge=0),
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict]:
+    report = build_peer_review_receipt_health(db, user_id=current_user["id"], limit=limit, after_id=after_id)
+    attention_count = report["missing_receipt_count"] + report["stale_receipt_count"]
+    warnings = (
+        [f"{attention_count} active reviewed peer set(s) need diagnostic re-acknowledgement."]
+        if attention_count
+        else []
+    )
+    if report["storage_blocked_count"]:
+        warnings.append(f'{report["storage_blocked_count"]} reviewed set(s) on this page have conflicting stored evidence.')
+    if report["coverage_blocked_count"]:
+        warnings.append(f'{report["coverage_blocked_count"]} reviewed set(s) on this page have no usable multiple method.')
+    if report["has_more"]:
+        warnings.append("Additional owned peer sets remain unchecked; continue to the next audit page.")
+    return ApiResponse(
+        data=report,
+        meta=ApiMeta(
+            source="owned_peer_review_receipt_audit",
+            last_updated=report["generated_at"],
+            confidence="high",
+            warnings=warnings,
+        ),
+    )
 
 
 @router.get(
@@ -40,9 +78,12 @@ def get_damodaran_coverage(db: Session = Depends(get_db)) -> ApiResponse[dict]:
 
 
 @router.get("/evidence-integrity", response_model=ApiResponse[EvidenceIntegrityReportRead])
-def get_evidence_integrity(db: Session = Depends(get_db)) -> ApiResponse[dict]:
-    report = build_evidence_integrity_report(db)
-    warnings = []
+def get_evidence_integrity(
+    deep: bool = True,
+    db: Session = Depends(get_db),
+) -> ApiResponse[dict]:
+    report = build_evidence_integrity_report(db, deep_asset_validation=deep)
+    warnings = list(report["limitations"])
     if report["error_count"]:
         warnings.append(f'Evidence integrity found {report["error_count"]} blocking error(s).')
     if report["is_truncated"]:

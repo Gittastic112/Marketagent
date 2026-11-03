@@ -1,0 +1,361 @@
+{
+  "date": "2026-10-25",
+  "scope": "Local project folder reorganization; no data deletion, permission change or runtime deployment.",
+  "git_status_basis": "Read-only version-2 index membership, not a full staged/HEAD comparison.",
+  "total_files": 41,
+  "total_preserved_bytes": 295277,
+  "reclaimed_bytes": 0,
+  "moves": [
+    {
+      "from": "backend/migrate_narratives.py",
+      "to": "scripts/retired/local/2026-10-25/backend/migrate_narratives.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 1563,
+      "sha256": "5103f7261ca47b61dfb0355c54827f4745bcd39c8a2098f90d9173bd9e35ade6",
+      "in_git_index": false
+    },
+    {
+      "from": "backend/refactor_routers.py",
+      "to": "scripts/retired/local/2026-10-25/backend/refactor_routers.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 2898,
+      "sha256": "cb782ba79fd60a9064c4e0283f8e40db69de5819b0ee7e430e7dd2e32be96848",
+      "in_git_index": true
+    },
+    {
+      "from": "backend/test_api.py",
+      "to": "scripts/retired/local/2026-10-25/backend/test_api.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 790,
+      "sha256": "d2546c8b03a053d669e7bda568255a17a39d7f15e3253cdf7966788aeefb9c2c",
+      "in_git_index": false
+    },
+    {
+      "from": "backend/test_crash.py",
+      "to": "scripts/retired/local/2026-10-25/backend/test_crash.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 390,
+      "sha256": "51f3bebc0ccbec3e7e1cc2a98a076d06ee00142597be8c1d1084bcebb95725ee",
+      "in_git_index": false
+    },
+    {
+      "from": "backend/test_endpoints.py",
+      "to": "scripts/retired/local/2026-10-25/backend/test_endpoints.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 590,
+      "sha256": "1dbf2a51581bba19bb05f1a76a59fd8ab76b042afca87d3a849c0794b512fa1d",
+      "in_git_index": true
+    },
+    {
+      "from": "backend/test_models_api.py",
+      "to": "scripts/retired/local/2026-10-25/backend/test_models_api.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 286,
+      "sha256": "74aeb296255a0d36b4329919efaf87853374fd829441ea86fff42618f665debe",
+      "in_git_index": false
+    },
+    {
+      "from": "backend/test_pydantic.py",
+      "to": "scripts/retired/local/2026-10-25/backend/test_pydantic.py.txt",
+      "reason": "Unreferenced one-off script outside the maintained test paths; retained as inactive source.",
+      "bytes": 405,
+      "sha256": "b1f82252bf1cd531ee5f9cda1b6f5cf018d2af85834859aac668f89391d538da",
+      "in_git_index": true
+    },
+    {
+      "from": "backend/test.db",
+      "to": "scripts/retired/local/2026-10-25/backend/test.db.empty",
+      "reason": "Zero-byte debug artifact; not a database containing records.",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "in_git_index": false
+    },
+    {
+      "from": "backend/error.log",
+      "to": "output/legacy-backend/2026-10-25/error.log",
+      "reason": "Retained historical diagnostic evidence.",
+      "bytes": 11649,
+      "sha256": "d7338ee4bddaa097ee033f5ee5dcc3bf08d1b00ad2098a6136d794896e5bdc01",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/SKILL.md",
+      "to": "skills/spreadsheets/SKILL.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 65321,
+      "sha256": "026bd578182391c9f805ae06f8d30f19313eff8b3a77fdac86147740163802d1",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/agents/openai.yaml",
+      "to": "skills/spreadsheets/agents/openai.yaml",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 364,
+      "sha256": "8dc6dfa3a1c6fd33ecb3088fe4d4e24689fc47685c43a9bac360fcee2af02a40",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/artifact_tool_docs/API_QUICK_START.md",
+      "to": "skills/spreadsheets/artifact_tool_docs/API_QUICK_START.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 25830,
+      "sha256": "2795943c6a356a6bb94767526acb53a6aec8599be1d15fdbe54458bc799d5f4a",
+      "in_git_index": false,
+      "after_sha256": "c56b0feaf198521bc2bd486d42cdda7a5e39b3c85caff9f1c1a7ea68fbee407e",
+      "after_bytes": 25823,
+      "post_move_edit": "Corrected the two quick-start links to sibling DATA_TABLES.md and SPARKLINES.md; original bytes retained in the task before folder.",
+      "original_copy": "/private/tmp/mi-structure-rollout-20261025/before/skills/spreadsheets/artifact_tool_docs/API_QUICK_START.md"
+    },
+    {
+      "from": "spreadsheets/artifact_tool_docs/DATA_TABLES.md",
+      "to": "skills/spreadsheets/artifact_tool_docs/DATA_TABLES.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 3586,
+      "sha256": "f87542406b8a2282521233c11fec87087eb2889628a1f20944977c0ad9c68488",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/artifact_tool_docs/SPARKLINES.md",
+      "to": "skills/spreadsheets/artifact_tool_docs/SPARKLINES.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1646,
+      "sha256": "d3926fac25653829837c03136124126e1d1be192de6d62bf1f77e29300d97c1f",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/assets/file-spreadsheet.png",
+      "to": "skills/spreadsheets/assets/file-spreadsheet.png",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 11988,
+      "sha256": "3a1c5e6c52a1877942b8ef8654247fbe1c4a82f6df8ef464dc99983fc72cd6fb",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/container_tools/mark_artifact_operation_started.mjs",
+      "to": "skills/spreadsheets/container_tools/mark_artifact_operation_started.mjs",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 743,
+      "sha256": "20c5a86e596154c0541c7bfc4c52c17d928e22e27c6f0ff936c1c3fe16873c10",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/domain_guidance/financial_models.md",
+      "to": "skills/spreadsheets/domain_guidance/financial_models.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 7224,
+      "sha256": "e01796e46470c9750b600eff185c90ec1f63f6b8f08fe9317dbeb026b31099e0",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/domain_guidance/healthcare.md",
+      "to": "skills/spreadsheets/domain_guidance/healthcare.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 4695,
+      "sha256": "df5b9dcb9df988c197fcb377e0b9798f582e9cd30d1c103fd7cd8957a215dff9",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/domain_guidance/marketing_advertising.md",
+      "to": "skills/spreadsheets/domain_guidance/marketing_advertising.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 3913,
+      "sha256": "bd6a715ac7d9ad2c830dff146e48321ccc4330c0024f471e85be66c5bb65b014",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/domain_guidance/scientific_research.md",
+      "to": "skills/spreadsheets/domain_guidance/scientific_research.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 3695,
+      "sha256": "a95381e624c4c9562efee3e4a5cdd41bd52e1d3330545ab64d2a85242b10c0af",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/features/charts.md",
+      "to": "skills/spreadsheets/features/charts.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 5822,
+      "sha256": "f85e0fa9ba2505f9ee3dd9c4529d1c529b0ce7c9c5e95a919409025c0217c470",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/references/artifact-template-selection.md",
+      "to": "skills/spreadsheets/references/artifact-template-selection.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1353,
+      "sha256": "00631628c4bb34296a978fec45535af00e65341380dc40cf07d05b9bf864ec1b",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/references/image-references.md",
+      "to": "skills/spreadsheets/references/image-references.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1068,
+      "sha256": "148690f09a1f33a8d61a3f28df8b9c872a6bc16f0eaa2ea561bcc4dcd07bc2cc",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/references/read_only_qna.md",
+      "to": "skills/spreadsheets/references/read_only_qna.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1095,
+      "sha256": "687beb1ce4c32164fd8f8f17e0a2c6a4371798ab1d47835a0a74efe7b8f980a6",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/routing/google_sheets.md",
+      "to": "skills/spreadsheets/routing/google_sheets.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1495,
+      "sha256": "e59dcc3a474ac69708114c1f6592c52675e36c19adf5832c7695e478c12f078d",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/style_guidelines.md",
+      "to": "skills/spreadsheets/style_guidelines.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 10103,
+      "sha256": "52f91ee6bc4c0a3b633b35df33924092a07e48c45cc839942288592989e33063",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/workflows/create_workflows.md",
+      "to": "skills/spreadsheets/workflows/create_workflows.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1563,
+      "sha256": "92e3d0910bde06d210718f47f88f24a51d33bf03b4560cca3e280fbcde22a47d",
+      "in_git_index": false
+    },
+    {
+      "from": "spreadsheets/workflows/edit_workflows.md",
+      "to": "skills/spreadsheets/workflows/edit_workflows.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 2481,
+      "sha256": "f75917488c75b5a7b9e194c57131163d54ad23405802944e1d59eece990d27d8",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/SKILL.md",
+      "to": "skills/excel-live-control/SKILL.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 71942,
+      "sha256": "1c27488fa2a59ce2cc8925a12527ee9c7aa40ccf0701f3f2719ab17858586e8b",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/agents/openai.yaml",
+      "to": "skills/excel-live-control/agents/openai.yaml",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 403,
+      "sha256": "70dc592d07c97d2703481d0794ad0c8d16a518a3cc4b790e02bf5a552f5e261f",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/domain_guidance/financial_models.md",
+      "to": "skills/excel-live-control/domain_guidance/financial_models.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 7224,
+      "sha256": "e01796e46470c9750b600eff185c90ec1f63f6b8f08fe9317dbeb026b31099e0",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/domain_guidance/healthcare.md",
+      "to": "skills/excel-live-control/domain_guidance/healthcare.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 4695,
+      "sha256": "df5b9dcb9df988c197fcb377e0b9798f582e9cd30d1c103fd7cd8957a215dff9",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/domain_guidance/marketing_advertising.md",
+      "to": "skills/excel-live-control/domain_guidance/marketing_advertising.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 3913,
+      "sha256": "bd6a715ac7d9ad2c830dff146e48321ccc4330c0024f471e85be66c5bb65b014",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/domain_guidance/scientific_research.md",
+      "to": "skills/excel-live-control/domain_guidance/scientific_research.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 3695,
+      "sha256": "a95381e624c4c9562efee3e4a5cdd41bd52e1d3330545ab64d2a85242b10c0af",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/features/charts.md",
+      "to": "skills/excel-live-control/features/charts.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 5822,
+      "sha256": "f85e0fa9ba2505f9ee3dd9c4529d1c529b0ce7c9c5e95a919409025c0217c470",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/officejs.md",
+      "to": "skills/excel-live-control/officejs.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 8717,
+      "sha256": "9379f52d8f7644eed600f5a544318fe9a3e8619ef0c4088c80c3c85d4b072113",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/references/image-references.md",
+      "to": "skills/excel-live-control/references/image-references.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1068,
+      "sha256": "148690f09a1f33a8d61a3f28df8b9c872a6bc16f0eaa2ea561bcc4dcd07bc2cc",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/references/read_only_qna.md",
+      "to": "skills/excel-live-control/references/read_only_qna.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1095,
+      "sha256": "687beb1ce4c32164fd8f8f17e0a2c6a4371798ab1d47835a0a74efe7b8f980a6",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/style_guidelines.md",
+      "to": "skills/excel-live-control/style_guidelines.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 10103,
+      "sha256": "52f91ee6bc4c0a3b633b35df33924092a07e48c45cc839942288592989e33063",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/workflows/create_workflows.md",
+      "to": "skills/excel-live-control/workflows/create_workflows.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 1563,
+      "sha256": "92e3d0910bde06d210718f47f88f24a51d33bf03b4560cca3e280fbcde22a47d",
+      "in_git_index": false
+    },
+    {
+      "from": "excel-live-control/workflows/edit_workflows.md",
+      "to": "skills/excel-live-control/workflows/edit_workflows.md",
+      "reason": "Consolidate local helper-package references under skills; no runtime caller or installed-plugin path changes.",
+      "bytes": 2481,
+      "sha256": "f75917488c75b5a7b9e194c57131163d54ad23405802944e1d59eece990d27d8",
+      "in_git_index": false
+    }
+  ],
+  "empty_original_directories": [
+    "spreadsheets/agents",
+    "spreadsheets/artifact_tool_docs",
+    "spreadsheets/assets",
+    "spreadsheets/container_tools",
+    "spreadsheets/domain_guidance",
+    "spreadsheets/features",
+    "spreadsheets/references",
+    "spreadsheets/routing",
+    "spreadsheets/workflows",
+    "spreadsheets",
+    "excel-live-control/agents",
+    "excel-live-control/domain_guidance",
+    "excel-live-control/features",
+    "excel-live-control/references",
+    "excel-live-control/workflows",
+    "excel-live-control"
+  ],
+  "directory_cleanup_status": "File moves verified. Empty original directory shells remain because rmdir is denied, including after explicit escalation."
+}

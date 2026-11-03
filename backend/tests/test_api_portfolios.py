@@ -460,7 +460,8 @@ def test_create_list_update_and_delete_snapshot(client: TestClient) -> None:
     update_response = client.patch(f"/portfolio-snapshots/{created['id']}", json={"total_cash": 2000})
     delete_response = client.delete(f"/portfolio-snapshots/{created['id']}")
 
-    assert created["payload_json"] == {"source": "manual"}
+    assert created["payload_json"]["source"] == "manual"
+    assert created["payload_json"]["replay_basis"]["method"] == "manual-snapshot-v1"
     assert list_response.status_code == 200
     assert response_data(list_response)[0]["portfolio_id"] == portfolio["id"]
     assert update_response.status_code == 200

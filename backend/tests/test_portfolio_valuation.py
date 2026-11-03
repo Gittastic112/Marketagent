@@ -1,5 +1,5 @@
 import pytest
-from datetime import date
+from datetime import date, datetime, UTC
 from sqlalchemy.orm import Session
 from collections.abc import Generator
 from sqlalchemy import create_engine
@@ -17,7 +17,7 @@ def db() -> Generator[Session]:
     with Session(engine) as session:
         yield session
 
-from app.models import Alert, Company, MarketPrice, Portfolio, PortfolioHolding
+from app.models import Alert, Company, DcfAssumptionSet, DcfOutput, MarketPrice, Portfolio, PortfolioHolding, ValuationModel
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 
 
@@ -109,7 +109,7 @@ def test_cash_only_portfolio_has_a_total_value(db: Session) -> None:
 
 
 def test_active_alert_count_is_scoped_to_user(db: Session) -> None:
-    portfolio = Portfolio(name="Alert Portfolio", base_currency="USD")
+    portfolio = Portfolio(user_id="owner-user", name="Alert Portfolio", base_currency="USD")
     company = Company(ticker="AAPL", name="Apple")
     holding = PortfolioHolding(
         portfolio=portfolio,
@@ -162,3 +162,104 @@ def test_active_alert_count_is_scoped_to_user(db: Session) -> None:
 def test_calculate_portfolio_valuation_not_found(db: Session) -> None:
     with pytest.raises(ValueError, match="Portfolio 999 not found"):
         calculate_portfolio_valuation(db, 999)
+
+
+def test_portfolio_valuation_uses_owned_trusted_dcf_output(db: Session) -> None:
+    company = Company(ticker="OWN", name="Owned DCF", currency="USD")
+    portfolio = Portfolio(user_id="owner-user", name="Owned", base_currency="USD")
+    holding = PortfolioHolding(
+        portfolio=portfolio,
+        company=company,
+        ticker="OWN",
+        quantity=1,
+        average_cost=100,
+        currency="USD",
+        as_of_date=date(2026, 5, 28),
+    )
+    db.add_all([company, portfolio, holding])
+    db.flush()
+    db.add(MarketPrice(
+        company_id=company.id,
+        ticker="OWN",
+        price=100,
+        currency="USD",
+        as_of_date=date(2026, 5, 28),
+    ))
+    owner_model = ValuationModel(user_id="owner-user", company_id=company.id, name="Owner")
+    other_model = ValuationModel(user_id="other-user", company_id=company.id, name="Other")
+    db.add_all([owner_model, other_model])
+    db.flush()
+    recorded_at = datetime(2026, 5, 28, tzinfo=UTC)
+    owner_assumptions = DcfAssumptionSet(valuation_model_id=owner_model.id, scenario="Base", is_stale=False, created_at=recorded_at, cash_flow_currency="USD")
+    other_assumptions = DcfAssumptionSet(valuation_model_id=other_model.id, scenario="Base", is_stale=False, created_at=recorded_at)
+    db.add_all([owner_assumptions, other_assumptions])
+    db.flush()
+    db.add_all([
+        DcfOutput(assumption_set_id=owner_assumptions.id, intrinsic_value_per_share=120, model_quality_score=80, warnings_json=[], created_at=recorded_at),
+        DcfOutput(assumption_set_id=other_assumptions.id, intrinsic_value_per_share=999, model_quality_score=100, warnings_json=[], created_at=recorded_at),
+    ])
+    db.commit()
+
+    valuation = calculate_portfolio_valuation(
+        db,
+        portfolio.id,
+        as_of_date=date(2026, 5, 28),
+        user_id="owner-user",
+    )
+
+    row = valuation["holdings"][0]
+    assert row["intrinsic_value"] == 120
+    assert row["expected_return"] == pytest.approx(0.20)
+    assert row["valuation_status"] == "trusted"
+
+
+def test_portfolio_valuation_hides_untrusted_intrinsic_value(db: Session) -> None:
+    company = Company(ticker="BAD", name="Untrusted DCF", currency="USD")
+    portfolio = Portfolio(user_id="owner-user", name="Owned", base_currency="USD")
+    db.add_all([company, portfolio])
+    db.flush()
+    db.add(PortfolioHolding(
+        portfolio_id=portfolio.id,
+        company_id=company.id,
+        ticker="BAD",
+        quantity=1,
+        average_cost=100,
+        currency="USD",
+        as_of_date=date(2026, 5, 28),
+    ))
+    db.add(MarketPrice(
+        company_id=company.id,
+        ticker="BAD",
+        price=100,
+        currency="USD",
+        as_of_date=date(2026, 5, 28),
+    ))
+    model = ValuationModel(user_id="owner-user", company_id=company.id, name="Invalid")
+    db.add(model)
+    db.flush()
+    assumptions = DcfAssumptionSet(valuation_model_id=model.id, scenario="Base", is_stale=False, created_at=datetime(2026, 5, 28, tzinfo=UTC))
+    db.add(assumptions)
+    db.flush()
+    output = DcfOutput(
+        assumption_set_id=assumptions.id,
+        intrinsic_value_per_share=999,
+        model_quality_score=100,
+        warnings_json=["Percent inputs are outside supported bounds."],
+        created_at=datetime(2026, 5, 28, tzinfo=UTC),
+    )
+    db.add(output)
+    db.commit()
+
+    valuation = calculate_portfolio_valuation(
+        db,
+        portfolio.id,
+        as_of_date=date(2026, 5, 28),
+        user_id="owner-user",
+    )
+
+    row = valuation["holdings"][0]
+    assert row["valuation_status"] == "untrusted"
+    assert row["valuation_status_reason"] == "The latest Base DCF output has unresolved diagnostic warnings."
+    assert row["intrinsic_value"] is None
+    assert row["expected_return"] is None
+    assert row["dcf_output_id"] == output.id

@@ -37,6 +37,9 @@ Every major view follows a strict 4-layer hierarchy to prevent data dumping:
 ---
 
 ## 5. Target User
+The configured scope is personal research in US and Indian equities, with USD
+portfolio reporting. Professional data licensing and public deployment are not
+established by the current local setup. Potential user personas include:
 - Individual investor
 - Finance student
 - Research analyst
@@ -52,7 +55,9 @@ The current app remains local-first, but the MVP has expanded into a broader res
 - [x] Raw document storage
 - [x] Basic event classification
 - [x] Credibility scoring
-- [x] Daily intelligence brief (Dashboard)
+- [x] Daily Brief with source inspection, review history and an opt-in local schedule
+- [x] Private paste/PDF research inbox with explicit, review-only AI triage
+- [x] Company/portfolio filing-backed business context and reviewed-peer Comps workspace
 - [x] Portfolio holdings and transactions
 - [x] Manual market prices
 - [x] Portfolio valuation and exposure analytics
@@ -66,7 +71,7 @@ The current app remains local-first, but the MVP has expanded into a broader res
 - [x] Candidate review/reject/override/promote UI foundation
 - [~] Narrative tracking and research workspace: modeled and routed, but still needs UX/provenance hardening
 - [~] India data support: structurally supported and manual-first; automated NSE/BSE/provider ingestion is not complete
-- [~] Assumption autofill: route and service exist, but drafts are not fully source-grounded yet
+- [~] Assumption autofill: annual SEC/FRED/benchmark inputs feed review-required drafts; company mapping, India coverage and unsupported assumptions remain incomplete
 
 ---
 
@@ -84,7 +89,8 @@ Do not build:
 ---
 
 ## 8. Source-Backed AI Principle
-This is not an AI summarizer. It is an intelligence system.
+AI is an optional research aid. Stored sources and explicit review remain the
+trust boundary; an exact quote does not certify the interpretation built on it.
 **The Flow:** `source → storage → classification → scoring → brief/alert`
 AI-generated outputs must:
 - Claim reasoning with direct links to evidence (filings, news).

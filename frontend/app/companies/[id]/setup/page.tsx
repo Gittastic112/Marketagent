@@ -1,3 +1,4 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 
@@ -20,7 +21,7 @@ function statusBadge(status: string) {
   };
   const color = colors[status] ?? "var(--text-secondary)";
   return (
-    <span className="badge" style={{ backgroundColor: `${color}18`, border: `1px solid ${color}40`, color }}>
+    <span className="badge" style={{ backgroundColor: "var(--surface-muted)", border: `1px solid ${color}`, color }}>
       {status.replaceAll("_", " ")}
     </span>
   );
@@ -66,10 +67,10 @@ export default async function CompanySetupPage(props: { params: Promise<{ id: st
           <p className="muted" style={{ marginTop: 0 }}>
             Create a setup checklist for identity, source readiness, filings, financial review, industry mapping, and valuation readiness.
           </p>
-          <form action={startCompanySetup}>
+          <RetainedActionForm label="Start company setup" action={startCompanySetup}>
             <input name="id" type="hidden" value={company.id} />
             <button type="submit">Start setup</button>
-          </form>
+          </RetainedActionForm>
         </Panel>
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) 360px", gap: "1.5rem", alignItems: "start" }}>
@@ -137,14 +138,14 @@ export default async function CompanySetupPage(props: { params: Promise<{ id: st
                 <div><dt className="muted">CIK</dt><dd style={{ margin: 0 }}>{company.cik ?? "-"}</dd></div>
                 <div><dt className="muted">ISIN</dt><dd style={{ margin: 0 }}>{company.isin ?? "-"}</dd></div>
               </dl>
-              <form action={confirmCompanySetupIdentity} style={{ marginTop: "1rem" }}>
+              <RetainedActionForm label="Confirm company setup identity" action={confirmCompanySetupIdentity} style={{ marginTop: "1rem" }}>
                 <input name="id" type="hidden" value={company.id} />
                 <button type="submit">Confirm identity</button>
-              </form>
+              </RetainedActionForm>
             </Panel>
 
             <Panel title="Update Setup">
-              <form action={updateCompanySetupStep} className="form-grid">
+              <RetainedActionForm label="Update company setup step" action={updateCompanySetupStep} className="form-grid">
                 <input name="id" type="hidden" value={company.id} />
                 <SelectField defaultValue={workflow.current_step} id="current_step" label="Current step" name="current_step">
                   <option value="identity">Identity</option>
@@ -179,7 +180,7 @@ export default async function CompanySetupPage(props: { params: Promise<{ id: st
                 <div className="button-row field-full">
                   <button type="submit">Save setup</button>
                 </div>
-              </form>
+              </RetainedActionForm>
             </Panel>
           </div>
         </div>

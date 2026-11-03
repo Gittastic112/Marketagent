@@ -14,7 +14,12 @@ from app.db.session import get_db
 from app.models import Company, ProcessingRun, Source
 from app.services.ingestion_pipeline import PostIngestionPipelineResult, run_post_ingestion_pipeline
 from app.services.macro_ingestion import ingest_fred_series
-from app.services.processing_runs import record_ingestion_run
+from app.services.processing_runs import (
+    complete_processing_run,
+    fail_processing_run,
+    record_ingestion_run,
+    start_processing_run,
+)
 from app.services.rss_ingestion import RssIngestionResult, ingest_rss_feed_url, ingest_rss_xml
 from app.services.sec_ingestion import (
     SecFilingMetadata,
@@ -260,30 +265,97 @@ def ingest_recent_sec_filings(
     )
 
 
-@router.post("/ingest/fred-series", response_model=ApiResponse[FredIngestionRead], status_code=status.HTTP_201_CREATED)
-def ingest_fred(payload: FredIngestionCreate, db: Session = Depends(get_db)) -> dict[str, Any]:
+@router.post(
+    "/ingest/fred-series",
+    response_model=ApiResponse[FredIngestionRead],
+    status_code=status.HTTP_201_CREATED,
+)
+def ingest_fred(
+    payload: FredIngestionCreate,
+    db: Session = Depends(get_db),
+    _current_user: dict = Depends(get_current_user),
+) -> ApiResponse[dict[str, Any]]:
     settings = get_settings()
     if not settings.fred_api_key:
-        raise HTTPException(status_code=400, detail="FRED API key not configured in environment.")
+        raise PublicApiError(
+            status_code=503,
+            code="FRED_API_KEY_MISSING",
+            message="FRED ingestion is not configured.",
+            provider="FRED",
+        )
 
+    run = start_processing_run(
+        db,
+        run_type="fred_ingestion",
+        source_type="macro",
+        metadata={"series_id": payload.series_id.strip().upper()},
+    )
     try:
         result = ingest_fred_series(db, payload.series_id, api_key=settings.fred_api_key)
-        return ApiResponse(data=result)
+        completed = complete_processing_run(
+            db,
+            run,
+            fetched_count=result.fetched_count,
+            created_count=result.created_count,
+            skipped_duplicate_count=result.skipped_duplicate_count,
+            error_count=result.error_count,
+            errors=result.errors,
+            metadata_patch={
+                "macro_series_id": result.macro_series_id,
+                "source_url": result.source_url,
+                "skipped_missing_count": result.skipped_missing_count,
+            },
+        )
+        return ApiResponse(
+            data={
+                "series_id": result.series_id,
+                "macro_series_id": result.macro_series_id,
+                "processing_run_id": completed.id,
+                "source_url": result.source_url,
+                "observations_fetched": result.fetched_count,
+                "observations_created": result.created_count,
+                "observations_skipped_duplicate": result.skipped_duplicate_count,
+                "observations_skipped_missing": result.skipped_missing_count,
+                "observations_rejected": result.error_count,
+            },
+            meta={
+                "source": "FRED",
+                "last_updated": completed.finished_at,
+                "warnings": list(result.errors),
+                "confidence": "high" if result.error_count == 0 else "medium",
+            },
+        )
     except ValueError as exc:
+        db.rollback()
+        failed = fail_processing_run(
+            db,
+            run,
+            error_type="invalid_request",
+            message="FRED rejected the series request or returned inconsistent metadata.",
+        )
         raise PublicApiError(
             status_code=422,
             code="FRED_SERIES_INVALID",
             message="The FRED series request is invalid.",
             field="series_id",
             provider="FRED",
+            processing_run_id=failed.id,
         ) from exc
     except RuntimeError as exc:
+        db.rollback()
+        failed = fail_processing_run(
+            db,
+            run,
+            error_type="provider_failure",
+            message="FRED did not complete the requested ingestion.",
+        )
         raise PublicApiError(
             status_code=502,
             code="FRED_INGESTION_FAILED",
             message="FRED ingestion failed.",
             retryable=True,
             provider="FRED",
+            processing_run_id=failed.id,
         ) from exc
 
 

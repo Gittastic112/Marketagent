@@ -9,10 +9,9 @@ from app.api.schemas import ApiResponse, CompanyMarketDataRead, MarketDataIngest
 from app.db.session import get_db
 from app.models.company import Company
 from app.models.market_price import CompanyMarketData, MarketPrice
-from app.models.processing_run import ProcessingRun
 from app.services.market_data.base import MarketDataProviderError
-from app.services.market_data.factory import get_market_data_provider
-from app.services.market_data.persistence import persist_history_point, persist_quote, request_for_company
+from app.services.market_data.ingestion import ingest_company_prices
+from app.api.dependencies import get_current_user
 
 router = APIRouter(prefix="/api/market", tags=["market"])
 
@@ -125,108 +124,30 @@ def get_market_history(ticker: str, range: str = "1y", db: Session = Depends(get
 
 
 @router.post("/ingest", response_model=ApiResponse[dict])
-async def ingest_market_data_for_identity(payload: MarketDataIngestionRequest, db: Session = Depends(get_db)):
-    company = _resolve_company_by_identity(
-        db,
-        market=payload.market,
-        ticker=payload.ticker,
-        exchange=payload.exchange,
-    )
-    return await _ingest_market_data_for_company(company=company, db=db, days=payload.days)
+async def ingest_market_data_for_identity(
+    payload: MarketDataIngestionRequest, db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    company = _resolve_company_by_identity(db, market=payload.market, ticker=payload.ticker, exchange=payload.exchange)
+    return await _ingest_market_data_for_company(company=company, db=db, days=payload.days, user_id=current_user["id"])
 
 
 @router.post("/ingest/{ticker}", response_model=ApiResponse[dict])
-async def ingest_market_data(ticker: str, db: Session = Depends(get_db)):
+async def ingest_market_data(
+    ticker: str, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user),
+):
     company = _resolve_company_by_legacy_ticker(db, ticker)
-    return await _ingest_market_data_for_company(company=company, db=db, days=365)
+    return await _ingest_market_data_for_company(company=company, db=db, days=365, user_id=current_user["id"])
 
 
-async def _ingest_market_data_for_company(company: Company, db: Session, days: int) -> ApiResponse[dict]:
+async def _ingest_market_data_for_company(*, company: Company, db: Session, days: int, user_id: str) -> ApiResponse[dict]:
     try:
-        provider = get_market_data_provider()
-        request = request_for_company(company)
+        result = await ingest_company_prices(db, company=company, days=days, user_id=user_id)
     except MarketDataProviderError as exc:
-        raise PublicApiError(
-            status_code=exc.status_code,
-            code=exc.code,
-            message=exc.message,
-            retryable=exc.retryable,
-            provider=exc.provider,
-        ) from exc
-
-    run = ProcessingRun(
-        run_type="market_data_ingestion",
-        source_type=provider.provider_name,
-        company_id=company.id,
-        started_at=datetime.now(timezone.utc),
-        status="running",
-        metadata_json={"provider": provider.provider_name, "days": days},
-    )
-    db.add(run)
-    db.commit()
-
-    try:
-        quote = await provider.get_quote(request)
-        history = await provider.get_historical_prices(request, days=days)
-
-        _, _, quote_created = persist_quote(db, company=company, quote=quote)
-        run.created_count += int(quote_created)
-        if not quote_created:
-            run.skipped_duplicate_count += 1
-
-        for price_record in history:
-            _, created = persist_history_point(db, company=company, point=price_record)
-            if created:
-                run.created_count += 1
-            else:
-                run.skipped_duplicate_count += 1
-
-        run.fetched_count = len(history) + 1
-        run.status = "completed"
-        run.finished_at = datetime.now(timezone.utc)
-        db.commit()
-        return ApiResponse(
-            data={
-                "status": "success",
-                "provider": provider.provider_name,
-                "fetched_count": run.fetched_count,
-                "created_count": run.created_count,
-                "skipped_duplicate_count": run.skipped_duplicate_count,
-                "processing_run_id": run.id,
-            }
-        )
-    except MarketDataProviderError as exc:
-        db.rollback()
-        run = db.get(ProcessingRun, run.id)
-        run.status = "failed"
-        run.error_count += 1
-        run.error_details_json = {"code": exc.code, "provider": exc.provider}
-        run.finished_at = datetime.now(timezone.utc)
-        db.commit()
-        raise PublicApiError(
-            status_code=exc.status_code,
-            code=exc.code,
-            message=exc.message,
-            retryable=exc.retryable,
-            provider=exc.provider,
-            processing_run_id=run.id,
-        ) from exc
-    except Exception as exc:
-        db.rollback()
-        run = db.get(ProcessingRun, run.id)
-        run.status = "failed"
-        run.error_count += 1
-        run.error_details_json = {
-            "code": "MARKET_DATA_INGESTION_FAILED",
-            "exception_type": type(exc).__name__,
-        }
-        run.finished_at = datetime.now(timezone.utc)
-        db.commit()
-        raise PublicApiError(
-            status_code=502,
-            code="MARKET_DATA_INGESTION_FAILED",
-            message="Market data ingestion failed.",
-            retryable=True,
-            provider=provider.provider_name,
-            processing_run_id=run.id,
-        ) from exc
+        raise PublicApiError(status_code=exc.status_code, code=exc.code, message=exc.message,
+            retryable=exc.retryable, provider=exc.provider, processing_run_id=exc.processing_run_id) from None
+    return ApiResponse(data={
+        "status": "success", "provider": result.provider, "fetched_count": result.fetched_count,
+        "created_count": result.created_count, "skipped_duplicate_count": result.skipped_duplicate_count,
+        "processing_run_id": result.processing_run_id,
+    })

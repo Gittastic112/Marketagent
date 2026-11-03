@@ -1,16 +1,19 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
+import { Suspense } from "react";
+import { CompanyResearchCards } from "@/components/company-research-cards";
 import { importSecFilings, lookupCompanyCik, addCompanyExposureTag, removeCompanyExposureTag, createExposureTag } from "@/app/actions";
-import { EmptyState, ErrorState, MockDataState, PageHeader, Panel } from "@/components/page";
+import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
 import { triggerEventClassification } from "@/app/actions";
 import { CompanyMarketHeader } from "@/components/company-market-header";
 import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
-import { StaleDataBanner, PartialDataNotice, ManualDataBadge } from "@/components/ui/data-states";
+import { ManualDataBadge } from "@/components/ui/data-states";
 import { summarizeApiMetas } from "@/lib/data-state-meta";
-import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialPeriod } from "@/lib/api";
-import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialStatementPeriod } from "@/lib/api";
+import { serverFetchApiResponse } from "@/lib/server-api";
 import { buildCompanyDetail } from "@/lib/company-detail";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
@@ -121,9 +124,13 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     const company = companies.find((item) => item.id === companyId);
 
     if (!company) {
+      if (companiesRes.errors.length || companiesRes.meta.status !== "success") {
+        return <><PageHeader eyebrow="Company" title="Company unavailable" />
+          <ErrorState message="Company records could not be loaded." errors={companiesRes.errors} /></>;
+      }
       return (
         <>
-          <PageHeader eyebrow="Company" title="Not found" />
+        <PageHeader eyebrow="Company" title="Not found" />
           <ErrorState message="No company exists for this ID." />
         </>
       );
@@ -134,8 +141,8 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
     if (company.currency) quoteParams.set("currency", company.currency);
     const [marketQuote, financialTrends] = await Promise.all([
-      serverFetchApi<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`).catch(() => null),
-      serverFetchApi<FinancialPeriod[]>(`/fundamentals/${encodeURIComponent(company.ticker)}/trends`).catch(() => [])
+      serverFetchApiResponse<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`),
+      serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`)
     ]);
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
@@ -167,8 +174,10 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     return (
       <>
         <DataHealthUpdater segment="" isStale={dataState.someStale || dataState.allStale} />
-        {dataState.someStale && <PartialDataNotice message="Some company panels are showing cached data because the backend is partially reachable." />}
-        {dataState.hasMock && <MockDataState message="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders." />}
+        <DataStateNotices
+          metas={[companiesRes.meta, documentsRes.meta, eventsRes.meta, alertsRes.meta, thesisNotesRes.meta, sourcesRes.meta, allExposureTagsRes.meta]}
+          mockMessage="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders."
+        />
         <header className="company-overview-header">
           <div className="company-overview-identity">
               <div className="company-meta-line">
@@ -183,7 +192,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 <span>{company.name}</span>
               </h1>
               <div className="company-market-row">
-                <CompanyMarketHeader data={marketQuote} />
+                <CompanyMarketHeader response={marketQuote} />
                 <SyncPriceButton companyId={company.id} market={company.market} />
               </div>
               <div className="company-badge-row">
@@ -198,15 +207,17 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           <a className="secondary-button company-memo-link" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download memo</a>
         </header>
 
+        <Suspense fallback={<p role="status">Loading business context…</p>}><CompanyResearchCards companyIds={[company.id]} /></Suspense>
+
         {/* Metric Cards */}
         <section className="metric-grid company-metric-grid">
           <div className="metric">
-            <div className="metric-label">Activity Score</div>
+            <div className="metric-label">Recorded activity</div>
             <div className="metric-value">{detail.counts.events + detail.counts.alerts}</div>
           </div>
           <div className="metric">
-            <div className="metric-label">Risk Status</div>
-            <div className="metric-value">{detail.counts.alerts > 0 ? "Elevated" : "Normal"}</div>
+            <div className="metric-label">Recorded alerts</div>
+            <div className="metric-value">{detail.counts.alerts}</div>
           </div>
           <div className="metric">
             <div className="metric-label">Documents</div>
@@ -246,45 +257,45 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                     {company.exposure_tags.map(tag => (
                       <span key={tag.id} className="badge" style={{ display: "inline-flex", alignItems: "center", gap: "0.25rem" }}>
                         {tag.name}
-                        <form action={removeCompanyExposureTag} style={{ display: "inline", marginLeft: "0.25rem" }}>
+                        <RetainedActionForm label="Remove company exposure tag" action={removeCompanyExposureTag} style={{ display: "inline", marginLeft: "0.25rem" }}>
                           <input type="hidden" name="company_id" value={company.id} />
                           <input type="hidden" name="tag_id" value={tag.id} />
-                          <button type="submit" style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--error)" }}>&times;</button>
-                        </form>
+                          <button type="submit" aria-label={`Remove ${tag.name} exposure tag`} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, color: "var(--error)" }}>&times;</button>
+                        </RetainedActionForm>
                       </span>
                     ))}
                   </div>
                 ) : (
                   <EmptyState label="No exposure factors linked." />
                 )}
-                <form action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
+                <RetainedActionForm label="Add company exposure tag" action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
                   <input type="hidden" name="company_id" value={company.id} />
-                  <select name="tag_id" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
+                  <select name="tag_id" aria-label="Exposure tag" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
                     <option value="" disabled>Add an exposure tag...</option>
                     {allExposureTags.filter(t => !company.exposure_tags?.some(ct => ct.id === t.id)).map(tag => (
                       <option key={tag.id} value={tag.id}>{tag.name}</option>
                     ))}
                   </select>
                   <button type="submit" style={{ fontSize: "0.85rem" }}>Add</button>
-                </form>
+                </RetainedActionForm>
               </div>
             </Panel>
 
-            <FinancialTrends trends={financialTrends} />
+            <FinancialTrends response={financialTrends} companyId={company.id} />
 
             <Panel title={company.market === "IN" ? "Filing Source" : "SEC Filing Picker"}>
               <div className="brief-list">
                 {company.market === "IN" ? (
                   <EmptyState label="India automated filing provider not configured. Add exchange filing links manually from the Documents page." />
                 ) : !company.cik ? (
-                  <form action={lookupCompanyCik} className="inline-form">
+                  <RetainedActionForm label="Lookup company cik" action={lookupCompanyCik} className="inline-form">
                     <input name="id" type="hidden" value={company.id} />
                     <div>
                       <strong>CIK is missing.</strong>
                       <p className="muted">Look up the company CIK before selecting SEC filings.</p>
                     </div>
                     <button className="secondary-button" type="submit">Look up CIK</button>
-                  </form>
+                  </RetainedActionForm>
                 ) : (
                   <>
                     <form className="form-grid" method="get">
@@ -314,7 +325,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                       secFilings.length === 0 ? (
                         <EmptyState label={`No ${formType} filings found for ${filingYear}.`} />
                       ) : (
-                        <form action={importSecFilings} className="form-grid">
+                        <RetainedActionForm label="Import sec filings" resetOnSuccess action={importSecFilings} className="form-grid">
                           <input name="company_id" type="hidden" value={company.id} />
                           <input name="form_type" type="hidden" value={formType} />
                           <input name="filing_year" type="hidden" value={filingYear} />
@@ -347,7 +358,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <div className="button-row">
                             <button type="submit">Import selected filing</button>
                           </div>
-                        </form>
+                        </RetainedActionForm>
                       )
                     ) : null}
                   </>
@@ -359,7 +370,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               {detail.documents.length === 0 ? (
                 <EmptyState label="No linked documents." />
               ) : (
-                <div className="table-wrap">
+                <div tabIndex={0} className="table-wrap">
                   <table>
                     <thead>
                       <tr>
@@ -408,7 +419,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <summary>Score details</summary>
                         <ScoreExplanationView explanation={event.score_explanation_json} />
                       </details>
-                      <form action={triggerEventClassification} className="company-event-action">
+                      <RetainedActionForm label="Trigger event classification" action={triggerEventClassification} className="company-event-action">
                         <input type="hidden" name="event_id" value={event.id} />
                         <input type="hidden" name="company_id" value={company.id} />
                         <label className="privacy-consent">
@@ -421,7 +432,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <span>{AI_DISCLOSURES.thesisImpact}</span>
                         </label>
                         <button type="submit" className="secondary-button">Propose impact</button>
-                      </form>
+                      </RetainedActionForm>
                     </article>
                   ))}
                 </div>
@@ -432,7 +443,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               {detail.alerts.length === 0 ? (
                 <EmptyState label="No active alerts." />
               ) : (
-                <div className="table-wrap">
+                <div tabIndex={0} className="table-wrap">
                   <table>
                     <thead>
                       <tr>

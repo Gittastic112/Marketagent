@@ -17,6 +17,28 @@ from app.models import (
 from helpers import response_data
 
 
+def test_reported_net_capex_does_not_request_gross_capex_backfill(db) -> None:
+    from app.services.accounting_normalization import (
+        FinancialReconciliationService, MetricNormalizationEngine, NormalizedSnapshotBackfillService,
+    )
+    from datetime import date
+
+    company = Company(ticker="NETCAPEX", name="Mock Data net-capex coverage", currency="USD")
+    db.add(company); db.flush()
+    period = FinancialStatementPeriod(company_id=company.id, period_type="annual", year=2025,
+        report_date=date(2025, 12, 31), currency="USD", currency_source="manual_entry", currency_confidence="high")
+    db.add(period); db.flush()
+    db.add_all([FinancialMetric(period_id=period.id, metric_name=code, value=value, unit="USD million")
+        for code, value in (("revenue", 100), ("net_capex", 20))])
+    db.commit()
+    snapshot = MetricNormalizationEngine.normalize_period(db, period.id)
+    assert {m.metric_code for m in snapshot.metrics} == {"revenue"}
+    coverage = NormalizedSnapshotBackfillService.summarize(db, company.id)
+    assert coverage["needs_backfill_count"] == 0
+    reconciliation = FinancialReconciliationService.reconcile(db, company.id)
+    assert reconciliation["missing_normalized_count"] == 0
+
+
 def test_extract_financial_candidates_from_filing_text(client, db) -> None:
     company = Company(
         ticker="ADANIPORTS",
@@ -588,14 +610,14 @@ def test_autofill_uses_promoted_financial_metrics_for_company_actuals(client, db
     assert response.status_code == 200
     draft = response_data(response)
     assumptions = draft["assumptions"]
-    assert assumptions["starting_revenue"] == 12345
-    assert assumptions["cash"] == 4000
-    assert assumptions["debt"] == 8250
-    assert assumptions["diluted_shares"] == 1200
+    assert assumptions["starting_revenue"] == 12_345_000_000
+    assert assumptions["cash"] == 4_000_000_000
+    assert assumptions["debt"] == 8_250_000_000
+    assert assumptions["diluted_shares"] == 1_200_000_000
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
-    assert draft["provenance"]["starting_revenue"]["label"] == "Legacy Metrics (FY2026)"
-    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Capped at risk_free_rate"
+    assert draft["provenance"]["starting_revenue"]["label"] == "Legacy Metrics (FY2026) (unit conversion)"
+    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 
 def test_promote_candidates_creates_normalized_snapshot_for_autofill(client, db) -> None:
@@ -665,14 +687,14 @@ def test_promote_candidates_creates_normalized_snapshot_for_autofill(client, db)
     assert normalized["revenue"].value == 12345
     assert normalized["ebit"].value == 2469
     assert normalized["net_debt"].value == 4250
-    assert normalized["nopat"].value == pytest.approx(1851.75)
+    assert "nopat" not in normalized  # No reported tax basis.
     assert normalized["cash"].value == 4000
     assert normalized["debt"].value == 8250
     assert normalized["diluted_shares"].value == 1200
     assert normalized["capex"].value == 900
     assert normalized["depreciation"].value == 300
     assert normalized["change_in_nwc"].value == 100
-    assert normalized["reinvestment"].value == 700
+    assert "reinvestment" not in normalized  # Acquisition coverage is missing.
     assert normalized["cash"].unit == "INR million"
     assert normalized["revenue"].provenance_notes
 
@@ -730,18 +752,18 @@ def test_autofill_prefers_latest_normalized_metrics_when_available(client, db) -
 
     draft = response_data(response)
     assumptions = draft["assumptions"]
-    assert assumptions["starting_revenue"] == 12345
-    assert assumptions["cash"] == 4000
-    assert assumptions["debt"] == 8250
-    assert assumptions["diluted_shares"] == 1200
-    assert assumptions["basic_shares"] == 1180
-    assert assumptions["minority_interests"] == 45
-    assert assumptions["preferred_stock"] == 12
-    assert assumptions["employee_options_value"] == 18
+    assert assumptions["starting_revenue"] == 12_345_000_000
+    assert assumptions["cash"] == 4_000_000_000
+    assert assumptions["debt"] == 8_250_000_000
+    assert assumptions["diluted_shares"] == 1_200_000_000
+    assert assumptions["basic_shares"] == 1_180_000_000
+    assert assumptions["minority_interests"] == 45_000_000
+    assert assumptions["preferred_stock"] == 12_000_000
+    assert assumptions["employee_options_value"] == 18_000_000
     assert assumptions["current_operating_margin"] == pytest.approx(0.20)
     assert "provenance" in draft
-    assert draft["provenance"]["starting_revenue"]["label"] == "Normalized Financials (FY2026)"
-    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Capped at risk_free_rate"
+    assert draft["provenance"]["starting_revenue"]["label"] == "Normalized Financials (FY2026) (unit conversion)"
+    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
 
 def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -> None:
     company = Company(
@@ -802,14 +824,18 @@ def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -
         for metric in db.query(NormalizedFinancialMetric).filter_by(snapshot_id=snapshot.id).all()
     }
 
-    # Check that warnings are generated for missing fields
-    assert "Missing current assets" in normalized["working_capital"].warnings
-    assert "Missing capex or D&A" in normalized["reinvestment"].warnings
-    assert "Pre-tax income missing" in normalized["effective_tax_rate"].warnings
-    assert "Missing invested capital" in normalized["invested_capital"].warnings
+    # Missing source inputs do not become numerical company facts.
+    assert not {
+        "working_capital", "reinvestment", "effective_tax_rate", "invested_capital",
+        "nopat", "fcff", "fcfe", "roic", "roe", "ebitda",
+    }.intersection(normalized)
+    assert normalized["revenue"].value == 12345
+    assert normalized["ebit"].value == 2469
 
 
 def test_promote_candidates_preserves_source_provenance_for_reported_and_derived_metrics(client, db) -> None:
+    from app.services.accounting_normalization import MetricNormalizationEngine
+
     company = Company(
         ticker="PROVENANCE",
         name="Promotion Provenance Co",
@@ -874,6 +900,47 @@ def test_promote_candidates_preserves_source_provenance_for_reported_and_derived
     assert normalized["effective_tax_rate"].value == pytest.approx(0.25)
     assert normalized["effective_tax_rate"].warnings is None
 
+    # A reviewed restatement has not been applied yet. It cannot relabel the
+    # current fact merely because its candidate happens to be returned last.
+    next_document = RawDocument(
+        company_id=company.id, source_id=source.id, document_type="annual_report",
+        title="FY2026 restatement", raw_text="Restated revenue 2,000",
+        content_hash="manual-filing:test-normalized-restatement",
+    )
+    db.add(next_document)
+    db.flush()
+    restatement = FinancialExtractionCandidate(
+        company_id=company.id, raw_document_id=next_document.id,
+        metric_code="revenue", reported_label="Revenue", value=2000,
+        unit="INR million", fiscal_year=2026, period_type="annual",
+        source_text="Restated revenue 2,000", extraction_method="restatement_source",
+        review_status="reviewed", confidence_label="high",
+        source_locator_json={"reviewed_basis": "Revised annual comparative.",
+                             "reviewed_limitations": ["Review comparability before growth calculations."]},
+    )
+    db.add(restatement)
+    db.commit()
+    MetricNormalizationEngine.normalize_period(db, snapshot.period_id)
+    current = db.query(NormalizedFinancialMetric).join(NormalizedFinancialSnapshot).filter(
+        NormalizedFinancialSnapshot.company_id == company.id,
+        NormalizedFinancialMetric.metric_code == "revenue",
+    ).one()
+    assert current.value == 1000
+    assert "Restated revenue" not in current.provenance_notes
+
+    assert response_data(client.post(
+        f"/api/companies/{company.id}/financial-statements/mark-reviewed"
+    ))["promoted_count"] == 1
+    current = db.query(NormalizedFinancialMetric).join(NormalizedFinancialSnapshot).filter(
+        NormalizedFinancialSnapshot.company_id == company.id,
+        NormalizedFinancialMetric.metric_code == "revenue",
+    ).one()
+    assert current.value == 2000
+    assert "restatement_source ('Restated revenue 2,000')" in current.provenance_notes
+    assert f"document {next_document.id}, candidate {restatement.id}" in current.provenance_notes
+    assert "Revised annual comparative." in current.provenance_notes
+    assert current.warnings == "Review comparability before growth calculations."
+
 
 def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client, db) -> None:
     company = Company(ticker="BACKFILL", name="Backfill Co", currency="INR")
@@ -897,7 +964,7 @@ def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client,
             FinancialMetric(period_id=period.id, metric_name="change_in_working_capital", value=10, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="acquisitions", value=5, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="basic_shares", value=50, unit="million shares"),
-            FinancialMetric(period_id=period.id, metric_name="lease_liabilities", value=40, unit="INR million"),
+            FinancialMetric(period_id=period.id, metric_name="operating_leases", value=40, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="minority_interests", value=8, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="preferred_stock", value=3, unit="INR million"),
             FinancialMetric(period_id=period.id, metric_name="employee_options_value", value=2, unit="INR million"),
@@ -955,6 +1022,7 @@ def test_normalized_snapshot_backfill_supports_dry_run_and_is_idempotent(client,
         "depreciation",
         "employee_options_value",
         "lease_liabilities",
+        "operating_leases",
         "minority_interests",
         "preferred_stock",
         "reinvestment",

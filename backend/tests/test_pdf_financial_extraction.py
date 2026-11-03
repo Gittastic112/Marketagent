@@ -11,6 +11,7 @@ from app.models import Company, DocumentAsset, FinancialExtractionCandidate, Pro
 from app.services.pdf_financial_extraction import (
     _consolidate_candidates,
     _statement_line_candidates,
+    _parse_pdf_financial_tables,
     parse_pdf_financial_tables,
     parse_pdf_page_ranges,
     validate_pdf_upload,
@@ -73,9 +74,9 @@ def test_parse_pdf_financial_tables_preserves_page_and_cell_geometry() -> None:
         for candidate in parsed.candidates
         if candidate.metric_code == "diluted_shares" and candidate.fiscal_year == 2026
     )
-    assert diluted_2026.unit == "shares"
-    assert diluted_2026.extraction_warnings is None
-    assert diluted_2026.confidence_label == "high"
+    assert diluted_2026.unit is None
+    assert diluted_2026.extraction_warnings == "reporting_unit_missing"
+    assert diluted_2026.confidence_label == "medium"
 
     presentation = parse_pdf_financial_tables(FIXTURE.read_bytes(), period_type="unknown")
     assert {candidate.period_type for candidate in presentation.candidates} == {"unknown"}
@@ -108,14 +109,16 @@ def test_targeted_pdf_scan_preserves_full_physical_page_count() -> None:
 
     with pdfplumber.open(BytesIO(FIXTURE.read_bytes())) as source_pdf:
         with patch("pdfplumber.open", return_value=TwoPagePdf(source_pdf.pages[0])):
-            parsed = parse_pdf_financial_tables(FIXTURE.read_bytes(), page_numbers=(2,))
+            # This unit stub targets the parser itself. Public calls exercise
+            # the isolated worker using the real PDF fixture above.
+            parsed = _parse_pdf_financial_tables(FIXTURE.read_bytes(), page_numbers=(2,))
 
     assert parsed.page_count == 2
     assert parsed.scanned_pages == (2,)
     assert parsed.raw_text.startswith("[Page 2]")
 
 
-def test_india_statement_rows_preserve_attribution_and_sum_debt_components() -> None:
+def test_india_statement_rows_preserve_attribution_and_separate_components() -> None:
     balance_sheet = """
 Consolidated Balance Sheet
 as at March 31, 2025
@@ -140,16 +143,9 @@ Lease Liabilities 15 254.56 71.20
     )
     candidates = _consolidate_candidates(rows)
 
-    debt_2025 = next(item for item in candidates if item.metric_code == "debt" and item.fiscal_year == 2025)
-    assert debt_2025.value == 45_810.03
-    assert debt_2025.source_locator_json["type"] == "pdf_reported_component_sum"
-    assert len(debt_2025.source_locator_json["components"]) == 2
-    assert debt_2025.extraction_warnings == "derived_sum_of_reported_components;review_required"
-
-    leases_2025 = next(
-        item for item in candidates if item.metric_code == "lease_liabilities" and item.fiscal_year == 2025
-    )
-    assert leases_2025.value == 5_644.17
+    assert {item.value for item in candidates if item.metric_code == "borrowings" and item.fiscal_year == 2025} == {35_830.68, 9_979.35}
+    assert {item.value for item in candidates if item.metric_code == "lease_liabilities" and item.fiscal_year == 2025} == {5_389.61, 254.56}
+    assert not any(item.source_locator_json["type"] == "pdf_reported_component_sum" for item in candidates)
     assert next(
         item for item in candidates if item.metric_code == "minority_interests" and item.fiscal_year == 2025
     ).value == 2_537.95
@@ -177,7 +173,7 @@ diluted EPS
         page=None,
     )
 
-    assert next(item for item in pnl_candidates if item.metric_code == "net_income").value == 11_061.26
+    assert next(item for item in pnl_candidates if item.metric_code == "group_profit").value == 11_061.26
     assert next(item for item in pnl_candidates if item.metric_code == "net_income_parent").value == 11_092.31
     assert next(item for item in pnl_candidates if item.metric_code == "net_income_nci").value == -31.05
     diluted = next(item for item in pnl_candidates if item.metric_code == "diluted_shares")
@@ -200,6 +196,20 @@ def test_validate_pdf_upload_sanitizes_filename_and_rejects_signature_spoof() ->
         assert "signature" in str(getattr(exc, "detail", "")).lower()
     else:
         raise AssertionError("A spoofed PDF signature must be rejected")
+
+
+def test_pdf_upload_without_publication_date_keeps_it_unknown(client, db) -> None:
+    company = _company(db)
+    response = client.post(
+        f"/api/companies/{company.id}/filings/pdf",
+        data={"document_type": "annual_report"},
+        files={"file": ("financial_statement_table.pdf", FIXTURE.read_bytes(), "application/pdf")},
+    )
+    assert response.status_code == 201
+    document = db.get(RawDocument, response_data(response)["raw_document_id"])
+    assert document.published_at is None
+    assert document.ingested_at is not None
+    assert document.raw_payload_json["publication_date_basis"] == "unknown"
 
 
 def test_pdf_upload_persists_asset_candidates_and_processing_run(client, db) -> None:

@@ -139,7 +139,7 @@ def test_post_sec_ingestion_can_download_filing_text(client: TestClient, monkeyp
         assert url == "https://www.sec.gov/example/msft-20260331.htm"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.providers.sec_provider.fetch_public_text", lambda url, **kwargs: fake_get(url, **kwargs).text)
 
     response = client.post(
         "/ingest/sec-filings",
@@ -240,7 +240,7 @@ def test_post_recent_sec_ingestion_fetches_by_company_cik(client: TestClient, mo
         assert url == "https://data.sec.gov/submissions/CIK0000789019.json"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.services.sec_ingestion.fetch_public_json", lambda url, **kwargs: fake_get(url, **kwargs).json())
 
     response = client.post("/ingest/sec-filings/recent", json={"source_id": 1, "company_id": 1})
 
@@ -275,7 +275,7 @@ def test_get_company_sec_filings_preview_filters_form_and_year(client: TestClien
         assert url == "https://data.sec.gov/submissions/CIK0000789019.json"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.services.sec_ingestion.fetch_public_json", lambda url, **kwargs: fake_get(url, **kwargs).json())
 
     response = client.get("/companies/1/sec-filings/preview?form_type=10-K&filing_year=2026")
 
@@ -304,7 +304,7 @@ def test_post_company_lookup_cik_updates_company(client: TestClient, monkeypatch
         assert url == "https://www.sec.gov/files/company_tickers.json"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.services.sec_ingestion.fetch_public_json", lambda url, **kwargs: fake_get(url, **kwargs).json())
     client.patch("/companies/1", json={"cik": None})
 
     response = client.post("/companies/1/lookup-cik")
@@ -325,7 +325,7 @@ def test_get_company_lookup_returns_sec_title_and_cik(client: TestClient, monkey
         assert url == "https://www.sec.gov/files/company_tickers.json"
         return FakeResponse()
 
-    monkeypatch.setattr("app.services.sec_ingestion.httpx.get", fake_get)
+    monkeypatch.setattr("app.services.sec_ingestion.fetch_public_json", lambda url, **kwargs: fake_get(url, **kwargs).json())
 
     response = client.get("/companies/lookup?ticker=AAPL")
 

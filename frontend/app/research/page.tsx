@@ -2,6 +2,7 @@ import Link from "next/link";
 import { PageHeader, Panel, ErrorState, EmptyState } from "@/components/page";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
+import { hasUsableData } from "@/lib/data-state-meta";
 import type { RawDocument, EventRecord, ThesisNote } from "@/lib/api";
 
 function formatDate(isoString: string) {
@@ -11,9 +12,9 @@ function formatDate(isoString: string) {
 export default async function ResearchPage() {
   try {
     const [documentsRes, eventsRes, thesisNotesRes] = await Promise.all([
-      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries").catch(() => ({ data: [], meta: null })),
-      serverFetchApiResponse<EventRecord[]>("/events").catch(() => ({ data: [], meta: null })),
-      serverFetchApiResponse<ThesisNote[]>("/thesis-notes").catch(() => ({ data: [], meta: null }))
+      serverFetchApiResponse<RawDocument[]>("/raw-documents/summaries"),
+      serverFetchApiResponse<EventRecord[]>("/events"),
+      serverFetchApiResponse<ThesisNote[]>("/thesis-notes")
     ]);
     const documents = documentsRes.data || [];
     const events = eventsRes.data || [];
@@ -42,7 +43,7 @@ export default async function ResearchPage() {
         <div className="metric-grid research-grid">
 
           <Panel title="Recent Source Documents">
-            {recentDocuments.length === 0 ? (
+            {!hasUsableData(documentsRes) ? <ErrorState message="Documents could not be loaded. Reload to retry." /> : recentDocuments.length === 0 ? (
               <EmptyState label="No documents ingested yet." />
             ) : (
               <div className="brief-list">
@@ -64,7 +65,7 @@ export default async function ResearchPage() {
           </Panel>
 
           <Panel title="Recent Extracted Events">
-            {recentEvents.length === 0 ? (
+            {!hasUsableData(eventsRes) ? <ErrorState message="Events could not be loaded. Reload to retry." /> : recentEvents.length === 0 ? (
               <EmptyState label="No events extracted yet." />
             ) : (
               <div className="brief-list">
@@ -85,7 +86,7 @@ export default async function ResearchPage() {
           </Panel>
 
           <Panel title="Active Thesis Notes">
-            {recentThesisNotes.length === 0 ? (
+            {!hasUsableData(thesisNotesRes) ? <ErrorState message="Thesis notes could not be loaded. Reload to retry." /> : recentThesisNotes.length === 0 ? (
               <EmptyState label="No thesis notes recorded." />
             ) : (
               <div className="brief-list">

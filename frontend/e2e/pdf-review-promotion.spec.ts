@@ -1,8 +1,11 @@
 import path from "node:path";
 
 import { expect, test } from "@playwright/test";
+import AxeBuilder from "@axe-core/playwright";
 
-import { backendData, createCompany, signIn } from "./helpers";
+import { backendData, createCompany, expandDraftSections, signIn } from "./helpers";
+import type { NormalizedSnapshotRead } from "../lib/api/financials";
+import type { ValuationSetupDraft } from "../lib/api/valuation-drafts";
 
 const PDF_FIXTURE = path.resolve(
   process.cwd(),
@@ -35,15 +38,41 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByLabel("Title", { exact: true }).fill("Mock Integration Financial Statements");
   await uploadPanel.getByLabel("Published date").fill("2026-05-31");
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
-  await expect(uploadPanel.getByRole("status")).toContainText("1 pages, 1 tables, 12 candidates");
+  await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
 
   await page.getByRole("link", { name: "Financials" }).click();
-  await expect(page.getByRole("heading", { name: "Extracted Financial Candidates" })).toBeVisible();
-  await expect(page.getByText("There are 12 extraction candidates")).toBeVisible();
+  const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
+  await expect(candidateHeading).toBeVisible();
+  const candidateReview = candidateHeading.locator("xpath=../../..");
+  await expect(page.getByRole("main").getByText("There are 12 extraction candidates")).toBeVisible();
+
+  const evidenceLink = candidateReview.getByRole("link", {name: "Open evidence"}).first();
+  await expect(evidenceLink).toHaveAttribute("href", /\/documents\/\d+\/financial-evidence\?candidate_id=\d+/);
+  const evidenceHref = await evidenceLink.getAttribute("href");
+  await page.goto(evidenceHref!);
+  await page.setViewportSize({width:390,height:844});
+  const sourceRegion = page.getByRole("region", {name:"Rendered source evidence",exact:true});
+  await expect(sourceRegion.getByRole("img")).toBeVisible();
+  await sourceRegion.getByRole("img").evaluate((element: HTMLImageElement) => element.decode());
+  await sourceRegion.scrollIntoViewIfNeeded();
+  for (let attempt = 0; attempt < 80; attempt++) {
+    if (await sourceRegion.evaluate(element => element === document.activeElement)) break;
+    await page.keyboard.press("Tab");
+  }
+  await expect(sourceRegion).toBeFocused();
+  expect(await sourceRegion.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => sourceRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const sourceAccessibility = await new AxeBuilder({page})
+    .withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]).analyze();
+  expect(sourceAccessibility.violations).toEqual([]);
+  await page.setViewportSize({width:1440,height:1000});
+  await page.getByRole("link", {name:"Back to fundamentals",exact:true}).click();
+  await expect(candidateHeading).toBeVisible();
 
   while (await page.getByRole("button", { name: "Accept" }).count()) {
     const acceptButtons = page.getByRole("button", { name: "Accept" });
-    const reviewedStatuses = page.getByText("reviewed", { exact: true });
+    const reviewedStatuses = page.getByRole("main").getByText("reviewed", { exact: true });
     const reviewedBefore = await reviewedStatuses.count();
     await acceptButtons.first().click();
     await expect(reviewedStatuses).toHaveCount(reviewedBefore + 1);
@@ -51,7 +80,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
 
   while (await page.getByRole("button", { name: "Add unit" }).count()) {
     const addUnitButtons = page.getByRole("button", { name: "Add unit" });
-    const overriddenStatuses = page.getByText("overridden", { exact: true });
+    const overriddenStatuses = page.getByRole("main").getByText("overridden", { exact: true });
     const overriddenBefore = await overriddenStatuses.count();
     await addUnitButtons.first().click();
     await page.getByLabel("Reporting unit").fill("million shares");
@@ -61,10 +90,34 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
 
   await expect(page.getByRole("heading", { name: "Review Required" })).toHaveCount(0);
   await page.getByRole("button", { name: "Promote Reviewed Candidates" }).click();
-  await expect(page.getByRole("status")).toContainText("Successfully promoted 12 candidates");
-  await expect(page.getByText("No extracted candidates yet")).toBeVisible();
-  await expect(page.getByText("2 of 2 periods normalized")).toBeVisible();
-  await expect(page.getByText(/exact matches, 0 mismatches/)).toBeVisible();
+  await expect(candidateReview.getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
+  await expect(candidateReview.getByText("No candidates awaiting review", { exact: false })).toBeVisible();
+  await expect(page.getByRole("region", { name: "Normalization Coverage" })).toContainText("2 of 2 periods normalized");
+  await expect(page.getByRole("region", { name: "Source Reconciliation" })).toContainText(/exact matches, 0 mismatches/);
+
+  await page.setViewportSize({width:390,height:844});
+  const normalizedRegion = page.getByRole("region", {name:"Normalized financial metrics",exact:true});
+  await normalizedRegion.scrollIntoViewIfNeeded();
+  for (let attempt = 0; attempt < 80; attempt++) {
+    if (await normalizedRegion.evaluate(element => element === document.activeElement)) break;
+    await page.keyboard.press("Tab");
+  }
+  await expect(normalizedRegion).toBeFocused();
+  expect(await normalizedRegion.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => normalizedRegion.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  const firstMetricDetails = normalizedRegion.locator("details").first();
+  await page.keyboard.press("Tab");
+  await expect(firstMetricDetails.locator("summary")).toBeFocused();
+  await page.keyboard.press("Space");
+  await expect(firstMetricDetails.locator("dl")).toBeVisible();
+  await expect(firstMetricDetails).toContainText("revenue");
+  await expect(firstMetricDetails).toContainText(/document \d+, candidate \d+, revision \d+/);
+  await expect(firstMetricDetails).not.toContainText("Current source revision unavailable");
+  const accessibility = await new AxeBuilder({page})
+    .withTags(["wcag2a","wcag2aa","wcag21a","wcag21aa","wcag22aa"]).analyze();
+  expect(accessibility.violations).toEqual([]);
+  await page.setViewportSize({width:1440,height:1000});
 
   const coverage = await backendData<{
     status: string;
@@ -77,4 +130,40 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   expect(coverage.status).toBe("complete");
   expect(coverage.normalized_period_count).toBe(2);
   expect(coverage.trust_ready_period_count).toBe(2);
+
+  const snapshots = await backendData<NormalizedSnapshotRead[]>(page,
+    `/api/companies/${company.id}/financial-statements/normalized`);
+  await page.goto(`/companies/${company.id}/valuation/draft`);
+  await expandDraftSections(page);
+  // The source retains INR millions; valuation inputs use full INR and shares.
+  await expect(page.locator("#starting_revenue:visible")).toHaveValue("1250000000");
+  await expect(page.locator("#diluted_shares:visible")).toHaveValue("102000000");
+  const revenueField = page.locator("#starting_revenue:visible").locator("xpath=..");
+  await expect(revenueField).toContainText("Normalized Financials");
+  await expect(revenueField).toContainText("FY2026");
+  await expect(revenueField).toContainText("INR");
+  await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();
+  const draft = await backendData<ValuationSetupDraft>(page, `/companies/${company.id}/valuation-drafts`, {method: "POST", data: {}});
+  const provenance = draft.provenance_json.starting_revenue;
+  expect(typeof provenance).toBe("object");
+  if (typeof provenance === "string") throw new Error("Expected structured financial provenance");
+  expect(provenance.source_table).toBe("normalized_financial_metrics");
+  const snapshot = snapshots.find(item => item.id === provenance.snapshot_id)!;
+  const source = snapshot.metrics.find(item => item.id === provenance.source_record_id)!;
+  expect(source.metric_code).toBe("revenue");
+  expect(source.value).toBe(1250);
+  expect(source.unit).toBe("INR million");
+  expect(provenance.original_value).toBe(source.value);
+  expect(provenance.unit).toBe(source.unit);
+  expect(provenance.input_unit).toBe("INR");
+  expect(provenance.unit_multiplier).toBe(1_000_000);
+  expect(provenance.unit_alignment_status).toBe("converted");
+  expect(provenance.claim_type).toBe("Calculation");
+  expect(draft.assumptions_json.starting_revenue).toBe(1_250_000_000);
+  expect(draft.assumptions_json.diluted_shares).toBe(102_000_000);
+  expect(provenance.period_id).toBe(snapshot.period_id);
+  expect(draft.source_metadata_json.reporting_currency).toBe("INR");
+  expect(draft.source_metadata_json.input_unit_policy).toBe("full_currency_and_shares_v1");
+  expect(draft.source_metadata_json.promotion_ready).toBe(false);
+  expect(await backendData<unknown[]>(page, `/companies/${company.id}/valuation-models`)).toHaveLength(0);
 });

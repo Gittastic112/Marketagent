@@ -1,12 +1,13 @@
 from dataclasses import dataclass
 
 from fastapi import FastAPI
-from fastapi.routing import APIRoute
+from fastapi.routing import APIRoute, iter_route_contexts
 
 
 BINARY_ROUTE_ALLOWLIST = frozenset(
     {
         ("GET", "/api/raw-documents/{raw_document_id}/asset/content"),
+        ("GET", "/brief-sources/{source_id}/pdf"),
         ("GET", "/api/raw-documents/{raw_document_id}/asset/pages/{page_number}.png"),
         ("GET", "/companies/{company_id}/memo"),
         ("GET", "/export/events"),
@@ -14,6 +15,7 @@ BINARY_ROUTE_ALLOWLIST = frozenset(
         ("GET", "/export/portfolio-holdings"),
         ("GET", "/export/portfolio-transactions"),
         ("GET", "/export/raw-documents"),
+        ("GET", "/portfolios/{portfolio_id}/evidence-bundle/template"),
     }
 )
 
@@ -31,8 +33,8 @@ def _is_api_response_model(response_model: object) -> bool:
 
 def build_response_contract_inventory(app: FastAPI) -> list[RouteResponseContract]:
     records: list[RouteResponseContract] = []
-    for route in app.routes:
-        if not isinstance(route, APIRoute):
+    for route in iter_route_contexts(app.routes):
+        if not isinstance(route.original_route, APIRoute):
             continue
         for method in sorted(route.methods or []):
             key = (method, route.path)

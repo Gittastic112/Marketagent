@@ -105,11 +105,11 @@ def test_reverse_dcf_solver():
         debt=0.0
     )
 
-    # Let's say we want to find the implied target margin to get exactly to $100 price, assuming 100 shares ($10,000 Equity Value)
+    # Use a reachable target and require actual convergence, not just a non-null result.
     implied_margin, _, _ = MarketImpliedAssumptionSolver.solve(
         assumption_set=assumption_set,
         target_parameter="target_operating_margin",
-        current_market_price=100.0,
+        current_market_price=25.0,
         diluted_shares=100.0
     )
 
@@ -119,11 +119,10 @@ def test_reverse_dcf_solver():
     # We can test that using this implied margin results in an intrinsic value very close to $100
     test_set = assumption_set
     test_set.target_operating_margin = implied_margin
-    test_set.current_market_price = 100.0
+    test_set.current_market_price = 25.0
     test_set.diluted_shares = 100.0
 
     from app.services.dcf import calculate_dcf
     output, _, _ = calculate_dcf(test_set)
     assert output.intrinsic_value_per_share is not None
-    # We remove the < 0.5 strict bound because non-linear DCF components (like real options)
-    # or iteration limits might yield a looser convergence.
+    assert abs(output.intrinsic_value_per_share - 25.0) <= 0.01

@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel, Field, model_validator
 
-from app.api.schemas import ApiMeta, ApiResponse
+from app.schemas.common import ApiMeta, ApiResponse
 from app.services.synthetic_rating_catalog import (
     SYNTHETIC_RATING_SOURCE,
     SyntheticRatingFirmType,

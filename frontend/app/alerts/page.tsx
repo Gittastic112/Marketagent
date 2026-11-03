@@ -1,3 +1,5 @@
+import { RetainedActionForm } from "@/components/retained-action-form";
+import { hasUsableData } from "@/lib/data-state-meta";
 import Link from "next/link";
 
 import { createAlert, deleteAlertWithState, generateAlerts, reviewAlert, updateAlert } from "@/app/actions";
@@ -78,19 +80,19 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
 
     return (
       <>
-        <PageHeader eyebrow="Review queue" title="Alerts" status={`${filteredAlerts.length} of ${alerts.length} alerts`} />
+        <PageHeader eyebrow="Review queue" title="Alerts" status={hasUsableData(alertsRes) ? `${filteredAlerts.length} of ${alerts.length} alerts` : "Alerts unavailable"} />
         <DataStateNotices
           metas={[alertsRes.meta, companiesRes.meta, eventsRes.meta]}
           mockMessage="One or more alert inputs are using mock data. Review those alerts as placeholders, not source-backed intelligence."
         />
         <Panel title="Generate Alerts">
-          <form action={generateAlerts} className="brief-list">
+          <RetainedActionForm label="Generate alerts" action={generateAlerts} className="brief-list">
             <div className="brief-item">
               <div className="button-row">
                 <button type="submit">Generate alerts</button>
               </div>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Filter Alerts">
           <div className="button-row" style={{ flexWrap: "wrap" }}>
@@ -118,7 +120,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
           </div>
         </Panel>
         <Panel title="Add Alert">
-          <form action={createAlert} className="form-grid">
+          <RetainedActionForm label="Create alert" resetOnSuccess action={createAlert} className="form-grid">
             <SelectField id="company_id" label="Company" name="company_id">
               <option value="">Unlinked</option>
               {companies.map((company) => (
@@ -152,10 +154,10 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
             <div className="button-row">
               <button type="submit">Add alert</button>
             </div>
-          </form>
+          </RetainedActionForm>
         </Panel>
         <Panel title="Alerts">
-          {filteredAlerts.length === 0 ? (
+          {!hasUsableData(alertsRes) ? <ErrorState message="Alerts could not be loaded. Reload to retry." /> : filteredAlerts.length === 0 ? (
             <EmptyState label="No alerts yet." />
           ) : (
             <div className="table-wrap">
@@ -191,14 +193,14 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                       <td>{alert.confidence_bucket}</td>
                       <td>{alert.portfolio_priority_score > 0 ? alert.portfolio_priority_score.toFixed(1) : "—"}</td>
                       <td>
-                        <form action={reviewAlert} className="inline-form">
+                        <RetainedActionForm label="Review alert" action={reviewAlert} className="inline-form">
                           <input name="id" type="hidden" value={alert.id} />
                           <SelectField defaultValue={alert.review_status} id={`quick-review-${alert.id}`} label="Review" name="review_status">
                             {reviewStatusOptions()}
                           </SelectField>
                           <TextAreaField defaultValue={alert.review_notes ?? ""} id={`quick-review-notes-${alert.id}`} label="Notes" name="review_notes" />
                           <button className="secondary-button" type="submit">Save review</button>
-                        </form>
+                        </RetainedActionForm>
                       </td>
                       <td>{formatReviewedAt(alert.reviewed_at)}</td>
                       <td>
@@ -211,7 +213,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                           </details>
                           <details className="edit-panel">
                             <summary>Edit</summary>
-                            <form action={updateAlert} className="inline-form">
+                            <RetainedActionForm label="Update alert" action={updateAlert} className="inline-form">
                               <input name="id" type="hidden" value={alert.id} />
                               <SelectField defaultValue={alert.company_id ?? ""} id={`alert-company-${alert.id}`} label="Company" name="company_id">
                                 <option value="">Unlinked</option>
@@ -246,7 +248,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                               <div className="button-row">
                                 <button className="secondary-button" type="submit">Save</button>
                               </div>
-                            </form>
+                            </RetainedActionForm>
                           </details>
                           <DeleteRecordForm action={deleteAlertWithState} recordId={alert.id} />
                         </div>

@@ -1,0 +1,982 @@
+{
+  "schema_version": "m05-source-review-register-v1",
+  "prepared_at": "2026-10-13T20:33:29.069875+00:00",
+  "status": "prepared_pending_review",
+  "complete_reference": false,
+  "summary": {
+    "reference_rows": 1417,
+    "preferred_reference_rows": 1174,
+    "arithmetic": {
+      "ties_exactly": 243,
+      "not_checked_missing_or_dash": 1,
+      "exception": 1
+    },
+    "comparative_revisions": 5,
+    "stored_candidates": {
+      "numeric_match_pending_review": 352,
+      "reference_not_selected_for_this_metric": 43,
+      "definition_difference": 3,
+      "source_dash_requires_review": 4
+    },
+    "isolated_pdf_candidates": {
+      "missing_or_wrong_unit": 16,
+      "wrong_reported_value": 36,
+      "scope_or_reference_unresolved": 42
+    },
+    "issuers": 10,
+    "securities": 11,
+    "target_issuer_years": 30,
+    "selected_annual_reports": 20,
+    "source_attempts": 42,
+    "source_attempt_statuses": {
+      "success": 36,
+      "failed": 6
+    },
+    "processing_run_ids": [
+      47,
+      48,
+      49,
+      50,
+      51,
+      52,
+      53,
+      54,
+      55,
+      56,
+      57,
+      58,
+      59,
+      60,
+      61,
+      62,
+      63,
+      64,
+      65,
+      66,
+      67,
+      68,
+      69,
+      70,
+      71,
+      72,
+      73,
+      74,
+      75,
+      76,
+      77,
+      78,
+      79,
+      80,
+      81,
+      82,
+      83,
+      84,
+      85,
+      86,
+      87,
+      88
+    ],
+    "human_approvals": 0,
+    "normal_candidate_versions_unchanged": true,
+    "financial_data_changed": false,
+    "processing_run_records_created": true,
+    "accepted_milestones": 2,
+    "acceptance_points": 20
+  },
+  "local_packet": "output/milestones/m05/review-batches-20261013/review-packet.html",
+  "source_reports": [
+    {
+      "id": "AAPL-2024-sec",
+      "ticker": "AAPL",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm",
+      "sha256": "147973a09b33b00f6f9ef5e53357aa8dc01415cb013f5269bd983d7970670476",
+      "byte_count": 1503898,
+      "finished_at": "2026-10-13T20:07:46.067202+00:00",
+      "processing_run_id": 77,
+      "local_path": "originals/AAPL-2024-sec.html"
+    },
+    {
+      "id": "AAPL-2025-sec",
+      "ticker": "AAPL",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+      "byte_count": 1520326,
+      "finished_at": "2026-10-13T20:07:45.369932+00:00",
+      "processing_run_id": 76,
+      "local_path": "originals/AAPL-2025-sec.html"
+    },
+    {
+      "id": "AMZN-2024-sec",
+      "ticker": "AMZN",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872425000004/amzn-20241231.htm",
+      "sha256": "e20c7637f54438c7d3cf34d04671c1c4282844177132d4aa53236271fa85900c",
+      "byte_count": 1922473,
+      "finished_at": "2026-10-13T20:07:48.441611+00:00",
+      "processing_run_id": 81,
+      "local_path": "originals/AMZN-2024-sec.html"
+    },
+    {
+      "id": "AMZN-2025-sec",
+      "ticker": "AMZN",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "byte_count": 1968460,
+      "finished_at": "2026-10-13T20:07:47.987611+00:00",
+      "processing_run_id": 80,
+      "local_path": "originals/AMZN-2025-sec.html"
+    },
+    {
+      "id": "BHARTIARTL-2025",
+      "ticker": "BHARTIARTL",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2024_25/Integrated_Report_and_Annual_Financial_Statements.pdf",
+      "sha256": "2f9e9614251a020d518804f761fd8662c94b2663b7e71bf60305171f2bf762d5",
+      "byte_count": 26040548,
+      "finished_at": "2026-10-13T20:06:37.298590+00:00",
+      "processing_run_id": 67,
+      "local_path": "originals/BHARTIARTL-2025.pdf"
+    },
+    {
+      "id": "BHARTIARTL-2026",
+      "ticker": "BHARTIARTL",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+      "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "byte_count": 20123126,
+      "finished_at": "2026-10-13T20:06:35.349328+00:00",
+      "processing_run_id": 66,
+      "local_path": "originals/BHARTIARTL-2026.pdf"
+    },
+    {
+      "id": "GOOG-2024-sec",
+      "ticker": "GOOG",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm",
+      "sha256": "461eafc9a47e4be5f97726b4124f87754c4d22c96e73092af6075367de907192",
+      "byte_count": 2528462,
+      "finished_at": "2026-10-13T20:07:47.382475+00:00",
+      "processing_run_id": 79,
+      "local_path": "originals/GOOG-2024-sec.html"
+    },
+    {
+      "id": "GOOG-2025-sec",
+      "ticker": "GOOG",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "byte_count": 2616617,
+      "finished_at": "2026-10-13T20:07:47.024256+00:00",
+      "processing_run_id": 78,
+      "local_path": "originals/GOOG-2025-sec.html"
+    },
+    {
+      "id": "HDFCBANK-2025",
+      "ticker": "HDFCBANK",
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf",
+      "sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+      "byte_count": 9438688,
+      "finished_at": "2026-10-13T20:06:31.375374+00:00",
+      "processing_run_id": 64,
+      "local_path": "originals/HDFCBANK-2025.pdf"
+    },
+    {
+      "id": "HDFCBANK-2026",
+      "ticker": "HDFCBANK",
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+      "sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+      "byte_count": 18608098,
+      "finished_at": "2026-10-13T20:06:28.887036+00:00",
+      "processing_run_id": 63,
+      "local_path": "originals/HDFCBANK-2026.pdf"
+    },
+    {
+      "id": "ICICIBANK-2025",
+      "ticker": "ICICIBANK",
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2025/icici-bank-2025-financial-statements.pdf",
+      "sha256": "774a4a2286824d7ab7b317ba9fe02659577362a121b831736f595773b1033077",
+      "byte_count": 1706427,
+      "finished_at": "2026-10-13T20:08:18.870196+00:00",
+      "processing_run_id": 83,
+      "local_path": "originals/ICICIBANK-2025.pdf"
+    },
+    {
+      "id": "ICICIBANK-2026",
+      "ticker": "ICICIBANK",
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+      "sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+      "byte_count": 1577252,
+      "finished_at": "2026-10-13T20:06:38.137187+00:00",
+      "processing_run_id": 68,
+      "local_path": "originals/ICICIBANK-2026.pdf"
+    },
+    {
+      "id": "MSFT-2025",
+      "ticker": "MSFT",
+      "url": "https://www.microsoft.com/investor/reports/ar25/index.html",
+      "sha256": "564154a15ac28c0f7f72f304ae26b74c29cfca9f3eafe8d59595776769d621ca",
+      "byte_count": 601259,
+      "finished_at": "2026-10-13T20:05:01.942171+00:00",
+      "processing_run_id": 48,
+      "local_path": "originals/MSFT-2025.html"
+    },
+    {
+      "id": "MSFT-2026-sec",
+      "ticker": "MSFT",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+      "byte_count": 8585619,
+      "finished_at": "2026-10-13T20:05:03.450283+00:00",
+      "processing_run_id": 49,
+      "local_path": "originals/MSFT-2026-sec.html"
+    },
+    {
+      "id": "NVDA-2025-sec",
+      "ticker": "NVDA",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000023/nvda-20250126.htm",
+      "sha256": "a2d2d68d1df0a7e784aff8dba23a501486a1e96a61bc1f074c097f862bdf115d",
+      "byte_count": 2067638,
+      "finished_at": "2026-10-13T20:09:08.816046+00:00",
+      "processing_run_id": 87,
+      "local_path": "originals/NVDA-2025-sec.html"
+    },
+    {
+      "id": "NVDA-2026-sec",
+      "ticker": "NVDA",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+      "byte_count": 1967934,
+      "finished_at": "2026-10-13T20:08:29.678918+00:00",
+      "processing_run_id": 86,
+      "local_path": "originals/NVDA-2026-sec.html"
+    },
+    {
+      "id": "RELIANCE-2025-retry",
+      "ticker": "RELIANCE",
+      "url": "https://www.ril.com/sites/default/files/2025-08/RIL-Integrated-Annual-Report-2024-25.pdf",
+      "sha256": "bb541a68a0440fd4e27527afbb79f9a0e7584ae430fe9af244700709cacc0769",
+      "byte_count": 11762229,
+      "finished_at": "2026-10-13T20:09:09.720044+00:00",
+      "processing_run_id": 88,
+      "local_path": "originals/RELIANCE-2025-retry.pdf"
+    },
+    {
+      "id": "RELIANCE-2026-direct",
+      "ticker": "RELIANCE",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "byte_count": 9681400,
+      "finished_at": "2026-10-13T20:06:24.494742+00:00",
+      "processing_run_id": 61,
+      "local_path": "originals/RELIANCE-2026-direct.pdf"
+    },
+    {
+      "id": "SBIN-2025",
+      "ticker": "SBIN",
+      "url": "https://sbi.bank.in/documents/17826/35696/Annual+Report+FY2025.pdf/1b6a1b79-a16d-b9d1-d28f-be8d7edf60d5?t=1745556744202",
+      "sha256": "a096ad285fef718364b005feff39c38c75e9da3f81c42f800eecbf189a9d9330",
+      "byte_count": 16034561,
+      "finished_at": "2026-10-13T20:08:28.876655+00:00",
+      "processing_run_id": 84,
+      "local_path": "originals/SBIN-2025.pdf"
+    },
+    {
+      "id": "SBIN-2026",
+      "ticker": "SBIN",
+      "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+      "sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+      "byte_count": 19078288,
+      "finished_at": "2026-10-13T20:06:47.950027+00:00",
+      "processing_run_id": 73,
+      "local_path": "originals/SBIN-2026.pdf"
+    }
+  ],
+  "batches": [
+    {
+      "batch_id": "M05-AAPL",
+      "issuer": "AAPL",
+      "securities": [
+        "AAPL"
+      ],
+      "target_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 150,
+      "preferred_rows": 132,
+      "review_decisions": [
+        {
+          "id": "M05-AAPL-01",
+          "title": "Cash definition",
+          "finding": "FY2023 cash-flow closing cash includes restricted cash and exceeds balance-sheet cash by $772 million. Preserve both definitions; review the cash available for valuation.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AAPL-2025-sec:t27",
+            "AAPL-2024-sec:t25"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AAPL-02",
+          "title": "Debt and leases",
+          "finding": "Term debt carrying amount, commercial paper, operating leases and finance leases are separate components. Do not mix face value, carrying value and undiscounted commitments.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AAPL-2025-sec:t43",
+            "AAPL-2025-sec:t40",
+            "AAPL-2024-sec:t45"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AAPL-03",
+          "title": "Shares and payout",
+          "finding": "Shares in the statements are thousands; money is USD millions. Dividends include dividend equivalents. Weighted-average EPS denominators are not automatically shares outstanding on a valuation date.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AAPL-2025-sec:t23",
+            "AAPL-2025-sec:t27"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AAPL-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-MSFT",
+      "issuer": "MSFT",
+      "securities": [
+        "MSFT"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 158,
+      "preferred_rows": 139,
+      "review_decisions": [
+        {
+          "id": "M05-MSFT-01",
+          "title": "Cash investment scope",
+          "finding": "Cash, short-term investments and operating cash needs remain separate. Marketable investments are not automatically excess cash.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "MSFT-2026-sec:t27"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-MSFT-02",
+          "title": "Lease and capital spending scope",
+          "finding": "Operating and finance lease liabilities are separately identified. Cash additions to PPE do not include every non-cash finance-lease addition. Debt carrying amount excludes separately presented leases.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "MSFT-2026-sec:t65",
+            "MSFT-2026-sec:t52",
+            "MSFT-2026-sec:t28"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-MSFT-03",
+          "title": "Depreciation definition",
+          "finding": "The cash-flow adjustment says depreciation, amortization and other. Do not use the whole adjustment as pure depreciation without note review.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "MSFT-2026-sec:t28"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-MSFT-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-RELIANCE",
+      "issuer": "RELIANCE",
+      "securities": [
+        "RELIANCE"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 164,
+      "preferred_rows": 123,
+      "review_decisions": [
+        {
+          "id": "M05-RELIANCE-01",
+          "title": "Revenue and profit basis",
+          "finding": "Revenue excludes recovered GST. Parent profit is separated from total group profit and non-controlling interests. Monetary statements use INR crores.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "RELIANCE-2026-direct:p101"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-RELIANCE-02",
+          "title": "Financing scope",
+          "finding": "Borrowings, leases and deferred-payment liabilities are separate. Spectrum obligations, supplier financing, cross-holdings and cash restrictions still need a model-specific bridge.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "RELIANCE-2026-direct:p100",
+            "RELIANCE-2026-direct:p103"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-RELIANCE-03",
+          "title": "Bonus shares and segments",
+          "finding": "FY2024 comparative EPS/share denominators in the FY2025 report reflect the October 2024 1:1 bonus basis. Confirm the same basis across the three years. The diversified business needs an explicit segment mix; no industry weights are invented.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "RELIANCE-2025-retry:p120",
+            "RELIANCE-2026-direct:p118"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-RELIANCE-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-HDFCBANK",
+      "issuer": "HDFCBANK",
+      "securities": [
+        "HDFCBANK"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 116,
+      "preferred_rows": 87,
+      "review_decisions": [
+        {
+          "id": "M05-HDFCBANK-01",
+          "title": "Bonus-share restatement",
+          "finding": "The FY2026 report restates FY2025 for the August 2025 1:1 bonus. FY2025 diluted EPS is 46.20 in the later report versus 92.39 previously; the denominator doubles. FY2024 values from the older report still need an explicitly calculated common bonus basis.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "HDFCBANK-2026:p546",
+            "HDFCBANK-2025:p515"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-HDFCBANK-02",
+          "title": "Merger comparability",
+          "finding": "FY2024 includes HDFC Limited only from the July 2023 merger date. Do not interpret annual growth as a like-for-like operating comparison without a bridge.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "HDFCBANK-2025:p478"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-HDFCBANK-03",
+          "title": "Bank equity and capital",
+          "finding": "Deposits and bank borrowings remain distinct. Consolidated equity includes non-controlling interests, employee awards and insurance policyholder balances. Review standalone/group capital, CET1, risk-weighted assets and payout before selecting a bank-equity model.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "HDFCBANK-2026:p471",
+            "HDFCBANK-2026:p472"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-HDFCBANK-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-NVDA",
+      "issuer": "NVDA",
+      "securities": [
+        "NVDA"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 128,
+      "preferred_rows": 117,
+      "review_decisions": [
+        {
+          "id": "M05-NVDA-01",
+          "title": "Stock-split basis",
+          "finding": "The latest three-year weighted-average share denominators use the post-split basis. Confirm any historical price and year-end share bridge uses the same basis.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "NVDA-2026-sec:t21"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-NVDA-02",
+          "title": "Capital spending definition",
+          "finding": "The cash-flow purchase row combines property/equipment and intangible assets. Do not use it as a narrower PPE-only fact.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "NVDA-2026-sec:t25"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-NVDA-03",
+          "title": "Debt and cash choices",
+          "finding": "A dash remains unapproved rather than an assumed zero. Current debt, noncurrent debt, marketable investments and leases need an explicit valuation bridge.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "NVDA-2026-sec:t23",
+            "NVDA-2026-sec:t58"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-NVDA-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-GOOG",
+      "issuer": "GOOG",
+      "securities": [
+        "GOOG",
+        "GOOGL"
+      ],
+      "target_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 175,
+      "preferred_rows": 156,
+      "review_decisions": [
+        {
+          "id": "M05-GOOG-01",
+          "title": "Issuer versus share class",
+          "finding": "GOOG Class C and GOOGL Class A share the issuer statements. Class A diluted EPS assumes Class B conversion. Do not sum class diluted denominators or automatically apply issuer shares to a class-specific price.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "GOOG-2025-sec:t146",
+            "GOOG-2025-sec:t148",
+            "GOOG-2025-sec:t150"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-GOOG-02",
+          "title": "Lease rounding or presentation difference",
+          "finding": "FY2025 total operating lease liabilities are $15,954 million; the selected current and noncurrent components sum to $15,953 million. Preserve the $1 million difference for review; no exact tie is claimed.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "GOOG-2025-sec:t123",
+            "GOOG-2025-sec:t78"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-GOOG-03",
+          "title": "Notes versus total borrowing",
+          "finding": "Long-term notes, other borrowings and finance leases have separate scopes. Note maturities alone do not certify all current borrowing. Depreciation in the selected cash-flow row is PPE depreciation only.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "GOOG-2025-sec:t128",
+            "GOOG-2025-sec:t123",
+            "GOOG-2025-sec:t86"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-GOOG-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-AMZN",
+      "issuer": "AMZN",
+      "securities": [
+        "AMZN"
+      ],
+      "target_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 148,
+      "preferred_rows": 135,
+      "review_decisions": [
+        {
+          "id": "M05-AMZN-01",
+          "title": "Face value versus carrying value",
+          "finding": "Stored total-debt candidates match face value. The prepared carrying-value bridge subtracts discount and issuance costs: differences are $374m, $360m and $440m for FY2023, FY2024 and FY2025. Select and document a consistent model basis; this is not an automatic correction of an invalid source number.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AMZN-2024-sec:t58",
+            "AMZN-2025-sec:t57"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AMZN-02",
+          "title": "Cash restrictions",
+          "finding": "Cash-flow closing cash includes restricted cash, unlike balance-sheet cash. The differences are $503m, $3,533m and $3,296m for FY2023–FY2025. Review liquidity availability before using cash in an equity bridge.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AMZN-2025-sec:t35",
+            "AMZN-2025-sec:t38",
+            "AMZN-2024-sec:t40"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AMZN-03",
+          "title": "Capital spending and leases",
+          "finding": "Keep gross cash PPE purchases, incentives, finance-lease additions, financing obligations and both lease types distinct. The broad cash-flow depreciation adjustment includes content and operating lease assets.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "AMZN-2025-sec:t35",
+            "AMZN-2025-sec:t52",
+            "AMZN-2025-sec:t53"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-AMZN-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-BHARTIARTL",
+      "issuer": "BHARTIARTL",
+      "securities": [
+        "BHARTIARTL"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 142,
+      "preferred_rows": 108,
+      "review_decisions": [
+        {
+          "id": "M05-BHARTIARTL-01",
+          "title": "Cash that is unavailable to the group",
+          "finding": "Cash-flow cash includes mobile-money trust balances and overdrafts. The trust balances are held for mobile customers and are unavailable to the group. FY2025 bridges exactly; FY2026 escrow is a dash and remains an explicit interpretation decision.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "BHARTIARTL-2026:p238",
+            "BHARTIARTL-2026:p214",
+            "BHARTIARTL-2026:p216"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-BHARTIARTL-02",
+          "title": "Profit and exceptional items",
+          "finding": "Parent profit differs from group profit. FY2025 has a net exceptional gain and FY2026 a net expense; acquisition/tax effects must be reviewed before normalizing margins or growth.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "BHARTIARTL-2026:p214"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-BHARTIARTL-03",
+          "title": "Units and share changes",
+          "finding": "Statements use INR millions; EPS denominator notes use shares in thousands. Partly-paid shares and their conversion require a separate dilution and share-class review.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "BHARTIARTL-2026:p249",
+            "BHARTIARTL-2026:p238"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-BHARTIARTL-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-ICICIBANK",
+      "issuer": "ICICIBANK",
+      "securities": [
+        "ICICIBANK"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 128,
+      "preferred_rows": 96,
+      "review_decisions": [
+        {
+          "id": "M05-ICICIBANK-01",
+          "title": "Mixed presentation scales",
+          "finding": "The primary statements use INR thousands, while EPS supporting amounts use millions and denominators use actual shares. Retain the unit at each source row.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "ICICIBANK-2026:p137",
+            "ICICIBANK-2026:p138",
+            "ICICIBANK-2026:p172"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-ICICIBANK-02",
+          "title": "Diluted EPS numerator",
+          "finding": "Subsidiary/associate option dilution changes the diluted earnings numerator. Parent profit divided by diluted shares alone does not reproduce the reported diluted EPS basis.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "ICICIBANK-2026:p172",
+            "ICICIBANK-2025:p162"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-ICICIBANK-03",
+          "title": "Bank capital and payout",
+          "finding": "Use the NSE ordinary shares, not ADRs. Review standalone/group CET1, risk-weighted assets, equity/NCI and sustainable payout. Deposits are not industrial FCFF debt.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "ICICIBANK-2026:p137",
+            "ICICIBANK-2026:p138"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-ICICIBANK-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    },
+    {
+      "batch_id": "M05-SBIN",
+      "issuer": "SBIN",
+      "securities": [
+        "SBIN"
+      ],
+      "target_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "prepared_pending_human_review",
+      "reference_rows": 108,
+      "preferred_rows": 81,
+      "review_decisions": [
+        {
+          "id": "M05-SBIN-01",
+          "title": "Revised comparative presentation",
+          "finding": "FY2025 interest earned decreases and other income increases by INR 625.0862 crore in the FY2026 comparative; total income is unchanged. A general regrouping note is present, but the exact reason for this offset is not confirmed.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "SBIN-2026:p313",
+            "SBIN-2025:p267",
+            "SBIN-2026:p358"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-SBIN-02",
+          "title": "Number grouping and bank scope",
+          "finding": "The statements show thousands omitted with unusual comma grouping. Preserve the entire numeric token. Cash/RBI balances, balances with banks, deposits and borrowings are distinct.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "SBIN-2026:p304",
+            "SBIN-2026:p313"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-SBIN-03",
+          "title": "Capital, shares and payout",
+          "finding": "Review reported share denominators alongside issuance dates, capital adequacy, risk-weighted assets, group interests and payout. Consolidated figures alone do not establish a usable bank-equity valuation basis.",
+          "basis": "Agent source comparison; human review pending",
+          "source_locator_hints": [
+            "SBIN-2026:p354",
+            "SBIN-2026:p304"
+          ],
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        },
+        {
+          "id": "M05-SBIN-04",
+          "title": "Industry, country and model basis",
+          "finding": "Industry mapping, weights and appropriate benchmark versions are not confirmed. Statements retain native reporting currency. USD portfolio reporting does not convert INR company statements into USD valuation inputs.",
+          "decision": null,
+          "reason": null,
+          "reviewer": null,
+          "reviewed_at": null
+        }
+      ]
+    }
+  ],
+  "boundaries": [
+    "Local public-report acquisition is audited; no financial values were imported, approved, corrected or promoted.",
+    "Reference selections are agent-prepared and incomplete; they are not a reviewed accuracy benchmark.",
+    "The isolated PDF parser has unresolved real-source layout, unit and accounting-scope failures.",
+    "Normal candidate version recheck covers 402 exported rows, not an all-table database fingerprint.",
+    "Mac settings and off-device recovery remain deferred by the user.",
+    "M05 stays open; no additional milestone is accepted."
+  ]
+}

@@ -20,7 +20,7 @@ def test_industry_mapping_autofill_provenance(client, db) -> None:
     draft = response_data(response)
     assert "provenance" in draft
     assert draft["provenance"]["scenario"]["label"] == "Structural Default"
-    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Capped at risk_free_rate"
+    assert draft["provenance"]["terminal_growth_rate"]["label"] == "Missing risk_free_rate"
     assert draft["source_metadata"]["promotion_ready"] is False
     assert "starting_revenue" in draft["source_metadata"]["placeholder_fields"]
     assert draft["assumptions"]["starting_revenue"] == 0.0

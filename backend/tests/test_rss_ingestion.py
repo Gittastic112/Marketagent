@@ -151,7 +151,8 @@ def test_ingest_rss_xml_does_not_link_ambiguous_company_match() -> None:
     assert document.company_id is None
 
 
-def test_ingest_rss_feed_url_uses_mocked_fetcher_and_reports_errors() -> None:
+def test_ingest_rss_feed_url_uses_mocked_fetcher_and_reports_errors(monkeypatch) -> None:
+    monkeypatch.setattr("socket.getaddrinfo", lambda *_a, **_k: [(2, 1, 6, "", ("93.184.216.34", 443))])
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 

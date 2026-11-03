@@ -114,7 +114,7 @@ export default async function FinancialEvidencePage({ params, searchParams }: Pa
             </Link>
           </aside>
 
-          <section className="financial-evidence-stage" aria-label="Rendered source evidence">
+          <section tabIndex={0} className="financial-evidence-stage" aria-label="Rendered source evidence">
             {geometry && pageImageHref ? (
               <div
                 className="financial-evidence-page"

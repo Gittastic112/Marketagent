@@ -31,7 +31,8 @@ def test_snapshot_capture_is_idempotent_and_records_completeness(db):
     second = record_daily_snapshot(db, portfolio.id, date(2026, 8, 9))
 
     assert first.id == second.id
-    assert second.calculation_status == "complete"
+    assert second.calculation_status == "partial"
+    assert second.payload_json["replay_basis"]["blockers"] == ["NO_RECORDED_ACTIVITY"]
     assert second.holdings_count == 1
     assert second.priced_holdings_count == 1
     assert second.total_portfolio_value == 24
