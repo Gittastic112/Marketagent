@@ -2,8 +2,8 @@ FROM python:3.14-slim@sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6
 
 # Keep OS security fixes reproducible. Advance the snapshot with an audited rebuild.
 RUN sed -i 's|http://deb.debian.org/debian-security|https://snapshot.debian.org/archive/debian-security/20261028T000000Z|;s|http://deb.debian.org/debian|https://snapshot.debian.org/archive/debian/20261028T000000Z|' /etc/apt/sources.list.d/debian.sources \
-    && apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 update \
-    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
+    && apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 upgrade -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -42,8 +42,8 @@ FROM test AS tools
 
 USER root
 # Repository/recovery checks need Git and shasum, not application runtime code.
-RUN apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false update \
-    && apt-get install -y --no-install-recommends git perl \
+RUN apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update \
+    && apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends git perl \
     && rm -rf /var/lib/apt/lists/*
 USER appuser
 

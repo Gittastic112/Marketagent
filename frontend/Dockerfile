@@ -2,9 +2,9 @@ FROM node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd
 
 # Same dated OS update policy as the backend; retain Debian signature checking.
 RUN sed -i 's|http://deb.debian.org/debian-security|http://snapshot.debian.org/archive/debian-security/20261028T000000Z|;s|http://deb.debian.org/debian|http://snapshot.debian.org/archive/debian/20261028T000000Z|' /etc/apt/sources.list.d/debian.sources \
-    && apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 update \
-    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
-    && apt-get install -y --no-install-recommends ca-certificates \
+    && apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update \
+    && DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 upgrade -y --no-install-recommends \
+    && apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 install -y --no-install-recommends ca-certificates \
     && sed -i 's|http://snapshot.debian.org|https://snapshot.debian.org|' /etc/apt/sources.list.d/debian.sources \
     && rm -rf /var/lib/apt/lists/*
 
