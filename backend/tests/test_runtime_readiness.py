@@ -47,6 +47,8 @@ def test_runtime_readiness_reports_migration_and_schema_gaps_without_exception_t
     assert report["schema_status"] == "blocked"
     assert report["current_migration_heads"] == ["old-head"]
     assert "daily_brief_schedules" in report["missing_tables"]
+    assert "ai_consent_decisions" in report["missing_tables"]
+    assert "ai_outputs" in report["missing_tables"]
     assert "daily_briefs.reviewed_at" in report["missing_columns"]
     assert (
         "peer_valuation_sets.uq_peer_valuation_sets_owner_company_import_sha256"

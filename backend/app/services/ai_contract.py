@@ -10,6 +10,7 @@ from app.models.ai import AiOutput
 from app.providers.ai_provider import DEFAULT_GEMINI_MODEL, GeminiAIProvider
 from app.providers.base import AIProviderResult, BaseAIProvider
 from app.providers.mock_provider import MockAIProvider
+from app.services.ai_consent import ConsentPolicyError, authorize_external_call, disclosure_version
 
 
 logger = logging.getLogger(__name__)
@@ -83,10 +84,7 @@ def select_ai_provider() -> BaseAIProvider:
 
 
 def require_privacy_disclosure(version: str | None) -> None:
-    expected = os.environ.get(
-        "AI_PRIVACY_DISCLOSURE_VERSION",
-        DEFAULT_PRIVACY_DISCLOSURE_VERSION,
-    )
+    expected = disclosure_version()
     if version != expected:
         raise AIPrivacyDisclosureRequired()
 
@@ -103,6 +101,22 @@ class AIProvenance:
     source_scope: str = "unspecified"
     external_data_classes: tuple[str, ...] = ()
     valuation_basis: dict | None = None
+    action_key: str | None = None
+    privacy_disclosure_version: str | None = None
+
+
+def require_provider_consent(db: Session, *, provider: BaseAIProvider, provenance: AIProvenance) -> int | None:
+    # Exempt the actual local implementation, never a provider claiming the name "mock".
+    if isinstance(provider, MockAIProvider):
+        return None
+    try:
+        decision = authorize_external_call(db, user_id=provenance.user_id,
+            provider_name=provider.provider_name, action_key=provenance.action_key,
+            acknowledgement=provenance.privacy_disclosure_version, data_classes=provenance.external_data_classes)
+    except ConsentPolicyError as exc:
+        raise AIExecutionError(code=exc.code, message=exc.message, status_code=exc.status_code,
+            retryable=False, provider_name=provider.provider_name) from exc
+    return decision.id
 
 
 def persist_ai_output(
@@ -118,6 +132,7 @@ def persist_ai_output(
     execution_status: str = "success",
     failure_code: str | None = None,
     transmission_scope: str | None = None,
+    consent_decision_id: int | None = None,
 ) -> AiOutput:
     output = AiOutput(
         user_id=provenance.user_id,
@@ -131,10 +146,8 @@ def persist_ai_output(
         input_hash=sha256_text(provenance.input_text),
         source_ids_json=list(provenance.source_ids),
         source_scope=provenance.source_scope,
-        privacy_disclosure_version=os.environ.get(
-            "AI_PRIVACY_DISCLOSURE_VERSION",
-            DEFAULT_PRIVACY_DISCLOSURE_VERSION,
-        ),
+        privacy_disclosure_version=provenance.privacy_disclosure_version or disclosure_version(),
+        consent_decision_id=consent_decision_id,
         external_data_classes_json=list(provenance.external_data_classes),
         transmission_scope=transmission_scope or ("none" if is_mock else "external_provider"),
         execution_status=execution_status,
@@ -177,6 +190,15 @@ def execute_ai_generation(
         raise
 
     try:
+        consent_decision_id = require_provider_consent(db, provider=selected_provider, provenance=provenance)
+    except AIExecutionError as exc:
+        persist_ai_output(db, provenance=provenance, provider_name=selected_provider.provider_name,
+            model_name="not_requested", is_mock=False, output_text="", limitations=exc.message,
+            confidence_label="none", execution_status="failed", failure_code=exc.code,
+            transmission_scope="none")
+        raise
+
+    try:
         result = generate(selected_provider)
     except Exception as exc:
         provider_name = selected_provider.provider_name
@@ -198,6 +220,7 @@ def execute_ai_generation(
             execution_status="failed",
             failure_code=error.code,
             transmission_scope="none" if is_mock else "external_provider",
+            consent_decision_id=consent_decision_id,
         )
         raise error from exc
 
@@ -211,4 +234,5 @@ def execute_ai_generation(
         output_text=result.output_text,
         limitations=result.limitations,
         confidence_label=result.confidence_label,
+        consent_decision_id=consent_decision_id,
     )

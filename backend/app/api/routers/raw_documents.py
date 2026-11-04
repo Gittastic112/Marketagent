@@ -205,6 +205,7 @@ def create_raw_document_ai_summary(
             db,
             document,
             user_id=current_user["id"],
+            privacy_disclosure_version=acknowledgement.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc

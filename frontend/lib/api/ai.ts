@@ -22,6 +22,7 @@ export type AiOutput = {
   citation_validation_status: string;
   evaluation_json: Record<string, unknown> | null;
   privacy_disclosure_version: string;
+  consent_decision_id?: number | null;
   external_data_classes_json: string[];
   transmission_scope: string;
   execution_status: string;

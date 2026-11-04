@@ -353,6 +353,7 @@ def classify_impact(
             db,
             event_id,
             user_id=current_user["id"],
+            privacy_disclosure_version=acknowledgement.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc

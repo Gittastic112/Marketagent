@@ -17,6 +17,7 @@ def detect_thesis_contradiction(
     assumption_text: str,
     event_id: int | None,
     user_id: str,
+    privacy_disclosure_version: str | None = None,
 ) -> AiOutput:
     prompt = f"""
     Analyze the following market event evidence and determine if it directly contradicts the stated thesis assumption.
@@ -38,6 +39,8 @@ def detect_thesis_contradiction(
             reference_id=event_id,
             prompt_version=PROMPT_VERSION,
             input_text=prompt,
+            external_data_classes=("event_text", "private_thesis_assumptions"),
+            action_key="thesis_contradiction", privacy_disclosure_version=privacy_disclosure_version,
         ),
         generate=lambda provider: provider.generate_structured_response(prompt, schema),
     )

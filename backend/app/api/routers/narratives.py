@@ -104,6 +104,7 @@ def extract_narratives(
             db,
             user_id=current_user["id"],
             limit=limit,
+            privacy_disclosure_version=acknowledgement.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc

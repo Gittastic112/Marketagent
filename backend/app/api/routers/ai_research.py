@@ -28,7 +28,7 @@ def summarize_evidence(
     assistant = AIResearchAssistant(db, user_id=current_user["id"])
     try:
         require_privacy_disclosure(req.privacy_disclosure_version)
-        result = assistant.summarize_evidence(req.document_id, req.user_task)
+        result = assistant.summarize_evidence(req.document_id, req.user_task, req.privacy_disclosure_version)
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc
     ai_output = result["ai_output"]
@@ -61,7 +61,7 @@ def generate_questions(
     assistant = AIResearchAssistant(db, user_id=current_user["id"])
     try:
         require_privacy_disclosure(req.privacy_disclosure_version)
-        result = assistant.answer_question_on_evidence(req.document_id, req.user_question)
+        result = assistant.answer_question_on_evidence(req.document_id, req.user_question, req.privacy_disclosure_version)
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc
     ai_output = result["ai_output"]
@@ -104,6 +104,7 @@ def map_event_endpoint(
             event_text=req.event_text,
             event_id=req.event_id,
             user_id=current_user["id"],
+            privacy_disclosure_version=req.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc

@@ -2,6 +2,8 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [Independent briefing, AI permissions and release-tooling completion, November 4](independent-completion-2026-11-04.md)
+- [Supplied delivery report reconciliation and documentation integration, November 4](delivery-report-reconciliation-2026-11-04.md)
 - [Company disclosures and dated research notes, November 4](company-disclosure-followup-2026-11-04.md)
 - [Approved historical research models, November 3](historical-model-completion-2026-11-03.md)
 - [Local release, financial follow-up and publication boundary, November 2](release-publication-and-financial-followup-2026-11-02.md)

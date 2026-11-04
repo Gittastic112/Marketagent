@@ -1,8 +1,36 @@
 /** Contracts and endpoint helpers for daily-brief. Import transport directly, never the compatibility facade. */
-import type { BriefResearchContext } from "./brief-context";
+import type { SavedBriefResearchContext } from "./brief-context";
+
+export type BriefSelectionCounts = {
+  eligible_count: number | null;
+  included_count: number;
+  excluded_count: number | null;
+  cap: number | null;
+  status: "complete" | "partial" | "unknown";
+  exclusion_reasons: Record<string, number>;
+};
+
+export type BriefPublicCoverage = {
+  version: "public-brief-coverage-v1";
+  captured_at: string;
+  window_start_exclusive: string | null;
+  window_end_inclusive: string | null;
+  selection_basis: "since_last_review" | "stored_history" | "dashboard_preview" | "caller_supplied";
+  event_timestamp_basis: "created_at";
+  failed_run_timestamp_basis: "started_at";
+  inspection_action_basis: "derived_from_included_inputs";
+  status: "complete" | "partial" | "unknown";
+  provider_coverage: "not_assessed";
+  source_verification: "not_assessed";
+  events: BriefSelectionCounts;
+  failed_runs: BriefSelectionCounts;
+  inspection_actions: BriefSelectionCounts;
+  limitations: string[];
+};
 
 export type DailyBriefPayload = {
-  private_research?: BriefResearchContext | null;
+  private_research?: SavedBriefResearchContext | null;
+  public_coverage?: BriefPublicCoverage | null;
   summary: string;
   calculation_status: "complete" | "partial" | "not_available";
   valuation_analysis_status: "complete" | "partial" | "failed" | "not_run" | "not_required";

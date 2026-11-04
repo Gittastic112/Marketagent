@@ -5,6 +5,7 @@ import { generateDailyBrief, markDailyBriefReviewed } from "@/app/actions";
 import { BriefingEventCard } from "@/components/briefing-event-card";
 import { BriefSourceInbox } from "@/components/brief-source-inbox";
 import { BriefPrivateResearch } from "@/components/brief-private-research";
+import { BriefPublicCoverage } from "@/components/brief-public-coverage";
 import { DailyBriefScheduleForm } from "@/components/daily-brief-schedule-form";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices, MockDataBadge } from "@/components/ui/data-states";
@@ -59,7 +60,7 @@ export default async function DailyBriefPage() {
             <div className="briefing-summary-copy">
               <div className="briefing-kicker-row">
                 <span className={`badge ${statusTone(payload.calculation_status)}`}>
-                  Brief {statusLabel(payload.calculation_status)}
+                  Calculation {statusLabel(payload.calculation_status)}
                 </span>
                 <span className={`badge ${statusTone(payload.valuation_analysis_status)}`}>
                   Valuation analysis {statusLabel(payload.valuation_analysis_status)}
@@ -86,7 +87,7 @@ export default async function DailyBriefPage() {
             </div>
             <div className="briefing-controls">
               <RetainedActionForm label="Generate daily brief" action={generateDailyBrief}>
-                <button type="submit" className="btn btn-primary">Generate refreshed analysis</button>
+                <button type="submit" className="btn btn-primary">Refresh stored evidence</button>
               </RetainedActionForm>
               {brief.review_status !== "reviewed" ? (
                 <RetainedActionForm label="Mark daily brief reviewed" action={markDailyBriefReviewed}>
@@ -102,7 +103,8 @@ export default async function DailyBriefPage() {
                 </div>
               )}
               <p>
-                Refreshing explicitly runs configured AI checks. Outputs remain AI Interpretation until reviewed.
+                Refresh rebuilds this brief from stored records without external AI. Use an event&apos;s explicit interpretation action to request a separate AI review.
+                Any retained AI output remains AI Interpretation until reviewed.
               </p>
               <Link href="/data-health" className="text-link">Inspect processing health</Link>
             </div>
@@ -301,7 +303,7 @@ export default async function DailyBriefPage() {
           {payload.thesis_contradictions.length === 0 ? (
             <EmptyState
               label={payload.contradiction_analysis_status === "not_run"
-                ? "AI contradiction analysis has not run. Generate a refreshed analysis to run it explicitly."
+                ? "This deterministic brief includes saved unresolved alerts; refreshing does not run new AI contradiction checks."
                 : "No unresolved contradiction alerts were found."}
             />
           ) : (
@@ -340,7 +342,7 @@ export default async function DailyBriefPage() {
           {payload.valuation_relevance.length === 0 ? (
             <EmptyState
               label={payload.valuation_analysis_status === "not_run"
-                ? "AI valuation mapping has not run. Generate a refreshed analysis to run it explicitly."
+                ? "Brief refresh does not run AI valuation mapping. Open an event to request interpretation explicitly."
                 : payload.valuation_analysis_status === "failed"
                   ? "Valuation mapping failed. No DCF impact was inferred."
                   : "No valuation-variable impact was identified."}
@@ -376,7 +378,9 @@ export default async function DailyBriefPage() {
           )}
         </Panel>
 
-        <Panel title="Source Coverage">
+        <Panel title="Stored Source Coverage">
+          <BriefPublicCoverage coverage={payload.public_coverage} />
+          <p className="basis-note">Included evidence identifiers:</p>
           <div className="briefing-source-grid panel-content">
             <div><span>Events</span><strong>{payload.source_event_ids.length}</strong></div>
             <div><span>Documents</span><strong>{payload.source_raw_document_ids.length}</strong></div>
@@ -392,7 +396,7 @@ export default async function DailyBriefPage() {
             <div tabIndex={0} className="table-wrap">
               <table>
                 <thead>
-                  <tr><th>Date</th><th>Summary</th><th>Status</th><th>Saved</th></tr>
+                  <tr><th>Date</th><th>Summary</th><th>Status</th><th>Stored-input coverage</th><th>Saved</th></tr>
                 </thead>
                 <tbody>
                   {savedBriefs.map((savedBrief) => (
@@ -400,6 +404,7 @@ export default async function DailyBriefPage() {
                       <td>{savedBrief.brief_date}</td>
                       <td>{savedBrief.summary}</td>
                       <td><span className={`badge ${statusTone(savedBrief.review_status)}`}>{savedBrief.review_status}</span></td>
+                      <td>{savedBrief.payload_json.public_coverage?.status ?? "Not recorded"}</td>
                       <td>{new Date(savedBrief.created_at).toLocaleString()}</td>
                     </tr>
                   ))}

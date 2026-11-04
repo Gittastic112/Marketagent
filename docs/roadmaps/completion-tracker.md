@@ -108,8 +108,8 @@ source/fixture boundaries. Final return labels, affected browser flows, measured
 process-cold/warm profiles and normal rollout are verified. Evidence review remains
 open; November 2 closes local credential work. The scope revision separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
-M04's verified checks are accepted after the M03 prerequisite closes. M09's latest integrated
-remote source/browser matrix passes on 6e2a6f8b. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) records later unit/review corrections, broad existing-data browser checks and explicit data effects. The [October 28 release](../archive/checkpoints/2026/locked-build-and-local-rollout-2026-10-28.md) retains dependency/OS audit evidence. Reviewed-input freeze and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
+M04's verified checks are accepted after the M03 prerequisite closes. PR4's five
+post-merge checks supersede the older 6e2a6f8b matrix as remote evidence. The [November completion pass](../archive/checkpoints/2026/independent-completion-2026-11-04.md) records new briefing/consent/runner source and its separately dated validation. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) retains earlier existing-data browser proof. Reviewed-input completeness and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -484,6 +484,14 @@ human verdict fields remain unchanged. M08-04 is verified under delegated review
 this is neither independent human certification nor statistical model-accuracy or
 future prompt-injection proof. M08 acceptance still depends on M07.
 
+November 4 [independent completion](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
+adds public briefing counts/windows/exclusions, dashboard source parity and
+persisted owner/provider/action grant/refusal/revocation management. Existing
+per-action acknowledgement, provenance and review gates remain. Manual refresh is
+deterministic; historical snapshots and AI outputs are not rewritten or granted
+permission retrospectively. Source tests do not supply actual-use days or change
+the cumulative acceptance points; broader evidence/interpretation gates remain.
+
 ## M09: complete browser workflows and responsiveness
 
 Owners: every active route in [route inventory](../09-route-inventory.md), domain UI,
@@ -530,15 +538,18 @@ remain open. The user confirms zero actual-use days and asks for agent function
 testing; those tests do not satisfy M10-04. Off-device recovery and the additional populated-backup rehearsal are
 deferred for this research/demo profile. Future use is never inferred.
 
-- [ ] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
+- [x] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
   full source/type/contract suites, migrations, dependency scans and browser gates.
   Resolve blockers; do not delete failing tests or relabel failures as deferred.
+  [November 4 source proof](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
+  records all five remote gates, locked builds and preserved installed source.
+  This technical source freeze does not certify missing financial inputs.
 - [ ] M10-02 Rehearse fresh install plus an existing populated backup upgrade in
   disposable runtimes; verify all pre-existing user-data and asset fingerprints.
 - [x] M10-03 Deploy the reviewed local release with a verified backup, confirm
   localhost-only bindings/auth, provider settings, explicit worker states and
   source/image identity. Keep a documented rollback path without destructive reset.
-  [November 2 release proof](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+  [November 4 release proof](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
   verifies installed source, final review backup, unchanged settings/data and worker states.
 - [ ] M10-04 Record five business days of actual daily use: startup, source refresh,
   review, valuation, portfolio and briefing, including one restart and one provider
@@ -548,8 +559,10 @@ deferred for this research/demo profile. Future use is never inferred.
 - [ ] M10-06 Reconcile the feature register and limitation ledger. Every v1 acceptance
   item is evidenced; every optional/deferred capability is clearly labeled. Replace
   the handoff with maintenance priorities, not an endless historical task list.
-  October 24 reconciles current parser, normalization, mapping, benchmark, AI and
-  worker-state claims. Remaining valuation evidence and final acceptance stay open.
+  November 4 reconciles current behavior, permission controls, source coverage,
+  validation, worker state and maintenance instructions. Documentation work is
+  complete for this release; missing financial evidence and final acceptance keep
+  the combined acceptance item open.
 - [ ] M10-07 Obtain final user acceptance of the genuine daily workflow and the
   disclosed local/manual/provider boundaries. Close M10 only after this acceptance.
 

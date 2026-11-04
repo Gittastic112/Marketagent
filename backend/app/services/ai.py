@@ -12,6 +12,7 @@ def generate_document_summary(
     document: RawDocument,
     *,
     user_id: str,
+    privacy_disclosure_version: str | None = None,
 ) -> AiOutput:
     text_to_summarize = document.raw_text or document.title
     source_ids = [f"raw_document:{document.id}"]
@@ -30,6 +31,7 @@ def generate_document_summary(
             source_ids=tuple(source_ids),
             source_scope="raw_document_text",
             external_data_classes=("raw_document_text",),
+            action_key="document_summary", privacy_disclosure_version=privacy_disclosure_version,
         ),
         generate=lambda provider: provider.generate_summary(text_to_summarize),
     )

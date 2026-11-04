@@ -1,13 +1,14 @@
-from datetime import date
+from datetime import UTC, date, datetime, timedelta
 
 from fastapi.testclient import TestClient
 from sqlalchemy import event as sqlalchemy_event
 from sqlalchemy.orm import Session
 
 from app.api.dependencies import get_current_user
+from app.db.session import get_db
 from app.api.routers.dashboard import DASHBOARD_QUERY_BUDGET, DASHBOARD_RESPONSE_BUDGET_MS
 from app.main import app
-from app.models import PortfolioSnapshot, ThesisAssumption, ThesisNote
+from app.models import Event, PortfolioSnapshot, ProcessingRun, RawDocument, Source, ThesisAssumption, ThesisNote
 from helpers import response_data
 
 
@@ -70,7 +71,7 @@ def test_dashboard_overview_consolidates_data_and_enforces_ownership(
     assert overview["default_portfolio"] is None
     assert overview["companies"][0]["ticker"] == "DASH"
     assert overview["daily_brief"]["summary"] == (
-        "0 events since the last reviewed brief; 0 unresolved contradiction alerts; "
+        "0 events in the stored-event preview; 0 unresolved contradiction alerts; "
         "0 affected held companies."
     )
     assert len(statements) <= DASHBOARD_QUERY_BUDGET
@@ -180,3 +181,66 @@ def test_dashboard_latency_budget_is_observability_not_a_partial_data_warning(
     assert response.json()["meta"]["processing_time_ms"] == 1250
     assert not any("local budget" in warning for warning in response.json()["meta"]["warnings"])
     assert "Dashboard overview took 1250 ms" in caplog.text
+
+
+def test_dashboard_fresh_session_keeps_source_provenance_and_bounded_coverage(client, db_session, monkeypatch):
+    now = datetime.now(UTC)
+    source = Source(name="Recorded official source", source_type="filing")
+    document = RawDocument(source=source, document_type="filing", title="Recorded filing",
+        url="https://example.invalid/retained", published_at=now - timedelta(days=1),
+        raw_text="Original body must not load into the dashboard", content_hash="dashboard-source-parity")
+    linked = Event(raw_document=document, event_type="filing", information_speed="slow",
+        title="Linked source event", priority_score=100, created_at=now - timedelta(minutes=1))
+    db_session.add(linked)
+    for index in range(12):
+        db_session.add(Event(event_type="manual", information_speed="slow", title=f"Manual {index}",
+            priority_score=90, created_at=now - timedelta(minutes=2, seconds=index)))
+    # The dashboard's recent-run preview can exclude old failures even below its ten-failure cap.
+    db_session.add(ProcessingRun(run_type="old_failure", status="failed", error_count=1,
+        started_at=now - timedelta(days=1), created_at=now - timedelta(days=1)))
+    for index in range(21):
+        db_session.add(ProcessingRun(run_type="recent_success", status="success", error_count=0,
+            started_at=now - timedelta(minutes=3, seconds=index), created_at=now - timedelta(minutes=3, seconds=index)))
+    db_session.commit()
+    linked_id, document_id = linked.id, document.id
+    db_session.expunge_all()
+
+    def forbidden(**_kwargs):
+        raise AssertionError("Dashboard must not invoke AI")
+    monkeypatch.setattr("app.services.morning_briefing_engine.map_event_to_dcf_variables", forbidden)
+    monkeypatch.setattr("app.services.morning_briefing_engine.detect_thesis_contradiction", forbidden)
+    statements = []
+    def record(_connection, _cursor, statement, *_args):
+        statements.append(statement)
+    engine = db_session.get_bind()
+    original_dependency = app.dependency_overrides[get_db]
+    def fresh_session():
+        with Session(engine) as session:
+            yield session
+            assert not session.new and not session.dirty and not session.deleted
+    app.dependency_overrides[get_db] = fresh_session
+    sqlalchemy_event.listen(engine, "before_cursor_execute", record)
+    try:
+        payload = response_data(client.get("/dashboard/overview"))["daily_brief"]
+    finally:
+        app.dependency_overrides[get_db] = original_dependency
+        sqlalchemy_event.remove(engine, "before_cursor_execute", record)
+
+    event = next(item for item in payload["high_materiality_events"] if item["event_id"] == linked_id)
+    assert event["evidence_status"] == "source_linked"
+    assert event["claim_type"] == "Source Summary"
+    assert event["source_name"] == "Recorded official source"
+    assert event["raw_document_id"] == document_id
+    assert event["source_url"] == "https://example.invalid/retained"
+    assert all(item["claim_type"] == "User Assumption" for item in payload["high_materiality_events"] if item["event_id"] != linked_id)
+    coverage = payload["public_coverage"]
+    assert coverage["events"]["eligible_count"] == 13
+    assert coverage["events"]["included_count"] == 10
+    assert coverage["events"]["excluded_count"] == 3
+    assert coverage["failed_runs"]["eligible_count"] == 1
+    assert coverage["failed_runs"]["included_count"] == 0
+    assert coverage["failed_runs"]["exclusion_reasons"] == {"dashboard_recent_run_preview": 1}
+    assert coverage["status"] == "partial"
+    assert len(statements) <= DASHBOARD_QUERY_BUDGET
+    assert all("raw_documents.raw_text" not in statement and "raw_documents_1.raw_text" not in statement for statement in statements)
+    assert "Original body must not load" not in str(payload)

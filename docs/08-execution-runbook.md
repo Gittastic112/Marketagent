@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-10-18. This document owns commands, not historical phase records.
+Updated: 2026-11-04. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -42,12 +42,12 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. From the repository root, use the verified November image override and validate
+2. From the repository root, use the verified November 4 image override and validate
    configuration without printing it:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml config --quiet
-   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml stop frontend backend scheduler source_scheduler
+   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml config --quiet
+   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml stop frontend backend scheduler source_scheduler
    docker exec -it market_intel_postgres psql -X -U marketintel -d marketintel
    ~~~
 
@@ -58,9 +58,9 @@ password into chat or commands. Never use `docker compose down -v`.
    the current image versions and stopped optional services:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
-   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml create --no-build source_scheduler pgadmin
-   docker compose -f docker-compose.yml -f output/milestones/financial-review-20261102/runtime-images.yml ps --all
+   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
+   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml create --no-build source_scheduler pgadmin
+   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml ps --all
    ~~~
 
 5. Verify backend/frontend/database health, sign-in and an existing company page.
@@ -71,8 +71,10 @@ password into chat or commands. Never use `docker compose down -v`.
    private setting; the same local database prompt can reset the role without a
    restore or data loss. Recheck all table/asset fingerprints afterward.
 
-The configuration guard is tested; the real rotation is not complete until the
-operator performs the private step and authentication/data preservation pass.
+The November 2 rotation is already verified. These steps are for a future rotation,
+which is complete only after private input and authentication/data checks pass.
+The local override retains the November 4 installed images. On another checkout,
+use that installation's verified image override; do not substitute older tags.
 
 ## Dependency and container updates
 
@@ -257,11 +259,14 @@ Each agent owns only its manifest paths and evidence tree. Contract changes,
 central docs, test infrastructure and migrations use the plan's coordinator
 procedure. A boundary failure does not authorize editing a neighbor's test.
 
-Browser and release runners use fixed Compose project names; recovery allocates a unique project.
-Only the coordinator dispatches one such gate at a time; record the owner until
-cleanup is confirmed. Different ports or worktrees do not prevent destructive
-cross-run cleanup. Build shared images before parallel tests and avoid concurrent
-replacement of image tags. Frontend build/test outputs need separate worktrees.
+Browser, release and recovery runners allocate unique owned Compose projects.
+Browser/release runners reject existing containers, networks or volumes before
+startup and recheck after builds. Cleanup is enabled only when their own creation
+begins; preflight failures never delete a pre-existing project. Release unit tests
+also get a separate project. Failure and interrupt exit codes remain visible.
+The coordinator still serializes shared image builds and reserves free default
+ports, or supplies explicit overrides. Unique projects do not isolate shared image
+tags or occupied host ports. Frontend build/test outputs need separate worktrees.
 Before installing an image, give it a unique release tag and verify that tag resolves
 to the recorded image ID. Never rebuild or retag a release name used by a running
 or retained rollback container. With Docker's containerd image store, replacing the
@@ -565,3 +570,14 @@ proof in archive/checkpoints/YYYY, and unresolved gaps in the
 
 Update the roadmap only when priorities change and the feature register only
 when capability status changes. Replace the short handoff; do not append history.
+
+CI runs all five gates on pull requests (including the proposed merge), pushes to
+the current default branch codex/worktree-recovery, and all tags. Feature branches
+run CI when a pull request opens; this avoids duplicate branch-push and PR builds.
+Keep this branch filter aligned if the repository default branch changes. Upstream
+package-download failures remain failures and may be retried without changing pins.
+
+All seven image-build APT commands use three per-file retries and 30-second HTTP/
+HTTPS connection/data timeouts. These are not whole-build deadlines; CI job limits
+remain. Snapshot dates, package hashes, Debian signatures and failure propagation
+are unchanged. See [Debian's transport timeout definition](https://manpages.debian.org/trixie/apt/apt-transport-http.1.en.html).

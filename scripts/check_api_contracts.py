@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.schemas import brief, companies, evidence, financials, market, operations, research
+from app.schemas import ai_consent, brief, companies, evidence, financials, market, operations, research
 from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 CONTRACTS = {
@@ -25,6 +25,12 @@ CONTRACTS = {
                  "DecisionLog": research.DecisionLogRead, "OutcomeReview": research.OutcomeReviewRead,
                  "EvidenceLedgerItem": research.EvidenceLedgerItemRead, "VariantPerception": research.VariantPerceptionRead},
     "financials": {"FinancialExtractionCandidate": financials.FinancialExtractionCandidateRead},
+    "ai-consent": {
+        "AIConsentDecision": ai_consent.AIConsentDecisionRead,
+        "AIConsentAction": ai_consent.AIConsentActionRead,
+        "AIConsentOverview": ai_consent.AIConsentOverview,
+        "AIConsentHistory": ai_consent.AIConsentHistory,
+    },
 }
 MANIFEST = Path(__file__).resolve().parents[1] / "data/contracts/frontend-backend.json"
 

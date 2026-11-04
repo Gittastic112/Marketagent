@@ -49,7 +49,7 @@ class AIResearchAssistant:
         )
         return prompt
 
-    def summarize_evidence(self, document_id: int, user_task: str) -> dict:
+    def summarize_evidence(self, document_id: int, user_task: str, privacy_disclosure_version: str | None = None) -> dict:
         evidence_str, source_ids = self._build_context_from_docs([document_id])
         instruction = "Summarize the key factual points from the provided evidence. Maintain strict neutrality."
 
@@ -64,6 +64,8 @@ class AIResearchAssistant:
             raw_document_id=document_id,
             source_ids=tuple(source_ids),
             source_scope="raw_document_summary",
+            external_data_classes=("raw_document_text", "user_task"),
+            action_key="research_summary", privacy_disclosure_version=privacy_disclosure_version,
         )
 
         ai_output = execute_ai_generation(
@@ -78,7 +80,7 @@ class AIResearchAssistant:
             "ai_output": ai_output
         }
 
-    def identify_potential_contradictions(self, thesis_assumptions: List[str], document_ids: List[int]) -> dict:
+    def identify_potential_contradictions(self, thesis_assumptions: List[str], document_ids: List[int], privacy_disclosure_version: str | None = None) -> dict:
         evidence_str, source_ids = self._build_context_from_docs(document_ids)
         instruction = "Identify any statements in the evidence that directly contradict the provided thesis assumptions."
         task = f"Compare evidence against these assumptions: {', '.join(thesis_assumptions)}."
@@ -92,6 +94,8 @@ class AIResearchAssistant:
             reference_type="thesis_assumptions",
             source_ids=tuple(source_ids),
             source_scope="raw_document_contradictions",
+            external_data_classes=("raw_document_text", "private_thesis_assumptions"),
+            action_key="research_contradictions", privacy_disclosure_version=privacy_disclosure_version,
         )
 
         ai_output = execute_ai_generation(
@@ -106,7 +110,7 @@ class AIResearchAssistant:
             "ai_output": ai_output
         }
 
-    def answer_question_on_evidence(self, document_id: int, user_question: str) -> dict:
+    def answer_question_on_evidence(self, document_id: int, user_question: str, privacy_disclosure_version: str | None = None) -> dict:
         evidence_str, source_ids = self._build_context_from_docs([document_id])
         instruction = "Answer the user's question based strictly on the provided evidence."
         task = user_question
@@ -122,6 +126,8 @@ class AIResearchAssistant:
             raw_document_id=document_id,
             source_ids=tuple(source_ids),
             source_scope="raw_document_qa",
+            external_data_classes=("raw_document_text", "user_question"),
+            action_key="research_question", privacy_disclosure_version=privacy_disclosure_version,
         )
 
         ai_output = execute_ai_generation(

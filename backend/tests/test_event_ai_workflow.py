@@ -69,7 +69,9 @@ def test_event_mapping_uses_actual_mock_provider_schema(client):
     assert data["ai_output"]["human_review_status"] == "pending"
 
 
-def test_event_mapping_sends_inline_schema_through_real_gemini_transport(client, monkeypatch):
+def test_event_mapping_sends_inline_schema_through_real_gemini_transport(client, db_session, monkeypatch):
+    from test_ai_consent import decision
+    decision(db_session, "event_mapping")
     from app.providers import ai_provider
 
     captured = {}

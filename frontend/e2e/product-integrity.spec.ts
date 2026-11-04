@@ -147,23 +147,28 @@ test("company tabs and grouped navigation remain usable on mobile", async ({ pag
 });
 
 
-test("research discloses AI transmission and renders provider failure inline", async ({ page }) => {
+test("research discloses AI transmission and rejects an unconfigured provider before saving", async ({ page }) => {
   await signIn(page);
   await page.goto("/research/sessions");
   await page.getByRole("button", { name: "Start New Session" }).click();
   await expect(page).toHaveURL(/\/research\/sessions\/\d+$/);
+  const sessionId = new URL(page.url()).pathname.split("/").pop();
 
   const input = page.getByPlaceholder("Ask about companies, events, or market trends...");
-  await input.fill("Summarize the evidence in this empty research session.");
+  const question = "Summarize the evidence in this empty research session.";
+  await input.fill(question);
   await expect(page.getByRole("button", { name: "Send" })).toBeDisabled();
   await page.getByRole("checkbox").check();
   await page.getByRole("button", { name: "Send" }).click();
 
   await expect(page.locator("p.inline-error[role=alert]")).toContainText("AI is not configured");
-  await expect(page.getByRole("main").getByText(/Your research message was saved/)).toBeVisible();
-  await expect(
-    page.getByRole("main").getByText("Summarize the evidence in this empty research session.", { exact: true }),
-  ).toBeVisible();
+  await expect(page.locator("p.inline-error[role=alert]")).toContainText("Save could not be confirmed");
+  await expect(page.getByRole("main").getByText(/Your research message was saved/)).toHaveCount(0);
+  await expect(input).toHaveValue(question);
+  await expect(page.getByRole("button", {name: "Send", exact: true})).toBeEnabled();
+  await expect(page.getByText("No messages yet. Start the research session by asking a question.")).toBeVisible();
+  const stored = await backendData<{messages: unknown[]}>(page, `/research/sessions/${sessionId}`);
+  expect(stored.messages).toHaveLength(0);
 });
 
 

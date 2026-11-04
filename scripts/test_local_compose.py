@@ -5,6 +5,7 @@ import os
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -12,7 +13,7 @@ import unittest
 ROOT = Path(__file__).resolve().parents[1]
 
 
-class BrowserRunnerTests(unittest.TestCase):
+class RunnerCommandFixture(unittest.TestCase):
     """Mock Data commands only; never invoke Docker or read normal settings."""
 
     def setUp(self):
@@ -21,13 +22,13 @@ class BrowserRunnerTests(unittest.TestCase):
         self.directory = Path(temporary.name)
         (self.directory / "scripts").mkdir()
         (self.directory / "frontend").mkdir()
-        shutil.copyfile(ROOT / "scripts/run_browser_workflows.sh", self.directory / "scripts/run_browser_workflows.sh")
+        for script in ("run_browser_workflows.sh", "verify_release_baseline.sh"):
+            shutil.copyfile(ROOT / "scripts" / script, self.directory / "scripts" / script)
         binary = self.directory / "bin"
         binary.mkdir()
-        for name in ("docker", "curl", "lsof", "npx"):
+        for name in ("docker", "curl", "lsof", "npx", "python3"):
             command = binary / name
-            command.write_text('''#!/usr/bin/env python3
-import json, os, sys
+            command.write_text(f"#!{sys.executable}\n" + '''import json, os, signal, sys
 from pathlib import Path
 name = Path(sys.argv[0]).name
 with open(os.environ["MOCK_COMMAND_LOG"], "a") as log:
@@ -37,28 +38,71 @@ with open(os.environ["MOCK_COMMAND_LOG"], "a") as log:
         "base_url": os.environ.get("E2E_BASE_URL")}) + "\\n")
 if name == "lsof":
     raise SystemExit(0 if os.environ.get("MOCK_PORT_BUSY") else 1)
+stage = {"npx": "browser", "python3": "preflight"}.get(name, name)
+if name == "docker":
+    args = sys.argv[1:]
+    if args[0] in {"container", "network", "volume"}:
+        if os.environ.get("MOCK_QUERY_EXIT"):
+            raise SystemExit(int(os.environ["MOCK_QUERY_EXIT"]))
+        project = next(arg.split("=", 2)[-1] for arg in args if arg.startswith("label="))
+        prior_calls = [json.loads(line) for line in Path(os.environ["MOCK_COMMAND_LOG"]).read_text().splitlines()]
+        after_build = any(call["command"] == "docker" and "build" in call["args"] for call in prior_calls)
+        if (os.environ.get("MOCK_OCCUPIED_RESOURCE") == args[0]
+                and (not os.environ.get("MOCK_OCCUPIED_AFTER_BUILD") or after_build)
+                and (not os.environ.get("MOCK_OCCUPIED_UNIT_ONLY") or project.endswith("-unit"))):
+            print("existing-Mock-Data-resource")
+        raise SystemExit(0)
+    stage = args[args.index("-f") + 2]
+    if stage == "run" and args[args.index("-f") + 1].endswith("docker-compose.test.yml"):
+        stage = "unit-run"
+    if stage == "down":
+        raise SystemExit(int(os.environ.get("MOCK_DOWN_EXIT", "0")))
+if stage == os.environ.get("MOCK_SIGNAL_STAGE"):
+    os.kill(os.getppid(), getattr(signal, "SIG" + os.environ["MOCK_SIGNAL"]))
+if stage == os.environ.get("MOCK_FAIL_STAGE"):
+    raise SystemExit(int(os.environ.get("MOCK_COMMAND_EXIT", "23")))
 if name == "npx":
     raise SystemExit(int(os.environ.get("MOCK_BROWSER_EXIT", "0")))
 ''')
             command.chmod(0o755)
         self.env = {key: value for key, value in os.environ.items()
-                    if key not in {"NEXTAUTH_SECRET", "LOCAL_AUTH_USERNAME", "LOCAL_AUTH_PASSWORD",
-                                   "E2E_FRONTEND_PORT", "E2E_BACKEND_PORT", "E2E_BASE_URL"}}
+                    if not key.startswith("MOCK_") and key not in {
+                        "NEXTAUTH_SECRET", "LOCAL_AUTH_USERNAME", "LOCAL_AUTH_PASSWORD",
+                        "E2E_FRONTEND_PORT", "E2E_BACKEND_PORT", "E2E_BASE_URL"}}
         self.env.update(PATH=f"{binary}{os.pathsep}{os.environ['PATH']}",
                         MOCK_COMMAND_LOG=str(self.directory / "calls.jsonl"))
 
-    def run_script(self):
-        result = subprocess.run(["bash", str(self.directory / "scripts/run_browser_workflows.sh"),
-                                 "valuation-draft.spec.ts"], env=self.env, capture_output=True,
+    def run_script(self, script="run_browser_workflows.sh"):
+        log = self.directory / "calls.jsonl"
+        log.unlink(missing_ok=True)
+        args = ["valuation-draft.spec.ts"] if script == "run_browser_workflows.sh" else []
+        result = subprocess.run(["bash", str(self.directory / "scripts" / script), *args],
+                                env=self.env, capture_output=True,
                                 text=True, timeout=10)
         log = self.directory / "calls.jsonl"
         calls = [json.loads(line) for line in log.read_text().splitlines()] if log.exists() else []
         return result, calls
 
+    @staticmethod
+    def compose_calls(calls):
+        return [call for call in calls if call["command"] == "docker" and call["args"][0] == "compose"]
+
+    @staticmethod
+    def project(call):
+        args = call["args"]
+        return args[args.index("-p") + 1]
+
+    @staticmethod
+    def cleanup_calls(calls):
+        return [call for call in RunnerCommandFixture.compose_calls(calls) if "down" in call["args"]]
+
+
+class BrowserRunnerTests(RunnerCommandFixture):
+
     def test_runs_without_normal_settings_and_uses_empty_compose_environment(self):
         result, calls = self.run_script()
         self.assertEqual(result.returncode, 0, result.stderr)
-        docker = [call for call in calls if call["command"] == "docker"]
+        docker = self.compose_calls(calls)
         self.assertTrue(docker)
         for call in docker:
             self.assertEqual(call["args"][:3], ["compose", "--env-file", "/dev/null"])
@@ -98,7 +142,145 @@ if name == "npx":
         self.assertEqual(result.returncode, 7, result.stderr)
         self.assertEqual(calls[-1]["command"], "docker")
         self.assertIn("down", calls[-1]["args"])
-        self.assertIn("market-intel-e2e", calls[-1]["args"])
+        self.assertRegex(self.project(calls[-1]), r"^market-intel-e2e-\d+-\d+-\d+$")
+        self.assertEqual(len(self.cleanup_calls(calls)), 1)
+
+    def test_each_run_owns_a_new_project_and_checks_all_existing_resource_kinds(self):
+        projects = []
+        for _ in range(2):
+            result, calls = self.run_script()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            compose = self.compose_calls(calls)
+            project = self.project(compose[0])
+            projects.append(project)
+            self.assertTrue(all(self.project(call) == project for call in compose))
+            checks = [call for call in calls if call["command"] == "docker" and call["args"][0] != "compose"]
+            self.assertEqual({call["args"][0] for call in checks}, {"container", "network", "volume"})
+            for call in checks:
+                self.assertIn(f"label=com.docker.compose.project={project}", call["args"])
+            self.assertIn("--all", next(call for call in checks if call["args"][0] == "container")["args"])
+            self.assertEqual(len(self.cleanup_calls(calls)), 1)
+            self.assertEqual(calls[-1], self.cleanup_calls(calls)[0])
+        self.assertNotEqual(*projects)
+
+    def test_existing_project_resources_are_never_adopted_or_deleted(self):
+        for kind in ("container", "network", "volume"):
+            with self.subTest(kind=kind):
+                self.env["MOCK_OCCUPIED_RESOURCE"] = kind
+                result, calls = self.run_script()
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn("refusing", result.stderr.lower())
+                self.assertFalse(self.compose_calls(calls))
+
+    def test_resource_inventory_failure_stops_before_any_mutation(self):
+        self.env["MOCK_QUERY_EXIT"] = "31"
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 31)
+        self.assertFalse(self.compose_calls(calls))
+
+    def test_resources_appearing_during_build_are_not_adopted_or_cleaned(self):
+        self.env.update(MOCK_OCCUPIED_RESOURCE="network", MOCK_OCCUPIED_AFTER_BUILD="1")
+        result, calls = self.run_script()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("refusing", result.stderr.lower())
+        compose = self.compose_calls(calls)
+        self.assertEqual(len(compose), 1)
+        self.assertIn("build", compose[0]["args"])
+        self.assertFalse(self.cleanup_calls(calls))
+
+    def test_failed_build_never_cleans_up_a_project_it_did_not_start(self):
+        self.env["MOCK_FAIL_STAGE"] = "build"
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 23)
+        self.assertFalse(self.cleanup_calls(calls))
+        self.assertFalse(any("up" in call["args"] for call in self.compose_calls(calls)))
+
+    def test_partial_startup_is_cleaned_once_without_masking_failure(self):
+        self.env.update(MOCK_FAIL_STAGE="up", MOCK_DOWN_EXIT="9")
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 23)
+        self.assertEqual(len(self.cleanup_calls(calls)), 1)
+
+    def test_signals_exit_with_signal_status_and_cleanup_only_once(self):
+        for signal_name, status in (("INT", 130), ("TERM", 143)):
+            with self.subTest(signal=signal_name):
+                self.env.update(MOCK_SIGNAL_STAGE="browser", MOCK_SIGNAL=signal_name, MOCK_DOWN_EXIT="9")
+                result, calls = self.run_script()
+                self.assertEqual(result.returncode, status, result.stderr)
+                self.assertEqual(len(self.cleanup_calls(calls)), 1)
+
+
+class ReleaseRunnerTests(RunnerCommandFixture):
+
+    def run_script(self, script="verify_release_baseline.sh"):
+        return super().run_script(script)
+
+    def test_preflight_failure_does_not_touch_docker(self):
+        self.env["MOCK_FAIL_STAGE"] = "preflight"
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 23)
+        self.assertFalse(any(call["command"] == "docker" for call in calls))
+
+    def test_existing_resources_in_either_project_block_before_build_or_cleanup(self):
+        for unit_only in ("", "1"):
+            for kind in ("container", "network", "volume"):
+                with self.subTest(unit_only=unit_only, kind=kind):
+                    self.env.update(MOCK_OCCUPIED_RESOURCE=kind, MOCK_OCCUPIED_UNIT_ONLY=unit_only)
+                    result, calls = self.run_script()
+                    self.assertNotEqual(result.returncode, 0)
+                    self.assertIn("refusing", result.stderr.lower())
+                    self.assertFalse(self.compose_calls(calls))
+
+    def test_failed_build_does_not_cleanup_unstarted_projects(self):
+        self.env["MOCK_FAIL_STAGE"] = "build"
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 23)
+        self.assertFalse(self.cleanup_calls(calls))
+
+    def test_unit_resources_appearing_during_build_leave_both_projects_unowned(self):
+        self.env.update(MOCK_OCCUPIED_RESOURCE="volume", MOCK_OCCUPIED_UNIT_ONLY="1",
+                        MOCK_OCCUPIED_AFTER_BUILD="1")
+        result, calls = self.run_script()
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("refusing", result.stderr.lower())
+        compose = self.compose_calls(calls)
+        self.assertEqual(len(compose), 1)
+        self.assertIn("build", compose[0]["args"])
+        self.assertFalse(self.cleanup_calls(calls))
+
+    def test_failed_unit_run_preserves_error_and_cleans_only_both_owned_projects(self):
+        self.env.update(MOCK_FAIL_STAGE="unit-run", MOCK_DOWN_EXIT="9")
+        result, calls = self.run_script()
+        self.assertEqual(result.returncode, 23)
+        cleanup = self.cleanup_calls(calls)
+        self.assertEqual(len(cleanup), 2)
+        unit = next(call for call in self.compose_calls(calls) if "backend-tests" in call["args"])
+        unit_project = self.project(unit)
+        self.assertTrue(unit_project.endswith("-unit"))
+        self.assertEqual({self.project(call) for call in cleanup}, {unit_project, unit_project.removesuffix("-unit")})
+
+    def test_release_calls_keep_empty_environment_and_use_unique_owned_projects(self):
+        projects = []
+        for _ in range(2):
+            result, calls = self.run_script()
+            self.assertEqual(result.returncode, 0, result.stderr)
+            compose = self.compose_calls(calls)
+            project = self.project(compose[0])
+            projects.append(project)
+            self.assertRegex(project, r"^market-intel-release-check-\d+-\d+-\d+$")
+            for call in compose:
+                self.assertEqual(call["args"][:3], ["compose", "--env-file", "/dev/null"])
+                self.assertIn(self.project(call), {project, project + "-unit"})
+            self.assertEqual({self.project(call) for call in self.cleanup_calls(calls)}, {project, project + "-unit"})
+        self.assertNotEqual(*projects)
+
+    def test_signal_before_or_after_start_preserves_status_and_ownership(self):
+        for stage, cleanup_count in (("preflight", 0), ("up", 1), ("unit-run", 2)):
+            with self.subTest(stage=stage):
+                self.env.update(MOCK_SIGNAL_STAGE=stage, MOCK_SIGNAL="TERM")
+                result, calls = self.run_script()
+                self.assertEqual(result.returncode, 143, result.stderr)
+                self.assertEqual(len(self.cleanup_calls(calls)), cleanup_count)
 
 
 class LocalComposeTests(unittest.TestCase):

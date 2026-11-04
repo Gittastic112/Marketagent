@@ -41,7 +41,7 @@ def get_daily_brief(db: Session = Depends(get_db), current_user: dict = Depends(
 @router.post("/daily-brief", response_model=ApiResponse[DailyBriefRead], status_code=status.HTTP_201_CREATED)
 def create_daily_brief(db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> DailyBrief:
     return _brief_response(
-        MorningBriefingEngine.generate_briefing(db, user_id=current_user["id"])
+        MorningBriefingEngine.generate_briefing(db, user_id=current_user["id"], allow_generation=False)
     )
 
 

@@ -1,5 +1,5 @@
 """Brief API contracts, independent of HTTP and persistence."""
-from app.schemas.brief_context import BriefResearchContext
+from app.schemas.brief_context import BriefResearchContext, LegacyBriefResearchContext
 
 from datetime import (
     date,
@@ -141,8 +141,36 @@ class BriefingInspectionAction(BaseModel):
     processing_run_id: int | None = None
 
 
+class BriefSelectionCounts(BaseModel):
+    eligible_count: int | None = Field(default=None, ge=0)
+    included_count: int = Field(ge=0)
+    excluded_count: int | None = Field(default=None, ge=0)
+    cap: int | None = Field(default=None, ge=1)
+    status: Literal["complete", "partial", "unknown"]
+    exclusion_reasons: dict[str, int] = Field(default_factory=dict)
+
+
+class BriefPublicCoverage(BaseModel):
+    version: Literal["public-brief-coverage-v1"] = "public-brief-coverage-v1"
+    captured_at: datetime
+    window_start_exclusive: datetime | None = None
+    window_end_inclusive: datetime | None = None
+    selection_basis: Literal["since_last_review", "stored_history", "dashboard_preview", "caller_supplied"]
+    event_timestamp_basis: Literal["created_at"] = "created_at"
+    failed_run_timestamp_basis: Literal["started_at"] = "started_at"
+    inspection_action_basis: Literal["derived_from_included_inputs"] = "derived_from_included_inputs"
+    status: Literal["complete", "partial", "unknown"]
+    provider_coverage: Literal["not_assessed"] = "not_assessed"
+    source_verification: Literal["not_assessed"] = "not_assessed"
+    events: BriefSelectionCounts
+    failed_runs: BriefSelectionCounts
+    inspection_actions: BriefSelectionCounts
+    limitations: list[str] = Field(default_factory=list)
+
+
 class DailyBriefPayload(BaseModel):
-    private_research: BriefResearchContext | None = None
+    private_research: BriefResearchContext | LegacyBriefResearchContext | None = None
+    public_coverage: BriefPublicCoverage | None = None
     summary: str = "Daily brief summary unavailable."
     calculation_status: Literal["complete", "partial", "not_available"] = "not_available"
     valuation_analysis_status: Literal[
