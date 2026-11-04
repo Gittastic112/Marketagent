@@ -47,8 +47,15 @@
       "backend_image_matches": true
     },
     "post_build_difference": {
-      "path": ".github/workflows/ci.yml",
-      "scope": "Only CI triggers: PRs, current default-branch pushes and all tags; not an application image input"
+      "paths": [
+        ".github/workflows/ci.yml",
+        "backend/Dockerfile",
+        "backend/tests/test_ai_consent_routes.py",
+        "frontend/Dockerfile",
+        "frontend/e2e/manual-research-controls.spec.ts",
+        "frontend/e2e/product-integrity.spec.ts"
+      ],
+      "scope": "CI triggers, package-download retry/timeouts and tests only; application source remains identical"
     }
   },
   "normal_browser": {
