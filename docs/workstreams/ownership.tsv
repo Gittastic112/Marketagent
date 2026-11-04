@@ -57,6 +57,8 @@ W2	file	backend/app/api/routers/events.py
 W2	file	backend/app/api/routers/narratives.py
 W2	file	backend/tests/test_ai_consent.py
 W2	file	backend/tests/test_ai_consent_routes.py
+W2	file	frontend/e2e/manual-research-controls.spec.ts
+W2	file	frontend/e2e/product-integrity.spec.ts
 W2	file	backend/tests/test_ai_contract.py
 W2	file	backend/tests/test_event_ai_workflow.py
 W2	file	frontend/lib/api/ai-consent.ts

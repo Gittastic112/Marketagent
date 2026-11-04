@@ -90,7 +90,7 @@ test("manual narrative and pasted social text remain literal and have working ed
   await expect(heading).toHaveCount(0);
 });
 
-test("a failed research transport retains the question and a verified provider failure confirms only its saved message", async ({page}) => {
+test("research transport and permission failures retain the question without claiming a save", async ({page}) => {
   await signIn(page);
   const session = await backendData<{id: number}>(page, "/research/sessions", {method: "POST", data: {title: "Mock Data message recovery"}});
   await page.goto(`/research/sessions/${session.id}`);
@@ -99,7 +99,10 @@ test("a failed research transport retains the question and a verified provider f
   await input.fill(content);
   await page.getByRole("checkbox").check();
   let fail = true;
-  await page.route(`**/api/backend/research/sessions/${session.id}/messages`, route => fail ? route.abort("failed") : route.continue());
+  await page.route(`**/api/backend/research/sessions/${session.id}/messages`, route => fail ? route.abort("failed") : route.fulfill({
+    status: 409,
+    json: {errors: [{code: "AI_CONSENT_REQUIRED", message: "Mock Data: No current permission allows this AI action. Review AI permissions in Settings before trying again."}]},
+  }));
   await page.getByRole("button", {name: "Send", exact: true}).click();
   await expect(page.locator("main").getByRole("alert")).toContainText("Save could not be confirmed");
   await expect(input).toHaveValue(content);
@@ -107,9 +110,49 @@ test("a failed research transport retains the question and a verified provider f
   expect((await backendData<{messages: unknown[]}>(page, `/research/sessions/${session.id}`)).messages).toHaveLength(0);
   fail = false;
   await page.getByRole("button", {name: "Send", exact: true}).click();
-  await expect(page.locator("main").getByRole("alert")).toContainText("Your research message was saved without an assistant response");
-  await expect(input).toHaveValue("");
+  await expect(page.locator("main").getByRole("alert")).toContainText("No current permission allows this AI action");
+  await expect(page.locator("main").getByRole("alert")).toContainText("Save could not be confirmed");
+  await expect(input).toHaveValue(content);
+  await expect(page.getByText(/Your research message was saved/)).toHaveCount(0);
   const stored = await backendData<{messages: Array<{role: string; content: string}>}>(page, `/research/sessions/${session.id}`);
-  expect(stored.messages).toHaveLength(1);
-  expect(stored.messages[0]).toMatchObject({role: "user", content});
+  expect(stored.messages).toHaveLength(0);
+});
+
+test("a Mock Data post-save provider failure confirms only the refreshed user message", async ({page}) => {
+  // Presentation proof only. The isolated backend regression verifies actual post-grant persistence.
+  const sessionId = 984201;
+  const content = "Mock Data question saved before provider failure";
+  let sent = 0;
+  const messages: Array<{id: number; role: string; content: string; created_at: string; ai_output: null}> = [];
+  await page.route(`**/api/backend/research/sessions/${sessionId}`, async route => {
+    expect(route.request().method()).toBe("GET");
+    await route.fulfill({json: {data: {id: sessionId, title: "Mock Data provider failure receipt", messages},
+      meta: {status: "success", source: "Mock Data browser fixture", is_mock: true}, errors: []}});
+  });
+  await page.route(`**/api/backend/research/sessions/${sessionId}/messages`, async route => {
+    expect(route.request().method()).toBe("POST");
+    expect(route.request().postDataJSON()).toEqual({role: "user", content, privacy_disclosure_version: "v1"});
+    sent++;
+    messages.push({id: 984202, role: "user", content, created_at: "2026-11-04T12:00:00Z", ai_output: null});
+    await route.fulfill({status: 502, json: {errors: [{code: "AI_PROVIDER_FAILED", message: "Mock Data: The AI provider could not complete the request."}]}});
+  });
+  await signIn(page);
+  await page.goto(`/research/sessions/${sessionId}`);
+  const input = page.getByRole("textbox", {name: "Research question"});
+  await expect(page.getByText("No messages yet. Start the research session by asking a question.")).toBeVisible();
+  await input.fill(content);
+  await expect(page.getByRole("button", {name: "Send", exact: true})).toBeDisabled();
+  await page.getByRole("checkbox").check();
+  await page.getByRole("button", {name: "Send", exact: true}).click();
+  await expect(page.locator("main").getByRole("alert")).toContainText("The AI provider could not complete the request");
+  await expect(page.locator("main").getByRole("alert")).toContainText("Your research message was saved without an assistant response");
+  await expect(page.locator("main").getByRole("alert")).not.toContainText("Save could not be confirmed");
+  await expect(input).toHaveValue("");
+  await expect(page.locator("#message-984202")).toContainText(content);
+  await expect(page.locator("main [id^=message-]")).toHaveCount(1);
+  await expect(page.locator("main [id^=ai-output-]")).toHaveCount(0);
+  await expect(page.getByRole("button", {name: "Send", exact: true})).toBeDisabled();
+  expect(sent).toBe(1);
+  expect(messages).toHaveLength(1);
+  expect(messages[0]).toMatchObject({role: "user", content, ai_output: null});
 });
