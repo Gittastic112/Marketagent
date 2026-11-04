@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-04",
+  "reviewer": "/root/us_review",
+  "scope": "Read-only follow-up for six approved dated historical research models. Evidence only; no database/model/forecast changes.",
+  "prior_approval_summary_sha256": "be9ad33317a6611e9af9e65cb9c481a7347fb88bf13f26635e72d7f64a71c981",
+  "applied_scenario_receipt_path": "data/reviews/historical-scenario-application-20261103.json",
+  "applied_scenario_receipt_sha256": "51482d4629fea12c6f027320f6737b1f4840f53b0ddc928b5d79f98f5bab9c6e",
+  "prior_us_proposal_sha256": "190ced26c8a33b31de877a16a918c374ef965df2aba2129b3cfbb19b01cd652b",
+  "prior_us_source_receipt_sha256": "e46371873ec417b725d73328b04dc015e7fbdf7502235810aa8aec425ed6d87d",
+  "existing_originals_hash_reverified": 14,
+  "new_originals_hash_and_receipt_reverified": 4,
+  "sources": [
+    {
+      "id": "AAPL-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/AAPL-2025-sec.html",
+      "sha256": "45a0dd6e8ee4bf4bf47dc48d0c66d74d053adef8f8b9c5a62926d97d0c740e6c",
+      "status": "retained_original_hash_reverified"
+    },
+    {
+      "id": "NVDA-2026-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/NVDA-2026-sec.html",
+      "sha256": "761ccaba47a10622eaca3585fa30b7857b1d4e83fd352c6a390367407dc3c912",
+      "status": "retained_original_hash_reverified"
+    },
+    {
+      "id": "MSFT-2026-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/MSFT-2026-sec.html",
+      "sha256": "32c2206d3b806228a639da395770e84044d813fd601f18e77fb0103fd7b6d3c5",
+      "status": "retained_original_hash_reverified"
+    },
+    {
+      "id": "AMZN-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/AMZN-2025-sec.html",
+      "sha256": "a1732adb7f13ec1cc50a6534ef42b549f208670cb769dbbd41cbd0386518471a",
+      "status": "retained_original_hash_reverified"
+    },
+    {
+      "id": "GOOG-2025-sec",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/GOOG-2025-sec.html",
+      "sha256": "5c59c9cd49235938e049a1c74d6d84376db9cdfec23c44183fc888e38f896e82",
+      "status": "retained_original_hash_reverified"
+    },
+    {
+      "id": "AAPL-proxy-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000130817926000008/aapl014016-def14a.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-proxy-2026.html",
+      "sha256": "18b7685675d4482810b3601facfc966a4d0f5124963ae52e53d61e9cd41c7840",
+      "processing_run_id": 172,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 83,
+        "html_table_indices_zero_based": [
+          256,
+          257
+        ],
+        "notes": [
+          "1: exercise price applies only to options",
+          "2: no acquired options or RSUs at fiscal end",
+          "3: outstanding award components",
+          "4: ESPP capacity separate from outstanding awards"
+        ]
+      }
+    },
+    {
+      "id": "AAPL-proxy-2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000130817925000008/aapl4359751-def14a.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-proxy-2025.html",
+      "sha256": "b94c6e8b7701a2573c956d00e504baa7cf716d8e79773f4472497cbe72d5d6f9",
+      "processing_run_id": 173,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 97,
+        "html_table_indices_zero_based": [
+          286,
+          287
+        ],
+        "notes": [
+          "4: ESPP capacity; comparison year for optional reserve-decline proxy"
+        ]
+      }
+    },
+    {
+      "id": "AAPL-ESPP-2024-amendment",
+      "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000008/a10-qexhibit10112282024.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AAPL-ESPP-2024-amendment.html",
+      "sha256": "65fe092cb84ae198fb059bd5a457eeb139b54efbd70c756614a4d71e6dc9e94c",
+      "processing_run_id": 174,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": null,
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Sections 2(p), 2(u), 3, 5, 10, 17; offerings and purchasing mechanics, not actual participant rights"
+        ]
+      }
+    },
+    {
+      "id": "NVDA-proxy-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/nvda-20260512.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/NVDA-proxy-2026.html",
+      "sha256": "db1037e5ad0ad29792c573051de9e0d4cfa64efe1b1c610413737cbddee01d54",
+      "processing_run_id": 175,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 69,
+        "html_table_indices_zero_based": [
+          83
+        ],
+        "notes": [
+          "1: fiscal-end ESPP rights cannot be determined",
+          "2: capacity at January 25; separate later purchase-period estimate",
+          "Following paragraph: fiscal-year ESPP purchases; not fiscal-end unexercised rights"
+        ]
+      }
+    },
+    {
+      "id": "MSFT-proxy-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/d61756ddef14a.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-proxy-2026.html",
+      "sha256": "a159026ac635a8462d49288bfa8b8d0b3c806dce71305c2cdc3cd79f162b8664",
+      "processing_run_id": 176,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 61,
+        "html_table_indices_zero_based": [
+          404,
+          405,
+          406,
+          407
+        ],
+        "notes": [
+          "1: target PSAs plus acquisition awards/options",
+          "2: exercise price excludes stock awards",
+          "3: remaining ESPP reserve after June 30 exercise"
+        ]
+      }
+    },
+    {
+      "id": "MSFT-ESPP-2025-11K",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526120090/msft-20251231.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-ESPP-2025-11K.html",
+      "sha256": "b88887eed52ea5d204d4ee49850c294a5f5f254669b029d11e3e4c72de0c2fef",
+      "processing_run_id": 177,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": [
+          4,
+          5
+        ],
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Note 1, Share Purchases: trade-date recognition and later settlement",
+          "Related Party Transactions: annual purchased-share count"
+        ]
+      }
+    },
+    {
+      "id": "MSFT-charter-2016",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312516782569/d305147dex31.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/MSFT-charter-2016.html",
+      "sha256": "6f27f2fcc1790d4c634b25152534d658fdbc7ece51219ee405303eb584fa163e",
+      "processing_run_id": 179,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": null,
+        "html_table_indices_zero_based": [],
+        "notes": [
+          "Article IV 4.1-4.2: authorized classes; not issued/outstanding balances",
+          "Signature: November 30, 2016"
+        ]
+      }
+    },
+    {
+      "id": "AMZN-proxy-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000110465926041026/tm261382-1_def14a.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/AMZN-proxy-2026.html",
+      "sha256": "09b2c92275648c69a57c2fc32bb29eb54b41afeccc339add375ff63c5de7407a",
+      "processing_run_id": 180,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 64,
+        "html_table_indices_zero_based": [
+          64
+        ],
+        "notes": [
+          "1: all outstanding table awards are RSUs with no exercise price",
+          "Unapproved-plan outstanding row is a dash; future capacity excluded"
+        ]
+      }
+    },
+    {
+      "id": "GOOG-proxy-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm",
+      "original_path": "output/milestones/model-completion-20261103/acquired-sources/originals/GOOG-proxy-2026.html",
+      "sha256": "84aeababf68c7d4ea7f876474dd34d79f7d582f7aa2a378a5020cf38bfb6a63d",
+      "processing_run_id": 181,
+      "status": "retained_original_hash_reverified",
+      "locator": {
+        "printed_page": 58,
+        "html_table_indices_zero_based": [
+          179
+        ],
+        "notes": [
+          "1A-1B: parent Class C awards and dividend equivalents",
+          "PSUs at 100% target; no parent A/B awards or stock options under current plans"
+        ]
+      }
+    },
+    {
+      "id": "AMZN-subsidiaries-2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231xex211.htm",
+      "as_of": "2025-12-31",
+      "locator": "Exhibit 21.1, List of Significant Subsidiaries, entire one-page table, Percent Owned column",
+      "use": "New ownership fact for nine named significant subsidiaries only.",
+      "read_at": "2026-11-04",
+      "status": "retained_original_hash_reverified",
+      "sha256": "ca3a7b31763e8a1810030762539b43cfe0875cf2e20708d0de6a30c16233f047",
+      "processing_run_id": 188,
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/AMZN-subsidiaries-FY2025.html",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/AMZN-subsidiaries-FY2025.json",
+      "receipt_sha256": "6a8511b4cdf5fec9d889d742990a193d65f25b837acd3516a7d569ade44aeae5",
+      "byte_count": 12857,
+      "retention_finished_at": "2026-11-04T05:50:00.028330+00:00"
+    },
+    {
+      "id": "MSFT-subsidiaries-2026",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-ex21.htm",
+      "as_of": "2026-06-30",
+      "locator": "Exhibit 21, opening qualification and entire subsidiary table",
+      "use": "Coverage limitation: eight named subsidiaries, no ownership percentages, aggregate-insignificant subsidiaries omitted.",
+      "read_at": "2026-11-04",
+      "status": "retained_original_hash_reverified",
+      "sha256": "21a89cac3a516b5cc0cac1f9c061eb3f7a4c305e05590152616df86e8d6b4d3e",
+      "processing_run_id": 189,
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/MSFT-subsidiaries-FY2026.html",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/MSFT-subsidiaries-FY2026.json",
+      "receipt_sha256": "944eecf7c14a5fc3d9f286bf8109e2d169ba95fdbc174482b4845643ddfe71da",
+      "byte_count": 16281,
+      "retention_finished_at": "2026-11-04T05:50:00.290093+00:00"
+    },
+    {
+      "id": "GOOG-subsidiaries-2025",
+      "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/googexhibit2101q42025.htm",
+      "as_of": "2025-12-31",
+      "locator": "Exhibit 21.01, opening qualification and entire three-row table",
+      "use": "Coverage limitation: no Other Bets ownership percentages; aggregate-insignificant subsidiaries omitted.",
+      "read_at": "2026-11-04",
+      "status": "retained_original_hash_reverified",
+      "sha256": "81aeed9c9167276b155945a843962948eba285b8e97ff4aa8f41b17eab89be0d",
+      "processing_run_id": 190,
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/GOOG-subsidiaries-FY2025.html",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/GOOG-subsidiaries-FY2025.json",
+      "receipt_sha256": "25678162478760eeae738cc6c8e7e4ac2b4ddcb8e6074009f77a18bde96cf4de",
+      "byte_count": 3568,
+      "retention_finished_at": "2026-11-04T05:50:00.454540+00:00"
+    },
+    {
+      "id": "MSFT-securities-2024",
+      "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-ex4_26.htm",
+      "as_of": "2024-07-30",
+      "locator": "Exhibit 4.26, opening paragraph, Authorized Capital Shares, Dividend Rights",
+      "use": "Rejected as period-end preferred balance proof: authorization and registered classes, not issued/outstanding preferred at June 30, 2026.",
+      "read_at": "2026-11-04",
+      "status": "official_web_read_not_retained_not_used_as_model_evidence",
+      "sha256": null,
+      "processing_run_id": null
+    },
+    {
+      "id": "MSFT-current-FAQ",
+      "url": "https://www.microsoft.com/en-us/investor/faq",
+      "as_of": null,
+      "locator": "Do you issue preferred stock?",
+      "use": "Current undated issuer policy statement; not June 30, 2026 outstanding preferred balance.",
+      "read_at": "2026-11-04",
+      "status": "retained_original_hash_reverified",
+      "sha256": "d4c192668c86a34e28cdf2046bf1ca224ceb412228927d9fd2b7d52fcf23edb6",
+      "processing_run_id": 191,
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/MSFT-FAQ-current-20261104.html",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/MSFT-FAQ-current-20261104.json",
+      "receipt_sha256": "a049c4c3d59cae090c12f04f71bf6ceb8dd76c93b95cc8ac0c06b2af9a9a2cc9",
+      "byte_count": 266665,
+      "retention_finished_at": "2026-11-04T05:50:00.699871+00:00"
+    }
+  ],
+  "companies": [
+    {
+      "symbols": [
+        "AAPL"
+      ],
+      "historical_model_date": "2025-09-27",
+      "currency": "USD",
+      "prior_gap": "Actual unexercised ESPP rights at fiscal end; reserve capacity cannot substitute for employee elections or contributions.",
+      "newly_supported_facts": [],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "ESPP future-issuance reserve is 58,575,220 shares, separate from disclosed outstanding plan awards.",
+          "source_id": "AAPL-proxy-2026",
+          "locator": "p83, Equity Compensation Plan Information, note4",
+          "value": 58575220,
+          "units": "shares"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Normal offerings span February-July and August-January. Rights depend on participant payroll deductions; purchased shares can be newly issued, treasury, or market-purchased.",
+          "source_id": "AAPL-ESPP-2024-amendment",
+          "locator": "sections2(p),2(u),3,5,10,17",
+          "units": "plan terms"
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 14983439505,
+        "espp_capacity_stress_shares": 58575220,
+        "employee_options_value": 0
+      },
+      "remaining_disclosure_limits": [
+        "No aggregate September 27, 2025 participant contribution balance, outstanding purchase-right count, or rights fair value found in the retained annual/proxy/plan.",
+        "The August 2025-January 2026 offering straddles the model date. Future purchases and prior-year capacity decline do not identify the fiscal-end obligation.",
+        "All-capacity issuance remains a nonprobabilistic User Assumption. Zero separate employee-claim deduction means no second charge for modeled parent awards; it is not proof of no ESPP economic cost."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false
+    },
+    {
+      "symbols": [
+        "NVDA"
+      ],
+      "historical_model_date": "2026-01-25",
+      "currency": "USD",
+      "prior_gap": "ESPP rights at fiscal end and separately identifiable finance-lease liability.",
+      "newly_supported_facts": [],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "The issuer expressly states that shares issuable on fiscal-end outstanding ESPP rights cannot be determined.",
+          "source_id": "NVDA-proxy-2026",
+          "locator": "p69, Equity Compensation Plan Information, note1",
+          "units": "disclosure limitation"
+        },
+        {
+          "classification": "Fact",
+          "claim": "ESPP future capacity is 2,226,741,019 shares. The 2,825,984-share estimate concerns the later purchase period ending August 31, 2026.",
+          "source_id": "NVDA-proxy-2026",
+          "locator": "p69, note2",
+          "future_capacity_shares": 2226741019,
+          "later_period_estimate_shares": 2825984,
+          "later_period_end": "2026-08-31",
+          "units": "shares"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Fiscal 2026 ESPP purchases were 13,226,923 shares, an annual flow already reflected in period-end common shares.",
+          "source_id": "NVDA-proxy-2026",
+          "locator": "p69, paragraph following equity compensation table",
+          "value": 13226923,
+          "units": "shares purchased during fiscal year"
+        },
+        {
+          "classification": "Fact",
+          "claim": "The 519 million figure is accumulated amortization of leasehold improvements and finance leases, not a lease-liability balance.",
+          "source_id": "NVDA-2026-sec",
+          "locator": "Note 9, Balance Sheet Components, p68, Property and Equipment footnote C / following paragraph",
+          "value": 519000000,
+          "units": "USD asset accumulated amortization"
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 26723132784,
+        "espp_capacity_stress_shares": 2226741019,
+        "employee_options_value": 0,
+        "debt": 13771000000
+      },
+      "remaining_disclosure_limits": [
+        "A later-period estimate or annual purchase flow cannot replace fiscal-end rights.",
+        "The retained annual does not separately disclose finance-lease liability; the approved debt treatment includes acquisition consideration and a broad other-liability reserve, not a measured finance-lease amount.",
+        "Future plan capacity is not an existing employee claim or a bound on all future awards."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false
+    },
+    {
+      "symbols": [
+        "MSFT"
+      ],
+      "historical_model_date": "2026-06-30",
+      "currency": "USD",
+      "prior_gap": "Preferred stock outstanding and possible claims in consolidated subsidiaries; separate check of actual versus future ESPP rights.",
+      "newly_supported_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Microsoft states it is not primary beneficiary of any VIE investments and therefore does not consolidate those investments.",
+          "source_id": "MSFT-2026-sec",
+          "locator": "Note 1, Accounting Policies, Investments, p59; inline text block F_af1f1829-d649-47ad-8f30-94f725bff394",
+          "units": "consolidation scope"
+        },
+        {
+          "classification": "Fact",
+          "claim": "The fiscal-end subsidiary exhibit names eight subsidiaries, gives no ownership percentages, and expressly omits subsidiaries below aggregate significance.",
+          "source_id": "MSFT-subsidiaries-2026",
+          "locator": "Exhibit 21, opening sentence and table",
+          "value": 8,
+          "units": "listed entities"
+        }
+      ],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "The proxy expressly places the 57,250,943 future ESPP shares after exercise of purchase rights on June 30, 2026.",
+          "source_id": "MSFT-proxy-2026",
+          "locator": "p61, Equity Compensation Plan Information, note3",
+          "value": 57250943,
+          "units": "future-capacity shares after exercise"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Quarterly ESPP purchases are recorded on the last-business-day trade date; later settlement distributes already purchased shares.",
+          "source_id": "MSFT-ESPP-2025-11K",
+          "locator": "Note1, Share Purchases, pp4-5",
+          "units": "plan accounting terms"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Charter authorizes 100,000,000 preferred shares; authorization does not report shares issued or outstanding.",
+          "source_id": "MSFT-charter-2016",
+          "locator": "Article IV sections4.1-4.2",
+          "value": 100000000,
+          "units": "authorized shares"
+        }
+      ],
+      "rejected_replacement_evidence": [
+        {
+          "source_id": "MSFT-securities-2024",
+          "reason": "Lists registered securities as of July 30, 2024 and authorized preferred capacity, not all issued classes at June 30, 2026."
+        },
+        {
+          "source_id": "MSFT-current-FAQ",
+          "reason": "Undated statement that Microsoft no longer offers preferred shares does not establish historical outstanding balance."
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 7504694025,
+        "employee_options_value": 0,
+        "preferred_stock": 0,
+        "minority_interests": 4423870000
+      },
+      "remaining_disclosure_limits": [
+        "Preferred_stock=0 remains an explicitly uncertain User Assumption.",
+        "The VIE statement excludes that category from consolidated NCI, but does not establish ownership of every other consolidated subsidiary.",
+        "The 4.42387 billion minority reserve remains 1% of 442.387 billion reported book equity; the approved 0-5% sensitivity is discretionary, not a confidence interval or measured NCI.",
+        "ESPP quarter-end exercise treatment is supported and needs no additional reserve-capacity issuance."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false,
+      "previously_resolved_subgap_reconfirmed": "Quarter-end ESPP exercise versus future capacity"
+    },
+    {
+      "symbols": [
+        "AMZN"
+      ],
+      "historical_model_date": "2025-12-31",
+      "currency": "USD",
+      "prior_gap": "Possible nonparent economic claims in consolidated entities.",
+      "newly_supported_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Each of the nine named significant subsidiaries is reported 100% owned.",
+          "source_id": "AMZN-subsidiaries-2025",
+          "locator": "Exhibit21.1, Percent Owned column",
+          "value": 100,
+          "units": "ownership percent for each listed entity",
+          "entities": [
+            "Amazon.com Services LLC",
+            "Amazon.com Sales, Inc.",
+            "Amazon Data Services, Inc.",
+            "Amazon Web Services, Inc.",
+            "Amazon Technologies, Inc.",
+            "Amazon.com NV Investment Holdings LLC",
+            "Amazon US Services LLC",
+            "A100 ROW, Inc.",
+            "Day One Insurance, Inc."
+          ]
+        }
+      ],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Consolidated entities comprise wholly owned subsidiaries and primary-beneficiary VIEs, including entities in India, healthcare services, and video production/distribution.",
+          "source_id": "AMZN-2025-sec",
+          "locator": "Note1, Description of Business, Accounting Policies, and Supplemental Disclosures; Principles of Consolidation, p41; inline block f-372",
+          "units": "consolidation scope"
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 10953498786,
+        "employee_options_value": 0,
+        "minority_interests": 4110650000
+      },
+      "remaining_disclosure_limits": [
+        "100% ownership closes the listed-entity ownership question only. It does not supply the ownership/economic-claim schedule for all consolidated VIEs.",
+        "No separate aggregate NCI balance was found in the retained annual. Absence of a separate row or XBRL NCI fact does not prove zero.",
+        "The approved 4.11065 billion reserve remains 1% of 411.065 billion book equity, a User Assumption. The 0-5% reserve stress is not a bound."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false,
+      "newly_closed_subgap": "Ownership of nine specifically listed significant subsidiaries"
+    },
+    {
+      "symbols": [
+        "GOOG"
+      ],
+      "historical_model_date": "2025-12-31",
+      "currency": "USD",
+      "prior_gap": "Ending value and settlement mix of nonparent employee awards, entity ownership, and overlap with reported NCI and forecast operating costs.",
+      "newly_supported_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Some Other Bets awards are equity classified; others are liability classified and remeasured through settlement using the relevant company equity valuation.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note1, Stock-Based Compensation, p55; inline policy block f-448",
+          "units": "measurement policy"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Alphabet may fund operations including employee compensation programs of certain Other Bets VIEs. VIE-only assets were 5.6 billion and nonrecourse liabilities 2.0 billion.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note5, Consolidated VIEs, p70",
+          "restricted_vie_assets_usd": 5600000000,
+          "nonrecourse_vie_liabilities_usd": 2000000000,
+          "units": "USD consolidated VIE amounts"
+        },
+        {
+          "classification": "Fact",
+          "claim": "The subsidiary exhibit lists Google LLC, XXVI Holdings Inc., and Alphabet Capital US LLC; it omits aggregate-insignificant subsidiaries and reports no ownership percentages.",
+          "source_id": "GOOG-subsidiaries-2025",
+          "locator": "Exhibit21.01, opening qualification and three-row table",
+          "units": "listed entities"
+        }
+      ],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Total NCI is 3.4 billion, including 841 million redeemable NCI; both are included within additional paid-in capital.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note5, Consolidated VIEs, p70",
+          "total_nci_usd": 3400000000,
+          "included_redeemable_nci_usd": 841000000,
+          "units": "USD reported book carrying amounts"
+        },
+        {
+          "classification": "Fact",
+          "claim": "2025 total SBC expense was 27.1 billion; 24.1 billion related to awards expected to settle in Alphabet stock. The 3.0 billion difference is an expense flow.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note13, Stock-Based Compensation, p82; total expense inline f-1517",
+          "total_sbc_expense_usd": 27100000000,
+          "parent_stock_settled_expense_usd": 24100000000,
+          "calculated_difference_usd": 3000000000,
+          "units": "USD expense during 2025, rounded billions"
+        },
+        {
+          "classification": "Fact",
+          "claim": "2025 Other Bets results include a 2.1 billion Waymo employee-compensation charge based on estimated stock valuation, mainly in R&D.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "MD&A executive overview, p33",
+          "value": 2100000000,
+          "units": "USD 2025 expense, not claim stock"
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 12369490604,
+        "employee_options_value": 3000000000,
+        "minority_interests": 3400000000
+      },
+      "remaining_disclosure_limits": [
+        "No ending nonparent-award fair-value balance, settlement split, or full cap table is disclosed in the inspected annual, proxy, or subsidiary exhibit.",
+        "The 3 billion employee reserve is an approved User Assumption calibrated to an annual expense difference. It is not a reported liability, award fair value, or probable cash payment.",
+        "No disclosed reconciliation quantifies overlap between nonparent equity awards, book NCI, liability awards, and operating-cost forecasts. Preserve explicit possible double-counting uncertainty.",
+        "The February 2026 Waymo financing is subsequent to this model date. Its 16 billion total and majority Alphabet funding do not establish December 31, 2025 ownership percentages.",
+        "The 841 million redeemable amount is already within 3.4 billion NCI and must not be added again.",
+        "The shared issuer share count applies to GOOG and GOOGL; the models do not represent two additive issuer equity values."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false
+    },
+    {
+      "symbols": [
+        "GOOGL"
+      ],
+      "historical_model_date": "2025-12-31",
+      "currency": "USD",
+      "prior_gap": "Ending value and settlement mix of nonparent employee awards, entity ownership, and overlap with reported NCI and forecast operating costs.",
+      "newly_supported_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Some Other Bets awards are equity classified; others are liability classified and remeasured through settlement using the relevant company equity valuation.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note1, Stock-Based Compensation, p55; inline policy block f-448",
+          "units": "measurement policy"
+        },
+        {
+          "classification": "Fact",
+          "claim": "Alphabet may fund operations including employee compensation programs of certain Other Bets VIEs. VIE-only assets were 5.6 billion and nonrecourse liabilities 2.0 billion.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note5, Consolidated VIEs, p70",
+          "restricted_vie_assets_usd": 5600000000,
+          "nonrecourse_vie_liabilities_usd": 2000000000,
+          "units": "USD consolidated VIE amounts"
+        },
+        {
+          "classification": "Fact",
+          "claim": "The subsidiary exhibit lists Google LLC, XXVI Holdings Inc., and Alphabet Capital US LLC; it omits aggregate-insignificant subsidiaries and reports no ownership percentages.",
+          "source_id": "GOOG-subsidiaries-2025",
+          "locator": "Exhibit21.01, opening qualification and three-row table",
+          "units": "listed entities"
+        }
+      ],
+      "reconfirmed_facts": [
+        {
+          "classification": "Fact",
+          "claim": "Total NCI is 3.4 billion, including 841 million redeemable NCI; both are included within additional paid-in capital.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note5, Consolidated VIEs, p70",
+          "total_nci_usd": 3400000000,
+          "included_redeemable_nci_usd": 841000000,
+          "units": "USD reported book carrying amounts"
+        },
+        {
+          "classification": "Fact",
+          "claim": "2025 total SBC expense was 27.1 billion; 24.1 billion related to awards expected to settle in Alphabet stock. The 3.0 billion difference is an expense flow.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "Note13, Stock-Based Compensation, p82; total expense inline f-1517",
+          "total_sbc_expense_usd": 27100000000,
+          "parent_stock_settled_expense_usd": 24100000000,
+          "calculated_difference_usd": 3000000000,
+          "units": "USD expense during 2025, rounded billions"
+        },
+        {
+          "classification": "Fact",
+          "claim": "2025 Other Bets results include a 2.1 billion Waymo employee-compensation charge based on estimated stock valuation, mainly in R&D.",
+          "source_id": "GOOG-2025-sec",
+          "locator": "MD&A executive overview, p33",
+          "value": 2100000000,
+          "units": "USD 2025 expense, not claim stock"
+        }
+      ],
+      "approved_assumptions_preserved": {
+        "diluted_shares": 12369490604,
+        "employee_options_value": 3000000000,
+        "minority_interests": 3400000000
+      },
+      "remaining_disclosure_limits": [
+        "No ending nonparent-award fair-value balance, settlement split, or full cap table is disclosed in the inspected annual, proxy, or subsidiary exhibit.",
+        "The 3 billion employee reserve is an approved User Assumption calibrated to an annual expense difference. It is not a reported liability, award fair value, or probable cash payment.",
+        "No disclosed reconciliation quantifies overlap between nonparent equity awards, book NCI, liability awards, and operating-cost forecasts. Preserve explicit possible double-counting uncertainty.",
+        "The February 2026 Waymo financing is subsequent to this model date. Its 16 billion total and majority Alphabet funding do not establish December 31, 2025 ownership percentages.",
+        "The 841 million redeemable amount is already within 3.4 billion NCI and must not be added again.",
+        "The shared issuer share count applies to GOOG and GOOGL; the models do not represent two additive issuer equity values."
+      ],
+      "safe_assumptions_patch": {},
+      "numeric_fact_gap_closed": false
+    }
+  ],
+  "retained_fact_checks": [
+    {
+      "source_id": "MSFT-2026-sec",
+      "fact_locator_text_verified": "We have determined we are not the primary beneficiary of any of our VIE investments."
+    },
+    {
+      "source_id": "MSFT-2026-sec",
+      "fact_locator_text_verified": "442,387"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "fact_locator_text_verified": "consisting of its wholly-owned subsidiaries"
+    },
+    {
+      "source_id": "AMZN-2025-sec",
+      "fact_locator_text_verified": "411,065"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "fact_locator_text_verified": "liability classified and remeasured at fair value through settlement"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "fact_locator_text_verified": "potential funding of employee compensation programs"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "fact_locator_text_verified": "27.1"
+    },
+    {
+      "source_id": "GOOG-2025-sec",
+      "fact_locator_text_verified": "24.1"
+    },
+    {
+      "source_id": "AMZN-subsidiaries-2025",
+      "fact_locator_text_verified": "AMAZON.COM, INC."
+    },
+    {
+      "source_id": "AMZN-subsidiaries-2025",
+      "fact_locator_text_verified": "Percent Owned"
+    },
+    {
+      "source_id": "AMZN-subsidiaries-2025",
+      "fact_locator_text_verified": "Day One Insurance, Inc. Arizona 100 %"
+    },
+    {
+      "source_id": "MSFT-subsidiaries-2026",
+      "fact_locator_text_verified": "as of June 30, 2026"
+    },
+    {
+      "source_id": "MSFT-subsidiaries-2026",
+      "fact_locator_text_verified": "omitting subsidiaries"
+    },
+    {
+      "source_id": "MSFT-subsidiaries-2026",
+      "fact_locator_text_verified": "Activision Publishing, Inc."
+    },
+    {
+      "source_id": "GOOG-subsidiaries-2025",
+      "fact_locator_text_verified": "as of December 31, 2025"
+    },
+    {
+      "source_id": "GOOG-subsidiaries-2025",
+      "fact_locator_text_verified": "omitting subsidiaries"
+    },
+    {
+      "source_id": "GOOG-subsidiaries-2025",
+      "fact_locator_text_verified": "Alphabet Capital US LLC"
+    },
+    {
+      "source_id": "MSFT-current-FAQ",
+      "fact_locator_text_verified": "Do you issue preferred stock?"
+    },
+    {
+      "source_id": "MSFT-current-FAQ",
+      "fact_locator_text_verified": "Microsoft no longer offers preferred shares."
+    }
+  ],
+  "additional_validation": {
+    "amazon_100_percent_rows": 9,
+    "preserved_approved_input_values_checked": 18,
+    "historical_model_dates_checked": 6
+  },
+  "conclusion": {
+    "new_numeric_model_patch_supported": false,
+    "source_scope_closures": [
+      "AMZN listed significant subsidiaries are each 100% owned.",
+      "MSFT VIE investments are not consolidated; this specific category cannot create consolidated NCI."
+    ],
+    "safe_next_action": "Attach the retained new exhibit ownership/scope facts and this audit to review provenance. Preserve all approved model numbers and labels. Do not claim that the remaining historical factual gaps are closed.",
+    "further_information_needed": [
+      "AAPL fiscal-end ESPP participant contributions/right valuation and expected issuance versus market-purchased settlement.",
+      "NVDA fiscal-end ESPP rights valuation; issuer expressly says the share count is not determinable; separate finance-lease liability if required.",
+      "MSFT period-specific preferred outstanding confirmation and ownership/claims for all consolidated subsidiaries.",
+      "AMZN consolidated VIE economic-rights and aggregate NCI measurement.",
+      "Alphabet period-end nonparent award liability/equity valuation, settlement split, ownership, and reconciliation to NCI and forecast expense."
+    ],
+    "public_search_limit": "Targeted SEC/issuer searches plus retained annuals, fiscal-end proxies, plan terms and significant-subsidiary exhibits were inspected. This is not a claim that no undiscovered disclosure exists. No additional complete date-aligned numerical schedule was found.",
+    "approval_needed_for_existing_scenarios": false
+  }
+}

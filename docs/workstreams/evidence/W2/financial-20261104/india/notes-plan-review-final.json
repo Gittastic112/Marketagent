@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "review_id": "W2-INDIA-NOTES-PLAN-REVIEW-20261104-FINAL",
+  "reviewed_on": "2026-11-04",
+  "reviewer": "delegated India source reviewer",
+  "status": "pass",
+  "scope": "Final RELIANCE and BHARTIARTL disclosure-note thesis and metadata only",
+  "plan_path": "output/milestones/disclosure-followup-20261104/notes-plan.json",
+  "plan_sha256": "5ad083abdd64607dde1cd77b711217ea309173a556516c41d053dd0593bcf886",
+  "prior_receipt_path": "docs/workstreams/evidence/W2/financial-20261104/india/notes-plan-review-r1.json",
+  "prior_receipt_sha256": "c991915a36f7a715c571852d2532ae949bd83bb75fb52a73a24666c6d0e6c32a",
+  "source_packet_path": "docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json",
+  "source_packet_sha256": "b0bcc9371adcfd52944d65d9d00aa3c8ee54a1ebd8724d5e9a9c4b7e3dd6dea2",
+  "companies": [
+    {
+      "ticker": "RELIANCE",
+      "model_id": 3,
+      "company_id": 7,
+      "input_hash": "4bd053189e7af0bc763fcf85365b923a8ca718ee36dddc509fbc98bbc6a4499b",
+      "payload_sha256": "f565b1dfaf2b5e576a93c0ddcf0db3a711a5afb01505e79307cb4ba4f1b4c19d",
+      "thesis_sha256": "80bda6cf2b35132a31ccb4dfd35e66e48df5a0aa8a4cc7fbcb1c8b3cdfaaeb88",
+      "source_count": 3
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "model_id": 4,
+      "company_id": 9,
+      "input_hash": "8bb33ee29bde4a63194f467c24e983cd03dec53877c09d00ea339165bdef53c2",
+      "payload_sha256": "2199433d23f8dceec29c20109eef8a81ff39dfcaa4c5dec04c2aa1713fc9e19b",
+      "thesis_sha256": "946e2610e9fa33de8337c49d2d21a166147bdbaa5df34cdbc4fd35cc63a35555",
+      "source_count": 5
+    }
+  ],
+  "checks": [
+    {
+      "ticker": "RELIANCE",
+      "name": "Embedded company review exactly matches final packet",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Inactive evidence note with no model or financial patch",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Historical basis remains March31,2026",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Final source packet hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Source IDs exactly match manifest",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Delegated review status and unknown exact model ID preserved",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Canonical input hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Canonical final payload hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "Freshness now permits explicitly dated historical statements and prevents backdating",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-2026 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-2026 annual URL and hash match",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-FY2026-official original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-FY2026-official URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-FY2026-official receipt hash unchanged",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-ventures-FY2026-official original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-ventures-FY2026-official URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "RELIANCE",
+      "name": "RELIANCE-retail-ventures-FY2026-official receipt hash unchanged",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Embedded company review exactly matches final packet",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Inactive evidence note with no model or financial patch",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Historical basis remains March31,2026",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Final source packet hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Source IDs exactly match manifest",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Delegated review status and unknown exact model ID preserved",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Canonical input hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Canonical final payload hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Freshness now permits explicitly dated historical statements and prevents backdating",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Known holders distinguished from unresolved covered share population",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "Treasury subpopulation discrepancy now explicit",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "September AMC publication distinguished from March historical basis",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-2026 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-2026 annual URL and hash match",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-africa-FY2026 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-africa-FY2026 URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-africa-FY2026 receipt hash unchanged",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-indus-shareholding-20260331 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-indus-shareholding-20260331 URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-indus-shareholding-20260331 receipt hash unchanged",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-nxtra-results-20260331 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-nxtra-results-20260331 URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-nxtra-results-20260331 receipt hash unchanged",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-AMC-registration-20260923 original hash matches",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-AMC-registration-20260923 URL, run and receipt match",
+      "pass": true
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "name": "BHARTIARTL-AMC-registration-20260923 receipt hash unchanged",
+      "pass": true
+    }
+  ],
+  "passed": 43,
+  "failed": 0,
+  "resolved_findings": [
+    {
+      "id": "INDIA-NOTE-WORDING-1",
+      "status": "resolved"
+    },
+    {
+      "id": "INDIA-NOTE-WORDING-2",
+      "status": "resolved"
+    },
+    {
+      "id": "INDIA-NOTE-OMISSION-3",
+      "status": "resolved"
+    }
+  ],
+  "new_material_findings": [
+
+  ],
+  "conclusion": "Both final notes accurately summarize the verified historical sources and preserve uncertainty, approved assumptions and no-numeric-change scope. All original/source/input/payload hashes verified. No remaining material note wording issue.",
+  "application_performed": false,
+  "source_changes": false,
+  "model_changes": false,
+  "limits": "This review certifies note consistency with retained evidence, not whole-company claim completeness or human acceptance."
+}

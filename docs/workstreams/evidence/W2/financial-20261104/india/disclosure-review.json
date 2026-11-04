@@ -1,0 +1,1234 @@
+{
+  "schema_version": 1,
+  "decision_id": "W2-INDIA-DISCLOSURE-FOLLOWUP-20261104",
+  "reviewed_on": "2026-11-04",
+  "reviewer": "delegated agent",
+  "status": "bounded_disclosure_review_complete_with_new_fact_scope_and_explicit_residuals",
+  "historical_reference_date": "2026-03-31",
+  "information_basis": "Retrospective FY2026 source research. Post-March report publication is allowed; later transactions and latest-practicable-date shareholder tables are not backdated.",
+  "authority_and_effect": {
+    "normal_runtime_calls": false,
+    "database_writes": false,
+    "model_changes": false,
+    "source_ingestion": false,
+    "new_datasets": false,
+    "git_changes": false,
+    "automatic_application_authority": false,
+    "company_fact_completeness": false
+  },
+  "immutable_inputs": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261103/india/historical-reference-candidates.json",
+      "sha256": "7d96bc290ffc9c8ab57360855f58c2c786701999a21226a4698e69e34a43444b"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261103/approval/approval-summary.json",
+      "sha256": "be9ad33317a6611e9af9e65cb9c481a7347fb88bf13f26635e72d7f64a71c981"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261103/approval/approval-report.html",
+      "sha256": "031be4fbe3d3aa3637bbe322b2a21e64083503438aeb8a2215fc0b5a5e86c344"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261102/india/remaining-gap-audit.json",
+      "sha256": "8ac35e73bf3439befeb293891d69b1d24e2f3766c3c5efb319a3a56793b4481e"
+    }
+  ],
+  "retained_sources": {
+    "RELIANCE": {
+      "sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "url": "https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/RELIANCE-2026-direct.pdf",
+      "verified_sha256": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/RELIANCE-2026-direct.txt",
+      "extracted_text_sha256": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737"
+    },
+    "BHARTIARTL": {
+      "sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "url": "https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf",
+      "local_path": "output/milestones/m05/review-batches-20261013/originals/BHARTIARTL-2026.pdf",
+      "verified_sha256": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+      "extracted_text_path": "output/milestones/m05/review-batches-20261013/extracted/BHARTIARTL-2026.txt",
+      "extracted_text_sha256": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1"
+    }
+  },
+  "new_source_retention_verification": {
+    "path": "docs/workstreams/evidence/W2/financial-20261104/india/source-retention-verification.json",
+    "sha256": "3b13861d19a56fb178b736b96b4102a66e2621019770cba6e8c80fd8f0e47fc5",
+    "originals": 6,
+    "human_review_status": "pending; delegated evidence verification is not independent human certification"
+  },
+  "additional_official_sources": {
+    "AFRICA-2026-ORIGINAL": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/pdf/Airtel_Africa_plc_Annual_Report_and_Accounts_2026.pdf",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 192,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-africa-FY2026.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-africa-FY2026.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-africa-FY2026.txt",
+      "extracted_text_sha256": "9fdea783dc396277aa27636bc9e0a70cdc764e475bfc01b5fd030717ce2f0b8d"
+    },
+    "AFRICA-CAPITAL": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/28-share-capital-17302.html",
+      "section": "Note 28 and 28.1",
+      "read_status": "read",
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original",
+      "retained_original_source": "AFRICA-2026-ORIGINAL"
+    },
+    "AFRICA-DIRECTORS": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/directors-report-17269.html",
+      "section": "Share plans; Major shareholders; AMC BV; update on put option",
+      "read_status": "read",
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original",
+      "retained_original_source": "AFRICA-2026-ORIGINAL"
+    },
+    "AFRICA-NCI": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/30-investments-in-subsidiaries-17304.html",
+      "section": "Note 30(C)",
+      "read_status": "read",
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original",
+      "retained_original_source": "AFRICA-2026-ORIGINAL"
+    },
+    "AFRICA-PUT": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/35-fair-value-of-financial-assets-and-liabilities-17309.html",
+      "section": "Note 35",
+      "read_status": "read",
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original",
+      "retained_original_source": "AFRICA-2026-ORIGINAL"
+    },
+    "AFRICA-REMUNERATION": {
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/AR2026/reports/part-3-our-annual-report-on-remuneration-17268.html",
+      "section": "Directors share interests and IPO-linked incentive awards",
+      "read_status": "read",
+      "read_on": "2026-11-04",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original",
+      "retained_original_source": "AFRICA-2026-ORIGINAL"
+    },
+    "INDUS-MARCH31-SHP": {
+      "url": "https://www.industowers.com/wp-content/uploads/2026/04/SHP31032026.pdf",
+      "section": "PDF pages 4, 9, 14 and promoter table",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "1c06f59f9739f9370e1c27b39a8a7fd74ca39c0b9db7d471f888e28c38ae1533",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 193,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-indus-shareholding-20260331.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-indus-shareholding-20260331.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-indus-shareholding-20260331.txt",
+      "extracted_text_sha256": "3b36d1cd9c7901daa3273dabb0c9d382b7c5e8acf3ff6e2892df822d5caa6df4"
+    },
+    "INDUS-2026-ORIGINAL": {
+      "url": "https://www.industowers.com/wp-content/uploads/2026/07/Indus-IR-fq-2026.pdf",
+      "read_status": "66,280,278-byte original exceeds normal40MiB acquisition cap; not acquired or used for unverified award counts",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": null,
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original"
+    },
+    "NXTRA-FY2026-RESULTS": {
+      "url": "https://assets.airtel.in/nxtra/pdf/Financial-Documents/STXIntimation_Nxtra_results_March31_2026.pdf",
+      "section": "Audited standalone and consolidated results approved May 11, 2026",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "9ec0376e75c9a2cf139baa0d49e0ea49581bc030fbc62c13b64f51aa502f80a4",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 194,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-nxtra-results-20260331.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-nxtra-results-20260331.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-nxtra-results-20260331.txt",
+      "extracted_text_sha256": "2ba97751b2a2d7cf8aea57883d44432a4d6536cdc69a3ad8cee76681eade82d9"
+    },
+    "NXTRA-DIRECTORY": {
+      "url": "https://www.nxtra.in/documents/",
+      "read_status": "read; FY2026 annual return links to /404; labelled March31 results link serves Dec2025 results",
+      "read_on": "2026-11-04",
+      "original_sha256": null,
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original"
+    },
+    "AMC-REGISTRATION": {
+      "url": "https://data.fca.org.uk/artefacts/NSM/FCA/NI-000152177/NI-000152177.pdf",
+      "document_date": "2026-09-23",
+      "section": "Historical FY2026 note25, PDF205/printed202; part11 section12.4, PDF267/printed264; capital reorganisation PDF139/printed136; latest shareholder table PDF256/printed253",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "743884f1144dc4bd5636c0442a4f694f6dd5c2dbcc456ed73a706762d2d3e610",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 197,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/BHARTIARTL-AMC-registration-20260923.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/BHARTIARTL-AMC-registration-20260923.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-AMC-registration-20260923.txt",
+      "extracted_text_sha256": "a3ddeb00d5ef9a0d7078e0e60be7ee2c3047f097504038f9aa2adace43cfd93f"
+    },
+    "RIL-SUBSIDIARY-DIRECTORY": {
+      "url": "https://www.ril.com/investors/subsidiaries-associates/financial-statements-of-subsidiaries/financial-statements-of-subsidiaries-2025-26",
+      "read_status": "read; issuer-linked originals confirmed",
+      "read_on": "2026-11-04",
+      "original_sha256": null,
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original"
+    },
+    "RRL-2026": {
+      "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Limited.pdf",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "1163ad1e2953f7fd6095bfcfcb72d93e0971f250d29f26d0420f4b31b7caf10b",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 199,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-FY2026-official.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-FY2026-official.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/RELIANCE-retail-FY2026-official.txt",
+      "extracted_text_sha256": "bde3b058c5296c360465f89f14631e700473132e203fdc44cd778776d99b109e"
+    },
+    "RRVL-2026": {
+      "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf",
+      "read_status": "Retained original read; exact period, scope and numeric locators checked",
+      "acquisition_requested": false,
+      "read_on": "2026-11-04",
+      "original_sha256": "84c2d7d1061b87f790188abe9370fec07c49f86b32b9675aa047bf96f216909f",
+      "retention_owner": "coordinator retained source; delegated agent verified bytes and targeted disclosures",
+      "processing_run_id": 200,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-ventures-FY2026-official.json",
+      "local_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-ventures-FY2026-official.pdf",
+      "extracted_text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/RELIANCE-retail-ventures-FY2026-official.txt",
+      "extracted_text_sha256": "55a2f1f738e794b8247a5c4c0965ce42778c47550cb184d650ce8782a2ff0faf"
+    },
+    "RIL-SGX-ANNUAL-MIRROR": {
+      "url": "https://links.sgx.com/FileOpen/SE_Notice_IAR.ashx?App=Announcement&FileID=890565",
+      "section": "Consolidated note37, printed254-255",
+      "read_status": "official exchange search result reproduces same gross-external/intersegment/GST table; no independent net-external GST allocation supplied",
+      "read_on": "2026-11-04",
+      "original_sha256": null,
+      "retention_owner": "coordinator; this packet does not claim web text is a retained original"
+    }
+  },
+  "companies": [
+    {
+      "ticker": "RELIANCE",
+      "model_id": 3,
+      "assumptions_patch": {
+      },
+      "reviewed_fields": [
+
+      ],
+      "already_known": {
+        "consolidated_nci_inr_crore": 181836,
+        "consolidated_source_pdf_page": 100,
+        "parent_outstanding_options": 907052,
+        "jio_outstanding_options": 10280000,
+        "awards_source_pdf_pages": [
+          117,
+          118
+        ],
+        "jio_issued_ordinary_shares": 8939030830,
+        "ril_jio_holding": 5937841645,
+        "jio_ordinary_book_equity_inr_crore": 335977,
+        "jio_lower_tier_nci_excluded_inr_crore": 1099
+      },
+      "newly_closed_fact_only_updates": [
+        {
+          "id": "RRL-EXACT-ORDINARY-CAPITAL-AND-HOLDER",
+          "claim_type": "Fact",
+          "source": "RRL-2026",
+          "section": "Notes10,10.1-10.5",
+          "pdf_pages": [
+            28,
+            29
+          ],
+          "printed_pages": [
+            28,
+            29
+          ],
+          "units": "ordinary shares, INR par and percentages",
+          "as_of": "2026-03-31",
+          "values": {
+            "issued": 8986974090,
+            "ordinary_par_inr": 10,
+            "rrvl_holding": 8986974090,
+            "rrvl_holding_pct": 100
+          },
+          "scope": "The sole issued ordinary class is wholly held by RRVL. The7,865,423 former minority shares were extinguished inFY2023-24, not outstanding inFY2026. Authorized preference capacity is not issued preference capital. This closes this direct ordinary ownership population, not all subsidiary contingent claims."
+        },
+        {
+          "id": "RRL-OFCD-IS-INTRAGROUP",
+          "claim_type": "Source Summary",
+          "source": "RRL-2026",
+          "section": "Notes11.1-11.3 and34 related-party balances",
+          "pdf_pages": [
+            30,
+            49
+          ],
+          "printed_pages": [
+            30,
+            49
+          ],
+          "units": "INR crore carrying amount",
+          "as_of": "2026-03-31",
+          "values": {
+            "opening": 40000,
+            "issued": 19000,
+            "redeemed": 20774,
+            "closing": 38226
+          },
+          "scope": "All outstanding Zero Coupon Unsecured Optionally Fully Convertible Debentures are held by RRVL, the parent of RRL. The related-party table places the entire38,226crore in Parent. These are internal to consolidated Reliance; no extra external NCI/preferred/debt deduction is proposed. Rights and conversion prices are disclosed in note11, but no instrument fair value is inferred."
+        },
+        {
+          "id": "RRVL-EXACT-ORDINARY-CAPITAL-AND-RIL-HOLDING",
+          "claim_type": "Fact",
+          "source": "RRVL-2026",
+          "section": "Standalone notes13-13.5",
+          "pdf_page": 25,
+          "printed_page": 24,
+          "units": "ordinary shares, INR par and percentages",
+          "as_of": "2026-03-31",
+          "values": {
+            "issued": 7011242660,
+            "ordinary_par_inr": 10,
+            "ril_holding": 5858486658,
+            "reported_ril_holding_pct": 83.56
+          },
+          "scope": "Issued share-capital table contains ordinary equity only; the5,000crore preference line is authorization. Other ordinary holders remain external to RIL. The standalone capital table is not a complete fair-value or group award register; no new aggregate NCI amount is derived."
+        }
+      ],
+      "net_external_revenue": {
+        "source": "RELIANCE",
+        "section": "Note37(I)",
+        "pdf_page": 129,
+        "printed_pages": [
+          254,
+          255
+        ],
+        "period": "2025-04-01/2026-03-31",
+        "units": "INR crore",
+        "segments": [
+          "O2C",
+          "Oil and Gas",
+          "Retail",
+          "Digital Services",
+          "Others"
+        ],
+        "gross_external_turnover": [
+          658991,
+          19008,
+          365820,
+          59777,
+          72323
+        ],
+        "intersegment_turnover": [
+          3410,
+          4853,
+          5265,
+          116387,
+          8199
+        ],
+        "segment_gst": [
+          21429,
+          24,
+          42883,
+          26199,
+          9709
+        ],
+        "group_net_revenue": 1075675,
+        "mechanical_external_minus_all_segment_gst": [
+          637562,
+          18984,
+          322937,
+          33578,
+          62614
+        ],
+        "mechanical_values_approved_as_facts": false,
+        "net_external_weights": null,
+        "conclusion": "The net operating revenue rows include intersegment activity. Their sum exceeds the consolidated net revenue by138,114 crore. External turnover is separately gross of GST. Subtracting every segment GST amount from gross external turnover reconciles the group total, but does not establish which GST relates to external versus intersegment turnover. No newly reviewed official disclosure resolves that allocation.",
+        "exact_missing": "A segment net-external-revenue table, or explicit per-segment external/intersegment GST and consolidation eliminations.",
+        "source_search_scope": [
+          "retained FY2026 consolidated note37 and revenue notes",
+          "issuer FY2026 report and subsidiary directory",
+          "official SGX annual-report mirror",
+          "targeted official-source searches for net external revenue/GST"
+        ],
+        "selected_mapping_unchanged": "Diversified comparison taxonomy, not a verified revenue-weighted industry mixture"
+      },
+      "claim_scope": {
+        "supported": "Consolidated note28.2 separately identifies parent and Jio equity-settled options. The retained Jio carrying-equity dilution proxy excludes lower-tier NCI and does not add Jio options to parent shares. Newly retained retail originals establish RRL ordinary ownership, internal OFCD scope and RRVL parent holdings.",
+        "new_supported_aggregate_claim_value": null,
+        "remaining": "The aggregate181,836crore NCI carrying amount is not a market valuation of each minority interest. The parent/Jio plan disclosure plus these two retail standalone reports is not a complete security-level register of every group subsidiary contingent, employee or preference claim. No targeted retail disclosure establishes a complete outstanding-award population; absence of a separate table is not evidence of zero. Exact full-group claim measurement remains unestablished.",
+        "additional_sources_pending_read": [
+
+        ]
+      },
+      "discretionary_choices_preserved": {
+        "jio_incremental_carrying_proxy_inr": 2564000000,
+        "full_parent_options_issued_without_proceeds": true,
+        "direct_inr_hurdle": 0.14,
+        "interpretation": "Approved historical assumptions, unchanged. No conversion to actual fair value or complete-group certification."
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "model_id": 4,
+      "assumptions_patch": {
+      },
+      "reviewed_fields": [
+
+      ],
+      "already_known": {
+        "aggregate_nci_inr_m": 469068,
+        "parent_full_issuance_denominator_estimate": 6095062981,
+        "nxtra_options_rounded_to_thousand": 60000,
+        "indus_options_rounded_to_thousand": 1745000,
+        "africa_ordinary_awards_rounded_to_thousand": 8969000,
+        "source_pdf_pages": [
+          214,
+          238,
+          239,
+          246,
+          247,
+          258
+        ]
+      },
+      "newly_closed_fact_only_updates": [
+        {
+          "id": "BHARTI-NCI-SUBGROUP-SCOPE",
+          "claim_type": "Fact",
+          "source": "BHARTIARTL",
+          "section": "Note8",
+          "pdf_page": 233,
+          "printed_pages": [
+            462,
+            463
+          ],
+          "units": "INR million and percentages",
+          "as_of": "2026-03-31",
+          "values": {
+            "nxtra_equity": 32393,
+            "nxtra_nci": 7787,
+            "nxtra_nci_pct": 24.04,
+            "hexacom_equity": 71652,
+            "hexacom_nci": 21495,
+            "hexacom_nci_pct": 30.0,
+            "indus_equity": 396456,
+            "indus_nci_including_ppa": 251870,
+            "indus_nci_pct": 48.744,
+            "africa_equity_including_lower_tier_nci": 330111,
+            "africa_accumulated_nci": 110011,
+            "africa_nci_pct": 37.38,
+            "africa_lower_tier_nci_in_equity": 32135
+          },
+          "scope": "Consolidation-adjusted subgroup table, including acquisition fair-value/accounting alignments. Not a disjoint security-by-security claims register. Indus NCI explicitly includes PPA; the Africa equity line includes lower-tier NCI."
+        },
+        {
+          "id": "INDUS-EXACT-ISSUED-TRUST-AND-PARENT",
+          "claim_type": "Fact",
+          "source": "INDUS-MARCH31-SHP",
+          "pdf_pages": [
+            4,
+            9,
+            14,
+            15
+          ],
+          "units": "ordinary shares",
+          "as_of": "2026-03-31",
+          "values": {
+            "issued": 2638162757,
+            "bharti_parent_holding": 1352208904,
+            "public_holding": 1284980900,
+            "employee_trust_holding": 972953
+          },
+          "scope": "Page15 explicitly names BHARTI AIRTEL LIMITED. Trust shares are already issued. The shareholding filing does not replace the unexercised-award note. Do not count the trust shares as extra grants or add subsidiary awards to Bharti parent shares."
+        },
+        {
+          "id": "AFRICA-EXACT-ISSUED-AND-TREASURY",
+          "claim_type": "Fact",
+          "source": "AFRICA-CAPITAL",
+          "section": "Note28 and28.1",
+          "pdf_page": 214,
+          "printed_page": 214,
+          "units": "ordinary shares",
+          "as_of": "2026-03-31",
+          "values": {
+            "issued": 3654881028,
+            "treasury": 6829485,
+            "ordinary_par_usd": 0.5
+          },
+          "scope": "Audited share-capital note. One ordinary class. Treasury is deducted once to form an economic outstanding-share calculation; the total is not added again to awards. Treasury subpopulation discrepancies are preserved separately."
+        },
+        {
+          "id": "AFRICA-PARENT-HOLDING",
+          "claim_type": "Fact",
+          "source": "AFRICA-DIRECTORS",
+          "section": "Major shareholders",
+          "pdf_page": 159,
+          "printed_page": 159,
+          "units": "ordinary share voting rights",
+          "as_of": "2026-03-31",
+          "values": {
+            "airtel_africa_mauritius_holding": 2288691385,
+            "reported_voting_interest_pct": 62.73
+          },
+          "scope": "Voting-interest percentage has a different denominator from Bharti reported62.62% consolidated ownership. Exact holding is sourced; neither percentage should silently overwrite the other."
+        },
+        {
+          "id": "AFRICA-AMC-SEPARATE-INCENTIVES",
+          "claim_type": "Source Summary",
+          "source": "AFRICA-REMUNERATION",
+          "section": "Directors share interests and IPO-linked incentive awards",
+          "pdf_page": 155,
+          "printed_page": 155,
+          "as_of": "2026-03-31",
+          "units": "USD maximum face-value interests",
+          "values": {
+            "sunil_taldar": 570000,
+            "kamal_dua": 65000,
+            "jaideep_paul": 482000
+          },
+          "scope": "Separate performance-dependent Airtel Money IPO-linked interests. Face values are not present claim values or AMC share counts, and the total is not a replacement for ordinary Africa award counts."
+        },
+        {
+          "id": "NXTRA-CONSOLIDATED-VS-STANDALONE",
+          "claim_type": "Calculation",
+          "sources": [
+            "BHARTIARTL",
+            "NXTRA-FY2026-RESULTS"
+          ],
+          "locators": [
+            "Bharti note8 PDF233",
+            "Nxtra standalone balance sheet PDF6",
+            "Nxtra consolidated balance sheet PDF14"
+          ],
+          "as_of": "2026-03-31",
+          "units": "INR million",
+          "values": {
+            "standalone_equity": 32447,
+            "consolidated_equity": 32393,
+            "difference": 54
+          },
+          "scope": "Standalone119m capital plus32,328m other equity is not the same base as119m plus32,274m =32,393m consolidated equity. Both pages visually verified. Results capital is rounded to millions, so119m/INR10 must not be called an exact share register."
+        },
+        {
+          "id": "AMC-HISTORICAL-ORDINARY-CAPITAL",
+          "claim_type": "Fact",
+          "source": "AMC-REGISTRATION",
+          "section": "FY2026 special-purpose consolidated financial statements note25",
+          "pdf_page": 205,
+          "printed_page": 202,
+          "as_of": "2026-03-31",
+          "units": "ordinary shares and EUR par",
+          "values": {
+            "issued_ordinary_shares": 18000,
+            "nominal_value_eur": 1
+          },
+          "scope": "Later publication reports a historical count. August2026 split/bonus resulted in2.7bn shares (PDF139/printed136), but those are not the March31 denominator."
+        },
+        {
+          "id": "AMC-HISTORICAL-EQUITY-SCOPE",
+          "claim_type": "Fact",
+          "source": "AMC-REGISTRATION",
+          "section": "Special-purpose consolidated statement of changes in equity",
+          "pdf_page": 170,
+          "printed_page": 167,
+          "as_of": "2026-03-31",
+          "units": "USD million",
+          "values": {
+            "ordinary_owner_equity": 533,
+            "lower_tier_nci": 9,
+            "total_equity": 542
+          },
+          "scope": "This separates the9m lower-tier NCI from the533m equity attributable to AMC owners. It does not provide the put-covered holders allocation within Bharti consolidated NCI."
+        }
+      ],
+      "ownership_and_claim_arithmetic": {
+        "indus_issued_sum": 2638162757,
+        "indus_excluding_trust_shares": 2637189804,
+        "indus_parent_fraction_of_issued": 0.5125570438791545,
+        "africa_excluding_note28_treasury": 3648051543,
+        "africa_treasury_rollforward": 6829485,
+        "africa_directors_treasury_plus_ebt": 6822585,
+        "africa_treasury_scope_difference": 6900,
+        "africa_note5_vs_directors_buyback_treasury_difference": 40350,
+        "africa_parent_fraction_of_issued": 0.6262013366417026,
+        "africa_parent_fraction_excluding_note28_treasury": 0.6273736426207068,
+        "bharti_put_rollforward_inr_m": 48729,
+        "nxtra_standalone_minus_consolidated_equity_inr_m": 54,
+        "africa_known_ordinary_awards_rounded": 8969000,
+        "amc_ipo_director_face_values_usd_sum": 1117000,
+        "amc_historical_equity_usd_m": 542
+      },
+      "explicit_source_conflicts": [
+        {
+          "sources": [
+            "AFRICA-CAPITAL",
+            "AFRICA-DIRECTORS",
+            "AFRICA-2026-ORIGINAL"
+          ],
+          "pdf_pages": [
+            159,
+            192,
+            214
+          ],
+          "issue": "Audited note28 treasury6,829,485 differs by6,900 from directors buyback treasury6,136,678 plus EBT685,907. Note5(b) separately reports6,177,028 bought-back shares remaining in treasury, which is40,350 above the directors figure. No forced equality or invented reconciliation; use note28 only for the reported total and preserve all three scopes."
+        },
+        {
+          "sources": [
+            "BHARTIARTL",
+            "AFRICA-PUT"
+          ],
+          "issue": "Bharti note38 PDF258 describes48months, while Africa note35 records60months and the FY2026 12-month extension. Bharti INR48,729m and Africa USD515m carrying/517m fair value are distinct reported figures; no synthetic FX conversion or silent replacement."
+        }
+      ],
+      "amc_put": {
+        "already_known": {
+          "source": "BHARTIARTL",
+          "pdf_pages": [
+            217,
+            225,
+            241,
+            258
+          ],
+          "carrying_redemption_liability_inr_m": 48729,
+          "aggregate_nci_retained_inr_m": 469068
+        },
+        "additional_scope": {
+          "sources": [
+            "AFRICA-DIRECTORS",
+            "AFRICA-PUT",
+            "AFRICA-NCI",
+            "AMC-REGISTRATION"
+          ],
+          "locators": [
+            "Africa PDF160 holder identity, cap and extension",
+            "Africa PDF182 note2.3 NCI remains recognized until exercise",
+            "Africa PDF192 note5(c) FY2026 extension",
+            "Africa PDF217 note30(C) AMC equity and NCI scope",
+            "Africa PDF227-228 note35 valuation and rollforward",
+            "AMC PDF170/printed167 historical equity",
+            "AMC PDF267/printed264 later option-deed summary"
+          ],
+          "put_holders": [
+            "The Rise Fund II Aurora SARL",
+            "Mastercard Asia/Pacific Pte Ltd"
+          ],
+          "nonput_minorities_also_exist": [
+            "Qatar Holding LLC",
+            "Chimetec/Chimetech Holding"
+          ],
+          "ceiling_description": "Two times invested capital less dividends received; FY2026 exercise deadline extended12months.",
+          "africa_carrying_usd_m": 515,
+          "africa_fair_value_table_usd_m": 517,
+          "amc_subgroup_equity_usd_m": 542,
+          "amc_ordinary_owner_equity_ex_lower_nci_usd_m": 533,
+          "amc_accumulated_nci_in_africa_usd_m": 118,
+          "amc_effective_nci_pct": 22.15,
+          "amc_lower_tier_nci_usd_m": 9,
+          "later_registration_scope_only": "September registration section12.4 says capped purchase obligations may cover less than a put holder full holding. Later amendments are not treated as March31 terms."
+        },
+        "measured_net_incremental_put_inr": null,
+        "exact_unresolved": "Need March31 put-covered shares/beneficiary-specific carrying allocation within Bharti NCI, the applicable capped settlement mechanics and reconciliation across lower-tier NCI/FX/consolidation. A total shareholding or investment amount does not identify the covered redemption population. Removing all AMC NCI would omit non-put holders; subtracting all NCI plus full redemption debt would overlap underlying ownership."
+      },
+      "residual_claim_limits": [
+        "Nxtra exact March31 issued/treasury share count and full award-conversion terms remain unverified; official annual-return link is broken.",
+        "Indus exact issued/trust/parent holdings now known, but rounded parent-note awards and consolidation/PPA treatment are not a complete incremental valuation.",
+        "Africa ordinary award counts, issued shares and accounting treasury now known; separate AMC incentives and ownership/accounting scope still prevent a complete group claim measurement.",
+        "Actual subsidiary awards fair value and net AMC obligation remain null. Source-supported carrying values are not option fair values."
+      ],
+      "discretionary_choices_preserved": {
+        "net_additional_claim_allowance_inr": 14905660000,
+        "assumed_fraction_parent_book": 0.01,
+        "stress_fractions": [
+          0,
+          0.01,
+          0.025,
+          0.05
+        ],
+        "interpretation": "Approved arbitrary NET additional allowance after NCI. No evidence establishes adequacy, expected loss or a bound; actual claims remain unknown. No full put deduction added."
+      }
+    }
+  ],
+  "research_disposition": {
+    "new_facts_are_disclosure_annotations_not_app_api_patch": true,
+    "normal_model_numeric_updates_proposed": 0,
+    "statement_history_changes_proposed": 0,
+    "remaining_public_disclosure_claim": "No claim of exhaustive global absence. Exact unresolved items are not established in the reviewed official sources; broken/oversize source paths are separately identified. Six targeted originals are now retained and reviewed. No invented zero or proportional GST/claim allocation.",
+    "completed_independent_action": "Verified six retained originals and extracted exact historical ownership, internal claim and subsidiary accounting scopes. These support factual annotations, not a new aggregate valuation deduction.",
+    "precise_remaining_disclosures": [
+      "Reliance net external revenue by segment, or the explicit external/intersegment GST and consolidation allocation.",
+      "Reliance complete subsidiary employee/contingent/preference claim population and applicable economic terms. Reviewed retail ordinary/internal instruments do not supply a full-group register.",
+      "Nxtra exact historical ordinary/treasury share register and precise award terms; Indus/Africa award settlement and ownership/PPA reconciliation, including Africa treasury subpopulation discrepancies.",
+      "AMC March31 put-covered holder population and corresponding carrying interest inside Bharti NCI, with the applicable cap/settlement and FX/consolidation bridge."
+    ],
+    "model_disposition": "Keep both approved historical scenarios and their unknown-claim limitations. No additional routine forecast approval or fabricated zero is required. Full company disclosure completeness is not achieved."
+  },
+  "arithmetic": {
+    "ril_gross_external_sum_crore": 1175919,
+    "ril_gst_sum_crore": 100244,
+    "ril_intersegment_sum_crore": 138114,
+    "ril_mechanical_external_minus_gst_sum_crore": 1075675,
+    "indus_issued_sum": 2638162757,
+    "indus_excluding_trust_shares": 2637189804,
+    "indus_parent_fraction_of_issued": 0.5125570438791545,
+    "africa_excluding_note28_treasury": 3648051543,
+    "africa_treasury_rollforward": 6829485,
+    "africa_directors_treasury_plus_ebt": 6822585,
+    "africa_treasury_scope_difference": 6900,
+    "africa_note5_vs_directors_buyback_treasury_difference": 40350,
+    "africa_parent_fraction_of_issued": 0.6262013366417026,
+    "africa_parent_fraction_excluding_note28_treasury": 0.6273736426207068,
+    "bharti_put_rollforward_inr_m": 48729,
+    "nxtra_standalone_minus_consolidated_equity_inr_m": 54,
+    "africa_known_ordinary_awards_rounded": 8969000,
+    "amc_ipo_director_face_values_usd_sum": 1117000,
+    "amc_historical_equity_usd_m": 542,
+    "rrl_ofcd_rollforward_inr_crore": 38226,
+    "rrvl_parent_fraction_of_issued": 0.835584637716704,
+    "rrvl_other_shareholders_count": 1152756002
+  },
+  "verification": {
+    "checks": [
+      {
+        "name": "RELIANCE retained local_path unchanged",
+        "expected": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+        "actual": "ed8affb5e7d2da16e19ed925be925b04a8ee581038ff75ada1a5d0cb7309c1e0",
+        "pass": true
+      },
+      {
+        "name": "RELIANCE retained extracted_text_path unchanged",
+        "expected": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737",
+        "actual": "55e23b52d77c4ac3a729d4ea6583e544334f93b063a7a649d5b4eb7e26556737",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL retained local_path unchanged",
+        "expected": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+        "actual": "b24a90e9e4aad5fd4b325f4643a221e814ece66ca43f77aade475609c16602a2",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL retained extracted_text_path unchanged",
+        "expected": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1",
+        "actual": "2cb7fc927df0769420f2d9dc734a1fdd9ba4074e255ddbd5ac29fb83355dfba1",
+        "pass": true
+      },
+      {
+        "name": "RELIANCE page 100 locator",
+        "anchor": "Non-Controlling Interest 1,81,836",
+        "pass": true
+      },
+      {
+        "name": "RELIANCE page 129 locator",
+        "anchor": "External Turnover 6,58,991 19,008 3,65,820 59,777 72,323",
+        "pass": true
+      },
+      {
+        "name": "RELIANCE page 129 locator",
+        "anchor": "Less: GST Recovered 21,429 24 42,883 26,199 9,709",
+        "pass": true
+      },
+      {
+        "name": "RELIANCE page 118 locator",
+        "anchor": "Balance at the end of the year 1,02,80,000",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 233 locator",
+        "anchor": "Equity 32,393 29,970 71,652 59,321 396,456 324,983 330,111 237,433",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 233 locator",
+        "anchor": "Accumulated NCI 7,787 7,205 21,495 17,796 251,870# 227,692# 110,011 78,665",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 233 locator",
+        "anchor": "^Equity includes NCI of H 32,135",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 246 locator",
+        "anchor": "Outstanding at end of year 60 5,780",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 247 locator",
+        "anchor": "Outstanding at end of period 1,745 10",
+        "pass": true
+      },
+      {
+        "name": "BHARTIARTL page 258 locator",
+        "anchor": "Closing balance 48,729 46,397",
+        "pass": true
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 214,
+        "anchor": "3,654,881,028 Ordinary shares of $0.50 each",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 214,
+        "anchor": "Closing balance 6,829,485",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 159,
+        "anchor": "Airtel Africa Mauritius Limited 2,288,691,385 62.73",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 155,
+        "anchor": "interests of up to $570k, $65k and $482k",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 160,
+        "anchor": "ceiling for the put option is two times the invested capital less any dividends received.",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 192,
+        "anchor": "6,177,028 shares bought back",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 192,
+        "anchor": "defer the exercisable date of their put options",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 202,
+        "anchor": "7,144,336 shares",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 217,
+        "anchor": "Accumulated NCI 118 85",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 227,
+        "anchor": "Put option liability Level 3 515 542 517 544",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 228,
+        "anchor": "Closing balance (515) (542)",
+        "pass": true,
+        "source_id": "BHARTIARTL-africa-FY2026"
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 4,
+        "anchor": "2638162757",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 4,
+        "anchor": "1284980900",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 4,
+        "anchor": "972953",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 15,
+        "anchor": "BHARTI AIRTEL LIMITED",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 15,
+        "anchor": "1352208904",
+        "pass": true,
+        "source_id": "BHARTIARTL-indus-shareholding-20260331"
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 6,
+        "anchor": "Audited Standalone Balance Sheet as of March 31, 2026",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 6,
+        "anchor": "32,447",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 14,
+        "anchor": "Audited Consolidated Balance Sheet as of March 31, 2026",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 14,
+        "anchor": "32,393",
+        "pass": true,
+        "source_id": "BHARTIARTL-nxtra-results-20260331"
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 170,
+        "anchor": "18,000 0 526 7 533 533 9 542",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 205,
+        "anchor": "18,000 Ordinary shares of EUR 1.00",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 267,
+        "anchor": "each investor may not be able to put its full shareholding",
+        "pass": true,
+        "source_id": "BHARTIARTL-AMC-registration-20260923"
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 28,
+        "anchor": "898,69,74,090 Equity shares",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 29,
+        "anchor": "Reliance Retail Ventures Limited 898,69,74,090 100.00%",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 30,
+        "anchor": "38,226 40,000",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 30,
+        "anchor": "on rights basis to Reliance Retail Ventures Limited",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 49,
+        "anchor": "- 38,226 - - - - - 38,226",
+        "pass": true,
+        "source_id": "RELIANCE-retail-FY2026-official"
+      },
+      {
+        "name": "Successful official acquisition",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Original SHA256 matches receipt and extraction",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Original bytes match receipt and extraction",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Extracted text SHA256 matches extraction receipt",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Retention did not modify financial data or mark human review complete",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 25,
+        "anchor": "7,01,12,42,660 Equity Shares",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 25,
+        "anchor": "5,858,486,658",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 25,
+        "anchor": "5,00,00,00,000 Preference shares",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "Period/scope/value locator",
+        "pdf_page": 25,
+        "anchor": "Reliance Industries Limited 585,84,86,658 83.56",
+        "pass": true,
+        "source_id": "RELIANCE-retail-ventures-FY2026-official"
+      },
+      {
+        "name": "ril_gross_external_sum_crore",
+        "expected": 1175919,
+        "actual": 1175919,
+        "pass": true
+      },
+      {
+        "name": "ril_gst_sum_crore",
+        "expected": 100244,
+        "actual": 100244,
+        "pass": true
+      },
+      {
+        "name": "ril_intersegment_sum_crore",
+        "expected": 138114,
+        "actual": 138114,
+        "pass": true
+      },
+      {
+        "name": "ril_mechanical_external_minus_gst_sum_crore",
+        "expected": 1075675,
+        "actual": 1075675,
+        "pass": true
+      },
+      {
+        "name": "indus_issued_sum",
+        "expected": 2638162757,
+        "actual": 2638162757,
+        "pass": true
+      },
+      {
+        "name": "africa_treasury_rollforward",
+        "expected": 6829485,
+        "actual": 6829485,
+        "pass": true
+      },
+      {
+        "name": "africa_treasury_scope_difference",
+        "expected": 6900,
+        "actual": 6900,
+        "pass": true
+      },
+      {
+        "name": "africa_note5_vs_directors_buyback_treasury_difference",
+        "expected": 40350,
+        "actual": 40350,
+        "pass": true
+      },
+      {
+        "name": "bharti_put_rollforward_inr_m",
+        "expected": 48729,
+        "actual": 48729,
+        "pass": true
+      },
+      {
+        "name": "nxtra_standalone_minus_consolidated_equity_inr_m",
+        "expected": 54,
+        "actual": 54,
+        "pass": true
+      },
+      {
+        "name": "amc_historical_equity_usd_m",
+        "expected": 542,
+        "actual": 542,
+        "pass": true
+      },
+      {
+        "name": "rrl_ofcd_rollforward_inr_crore",
+        "expected": 38226,
+        "actual": 38226,
+        "pass": true
+      },
+      {
+        "name": "rrvl_other_shareholders_count",
+        "expected": 1152756002,
+        "actual": 1152756002,
+        "pass": true
+      }
+    ],
+    "passed": 89,
+    "failed": 0,
+    "git_status": "Host git status attempted; Xcode developer-tool lookup unavailable. No Git mutation attempted.",
+    "host_python": "Known Xcode tool lookup limitation; coordinator owns repository documentation check.",
+    "model_effect": "none"
+  }
+}

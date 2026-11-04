@@ -322,6 +322,14 @@ acknowledgements; 31 initially unavailable fields remain unreviewed. Complete aw
 inputs and Reliance allocation remain missing, so M05-03/05 and the milestone
 gate stay open. No model is promoted or acceptance percentage increased.
 
+November 4 [disclosure follow-up](../archive/checkpoints/2026/company-disclosure-followup-2026-11-04.md)
+retains 16 additional originals and 11 inactive research notes. Named SBI subsidiary
+and Yes Bank closing award counts, ICICI AMC parent-share overlap, retail internal
+financing and selected Airtel ownership scopes are verified. Missing claim values,
+full settlement bridges, merger comparability and Reliance external-revenue mapping
+remain separate gaps. The November 3 approved models and financial histories are
+unchanged; no additional milestone acceptance points or actual-use days are claimed.
+
 - [x] M05-01 Build an issuer/period/source checklist for the scoped US/India
   companies using the existing AAPL/APSEZ certified paths as references. Record
   required source documents and human-review dependencies before execution.

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-11-03T03:00:50.773986+00:00",
+  "updated_at": "2026-11-04T06:10:50.116471+00:00",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -466,7 +466,7 @@
             "approved": true
           }
         ],
-        "approved_treatment": "Use United States as domicile and USD for both forecast cash flows and the matching discount-rate currency. Use an operating-company FCFF DCF as the primary model, with separately reviewed equity-bridge adjustments. Keep Apple\u2019s products and services visible in the business description. Review exact industry mappings, benchmark versions and weights separately; domicile does not set a US-only country-risk premium.",
+        "approved_treatment": "Use United States as domicile and USD for both forecast cash flows and the matching discount-rate currency. Use an operating-company FCFF DCF as the primary model, with separately reviewed equity-bridge adjustments. Keep Apple’s products and services visible in the business description. Review exact industry mappings, benchmark versions and weights separately; domicile does not set a US-only country-risk premium.",
         "source_evidence": [
           {
             "id": "domicile",
@@ -5139,8 +5139,12 @@
       "reason": {
         "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
       },
-      "sources": [],
-      "remaining_uncertainty": [],
+      "sources": [
+
+      ],
+      "remaining_uncertainty": [
+
+      ],
       "consolidated_review": "data/reviews/financial-input-followup-20261102.json",
       "consolidated_review_sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce",
       "affected_records": {
@@ -5168,8 +5172,12 @@
       "reason": {
         "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
       },
-      "sources": [],
-      "remaining_uncertainty": [],
+      "sources": [
+
+      ],
+      "remaining_uncertainty": [
+
+      ],
       "consolidated_review": "data/reviews/financial-input-followup-20261102.json",
       "consolidated_review_sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce",
       "affected_records": {
@@ -5197,8 +5205,12 @@
       "reason": {
         "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
       },
-      "sources": [],
-      "remaining_uncertainty": [],
+      "sources": [
+
+      ],
+      "remaining_uncertainty": [
+
+      ],
       "consolidated_review": "data/reviews/financial-input-followup-20261102.json",
       "consolidated_review_sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce",
       "affected_records": {
@@ -5562,8 +5574,12 @@
       "reason": {
         "comparison_price": "Explicitly accept unavailable comparison data. No current quote, implied upside or historical closing price is asserted."
       },
-      "sources": [],
-      "remaining_uncertainty": [],
+      "sources": [
+
+      ],
+      "remaining_uncertainty": [
+
+      ],
       "consolidated_review": "data/reviews/financial-input-followup-20261102.json",
       "consolidated_review_sha256": "13c27043b9dcf33cc752d0d30d2a21c8efeb16ee8bd8508f7913674c5032b5ce",
       "affected_records": {
@@ -5579,6 +5595,65 @@
       "supersedes_fields": [
         "current_market_price"
       ]
+    },
+    {
+      "decision_id": "M05-DISCLOSURES-20261104",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-04T06:10:50.116471+00:00",
+      "status": "applied_and_verified",
+      "decision": "Retain16 additional official originals and save11 inactive dated disclosure notes; preserve all numerical financial histories, reviewed drafts and approved model assumptions.",
+      "reason": "The new sources close specific ownership, award-count and accounting-scope questions but do not establish complete historical claim values or revenue allocations. Child shares, parent-share awards, trust settlement, intragroup financing and later-date ownership must retain separate scopes.",
+      "consolidated_review": "data/reviews/disclosure-followup-20261104.json",
+      "consolidated_review_sha256": "b71acb5e2bd3af349a953b7b2aa614af168dffb3c5e28bdeb7c22da1fc0239fe",
+      "affected_records": {
+        "thesis_note_ids": [
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14
+        ],
+        "processing_run_ids": [
+          184,
+          185,
+          186,
+          187,
+          188,
+          189,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          198,
+          199,
+          200,
+          201
+        ],
+        "saved_valuations_changed": false,
+        "historical_financial_values_changed": false,
+        "previous_notes_preserved": 3
+      },
+      "remaining_uncertainty": [
+        "Complete closing subsidiary/associate claim valuation and settlement/ownership bridges",
+        "Historical ESPP rights quantities, preferred and non-controlling balances where unreported",
+        "HDFC comparable pro-forma merger history",
+        "Reliance net external revenue/GST allocation",
+        "Airtel put-covered share population and corresponding NCI allocation",
+        "No independent human certification or actual-use days"
+      ],
+      "supersedes_decision_id": null
     }
   ],
   "evidence": {

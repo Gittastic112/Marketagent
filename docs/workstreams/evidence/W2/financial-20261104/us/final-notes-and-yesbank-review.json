@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-04",
+  "reviewer": "/root/us_review",
+  "independent_human_certification": false,
+  "status": "pass_no_remaining_material_defect_found",
+  "scope": "Final inactive disclosure-note payload review plus independent Yes Bank source supplement review; no app/database/model writes.",
+  "notes_plan": {
+    "path": "output/milestones/disclosure-followup-20261104/notes-plan.json",
+    "sha256": "5ad083abdd64607dde1cd77b711217ea309173a556516c41d053dd0593bcf886",
+    "notes": 11,
+    "unique_originals_hash_reverified": 36,
+    "model_or_financial_patch": {}
+  },
+  "note_checks": [
+    {
+      "ticker": "AAPL",
+      "historical_as_of": "2025-09-27",
+      "payload_sha256": "9470159bdd07049212d0eac2c408de5e9d595fd1777347523336869eaf954ce4",
+      "status": "passed"
+    },
+    {
+      "ticker": "RELIANCE",
+      "historical_as_of": "2026-03-31",
+      "payload_sha256": "f565b1dfaf2b5e576a93c0ddcf0db3a711a5afb01505e79307cb4ba4f1b4c19d",
+      "status": "passed"
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "historical_as_of": "2026-03-31",
+      "payload_sha256": "2199433d23f8dceec29c20109eef8a81ff39dfcaa4c5dec04c2aa1713fc9e19b",
+      "status": "passed"
+    },
+    {
+      "ticker": "HDFCBANK",
+      "historical_as_of": "2026-03-31",
+      "payload_sha256": "3b1a2bf0e12b18210ddb91b1b51d04464ed09c3d7c83d638cc122382e64d2f19",
+      "status": "passed"
+    },
+    {
+      "ticker": "ICICIBANK",
+      "historical_as_of": "2026-03-31",
+      "payload_sha256": "b2160cff6b31746d6ca656252b762ef400024d53672a0c33e1f154881d2b9cb0",
+      "status": "passed"
+    },
+    {
+      "ticker": "SBIN",
+      "historical_as_of": "2026-03-31",
+      "payload_sha256": "d418d1ef95d748fe1b1c638c408fe22435bc2ac3fb30a583a7cf770bd891269e",
+      "status": "passed"
+    },
+    {
+      "ticker": "NVDA",
+      "historical_as_of": "2026-01-25",
+      "payload_sha256": "b5cf704ac0675479fdcef45d8106e77b76b473908253f42db930654609addcc6",
+      "status": "passed"
+    },
+    {
+      "ticker": "GOOG",
+      "historical_as_of": "2025-12-31",
+      "payload_sha256": "e1353d528ca15a4ce3f31ddca699304dd4b1e9cf47646749f4bcc9480699b06d",
+      "status": "passed"
+    },
+    {
+      "ticker": "MSFT",
+      "historical_as_of": "2026-06-30",
+      "payload_sha256": "830268f450ba89632d5be9a1ac9581918ecba54ad81ad3d4d8454815dd77d983",
+      "status": "passed"
+    },
+    {
+      "ticker": "AMZN",
+      "historical_as_of": "2025-12-31",
+      "payload_sha256": "f813e5db0c17ccf31ee6c9d366e2cffc165a7c4aa9749f7df32cd4a370215ce7",
+      "status": "passed"
+    },
+    {
+      "ticker": "GOOGL",
+      "historical_as_of": "2025-12-31",
+      "payload_sha256": "719af4653dfc9043842d0694e420bd85c06385d74d3a14c3e726134e7d7bbd22",
+      "status": "passed"
+    }
+  ],
+  "resolved_review_findings": [
+    "NVDA now distinguishes the unknown issuable share count from the existence of outstanding ESPP rights.",
+    "GOOG/GOOGL now disclose annual-expense calibration and potential overlap with book NCI and forecast operating costs.",
+    "ICICI AMC options are explicitly parent ICICI Bank awards, preventing a second parent-share addition.",
+    "SBI note includes Yes Bank as an equity-method associate with separate own-share award counts."
+  ],
+  "bank_report_bindings": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json",
+      "sha256": "4954c302a3d18f8bc18d39e589abf619f455e625848d31cda776e65295f022a7"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/new-source-retention-verification.json",
+      "sha256": "06c2d4fb69d8cc9bc0b2b126d74d221fa4eb20ce848dd1313598d3d2422945bc"
+    }
+  ],
+  "yes_bank_verification": {
+    "processing_run_id": 201,
+    "source_url": "https://www.yes.bank.in/sites/web/content/published/api/v1.1/assets/CONT561040E6AFF04011A295D336812B391B/native/esos_disclosure_pursuant_to_regulation_31march_2026.pdf?download=false&channelToken=21f7ccfa2fc3401091938f541a6f8f2a",
+    "original_sha256": "8fb3a2db8b0bbec5b58c0f191796d6e35204b179b5ff4e90e692bbce0ffe7620",
+    "receipt_sha256": "5917f4a23c624e558f23063ca8314d8ba6b68f9c594189de1c70136a4468faf9",
+    "bytes": 272034,
+    "visual_pages_one_based": [
+      3,
+      4
+    ],
+    "additional_text_pages_one_based": [
+      1,
+      2,
+      7,
+      8
+    ],
+    "historical_as_of": "2026-03-31",
+    "plans_individually_reconciled": 10,
+    "closing_awards": 381906675,
+    "non_rsu_options": 345826675,
+    "rsus": 36080000,
+    "annual_exercises_matching_sbi": 25641735,
+    "units": "Yes Bank own shares/options, not SBI parent shares or currency",
+    "remaining_limit": "Grant-date accounting values and rounded SBI ownership do not establish current aggregate economic claim value or an SBI equity-method adjustment."
+  },
+  "previous_bank_review": {
+    "path": "docs/workstreams/evidence/W2/financial-20261104/us/bank-disclosure-independent-review.json",
+    "sha256": "24579f9a1535a7059e8cb69111da7ea0b1165b3fd97cfb96aa258fc7a3d60a6b",
+    "status": "Preserved as review of the pre-Yes-Bank packet; current bindings above supersede only that earlier packet binding."
+  },
+  "findings": [],
+  "review_limits": [
+    "This is delegated agent review, not independent human financial certification.",
+    "India note statements were checked against the attached reviewed company packets; their primary-source re-review is owned by the India reviewer.",
+    "No numeric model patch, live-price comparison, new source fetch or application mutation was performed by this reviewer."
+  ]
+}

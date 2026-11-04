@@ -1,0 +1,658 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-DISCLOSURES-20261104",
+  "at": "2026-11-04T06:10:50.116471+00:00",
+  "status": "applied_and_verified",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "normal_note_status": "inactive",
+  "notes": [
+    {
+      "ticker": "AAPL",
+      "company_id": 1,
+      "note_id": 4,
+      "model_id": 2,
+      "payload_sha256": "9470159bdd07049212d0eac2c408de5e9d595fd1777347523336869eaf954ce4",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: AAPL",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2025-09-27. The FY 2026 proxy separates 58,575,220 shares of future ESPP capacity from outstanding equity awards. That capacity is not a measured population of unexercised purchase rights at September 27, 2025. Offering dates straddle the fiscal year end. Participant contributions, actual closing rights and their aggregate fair value are still missing. The approved full-capacity dilution stress remains a User Assumption. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm ; https://www.sec.gov/Archives/edgar/data/320193/000130817926000008/aapl014016-def14a.htm ; https://www.sec.gov/Archives/edgar/data/320193/000130817925000008/aapl4359751-def14a.htm ; https://www.sec.gov/Archives/edgar/data/320193/000032019325000008/a10-qexhibit10112282024.htm.",
+      "review_id": "DISCLOSURE-20261104-AAPL",
+      "historical_as_of": "2025-09-27",
+      "input_hash": "db8f1ff348c3a7a57d256592dbd387b7fb24e6aab60900e18a043736dcc1e636",
+      "source_ids": [
+        "AAPL-2025-sec",
+        "AAPL-proxy-2026",
+        "AAPL-proxy-2025",
+        "AAPL-ESPP-2024-amendment"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    },
+    {
+      "ticker": "RELIANCE",
+      "company_id": 7,
+      "note_id": 5,
+      "model_id": 3,
+      "payload_sha256": "f565b1dfaf2b5e576a93c0ddcf0db3a711a5afb01505e79307cb4ba4f1b4c19d",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: RELIANCE",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-03-31. The FY 2026 retail statements report 8,986,974,090 Reliance Retail ordinary shares entirely held by Reliance Retail Ventures. INR 38,226crore of Retail optionally fully convertible debentures are also held by Retail Ventures and are intragroup, not an additional external consolidated deduction. Retail Ventures has 7,011,242,660 issued ordinary shares, of which Reliance Industries holds 5,858,486,658. Preference capital in these statements is authorized rather than issued. This does not establish absence of every group award. Segment GST remains unallocated between external and intersegment sales, so mechanically subtracting it does not establish net external revenue by industry. The diversified mapping and approved claim assumptions remain unchanged. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json. Official sources: https://www.ril.com/sites/default/files/reports/RIL-Integrated-Annual-Report-2025-26.pdf ; https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Limited.pdf ; https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf.",
+      "review_id": "DISCLOSURE-20261104-RELIANCE",
+      "historical_as_of": "2026-03-31",
+      "input_hash": "4bd053189e7af0bc763fcf85365b923a8ca718ee36dddc509fbc98bbc6a4499b",
+      "source_ids": [
+        "RELIANCE-2026",
+        "RELIANCE-retail-FY2026-official",
+        "RELIANCE-retail-ventures-FY2026-official"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json",
+        "sha256": "b0bcc9371adcfd52944d65d9d00aa3c8ee54a1ebd8724d5e9a9c4b7e3dd6dea2"
+      }
+    },
+    {
+      "ticker": "BHARTIARTL",
+      "company_id": 9,
+      "note_id": 6,
+      "model_id": 4,
+      "payload_sha256": "2199433d23f8dceec29c20109eef8a81ff39dfcaa4c5dec04c2aa1713fc9e19b",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: BHARTIARTL",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-03-31. At March 31, 2026 Airtel Africa reports 3,654,881,028 issued ordinary shares and 6,829,485 treasury shares. Indus reports 2,638,162,757 issued shares,1,352,208,904 held by Bharti Airtel and 972,953 held by its employee trust. These counts refine the ownership reconciliation but do not complete settlement or claim valuation. Nxtra standalone equity is INR 32,447m while the Bharti consolidated subsidiary note reports INR 32,393m; they are different scopes. Separate Money IPO-linked interests are outside the Africa ordinary award population. The September 23 AMC registration provides historical March 31 information, but its later ownership cannot be backdated. The put purchase cap means total investor holdings are not automatically the covered population. The exact put-covered share population and corresponding allocation within Bharti non-controlling interests remain unresolved. The approved additional INR 14,905.66m allowance remains a User Assumption. Africa treasury subpopulation disclosures do not fully reconcile; the stated total uses the reported Note 28 accounting balance. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json. Official sources: https://assets.airtel.in/static-assets/cms/investor/docs/annual_results_2025_26/Airtel---Annual-Report-2026.pdf ; https://cdn-webportal.airtelstream.net/website/investor/main/pdf/Airtel_Africa_plc_Annual_Report_and_Accounts_2026.pdf ; https://www.industowers.com/wp-content/uploads/2026/04/SHP31032026.pdf ; https://assets.airtel.in/nxtra/pdf/Financial-Documents/STXIntimation_Nxtra_results_March31_2026.pdf ; https://data.fca.org.uk/artefacts/NSM/FCA/NI-000152177/NI-000152177.pdf.",
+      "review_id": "DISCLOSURE-20261104-BHARTIARTL",
+      "historical_as_of": "2026-03-31",
+      "input_hash": "8bb33ee29bde4a63194f467c24e983cd03dec53877c09d00ea339165bdef53c2",
+      "source_ids": [
+        "BHARTIARTL-2026",
+        "BHARTIARTL-africa-FY2026",
+        "BHARTIARTL-indus-shareholding-20260331",
+        "BHARTIARTL-nxtra-results-20260331",
+        "BHARTIARTL-AMC-registration-20260923"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json",
+        "sha256": "b0bcc9371adcfd52944d65d9d00aa3c8ee54a1ebd8724d5e9a9c4b7e3dd6dea2"
+      }
+    },
+    {
+      "ticker": "HDFCBANK",
+      "company_id": 8,
+      "note_id": 7,
+      "model_id": 5,
+      "payload_sha256": "3b1a2bf0e12b18210ddb91b1b51d04464ed09c3d7c83d638cc122382e64d2f19",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: HDFCBANK",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-03-31. The FY 2026 report links six named subsidiary award populations to March 31 ownership: HDFC Securities 94.01%, HDB Financial 74.12%, HDFC ERGO 50.33%, HDFC Capital 89.68%, HDFC Life 50.21% and HDFC AMC 52.37%. The award counts are shares of their respective subsidiaries, not interchangeable HDFC Bank shares. Ownership is rounded and does not supply an aggregate closing claim valuation. The July 1, 2023 merger used pooling accounting. FY 2024 includes only part of the merged year, while FY 2025 includes a full year; the reviewed report does not provide complete comparable pro-forma FY 2024 earnings. Reported financial history and the approved subsidiary stress are preserved. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json. Official sources: https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf ; https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf.",
+      "review_id": "DISCLOSURE-20261104-HDFCBANK",
+      "historical_as_of": "2026-03-31",
+      "input_hash": "4d3d0b2a6176490057401343205ce573de30c81e67c26c763b6fb2e75d9cfc03",
+      "source_ids": [
+        "HDFCBANK-2025",
+        "HDFCBANK-2026"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json",
+        "sha256": "4954c302a3d18f8bc18d39e589abf619f455e625848d31cda776e65295f022a7"
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "company_id": 10,
+      "note_id": 8,
+      "model_id": 6,
+      "payload_sha256": "b2160cff6b31746d6ca656252b762ef400024d53672a0c33e1f154881d2b9cb0",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: ICICIBANK",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-03-31. The FY 2026 report establishes March 31 ownership of ICICI Prudential Life 50.89%, ICICI Lombard 51.26% and ICICI Prudential AMC 53.00%. The newly retained AMC statements identify 8,503,860 outstanding options as ICICI Bank parent-share awards. Those parent awards must not be appended to the bank plan population again. Child award counts and the reported earnings-per-share dilution adjustment do not establish a complete closing market value of subsidiary claims. Securities scheme changes also limit year comparisons. The approved model remains unchanged. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json. Official sources: https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf ; https://www.icicipruamc.com/blob/investor-relations/Annual_Report/pdf/financial-statement.pdf.",
+      "review_id": "DISCLOSURE-20261104-ICICIBANK",
+      "historical_as_of": "2026-03-31",
+      "input_hash": "602384295042f1c7c56223401b4831a11578e4fe8f2bfb2df76ac57c3b491113",
+      "source_ids": [
+        "ICICIBANK-2026",
+        "ICICIBANK-AMC-statements-FY2026"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json",
+        "sha256": "4954c302a3d18f8bc18d39e589abf619f455e625848d31cda776e65295f022a7"
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "company_id": 11,
+      "note_id": 9,
+      "model_id": 7,
+      "payload_sha256": "d418d1ef95d748fe1b1c638c408fe22435bc2ac3fb30a583a7cf770bd891269e",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: SBIN",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-03-31. At March 31, 2026, subsidiary closing awards are SBI Life 3,094,990, SBI General 416,783, SBI Funds 11,922,312 and SBI Card 405,789. These are separate child-share populations, not SBI parent shares. Calculation: Funds exercises 3,183,008 reconcile to 2,123,601 newly issued shares plus 1,059,407 employee-trust transfers. Funds option counts already reflect the bonus adjustment. Intrinsic-value accounting and grant-date fair values do not establish a zero or current aggregate claim value. The closing Funds trust balance, future settlement mix, performance maxima and complete claim valuation remain unresolved. Reported disposal gains and the RRB charge remain in reported history. The newly retained Yes Bank report records 381,906,675 closing awards, comprising 345,826,675 non-RSU options and 36,080,000 RSUs. Calculation: its 25,641,735 exercises match the SBI parent report. These are Yes Bank primary-issuance awards of an equity-method associate, not SBI shares; the reported 10.78% holding does not convert grant-date accounting values into a current parent claim deduction. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json. Official sources: https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579 ; https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BLife.pdf/704cf06d-f821-d616-fea2-12492db89479?t=1779688609796 ; https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BGeneral%2BInsurance.pdf/99c8784a-cc4d-892d-3a95-7b82888af51e?t=1779688110335 ; https://sbi.bank.in/documents/17836/58210978/FY2026_SBIFML.pdf/1fec82cf-ebf9-bd99-9d7c-e93abad62483?t=1779688136764 ; https://www.sbicard.com/sbi-card-en/assets/docs/pdf/who-we-are/notices/Disclosure-under-SEBI-%28SBEBSE%29.pdf ; https://www.yes.bank.in/sites/web/content/published/api/v1.1/assets/CONT561040E6AFF04011A295D336812B391B/native/esos_disclosure_pursuant_to_regulation_31march_2026.pdf?download=false&channelToken=21f7ccfa2fc3401091938f541a6f8f2a.",
+      "review_id": "DISCLOSURE-20261104-SBIN",
+      "historical_as_of": "2026-03-31",
+      "input_hash": "04bf60b647a3ebf4518ea5f80600a43b59dbbe706ba7a375a8beb19b3d13d795",
+      "source_ids": [
+        "SBIN-2026",
+        "SBIN-life-FY2026",
+        "SBIN-general-FY2026",
+        "SBIN-funds-FY2026",
+        "SBIN-card-awards-FY2026",
+        "SBIN-yesbank-awards-FY2026"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json",
+        "sha256": "4954c302a3d18f8bc18d39e589abf619f455e625848d31cda776e65295f022a7"
+      }
+    },
+    {
+      "ticker": "NVDA",
+      "company_id": 3,
+      "note_id": 10,
+      "model_id": 8,
+      "payload_sha256": "b5cf704ac0675479fdcef45d8106e77b76b473908253f42db930654609addcc6",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: NVDA",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-01-25. The FY 2026 proxy explicitly says the number of shares issuable under fiscal-end ESPP purchase rights cannot be determined. The later estimate of 2,825,984 shares for the August 31, 2026 purchase date cannot replace a January 25, 2026 balance. Finance-lease liabilities are not separately quantified in the reviewed debt disclosure. The approved capacity stress and USD 13.771bn broad debt classification remain User Assumptions. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm ; https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/nvda-20260512.htm.",
+      "review_id": "DISCLOSURE-20261104-NVDA",
+      "historical_as_of": "2026-01-25",
+      "input_hash": "2c8022497ccc40f208a5f9d4758ee16dd276a042254daaa078fece859f03546c",
+      "source_ids": [
+        "NVDA-2026-sec",
+        "NVDA-proxy-2026"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    },
+    {
+      "ticker": "GOOG",
+      "company_id": 4,
+      "note_id": 11,
+      "model_id": 9,
+      "payload_sha256": "e1353d528ca15a4ce3f31ddca699304dd4b1e9cf47646749f4bcc9480699b06d",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: GOOG",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2025-12-31. The FY 2025 filing says Other Bets awards can be equity or liability classified; liability awards are remeasured through settlement using underlying equity value. The ending liability balance is not separately supplied. VIE assets of USD 5.6bn and nonrecourse liabilities of USD 2.0bn are not substitutes for that missing claim. Exhibit 21 lists three subsidiaries without ownership percentages. The approved USD 3bn claim reserve remains a User Assumption. The USD 3.4bn non-controlling-interest amount already includes USD 0.841bn redeemable interests. GOOG and GOOGL share one issuer value and must not be added together. This reserve is calibrated to an annual expense difference, with unquantified potential overlap with book non-controlling interests and forecast operating costs. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm ; https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm ; https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/googexhibit2101q42025.htm.",
+      "review_id": "DISCLOSURE-20261104-GOOG",
+      "historical_as_of": "2025-12-31",
+      "input_hash": "3e1ff510991b280ced8fabe8f168b274c261582fed54f8ec2de434286e5ad158",
+      "source_ids": [
+        "GOOG-2025-sec",
+        "GOOG-proxy-2026",
+        "GOOG-subsidiaries-2025"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    },
+    {
+      "ticker": "MSFT",
+      "company_id": 5,
+      "note_id": 12,
+      "model_id": 10,
+      "payload_sha256": "830268f450ba89632d5be9a1ac9581918ecba54ad81ad3d4d8454815dd77d983",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: MSFT",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2026-06-30. Exhibit 21 lists eight significant subsidiaries without ownership percentages and omits other subsidiaries under its significance rule. Note 1 says the disclosed VIE investments are not consolidated because Microsoft is not their primary beneficiary; that does not establish zero non-controlling interests across every other subsidiary. The newly retained current investor FAQ says Microsoft no longer offers preferred shares, but does not establish the June 30, 2026 outstanding preferred balance. Preferred zero and the USD 4.42387bn non-controlling-interest reserve remain uncertain User Assumptions. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm ; https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/d61756ddef14a.htm ; https://www.sec.gov/Archives/edgar/data/789019/000119312526120090/msft-20251231.htm ; https://www.sec.gov/Archives/edgar/data/789019/000119312516782569/d305147dex31.htm ; https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-ex21.htm ; https://www.microsoft.com/en-us/investor/faq.",
+      "review_id": "DISCLOSURE-20261104-MSFT",
+      "historical_as_of": "2026-06-30",
+      "input_hash": "f11c89187c7037c6a0c116a19f3871de454cfcf971c7018597a9d8b7bd27d0d7",
+      "source_ids": [
+        "MSFT-2026-sec",
+        "MSFT-proxy-2026",
+        "MSFT-ESPP-2025-11K",
+        "MSFT-charter-2016",
+        "MSFT-subsidiaries-2026",
+        "MSFT-current-FAQ"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    },
+    {
+      "ticker": "AMZN",
+      "company_id": 6,
+      "note_id": 13,
+      "model_id": 11,
+      "payload_sha256": "f813e5db0c17ccf31ee6c9d366e2cffc165a7c4aa9749f7df32cd4a370215ce7",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: AMZN",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2025-12-31. Exhibit 21.1 identifies nine named significant subsidiaries as 100% owned at December 31, 2025. This closes ownership for that named list only. It does not provide a complete ownership or non-controlling-interest reconciliation for all consolidated entities and VIEs. The approved USD 4.11065bn non-controlling-interest reserve remains a User Assumption, not a measured claim or proven upper bound. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231.htm ; https://www.sec.gov/Archives/edgar/data/1018724/000110465926041026/tm261382-1_def14a.htm ; https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231xex211.htm.",
+      "review_id": "DISCLOSURE-20261104-AMZN",
+      "historical_as_of": "2025-12-31",
+      "input_hash": "90ac522e346a377b4b6a53a709d37cba6db9a1747332275e12f6daa308043ab9",
+      "source_ids": [
+        "AMZN-2025-sec",
+        "AMZN-proxy-2026",
+        "AMZN-subsidiaries-2025"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "company_id": 12,
+      "note_id": 14,
+      "model_id": 12,
+      "payload_sha256": "719af4653dfc9043842d0694e420bd85c06385d74d3a14c3e726134e7d7bbd22",
+      "status": "inactive",
+      "title": "2026-11-04 disclosure review: GOOGL",
+      "thesis_text": "Source Summary, reviewed November 4, 2026. Historical model basis: 2025-12-31. The FY 2025 filing says Other Bets awards can be equity or liability classified; liability awards are remeasured through settlement using underlying equity value. The ending liability balance is not separately supplied. VIE assets of USD 5.6bn and nonrecourse liabilities of USD 2.0bn are not substitutes for that missing claim. Exhibit 21 lists three subsidiaries without ownership percentages. The approved USD 3bn claim reserve remains a User Assumption. The USD 3.4bn non-controlling-interest amount already includes USD 0.841bn redeemable interests. GOOG and GOOGL share one issuer value and must not be added together. This reserve is calibrated to an annual expense difference, with unquantified potential overlap with book non-controlling interests and forecast operating costs. Review status: agent review under the user's delegated research authority; no independent human certification. No valuation inputs, forecasts or current-price comparisons were changed. Detailed retained evidence and source hashes: docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json. Official sources: https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm ; https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm ; https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/googexhibit2101q42025.htm.",
+      "review_id": "DISCLOSURE-20261104-GOOGL",
+      "historical_as_of": "2025-12-31",
+      "input_hash": "f67fc71c4915b35556bcac05b8395985568366b313e1d4f4422db6142ee35882",
+      "source_ids": [
+        "GOOG-2025-sec",
+        "GOOG-proxy-2026",
+        "GOOG-subsidiaries-2025"
+      ],
+      "review_packet": {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+        "sha256": "507402f6cc8c7f6def8acd0ebd21893e7564260cc6acc3758d20a2759d980bd3"
+      }
+    }
+  ],
+  "notes_plan_sha256": "5ad083abdd64607dde1cd77b711217ea309173a556516c41d053dd0593bcf886",
+  "acquisition": {
+    "attempts": 18,
+    "successful_originals": 16,
+    "failed_redirect_attempts_preserved": 2,
+    "sources": [
+      {
+        "id": "AMZN-subsidiaries-FY2025",
+        "ticker": "AMZN",
+        "url": "https://www.sec.gov/Archives/edgar/data/1018724/000101872426000004/amzn-20251231xex211.htm",
+        "status": "success",
+        "processing_run_id": 188,
+        "sha256": "ca3a7b31763e8a1810030762539b43cfe0875cf2e20708d0de6a30c16233f047",
+        "byte_count": 12857,
+        "started_at": "2026-11-04T05:49:59.818428+00:00",
+        "finished_at": "2026-11-04T05:50:00.028330+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/AMZN-subsidiaries-FY2025.json",
+        "receipt_sha256": "6a8511b4cdf5fec9d889d742990a193d65f25b837acd3516a7d569ade44aeae5",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/AMZN-subsidiaries-FY2025.html"
+      },
+      {
+        "id": "BHARTIARTL-africa-FY2026",
+        "ticker": "BHARTIARTL",
+        "url": "https://cdn-webportal.airtelstream.net/website/investor/main/pdf/Airtel_Africa_plc_Annual_Report_and_Accounts_2026.pdf",
+        "status": "success",
+        "processing_run_id": 192,
+        "sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+        "byte_count": 14673235,
+        "started_at": "2026-11-04T05:50:00.700794+00:00",
+        "finished_at": "2026-11-04T05:50:01.825815+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-africa-FY2026.json",
+        "receipt_sha256": "5c344948cecdc8c235a9e6d99db49be7125c3bfbed5f7e7468c1a7b0dc7af202",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-africa-FY2026.pdf"
+      },
+      {
+        "id": "BHARTIARTL-indus-shareholding-20260331",
+        "ticker": "BHARTIARTL",
+        "url": "https://www.industowers.com/wp-content/uploads/2026/04/SHP31032026.pdf",
+        "status": "success",
+        "processing_run_id": 193,
+        "sha256": "1c06f59f9739f9370e1c27b39a8a7fd74ca39c0b9db7d471f888e28c38ae1533",
+        "byte_count": 443123,
+        "started_at": "2026-11-04T05:50:01.827541+00:00",
+        "finished_at": "2026-11-04T05:50:08.940740+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-indus-shareholding-20260331.json",
+        "receipt_sha256": "bce13e3f6d626adb88cac99896672ef36ed986d42f727113aed688723a8ad05c",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-indus-shareholding-20260331.pdf"
+      },
+      {
+        "id": "BHARTIARTL-nxtra-results-20260331",
+        "ticker": "BHARTIARTL",
+        "url": "https://assets.airtel.in/nxtra/pdf/Financial-Documents/STXIntimation_Nxtra_results_March31_2026.pdf",
+        "status": "success",
+        "processing_run_id": 194,
+        "sha256": "9ec0376e75c9a2cf139baa0d49e0ea49581bc030fbc62c13b64f51aa502f80a4",
+        "byte_count": 8928831,
+        "started_at": "2026-11-04T05:50:08.942847+00:00",
+        "finished_at": "2026-11-04T05:50:12.553812+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-nxtra-results-20260331.json",
+        "receipt_sha256": "9d4c8a6868253760c0ab9bd6bc231cc9c716fb2fe95dc3000b5b46e50cfb9ac1",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-nxtra-results-20260331.pdf"
+      },
+      {
+        "id": "GOOG-subsidiaries-FY2025",
+        "ticker": "GOOG",
+        "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/googexhibit2101q42025.htm",
+        "status": "success",
+        "processing_run_id": 190,
+        "sha256": "81aeed9c9167276b155945a843962948eba285b8e97ff4aa8f41b17eab89be0d",
+        "byte_count": 3568,
+        "started_at": "2026-11-04T05:50:00.290375+00:00",
+        "finished_at": "2026-11-04T05:50:00.454540+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/GOOG-subsidiaries-FY2025.json",
+        "receipt_sha256": "25678162478760eeae738cc6c8e7e4ac2b4ddcb8e6074009f77a18bde96cf4de",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/GOOG-subsidiaries-FY2025.html"
+      },
+      {
+        "id": "MSFT-FAQ-current-20261104",
+        "ticker": "MSFT",
+        "url": "https://www.microsoft.com/en-us/investor/FAQ",
+        "status": "success",
+        "processing_run_id": 191,
+        "sha256": "d4c192668c86a34e28cdf2046bf1ca224ceb412228927d9fd2b7d52fcf23edb6",
+        "byte_count": 266665,
+        "started_at": "2026-11-04T05:50:00.455194+00:00",
+        "finished_at": "2026-11-04T05:50:00.699871+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/MSFT-FAQ-current-20261104.json",
+        "receipt_sha256": "a049c4c3d59cae090c12f04f71bf6ceb8dd76c93b95cc8ac0c06b2af9a9a2cc9",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/MSFT-FAQ-current-20261104.html"
+      },
+      {
+        "id": "MSFT-subsidiaries-FY2026",
+        "ticker": "MSFT",
+        "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-ex21.htm",
+        "status": "success",
+        "processing_run_id": 189,
+        "sha256": "21a89cac3a516b5cc0cac1f9c061eb3f7a4c305e05590152616df86e8d6b4d3e",
+        "byte_count": 16281,
+        "started_at": "2026-11-04T05:50:00.029370+00:00",
+        "finished_at": "2026-11-04T05:50:00.290093+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/MSFT-subsidiaries-FY2026.json",
+        "receipt_sha256": "944eecf7c14a5fc3d9f286bf8109e2d169ba95fdbc174482b4845643ddfe71da",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/MSFT-subsidiaries-FY2026.html"
+      },
+      {
+        "id": "SBIN-card-awards-FY2026",
+        "ticker": "SBIN",
+        "url": "https://www.sbicard.com/sbi-card-en/assets/docs/pdf/who-we-are/notices/Disclosure-under-SEBI-%28SBEBSE%29.pdf",
+        "status": "success",
+        "processing_run_id": 187,
+        "sha256": "61bd71e6b3f278d45e25a9abd1bdbd871e1e1e6357ede7670f8ef943aa1d4bff",
+        "byte_count": 380504,
+        "started_at": "2026-11-04T05:49:52.563468+00:00",
+        "finished_at": "2026-11-04T05:49:59.816474+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-card-awards-FY2026.json",
+        "receipt_sha256": "acfc89a384118af07f436601da804a21b7e00d70a68299364fdcb40036bccd19",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-card-awards-FY2026.pdf"
+      },
+      {
+        "id": "SBIN-funds-FY2026",
+        "ticker": "SBIN",
+        "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBIFML.pdf/1fec82cf-ebf9-bd99-9d7c-e93abad62483?t=1779688136764",
+        "status": "success",
+        "processing_run_id": 186,
+        "sha256": "27f21bf16dece622b36f3f33e236585fab57bed55201d3e085b18cfa252a47ac",
+        "byte_count": 10418185,
+        "started_at": "2026-11-04T05:49:42.760873+00:00",
+        "finished_at": "2026-11-04T05:49:52.561628+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-funds-FY2026.json",
+        "receipt_sha256": "a795d8ac4c506183f98a93df07b827668141965d664e9c104081b2f8a7491224",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-funds-FY2026.pdf"
+      },
+      {
+        "id": "SBIN-general-FY2026",
+        "ticker": "SBIN",
+        "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BGeneral%2BInsurance.pdf/99c8784a-cc4d-892d-3a95-7b82888af51e?t=1779688110335",
+        "status": "success",
+        "processing_run_id": 185,
+        "sha256": "f7a63790ebfd118f740d1caf521372cb6e0dd92547f0312dbee06ed5a7f3fdb4",
+        "byte_count": 20715910,
+        "started_at": "2026-11-04T05:49:23.490618+00:00",
+        "finished_at": "2026-11-04T05:49:42.758774+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-general-FY2026.json",
+        "receipt_sha256": "815b29b336dc08864fc70674ad5670e96c799ad3b22b95ea401687db639dc1c5",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-general-FY2026.pdf"
+      },
+      {
+        "id": "SBIN-life-FY2026",
+        "ticker": "SBIN",
+        "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BLife.pdf/704cf06d-f821-d616-fea2-12492db89479?t=1779688609796",
+        "status": "success",
+        "processing_run_id": 184,
+        "sha256": "84f59fc2a82db08ded37def55b212225d89dc44969dd6523af8a2ef0335f12ef",
+        "byte_count": 10981386,
+        "started_at": "2026-11-04T05:49:12.929624+00:00",
+        "finished_at": "2026-11-04T05:49:23.489375+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-life-FY2026.json",
+        "receipt_sha256": "54824105617ffd6abdc70c8d6ccafa7e0406fb13808270fc3bb380d1b6b4146f",
+        "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-life-FY2026.pdf"
+      },
+      {
+        "id": "BHARTIARTL-AMC-registration-20260923",
+        "ticker": "BHARTIARTL",
+        "url": "https://data.fca.org.uk/artefacts/NSM/FCA/NI-000152177/NI-000152177.pdf",
+        "status": "success",
+        "processing_run_id": 197,
+        "sha256": "743884f1144dc4bd5636c0442a4f694f6dd5c2dbcc456ed73a706762d2d3e610",
+        "byte_count": 4223598,
+        "started_at": "2026-11-04T05:51:47.811571+00:00",
+        "finished_at": "2026-11-04T05:51:49.197192+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/BHARTIARTL-AMC-registration-20260923.json",
+        "receipt_sha256": "fcb63005ebaf5e7331be0cea357f7577e9ec7d218af89c474192d69efd20b91e",
+        "original_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/BHARTIARTL-AMC-registration-20260923.pdf"
+      },
+      {
+        "id": "ICICIBANK-AMC-statements-FY2026",
+        "ticker": "ICICIBANK",
+        "url": "https://www.icicipruamc.com/blob/investor-relations/Annual_Report/pdf/financial-statement.pdf",
+        "status": "success",
+        "processing_run_id": 198,
+        "sha256": "19076fd4dd1aa338e462f469e426a68f8b0c71acf995bf838204c4d02b4dcdae",
+        "byte_count": 891700,
+        "started_at": "2026-11-04T05:51:49.198479+00:00",
+        "finished_at": "2026-11-04T05:51:52.130022+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/ICICIBANK-AMC-statements-FY2026.json",
+        "receipt_sha256": "061e5b2e26a6c6f3ff7987aec49b3244db5f1b393b89e61d7ffe32c079e139cb",
+        "original_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/ICICIBANK-AMC-statements-FY2026.pdf"
+      },
+      {
+        "id": "RELIANCE-retail-FY2026",
+        "ticker": "RELIANCE",
+        "url": "https://rilstaticasset.akamaized.net/sites/default/files/2026-05/Reliance_Retail_Limited.pdf",
+        "status": "failed",
+        "processing_run_id": 195,
+        "started_at": "2026-11-04T05:51:45.631923+00:00",
+        "finished_at": "2026-11-04T05:51:47.623550+00:00",
+        "failure_reason": "Source request failed; original exception type retained",
+        "redirect_url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Limited.pdf",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/RELIANCE-retail-FY2026.json",
+        "receipt_sha256": "7ee69c20ecdde788e545dba21d01743f2266fcb13e4b1b2a8c8ab5c39fd6c4b4"
+      },
+      {
+        "id": "RELIANCE-retail-ventures-FY2026",
+        "ticker": "RELIANCE",
+        "url": "https://rilstaticasset.akamaized.net/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf",
+        "status": "failed",
+        "processing_run_id": 196,
+        "started_at": "2026-11-04T05:51:47.624809+00:00",
+        "finished_at": "2026-11-04T05:51:47.810921+00:00",
+        "failure_reason": "Source request failed; original exception type retained",
+        "redirect_url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/RELIANCE-retail-ventures-FY2026.json",
+        "receipt_sha256": "8c3e746b3281cfb04f6d15bea446f66c3c635561990eb18e77accb3db2c38da8"
+      },
+      {
+        "id": "RELIANCE-retail-FY2026-official",
+        "ticker": "RELIANCE",
+        "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Limited.pdf",
+        "status": "success",
+        "processing_run_id": 199,
+        "sha256": "1163ad1e2953f7fd6095bfcfcb72d93e0971f250d29f26d0420f4b31b7caf10b",
+        "byte_count": 506773,
+        "started_at": "2026-11-04T05:52:50.793922+00:00",
+        "finished_at": "2026-11-04T05:52:51.853567+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-FY2026-official.json",
+        "receipt_sha256": "8d9fa80ab38282e02abf7a4c4596782dbbdd0a64407489cbacd48658aae0ea23",
+        "original_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-FY2026-official.pdf"
+      },
+      {
+        "id": "RELIANCE-retail-ventures-FY2026-official",
+        "ticker": "RELIANCE",
+        "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf",
+        "status": "success",
+        "processing_run_id": 200,
+        "sha256": "84c2d7d1061b87f790188abe9370fec07c49f86b32b9675aa047bf96f216909f",
+        "byte_count": 874257,
+        "started_at": "2026-11-04T05:52:51.854755+00:00",
+        "finished_at": "2026-11-04T05:52:56.641900+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-ventures-FY2026-official.json",
+        "receipt_sha256": "5b3b8569e199bdad1cef99c15c369f2f0167b137eefebea6a53dac49056efa3c",
+        "original_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-ventures-FY2026-official.pdf"
+      },
+      {
+        "id": "SBIN-yesbank-awards-FY2026",
+        "ticker": "SBIN",
+        "url": "https://www.yes.bank.in/sites/web/content/published/api/v1.1/assets/CONT561040E6AFF04011A295D336812B391B/native/esos_disclosure_pursuant_to_regulation_31march_2026.pdf?download=false&channelToken=21f7ccfa2fc3401091938f541a6f8f2a",
+        "status": "success",
+        "processing_run_id": 201,
+        "sha256": "8fb3a2db8b0bbec5b58c0f191796d6e35204b179b5ff4e90e692bbce0ffe7620",
+        "byte_count": 272034,
+        "started_at": "2026-11-04T06:02:39.465717+00:00",
+        "finished_at": "2026-11-04T06:02:41.413943+00:00",
+        "receipt_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/SBIN-yesbank-awards-FY2026.json",
+        "receipt_sha256": "5917f4a23c624e558f23063ca8314d8ba6b68f9c594189de1c70136a4468faf9",
+        "original_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/originals/SBIN-yesbank-awards-FY2026.pdf"
+      }
+    ]
+  },
+  "application_effects": {
+    "changed_tables": [
+      {
+        "before": {
+          "kind": "table",
+          "name": "processing_runs",
+          "rows": 183,
+          "sha256": "5553dc3ca5a46417f3023ef8eae1be9b0d5806468fbfb7da407d159418133f00"
+        },
+        "after": {
+          "kind": "table",
+          "name": "processing_runs",
+          "rows": 201,
+          "sha256": "680416f08f46b60290a1504f5e4cb0275cbc839a34a0e6817d4047278e7bdb4f"
+        }
+      },
+      {
+        "before": {
+          "kind": "table",
+          "name": "thesis_notes",
+          "rows": 3,
+          "sha256": "9989803589d7d9e7631c681752c6b42f1294ed7e3514498e3d585f531a63da1e"
+        },
+        "after": {
+          "kind": "table",
+          "name": "thesis_notes",
+          "rows": 14,
+          "sha256": "41bdb388c257749aec5994722b2cde3cce69a8697d37577138d23778d276ec42"
+        }
+      }
+    ],
+    "other_tables_unchanged": 107,
+    "source_assets_unchanged": true,
+    "previous_notes_preserved": 3,
+    "financial_histories_models_and_drafts_unchanged": true
+  },
+  "browser": {
+    "views": 24,
+    "status": "success",
+    "accessibility_violations": 0,
+    "overflow": false,
+    "page_errors": [],
+    "tables_unchanged": 109,
+    "assets_unchanged": true
+  },
+  "initial_harness_failures": {
+    "application_succeeded": true,
+    "writes_replayed": false,
+    "cause": "First browser assertion read before streamed note content was ready; follow-up exact-text locator matched multiple DOM nodes. Final read-only check waits for the named heading and verifies the visible thesis paragraph.",
+    "failed_evidence_preserved": true
+  },
+  "runtime": {
+    "services": {
+      "backend": {
+        "id": "fb791ad500afec51919c20d2ff68f5e5d9cd32bae3146dba5967fc157cdd14c2",
+        "image": "sha256:cb7b568ad74f0e6de64a359452030798a67101c0921dc85debeb49e699ef9dab",
+        "running": true,
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8000"
+            }
+          ]
+        }
+      },
+      "frontend": {
+        "id": "aef59f8287c24e89f48f2769bb453ec93ab0e2febc833cb028fedc460ab100de",
+        "image": "sha256:2e326fe947729890094d0cfb8e2b2fde6e353bfe49042524b5cf80709b3f4948",
+        "running": true,
+        "health": "healthy",
+        "ports": {
+          "3000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "3000"
+            }
+          ]
+        }
+      },
+      "postgres": {
+        "id": "d13cbb2d40d09788e45c39faeb84ae36042c2f865148d54e8140c7cb6ab9e021",
+        "image": "sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d",
+        "running": true,
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "5432"
+            }
+          ]
+        }
+      },
+      "scheduler": {
+        "id": "00e715689058a990c9dcecf216b4a30c4af02d3955c3491b3b6db2690f952b19",
+        "image": "sha256:cb7b568ad74f0e6de64a359452030798a67101c0921dc85debeb49e699ef9dab",
+        "running": true,
+        "health": null,
+        "ports": {}
+      },
+      "source_scheduler": {
+        "id": "61a5185f2fb3ee509f6998f637dfac70effee49afbda4f6c50caf7cf3001d8a5",
+        "image": "sha256:cb7b568ad74f0e6de64a359452030798a67101c0921dc85debeb49e699ef9dab",
+        "running": false,
+        "health": null,
+        "ports": {}
+      },
+      "pgadmin": {
+        "id": "5e755681aa425dbced5c8c4425e48c0b526dc73a7b1c9dcf9cebbb65f66952fc",
+        "image": "sha256:8a68677a97b8c8d1427dc915672a26d2c4a04376916a68256f53d669d6171be7",
+        "running": false,
+        "health": null,
+        "ports": {
+          "80/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "5050"
+            }
+          ]
+        }
+      }
+    },
+    "images_and_container_ids_unchanged": true,
+    "migration_head": "t2t2t2t2t2t2",
+    "shared_index_preserved": true
+  },
+  "backup": {
+    "path": "output/milestones/disclosure-followup-20261104/final-backup/database.dump",
+    "bytes": 128445245,
+    "sha256": "b97cc9228e72de0f700f5b6379250974b807ed964227bdcd786e09728e2280e9",
+    "archive_listing": "pass",
+    "restore_verified": false,
+    "off_device_recovery_verified": false,
+    "scope": "Database including eleven notes and source Processing Runs; the new public originals are retained separately at the exact manifest paths."
+  },
+  "numeric_model_patch": {},
+  "company_fact_completeness": false,
+  "actual_use_days_added": 0,
+  "milestone_acceptance_changed": false
+}

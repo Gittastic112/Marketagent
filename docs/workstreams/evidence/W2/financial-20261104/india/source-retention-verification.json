@@ -1,0 +1,458 @@
+{
+  "schema_version": 1,
+  "decision_id": "W2-INDIA-SOURCE-RETENTION-20261104",
+  "reviewed_on": "2026-11-04",
+  "status": "delegated_targeted_verification_complete",
+  "human_certification": false,
+  "model_changes": false,
+  "method": "Isolated network-disabled existing PDF reader; only retained originals and this evidence directory mounted. Existing source bytes unchanged. Nxtra pages6 and14 also visually inspected.",
+  "sources": [
+    {
+      "source_id": "BHARTIARTL-africa-FY2026",
+      "source_key": "AFRICA-2026-ORIGINAL",
+      "url": "https://cdn-webportal.airtelstream.net/website/investor/main/pdf/Airtel_Africa_plc_Annual_Report_and_Accounts_2026.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-africa-FY2026.json",
+      "receipt_sha256": "5c344948cecdc8c235a9e6d99db49be7125c3bfbed5f7e7468c1a7b0dc7af202",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-africa-FY2026.pdf",
+      "original_sha256": "6cf002c680ea501912f9cb2abd4329e67912f627d700e01b13ba0d498095f2d0",
+      "byte_count": 14673235,
+      "processing_run_id": 192,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-africa-FY2026.txt",
+      "text_sha256": "9fdea783dc396277aa27636bc9e0a70cdc764e475bfc01b5fd030717ce2f0b8d",
+      "pdf_pages": 254,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "FY2026 report or March31 statement/shareholding",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 214,
+          "anchor": "3,654,881,028 Ordinary shares of $0.50 each",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 214,
+          "anchor": "Closing balance 6,829,485",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 159,
+          "anchor": "Airtel Africa Mauritius Limited 2,288,691,385 62.73",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 155,
+          "anchor": "interests of up to $570k, $65k and $482k",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 160,
+          "anchor": "ceiling for the put option is two times the invested capital less any dividends received.",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 192,
+          "anchor": "6,177,028 shares bought back",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 192,
+          "anchor": "defer the exercisable date of their put options",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 202,
+          "anchor": "7,144,336 shares",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 217,
+          "anchor": "Accumulated NCI 118 85",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 227,
+          "anchor": "Put option liability Level 3 515 542 517 544",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 228,
+          "anchor": "Closing balance (515) (542)",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-indus-shareholding-20260331",
+      "source_key": "INDUS-MARCH31-SHP",
+      "url": "https://www.industowers.com/wp-content/uploads/2026/04/SHP31032026.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-indus-shareholding-20260331.json",
+      "receipt_sha256": "bce13e3f6d626adb88cac99896672ef36ed986d42f727113aed688723a8ad05c",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-indus-shareholding-20260331.pdf",
+      "original_sha256": "1c06f59f9739f9370e1c27b39a8a7fd74ca39c0b9db7d471f888e28c38ae1533",
+      "byte_count": 443123,
+      "processing_run_id": 193,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-indus-shareholding-20260331.txt",
+      "text_sha256": "3b36d1cd9c7901daa3273dabb0c9d382b7c5e8acf3ff6e2892df822d5caa6df4",
+      "pdf_pages": 48,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "FY2026 report or March31 statement/shareholding",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 4,
+          "anchor": "2638162757",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 4,
+          "anchor": "1284980900",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 4,
+          "anchor": "972953",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 15,
+          "anchor": "BHARTI AIRTEL LIMITED",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 15,
+          "anchor": "1352208904",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-nxtra-results-20260331",
+      "source_key": "NXTRA-FY2026-RESULTS",
+      "url": "https://assets.airtel.in/nxtra/pdf/Financial-Documents/STXIntimation_Nxtra_results_March31_2026.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/BHARTIARTL-nxtra-results-20260331.json",
+      "receipt_sha256": "9d4c8a6868253760c0ab9bd6bc231cc9c716fb2fe95dc3000b5b46e50cfb9ac1",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/BHARTIARTL-nxtra-results-20260331.pdf",
+      "original_sha256": "9ec0376e75c9a2cf139baa0d49e0ea49581bc030fbc62c13b64f51aa502f80a4",
+      "byte_count": 8928831,
+      "processing_run_id": 194,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-nxtra-results-20260331.txt",
+      "text_sha256": "2ba97751b2a2d7cf8aea57883d44432a4d6536cdc69a3ad8cee76681eade82d9",
+      "pdf_pages": 17,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "FY2026 report or March31 statement/shareholding",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 6,
+          "anchor": "Audited Standalone Balance Sheet as of March 31, 2026",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 6,
+          "anchor": "32,447",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 14,
+          "anchor": "Audited Consolidated Balance Sheet as of March 31, 2026",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 14,
+          "anchor": "32,393",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "source_id": "BHARTIARTL-AMC-registration-20260923",
+      "source_key": "AMC-REGISTRATION",
+      "url": "https://data.fca.org.uk/artefacts/NSM/FCA/NI-000152177/NI-000152177.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/BHARTIARTL-AMC-registration-20260923.json",
+      "receipt_sha256": "fcb63005ebaf5e7331be0cea357f7577e9ec7d218af89c474192d69efd20b91e",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/BHARTIARTL-AMC-registration-20260923.pdf",
+      "original_sha256": "743884f1144dc4bd5636c0442a4f694f6dd5c2dbcc456ed73a706762d2d3e610",
+      "byte_count": 4223598,
+      "processing_run_id": 197,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-AMC-registration-20260923.txt",
+      "text_sha256": "a3ddeb00d5ef9a0d7078e0e60be7ee2c3047f097504038f9aa2adace43cfd93f",
+      "pdf_pages": 278,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "September23 registration includes historical FY2026 statements; later transactions not backdated",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 170,
+          "anchor": "18,000 0 526 7 533 533 9 542",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 205,
+          "anchor": "18,000 Ordinary shares of EUR 1.00",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 267,
+          "anchor": "each investor may not be able to put its full shareholding",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "source_id": "RELIANCE-retail-FY2026-official",
+      "source_key": "RRL-2026",
+      "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Limited.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-FY2026-official.json",
+      "receipt_sha256": "8d9fa80ab38282e02abf7a4c4596782dbbdd0a64407489cbacd48658aae0ea23",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-FY2026-official.pdf",
+      "original_sha256": "1163ad1e2953f7fd6095bfcfcb72d93e0971f250d29f26d0420f4b31b7caf10b",
+      "byte_count": 506773,
+      "processing_run_id": 199,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/RELIANCE-retail-FY2026-official.txt",
+      "text_sha256": "bde3b058c5296c360465f89f14631e700473132e203fdc44cd778776d99b109e",
+      "pdf_pages": 58,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "FY2026 report or March31 statement/shareholding",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 28,
+          "anchor": "898,69,74,090 Equity shares",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 29,
+          "anchor": "Reliance Retail Ventures Limited 898,69,74,090 100.00%",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 30,
+          "anchor": "38,226 40,000",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 30,
+          "anchor": "on rights basis to Reliance Retail Ventures Limited",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 49,
+          "anchor": "- 38,226 - - - - - 38,226",
+          "pass": true
+        }
+      ]
+    },
+    {
+      "source_id": "RELIANCE-retail-ventures-FY2026-official",
+      "source_key": "RRVL-2026",
+      "url": "https://www.ril.com/sites/default/files/2026-05/Reliance_Retail_Ventures_Limited.pdf",
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/RELIANCE-retail-ventures-FY2026-official.json",
+      "receipt_sha256": "5b3b8569e199bdad1cef99c15c369f2f0167b137eefebea6a53dac49056efa3c",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch3/acquired-sources/originals/RELIANCE-retail-ventures-FY2026-official.pdf",
+      "original_sha256": "84c2d7d1061b87f790188abe9370fec07c49f86b32b9675aa047bf96f216909f",
+      "byte_count": 874257,
+      "processing_run_id": 200,
+      "text_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/RELIANCE-retail-ventures-FY2026-official.txt",
+      "text_sha256": "55a2f1f738e794b8247a5c4c0965ce42778c47550cb184d650ce8782a2ff0faf",
+      "pdf_pages": 45,
+      "financial_as_of": "2026-03-31",
+      "publication_scope": "FY2026 report or March31 statement/shareholding",
+      "checks": [
+        {
+          "name": "Successful official acquisition",
+          "pass": true
+        },
+        {
+          "name": "Original SHA256 matches receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Original bytes match receipt and extraction",
+          "pass": true
+        },
+        {
+          "name": "Extracted text SHA256 matches extraction receipt",
+          "pass": true
+        },
+        {
+          "name": "Retention did not modify financial data or mark human review complete",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 25,
+          "anchor": "7,01,12,42,660 Equity Shares",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 25,
+          "anchor": "5,858,486,658",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 25,
+          "anchor": "5,00,00,00,000 Preference shares",
+          "pass": true
+        },
+        {
+          "name": "Period/scope/value locator",
+          "pdf_page": 25,
+          "anchor": "Reliance Industries Limited 585,84,86,658 83.56",
+          "pass": true
+        }
+      ]
+    }
+  ],
+  "preserved_failures": [
+    {
+      "processing_run_ids": [
+        195,
+        196
+      ],
+      "reason": "Official CDN links returned301; failed receipts preserved. Exact official destinations subsequently retained in Runs199 and200."
+    }
+  ],
+  "visual_checks": [
+    {
+      "source_id": "BHARTIARTL-nxtra-results-20260331",
+      "pdf_page": 6,
+      "image_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-nxtra-results-20260331-page6.png",
+      "sha256": "481ea73567789b2d0931acac9bc270812906f5d199364ad95232e78bc69008d8",
+      "result": "Readable balance sheet; period, standalone/consolidated label and equity totals visually verified"
+    },
+    {
+      "source_id": "BHARTIARTL-nxtra-results-20260331",
+      "pdf_page": 14,
+      "image_path": "docs/workstreams/evidence/W2/financial-20261104/india/retained/BHARTIARTL-nxtra-results-20260331-page14.png",
+      "sha256": "566adf8b288a137d4b6119a7da1fcf8290edf003afef8274c1b33dbe4b679e69",
+      "result": "Readable balance sheet; period, standalone/consolidated label and equity totals visually verified"
+    }
+  ],
+  "checks_passed": 62,
+  "checks_failed": 0
+}
