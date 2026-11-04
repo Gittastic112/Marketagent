@@ -2,6 +2,8 @@
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
 
+- [Company disclosures and dated research notes, November 4](company-disclosure-followup-2026-11-04.md)
+- [Approved historical research models, November 3](historical-model-completion-2026-11-03.md)
 - [Local release, financial follow-up and publication boundary, November 2](release-publication-and-financial-followup-2026-11-02.md)
 
 - [Locked builds, OS correction and verified local rollout, October 28](locked-build-and-local-rollout-2026-10-28.md)

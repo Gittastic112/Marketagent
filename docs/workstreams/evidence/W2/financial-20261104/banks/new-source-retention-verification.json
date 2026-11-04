@@ -1,0 +1,632 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-04",
+  "review_type": "Retained-source verification and dated fact-only disclosure follow-up",
+  "reviewer": "Delegated agent",
+  "independent_human_certification": false,
+  "sources": [
+    {
+      "id": "SBIN-life-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BLife.pdf/704cf06d-f821-d616-fea2-12492db89479?t=1779688609796",
+      "processing_run_id": 184,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-life-FY2026.json",
+      "receipt_sha256": "54824105617ffd6abdc70c8d6ccafa7e0406fb13808270fc3bb380d1b6b4146f",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-life-FY2026.pdf",
+      "original_sha256": "84f59fc2a82db08ded37def55b212225d89dc44969dd6523af8a2ef0335f12ef",
+      "bytes": 10981386,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:23.489375+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-general-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BGeneral%2BInsurance.pdf/99c8784a-cc4d-892d-3a95-7b82888af51e?t=1779688110335",
+      "processing_run_id": 185,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-general-FY2026.json",
+      "receipt_sha256": "815b29b336dc08864fc70674ad5670e96c799ad3b22b95ea401687db639dc1c5",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-general-FY2026.pdf",
+      "original_sha256": "f7a63790ebfd118f740d1caf521372cb6e0dd92547f0312dbee06ed5a7f3fdb4",
+      "bytes": 20715910,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:42.758774+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-funds-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBIFML.pdf/1fec82cf-ebf9-bd99-9d7c-e93abad62483?t=1779688136764",
+      "processing_run_id": 186,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-funds-FY2026.json",
+      "receipt_sha256": "a795d8ac4c506183f98a93df07b827668141965d664e9c104081b2f8a7491224",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-funds-FY2026.pdf",
+      "original_sha256": "27f21bf16dece622b36f3f33e236585fab57bed55201d3e085b18cfa252a47ac",
+      "bytes": 10418185,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:52.561628+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-card-awards-FY2026",
+      "source_url": "https://www.sbicard.com/sbi-card-en/assets/docs/pdf/who-we-are/notices/Disclosure-under-SEBI-%28SBEBSE%29.pdf",
+      "processing_run_id": 187,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-card-awards-FY2026.json",
+      "receipt_sha256": "acfc89a384118af07f436601da804a21b7e00d70a68299364fdcb40036bccd19",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-card-awards-FY2026.pdf",
+      "original_sha256": "61bd71e6b3f278d45e25a9abd1bdbd871e1e1e6357ede7670f8ef943aa1d4bff",
+      "bytes": 380504,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:59.816474+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "ICICIBANK-AMC-statements-FY2026",
+      "source_url": "https://www.icicipruamc.com/blob/investor-relations/Annual_Report/pdf/financial-statement.pdf",
+      "processing_run_id": 198,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/ICICIBANK-AMC-statements-FY2026.json",
+      "receipt_sha256": "061e5b2e26a6c6f3ff7987aec49b3244db5f1b393b89e61d7ffe32c079e139cb",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/ICICIBANK-AMC-statements-FY2026.pdf",
+      "original_sha256": "19076fd4dd1aa338e462f469e426a68f8b0c71acf995bf838204c4d02b4dcdae",
+      "bytes": 891700,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:51:52.130022+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-yesbank-awards-FY2026",
+      "source_url": "https://www.yes.bank.in/sites/web/content/published/api/v1.1/assets/CONT561040E6AFF04011A295D336812B391B/native/esos_disclosure_pursuant_to_regulation_31march_2026.pdf?download=false&channelToken=21f7ccfa2fc3401091938f541a6f8f2a",
+      "processing_run_id": 201,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/SBIN-yesbank-awards-FY2026.json",
+      "receipt_sha256": "5917f4a23c624e558f23063ca8314d8ba6b68f9c594189de1c70136a4468faf9",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/originals/SBIN-yesbank-awards-FY2026.pdf",
+      "original_sha256": "8fb3a2db8b0bbec5b58c0f191796d6e35204b179b5ff4e90e692bbce0ffe7620",
+      "bytes": 272034,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T06:02:41.413943+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    }
+  ],
+  "findings": [
+    {
+      "source_id": "SBIN-life-FY2026",
+      "entity": "SBI Life Insurance Company Limited",
+      "claim_types": [
+        "Source Summary",
+        "Calculation"
+      ],
+      "pdf_pages_one_based": [
+        97,
+        98,
+        99
+      ],
+      "printed_pages": [
+        96,
+        97,
+        98
+      ],
+      "section": "Note 19(c), ESOS 2018",
+      "closing_date": "2026-03-31",
+      "closing_options": 3094990,
+      "exercisable_options": 1540180,
+      "rollforward": {
+        "opening": 3287122,
+        "granted": 830000,
+        "lapsed": 65094,
+        "exercised": 957038,
+        "closing": 3094990
+      },
+      "settlement": "Direct administration, own-company equity shares; one option represents one own-company share.",
+      "accounting": "Intrinsic-value accounting with separate grant-date fair-value/pro-forma disclosures. Neither expense nor grant-date value is a March31 value of all remaining claims.",
+      "excludes": "The 30000000 scheme capacity is not the outstanding population.",
+      "newly_closed_gap": "Exact closing own-company options and reconciliation to the parent annual exercise count.",
+      "remaining_unknowns": [
+        "Complete current fair value of outstanding claims and resulting parent-equity effect are not established."
+      ]
+    },
+    {
+      "source_id": "SBIN-general-FY2026",
+      "entity": "SBI General Insurance Company Limited",
+      "claim_types": [
+        "Source Summary",
+        "Calculation"
+      ],
+      "pdf_pages_one_based": [
+        61,
+        62
+      ],
+      "printed_pages": null,
+      "printed_page_note": "No printed page number visible on these scanned pages.",
+      "section": "Schedule 16, note 3.24 Employee Stock Option Plan",
+      "closing_date": "2026-03-31",
+      "closing_options": 416783,
+      "closing_tranche_rows": [
+        64473,
+        35140,
+        81245,
+        105619,
+        34906,
+        10743,
+        13174,
+        10954,
+        60529
+      ],
+      "rollforward": {
+        "opening": 551466,
+        "granted": 60529,
+        "exercised": 131432,
+        "lapsed": 63780,
+        "closing": 416783
+      },
+      "settlement": "Options over the insurer own equity under its 2019 plan.",
+      "accounting": "Intrinsic-value method; grant intrinsic value was zero so no compensation expense was recorded. Separate Black-Scholes grant-date fair-value methodology is disclosed. Zero expense does not imply zero economic value of outstanding awards.",
+      "newly_closed_gap": "Exact March31 closing own-company options, supported by the nine tranche rows and total rollforward.",
+      "remaining_unknowns": [
+        "No current claim fair value or complete parent ownership after exercise is calculated."
+      ]
+    },
+    {
+      "source_id": "SBIN-funds-FY2026",
+      "entity": "SBI Funds Management Limited",
+      "claim_types": [
+        "Source Summary",
+        "Calculation"
+      ],
+      "pdf_pages_one_based": [
+        54,
+        55
+      ],
+      "printed_pages": null,
+      "printed_page_note": "No printed page number visible on these scanned pages.",
+      "section": "Standalone financial statements, note 33, Employee Stock Option Plan",
+      "closing_date": "2026-03-31",
+      "closing_options": 11922312,
+      "closing_tranche_rows": [
+        0,
+        4908,
+        172563,
+        1101135,
+        805000,
+        3268476,
+        2354030,
+        26800,
+        820000,
+        3369400
+      ],
+      "fy2026_exercised": 3183008,
+      "exercise_rows": [
+        99310,
+        220064,
+        816870,
+        760285,
+        1053839,
+        219440,
+        13200
+      ],
+      "settlement_reconciliation": {
+        "fresh_shares_in_parent_annual_report": 2123601,
+        "employee_welfare_trust_transfers": 1059407,
+        "total_exercised": 3183008
+      },
+      "trust_facts": {
+        "initial_acquired_shares": 517174,
+        "bonus_shares_received_20251219": 711798,
+        "fy2026_transfers": 1059407,
+        "closing_trust_shares": null
+      },
+      "settlement": "Plan permits direct, Employee Welfare Trust, or combined settlement. Each option represents one own-company share. The March31 closing counts already reflect its own bonus issue.",
+      "accounting": "Grant-date Black-Scholes valuation and FY2026 compensation expense are disclosed; these do not establish the current fair value of all remaining claims.",
+      "newly_closed_gap": "Exact March31 closing options and the reason total exercises exceed fresh issue: the difference is EWT transfers.",
+      "remaining_unknowns": [
+        "No closing trust-share balance is explicitly asserted from the reviewed pages.",
+        "Future fresh issuance versus trust settlement and complete claim value are not established.",
+        "PDF55 comparative movement rows are FY2025, not an alternative FY2026 population."
+      ]
+    },
+    {
+      "source_id": "SBIN-card-awards-FY2026",
+      "entity": "SBI Cards and Payment Services Limited",
+      "claim_types": [
+        "Source Summary",
+        "Calculation"
+      ],
+      "pdf_pages_one_based": [
+        1,
+        2,
+        5,
+        6,
+        7
+      ],
+      "printed_pages": null,
+      "section": "FY2026 SEBI SBEBSE disclosure, ESOP 2019 and ESOP 2023",
+      "closing_date": "2026-03-31",
+      "closing_awards_total": 405789,
+      "plans": [
+        {
+          "name": "ESOP 2019",
+          "closing_options": 71315,
+          "rollforward": {
+            "opening": 301275,
+            "granted": 0,
+            "lapsed": 17060,
+            "exercised": 212900,
+            "closing": 71315
+          }
+        },
+        {
+          "name": "ESOP 2023, RSU/PSU awards",
+          "closing_awards": 334474,
+          "rollforward": {
+            "opening": 391625,
+            "granted": 0,
+            "lapsed": 26754,
+            "exercised": 30397,
+            "closing": 334474
+          }
+        }
+      ],
+      "settlement": "Primary own-company equity shares; not bank shares and not a trust-funded settlement.",
+      "accounting": "Fair-value method disclosed. Grant-date expense is not a current valuation of remaining claims.",
+      "newly_closed_gap": "Both disclosed plans have dated closing populations; their exercises reconcile exactly to the parent annual count243297.",
+      "remaining_unknowns": [
+        "Reported RSU/PSU award count is not a maximum performance payout. Scheme capacities are not outstanding claims.",
+        "No complete current claim value or parent-value adjustment is established."
+      ]
+    },
+    {
+      "source_id": "ICICIBANK-AMC-statements-FY2026",
+      "entity": "ICICI Prudential Asset Management Company Limited",
+      "claim_types": [
+        "Source Summary",
+        "Calculation",
+        "AI Interpretation"
+      ],
+      "pdf_pages_one_based": [
+        57,
+        58,
+        59,
+        60
+      ],
+      "printed_pages": [
+        178,
+        179,
+        180,
+        181
+      ],
+      "section": "Note 36, Employee share based payments",
+      "closing_date": "2026-03-31",
+      "award_underlying_issuer": "ICICI Bank Limited",
+      "closing_parent_bank_options": 8503860,
+      "vested_exercisable_parent_bank_options": 7698840,
+      "rollforward": {
+        "opening": 9176395,
+        "transfer_in": 10700,
+        "granted": 358500,
+        "exercised": 1041735,
+        "closing": 8503860
+      },
+      "accounting": "AMC recognises grant-date fair value over vesting for parent-share awards, with corresponding equity. FY2026 expense is INR150.3million, reported at one-decimal million precision, not a child-company claim valuation.",
+      "overlap_decision": "This disclosed population is parent-bank shares, not AMC shares. The approved bank aggregate covers employee/director grants across the bank and subsidiaries; do not append these options again to the bank denominator or treat them as AMC ownership dilution.",
+      "parent_scope_locator": {
+        "source_id": "ICICIBANK-2026",
+        "pdf_pages_one_based": [
+          180,
+          181
+        ],
+        "printed_pages": [
+          315,
+          316
+        ],
+        "section": "Consolidated Schedule18.3 parent ESOS population145272095; AMC note36 explicitly identifies parent scheme and bank/subsidiary employee eligibility"
+      },
+      "newly_closed_gap": "The AMC note establishes issuer identity and exact closing parent-share population; source retention is complete.",
+      "remaining_unknowns": [
+        "No universal absence of AMC own-share or other group plans is inferred from this note.",
+        "No complete subsidiary/associate current claim valuation is established."
+      ]
+    },
+    {
+      "source_id": "SBIN-yesbank-awards-FY2026",
+      "entity": "Yes Bank Limited",
+      "relation_to_sbi": "Associate, not subsidiary; SBI reports10.78% March31 ownership, rounded to two decimals.",
+      "claim_types": [
+        "Source Summary",
+        "Calculation"
+      ],
+      "pdf_pages_one_based": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8
+      ],
+      "printed_pages": null,
+      "printed_page_note": "No printed page numbers visible; PDF pages3-4 visually checked for column alignment.",
+      "section": "ESOS and RSU disclosure pursuant to Regulation14, plans as on March31 2026",
+      "closing_date": "2026-03-31",
+      "closing_awards_total": 381906675,
+      "closing_non_rsu_options": 345826675,
+      "closing_rsus": 36080000,
+      "plans": [
+        {
+          "name": "JESOP V",
+          "award_type": "option",
+          "opening": 2531750,
+          "granted": 0,
+          "exercised": 0,
+          "lapsed_forfeited": 1776750,
+          "closing": 755000,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "PESOP II 2010",
+          "award_type": "option",
+          "opening": 3362880,
+          "granted": 0,
+          "exercised": 0,
+          "lapsed_forfeited": 2264130,
+          "closing": 1098750,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL JESOP 2018",
+          "award_type": "option",
+          "opening": 6492500,
+          "granted": 675000,
+          "exercised": 35500,
+          "lapsed_forfeited": 1245000,
+          "closing": 5887000,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL PESOP 2018",
+          "award_type": "option",
+          "opening": 3135184,
+          "granted": 0,
+          "exercised": 0,
+          "lapsed_forfeited": 791930,
+          "closing": 2343254,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL MD&CEO Plan 2020",
+          "award_type": "option",
+          "opening": 16228490,
+          "granted": 0,
+          "exercised": 0,
+          "lapsed_forfeited": 0,
+          "closing": 16228490,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL PESOP 2020",
+          "award_type": "option",
+          "opening": 300836021,
+          "granted": 0,
+          "exercised": 24142235,
+          "lapsed_forfeited": 39299480,
+          "closing": 237394306,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL RSU 2024",
+          "award_type": "RSU",
+          "opening": 17587000,
+          "granted": 0,
+          "exercised": 1464000,
+          "lapsed_forfeited": 2287000,
+          "closing": 13836000,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL MD&CEO Plan 2025",
+          "award_type": "option",
+          "opening": 0,
+          "granted": 4564394,
+          "exercised": 0,
+          "lapsed_forfeited": 0,
+          "closing": 4564394,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL PESOP 2025",
+          "award_type": "option",
+          "opening": 0,
+          "granted": 85453166,
+          "exercised": 0,
+          "lapsed_forfeited": 7897685,
+          "closing": 77555481,
+          "rollforward_reconciles": true
+        },
+        {
+          "name": "YBL RSU 2025",
+          "award_type": "RSU",
+          "opening": 0,
+          "granted": 23024000,
+          "exercised": 0,
+          "lapsed_forfeited": 780000,
+          "closing": 22244000,
+          "rollforward_reconciles": true
+        }
+      ],
+      "dash_handling": "Dashes in the source rollforward are represented as zero movement or opening balance only within that disclosed table; no wider absence of claims is inferred.",
+      "aggregate_rollforward": {
+        "opening": 350173825,
+        "granted": 113716560,
+        "exercised": 25641735,
+        "lapsed_forfeited": 56341975,
+        "closing": 381906675
+      },
+      "settlement": "Both option and RSU plans use primary issuance of Yes Bank equity shares. New grants ceased for some predecessor plans while outstanding grants remain valid. These are not SBI shares.",
+      "accounting": "Policy changed from intrinsic value to grant-date Black-Scholes fair value for instruments granted after March31 2021, expensed over vesting. Page7 valuation disclosures do not establish a newly measured March31 current value of all outstanding claims.",
+      "parent_crosscheck": {
+        "source_id": "SBIN-2026",
+        "pdf_pages_one_based": [
+          338
+        ],
+        "printed_pages": [
+          336
+        ],
+        "section": "Schedule18.1(d)",
+        "fy2026_shares_issued_on_exercise": 25641735,
+        "reported_sbi_ownership_percent": 10.78
+      },
+      "newly_closed_gap": "The exact closing population for all ten listed plans is retained and reconciles individually. The annual exercise sum agrees exactly with SBI consolidated disclosure. Earlier website-access limitation is resolved.",
+      "remaining_unknowns": [
+        "Complete current claim fair value and its effect on SBI equity-method associate value remain unquantified.",
+        "No addition of these Yes Bank awards to SBI parent shares, automatic book-equity haircut, or future ownership assumption change is justified."
+      ]
+    }
+  ],
+  "arithmetic_checks": {
+    "life_rollforward": true,
+    "general_closing_rows": true,
+    "general_rollforward": true,
+    "funds_closing_rows": true,
+    "funds_exercise_rows": true,
+    "funds_exercise_settlement_reconciliation": true,
+    "card_2019_rollforward": true,
+    "card_2023_rollforward": true,
+    "card_combined_closing": true,
+    "card_parent_exercise_reconciliation": true,
+    "icici_amc_parent_award_rollforward": true,
+    "yes_bank_all_ten_plan_rollforwards": true,
+    "yes_bank_closing_plan_total": true,
+    "yes_bank_options_and_units_subtotals": true,
+    "yes_bank_parent_exercise_reconciliation": true
+  },
+  "visual_review": {
+    "method": "Read four exact General/Funds scan pages plus Yes Bank table pages3-4 rendered from retained bytes at scale2 with view_image; no OCR inference.",
+    "exact_reviewed_images": [
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page54-local-only.png",
+        "sha256": "2ba27542e790575b5b1a65fef6deb03bdeecd5e15bb30c8806832c6787278891",
+        "bytes": 485731,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      },
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page55-local-only.png",
+        "sha256": "03b22e418725a5e576ca18f9eb8683dfb311ceffff1d783a4ca1ac4e694a90ad",
+        "bytes": 491010,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      },
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page61-local-only.png",
+        "sha256": "c09805069d1c819f18898f99e53414151dd010c1f2c6d341e9dde80a15c6c77d",
+        "bytes": 1432402,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      },
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page62-local-only.png",
+        "sha256": "3c2b7fd566a78b2b21a7a0db0e136ee76235dd44e2e91b5f87bb9c21bd1e6b5e",
+        "bytes": 1247852,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      },
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page3-local-only.png",
+        "sha256": "6ea12a52e8b005ab8675e72feb641285f673245fed6551c732707c820ab7f010",
+        "bytes": 149500,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      },
+      {
+        "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page4-local-only.png",
+        "sha256": "625e9baf58658055a648a4d185000eb57be866588b0ab9105c5ad5b905f4c881",
+        "bytes": 148679,
+        "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+      }
+    ],
+    "coordinator_crosscheck": "Coordinator separately confirmed all four page images and the Funds/General arithmetic; see coordinator integration evidence for its own receipt."
+  },
+  "local_only_derivatives": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-navigation-local-only.png",
+      "sha256": "937738a01783138c7c77bd059b7c07eda68cc6b4395934d930ea3f482f0b5fb7",
+      "bytes": 638160,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-notes-local-only.png",
+      "sha256": "12c8d26ef2d7d3528b0ee650ea74725c2834d2453ce466bd52221a8c49c5c7e2",
+      "bytes": 671702,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page54-local-only.png",
+      "sha256": "2ba27542e790575b5b1a65fef6deb03bdeecd5e15bb30c8806832c6787278891",
+      "bytes": 485731,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page55-local-only.png",
+      "sha256": "03b22e418725a5e576ca18f9eb8683dfb311ceffff1d783a4ca1ac4e694a90ad",
+      "bytes": 491010,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-navigation-local-only.png",
+      "sha256": "2ed1ce9a89ecc2d9ca3162238579819f1d372c65c7bc961b57b151c359c8ddfb",
+      "bytes": 791873,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-notes-local-only.png",
+      "sha256": "97d188a827f4c2c49af53d335c2293dda3c919dadea99d77e1ac9f2b6d1ae522",
+      "bytes": 1395795,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page61-local-only.png",
+      "sha256": "c09805069d1c819f18898f99e53414151dd010c1f2c6d341e9dde80a15c6c77d",
+      "bytes": 1432402,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page62-local-only.png",
+      "sha256": "3c2b7fd566a78b2b21a7a0db0e136ee76235dd44e2e91b5f87bb9c21bd1e6b5e",
+      "bytes": 1247852,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page3-local-only.png",
+      "sha256": "6ea12a52e8b005ab8675e72feb641285f673245fed6551c732707c820ab7f010",
+      "bytes": 149500,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page4-local-only.png",
+      "sha256": "625e9baf58658055a648a4d185000eb57be866588b0ab9105c5ad5b905f4c881",
+      "bytes": 148679,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    }
+  ],
+  "resolved_disclosure_access_boundary": {
+    "entity": "Yes Bank Limited",
+    "official_index_url": "https://www.yes.bank.in/sites/yesbank/about-us/investors-relation/financial-information/annual-reports",
+    "observed_listing": "FY2025-26 index lists an ESOS disclosure under Regulation14 for March31 2026.",
+    "resolution": "Coordinator followed the official rendered link to its PDF viewer and retained the public native document through Processing Run201; original hash and fiscal identity are verified above.",
+    "resolved": true,
+    "prohibited_inference": "The SBI parent annual FY2026 exercise count25641735 is not the closing award count."
+  },
+  "proposed_fact_only_updates": [
+    "Attach dated named-issuer closing awards, settlement distinctions and accounting scope to existing research evidence.",
+    "Replace the named SBI subsidiary and Yes Bank associate remaining-count gaps with precise residual current-valuation/trust/performance scope limits.",
+    "Record ICICI AMC parent-share overlap so its8503860 options cannot be double counted."
+  ],
+  "assumptions_patch": {
+  },
+  "financial_history_patch": {
+  },
+  "normal_database_mutations": false,
+  "model_decision": "Approved book equity, income, parent full-issuance denominators, fixed-future-ownership assumptions and no-price historical outputs remain unchanged. Named subsidiary count closure is not complete issuer claim valuation."
+}

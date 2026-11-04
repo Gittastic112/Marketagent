@@ -1,6 +1,6 @@
 # Research/demo decision log
 
-Updated November 2, 2026. This is the readable index for the
+Updated November 4, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
 owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
@@ -32,6 +32,7 @@ versions before applying a change. The original source packets remain intact.
 | M05-AAPL-03A | FY2025 year-end shares 14,773.260m, average basic shares 14,948.500m and average diluted shares 15,004.697m; units and historical uses | Source approval recorded; valuation-date denominator not yet selected |
 | M05-AAPL-03B | FY2025 dividends/equivalents declared USD15.413bn, paid USD15.421bn, buyback cash USD90.711bn and declaration USD1.02 per share/RSU; units, signs and definitions | Source approval recorded; USD8m declared/paid difference retained without an invented bridge |
 | M05-AAPL-04A | US domicile, USD cash flows and matching discount-rate currency, operating-company FCFF DCF as primary method | Setup approval recorded; no numerical forecast or saved valuation changed |
+| USER-APPROVED-HISTORICAL-SCENARIOS-20261103 | Apply all eleven named historical research scenarios with disclosed reserves and dilution stresses | [Application](../../data/reviews/historical-scenario-application-20261103.json) saves models 2-12; no complete company-fact or current-value certification |
 
 Every approval's exact user message, scope, timestamp and source evidence is
 embedded in the register. These approvals did not themselves promote financial
@@ -43,6 +44,7 @@ The cash receipt separately pins its FY2024 source for the FY2023 balance sheet.
 
 | ID | Decision and reason | Actual effect / verification |
 |---|---|---|
+| M05-DISCLOSURES-20261104 | Record supported ownership, award-count and accounting-scope findings while withholding unsupported numerical claim replacements | [Application](../../data/reviews/disclosure-followup-20261104.json): 16 additional originals,18 source-processing attempts and 11 inactive company notes. Three earlier notes, all saved models/drafts and financial histories remain. Twenty-four normal browser views pass; the other 107 tables/assets are preserved |
 | M05-US-BENCHMARK-INTAKE-20261017 | Load the six retained US benchmark workbooks dated January 5, 2026. The normal database had no dataset versions; source mirrors match the audited immutable originals | Added six active versions, 1,131 typed rows and six successful Processing Runs. Changed seven benchmark/audit tables; the other 102 tables are unchanged. Twenty-seven selected values match workbook cells |
 | M05-AAPL-04B | Initially retain separate industry comparisons and the FY2025 Products/Services revenue context | Original receipt preserved. M05-MAPPING-16 supersedes only the provisional mapping; no company forecast is approved |
 | M05-HDFCBANK-05 | Accept 64 selected consolidated FY2024/FY2025 entries on their historical pre-bonus basis. Separate official audited results corroborate the annual PDF's missing currency glyph | Report retained as document 10/asset 1. Corrected 52 monetary units to INR crores and four EPS units to INR/share; eight existing share/EPS units retained. Eighteen statement/EPS checks pass; Processing Runs 97/98 succeed |

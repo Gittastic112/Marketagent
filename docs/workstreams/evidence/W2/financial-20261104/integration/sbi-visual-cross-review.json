@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-04",
+  "reviewer": "coordinator independent of bank-review extraction",
+  "review_type": "agent visual source review and independent arithmetic",
+  "independent_human_review": false,
+  "status": "pass",
+  "sources": [
+    {"source_id":"SBIN-funds-FY2026","sha256":"27f21bf16dece622b36f3f33e236585fab57bed55201d3e085b18cfa252a47ac","pdf_pages_one_based":[54,55],"section":"Note 33"},
+    {"source_id":"SBIN-general-FY2026","sha256":"f7a63790ebfd118f740d1caf521372cb6e0dd92547f0312dbee06ed5a7f3fdb4","pdf_pages_one_based":[61,62],"section":"Schedule 16 Note 3.24"}
+  ],
+  "checks": {
+    "funds_fiscal_date": "2026-03-31",
+    "funds_closing_option_rows": [0,4908,172563,1101135,805000,3268476,2354030,26800,820000,3369400],
+    "funds_closing_sum": 11922312,
+    "funds_exercised_rows": [99310,220064,816870,760285,1053839,219440,13200],
+    "funds_exercised_sum": 3183008,
+    "funds_ewt_transfers": 1059407,
+    "funds_ewt_bonus_shares": 711798,
+    "general_fiscal_date": "2026-03-31",
+    "general_closing_formula": "551466 + 60529 - 131432 - 63780",
+    "general_closing_options": 416783,
+    "general_intrinsic_value_accounting_not_current_award_fair_value": true,
+    "funds_grant_date_fair_values_not_closing_claim_values": true
+  },
+  "limits": [
+    "Four rendered pages were read directly; OCR accuracy is not claimed.",
+    "The source dash in the first Funds closing cell contributes zero to this arithmetic only.",
+    "These are subsidiary share units, not SBI parent shares.",
+    "Exercise settlements include trust transfers; closing options cannot all be presumed fresh issuance.",
+    "No complete parent-equity claim value or numeric valuation patch follows from these counts alone."
+  ]
+}

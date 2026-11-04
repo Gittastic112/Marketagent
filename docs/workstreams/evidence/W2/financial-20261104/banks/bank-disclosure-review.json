@@ -1,0 +1,1432 @@
+{
+  "schema_version": 1,
+  "review_date": "2026-11-04",
+  "reviewer": "Delegated agent source review",
+  "independent_human_certification": false,
+  "scope": "Historical issuer-disclosure follow-up for the three already approved bank scenarios, all financial as-of 2026-03-31",
+  "writes": {
+    "application": false,
+    "normal_database": false,
+    "assumptions": false,
+    "existing_corpus": false,
+    "shared_docs": false
+  },
+  "prior_packet": {
+    "path": "docs/workstreams/evidence/W2/financial-20261103/banks/historical-bank-model-proposals.json",
+    "sha256": "eecd69abe56ea01ec53fd7d25e22e8e5b15eab752ac28bf500b5a42a7020a044"
+  },
+  "source_manifest": [
+    {
+      "id": "HDFCBANK-2025",
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2024-25/HDFC_Bank_Annual_Report_2024_25-310202.pdf",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2025.pdf",
+      "original_sha256": "2a1879eee544526b7cecacb5380c2664f92e0d031361f5d54ffe55370c9487ea",
+      "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2025.json",
+      "extracted_sha256": "1975d2d02ea35276cd1c3446376de2a171d1f88b16c4f2c4c43d88580854eeab",
+      "fiscal_period_end": "2025-03-31",
+      "original_hash_reverified": true,
+      "retention": "Existing immutable original; no new acquisition by this agent"
+    },
+    {
+      "id": "HDFCBANK-2026",
+      "url": "https://www.hdfc.bank.in/content/dam/hdfcbankpws/in/en/pdf/annual-reports/2025-26/reports/HDFC_Bank_IR26.pdf",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/HDFCBANK-2026.pdf",
+      "original_sha256": "ec2d162371db0a5b4af04fe1ed78b77bd50e097259e1b940b4155139b20b4848",
+      "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/HDFCBANK-2026.json",
+      "extracted_sha256": "156283ddd67ada8616f2ad418e85491ef1ab403ac4ef13c0ed035f39dbe52686",
+      "fiscal_period_end": "2026-03-31",
+      "original_hash_reverified": true,
+      "retention": "Existing immutable original; no new acquisition by this agent"
+    },
+    {
+      "id": "ICICIBANK-2026",
+      "url": "https://www.icici.bank.in/content/dam/icicibank/managed-assets/docs/investor/annual-reports/2026/icici-bank-2026-financial-statements.pdf",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/ICICIBANK-2026.pdf",
+      "original_sha256": "a5cf4bddb070e47a10dff9b097ef2553bc2e95e75a7116afbacf03e7e9b1b225",
+      "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/ICICIBANK-2026.json",
+      "extracted_sha256": "c7183df6e1f6f212d743201b097fdf3901a6b223b717312001ac550fea80cab6",
+      "fiscal_period_end": "2026-03-31",
+      "original_hash_reverified": true,
+      "retention": "Existing immutable original; no new acquisition by this agent"
+    },
+    {
+      "id": "SBIN-2026",
+      "url": "https://sbi.bank.in/documents/17836/58092042/Annual%2BReport%2BFY2026.pdf/0f165880-8752-4d67-6d87-422984f5cc3f?t=1778164340579",
+      "original_path": "output/milestones/m05/review-batches-20261013/originals/SBIN-2026.pdf",
+      "original_sha256": "3675260e80fd4074f8be5b7fd51b1f0d1e1f3cfdbc5dc78b613a09b2ce2bd069",
+      "extracted_path": "output/milestones/m05/review-batches-20261013/extracted/SBIN-2026.json",
+      "extracted_sha256": "8ae028c16673b6b32a403f40228e2b05316d18aecc90114fc79eceb78c08c435",
+      "fiscal_period_end": "2026-03-31",
+      "original_hash_reverified": true,
+      "retention": "Existing immutable original; no new acquisition by this agent"
+    },
+    {
+      "id": "SBIN-life-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BLife.pdf/704cf06d-f821-d616-fea2-12492db89479?t=1779688609796",
+      "processing_run_id": 184,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-life-FY2026.json",
+      "receipt_sha256": "54824105617ffd6abdc70c8d6ccafa7e0406fb13808270fc3bb380d1b6b4146f",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-life-FY2026.pdf",
+      "original_sha256": "84f59fc2a82db08ded37def55b212225d89dc44969dd6523af8a2ef0335f12ef",
+      "bytes": 10981386,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:23.489375+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-general-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BGeneral%2BInsurance.pdf/99c8784a-cc4d-892d-3a95-7b82888af51e?t=1779688110335",
+      "processing_run_id": 185,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-general-FY2026.json",
+      "receipt_sha256": "815b29b336dc08864fc70674ad5670e96c799ad3b22b95ea401687db639dc1c5",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-general-FY2026.pdf",
+      "original_sha256": "f7a63790ebfd118f740d1caf521372cb6e0dd92547f0312dbee06ed5a7f3fdb4",
+      "bytes": 20715910,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:42.758774+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-funds-FY2026",
+      "source_url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBIFML.pdf/1fec82cf-ebf9-bd99-9d7c-e93abad62483?t=1779688136764",
+      "processing_run_id": 186,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-funds-FY2026.json",
+      "receipt_sha256": "a795d8ac4c506183f98a93df07b827668141965d664e9c104081b2f8a7491224",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-funds-FY2026.pdf",
+      "original_sha256": "27f21bf16dece622b36f3f33e236585fab57bed55201d3e085b18cfa252a47ac",
+      "bytes": 10418185,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:52.561628+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-card-awards-FY2026",
+      "source_url": "https://www.sbicard.com/sbi-card-en/assets/docs/pdf/who-we-are/notices/Disclosure-under-SEBI-%28SBEBSE%29.pdf",
+      "processing_run_id": 187,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/acquired-sources/SBIN-card-awards-FY2026.json",
+      "receipt_sha256": "acfc89a384118af07f436601da804a21b7e00d70a68299364fdcb40036bccd19",
+      "original_path": "output/milestones/disclosure-followup-20261104/acquired-sources/originals/SBIN-card-awards-FY2026.pdf",
+      "original_sha256": "61bd71e6b3f278d45e25a9abd1bdbd871e1e1e6357ede7670f8ef943aa1d4bff",
+      "bytes": 380504,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:49:59.816474+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "ICICIBANK-AMC-statements-FY2026",
+      "source_url": "https://www.icicipruamc.com/blob/investor-relations/Annual_Report/pdf/financial-statement.pdf",
+      "processing_run_id": 198,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/ICICIBANK-AMC-statements-FY2026.json",
+      "receipt_sha256": "061e5b2e26a6c6f3ff7987aec49b3244db5f1b393b89e61d7ffe32c079e139cb",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch2/acquired-sources/originals/ICICIBANK-AMC-statements-FY2026.pdf",
+      "original_sha256": "19076fd4dd1aa338e462f469e426a68f8b0c71acf995bf838204c4d02b4dcdae",
+      "bytes": 891700,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T05:51:52.130022+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    },
+    {
+      "id": "SBIN-yesbank-awards-FY2026",
+      "source_url": "https://www.yes.bank.in/sites/web/content/published/api/v1.1/assets/CONT561040E6AFF04011A295D336812B391B/native/esos_disclosure_pursuant_to_regulation_31march_2026.pdf?download=false&channelToken=21f7ccfa2fc3401091938f541a6f8f2a",
+      "processing_run_id": 201,
+      "receipt_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/SBIN-yesbank-awards-FY2026.json",
+      "receipt_sha256": "5917f4a23c624e558f23063ca8314d8ba6b68f9c594189de1c70136a4468faf9",
+      "original_path": "output/milestones/disclosure-followup-20261104/batch4/acquired-sources/originals/SBIN-yesbank-awards-FY2026.pdf",
+      "original_sha256": "8fb3a2db8b0bbec5b58c0f191796d6e35204b179b5ff4e90e692bbce0ffe7620",
+      "bytes": 272034,
+      "original_hash_and_size_reverified": true,
+      "fiscal_period_end": "2026-03-31",
+      "acquisition_finished_at": "2026-11-04T06:02:41.413943+00:00",
+      "retained_human_review_status": "pending",
+      "review_status": "Delegated agent source review; no independent human certification"
+    }
+  ],
+  "companies": [
+    {
+      "ticker": "HDFCBANK",
+      "prior_gap": "Subsidiary award/ownership/accounting scope and merger comparability remained incomplete; fixed future ownership was explicitly assumed.",
+      "already_known": [
+        "Six subsidiaries disclose awards, distinct from parent-bank awards.",
+        "FY2026 parent full-issuance denominator and 1:1 parent bonus adjustment were already approved.",
+        "FY2024 is a merger-period and pre-bonus historical basis."
+      ],
+      "newly_recorded_facts": {
+        "subsidiary_award_inventory": [
+          {
+            "entity": "HDFC Securities Limited",
+            "reported_ownership_percent": 94.01,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 602704,
+            "outstanding_units": null,
+            "units_null_meaning": "No unit count asserted in this review; not an inferred zero",
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                513
+              ],
+              "printed_pages": [
+                518
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          },
+          {
+            "entity": "HDB Financial Services Limited",
+            "reported_ownership_percent": 74.12,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 10526098,
+            "outstanding_units": null,
+            "units_null_meaning": "No unit count asserted in this review; not an inferred zero",
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                514
+              ],
+              "printed_pages": [
+                519
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          },
+          {
+            "entity": "HDFC ERGO General Insurance Company Limited",
+            "reported_ownership_percent": 50.33,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 8206561,
+            "outstanding_units": null,
+            "units_null_meaning": "No unit count asserted in this review; not an inferred zero",
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                516
+              ],
+              "printed_pages": [
+                521
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          },
+          {
+            "entity": "HDFC Capital Advisors Limited",
+            "reported_ownership_percent": 89.68,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 131283,
+            "outstanding_units": null,
+            "units_null_meaning": "No unit count asserted in this review; not an inferred zero",
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                517
+              ],
+              "printed_pages": [
+                522
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          },
+          {
+            "entity": "HDFC Life Insurance Company Limited",
+            "reported_ownership_percent": 50.21,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 11019288,
+            "outstanding_units": 702152,
+            "units_null_meaning": null,
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                518,
+                519,
+                520,
+                521,
+                522
+              ],
+              "printed_pages": [
+                523,
+                524,
+                525,
+                526,
+                527
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          },
+          {
+            "entity": "HDFC Asset Management Company Limited",
+            "reported_ownership_percent": 52.37,
+            "ownership_precision": "Published to two decimal places; not an exact numerator/denominator",
+            "outstanding_options": 5378785,
+            "outstanding_units": 499090,
+            "units_null_meaning": null,
+            "basis": "Own-entity shares at 2026-03-31, not HDFC Bank share units",
+            "award_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                527,
+                528
+              ],
+              "printed_pages": [
+                532,
+                533
+              ],
+              "section": "Consolidated Schedule 18.4"
+            },
+            "ownership_locator": {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17 principles of consolidation"
+            }
+          }
+        ],
+        "life_option_sum": {
+          "claim_type": "Calculation",
+          "value": 11019288,
+          "formula": "Sum of 21 nonzero closing grant rows; agrees with sum of 27 exercise-price summary rows",
+          "movement_counts": [
+            68044,
+            980456,
+            85000,
+            130440,
+            321817,
+            20000,
+            4608539,
+            500990,
+            933786,
+            120000,
+            42000,
+            170000,
+            262486,
+            45213,
+            331915,
+            159000,
+            725291,
+            51500,
+            1303811,
+            149000,
+            10000
+          ],
+          "exercise_summary_counts": [
+            68044,
+            725368,
+            85000,
+            130440,
+            262232,
+            20000,
+            255088,
+            59585,
+            120000,
+            170000,
+            149000,
+            4508539,
+            110990,
+            933786,
+            42000,
+            262486,
+            124000,
+            725291,
+            8000,
+            100000,
+            390000,
+            45213,
+            35000,
+            43500,
+            10000,
+            331915,
+            1303811
+          ]
+        },
+        "life_units_name": "PRSU 2025; reported outstanding units, not guaranteed or maximum performance payout",
+        "amc_units_name": "Performance-linked stock units; vesting depends on company and employee performance",
+        "amc_bonus_basis": "March31 2026 options and PSUs already include additions for its own bonus issue. Do not apply the parent-bank bonus again.",
+        "accounting": {
+          "claim_type": "Source Summary",
+          "conclusion": "Group awards acquire equity in their own entity. Pre-April2021 option accounting used intrinsic value; later grants use grant-date fair value with expense amortized over vesting and an outstanding-award reserve. That reserve is not a March31 market value of claims.",
+          "locator": {
+            "source_id": "HDFCBANK-2026",
+            "pdf_pages_one_based": [
+              501,
+              502
+            ],
+            "printed_pages": [
+              506,
+              507
+            ],
+            "section": "Schedule 17 policy 12: employee benefits"
+          }
+        },
+        "consolidation": {
+          "claim_type": "Source Summary",
+          "conclusion": "AS21 line-by-line consolidation eliminates intragroup items and presents minority interests separately. ScheduleIII entity contributions include separate minority interests and intercompany adjustments; they cannot be treated as standalone market values or directly allocated parent common equity.",
+          "locators": [
+            {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                486
+              ],
+              "printed_pages": [
+                491
+              ],
+              "section": "Schedule 17"
+            },
+            {
+              "source_id": "HDFCBANK-2026",
+              "pdf_pages_one_based": [
+                548
+              ],
+              "printed_pages": [
+                553
+              ],
+              "section": "Schedule 18.20"
+            }
+          ]
+        },
+        "dated_ownership_events": {
+          "hdb_ipo_sold_shares": 135135135,
+          "hdb_after_offer_ownership_percent": 74.19,
+          "hdb_march31_ownership_percent": 74.12,
+          "hdfc_life_june16_2026_preferential_shares": 14523906,
+          "hdfc_life_after_june_event_ownership_percent": 50.54,
+          "exclusion": "June16 Life issuance is after the model date; retain March31 ownership50.21%.",
+          "locator": {
+            "source_id": "HDFCBANK-2026",
+            "pdf_pages_one_based": [
+              286
+            ],
+            "printed_pages": [
+              291
+            ],
+            "section": "Board report: financial statements of subsidiaries"
+          }
+        },
+        "merger": {
+          "effective_date": "2023-07-01",
+          "accounting": "AS14 pooling of interest, carrying amounts with policy-alignment adjustments; intragroup balances eliminated",
+          "new_bank_shares_issued": 3110396492,
+          "bank_shares_cancelled": 1164625834,
+          "exchange_ratio": "42 bank shares per 25 HDFC Limited shares",
+          "comparability": "FY2024 includes the merged operations only from July1 2023. FY2025 is not comparable with FY2024. Bonus adjustment alone does not repair the economic perimeter/time mismatch.",
+          "temporary_control_exclusions": "HDFC Credila and HEADS were not consolidated under AS21 because control was intended to be temporary; do not assume every acquired subsidiary entered consolidated earnings.",
+          "locators": [
+            {
+              "source_id": "HDFCBANK-2025",
+              "pdf_pages_one_based": [
+                478,
+                479
+              ],
+              "printed_pages": [
+                483,
+                484
+              ],
+              "section": "Consolidated Schedule 18.1"
+            }
+          ]
+        }
+      },
+      "newly_closed_scope": [
+        "Exact disclosed March31 subsidiary award counts for the six named issuers, with reported ownership and policy locators.",
+        "Merger effective date, accounting method, partial-year perimeter and share exchange/cancellation are evidenced."
+      ],
+      "remaining_unknowns": [
+        "Complete fair value of all subsidiary claims, exact child share denominators/trust settlement and resulting parent-value effect are not established by this inventory.",
+        "All-grant/performance maximum payout is not established for the unit schemes.",
+        "No complete same-perimeter FY2024 pro-forma consolidated history was located in the targeted reviewed sources. Do not annualize nine months or infer one from the bonus.",
+        "The retained FY2025 EPS exception remains unchanged."
+      ],
+      "proposed_fact_only_updates": [
+        "Attach the dated child-issuer inventory and accounting/merger notes to source review evidence.",
+        "Describe merger comparability as a verified limitation with specific cause, not an unexplained missing note."
+      ],
+      "assumptions_patch": {
+      },
+      "financial_history_patch": {
+      }
+    },
+    {
+      "ticker": "ICICIBANK",
+      "prior_gap": "Child awards were acknowledged but complete subsidiary/associate valuation scope and ownership reconciliation were not closed.",
+      "already_known": [
+        "Parent replacement awards include former ICICI Securities awards.",
+        "FY2026 diluted EPS reduces parent income by an annual weighted subsidiary/associate award adjustment."
+      ],
+      "newly_recorded_facts": {
+        "subsidiary_award_inventory": [
+          {
+            "entity": "ICICI Prudential Life Insurance Company Limited",
+            "reported_ownership_percent": 50.89,
+            "outstanding_options": 24556368,
+            "outstanding_units": 1664819,
+            "award_locator": {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                183,
+                184
+              ],
+              "printed_pages": [
+                318,
+                319
+              ],
+              "section": "Consolidated Schedule 18.3"
+            },
+            "basis": "Own-entity shares at 2026-03-31, not ICICI Bank share units",
+            "ownership_precision": "Published to two decimal places",
+            "ownership_locator": {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                154
+              ],
+              "printed_pages": [
+                289
+              ],
+              "section": "Schedule 17 consolidation perimeter"
+            }
+          },
+          {
+            "entity": "ICICI Lombard General Insurance Company Limited",
+            "reported_ownership_percent": 51.26,
+            "outstanding_options": 10752805,
+            "outstanding_units": 1107145,
+            "award_locator": {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                184,
+                185
+              ],
+              "printed_pages": [
+                319,
+                320
+              ],
+              "section": "Consolidated Schedule 18.3"
+            },
+            "basis": "Own-entity shares at 2026-03-31, not ICICI Bank share units",
+            "ownership_precision": "Published to two decimal places",
+            "ownership_locator": {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                154
+              ],
+              "printed_pages": [
+                289
+              ],
+              "section": "Schedule 17 consolidation perimeter"
+            }
+          }
+        ],
+        "icici_securities": {
+          "own_awards_outstanding": 0,
+          "source_explicit_zero": true,
+          "scope": "The disclosed Securities ESOS and ESUS plans, after March24 2025 cancellation and replacement by bank awards; not all future awards or all group plans",
+          "locator": {
+            "source_id": "ICICIBANK-2026",
+            "pdf_pages_one_based": [
+              186
+            ],
+            "printed_pages": [
+              321
+            ],
+            "section": "Consolidated Schedule 18.3 Securities plan rollforwards"
+          }
+        },
+        "accounting": {
+          "claim_type": "Source Summary",
+          "conclusion": "Life and Lombard account for stock compensation using grant-date intrinsic value amortized over vesting. Bank awards use different post-March2021 fair-value treatment. A group accounting reserve or expense does not measure the current fair value of all child awards.",
+          "locator": {
+            "source_id": "ICICIBANK-2026",
+            "pdf_pages_one_based": [
+              166,
+              167
+            ],
+            "printed_pages": [
+              301,
+              302
+            ],
+            "section": "Schedule 17 policy8"
+          }
+        },
+        "annual_eps_adjustment": {
+          "reported_inr": 237900000,
+          "source_unit": "INR million, one decimal",
+          "exact_full_currency_precision": false,
+          "scope": "FY2026 weighted diluted-EPS numerator adjustment for subsidiary and associate awards, not March31 full issuance or book-equity haircut",
+          "locator": {
+            "source_id": "ICICIBANK-2026",
+            "pdf_pages_one_based": [
+              172
+            ],
+            "printed_pages": [
+              307
+            ],
+            "section": "Schedule18.1 EPS"
+          }
+        },
+        "perimeter": {
+          "icici_amc_reported_ownership_percent": 53.0,
+          "securities_ownership_percent": 100.0,
+          "pension_direct_acquisition_date": "2026-01-12",
+          "arteria_associate_ownership_percent": 19.02,
+          "accounting_scope": "Subsidiaries consolidated under AS21; associates under AS23 equity method. Additional immaterial separate-company statutory disclosures are expressly omitted from the consolidated report. No universal zero award inference is supported.",
+          "comparability": "The report expressly qualifies FY2026 versus FY2025 for newly consolidated/deconsolidated entities and ownership changes.",
+          "locators": [
+            {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                153,
+                154,
+                155
+              ],
+              "printed_pages": [
+                288,
+                289,
+                290
+              ],
+              "section": "Schedule17"
+            },
+            {
+              "source_id": "ICICIBANK-2026",
+              "pdf_pages_one_based": [
+                207
+              ],
+              "printed_pages": [
+                342
+              ],
+              "section": "Schedule18 notes21-22"
+            }
+          ]
+        },
+        "amc_parent_share_awards": {
+          "source_id": "ICICIBANK-AMC-statements-FY2026",
+          "entity": "ICICI Prudential Asset Management Company Limited",
+          "claim_types": [
+            "Source Summary",
+            "Calculation",
+            "AI Interpretation"
+          ],
+          "pdf_pages_one_based": [
+            57,
+            58,
+            59,
+            60
+          ],
+          "printed_pages": [
+            178,
+            179,
+            180,
+            181
+          ],
+          "section": "Note 36, Employee share based payments",
+          "closing_date": "2026-03-31",
+          "award_underlying_issuer": "ICICI Bank Limited",
+          "closing_parent_bank_options": 8503860,
+          "vested_exercisable_parent_bank_options": 7698840,
+          "rollforward": {
+            "opening": 9176395,
+            "transfer_in": 10700,
+            "granted": 358500,
+            "exercised": 1041735,
+            "closing": 8503860
+          },
+          "accounting": "AMC recognises grant-date fair value over vesting for parent-share awards, with corresponding equity. FY2026 expense is INR150.3million, reported at one-decimal million precision, not a child-company claim valuation.",
+          "overlap_decision": "This disclosed population is parent-bank shares, not AMC shares. The approved bank aggregate covers employee/director grants across the bank and subsidiaries; do not append these options again to the bank denominator or treat them as AMC ownership dilution.",
+          "parent_scope_locator": {
+            "source_id": "ICICIBANK-2026",
+            "pdf_pages_one_based": [
+              180,
+              181
+            ],
+            "printed_pages": [
+              315,
+              316
+            ],
+            "section": "Consolidated Schedule18.3 parent ESOS population145272095; AMC note36 explicitly identifies parent scheme and bank/subsidiary employee eligibility"
+          },
+          "newly_closed_gap": "The AMC note establishes issuer identity and exact closing parent-share population; source retention is complete.",
+          "remaining_unknowns": [
+            "No universal absence of AMC own-share or other group plans is inferred from this note.",
+            "No complete subsidiary/associate current claim valuation is established."
+          ]
+        }
+      },
+      "newly_closed_scope": [
+        "Exact disclosed Life and Lombard option/unit counts plus dated reported parent ownership.",
+        "Explicit Securities predecessor-plan zero is reconciled to parent replacement awards; no double count.",
+        "AMC Note36 identifies8503860 closing options over parent-bank shares. They are not an additional AMC-share dilution population or an addition to the approved parent option denominator."
+      ],
+      "remaining_unknowns": [
+        "Complete child/associate award fair values and parent-equity effects remain unquantified, including plan coverage outside the detailed consolidated note.",
+        "Rounded ownership percentages and annual EPS adjustment do not establish exact March31 ownership after full issuance."
+      ],
+      "proposed_fact_only_updates": [
+        "Record the named child counts, ownership and accounting scope; retain the fixed-future-ownership User Assumption.",
+        "Preserve reported parent income; do not subtract the annual EPS adjustment from book equity or append child counts to parent shares."
+      ],
+      "assumptions_patch": {
+      },
+      "financial_history_patch": {
+      }
+    },
+    {
+      "ticker": "SBIN",
+      "prior_gap": "Parent award absence was established, while consolidated disclosures only established that group awards exist.",
+      "already_known": [
+        "Parent paid-up/full-issuance shares9230617586 and parent ESOP/convertible absence are already supported by retained shareholding filing.",
+        "FY2026 reported income includes Yes Bank disposal gain."
+      ],
+      "newly_recorded_facts": {
+        "annual_exercise_and_ownership_inventory": [
+          {
+            "entity": "SBI Cards and Payment Services Limited",
+            "shares_issued_on_exercise_during_fy2026": 243297,
+            "prior_reported_ownership_percent": 68.6,
+            "reported_ownership_percent_at_20260331": 68.58,
+            "outstanding_awards_at_20260331": 405789,
+            "no_outstanding_count_inferred_from_annual_exercises": true,
+            "locator": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                336,
+                337,
+                338
+              ],
+              "printed_pages": [
+                334,
+                335,
+                336
+              ],
+              "section": "Consolidated Schedule 18.1 and 18.1(b)-(d)"
+            },
+            "closing_award_source_id": "SBIN-card-awards-FY2026",
+            "closing_count_is_not_inferred_from_annual_exercises": true
+          },
+          {
+            "entity": "SBI Life Insurance Company Limited",
+            "shares_issued_on_exercise_during_fy2026": 957038,
+            "prior_reported_ownership_percent": 55.38,
+            "reported_ownership_percent_at_20260331": 55.33,
+            "outstanding_awards_at_20260331": 3094990,
+            "no_outstanding_count_inferred_from_annual_exercises": true,
+            "locator": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                336,
+                337,
+                338
+              ],
+              "printed_pages": [
+                334,
+                335,
+                336
+              ],
+              "section": "Consolidated Schedule 18.1 and 18.1(b)-(d)"
+            },
+            "closing_award_source_id": "SBIN-life-FY2026",
+            "closing_count_is_not_inferred_from_annual_exercises": true
+          },
+          {
+            "entity": "SBI Funds Management Limited",
+            "shares_issued_on_exercise_during_fy2026": 2123601,
+            "prior_reported_ownership_percent": 61.98,
+            "reported_ownership_percent_at_20260331": 61.86,
+            "outstanding_awards_at_20260331": 11922312,
+            "no_outstanding_count_inferred_from_annual_exercises": true,
+            "locator": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                336,
+                337,
+                338
+              ],
+              "printed_pages": [
+                334,
+                335,
+                336
+              ],
+              "section": "Consolidated Schedule 18.1 and 18.1(b)-(d)"
+            },
+            "closing_award_source_id": "SBIN-funds-FY2026",
+            "closing_count_is_not_inferred_from_annual_exercises": true
+          },
+          {
+            "entity": "SBI General Insurance Company Limited",
+            "shares_issued_on_exercise_during_fy2026": 131432,
+            "prior_reported_ownership_percent": 68.99,
+            "reported_ownership_percent_at_20260331": 73.87,
+            "outstanding_awards_at_20260331": 416783,
+            "no_outstanding_count_inferred_from_annual_exercises": true,
+            "locator": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                336,
+                337,
+                338
+              ],
+              "printed_pages": [
+                334,
+                335,
+                336
+              ],
+              "section": "Consolidated Schedule 18.1 and 18.1(b)-(d)"
+            },
+            "closing_award_source_id": "SBIN-general-FY2026",
+            "closing_count_is_not_inferred_from_annual_exercises": true
+          },
+          {
+            "entity": "Yes Bank Limited",
+            "shares_issued_on_exercise_during_fy2026": 25641735,
+            "prior_reported_ownership_percent": 23.97,
+            "reported_ownership_percent_at_20260331": 10.78,
+            "outstanding_awards_at_20260331": 381906675,
+            "no_outstanding_count_inferred_from_annual_exercises": true,
+            "locator": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                336,
+                337,
+                338
+              ],
+              "printed_pages": [
+                334,
+                335,
+                336
+              ],
+              "section": "Consolidated Schedule 18.1 and 18.1(b)-(d)"
+            },
+            "closing_award_source_id": "SBIN-yesbank-awards-FY2026",
+            "closing_count_is_not_inferred_from_annual_exercises": true
+          }
+        ],
+        "ownership_cautions": [
+          "General Insurance ownership also reflects a4.925% acquisition on2025-08-19; do not attribute the net increase to employee exercises.",
+          "Yes Bank ownership also reflects disposal of4134404897 shares on2025-09-17; it remains an associate at10.78%.",
+          "Funds Management ownership propagates to international subsidiaries and changes the group Pension Funds stake to92.37%; do not add those indirect exposures again as separate parent claims."
+        ],
+        "reported_nonrecurring_components": {
+          "yes_bank_disposal_gain_inr": 30265700000,
+          "rrb_reversal_charge_inr": 6695000000,
+          "scope": "Amounts reported in crore, converted using10000000. These are disclosed components, not a complete normalized earnings bridge.",
+          "locators": [
+            {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                338
+              ],
+              "printed_pages": [
+                336
+              ],
+              "section": "Schedule18.1(d)"
+            },
+            {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                339
+              ],
+              "printed_pages": [
+                337
+              ],
+              "section": "Schedule18.1(e)"
+            }
+          ]
+        },
+        "consolidation_scope": {
+          "subsidiaries": 27,
+          "joint_ventures": 8,
+          "associates": 17,
+          "scope": "FY2026 perimeter includes entities only from/until their entry/exit dates; these counts are not a declaration that every entity remains at March31.",
+          "locator": {
+            "source_id": "SBIN-2026",
+            "pdf_pages_one_based": [
+              336,
+              337,
+              339
+            ],
+            "printed_pages": [
+              334,
+              335,
+              337
+            ],
+            "section": "Schedule18.1"
+          }
+        },
+        "retained_subsidiary_closing_awards": [
+          {
+            "source_id": "SBIN-life-FY2026",
+            "entity": "SBI Life Insurance Company Limited",
+            "claim_types": [
+              "Source Summary",
+              "Calculation"
+            ],
+            "pdf_pages_one_based": [
+              97,
+              98,
+              99
+            ],
+            "printed_pages": [
+              96,
+              97,
+              98
+            ],
+            "section": "Note 19(c), ESOS 2018",
+            "closing_date": "2026-03-31",
+            "closing_options": 3094990,
+            "exercisable_options": 1540180,
+            "rollforward": {
+              "opening": 3287122,
+              "granted": 830000,
+              "lapsed": 65094,
+              "exercised": 957038,
+              "closing": 3094990
+            },
+            "settlement": "Direct administration, own-company equity shares; one option represents one own-company share.",
+            "accounting": "Intrinsic-value accounting with separate grant-date fair-value/pro-forma disclosures. Neither expense nor grant-date value is a March31 value of all remaining claims.",
+            "excludes": "The 30000000 scheme capacity is not the outstanding population.",
+            "newly_closed_gap": "Exact closing own-company options and reconciliation to the parent annual exercise count.",
+            "remaining_unknowns": [
+              "Complete current fair value of outstanding claims and resulting parent-equity effect are not established."
+            ]
+          },
+          {
+            "source_id": "SBIN-general-FY2026",
+            "entity": "SBI General Insurance Company Limited",
+            "claim_types": [
+              "Source Summary",
+              "Calculation"
+            ],
+            "pdf_pages_one_based": [
+              61,
+              62
+            ],
+            "printed_pages": null,
+            "printed_page_note": "No printed page number visible on these scanned pages.",
+            "section": "Schedule 16, note 3.24 Employee Stock Option Plan",
+            "closing_date": "2026-03-31",
+            "closing_options": 416783,
+            "closing_tranche_rows": [
+              64473,
+              35140,
+              81245,
+              105619,
+              34906,
+              10743,
+              13174,
+              10954,
+              60529
+            ],
+            "rollforward": {
+              "opening": 551466,
+              "granted": 60529,
+              "exercised": 131432,
+              "lapsed": 63780,
+              "closing": 416783
+            },
+            "settlement": "Options over the insurer own equity under its 2019 plan.",
+            "accounting": "Intrinsic-value method; grant intrinsic value was zero so no compensation expense was recorded. Separate Black-Scholes grant-date fair-value methodology is disclosed. Zero expense does not imply zero economic value of outstanding awards.",
+            "newly_closed_gap": "Exact March31 closing own-company options, supported by the nine tranche rows and total rollforward.",
+            "remaining_unknowns": [
+              "No current claim fair value or complete parent ownership after exercise is calculated."
+            ]
+          },
+          {
+            "source_id": "SBIN-funds-FY2026",
+            "entity": "SBI Funds Management Limited",
+            "claim_types": [
+              "Source Summary",
+              "Calculation"
+            ],
+            "pdf_pages_one_based": [
+              54,
+              55
+            ],
+            "printed_pages": null,
+            "printed_page_note": "No printed page number visible on these scanned pages.",
+            "section": "Standalone financial statements, note 33, Employee Stock Option Plan",
+            "closing_date": "2026-03-31",
+            "closing_options": 11922312,
+            "closing_tranche_rows": [
+              0,
+              4908,
+              172563,
+              1101135,
+              805000,
+              3268476,
+              2354030,
+              26800,
+              820000,
+              3369400
+            ],
+            "fy2026_exercised": 3183008,
+            "exercise_rows": [
+              99310,
+              220064,
+              816870,
+              760285,
+              1053839,
+              219440,
+              13200
+            ],
+            "settlement_reconciliation": {
+              "fresh_shares_in_parent_annual_report": 2123601,
+              "employee_welfare_trust_transfers": 1059407,
+              "total_exercised": 3183008
+            },
+            "trust_facts": {
+              "initial_acquired_shares": 517174,
+              "bonus_shares_received_20251219": 711798,
+              "fy2026_transfers": 1059407,
+              "closing_trust_shares": null
+            },
+            "settlement": "Plan permits direct, Employee Welfare Trust, or combined settlement. Each option represents one own-company share. The March31 closing counts already reflect its own bonus issue.",
+            "accounting": "Grant-date Black-Scholes valuation and FY2026 compensation expense are disclosed; these do not establish the current fair value of all remaining claims.",
+            "newly_closed_gap": "Exact March31 closing options and the reason total exercises exceed fresh issue: the difference is EWT transfers.",
+            "remaining_unknowns": [
+              "No closing trust-share balance is explicitly asserted from the reviewed pages.",
+              "Future fresh issuance versus trust settlement and complete claim value are not established.",
+              "PDF55 comparative movement rows are FY2025, not an alternative FY2026 population."
+            ]
+          },
+          {
+            "source_id": "SBIN-card-awards-FY2026",
+            "entity": "SBI Cards and Payment Services Limited",
+            "claim_types": [
+              "Source Summary",
+              "Calculation"
+            ],
+            "pdf_pages_one_based": [
+              1,
+              2,
+              5,
+              6,
+              7
+            ],
+            "printed_pages": null,
+            "section": "FY2026 SEBI SBEBSE disclosure, ESOP 2019 and ESOP 2023",
+            "closing_date": "2026-03-31",
+            "closing_awards_total": 405789,
+            "plans": [
+              {
+                "name": "ESOP 2019",
+                "closing_options": 71315,
+                "rollforward": {
+                  "opening": 301275,
+                  "granted": 0,
+                  "lapsed": 17060,
+                  "exercised": 212900,
+                  "closing": 71315
+                }
+              },
+              {
+                "name": "ESOP 2023, RSU/PSU awards",
+                "closing_awards": 334474,
+                "rollforward": {
+                  "opening": 391625,
+                  "granted": 0,
+                  "lapsed": 26754,
+                  "exercised": 30397,
+                  "closing": 334474
+                }
+              }
+            ],
+            "settlement": "Primary own-company equity shares; not bank shares and not a trust-funded settlement.",
+            "accounting": "Fair-value method disclosed. Grant-date expense is not a current valuation of remaining claims.",
+            "newly_closed_gap": "Both disclosed plans have dated closing populations; their exercises reconcile exactly to the parent annual count243297.",
+            "remaining_unknowns": [
+              "Reported RSU/PSU award count is not a maximum performance payout. Scheme capacities are not outstanding claims.",
+              "No complete current claim value or parent-value adjustment is established."
+            ]
+          }
+        ],
+        "retained_associate_closing_awards": [
+          {
+            "source_id": "SBIN-yesbank-awards-FY2026",
+            "entity": "Yes Bank Limited",
+            "relation_to_sbi": "Associate, not subsidiary; SBI reports10.78% March31 ownership, rounded to two decimals.",
+            "claim_types": [
+              "Source Summary",
+              "Calculation"
+            ],
+            "pdf_pages_one_based": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              7,
+              8
+            ],
+            "printed_pages": null,
+            "printed_page_note": "No printed page numbers visible; PDF pages3-4 visually checked for column alignment.",
+            "section": "ESOS and RSU disclosure pursuant to Regulation14, plans as on March31 2026",
+            "closing_date": "2026-03-31",
+            "closing_awards_total": 381906675,
+            "closing_non_rsu_options": 345826675,
+            "closing_rsus": 36080000,
+            "plans": [
+              {
+                "name": "JESOP V",
+                "award_type": "option",
+                "opening": 2531750,
+                "granted": 0,
+                "exercised": 0,
+                "lapsed_forfeited": 1776750,
+                "closing": 755000,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "PESOP II 2010",
+                "award_type": "option",
+                "opening": 3362880,
+                "granted": 0,
+                "exercised": 0,
+                "lapsed_forfeited": 2264130,
+                "closing": 1098750,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL JESOP 2018",
+                "award_type": "option",
+                "opening": 6492500,
+                "granted": 675000,
+                "exercised": 35500,
+                "lapsed_forfeited": 1245000,
+                "closing": 5887000,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL PESOP 2018",
+                "award_type": "option",
+                "opening": 3135184,
+                "granted": 0,
+                "exercised": 0,
+                "lapsed_forfeited": 791930,
+                "closing": 2343254,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL MD&CEO Plan 2020",
+                "award_type": "option",
+                "opening": 16228490,
+                "granted": 0,
+                "exercised": 0,
+                "lapsed_forfeited": 0,
+                "closing": 16228490,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL PESOP 2020",
+                "award_type": "option",
+                "opening": 300836021,
+                "granted": 0,
+                "exercised": 24142235,
+                "lapsed_forfeited": 39299480,
+                "closing": 237394306,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL RSU 2024",
+                "award_type": "RSU",
+                "opening": 17587000,
+                "granted": 0,
+                "exercised": 1464000,
+                "lapsed_forfeited": 2287000,
+                "closing": 13836000,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL MD&CEO Plan 2025",
+                "award_type": "option",
+                "opening": 0,
+                "granted": 4564394,
+                "exercised": 0,
+                "lapsed_forfeited": 0,
+                "closing": 4564394,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL PESOP 2025",
+                "award_type": "option",
+                "opening": 0,
+                "granted": 85453166,
+                "exercised": 0,
+                "lapsed_forfeited": 7897685,
+                "closing": 77555481,
+                "rollforward_reconciles": true
+              },
+              {
+                "name": "YBL RSU 2025",
+                "award_type": "RSU",
+                "opening": 0,
+                "granted": 23024000,
+                "exercised": 0,
+                "lapsed_forfeited": 780000,
+                "closing": 22244000,
+                "rollforward_reconciles": true
+              }
+            ],
+            "dash_handling": "Dashes in the source rollforward are represented as zero movement or opening balance only within that disclosed table; no wider absence of claims is inferred.",
+            "aggregate_rollforward": {
+              "opening": 350173825,
+              "granted": 113716560,
+              "exercised": 25641735,
+              "lapsed_forfeited": 56341975,
+              "closing": 381906675
+            },
+            "settlement": "Both option and RSU plans use primary issuance of Yes Bank equity shares. New grants ceased for some predecessor plans while outstanding grants remain valid. These are not SBI shares.",
+            "accounting": "Policy changed from intrinsic value to grant-date Black-Scholes fair value for instruments granted after March31 2021, expensed over vesting. Page7 valuation disclosures do not establish a newly measured March31 current value of all outstanding claims.",
+            "parent_crosscheck": {
+              "source_id": "SBIN-2026",
+              "pdf_pages_one_based": [
+                338
+              ],
+              "printed_pages": [
+                336
+              ],
+              "section": "Schedule18.1(d)",
+              "fy2026_shares_issued_on_exercise": 25641735,
+              "reported_sbi_ownership_percent": 10.78
+            },
+            "newly_closed_gap": "The exact closing population for all ten listed plans is retained and reconciles individually. The annual exercise sum agrees exactly with SBI consolidated disclosure. Earlier website-access limitation is resolved.",
+            "remaining_unknowns": [
+              "Complete current claim fair value and its effect on SBI equity-method associate value remain unquantified.",
+              "No addition of these Yes Bank awards to SBI parent shares, automatic book-equity haircut, or future ownership assumption change is justified."
+            ]
+          }
+        ]
+      },
+      "newly_closed_scope": [
+        "Five named group issuers have exact FY2026 exercise issuance and reported period-end ownership, separated from outstanding awards.",
+        "The RRB merger/exit charge is explicitly identified without manufacturing normalized parent income.",
+        "Retained annual/disclosure originals establish March31 closing awards: Life3094990, General416783, Funds11922312, Card405789.",
+        "Funds total exercises3183008 reconcile to2123601 fresh shares plus1059407 EWT transfers. Future exercises cannot all be assumed to require fresh issuance.",
+        "Yes Bank associate ten plans close at381906675 awards:345826675 non-RSU options and36080000 RSUs. All ten rollforwards reconcile;25641735 annual exercises agree with SBI parent disclosure. The earlier source-access gap is resolved by retained Run201."
+      ],
+      "remaining_unknowns": [
+        "Complete current claim valuation and parent-equity effect across subsidiaries and associates remain unquantified.",
+        "Funds closing EWT shares and future direct-versus-trust settlement are not established by reviewed pages; Card performance maximum is not established.",
+        "Yes Bank award counts and primary settlement are established, but a current claim valuation and resulting effect on SBI equity-method associate value are not.",
+        "No blanket zero claim is made for other group entities not detailed in this bounded review."
+      ],
+      "proposed_fact_only_updates": [
+        "Record historical issuance and ownership separately from outstanding grants.",
+        "Preserve the approved parent denominator and reported parent income.",
+        "Replace the four named subsidiary and Yes Bank associate outstanding-count gaps with the retained dated counts and their exact settlement/performance/current-value limits."
+      ],
+      "assumptions_patch": {
+      },
+      "financial_history_patch": {
+      }
+    }
+  ],
+  "official_acquisition_candidates": [
+    {
+      "id": "SBI-LIFE-FY2026",
+      "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BLife.pdf/704cf06d-f821-d616-fea2-12492db89479?t=1779688609796",
+      "period_end": "2026-03-31",
+      "purpose": "Outstanding child awards, issued shares and award accounting",
+      "web_result": "Official FY2025-26 index link;10981386-byte PDF exceeded web fetch size limit",
+      "current_status": "Retained and delegated-agent reviewed; human review status remains pending in original acquisition receipt.",
+      "processing_run_id": 184,
+      "retained_original_sha256": "84f59fc2a82db08ded37def55b212225d89dc44969dd6523af8a2ef0335f12ef"
+    },
+    {
+      "id": "SBI-GENERAL-FY2026",
+      "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBI%2BGeneral%2BInsurance.pdf/99c8784a-cc4d-892d-3a95-7b82888af51e?t=1779688110335",
+      "period_end": "2026-03-31",
+      "purpose": "Outstanding child awards and accounting",
+      "web_result": "Official FY2025-26 index link;20715910-byte PDF exceeded web fetch size limit",
+      "current_status": "Retained and delegated-agent reviewed; human review status remains pending in original acquisition receipt.",
+      "processing_run_id": 185,
+      "retained_original_sha256": "f7a63790ebfd118f740d1caf521372cb6e0dd92547f0312dbee06ed5a7f3fdb4"
+    },
+    {
+      "id": "SBI-FUNDS-FY2026",
+      "url": "https://sbi.bank.in/documents/17836/58210978/FY2026_SBIFML.pdf/1fec82cf-ebf9-bd99-9d7c-e93abad62483?t=1779688136764",
+      "period_end": "2026-03-31",
+      "purpose": "Outstanding awards, own bonus and Employee Welfare Trust settlement",
+      "web_result": "Official FY2025-26 index link;78-page scan, screenshot fetch timed out",
+      "current_status": "Retained and delegated-agent reviewed; human review status remains pending in original acquisition receipt.",
+      "processing_run_id": 186,
+      "retained_original_sha256": "27f21bf16dece622b36f3f33e236585fab57bed55201d3e085b18cfa252a47ac"
+    },
+    {
+      "id": "SBI-CARD-SBEB-FY2026",
+      "url": "https://www.sbicard.com/sbi-card-en/assets/docs/pdf/who-we-are/notices/Disclosure-under-SEBI-%28SBEBSE%29.pdf",
+      "period_end": "2026-03-31",
+      "purpose": "Child outstanding awards",
+      "web_result": "Official annual-report page labels FY2025-26;8-page initial PDF parse, later fetch timed out",
+      "current_status": "Retained and delegated-agent reviewed; human review status remains pending in original acquisition receipt.",
+      "processing_run_id": 187,
+      "retained_original_sha256": "61bd71e6b3f278d45e25a9abd1bdbd871e1e1e6357ede7670f8ef943aa1d4bff"
+    }
+  ],
+  "acquisition_index_urls": [
+    "https://sbi.bank.in/web/investor-relations/disclosure-under-regulation-46/financial-statements-of-subsidiaries-associates-jvs?p_p_resource_id=submitForm",
+    "https://www.sbicard.com/en/who-we-are/annual-reports.page"
+  ],
+  "separately_dated_corroboration": [
+    {
+      "url": "https://www.sbimf.com/docs/default-source/sbi-funds/offer-documents/drhp-document.pdf",
+      "source_date": "2026-03-19",
+      "locators": "PDF108/printed105 options;PDF330/printed327 EWT consolidation",
+      "conclusions": "11981612 outstanding options are dated to the DRHP, not March31. The Employee Welfare Trust is consolidated and its shares are deducted from equity until sold/reissued.",
+      "use": "Corroborates settlement/perimeter caveat only; do not substitute the earlier count for March31.",
+      "retained_original": false
+    },
+    {
+      "url": "https://www.sec.gov/Archives/edgar/data/1144967/000119312526322004/d88195d20f.htm",
+      "source_date": "2026-07-29",
+      "locators": "Transaction and comparability discussion",
+      "conclusions": "Issuer again states FY2024 is not fully comparable with FY2025/FY2026 because the merger completed July1 2023.",
+      "use": "Corroborates limitation; US reporting basis is not substituted for approved Indian-GAAP numbers.",
+      "retained_original": false
+    }
+  ],
+  "model_decision": "No numerical model or financial-history update proposed from these facts. Preserve approved book/income/parent denominators and fixed future ownership assumption. New factual context narrows gaps; it does not certify full issuer claim valuation.",
+  "review_limits": [
+    "No claim that current ownership or post-March31 grants are historical facts.",
+    "No absence inferred from silence, no duplicated subsidiary/parent award deduction, no market comparison.",
+    "Sources and approval packets remain immutable. New external retention is coordinator-owned through Processing Runs.",
+    "Host Git status could not execute because the Xcode command-line-tool shim is unavailable; no Git mutation attempted.",
+    "All ten local source-page PNG derivatives are excluded from publication; retain local originals and images."
+  ],
+  "retention_supplement": {
+    "path": "docs/workstreams/evidence/W2/financial-20261104/banks/new-source-retention-verification.json",
+    "sha256": "06c2d4fb69d8cc9bc0b2b126d74d221fa4eb20ce848dd1313598d3d2422945bc",
+    "scope": "Six newly retained originals; dated closing awards, settlement and accounting facts. Fifteen arithmetic checks pass."
+  },
+  "local_only_source_derivatives": [
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-navigation-local-only.png",
+      "sha256": "937738a01783138c7c77bd059b7c07eda68cc6b4395934d930ea3f482f0b5fb7",
+      "bytes": 638160,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-notes-local-only.png",
+      "sha256": "12c8d26ef2d7d3528b0ee650ea74725c2834d2453ce466bd52221a8c49c5c7e2",
+      "bytes": 671702,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page54-local-only.png",
+      "sha256": "2ba27542e790575b5b1a65fef6deb03bdeecd5e15bb30c8806832c6787278891",
+      "bytes": 485731,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-funds-FY2026-page55-local-only.png",
+      "sha256": "03b22e418725a5e576ca18f9eb8683dfb311ceffff1d783a4ca1ac4e694a90ad",
+      "bytes": 491010,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-navigation-local-only.png",
+      "sha256": "2ed1ce9a89ecc2d9ca3162238579819f1d372c65c7bc961b57b151c359c8ddfb",
+      "bytes": 791873,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-notes-local-only.png",
+      "sha256": "97d188a827f4c2c49af53d335c2293dda3c919dadea99d77e1ac9f2b6d1ae522",
+      "bytes": 1395795,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page61-local-only.png",
+      "sha256": "c09805069d1c819f18898f99e53414151dd010c1f2c6d341e9dde80a15c6c77d",
+      "bytes": 1432402,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-general-FY2026-page62-local-only.png",
+      "sha256": "3c2b7fd566a78b2b21a7a0db0e136ee76235dd44e2e91b5f87bb9c21bd1e6b5e",
+      "bytes": 1247852,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page3-local-only.png",
+      "sha256": "6ea12a52e8b005ab8675e72feb641285f673245fed6551c732707c820ab7f010",
+      "bytes": 149500,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    },
+    {
+      "path": "docs/workstreams/evidence/W2/financial-20261104/banks/SBIN-yesbank-awards-FY2026-page4-local-only.png",
+      "sha256": "625e9baf58658055a648a4d185000eb57be866588b0ab9105c5ad5b905f4c881",
+      "bytes": 148679,
+      "publication": "Exclude; local copyrighted source-page derivative used only for visual review"
+    }
+  ],
+  "resolved_disclosure_access_boundary": {
+    "entity": "Yes Bank Limited",
+    "official_index_url": "https://www.yes.bank.in/sites/yesbank/about-us/investors-relation/financial-information/annual-reports",
+    "observed_listing": "FY2025-26 index lists an ESOS disclosure under Regulation14 for March31 2026.",
+    "resolution": "Coordinator followed the official rendered link to its PDF viewer and retained the public native document through Processing Run201; original hash and fiscal identity are verified above.",
+    "resolved": true,
+    "prohibited_inference": "The SBI parent annual FY2026 exercise count25641735 is not the closing award count."
+  }
+}
