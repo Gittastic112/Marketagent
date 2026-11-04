@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "recorded_at": "2026-11-04T18:53:38.923802+00:00",
-  "status": "local_verification_complete_remote_checks_pending",
+  "recorded_at": "2026-11-04T21:13:44.724163+00:00",
+  "status": "implementation_local_rollout_and_source_validation_complete",
   "scope": "Independently actionable local research/demo completion, documentation reconciliation and curated GitHub release; no new actual-use acceptance",
   "implementation": [
     "bounded public briefing coverage and source provenance",
@@ -11,7 +11,7 @@
     "CI preserves all five PR/default-branch/tag gates without duplicate feature push builds"
   ],
   "source_validation": {
-    "backend_passed": 1882,
+    "backend_passed": 1883,
     "backend_postgresql_opt_in_skipped": 6,
     "backend_upstream_warnings": 5,
     "frontend_passed": 332,
@@ -20,8 +20,14 @@
     "repository_tests": 75,
     "runner_tests_included": 26,
     "ownership_cases": 10,
-    "locked_builds": "pass",
-    "new_dependencies": false
+    "locked_builds": {
+      "installed_r2_arm64": "pass",
+      "final_source_remote_amd64": "pass",
+      "local_retry_policy_arm64_backend": "pass",
+      "local_retry_policy_arm64_frontend": "blocked_by_fixed_package_HTTP504"
+    },
+    "new_dependencies": false,
+    "ownership_reservations": 134
   },
   "source_build": {
     "files": 1024,
@@ -47,9 +53,7 @@
   },
   "normal_browser": {
     "views": 12,
-    "skipped_views": [
-
-    ],
+    "skipped_views": [],
     "page_errors": 0,
     "blocked_requests": 0,
     "axe_violations": 0,
@@ -68,8 +72,7 @@
             "excluded_count": 0,
             "cap": 10,
             "status": "complete",
-            "exclusion_reasons": {
-            }
+            "exclusion_reasons": {}
           },
           "failed_runs": {
             "eligible_count": 13,
@@ -87,8 +90,7 @@
             "excluded_count": 0,
             "cap": 20,
             "status": "complete",
-            "exclusion_reasons": {
-            }
+            "exclusion_reasons": {}
           }
         },
         "linked_event_count": 3,
@@ -161,8 +163,7 @@
             "excluded_count": 0,
             "cap": 10,
             "status": "complete",
-            "exclusion_reasons": {
-            }
+            "exclusion_reasons": {}
           },
           "failed_runs": {
             "eligible_count": 13,
@@ -180,8 +181,7 @@
             "excluded_count": 0,
             "cap": 20,
             "status": "complete",
-            "exclusion_reasons": {
-            }
+            "exclusion_reasons": {}
           }
         },
         "linked_event_count": 3,
@@ -334,9 +334,71 @@
   "github": {
     "pr": "https://github.com/Gittastic112/Marketagent/pull/5",
     "base": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
-    "state": "draft_pending_final_publication_checks",
+    "state": "source_checks_passed_publication_status_owned_by_PR",
     "initial_source_commit": "272a809241212018ba02481cb7e96626632334d5",
-    "initial_security_failure": "Signed package mirror returned HTTP503 TooManyRequests before scan; gate unchanged"
+    "initial_security_failure": "Signed package mirror returned HTTP503 TooManyRequests before scan; gate unchanged",
+    "validated_source_commit": "c9a28c8d3e6dad6424f51c4b265ae74dbdaa37d6",
+    "source_validation": {
+      "source_commit": "c9a28c8d3e6dad6424f51c4b265ae74dbdaa37d6",
+      "run_id": 41912060477,
+      "url": "https://github.com/Gittastic112/Marketagent/actions/runs/41912060477",
+      "event": "pull_request",
+      "jobs": [
+        {
+          "id": 126861921268,
+          "name": "browser-quality-gate",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 126861921891,
+          "name": "release-baseline",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 126861921921,
+          "name": "container-security",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 126861921930,
+          "name": "dependency-security",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 126861921983,
+          "name": "recovery-quality-gate",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "backend": {
+        "passed": 1883,
+        "skipped": 6,
+        "warnings": 5
+      },
+      "frontend": {
+        "passed": 332,
+        "failed": 0,
+        "typescript": "pass"
+      },
+      "browser": {
+        "passed": 68,
+        "failed": 0,
+        "duration": "6.3m"
+      },
+      "postgresql_integration": {
+        "passed": 6
+      },
+      "ownership": {
+        "owners": 5,
+        "reservations": 134
+      }
+    },
+    "subsequent_changes": "Documentation and evidence reconciliation only; PR link owns current merge/check status"
   },
   "retained_failures": [
     "initial pytest import-path invocation",
@@ -346,7 +408,11 @@
     "normal saved-brief history500 from two legacy integer-version snapshots",
     "initial remote signed-package download503",
     "normal browser harness checked coverage before client loading completed; explicit wait added, all assertions retained",
-    "initial remote browser gate timed out during signed OS package build before tests"
+    "initial remote browser gate timed out during signed OS package build before tests",
+    "initial remote browser build timeout",
+    "two obsolete pre-consent research-chat assertions corrected while preserving post-save failure coverage",
+    "local ARM64 frontend retry-policy build HTTP504 twice for fixed libpcre2-8-0 package",
+    "frontend test harness missing repository-level fixture scripts, corrected without product changes"
   ],
   "limitations_owner": "docs/agent_capabilities_and_limitations.md",
   "actual_user_use_days_added": 0,
@@ -415,7 +481,97 @@
       {
         "path": "rollout/final.json",
         "sha256": "3c443c5f4dd89017d9854fb24b77833f19cc4313fcbe69f0019b399c40bb20d4"
+      },
+      {
+        "path": "logs/backend-full-r4.txt",
+        "sha256": "d5209d0b74e09162d49207fc467f24202a1b74d5fadc607a5f46fe1083ab713b"
+      },
+      {
+        "path": "logs/frontend-tests-and-types-r4.txt",
+        "sha256": "737e6b7b90f21ca5ecec385fde11c5ea55c1b7f2f4bcf7e4a5149d711b0aa355"
+      },
+      {
+        "path": "logs/frontend-tests-and-types-r5.txt",
+        "sha256": "23cd951410d15f418b5b4012b12f27835c4a950a5f0fa2cadce70356abb3f172"
+      },
+      {
+        "path": "logs/build-test-r4.txt",
+        "sha256": "a360aad2eb9b210003a102172f4ce7cf00f45b03816a27cc34a3bfdd92a4d7c8"
+      },
+      {
+        "path": "logs/build-backend-r4.txt",
+        "sha256": "2a83c3f86013ba96bc8118cb8f0f61d96f79da06a4400d7fab2907b451683121"
+      },
+      {
+        "path": "logs/build-builder-r4.txt",
+        "sha256": "5d3637e7ce21c0a0a9815836f87b65cf01e1ea013f2068f04cfe21d1760ea927"
+      },
+      {
+        "path": "browser-research-r2/results.json",
+        "sha256": "a9dd70b9ee63877bfe305378d4e68a66a15779fb41e87864ed95517dcb865670"
+      },
+      {
+        "path": "browser-research-r2/database-effects.json",
+        "sha256": "c4bd784a9b909b4ba44a78fd3acf9db8aa37fb995680a21be120db04f9668dce"
+      },
+      {
+        "path": "rollout/final-runtime-identity.json",
+        "sha256": "8eef2c0011c9cfe73db7fd38c5f26ff7cfa13f94ad0ec7050478269ac8abd25a"
+      },
+      {
+        "path": "remote-proof-r4.json",
+        "sha256": "97b7ab3ad1eca3a4c1ca3791fc22383f72692227725b4ab4847a8ddcb7df322b"
+      },
+      {
+        "path": "source-manifest-r2.json",
+        "sha256": "5cee6f76fe62518fadb66236fb118d1e35f94e242f3de1db46a14e7f5c136fd7"
+      },
+      {
+        "path": "source-manifest.json",
+        "sha256": "4d2c051835c974cd35815b34e4641a1d26a8fb5c4ef033fe4b37d8e576b962e5"
+      },
+      {
+        "path": "runtime-images.yml",
+        "sha256": "f71e4db4d130b4876c8ce2621e86402bf81fa55d09564896691070133215c379"
       }
     ]
+  },
+  "final_source_snapshot": {
+    "files": 1024,
+    "bytes": 6508981,
+    "manifest_sha256": "4d2c051835c974cd35815b34e4641a1d26a8fb5c4ef033fe4b37d8e576b962e5",
+    "changes_since_installed_build": [
+      ".github/workflows/ci.yml",
+      "backend/Dockerfile",
+      "backend/tests/test_ai_consent_routes.py",
+      "frontend/Dockerfile",
+      "frontend/e2e/manual-research-controls.spec.ts",
+      "frontend/e2e/product-integrity.spec.ts"
+    ],
+    "application_source_unchanged": true,
+    "installed_release_replaced": false
+  },
+  "mocked_research_failure_browser": {
+    "passed": 1,
+    "failed": 0,
+    "scope": "Fully intercepted Mock Data post-save provider failure; no real-user message, grant or provider call",
+    "database_effects": {
+      "tables_unchanged": 110,
+      "assets_unchanged": true,
+      "browser_exit": 0
+    }
+  },
+  "maintenance_override": {
+    "path": "output/milestones/independent-completion-20261104/runtime-images.yml",
+    "sha256": "f71e4db4d130b4876c8ce2621e86402bf81fa55d09564896691070133215c379",
+    "scope": "Retains installed immutable R2 application tags; does not read private settings"
+  },
+  "local_arm64_frontend_retry_limit": {
+    "package": "libpcre2-8-0_10.42-1+deb12u2_arm64.deb",
+    "host": "snapshot.debian.org",
+    "http_status": 504,
+    "attempts": 2,
+    "partial_images_installed": false,
+    "pins_signatures_and_gates_unchanged": true
   }
 }

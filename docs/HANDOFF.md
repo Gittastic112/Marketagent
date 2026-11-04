@@ -1,8 +1,8 @@
 # Agent Handoff
 
-November 4, 2026: independently actionable source, local rollout and normal-data
-verification are complete. [PR5](https://github.com/Gittastic112/Marketagent/pull/5)
-contains the curated release; final remote checks are still in progress. The
+November 4, 2026: independently actionable source, local rollout, normal-data and
+remote verification are complete. [PR5](https://github.com/Gittastic112/Marketagent/pull/5)
+owns the curated release and its current publication/merge status. The
 [completion checkpoint](archive/checkpoints/2026/independent-completion-2026-11-04.md)
 and [portable receipt](../data/reviews/independent-completion-20261104.json) own evidence.
 
@@ -27,15 +27,16 @@ and [portable receipt](../data/reviews/independent-completion-20261104.json) own
 
 ## Verified local release
 
-- 1,882 backend tests pass, six PostgreSQL opt-in skips, five upstream warnings.
+- 1,883 backend tests pass, six PostgreSQL opt-in skips, five upstream warnings.
   Frontend: 332 tests, TypeScript and 26 contracts pass. Repository: 75 tests;
-  ownership: ten cases and 132 disjoint reservations. Locked ARM64 builds pass.
+  ownership: ten cases and 134 disjoint reservations. Locked R2 ARM64 builds pass.
 - Installed 20261104-independent-r2: backend/workers 285827fb5238, frontend
   5857415cadec. All 456 backend runtime source files match. The 1,024-file build
-  context excludes protected settings; only the subsequent CI-trigger change is
-  outside that frozen context and is not copied into application images.
-- Twelve existing-data desktop/mobile views and three intercepted permission
-  workflows pass. Zero detected accessibility, overflow, duplicate-ID or page
+  context excludes protected settings. The six later source changes affect only
+  CI triggers, package-download retry options and tests, not application behavior.
+- Twelve existing-data desktop/mobile views, three intercepted permission
+  workflows and one intercepted post-save research failure pass.
+  Zero detected accessibility, overflow, duplicate-ID or page
   errors. Browser reads preserve all 110 table/asset fingerprints and grant nothing.
 - Original PostgreSQL/settings remain. Schema u3u3u3u3u3u3 adds an empty permission
   table and nullable AI-output link; original application content is preserved.
@@ -44,13 +45,16 @@ and [portable receipt](../data/reviews/independent-completion-20261104.json) own
   drill. Original/intermediate containers, immutable tags and failed evidence remain.
   Local audit root: output/milestones/independent-completion-20261104/.
 
-## Remaining release step
+## Remote release evidence
 
-Verify PR5's final remote release, recovery, browser, dependency and container
-checks, then complete the authorized merge. Initial signed-package downloads
-returned HTTP503 and one build timed out before browser tests. Those failures
-remain recorded; no dependency pin, signature check or security gate was weakened.
-Update this section with the observed final result, not inferred success.
+[All five source checks pass](https://github.com/Gittastic112/Marketagent/actions/runs/41912060477)
+at c9a28c8d: release, recovery, browser, dependency and container security. This
+includes 68 browser workflows and six PostgreSQL integration tests. Subsequent
+publication changes reconcile documentation/evidence only; PR5 owns their checks.
+Signed-package HTTP503/504 failures and the initial timeout remain recorded.
+A fresh ARM64 frontend retry is blocked by a fixed-package HTTP504; R2 stays
+installed with identical application source. Remote AMD64 builds pass. Dependency
+pins, signature checks and security gates remain intact.
 
 The shared checkout stays on local HEAD fba390bf and contains extensive prior
 work. Never reset, clean, stage all or publish an uncurated snapshot. Protected

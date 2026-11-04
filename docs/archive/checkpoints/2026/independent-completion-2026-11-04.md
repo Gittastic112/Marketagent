@@ -30,10 +30,11 @@ approved historical models, source originals, prior evidence and the dirty check
 ## Source validation
 
 The initial unchanged backend baseline passes 1,838 tests. The integrated source
-passes 1,882 backend tests, with six PostgreSQL opt-in skips and five upstream
+passes 1,883 backend tests, with six PostgreSQL opt-in skips and five upstream
 warnings under the no-new-local-datasets boundary. Frontend tests pass 332 checks;
 TypeScript, 26 backend/frontend wire contracts and locked Linux ARM64 production
-builds pass. The runner's fake-command/static suite passes 26 cases without
+builds pass for the installed R2 release. Final source also passes remote AMD64
+builds. The runner's fake-command/static suite passes 26 cases without
 operating a real disposable database. Independent source review checks consent
 callers, owner/scope boundaries and the additive migration.
 
@@ -68,18 +69,39 @@ restore claim. Original and intermediate containers/images remain for recovery.
 
 Twelve normal-data desktop/mobile views pass, including three linked dashboard
 events, saved history, ten denied-by-default AI actions and two saved valuations.
-Three intercepted permission workflows also pass on the final frontend. All 110
+Three intercepted permission workflows and one intercepted post-save research
+failure also pass on the installed frontend. All 110
 table/asset fingerprints match through browser verification. There are no detected
 accessibility, overflow, duplicate-ID or page errors. A premature browser assertion
 was corrected to wait for the client response; no product assertion was removed.
 Daily Brief scheduling resumes; source refresh and pgAdmin remain stopped.
 
-[PR5](https://github.com/Gittastic112/Marketagent/pull/5) owns final remote checks.
-Initial release/recovery/dependency jobs pass, but signed-package HTTP503 failures
-and a package-build timeout prevent an initial full pass. The CI trigger policy
-now keeps all five checks on PR merge candidates, default-branch pushes and all
-tags while avoiding duplicate feature-branch push builds. This CI-only change is
-outside installed image contents. Final remote verification is still pending.
+[PR5](https://github.com/Gittastic112/Marketagent/pull/5) owns publication and its
+current merge/check status. Source c9a28c8d passes [all five remote gates](https://github.com/Gittastic112/Marketagent/actions/runs/41912060477):
+release baseline, recovery, browser, dependency security and container security.
+Evidence includes 1,883 backend tests, 332 frontend tests, six PostgreSQL integration
+tests, 68 browser workflows and 134 disjoint file reservations. Final publication
+documentation records this source result; later publication checks remain on PR5.
+
+Earlier HTTP503 package failures, a build timeout and two obsolete chat assertions
+are retained. The assertions were reconciled to pre-send consent: denied requests
+preserve the unsent input, while a separate transport-free backend test and labeled
+Mock Data browser test retain the post-save provider-failure contract. No failure
+state is removed. CI keeps all five gates on PRs, default-branch pushes and all
+tags, avoiding duplicate feature-branch builds. All seven APT commands retain
+signed pinned packages and fail-closed checks, adding three retries and 30-second
+HTTP/HTTPS connection/data timeouts rather than a whole-build deadline.
+
+The later local ARM64 test/backend builds pass, but two frontend builder attempts
+fail on HTTP504 for the fixed libpcre2-8-0 ARM64 package at snapshot.debian.org.
+No incomplete replacement is installed. The six build-context changes after R2
+are exactly two Dockerfiles, the CI trigger and three test files; application
+source is identical. All 456 backend runtime files and both installed image IDs
+match their receipts. Remote AMD64 production builds pass with the retry policy.
+The local maintenance override retains the verified R2 tags; rollback images,
+failed logs and the source snapshots remain. A frontend test invocation initially
+omitted repository-level fixture scripts; correcting that test mount yields all
+332 tests and TypeScript passing without product changes.
 No real user's AI permission is granted by implementation or validation.
 
 ## Acceptance boundary

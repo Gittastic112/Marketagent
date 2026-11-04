@@ -538,15 +538,18 @@ remain open. The user confirms zero actual-use days and asks for agent function
 testing; those tests do not satisfy M10-04. Off-device recovery and the additional populated-backup rehearsal are
 deferred for this research/demo profile. Future use is never inferred.
 
-- [ ] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
+- [x] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
   full source/type/contract suites, migrations, dependency scans and browser gates.
   Resolve blockers; do not delete failing tests or relabel failures as deferred.
+  [November 4 source proof](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
+  records all five remote gates, locked builds and preserved installed source.
+  This technical source freeze does not certify missing financial inputs.
 - [ ] M10-02 Rehearse fresh install plus an existing populated backup upgrade in
   disposable runtimes; verify all pre-existing user-data and asset fingerprints.
 - [x] M10-03 Deploy the reviewed local release with a verified backup, confirm
   localhost-only bindings/auth, provider settings, explicit worker states and
   source/image identity. Keep a documented rollback path without destructive reset.
-  [November 2 release proof](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)
+  [November 4 release proof](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
   verifies installed source, final review backup, unchanged settings/data and worker states.
 - [ ] M10-04 Record five business days of actual daily use: startup, source refresh,
   review, valuation, portfolio and briefing, including one restart and one provider
@@ -556,8 +559,10 @@ deferred for this research/demo profile. Future use is never inferred.
 - [ ] M10-06 Reconcile the feature register and limitation ledger. Every v1 acceptance
   item is evidenced; every optional/deferred capability is clearly labeled. Replace
   the handoff with maintenance priorities, not an endless historical task list.
-  October 24 reconciles current parser, normalization, mapping, benchmark, AI and
-  worker-state claims. Remaining valuation evidence and final acceptance stay open.
+  November 4 reconciles current behavior, permission controls, source coverage,
+  validation, worker state and maintenance instructions. Documentation work is
+  complete for this release; missing financial evidence and final acceptance keep
+  the combined acceptance item open.
 - [ ] M10-07 Obtain final user acceptance of the genuine daily workflow and the
   disclosed local/manual/provider boundaries. Close M10 only after this acceptance.
 
