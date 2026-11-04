@@ -4,8 +4,10 @@ from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 
-EXPECTED_MIGRATION_HEAD = "t2t2t2t2t2t2"
+EXPECTED_MIGRATION_HEAD = "u3u3u3u3u3u3"
 REQUIRED_SCHEMA: dict[str, set[str]] = {
+    "ai_consent_decisions": {"id", "user_id", "provider_name", "action_key", "revision", "state", "disclosure_version", "scope_hash", "external_data_classes_json", "created_at"},
+    "ai_outputs": {"id", "user_id", "consent_decision_id"},
     "brief_comparison_reviews": {"id", "user_id", "company_id", "field", "include_mock", "version", "evidence_hash", "evidence_json"},
     "users": {"id"},
     "evaluation_runs": {"id", "user_id", "report_json"},
@@ -129,6 +131,7 @@ REQUIRED_SCHEMA: dict[str, set[str]] = {
     },
 }
 REQUIRED_UNIQUE_CONSTRAINTS: dict[str, set[str]] = {
+    "ai_consent_decisions": {"uq_ai_consent_scope_revision"},
     "brief_comparison_reviews": {"uq_brief_review_scope_version"},
     "brief_sources": {"uq_brief_source_owner_content"},
     "peer_valuation_sets": {

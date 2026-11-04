@@ -1,5 +1,463 @@
 {
   "contracts": {
+    "ai-consent": {
+      "AIConsentAction": {
+        "$defs": {
+          "AIConsentDecisionRead": {
+            "properties": {
+              "action_key": {
+                "title": "Action Key",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disclosure_version": {
+                "title": "Disclosure Version",
+                "type": "string"
+              },
+              "external_data_classes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes",
+                "type": "array"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "revision": {
+                "title": "Revision",
+                "type": "integer"
+              },
+              "scope_hash": {
+                "title": "Scope Hash",
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "granted",
+                  "refused",
+                  "revoked"
+                ],
+                "title": "State",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "provider_name",
+              "action_key",
+              "revision",
+              "state",
+              "disclosure_version",
+              "scope_hash",
+              "external_data_classes",
+              "created_at"
+            ],
+            "title": "AIConsentDecisionRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "action_key": {
+            "title": "Action Key",
+            "type": "string"
+          },
+          "current_revision": {
+            "title": "Current Revision",
+            "type": "integer"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "disclosure_version": {
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "external_data_classes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "External Data Classes",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "latest_decision": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/AIConsentDecisionRead"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "provider_name": {
+            "const": "gemini",
+            "title": "Provider Name",
+            "type": "string"
+          },
+          "scope_hash": {
+            "title": "Scope Hash",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "not_granted",
+              "granted",
+              "refused",
+              "revoked",
+              "outdated"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider_name",
+          "action_key",
+          "label",
+          "description",
+          "external_data_classes",
+          "disclosure_version",
+          "scope_hash",
+          "state",
+          "current_revision",
+          "latest_decision"
+        ],
+        "title": "AIConsentActionRead",
+        "type": "object"
+      },
+      "AIConsentDecision": {
+        "properties": {
+          "action_key": {
+            "title": "Action Key",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "disclosure_version": {
+            "title": "Disclosure Version",
+            "type": "string"
+          },
+          "external_data_classes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "External Data Classes",
+            "type": "array"
+          },
+          "id": {
+            "title": "Id",
+            "type": "integer"
+          },
+          "provider_name": {
+            "title": "Provider Name",
+            "type": "string"
+          },
+          "revision": {
+            "title": "Revision",
+            "type": "integer"
+          },
+          "scope_hash": {
+            "title": "Scope Hash",
+            "type": "string"
+          },
+          "state": {
+            "enum": [
+              "granted",
+              "refused",
+              "revoked"
+            ],
+            "title": "State",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "provider_name",
+          "action_key",
+          "revision",
+          "state",
+          "disclosure_version",
+          "scope_hash",
+          "external_data_classes",
+          "created_at"
+        ],
+        "title": "AIConsentDecisionRead",
+        "type": "object"
+      },
+      "AIConsentHistory": {
+        "$defs": {
+          "AIConsentDecisionRead": {
+            "properties": {
+              "action_key": {
+                "title": "Action Key",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disclosure_version": {
+                "title": "Disclosure Version",
+                "type": "string"
+              },
+              "external_data_classes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes",
+                "type": "array"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "revision": {
+                "title": "Revision",
+                "type": "integer"
+              },
+              "scope_hash": {
+                "title": "Scope Hash",
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "granted",
+                  "refused",
+                  "revoked"
+                ],
+                "title": "State",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "provider_name",
+              "action_key",
+              "revision",
+              "state",
+              "disclosure_version",
+              "scope_hash",
+              "external_data_classes",
+              "created_at"
+            ],
+            "title": "AIConsentDecisionRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/$defs/AIConsentDecisionRead"
+            },
+            "title": "Items",
+            "type": "array"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor"
+          }
+        },
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "AIConsentHistory",
+        "type": "object"
+      },
+      "AIConsentOverview": {
+        "$defs": {
+          "AIConsentActionRead": {
+            "properties": {
+              "action_key": {
+                "title": "Action Key",
+                "type": "string"
+              },
+              "current_revision": {
+                "title": "Current Revision",
+                "type": "integer"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              },
+              "disclosure_version": {
+                "title": "Disclosure Version",
+                "type": "string"
+              },
+              "external_data_classes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes",
+                "type": "array"
+              },
+              "label": {
+                "title": "Label",
+                "type": "string"
+              },
+              "latest_decision": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/AIConsentDecisionRead"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "provider_name": {
+                "const": "gemini",
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "scope_hash": {
+                "title": "Scope Hash",
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "not_granted",
+                  "granted",
+                  "refused",
+                  "revoked",
+                  "outdated"
+                ],
+                "title": "State",
+                "type": "string"
+              }
+            },
+            "required": [
+              "provider_name",
+              "action_key",
+              "label",
+              "description",
+              "external_data_classes",
+              "disclosure_version",
+              "scope_hash",
+              "state",
+              "current_revision",
+              "latest_decision"
+            ],
+            "title": "AIConsentActionRead",
+            "type": "object"
+          },
+          "AIConsentDecisionRead": {
+            "properties": {
+              "action_key": {
+                "title": "Action Key",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "disclosure_version": {
+                "title": "Disclosure Version",
+                "type": "string"
+              },
+              "external_data_classes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes",
+                "type": "array"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "revision": {
+                "title": "Revision",
+                "type": "integer"
+              },
+              "scope_hash": {
+                "title": "Scope Hash",
+                "type": "string"
+              },
+              "state": {
+                "enum": [
+                  "granted",
+                  "refused",
+                  "revoked"
+                ],
+                "title": "State",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "provider_name",
+              "action_key",
+              "revision",
+              "state",
+              "disclosure_version",
+              "scope_hash",
+              "external_data_classes",
+              "created_at"
+            ],
+            "title": "AIConsentDecisionRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/$defs/AIConsentActionRead"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          }
+        },
+        "required": [
+          "actions",
+          "limitations"
+        ],
+        "title": "AIConsentOverview",
+        "type": "object"
+      }
+    },
     "companies": {
       "Company": {
         "$defs": {
@@ -743,6 +1201,122 @@
     "daily-brief": {
       "DailyBrief": {
         "$defs": {
+          "BriefPublicCoverage": {
+            "properties": {
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "event_timestamp_basis": {
+                "const": "created_at",
+                "default": "created_at",
+                "title": "Event Timestamp Basis",
+                "type": "string"
+              },
+              "events": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "failed_run_timestamp_basis": {
+                "const": "started_at",
+                "default": "started_at",
+                "title": "Failed Run Timestamp Basis",
+                "type": "string"
+              },
+              "failed_runs": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "inspection_action_basis": {
+                "const": "derived_from_included_inputs",
+                "default": "derived_from_included_inputs",
+                "title": "Inspection Action Basis",
+                "type": "string"
+              },
+              "inspection_actions": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "provider_coverage": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Provider Coverage",
+                "type": "string"
+              },
+              "selection_basis": {
+                "enum": [
+                  "since_last_review",
+                  "stored_history",
+                  "dashboard_preview",
+                  "caller_supplied"
+                ],
+                "title": "Selection Basis",
+                "type": "string"
+              },
+              "source_verification": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Source Verification",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "public-brief-coverage-v1",
+                "default": "public-brief-coverage-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "window_end_inclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window End Inclusive"
+              },
+              "window_start_exclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window Start Exclusive"
+              }
+            },
+            "required": [
+              "captured_at",
+              "selection_basis",
+              "status",
+              "events",
+              "failed_runs",
+              "inspection_actions"
+            ],
+            "title": "BriefPublicCoverage",
+            "type": "object"
+          },
           "BriefResearchContext": {
             "properties": {
               "as_of_date": {
@@ -1043,6 +1617,76 @@
               "is_current"
             ],
             "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefSelectionCounts": {
+            "properties": {
+              "cap": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cap"
+              },
+              "eligible_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Eligible Count"
+              },
+              "excluded_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Excluded Count"
+              },
+              "exclusion_reasons": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Exclusion Reasons",
+                "type": "object"
+              },
+              "included_count": {
+                "minimum": 0,
+                "title": "Included Count",
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "included_count",
+              "status"
+            ],
+            "title": "BriefSelectionCounts",
             "type": "object"
           },
           "BriefTriageFinding": {
@@ -2129,6 +2773,17 @@
                 "title": "Processing Failures",
                 "type": "array"
               },
+              "public_coverage": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefPublicCoverage"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
               "source_alert_ids": {
                 "items": {
                   "type": "integer"
@@ -2338,6 +2993,122 @@
       },
       "DailyBriefPayload": {
         "$defs": {
+          "BriefPublicCoverage": {
+            "properties": {
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "event_timestamp_basis": {
+                "const": "created_at",
+                "default": "created_at",
+                "title": "Event Timestamp Basis",
+                "type": "string"
+              },
+              "events": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "failed_run_timestamp_basis": {
+                "const": "started_at",
+                "default": "started_at",
+                "title": "Failed Run Timestamp Basis",
+                "type": "string"
+              },
+              "failed_runs": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "inspection_action_basis": {
+                "const": "derived_from_included_inputs",
+                "default": "derived_from_included_inputs",
+                "title": "Inspection Action Basis",
+                "type": "string"
+              },
+              "inspection_actions": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "provider_coverage": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Provider Coverage",
+                "type": "string"
+              },
+              "selection_basis": {
+                "enum": [
+                  "since_last_review",
+                  "stored_history",
+                  "dashboard_preview",
+                  "caller_supplied"
+                ],
+                "title": "Selection Basis",
+                "type": "string"
+              },
+              "source_verification": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Source Verification",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "public-brief-coverage-v1",
+                "default": "public-brief-coverage-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "window_end_inclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window End Inclusive"
+              },
+              "window_start_exclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window Start Exclusive"
+              }
+            },
+            "required": [
+              "captured_at",
+              "selection_basis",
+              "status",
+              "events",
+              "failed_runs",
+              "inspection_actions"
+            ],
+            "title": "BriefPublicCoverage",
+            "type": "object"
+          },
           "BriefResearchContext": {
             "properties": {
               "as_of_date": {
@@ -2638,6 +3409,76 @@
               "is_current"
             ],
             "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefSelectionCounts": {
+            "properties": {
+              "cap": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cap"
+              },
+              "eligible_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Eligible Count"
+              },
+              "excluded_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Excluded Count"
+              },
+              "exclusion_reasons": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Exclusion Reasons",
+                "type": "object"
+              },
+              "included_count": {
+                "minimum": 0,
+                "title": "Included Count",
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "included_count",
+              "status"
+            ],
+            "title": "BriefSelectionCounts",
             "type": "object"
           },
           "BriefTriageFinding": {
@@ -3799,6 +4640,17 @@
             "title": "Processing Failures",
             "type": "array"
           },
+          "public_coverage": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/BriefPublicCoverage"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
           "source_alert_ids": {
             "items": {
               "type": "integer"
@@ -4032,6 +4884,122 @@
       },
       "SavedDailyBrief": {
         "$defs": {
+          "BriefPublicCoverage": {
+            "properties": {
+              "captured_at": {
+                "format": "date-time",
+                "title": "Captured At",
+                "type": "string"
+              },
+              "event_timestamp_basis": {
+                "const": "created_at",
+                "default": "created_at",
+                "title": "Event Timestamp Basis",
+                "type": "string"
+              },
+              "events": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "failed_run_timestamp_basis": {
+                "const": "started_at",
+                "default": "started_at",
+                "title": "Failed Run Timestamp Basis",
+                "type": "string"
+              },
+              "failed_runs": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "inspection_action_basis": {
+                "const": "derived_from_included_inputs",
+                "default": "derived_from_included_inputs",
+                "title": "Inspection Action Basis",
+                "type": "string"
+              },
+              "inspection_actions": {
+                "$ref": "#/$defs/BriefSelectionCounts"
+              },
+              "limitations": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Limitations",
+                "type": "array"
+              },
+              "provider_coverage": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Provider Coverage",
+                "type": "string"
+              },
+              "selection_basis": {
+                "enum": [
+                  "since_last_review",
+                  "stored_history",
+                  "dashboard_preview",
+                  "caller_supplied"
+                ],
+                "title": "Selection Basis",
+                "type": "string"
+              },
+              "source_verification": {
+                "const": "not_assessed",
+                "default": "not_assessed",
+                "title": "Source Verification",
+                "type": "string"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              },
+              "version": {
+                "const": "public-brief-coverage-v1",
+                "default": "public-brief-coverage-v1",
+                "title": "Version",
+                "type": "string"
+              },
+              "window_end_inclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window End Inclusive"
+              },
+              "window_start_exclusive": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Window Start Exclusive"
+              }
+            },
+            "required": [
+              "captured_at",
+              "selection_basis",
+              "status",
+              "events",
+              "failed_runs",
+              "inspection_actions"
+            ],
+            "title": "BriefPublicCoverage",
+            "type": "object"
+          },
           "BriefResearchContext": {
             "properties": {
               "as_of_date": {
@@ -4332,6 +5300,76 @@
               "is_current"
             ],
             "title": "BriefReviewRead",
+            "type": "object"
+          },
+          "BriefSelectionCounts": {
+            "properties": {
+              "cap": {
+                "anyOf": [
+                  {
+                    "minimum": 1,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Cap"
+              },
+              "eligible_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Eligible Count"
+              },
+              "excluded_count": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Excluded Count"
+              },
+              "exclusion_reasons": {
+                "additionalProperties": {
+                  "type": "integer"
+                },
+                "title": "Exclusion Reasons",
+                "type": "object"
+              },
+              "included_count": {
+                "minimum": 0,
+                "title": "Included Count",
+                "type": "integer"
+              },
+              "status": {
+                "enum": [
+                  "complete",
+                  "partial",
+                  "unknown"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "included_count",
+              "status"
+            ],
+            "title": "BriefSelectionCounts",
             "type": "object"
           },
           "BriefTriageFinding": {
@@ -5417,6 +6455,17 @@
                 },
                 "title": "Processing Failures",
                 "type": "array"
+              },
+              "public_coverage": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/BriefPublicCoverage"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
               },
               "source_alert_ids": {
                 "items": {
@@ -6771,6 +7820,18 @@
                 "title": "Confidence Label",
                 "type": "string"
               },
+              "consent_decision_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Consent Decision Id"
+              },
               "created_at": {
                 "format": "date-time",
                 "title": "Created At",
@@ -7051,6 +8112,18 @@
               "confidence_label": {
                 "title": "Confidence Label",
                 "type": "string"
+              },
+              "consent_decision_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Consent Decision Id"
               },
               "created_at": {
                 "format": "date-time",

@@ -85,6 +85,7 @@ def narrative_to_numbers(
             narrative_text=request.narrative_text,
             current_assumptions=current_assumptions,
             saved_basis=valuation_basis(assumption_set),
+            privacy_disclosure_version=request.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc
@@ -122,6 +123,7 @@ def generate_valuation_memo(
             valuation=valuation,
             assumption_set=assumption_set,
             output=output,
+            privacy_disclosure_version=request.privacy_disclosure_version,
         )
     except AIExecutionError as exc:
         raise public_ai_error(exc) from exc

@@ -98,8 +98,15 @@ def test_alembic_migrations_contain_core_tables_and_company_fields() -> None:
     assert '"brief_comparison_reviews"' in review_head
     assert '"uq_brief_review_scope_version"' in review_head
     calendar_head = (versions_dir / "t2t2t2t2t2t2_allow_unknown_projection_calendar_year.py").read_text()
-    assert f'revision = "{EXPECTED_MIGRATION_HEAD}"' in calendar_head
+    assert 'revision = "t2t2t2t2t2t2"' in calendar_head
     assert 'down_revision = "s1s1s1s1s1s1"' in calendar_head
     assert '"dcf_projection_years"' in calendar_head
     assert '"calendar_year"' in calendar_head
     assert "nullable=True" in calendar_head
+    from alembic.script import ScriptDirectory
+
+    scripts = ScriptDirectory(str(versions_dir.parent))
+    assert scripts.get_heads() == [EXPECTED_MIGRATION_HEAD]
+    chain = list(scripts.walk_revisions())
+    assert chain[0].revision == "u3u3u3u3u3u3"
+    assert chain[0].down_revision == "t2t2t2t2t2t2"

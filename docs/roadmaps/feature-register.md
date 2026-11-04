@@ -1,6 +1,6 @@
 # Feature Register
 
-**Source and runtime status reconciled:** 2026-11-02. Validation dates are in Current State.
+**Documentation/source reconciliation:** 2026-11-04. Runtime validation dates are in Current State.
 
 First release: local research/demo using existing data, explicitly chosen October
 17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
@@ -27,7 +27,7 @@ Status meanings:
 | Exact PDF/text evidence | Built | Historical records can have coarse fallback |
 | Events, scoring, and alerts | Built | Extraction remains primarily rule-based |
 | Thesis notes and evidence ledger | Built | Contradiction workflow partial |
-| Daily brief | Built | Source-linked evidence, held-company impact, review history, owner-scoped local scheduling, an audited deterministic worker, broad backend coverage, the core browser workflow, an actual due cycle, sanitized Processing Run persistence, generated-brief inspection, next-run advancement, and idempotent owner/date reuse all pass |
+| Daily brief | Built with disclosed coverage | New saved briefs and dashboard previews expose stored-input counts, windows, caps and exclusions. Source metadata agrees across callers; historical counts remain unknown without rewriting snapshots. Manual refresh and scheduling are deterministic. [Priority 3](product-roadmap.md#priority-3-daily-evidence-to-decision-loop-workflow-verified-review-open) preserves broader coverage/interpretation limits; linkage is not source verification |
 | Private Daily Brief source inbox | Built, review-required | Explicit AI scanning, exact passages, field links, search, pagination and reversible archiving retain review state. M08 source adds bounded owner-scoped private snapshots to manual/scheduled deterministic briefs, separating current reviewed analyst context from pending/stale/incompatible evidence. No automatic numeric edits or external AI on read; installed in the normal runtime |
 | Company and portfolio research cards | Built with source limits | Company identity, sourced annual business excerpts and direct Overview/Comps/Valuation/Filings navigation. One bounded read query; missing descriptions remain unavailable. Comps reuses the reviewed peer workflow, not a licensed data feed |
 | Private-source input comparison | Built, with analyst review receipts | V2 distinguishes quoted same/unknown/incompatible period, currency and scope while retaining immutable v1 receipts. Owner-scoped exact evidence, rationale, version history and stale-review rejection remain bounded to 50 active sources. Copied content and Mock Data are not real corroboration; no semantic contradiction certification, AI approval or valuation edits |
@@ -53,6 +53,7 @@ Status meanings:
 | Damodaran source versioning | Built | Twelve active US/India versions retain original hashes, dates and typed-source provenance. Imports are audited and duplicate-safe; this does not imply every retained workbook or column has a consuming parser |
 | Data Health | Built | Separates liveness/readiness, migration/schema blockers, run outcomes, freshness and RSS coverage. The fast page labels its latest-100-run window, displays 25 recent rows and leaves expensive diagnostics explicit. Mobile table keyboard access and all four diagnostic views pass on October 28. Owner-scoped receipt audits preserve bounded cursors, eligibility, conflict/coverage blockers and peer-review links |
 | AI memo and narrative assistance | Partial | Exact-source validation, deterministic passage candidates and approval gates are built. Delegated semantic review covers six saved Gemini responses and four adversarial fixtures: four constrained summaries accepted, unsupported valuation directions rejected, one response still blocked. Original human verdicts remain blank. Citation checks and this small review set do not establish general interpretation accuracy |
+| External AI consent | Built, explicit permissions required | Settings manages append-only owner/provider/action grants, refusals and revocations with exact disclosure scope, current revisions and history. Ten Gemini actions require both current permission and per-action acknowledgement before each send; no migration/old output grants permission. Dispatched external outputs link to the exact grant. Mock Data stays local; dispatched data cannot be recalled. Validation dates remain in Current State |
 | Research sessions | Built | Not yet a unified research workflow |
 | Market regime | Built | Manual inputs are bounded; persisted FRED NFCI can supply one idempotent, exact-record-linked macro Calculation with explicit freshness, while options, liquidity, volume, and breadth remain manual because no compliant automated adapter is configured |
 | Broker sync | Not built | Security design required first |
@@ -67,6 +68,9 @@ Status meanings:
    acceptance. Preparation does not supply those observations.
 3. Keep real-portfolio validation, deferred host/off-device protection, unsupported
    provider modules and public hosting under their separately stated boundaries.
+4. Preserve the new briefing coverage and scoped-consent regressions under roadmap
+   priorities 3 and 6. Broader source coverage and interpretation quality remain
+   distinct from these completed engineering changes.
 
 Update this file when code changes a status. Put implementation proof in tests
 and a dated archived checkpoint, not in additional columns here.

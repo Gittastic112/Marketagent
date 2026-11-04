@@ -13,6 +13,7 @@ class AiOutput(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id"), index=True, nullable=False)
+    consent_decision_id: Mapped[int | None] = mapped_column(ForeignKey("ai_consent_decisions.id", name="fk_ai_outputs_consent_decision"), nullable=True)
     raw_document_id: Mapped[int | None] = mapped_column(ForeignKey("raw_documents.id", ondelete="CASCADE"), index=True, nullable=True)
 
     reference_type: Mapped[str | None] = mapped_column(String(50), nullable=True) # e.g. "valuation_run", "dcf_assumption_set"

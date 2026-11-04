@@ -257,11 +257,14 @@ Each agent owns only its manifest paths and evidence tree. Contract changes,
 central docs, test infrastructure and migrations use the plan's coordinator
 procedure. A boundary failure does not authorize editing a neighbor's test.
 
-Browser and release runners use fixed Compose project names; recovery allocates a unique project.
-Only the coordinator dispatches one such gate at a time; record the owner until
-cleanup is confirmed. Different ports or worktrees do not prevent destructive
-cross-run cleanup. Build shared images before parallel tests and avoid concurrent
-replacement of image tags. Frontend build/test outputs need separate worktrees.
+Browser, release and recovery runners allocate unique owned Compose projects.
+Browser/release runners reject existing containers, networks or volumes before
+startup and recheck after builds. Cleanup is enabled only when their own creation
+begins; preflight failures never delete a pre-existing project. Release unit tests
+also get a separate project. Failure and interrupt exit codes remain visible.
+The coordinator still serializes shared image builds and reserves free default
+ports, or supplies explicit overrides. Unique projects do not isolate shared image
+tags or occupied host ports. Frontend build/test outputs need separate worktrees.
 Before installing an image, give it a unique release tag and verify that tag resolves
 to the recorded image ID. Never rebuild or retag a release name used by a running
 or retained rollback container. With Docker's containerd image store, replacing the

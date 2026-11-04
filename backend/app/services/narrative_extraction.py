@@ -33,6 +33,7 @@ def extract_narratives_from_events(
     *,
     user_id: str,
     limit: int | None = 100,
+    privacy_disclosure_version: str | None = None,
 ) -> NarrativeExtractionResult:
     query = (
         select(Event)
@@ -73,6 +74,7 @@ def extract_narratives_from_events(
                 source_ids=(f"event:{event.id}",),
                 source_scope="event_title_and_description",
                 external_data_classes=("event_text",),
+                action_key="narrative_extraction", privacy_disclosure_version=privacy_disclosure_version,
             ),
             generate=generate,
         )

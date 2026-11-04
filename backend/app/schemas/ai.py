@@ -46,6 +46,7 @@ class FilingSectionRead(BaseModel):
 
 class AiOutputRead(BaseModel):
     id: int
+    consent_decision_id: int | None = None
     raw_document_id: int | None = None
     reference_type: str | None = None
     reference_id: int | None = None

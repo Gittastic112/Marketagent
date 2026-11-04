@@ -1,6 +1,6 @@
 # Architecture
 
-**Updated:** 2026-10-18 (reported-metric calculations and repeated-source promotion). Product validation scope is in [Current State](00-current-state.md).
+**Updated:** 2026-11-04 (scoped AI permissions and public briefing coverage). Product validation scope is in [Current State](00-current-state.md).
 
 **Deployment boundary:** local Docker Compose only
 
@@ -34,6 +34,15 @@ current recorded event text; structured-response and recommendation-language
 checks reject invalid output while retaining a failed audit record. Successful
 interpretations remain pending review, disclose missing citation verification,
 and never update valuation assumptions.
+
+External AI generation now has two explicit gates: the feature's current
+disclosure acknowledgement and an append-only user/provider/action permission.
+The shared executor checks the latest decision and exact disclosed scope before
+each provider callback, recording the permitting decision on its output. Settings
+manages grants, refusals and revocations; reads and migrations grant nothing.
+Research chat checks before saving a message and again before sending, including
+retrieved document excerpts in its disclosed scope. Mock generation remains local.
+The operator-only fixed-text connectivity probe is separate and sends no app data.
 
 ## System Shape
 
@@ -185,6 +194,17 @@ validate company/change-log relationships and link only that owner's portfolios.
 These protections do not recalculate or relabel historical records.
 
 ## Core Workflows
+
+### Public briefing selection
+
+Manual refresh, ordinary reads and scheduled briefs use deterministic evidence
+assembly. The dashboard explicitly loads linked document/source metadata without
+source bodies. New public coverage records capture the collection-time window,
+eligible/included/excluded counts, caps and reasons for events, failed runs and
+derived inspection actions. Dashboard preview and saved-brief selection have
+different declared limits. Counts do not certify provider completeness, source
+accuracy or interpretation; historical JSON without counts remains unknown and
+unchanged. Private reviewed/pending snapshots retain their separate provenance.
 
 ### Read-loading and page composition
 

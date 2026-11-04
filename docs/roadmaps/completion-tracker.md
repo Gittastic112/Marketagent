@@ -108,8 +108,8 @@ source/fixture boundaries. Final return labels, affected browser flows, measured
 process-cold/warm profiles and normal rollout are verified. Evidence review remains
 open; November 2 closes local credential work. The scope revision separates deferred host/
 off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
-M04's verified checks are accepted after the M03 prerequisite closes. M09's latest integrated
-remote source/browser matrix passes on 6e2a6f8b. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) records later unit/review corrections, broad existing-data browser checks and explicit data effects. The [October 28 release](../archive/checkpoints/2026/locked-build-and-local-rollout-2026-10-28.md) retains dependency/OS audit evidence. Reviewed-input freeze and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
+M04's verified checks are accepted after the M03 prerequisite closes. PR4's five
+post-merge checks supersede the older 6e2a6f8b matrix as remote evidence. The [November completion pass](../archive/checkpoints/2026/independent-completion-2026-11-04.md) records new briefing/consent/runner source and its separately dated validation. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) retains earlier existing-data browser proof. Reviewed-input completeness and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
 The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
@@ -483,6 +483,14 @@ fixture interpretations are rejected despite valid citations. Original packet an
 human verdict fields remain unchanged. M08-04 is verified under delegated review;
 this is neither independent human certification nor statistical model-accuracy or
 future prompt-injection proof. M08 acceptance still depends on M07.
+
+November 4 [independent completion](../archive/checkpoints/2026/independent-completion-2026-11-04.md)
+adds public briefing counts/windows/exclusions, dashboard source parity and
+persisted owner/provider/action grant/refusal/revocation management. Existing
+per-action acknowledgement, provenance and review gates remain. Manual refresh is
+deterministic; historical snapshots and AI outputs are not rewritten or granted
+permission retrospectively. Source tests do not supply actual-use days or change
+the cumulative acceptance points; broader evidence/interpretation gates remain.
 
 ## M09: complete browser workflows and responsiveness
 

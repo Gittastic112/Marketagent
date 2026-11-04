@@ -6,6 +6,7 @@ import { CsvUploadForm } from "@/components/csv-upload-form";
 import { DataStateNotices } from "@/components/ui/data-states";
 import type { ScoringConfig, TokenStatusResponse } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
+import { AIConsentSettings } from "@/components/ai-consent-settings";
 
 export default async function SettingsPage() {
   const [configRes, oauthStatusResult] = await Promise.all([
@@ -63,6 +64,8 @@ export default async function SettingsPage() {
           ))}
         </div>
       </Panel>
+
+      <AIConsentSettings />
 
       <Panel title="Scoring Weights">
         <p className="text-sm text-gray-500 mb-4">

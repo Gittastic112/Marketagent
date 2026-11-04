@@ -1,7 +1,7 @@
 # Product Roadmap
 
 **Prioritized:** 2026-08-24. Product evidence: see Current State.
-Completion sequencing reviewed: 2026-11-02.
+Completion sequencing reconciled: 2026-11-04 against the supplied delivery report, current source and independent completion work.
 
 **Completion requests:** use the [ten-milestone tracker](completion-tracker.md).
 It defines ten acceptance gates for the remaining local release, not an estimate
@@ -16,10 +16,11 @@ recorded in the [decision log](review-decisions.md). Each applied choice still
 requires supporting evidence and current-record checks. No new local disposable
 fixture datasets are authorized.
 
-November 2 completes the available selected draft reviews, optional-price repair,
-local installation and backup. GitHub completion is authorized and tracked in
-[PR2](https://github.com/Gittastic112/Marketagent/pull/2). Missing issuer claims and
-actual-use/final acceptance remain distinct from finished engineering checks.
+November 3 completes the approved historical research scenarios; November 4 adds
+dated disclosure notes without changing their assumptions. [PR4](https://github.com/Gittastic112/Marketagent/pull/4)
+is merged with five successful post-merge checks. The [delivery-report reconciliation](../archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md)
+maps its two named priorities below; it does not import the absent 45-ticket backlog.
+Missing issuer claims and actual-use/final acceptance remain distinct from finished engineering checks.
 
 ## Planning Rule
 
@@ -107,6 +108,21 @@ edits. Reads stay deterministic; external AI requires an explicit disclosed acti
 Use [Current State](../00-current-state.md) for dated browser/provider evidence,
 not historical test counts embedded in planning text.
 
+November 4 implementation closes the report's bounded briefing engineering items in the
+[public coverage and provenance limits](../agent_capabilities_and_limitations.md#what-is-not-product-ready).
+Delivered behavior, with dated validation in Current State:
+
+- Counts eligible, included and excluded public events, failed runs and inspection
+  actions for an explicit time window; exposes caps and exclusion reasons in the
+  contract and UI. A warning-free calculation does not imply complete ingestion.
+- Preserves linked-document provenance in dashboard and saved-brief callers.
+  Fresh-session regressions and browser assertions cover source links and claim
+  labels; manual events remain User Assumptions. Historical counts stay unknown.
+- Keeps source linkage, source freshness and analyst verification distinct. Broader
+  interpretation checks must retain exact evidence and review state; no automatic
+  numerical forecast changes or claim of complete provider coverage. Manual refresh
+  is deterministic; external AI stays behind separate explicit per-item actions.
+
 ## Priority 4: Portfolio Attribution and Opportunity Cost (AUTOMATED RUNTIME PASSED, REAL-INPUT SMOKE PENDING)
 
 Move beyond current value and exposure totals to advanced portfolio tracking.
@@ -192,6 +208,22 @@ suggestions to known valuation fields. It remains review-only; importance,
 direction and interpretation are not certified by a matching quote. Public Apple
 PDF workflow proof does not certify arbitrary reports or a complete AI research
 evaluation corpus.
+
+Current external AI actions already require feature-specific acknowledgement of
+the shared disclosure version and retain per-output ownership/transmission audit.
+The report's centralized-consent item is implemented as a persisted policy and
+Settings interface, scoped in the [AI boundary](../agent_capabilities_and_limitations.md#ai-boundary).
+Delivered behavior, retaining the existing per-action gates:
+
+- Stores authenticated user, provider/action/data scopes and grant/refusal/revocation
+  history; exposes current scopes and controls to that user, with stale-tab rejection.
+- Checks current permissions immediately before each provider call. Denied,
+  outdated or revoked permission sends no request. Revocation cannot recall a
+  previous transmission or cancel an already dispatched request.
+- Preserves disclosure, ownership, review gates and historical output audit.
+  The additive migration grants nothing. New external outputs retain the exact
+  permitting decision. Current policy covers ten Gemini actions; unsupported
+  internal actions remain unavailable and actual Mock Data generation stays local.
 
 ## Deferred
 

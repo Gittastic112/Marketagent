@@ -62,5 +62,7 @@ Use the roadmap when selecting work, not as evidence that a feature is finished.
 
 Latest foundation verification: [October 10 M01 rollout and browser proof](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md).
 Broader product verification remains separately dated in Current State.
+Latest documentation reconciliation: [November 4 supplied delivery report](archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md), with reported package checks separated from source inspection and current GitHub evidence.
+Latest independent implementation: [November 4 briefing, permissions and release tooling](archive/checkpoints/2026/independent-completion-2026-11-04.md).
 
 [Archive](archive/) contains older instructions, checkpoints, research and plans.

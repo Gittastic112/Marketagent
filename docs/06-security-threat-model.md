@@ -351,6 +351,23 @@ Security requirements:
   configuration and provider failure must remain visible failures.
 - Display the exact data classes that may leave the machine and require the
   current disclosure version before every external-capable AI action.
+- Require a current owner/provider/action grant in addition to that per-action
+  acknowledgement. Settings records append-only grant/refusal/revocation decisions
+  with disclosure/scope hashes and optimistic revision checks. Missing, refused,
+  revoked or outdated permission sends no provider request; no migration or old
+  output creates consent. Scope changes invalidate old grants.
+- Recheck permission immediately before each external callback, including each
+  item in a batch. Record the precise permitting decision on successful or failed
+  dispatched outputs. Revocation stops subsequent sends; it cannot recall sent
+  data or cancel an already dispatched request. Permission history is owner-only.
+- Research chat discloses selected document titles/excerpts as well as private
+  messages, and checks permission before saving the new message. Existing
+  provider-failure message recovery remains separate from an absent permission.
+- Exempt only the actual local MockAIProvider implementation, never a provider
+  merely claiming a mock name. The operator CLI's fixed non-private connectivity
+  prompt is a separate diagnostic, not a grant to use application records.
+- Manual and scheduled Daily Brief assembly do not invoke external AI. Individual
+  evidence/valuation AI actions retain their own permission and review gates.
 - Do not let AI invent sources.
 - Citation suggestions may inspect only source IDs declared by an owned AI
   output. They must use already stored raw-document text, bound scan and quote

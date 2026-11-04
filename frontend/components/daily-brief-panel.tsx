@@ -2,6 +2,7 @@ import React from "react";
 import { Panel } from "@/components/page";
 import type { DailyBriefPayload } from "@/lib/api";
 import Link from "next/link";
+import { BriefPublicCoverage } from "@/components/brief-public-coverage";
 
 interface DailyBriefPanelProps {
   dailyBrief: DailyBriefPayload | null;
@@ -22,17 +23,19 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
         <p style={{ color: "var(--text-muted)", fontSize: "0.95rem" }}>
           {dailyBrief.summary}
         </p>
+        <BriefPublicCoverage coverage={dailyBrief.public_coverage} compact />
 
         {dailyBrief.high_materiality_events.length > 0 && (
           <div>
             <h4 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
               High-Materiality Events
             </h4>
+            <p className="basis-note">Up to three headlines from the selected inputs.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {dailyBrief.high_materiality_events.slice(0, 3).map((event) => (
+                <div key={event.event_id}>
                 <Link
                   href={`/events/${event.event_id}/evidence-resolution`}
-                  key={event.event_id}
                   className="btn btn-outline"
                   style={{
                     textAlign: "left",
@@ -50,6 +53,8 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
                   <span style={{ color: "var(--accent)", marginRight: "0.5rem" }}>→</span>
                   {event.headline}
                 </Link>
+                <p className="basis-note">{event.claim_type} · Evidence: {event.evidence_status === "source_linked" ? "Source linked" : "Manual record"}{event.source_name ? ` · ${event.source_name}` : ""} · {event.status}{event.source_published_at ? ` · Published ${event.source_published_at.slice(0, 10)}` : " · Publication date unknown"}</p>
+                </div>
               ))}
             </div>
           </div>

@@ -55,6 +55,7 @@ class NarrativeToNumbersAgent:
         narrative_text: str,
         current_assumptions: dict[str, Any],
         saved_basis: dict[str, Any] | None = None,
+        privacy_disclosure_version: str | None = None,
     ) -> dict[str, Any]:
         prompt = f"""
 Translate the user's qualitative company narrative into reviewable DCF estimates.
@@ -93,7 +94,8 @@ Saved basis (unsaved numerical edits are excluded):
                     f"dcf_assumption_set:{assumption_set_id}",
                 ),
                 source_scope="user_narrative_and_current_assumptions",
-                external_data_classes=("user_narrative", "valuation_assumptions"),
+                external_data_classes=("user_narrative", "valuation_assumptions", "valuation_version_metadata"),
+                action_key="narrative_to_numbers", privacy_disclosure_version=privacy_disclosure_version,
                 valuation_basis=saved_basis,
             ),
             generate=generate,

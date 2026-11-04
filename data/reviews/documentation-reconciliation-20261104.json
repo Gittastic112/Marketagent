@@ -1,0 +1,493 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04T17:33:29.516068+00:00",
+  "status": "passed",
+  "scope": "Documentation-only reconciliation using the user-supplied DELIVERY_VALIDATION.md; no application implementation or new acceptance",
+  "package_claims": {
+    "independently_reproduced": false,
+    "reason": "Only the report was supplied; package payload, utilities, schemas, examples, manifest and logs unavailable",
+    "payload_installed": false,
+    "backlog_reconstructed": false,
+    "original_drift_gate_repeated": false
+  },
+  "remote_evidence": {
+    "observed_at": "2026-11-04 17:27:43 UTC",
+    "scope": "Read-only GitHub reconciliation. Prior CI conclusions inspected; no workflows triggered.",
+    "reported_baseline": "133dba64c261a19e7810135d4d4bfa58b64809d9",
+    "current_default_commit": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+    "current_default_branch": "codex/worktree-recovery",
+    "current_tree": "3ff9c347e26b68314465bbbb4944962beeb2fb1a",
+    "pr": {
+      "number": 4,
+      "url": "https://github.com/Gittastic112/Marketagent/pull/4",
+      "merged": true,
+      "head": "8570cd90a6978fecaab9557f6305451de70292ac"
+    },
+    "comparison": {
+      "status": "ahead",
+      "total_commits": 2,
+      "files": [
+        {
+          "path": "data/reviews/disclosure-followup-20261104.json",
+          "status": "added",
+          "sha": "44455aa62c4e9296a0e5c83b0fb128a37a9597b6"
+        },
+        {
+          "path": "data/reviews/research-demo-decisions.json",
+          "status": "modified",
+          "sha": "b762592300bbea1e2fcf20087df68a0dc41aa473"
+        },
+        {
+          "path": "docs/00-current-state.md",
+          "status": "modified",
+          "sha": "4995bce1294f5df74678a133418d7f7f65f7c9dc"
+        },
+        {
+          "path": "docs/HANDOFF.md",
+          "status": "modified",
+          "sha": "3dbced31a94f53c5212bf6a4e7dfb866464f8d2e"
+        },
+        {
+          "path": "docs/agent_capabilities_and_limitations.md",
+          "status": "modified",
+          "sha": "ec307b0888eb67388926b8fec08b783d2a2e3be1"
+        },
+        {
+          "path": "docs/archive/checkpoints/2026/README.md",
+          "status": "modified",
+          "sha": "cddb2b0e6885dda4c9bf3fe6b84a36cf63056dd8"
+        },
+        {
+          "path": "docs/archive/checkpoints/2026/company-disclosure-followup-2026-11-04.md",
+          "status": "added",
+          "sha": "6ba4218275815b60858a7919cb6722e4daff7add"
+        },
+        {
+          "path": "docs/roadmaps/completion-tracker.md",
+          "status": "modified",
+          "sha": "09cdb62affdd036f623ea23419e3100ade968878"
+        },
+        {
+          "path": "docs/roadmaps/review-decisions.md",
+          "status": "modified",
+          "sha": "a3361685f7e4702fce5bb3acf88e41912536a31c"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/banks/bank-disclosure-review.json",
+          "status": "added",
+          "sha": "140cb2daf7424030e3eda4a1a2c946156e6447ce"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/banks/new-source-retention-verification.json",
+          "status": "added",
+          "sha": "3c08febff4b28eac1fcac88f1ec71f6a49640d26"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/india/disclosure-review.json",
+          "status": "added",
+          "sha": "e8b22d5ef6eaff43c58621d342cd73eb84e970e5"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/india/notes-plan-review-final.json",
+          "status": "added",
+          "sha": "1b185be1b9bc26a7785f9bd9effd4fc8a7ebb818"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/india/source-retention-verification.json",
+          "status": "added",
+          "sha": "7bbfde694c0f8777e984c2ecb0ec0a72000153f2"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/integration/sbi-visual-cross-review.json",
+          "status": "added",
+          "sha": "a19db7e2d855aea9a436c7b9046badcd25ed5e5b"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/us/final-notes-and-yesbank-review.json",
+          "status": "added",
+          "sha": "6c1e313ca73c7f52c4f799b0e5fc28cf134c6066"
+        },
+        {
+          "path": "docs/workstreams/evidence/W2/financial-20261104/us/remaining-disclosures-review.json",
+          "status": "added",
+          "sha": "2427f1b172e364ad22065b98d49f844a4d0966cd"
+        }
+      ]
+    },
+    "postmerge_ci": {
+      "run_url": "https://github.com/Gittastic112/Marketagent/actions/runs/41786044608",
+      "jobs": [
+        {
+          "name": "container-security",
+          "conclusion": "success",
+          "head_sha": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+          "completed_at": "2026-11-04T06:33:59Z"
+        },
+        {
+          "name": "dependency-security",
+          "conclusion": "success",
+          "head_sha": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+          "completed_at": "2026-11-04T06:31:41Z"
+        },
+        {
+          "name": "browser-quality-gate",
+          "conclusion": "success",
+          "head_sha": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+          "completed_at": "2026-11-04T06:41:14Z"
+        },
+        {
+          "name": "recovery-quality-gate",
+          "conclusion": "success",
+          "head_sha": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+          "completed_at": "2026-11-04T06:33:01Z"
+        },
+        {
+          "name": "release-baseline",
+          "conclusion": "success",
+          "head_sha": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+          "completed_at": "2026-11-04T06:38:07Z"
+        }
+      ]
+    },
+    "original_package_manifest_available": false
+  },
+  "selected_source_inspection": {
+    "scope": "Independent bounded inspection manifest, not the absent package drift manifest",
+    "files": [
+      {
+        "path": "backend/app/schemas/valuation_outputs.py",
+        "remote_blob_sha": "469021cb7b273ccda196874341080fe1ea4b78ed",
+        "bytes": 6093,
+        "sha256": "b35c279e56334e83a39cd88e4ed751e71799af632b3a3932fad6c6f334f19103",
+        "local_blob_sha": "469021cb7b273ccda196874341080fe1ea4b78ed",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/services/dcf.py",
+        "remote_blob_sha": "1e95846399ce311ddd623f23983ae66661b309a5",
+        "bytes": 22944,
+        "sha256": "8c0fa82555e7bdc528d4c3cf332e1de569f0cfb84ff6167634bbd4fe59054dd6",
+        "local_blob_sha": "1e95846399ce311ddd623f23983ae66661b309a5",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/alembic/versions/t2t2t2t2t2t2_allow_unknown_projection_calendar_year.py",
+        "remote_blob_sha": "a47f208a168744e84421e42916b3d8ff802dc8f4",
+        "bytes": 665,
+        "sha256": "a0d7838215f1bcfb9ae593b2d1c6d2e217ef506a82634f947b5f5b5953d84d33",
+        "local_blob_sha": "a47f208a168744e84421e42916b3d8ff802dc8f4",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/lib/valuation-projections.ts",
+        "remote_blob_sha": "66ce0e9429005e1863cbfa67b84c960f6fd07237",
+        "bytes": 1761,
+        "sha256": "250a0a360c69914f6a250f3f450cfe0bdc153f797af57c7f4f741ca3d6cb7e66",
+        "local_blob_sha": "66ce0e9429005e1863cbfa67b84c960f6fd07237",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/lib/valuation-projections.test.ts",
+        "remote_blob_sha": "e90214b549e1b4100459de1890e2917b8796cbe8",
+        "bytes": 2130,
+        "sha256": "e13dcfbba35806693e48445fc393e03d8485f97488d2c8538a38c3a56f26225e",
+        "local_blob_sha": "e90214b549e1b4100459de1890e2917b8796cbe8",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/services/morning_briefing_engine.py",
+        "remote_blob_sha": "22b9c85352bf6243531b110e3f743afff674c373",
+        "bytes": 31196,
+        "sha256": "5101ae9af88b771741e9306f75069b420f11e44e19505e81cc81d3a58613f9d9",
+        "local_blob_sha": "22b9c85352bf6243531b110e3f743afff674c373",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/api/routers/dashboard.py",
+        "remote_blob_sha": "f1635da32f7a8624b1198ee66b4443af96c0b092",
+        "bytes": 4737,
+        "sha256": "2a54aa66676f476addde4133d564e5f4a32b708a8995dc1050daba0af3065af3",
+        "local_blob_sha": "f1635da32f7a8624b1198ee66b4443af96c0b092",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/api/routers/daily_brief.py",
+        "remote_blob_sha": "5b2d76d60a5a68a1094f7d99f50d00f4337d9552",
+        "bytes": 2711,
+        "sha256": "b5a35ed0cbeaecc86a8bf49a6449d02d06ddc41c8952e011354bcf2d50b4a4df",
+        "local_blob_sha": "5b2d76d60a5a68a1094f7d99f50d00f4337d9552",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/schemas/brief.py",
+        "remote_blob_sha": "7ca54904424532ddbe7b1e8a783b8498c12b2fd7",
+        "bytes": 7720,
+        "sha256": "8b200752e628f7faf420a463fc30e6ea54ddde156631fe5c6bcc5cd16ab859c3",
+        "local_blob_sha": "7ca54904424532ddbe7b1e8a783b8498c12b2fd7",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/services/brief_private_context.py",
+        "remote_blob_sha": "7667ada3f882816b0eedec08f3de34ac220406b6",
+        "bytes": 5580,
+        "sha256": "e820fe6a74545ec8da2603c80de833c791ac14fce1c78f5c2a12dda8e0859dd9",
+        "local_blob_sha": "7667ada3f882816b0eedec08f3de34ac220406b6",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/tests/test_api_dashboard_overview.py",
+        "remote_blob_sha": "75d5e587fbf00d0f13029c3b7a2908bde3affaa1",
+        "bytes": 6468,
+        "sha256": "a795e19c20cbfd532872305a56e8db281007f616b28238b41105759c33280a5b",
+        "local_blob_sha": "75d5e587fbf00d0f13029c3b7a2908bde3affaa1",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/components/briefing-event-card.tsx",
+        "remote_blob_sha": "723769d8dfd42b2e6cdc2b99d15c366411ad808e",
+        "bytes": 2143,
+        "sha256": "6301da7b1c819ab392c14efc64a4070fd56f63e77383024b36057b5026d53368",
+        "local_blob_sha": "723769d8dfd42b2e6cdc2b99d15c366411ad808e",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/components/brief-private-research.tsx",
+        "remote_blob_sha": "643f33a126702cab9e9b5fdd21fc3b0215562094",
+        "bytes": 3728,
+        "sha256": "982625e7c8f3dde5a56bc071a2f240fe5c2b8ae1a471030ac3289d89e788457d",
+        "local_blob_sha": "643f33a126702cab9e9b5fdd21fc3b0215562094",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/e2e/recorded-public-morning.spec.ts",
+        "remote_blob_sha": "26bdc7f1abca11f89bdccf3630c0f103ac6c991c",
+        "bytes": 9734,
+        "sha256": "cdabde9ea928c3661685c9af8417f69a7d2730f044bcd9b3281f9e000431ff7b",
+        "local_blob_sha": "26bdc7f1abca11f89bdccf3630c0f103ac6c991c",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/lib/ai-privacy.ts",
+        "remote_blob_sha": "694710fd2139bc95edeac37c0c314c0a0c25188c",
+        "bytes": 931,
+        "sha256": "8d1bd3d084c1eb8133e49b3e18e0bb09a999daef556a0c85c6213c21845cde18",
+        "local_blob_sha": "694710fd2139bc95edeac37c0c314c0a0c25188c",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/components/dcf-impact-predictor.tsx",
+        "remote_blob_sha": "f95997d4c2b8c5d1788f58e4c883e820547f1f59",
+        "bytes": 4524,
+        "sha256": "44a92c767ec604b94975f0846e5b5cbdcabb8185e9839abb5e7e72bf15458605",
+        "local_blob_sha": "f95997d4c2b8c5d1788f58e4c883e820547f1f59",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/components/valuation/valuation-memo-panel.tsx",
+        "remote_blob_sha": "8a9d22ba2cd529456e178f99939e123574485d90",
+        "bytes": 4567,
+        "sha256": "c6ef444c18021940ab2e707682dcb38428ff954e2ac54eaf9ab9d123094eb86b",
+        "local_blob_sha": "8a9d22ba2cd529456e178f99939e123574485d90",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/app/documents/[id]/ai/page.tsx",
+        "remote_blob_sha": "e4d9cdd358a0a3557aefb921296d78d217192914",
+        "bytes": 5366,
+        "sha256": "905539a954a03ad6082e0708ee039941e5e3bcc9fa9a6097c0512239d81fe3a8",
+        "local_blob_sha": "e4d9cdd358a0a3557aefb921296d78d217192914",
+        "matches_current_remote": true
+      },
+      {
+        "path": "frontend/app/settings/page.tsx",
+        "remote_blob_sha": "eaf67d7adf6ad86aad4f9eac4eb16be0c83a8cf7",
+        "bytes": 6567,
+        "sha256": "7f226783014d870acf1d2d724c26dd59e1a0ba07239d33565f40a06b3ddf9484",
+        "local_blob_sha": "eaf67d7adf6ad86aad4f9eac4eb16be0c83a8cf7",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/services/ai_contract.py",
+        "remote_blob_sha": "89eab29a57b04dc5a38547fa248198256e3093ba",
+        "bytes": 6788,
+        "sha256": "2e1474e312216f942120ce466c7fe4f7969a2d39d428baed9a3eff31ad2bed52",
+        "local_blob_sha": "89eab29a57b04dc5a38547fa248198256e3093ba",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/models/ai.py",
+        "remote_blob_sha": "e2531ebe2363b2cdb224ded0aaca763f83cb9af6",
+        "bytes": 2738,
+        "sha256": "091c9e40a254e59559686aa431ba525e077982adea4722a06684aaad9f47a112",
+        "local_blob_sha": "e2531ebe2363b2cdb224ded0aaca763f83cb9af6",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/api/routers/ai_research.py",
+        "remote_blob_sha": "ed5e613ca1657ce776627e052b65c982d6ee50db",
+        "bytes": 4950,
+        "sha256": "35657f607f1c967c0f63fddfdbb8837e78737988e13fd0d4f94a2174a52aa065",
+        "local_blob_sha": "ed5e613ca1657ce776627e052b65c982d6ee50db",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/api/routers/ai.py",
+        "remote_blob_sha": "30347c75d40a92ae67acbabccf8dd1c4264a94ae",
+        "bytes": 7326,
+        "sha256": "c5651743ca16a4dbd9dc9df07fe3887e54f64abdaca914b65f8e9edffa98d174",
+        "local_blob_sha": "30347c75d40a92ae67acbabccf8dd1c4264a94ae",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/services/brief_sources.py",
+        "remote_blob_sha": "d72ac82ef17976a5c58beb8bc9b9879a5f1196d4",
+        "bytes": 17021,
+        "sha256": "1ba0c5fc052d3d0717cada2f1fa0846da3fba5f5fb2a8681d52478f428191586",
+        "local_blob_sha": "d72ac82ef17976a5c58beb8bc9b9879a5f1196d4",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/app/schemas/ai.py",
+        "remote_blob_sha": "682debe526e9e9cd52c67ed081c502178df8348f",
+        "bytes": 4007,
+        "sha256": "f4e90136512053a22b0713391925f34ed606a0919856741d600e59f4c7cfd200",
+        "local_blob_sha": "682debe526e9e9cd52c67ed081c502178df8348f",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/tests/test_ai_contract.py",
+        "remote_blob_sha": "2aeb8d64472b9b903a49a44a418ba3128a9588aa",
+        "bytes": 2857,
+        "sha256": "cab5793062341de7412c0d2a02d08212c00087ba406b252671d27ea628a6846e",
+        "local_blob_sha": "2aeb8d64472b9b903a49a44a418ba3128a9588aa",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/tests/test_api_ai_ownership.py",
+        "remote_blob_sha": "caf2e8f1ff4230e4210fff982c350a5cd5736805",
+        "bytes": 1871,
+        "sha256": "ca93d01830dab4cbfc6a8ab9055d2811764284a2825944a13b43fc98be6790a5",
+        "local_blob_sha": "caf2e8f1ff4230e4210fff982c350a5cd5736805",
+        "matches_current_remote": true
+      },
+      {
+        "path": "backend/tests/test_projection_calendar_basis.py",
+        "remote_blob_sha": "e968d5b3b0eec1e11b894b75befeb4b529fba050",
+        "bytes": 2776,
+        "sha256": "ce6e9971449a615ded1c27af438d24c5d074d2a76c78c341bd7cf0ec990422fe",
+        "local_blob_sha": "e968d5b3b0eec1e11b894b75befeb4b529fba050",
+        "matches_current_remote": true
+      }
+    ],
+    "all_match_current_remote": true
+  },
+  "validation": [
+    {
+      "name": "docs_unit_tests",
+      "command": [
+        "python",
+        "-m",
+        "unittest",
+        "scripts.test_check_docs"
+      ],
+      "exit_code": 0,
+      "output": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.004s\n\nOK"
+    },
+    {
+      "name": "active_docs_check",
+      "command": [
+        "python",
+        "scripts/check_docs.py"
+      ],
+      "exit_code": 0,
+      "output": "documentation check passed: 122 active Markdown files, 959 local links"
+    },
+    {
+      "name": "added_document_links_and_anchors",
+      "checked": 40,
+      "errors": [
+
+      ]
+    },
+    {
+      "name": "added_document_whitespace",
+      "errors": [
+
+      ]
+    },
+    {
+      "name": "completion_checklist_preserved",
+      "checkbox_lines": 70,
+      "unchanged": true
+    }
+  ],
+  "preservation": {
+    "local_head": "fba390bf4d22146229cfabd2d621b8ebd9975fe2",
+    "local_branch": "codex/worktree-recovery",
+    "index_sha256": "0f7cb26c0e162730396ea97090223c4eab69cf697f9b5124b156363f5cd7231e",
+    "head_unchanged": true,
+    "branch_unchanged": true,
+    "index_unchanged": true,
+    "source_files_checked": 28,
+    "source_files_changed": [
+
+    ],
+    "original_report_bytes": 4202,
+    "original_report_sha256": "fd83f782ef136515b0693ea2263b217d7f8d1ff88805a88a4fad782e33996d0c",
+    "original_report_unchanged": true,
+    "status_before_count": 821,
+    "status_after_count": 822,
+    "removed_status_entries": [
+
+    ],
+    "added_status_entries": [
+      "?? docs/archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md"
+    ],
+    "status_format": "git status --short, matching baseline; new receipt is inside pre-existing untracked data/reviews/ entry",
+    "status_delta_only_new_task_files": true
+  },
+  "project_files_changed": [
+    "docs/HANDOFF.md",
+    "docs/00-current-state.md",
+    "docs/README.md",
+    "docs/roadmaps/product-roadmap.md",
+    "docs/roadmaps/feature-register.md",
+    "docs/roadmaps/completion-tracker.md",
+    "docs/agent_capabilities_and_limitations.md",
+    "docs/archive/checkpoints/2026/README.md",
+    "docs/archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md",
+    "data/reviews/documentation-reconciliation-20261104.json"
+  ],
+  "document_sha256": {
+    "docs/HANDOFF.md": "a95417f6a2a62970e8b8e40e9161ab0dbc4bd8ab9b721822c2edaea424ce8336",
+    "docs/00-current-state.md": "48b59bde80f0591d9f5517c7d8ddac94e94de5b878ef91c948940f7042a82aa6",
+    "docs/README.md": "bbdbc83089d0b04b36b8dd4bb7c4a99fed514d7b093bddba5cacfc56aa0df650",
+    "docs/roadmaps/product-roadmap.md": "4be1b88c06703f97322e38474c2634a6b39a383e14c15195915f3fdb9d2127bf",
+    "docs/roadmaps/feature-register.md": "92a98b93148dcd362933b43a77836f53f74cd0962b6a41faabce1adca76bda73",
+    "docs/roadmaps/completion-tracker.md": "bcdb4870fb9a0841ed1222ab1edd9157d6b2de65b9097d818db94b1bbd90135d",
+    "docs/agent_capabilities_and_limitations.md": "174a32da1a37dd6ed3c29720bb4c31c6eb0bb643fe6e9907b4689664cdad2054",
+    "docs/archive/checkpoints/2026/README.md": "16c9b4ffd6bd14f62d1ec1ddd5860b33c5d6fa986e56aee5d0feee2de02357a3",
+    "docs/archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md": "7b1ed46808e3e1400d80104b1a4bd74cf43046e735e48e06933d637d2448ac49"
+  },
+  "effects": {
+    "github_writes": false,
+    "database_access": false,
+    "application_code_changes": false,
+    "application_tests_run": false,
+    "provider_requests": false,
+    "runtime_changes": false,
+    "milestone_checklist_changes": false,
+    "actual_use_days_added": 0
+  },
+  "limitations_owner": "docs/agent_capabilities_and_limitations.md",
+  "proposed_work_owner": "docs/roadmaps/product-roadmap.md",
+  "review": {
+    "briefing": "passed read-only review",
+    "ai_consent": "passed; historical browser attribution and stale projection clause corrected",
+    "scope": "Independent agent source/document inspection, not human acceptance"
+  },
+  "retained_initial_validation": {
+    "path": "output/milestones/documentation-reconciliation-20261104/reconciliation/attempt-1/validation-result.json",
+    "result": "Documentation gates passed; preservation harness failed because expanded untracked output and stripped leading status whitespace differed from baseline. Harness corrected to identical status format; no repository restoration or reset."
+  }
+}

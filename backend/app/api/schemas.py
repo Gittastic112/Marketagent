@@ -230,6 +230,8 @@ from app.schemas.research import (
 )
 
 from app.schemas.brief import (
+    BriefSelectionCounts,
+    BriefPublicCoverage,
     BriefingFiling,
     BriefingPortfolioExposure,
     BriefingPortfolioMove,

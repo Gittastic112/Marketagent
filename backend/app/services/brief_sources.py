@@ -213,7 +213,8 @@ def analyze_source(db: Session, user_id: str, source_id: int, disclosure_version
         output = execute_ai_generation(db, provenance=AIProvenance(user_id=user_id, prompt_version=PROMPT_VERSION,
             input_text=prompt, reference_type="brief_source", reference_id=source.id,
             source_ids=(source_id_marker,), source_scope="owned_brief_source",
-            external_data_classes=("selected_source_text", "source_date", "public_company_identity", "valuation_field_names")),
+            external_data_classes=("selected_source_text", "source_date", "public_company_identity", "valuation_field_names"),
+            action_key="private_source_scan", privacy_disclosure_version=disclosure_version),
             generate=lambda provider: provider.generate_structured_response(prompt, _response_schema()))
         if len(output.output_text) > 30_000:
             raise ValueError("Oversized response")

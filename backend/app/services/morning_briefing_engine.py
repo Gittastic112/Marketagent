@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from typing import Any
 
 from sqlalchemy import func, or_, select
@@ -20,6 +20,10 @@ from app.models import (
 from app.services.contradiction_detector import detect_thesis_contradiction
 from app.services.dcf_variable_mapper import map_event_to_dcf_variables
 from app.services.brief_private_context import snapshot_private_research
+from app.services.brief_public_coverage import (
+    EVENT_CAP, FAILED_RUN_CAP, INSPECTION_ACTION_CAP, count_public_inputs,
+    failed_run_filter, finish_public_coverage, public_coverage_context, time_window,
+)
 
 
 PRICE_LOOKBACK_DAYS = 14
@@ -230,6 +234,7 @@ class MorningBriefingEngine:
         as_of_date: date | None = None,
         last_reviewed_at: datetime | None = None,
         processing_failures: list[ProcessingRun] | None = None,
+        public_coverage: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         target_date = as_of_date or date.today()
         existing_contradictions = [
@@ -478,14 +483,22 @@ class MorningBriefingEngine:
                 }
             )
 
+        coverage = finish_public_coverage(public_coverage, event_count=len(events),
+            failed_run_count=len(processing_failures or []), action_count=len(inspection_queue))
+        if coverage["status"] == "partial":
+            warnings.append("Stored-input coverage is partial; inspect the selection limits and excluded counts.")
+        elif coverage["status"] == "unknown":
+            warnings.append("Stored-input coverage was not fully counted; complete source coverage is unknown.")
+        event_scope = "in the stored-event preview" if coverage["selection_basis"] == "dashboard_preview" else "since the last reviewed brief"
         summary = (
-            f"{len(events)} {'event' if len(events) == 1 else 'events'} since the last reviewed brief; "
+            f"{len(events)} {'event' if len(events) == 1 else 'events'} {event_scope}; "
             f"{len(thesis_contradictions_payload)} unresolved contradiction alerts; "
             f"{len(portfolio_moves)} affected held companies."
         )
         return {
             "summary": summary,
             "private_research": snapshot_private_research(db, user_id, target_date),
+            "public_coverage": coverage,
             "calculation_status": "partial" if warnings else "complete",
             "valuation_analysis_status": valuation_status,
             "contradiction_analysis_status": contradiction_status,
@@ -511,7 +524,7 @@ class MorningBriefingEngine:
                 }
                 for run in (processing_failures or [])
             ],
-            "inspection_queue": inspection_queue[:20],
+            "inspection_queue": inspection_queue[:INSPECTION_ACTION_CAP],
             "warnings": sorted(set(warnings)),
             "contains_mock_data": contains_mock_data,
             "contains_stale_data": (
@@ -542,6 +555,7 @@ class MorningBriefingEngine:
         allow_generation: bool = True,
     ) -> DailyBrief:
         brief_date = target_date or date.today()
+        captured_at = datetime.now(UTC)
         last_reviewed_brief = db.scalar(
             select(DailyBrief)
             .where(
@@ -564,9 +578,8 @@ class MorningBriefingEngine:
             .options(selectinload(Event.company), selectinload(Event.raw_document))
             .order_by(Event.priority_score.desc().nullslast(), Event.created_at.desc())
         )
-        if last_review_date:
-            event_query = event_query.where(Event.created_at > last_review_date)
-        events = list(db.scalars(event_query.limit(50)))
+        event_query = event_query.where(*time_window(Event.created_at, last_review_date, captured_at))
+        events = list(db.scalars(event_query.limit(EVENT_CAP)))
         thesis_notes = list(
             db.scalars(
                 select(ThesisNote)
@@ -591,19 +604,18 @@ class MorningBriefingEngine:
         processing_failure_query = (
             select(ProcessingRun)
             .where(
-                or_(
-                    ProcessingRun.status.in_(("failed", "error", "partial", "completed_with_errors")),
-                    ProcessingRun.error_count > 0,
-                )
+                failed_run_filter(),
+                *time_window(ProcessingRun.started_at, last_review_date, captured_at),
             )
             .order_by(ProcessingRun.started_at.desc(), ProcessingRun.id.desc())
-            .limit(10)
+            .limit(FAILED_RUN_CAP)
         )
-        if last_review_date:
-            processing_failure_query = processing_failure_query.where(
-                ProcessingRun.started_at > last_review_date
-            )
         processing_failures = list(db.scalars(processing_failure_query))
+        event_total, failed_run_total = count_public_inputs(db, last_review_date, captured_at)
+        coverage = public_coverage_context(captured_at=captured_at, start=last_review_date, end=captured_at,
+            basis="since_last_review" if last_review_date else "stored_history",
+            event_total=event_total, event_included=len(events), event_cap=EVENT_CAP,
+            failed_run_total=failed_run_total, failed_run_included=len(processing_failures), failed_run_cap=FAILED_RUN_CAP)
         payload = MorningBriefingEngine.build_briefing_payload(
             db,
             user_id,
@@ -614,6 +626,7 @@ class MorningBriefingEngine:
             as_of_date=brief_date,
             last_reviewed_at=last_review_date,
             processing_failures=processing_failures,
+            public_coverage=coverage,
         )
         brief = DailyBrief(
             user_id=user_id,

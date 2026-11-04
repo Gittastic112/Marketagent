@@ -36,6 +36,7 @@ from app.models.financial import (
 from app.models.dcf import ValuationModel, ValuationSetupDraft, DcfAssumptionSet, DcfOutput
 from app.models.sec_parsing import FilingSection, FilingSectionDiff
 from app.models.ai import AiOutput
+from app.models.ai_consent import AiConsentDecision
 from app.models.social import SocialPost, SentimentScore
 from app.models.narrative import NarrativeCluster, NarrativeClaim, NarrativeMention
 from app.models.scoring_config import ScoringConfig
@@ -127,6 +128,7 @@ __all__ = [
     "ThesisChange",
     "ThesisNote",
     "AiOutput",
+    "AiConsentDecision",
     "FilingSection",
     "FilingSectionDiff",
     "FinancialMetric",

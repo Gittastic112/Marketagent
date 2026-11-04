@@ -21,6 +21,7 @@ def map_event_to_dcf_variables(
     event_text: str,
     event_id: int | None,
     user_id: str,
+    privacy_disclosure_version: str | None = None,
 ) -> AiOutput:
     prompt = f"""
     Analyze the following market event or news snippet and determine which standard Discounted Cash Flow (DCF) valuation variables are likely to be impacted.
@@ -62,6 +63,7 @@ def map_event_to_dcf_variables(
             source_ids=(f"event:{event_id}",) if event_id is not None else (),
             source_scope="provided_event_text",
             external_data_classes=("event_text",),
+            action_key="event_mapping", privacy_disclosure_version=privacy_disclosure_version,
         ),
         generate=lambda provider: provider.generate_structured_response(prompt, schema),
     )

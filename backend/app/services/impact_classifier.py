@@ -38,6 +38,7 @@ def classify_event_impact(
     event_id: int,
     *,
     user_id: str,
+    privacy_disclosure_version: str | None = None,
 ) -> tuple[list[dict], AiOutput | None]:
     event = db.get(Event, event_id)
     if event is None:
@@ -98,6 +99,7 @@ def classify_event_impact(
             ),
             source_scope="event_and_owned_active_thesis_assumptions",
             external_data_classes=("event_text", "private_thesis_assumptions"),
+            action_key="thesis_impact", privacy_disclosure_version=privacy_disclosure_version,
         ),
         generate=generate,
     )

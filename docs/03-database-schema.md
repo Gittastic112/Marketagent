@@ -1,8 +1,8 @@
 # Database Schema Map
 
-**Source reviewed:** 2026-09-30. Runtime verification is recorded in Current State.
+**Source reviewed:** 2026-11-04. Runtime verification is recorded in Current State.
 
-**Current source head:** `t2t2t2t2t2t2`. Projection calendar years may be unknown; existing stored values remain unchanged.
+**Current source head:** `u3u3u3u3u3u3`. Adds scoped AI permission decisions and an optional output-to-decision link without backfilling grants or rewriting existing outputs. Projection calendar years may remain unknown.
 Check Current State for the normal runtime's verified revision.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic
@@ -36,7 +36,7 @@ here; that caused the previous schema document to drift.
 | Valuation methodology | `assumption_method_values`, `valuation_assumption_provenance`, `valuation_accounting_adjustments`, `company_rd_history` | `assumption_methodology.py`, `accounting.py`; method rows may link to exact Damodaran dataset versions |
 | Damodaran runtime data | `damodaran_dataset_files`, industry benchmark tables, `regression_model_coefficients`, `country_market_stats` | `damodaran.py`, `damodaran_fundamentals.py` |
 | Real options | `industry_volatility_benchmarks`, `real_option_assumptions`, `real_option_results`, `option_eligibility_tests` | `real_options.py` |
-| Research and AI | `research_sessions`, `research_messages`, `ai_outputs`, `brief_sources`, `brief_comparison_reviews` | `research.py`, `ai.py`, `brief_source.py`, `brief_review.py` |
+| Research and AI | `research_sessions`, `research_messages`, `ai_outputs`, `ai_consent_decisions`, `brief_sources`, `brief_comparison_reviews` | `research.py`, `ai.py`, `ai_consent.py`, `brief_source.py`, `brief_review.py` |
 | Extraction evaluations | `evaluation_runs`, `financial_extraction_evals` | `evaluation.py`; new runs belong to a user and retain source/reference hashes plus a bounded comparison report |
 | Narratives and social | `narrative_clusters`, `narrative_claims`, `narrative_mentions`, `social_posts`, `sentiment_scores` | `narrative.py`, `social.py` |
 | Disabled legacy OAuth storage | `oauth_tokens` | `oauth_token.py`; writes disabled, existing records preserved |
@@ -144,6 +144,15 @@ method rows now use the same dataset link, so rate, beta, capital-structure,
 WACC, and tax defaults cannot outlive their approved source version silently.
 
 ### Owned resources
+
+External AI permissions use append-only `ai_consent_decisions`, owned by the
+authenticated user and scoped to provider/action. Each scope has a unique positive
+revision. Latest grant/refusal/revocation plus current disclosure and scope hash
+controls subsequent sends; absent or outdated permission denies. Concurrent stale
+decisions are rejected instead of overwriting history. New external AI outputs
+link to the precise grant; historical outputs retain a null link and do not create
+permission. Normal reads and migration never grant access. See the
+[security contract](06-security-threat-model.md#ai-outputs) for enforcement limits.
 
 Migration `q8q8q8q8q8q8` adds immutable owner-private brief sources, separate from
 the shared raw-document catalog. Text and original PDF bytes are deferred fields;

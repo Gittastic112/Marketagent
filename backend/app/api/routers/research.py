@@ -18,6 +18,8 @@ from app.services.ai_contract import (
     AIProvenance,
     execute_ai_generation,
     require_privacy_disclosure,
+    require_provider_consent,
+    select_ai_provider,
 )
 from app.services.ai_citations import extract_source_ids, validate_ai_citations
 
@@ -84,6 +86,7 @@ def get_session(
         current_user["id"],
         include_messages=True,
     )
+
     return ApiResponse(data=session)
 
 
@@ -111,6 +114,19 @@ def add_message(
         current_user["id"],
         include_messages=True,
     )
+
+    # Reject absent/stale permissions before saving a message that a retry could duplicate.
+    # Keep this provider instance; the executor checks permission again immediately before sending.
+    try:
+        require_privacy_disclosure(payload.privacy_disclosure_version)
+        selected_provider = select_ai_provider()
+        require_provider_consent(db, provider=selected_provider, provenance=AIProvenance(
+            user_id=current_user["id"], prompt_version="v1.1.0-research-chat-contract",
+            input_text=payload.content, action_key="research_chat",
+            privacy_disclosure_version=payload.privacy_disclosure_version,
+            external_data_classes=("private_research_messages", "retrieved_document_excerpts")))
+    except AIExecutionError as exc:
+        raise public_ai_error(exc) from exc
 
     msg = ResearchMessage(
         session_id=session.id,
@@ -176,8 +192,11 @@ def add_message(
                     reference_id=session.id,
                     source_ids=tuple(source_ids),
                     source_scope="research_session_messages",
-                    external_data_classes=("private_research_messages",),
+                    external_data_classes=(("private_research_messages", "retrieved_document_excerpts")
+                                           if context_blocks else ("private_research_messages",)),
+                    action_key="research_chat", privacy_disclosure_version=payload.privacy_disclosure_version,
                 ),
+                provider=selected_provider,
                 generate=lambda provider: provider.generate_chat_response(
                     messages=message_history
                 ),

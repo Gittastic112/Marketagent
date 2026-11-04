@@ -25,6 +25,7 @@ class ValuationMemoAgent:
         valuation: ValuationModel,
         assumption_set: DcfAssumptionSet,
         output: DcfOutput,
+        privacy_disclosure_version: str | None = None,
     ) -> str:
         basis = valuation_basis(assumption_set)
         context = {
@@ -116,10 +117,12 @@ risks visible in the supplied context.
                 source_scope="valuation_inputs_and_outputs",
                 external_data_classes=(
                     "company_metadata",
+                    "valuation_metadata",
                     "valuation_assumptions",
                     "valuation_outputs",
                 ),
                 valuation_basis=basis,
+                action_key="valuation_memo", privacy_disclosure_version=privacy_disclosure_version,
             ),
             generate=lambda provider: provider.generate_chat_response(
                 [{"role": "user", "content": prompt}]

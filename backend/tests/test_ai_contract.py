@@ -12,12 +12,13 @@ from app.services.ai_contract import (
     require_privacy_disclosure,
     select_ai_provider,
 )
+from test_ai_consent import decision
 
 
 class FailingProvider(BaseAIProvider):
     @property
     def provider_name(self) -> str:
-        return "failing-test-provider"
+        return "gemini"
 
     def generate_summary(self, text: str) -> AIProviderResult:
         raise RuntimeError("sensitive upstream response")
@@ -38,7 +39,8 @@ def provenance() -> AIProvenance:
         reference_id=1,
         source_ids=("document:1",),
         source_scope="test_scope",
-        external_data_classes=("private_test_data",),
+        external_data_classes=("raw_document_text",),
+        action_key="document_summary", privacy_disclosure_version="v1",
     )
 
 
@@ -67,6 +69,7 @@ def test_privacy_disclosure_version_must_match(monkeypatch) -> None:
 
 
 def test_provider_failure_is_recorded_without_silent_mock_fallback(db_session) -> None:
+    grant = decision(db_session)
     with pytest.raises(AIProviderFailed):
         execute_ai_generation(
             db_session,
@@ -77,7 +80,8 @@ def test_provider_failure_is_recorded_without_silent_mock_fallback(db_session) -
 
     stored = db_session.scalar(select(AiOutput))
     assert stored is not None
-    assert stored.provider_name == "failing-test-provider"
+    assert stored.provider_name == "gemini"
+    assert stored.consent_decision_id == grant.id
     assert stored.is_mock is False
     assert stored.execution_status == "failed"
     assert stored.failure_code == "AI_PROVIDER_FAILED"
