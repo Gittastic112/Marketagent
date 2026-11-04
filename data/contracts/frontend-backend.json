@@ -2761,10 +2761,14 @@
                     "$ref": "#/$defs/BriefResearchContext"
                   },
                   {
+                    "$ref": "#/$defs/LegacyBriefResearchContext"
+                  },
+                  {
                     "type": "null"
                   }
                 ],
-                "default": null
+                "default": null,
+                "title": "Private Research"
               },
               "processing_failures": {
                 "items": {
@@ -2857,6 +2861,22 @@
               }
             },
             "title": "DailyBriefPayload",
+            "type": "object"
+          },
+          "LegacyBriefResearchContext": {
+            "additionalProperties": true,
+            "description": "Opaque historical version 1. Preserve its fields without inventing current receipts.",
+            "properties": {
+              "version": {
+                "const": 1,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "version"
+            ],
+            "title": "LegacyBriefResearchContext",
             "type": "object"
           },
           "QuotedComparisonContext": {
@@ -4483,6 +4503,22 @@
             "title": "BriefingValuationRelevance",
             "type": "object"
           },
+          "LegacyBriefResearchContext": {
+            "additionalProperties": true,
+            "description": "Opaque historical version 1. Preserve its fields without inventing current receipts.",
+            "properties": {
+              "version": {
+                "const": 1,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "version"
+            ],
+            "title": "LegacyBriefResearchContext",
+            "type": "object"
+          },
           "QuotedComparisonContext": {
             "additionalProperties": false,
             "properties": {
@@ -4628,10 +4664,14 @@
                 "$ref": "#/$defs/BriefResearchContext"
               },
               {
+                "$ref": "#/$defs/LegacyBriefResearchContext"
+              },
+              {
                 "type": "null"
               }
             ],
-            "default": null
+            "default": null,
+            "title": "Private Research"
           },
           "processing_failures": {
             "items": {
@@ -6444,10 +6484,14 @@
                     "$ref": "#/$defs/BriefResearchContext"
                   },
                   {
+                    "$ref": "#/$defs/LegacyBriefResearchContext"
+                  },
+                  {
                     "type": "null"
                   }
                 ],
-                "default": null
+                "default": null,
+                "title": "Private Research"
               },
               "processing_failures": {
                 "items": {
@@ -6540,6 +6584,22 @@
               }
             },
             "title": "DailyBriefPayload",
+            "type": "object"
+          },
+          "LegacyBriefResearchContext": {
+            "additionalProperties": true,
+            "description": "Opaque historical version 1. Preserve its fields without inventing current receipts.",
+            "properties": {
+              "version": {
+                "const": 1,
+                "title": "Version",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "version"
+            ],
+            "title": "LegacyBriefResearchContext",
             "type": "object"
           },
           "QuotedComparisonContext": {

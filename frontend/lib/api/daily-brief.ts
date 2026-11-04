@@ -1,5 +1,5 @@
 /** Contracts and endpoint helpers for daily-brief. Import transport directly, never the compatibility facade. */
-import type { BriefResearchContext } from "./brief-context";
+import type { SavedBriefResearchContext } from "./brief-context";
 
 export type BriefSelectionCounts = {
   eligible_count: number | null;
@@ -29,7 +29,7 @@ export type BriefPublicCoverage = {
 };
 
 export type DailyBriefPayload = {
-  private_research?: BriefResearchContext | null;
+  private_research?: SavedBriefResearchContext | null;
   public_coverage?: BriefPublicCoverage | null;
   summary: string;
   calculation_status: "complete" | "partial" | "not_available";

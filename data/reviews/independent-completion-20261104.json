@@ -1,0 +1,421 @@
+{
+  "schema_version": 1,
+  "recorded_at": "2026-11-04T18:53:38.923802+00:00",
+  "status": "local_verification_complete_remote_checks_pending",
+  "scope": "Independently actionable local research/demo completion, documentation reconciliation and curated GitHub release; no new actual-use acceptance",
+  "implementation": [
+    "bounded public briefing coverage and source provenance",
+    "append-only owner/provider/action AI permissions and per-send enforcement",
+    "unique owned browser/release projects and cleanup guards",
+    "lossless legacy private-brief response compatibility without data rewrite",
+    "CI preserves all five PR/default-branch/tag gates without duplicate feature push builds"
+  ],
+  "source_validation": {
+    "backend_passed": 1882,
+    "backend_postgresql_opt_in_skipped": 6,
+    "backend_upstream_warnings": 5,
+    "frontend_passed": 332,
+    "typescript": "pass",
+    "wire_contracts": 26,
+    "repository_tests": 75,
+    "runner_tests_included": 26,
+    "ownership_cases": 10,
+    "locked_builds": "pass",
+    "new_dependencies": false
+  },
+  "source_build": {
+    "files": 1024,
+    "bytes": 6502279,
+    "manifest_sha256": "5cee6f76fe62518fadb66236fb118d1e35f94e242f3de1db46a14e7f5c136fd7",
+    "tag": "20261104-independent-r2",
+    "images": {
+      "market-intelligence-review-test:20261104-independent-r2": "sha256:d63ff8b34ceba90a0c0b282af4e233c506a30cd8bf4cce493395fd662a7163d6",
+      "market-intelligence-review-backend:20261104-independent-r2": "sha256:285827fb5238e2d5c0e65531761e36265acf4dc45e3a40811e60e336e2af34f9",
+      "market-intelligence-review-builder:20261104-independent-r2": "sha256:e0f81aa34e9475a873dacedf19cc96f60477a10d58cb713c0fa59738c787de8f",
+      "market-intelligence-review-frontend:20261104-independent-r2": "sha256:5857415cadecce5d14a6e450c428bf6adad2fbb6239ea15673f7e76c96edf2e7"
+    },
+    "runtime_identity": {
+      "runtime_source_files": 456,
+      "all_match": true,
+      "frontend_image_matches": true,
+      "backend_image_matches": true
+    },
+    "post_build_difference": {
+      "path": ".github/workflows/ci.yml",
+      "scope": "Only CI triggers: PRs, current default-branch pushes and all tags; not an application image input"
+    }
+  },
+  "normal_browser": {
+    "views": 12,
+    "skipped_views": [
+
+    ],
+    "page_errors": 0,
+    "blocked_requests": 0,
+    "axe_violations": 0,
+    "views_summary": [
+      {
+        "label": "dashboard",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "coverage": {
+          "events": {
+            "eligible_count": 3,
+            "included_count": 3,
+            "excluded_count": 0,
+            "cap": 10,
+            "status": "complete",
+            "exclusion_reasons": {
+            }
+          },
+          "failed_runs": {
+            "eligible_count": 13,
+            "included_count": 2,
+            "excluded_count": 11,
+            "cap": 10,
+            "status": "partial",
+            "exclusion_reasons": {
+              "dashboard_recent_run_preview": 11
+            }
+          },
+          "inspection_actions": {
+            "eligible_count": 2,
+            "included_count": 2,
+            "excluded_count": 0,
+            "cap": 20,
+            "status": "complete",
+            "exclusion_reasons": {
+            }
+          }
+        },
+        "linked_event_count": 3,
+        "manual_event_count": 0,
+        "source_parity_exercised": true
+      },
+      {
+        "label": "daily-brief",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "existing_brief_id": 14,
+        "coverage_recorded": false
+      },
+      {
+        "label": "settings",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "action_count": 10,
+        "not_granted_count": 10,
+        "decisions_created": 0
+      },
+      {
+        "label": "companies",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "stored_company_count": 12
+      },
+      {
+        "label": "AAPL-saved-model",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "company_id": 1,
+        "model_id": 2,
+        "assumption_count": 1
+      },
+      {
+        "label": "HDFCBANK-saved-model",
+        "width": 1440,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "company_id": 8,
+        "model_id": 5,
+        "assumption_count": 1
+      },
+      {
+        "label": "dashboard",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "coverage": {
+          "events": {
+            "eligible_count": 3,
+            "included_count": 3,
+            "excluded_count": 0,
+            "cap": 10,
+            "status": "complete",
+            "exclusion_reasons": {
+            }
+          },
+          "failed_runs": {
+            "eligible_count": 13,
+            "included_count": 2,
+            "excluded_count": 11,
+            "cap": 10,
+            "status": "partial",
+            "exclusion_reasons": {
+              "dashboard_recent_run_preview": 11
+            }
+          },
+          "inspection_actions": {
+            "eligible_count": 2,
+            "included_count": 2,
+            "excluded_count": 0,
+            "cap": 20,
+            "status": "complete",
+            "exclusion_reasons": {
+            }
+          }
+        },
+        "linked_event_count": 3,
+        "manual_event_count": 0,
+        "source_parity_exercised": true
+      },
+      {
+        "label": "daily-brief",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "existing_brief_id": 14,
+        "coverage_recorded": false
+      },
+      {
+        "label": "settings",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "action_count": 10,
+        "not_granted_count": 10,
+        "decisions_created": 0
+      },
+      {
+        "label": "companies",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "stored_company_count": 12
+      },
+      {
+        "label": "AAPL-saved-model",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "company_id": 1,
+        "model_id": 2,
+        "assumption_count": 1
+      },
+      {
+        "label": "HDFCBANK-saved-model",
+        "width": 390,
+        "status": "pass",
+        "duplicate_ids": 0,
+        "overflow": false,
+        "axe_violation_count": 0,
+        "company_id": 8,
+        "model_id": 5,
+        "assumption_count": 1
+      }
+    ],
+    "checks": {
+      "preflight": {
+        "inventory_sha256": "ccd771f039e5488a8612ff77844237dcaf4f474cb0a4a9ac187715f19fea87f9",
+        "existing_scoring_config": true
+      },
+      "brief_precondition": {
+        "expected_date": "2026-11-04",
+        "today_already_saved": true,
+        "history_count": 14,
+        "unknown_coverage_count": 14,
+        "sha256": "edbb15fc3363e4d8a80e3e80b7fa080dbeaeffe895daf702ff72d6164f917afe"
+      },
+      "consent_before": {
+        "count": 10,
+        "states": {
+          "not_granted": 10
+        },
+        "sha256": "0e7aeb1946ef9ce23312487ffd94ceb53a1b7d9e00a20ba6f9eed1b1271bb201"
+      },
+      "models": [
+        {
+          "ticker": "AAPL",
+          "company_id": 1,
+          "model_id": 2,
+          "assumption_count": 1,
+          "before_sha256": "99cb573fbfdc949327f08bc642d6818c52982deb7cbe519c36a2f8740c178cfd",
+          "after_sha256": "99cb573fbfdc949327f08bc642d6818c52982deb7cbe519c36a2f8740c178cfd"
+        },
+        {
+          "ticker": "HDFCBANK",
+          "company_id": 8,
+          "model_id": 5,
+          "assumption_count": 1,
+          "before_sha256": "ff1f13b663ed21006c7eb0c44501ce84061a8ea9bae7ce4b1279565dff128c94",
+          "after_sha256": "ff1f13b663ed21006c7eb0c44501ce84061a8ea9bae7ce4b1279565dff128c94"
+        }
+      ],
+      "preservation": {
+        "brief_history_unchanged": true,
+        "consent_unchanged": true,
+        "consent_history_unchanged": true,
+        "company_records_unchanged": true,
+        "saved_assumptions_unchanged": true,
+        "full_database_asset_comparison": "Coordinator must compare before/after inventories; browser API hashes are not a substitute."
+      }
+    }
+  },
+  "mocked_permission_browser": {
+    "passed": 3,
+    "skipped": 0,
+    "failed": 0,
+    "scope": "Route-intercepted transport responses; no real-user grants or provider calls"
+  },
+  "preservation": {
+    "schema_before": "t2t2t2t2t2t2",
+    "schema_after": "u3u3u3u3u3u3",
+    "original_tables": 109,
+    "final_tables": 110,
+    "unchanged_table_fingerprints": 107,
+    "ai_outputs": "old fields and rows unchanged; new consent decision field null",
+    "alembic_version": "advanced to additive consent migration",
+    "new_consent_rows": 0,
+    "assets_unchanged": true,
+    "browser_tables_unchanged": 110,
+    "original_postgres_and_settings_preserved": true,
+    "runtime_workers": {
+      "backend": true,
+      "frontend": true,
+      "postgres": true,
+      "scheduler": true,
+      "source_scheduler": false,
+      "pgadmin": false
+    },
+    "localhost_only": true,
+    "backup": {
+      "at": "2026-11-04T18:15:02.382290+00:00",
+      "bytes": 128445245,
+      "sha256": "c6e6afb9e63efc5d1ed3c91dfbf350446a58e79bf8f50619a12d7adac10f394d",
+      "archive_listing": "pass",
+      "restore_verified": false
+    },
+    "rollback_images_containers_retained": true,
+    "local_git_index_untouched": true
+  },
+  "prior_report": {
+    "path": "DELIVERY_VALIDATION.md",
+    "sha256": "fd83f782ef136515b0693ea2263b217d7f8d1ff88805a88a4fad782e33996d0c",
+    "package_payload_installed": false,
+    "package_claims_independently_reproduced": false
+  },
+  "github": {
+    "pr": "https://github.com/Gittastic112/Marketagent/pull/5",
+    "base": "a3970d3b08e0d7eb16a741838fedb5c493ac6e26",
+    "state": "draft_pending_final_publication_checks",
+    "initial_source_commit": "272a809241212018ba02481cb7e96626632334d5",
+    "initial_security_failure": "Signed package mirror returned HTTP503 TooManyRequests before scan; gate unchanged"
+  },
+  "retained_failures": [
+    "initial pytest import-path invocation",
+    "focused fixture missing synthetic SEC identity",
+    "new brief facade export integration",
+    "retained AI warning source guard",
+    "normal saved-brief history500 from two legacy integer-version snapshots",
+    "initial remote signed-package download503",
+    "normal browser harness checked coverage before client loading completed; explicit wait added, all assertions retained",
+    "initial remote browser gate timed out during signed OS package build before tests"
+  ],
+  "limitations_owner": "docs/agent_capabilities_and_limitations.md",
+  "actual_user_use_days_added": 0,
+  "user_acceptance_inferred": false,
+  "real_ai_permissions_granted": false,
+  "public_deployment": false,
+  "local_evidence": {
+    "root": "output/milestones/independent-completion-20261104",
+    "files": [
+      {
+        "path": "logs/backend-full-r2.txt",
+        "sha256": "7f7a66d6a477a02c03cb95417727705cb8b39f8ac542afead907a56cbf32d95a"
+      },
+      {
+        "path": "logs/frontend-tests-and-types-r3.txt",
+        "sha256": "ecb83aafd4b606270caed725c1d8aef2572abc4d0c9f1cd31c251e67a026ebf4"
+      },
+      {
+        "path": "logs/repository-tests-r1.txt",
+        "sha256": "5b83ea4413393687f9bd114f59e1f362090e0ca760e63370c7101b2ccf5ec585"
+      },
+      {
+        "path": "logs/repository-gates-r1.txt",
+        "sha256": "22c1b1ad1ffbdaad78eb004fe904830366fa804aa450e55aa4c68cc269dbbc8d"
+      },
+      {
+        "path": "logs/build-test-r2.txt",
+        "sha256": "7235a16a692d3fd0025f919e9ef1be2f17012ee4384d28e0f4b12954ecfbf607"
+      },
+      {
+        "path": "logs/build-backend-r2.txt",
+        "sha256": "27e30129ec2091ca58930c407b7d21f31d38a38c72a1d729c46bf4969e45a277"
+      },
+      {
+        "path": "logs/build-builder-r2.txt",
+        "sha256": "3b3739aa99580d01278cc8eb367d8455c97b1b5ccb8e877cb10b6f8f0d52b2a8"
+      },
+      {
+        "path": "logs/build-frontend-r2.txt",
+        "sha256": "56c159255a140f8984cada178d05f7b2c60996f924d0c39d454396c566cc4a7b"
+      },
+      {
+        "path": "browser-normal-r3/results.json",
+        "sha256": "241dffe10cdb8687c58e87fd03ab775622e701cf566e88e567f1e4e73c87d89c"
+      },
+      {
+        "path": "browser-normal-r3/database-effects.json",
+        "sha256": "c4bd784a9b909b4ba44a78fd3acf9db8aa37fb995680a21be120db04f9668dce"
+      },
+      {
+        "path": "browser-consent-r2/results.json",
+        "sha256": "def801b346fd6762b614b464fa1b1cc67f58d0ee7de9ff5c4c73de90ac4f4485"
+      },
+      {
+        "path": "browser-consent-r2/database-effects.json",
+        "sha256": "c4bd784a9b909b4ba44a78fd3acf9db8aa37fb995680a21be120db04f9668dce"
+      },
+      {
+        "path": "rollout-r2/receipt.json",
+        "sha256": "645d5de96812f1049e2f1b376105306848de122c8fdfe4175b77e182b231d5f4"
+      },
+      {
+        "path": "rollout-r2/runtime-identity.json",
+        "sha256": "8eef2c0011c9cfe73db7fd38c5f26ff7cfa13f94ad0ec7050478269ac8abd25a"
+      },
+      {
+        "path": "rollout/final.json",
+        "sha256": "3c443c5f4dd89017d9854fb24b77833f19cc4313fcbe69f0019b399c40bb20d4"
+      }
+    ]
+  }
+}

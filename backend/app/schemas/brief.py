@@ -1,5 +1,5 @@
 """Brief API contracts, independent of HTTP and persistence."""
-from app.schemas.brief_context import BriefResearchContext
+from app.schemas.brief_context import BriefResearchContext, LegacyBriefResearchContext
 
 from datetime import (
     date,
@@ -169,7 +169,7 @@ class BriefPublicCoverage(BaseModel):
 
 
 class DailyBriefPayload(BaseModel):
-    private_research: BriefResearchContext | None = None
+    private_research: BriefResearchContext | LegacyBriefResearchContext | None = None
     public_coverage: BriefPublicCoverage | None = None
     summary: str = "Daily brief summary unavailable."
     calculation_status: Literal["complete", "partial", "not_available"] = "not_available"

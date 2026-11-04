@@ -2,9 +2,23 @@
 from datetime import date, datetime
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app.schemas.brief_triage import BriefReviewRead, BriefTriageSource
+
+
+class LegacyBriefResearchContext(BaseModel):
+    """Opaque historical version 1. Preserve its fields without inventing current receipts."""
+    model_config = ConfigDict(extra="allow")
+
+    version: Literal[1]
+
+    @field_validator("version", mode="before")
+    @classmethod
+    def require_exact_legacy_version(cls, value):
+        if type(value) is not int or value != 1:
+            raise ValueError("Legacy private research requires integer version 1")
+        return value
 
 
 class BriefResearchSource(BaseModel):

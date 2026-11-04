@@ -30,7 +30,7 @@ approved historical models, source originals, prior evidence and the dirty check
 ## Source validation
 
 The initial unchanged backend baseline passes 1,838 tests. The integrated source
-passes 1,875 backend tests, with six PostgreSQL opt-in skips and five upstream
+passes 1,882 backend tests, with six PostgreSQL opt-in skips and five upstream
 warnings under the no-new-local-datasets boundary. Frontend tests pass 332 checks;
 TypeScript, 26 backend/frontend wire contracts and locked Linux ARM64 production
 builds pass. The runner's fake-command/static suite passes 26 cases without
@@ -43,17 +43,44 @@ re-export for the new brief classes, and a removed historical AI-interpretation
 warning. The command/fixture was corrected, exports restored and warning retained;
 the affected and full checks then pass. No assertion was removed to obtain a pass.
 
-Local release images use unique tags 20261104-independent-r1. The build context
+Local release images use unique tags 20261104-independent-r2. The build context
 contains 1,024 explicitly selected source/configuration files and no protected
 environment files. Local recipes, before-copies, complete logs and hashes remain
 under output/milestones/independent-completion-20261104/.
 
+The first normal-data browser pass found a pre-existing compatibility defect:
+two retained October briefs store integer-version-1 private research. A narrow
+response union now preserves their exact opaque JSON and the UI labels that old
+format as unsupported by the current review view. It invents no current receipts.
+Current-format validation stays strict. Fifty-one focused checks and the full
+backend/frontend/type/contract suites pass after this repair; the failed normal
+browser evidence is retained and all 110 tables/assets stayed unchanged.
+
 ## Integration status
 
-At this source checkpoint, normal installation/browser verification and remote
-publication checks are pending. Current State separates this source proof from
-the prior runtime. Final receipts will replace this paragraph after those gates.
-No real user's AI permission is granted by the implementation or validation pass.
+The [portable receipt](../../../../data/reviews/independent-completion-20261104.json)
+records the completed normal rollout and source identity. The original PostgreSQL
+volume/settings remain; schema u3 adds one empty table. All 107 unaffected table
+fingerprints and every old AI-output field remain identical; only the migration
+marker advances and the new nullable output field is added. Stored assets match.
+The fresh 128,445,245-byte quiesced backup passes hash/archive listing, with no new
+restore claim. Original and intermediate containers/images remain for recovery.
+
+Twelve normal-data desktop/mobile views pass, including three linked dashboard
+events, saved history, ten denied-by-default AI actions and two saved valuations.
+Three intercepted permission workflows also pass on the final frontend. All 110
+table/asset fingerprints match through browser verification. There are no detected
+accessibility, overflow, duplicate-ID or page errors. A premature browser assertion
+was corrected to wait for the client response; no product assertion was removed.
+Daily Brief scheduling resumes; source refresh and pgAdmin remain stopped.
+
+[PR5](https://github.com/Gittastic112/Marketagent/pull/5) owns final remote checks.
+Initial release/recovery/dependency jobs pass, but signed-package HTTP503 failures
+and a package-build timeout prevent an initial full pass. The CI trigger policy
+now keeps all five checks on PR merge candidates, default-branch pushes and all
+tags while avoiding duplicate feature-branch push builds. This CI-only change is
+outside installed image contents. Final remote verification is still pending.
+No real user's AI permission is granted by implementation or validation.
 
 ## Acceptance boundary
 

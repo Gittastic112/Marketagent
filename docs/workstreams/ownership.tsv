@@ -3,6 +3,9 @@
 W1	file	backend/app/api/schemas.py
 W1	file	backend/app/schemas/daily_brief.py
 W1	file	backend/app/schemas/brief.py
+W1	file	backend/app/schemas/brief_context.py
+W1	file	frontend/lib/api/brief-context.ts
+W1	file	frontend/components/brief-private-research.tsx
 W1	file	backend/app/services/brief_public_coverage.py
 W1	file	backend/app/api/routers/dashboard.py
 W1	file	backend/tests/test_brief_public_coverage.py

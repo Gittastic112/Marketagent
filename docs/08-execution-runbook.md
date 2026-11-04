@@ -568,3 +568,9 @@ proof in archive/checkpoints/YYYY, and unresolved gaps in the
 
 Update the roadmap only when priorities change and the feature register only
 when capability status changes. Replace the short handoff; do not append history.
+
+CI runs all five gates on pull requests (including the proposed merge), pushes to
+the current default branch codex/worktree-recovery, and all tags. Feature branches
+run CI when a pull request opens; this avoids duplicate branch-push and PR builds.
+Keep this branch filter aligned if the repository default branch changes. Upstream
+package-download failures remain failures and may be retried without changing pins.

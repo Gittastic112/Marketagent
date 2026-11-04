@@ -1,5 +1,9 @@
 import type { ComparisonReview, TriageSource } from "./brief-triage";
 
+/** Preserved historical JSON. Its fields are not current reviewed-source receipts. */
+export type LegacyBriefResearchContext = { version: 1; [field: string]: unknown };
+export type SavedBriefResearchContext = BriefResearchContext | LegacyBriefResearchContext;
+
 export type BriefResearchDecision = {
   company_id: number; ticker: string; field: string; comparison_hash: string;
   comparability_status: "same" | "unknown" | "incompatible"; source_ids: number[];

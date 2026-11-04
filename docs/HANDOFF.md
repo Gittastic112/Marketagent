@@ -1,73 +1,75 @@
 # Agent Handoff
 
-November 4, 2026: the user requested completion of all independently actionable
-work, documentation and GitHub steps. The [completion checkpoint](archive/checkpoints/2026/independent-completion-2026-11-04.md)
-records briefing coverage, scoped AI permissions and safe release-runner ownership.
-Source tests/builds pass. Normal installation/browser and new remote checks are
-still being completed; do not confuse source proof with installed-runtime proof.
+November 4, 2026: independently actionable source, local rollout and normal-data
+verification are complete. [PR5](https://github.com/Gittastic112/Marketagent/pull/5)
+contains the curated release; final remote checks are still in progress. The
+[completion checkpoint](archive/checkpoints/2026/independent-completion-2026-11-04.md)
+and [portable receipt](../data/reviews/independent-completion-20261104.json) own evidence.
 
-## Current implementation
+## Delivered behavior
 
-- Brief payloads expose stored-record windows, eligible/included/excluded counts,
-  caps and reasons. Dashboard source metadata is fixed without loading bodies.
+- Briefs expose stored-record windows, counts, caps and exclusion reasons.
+  Dashboard metadata retains source links; counts do not establish source truth.
   Historical coverage remains unknown. Manual refresh and schedules use no AI.
-- Settings records append-only owner/provider/action grants, refusals and
-  revocations. Ten Gemini actions require current scope/version permission plus
-  per-action acknowledgement. Dispatched external outputs retain the permitting decision.
-  Research chat checks permission before saving and sending, disclosing retrieved
-  document excerpts. Migrations and old outputs never grant permission.
-- Source head u3u3u3u3u3u3 adds the consent table and nullable output link; historical
-  output content remains. Readiness checks the new schema and unique revisions.
-- Browser/release runners use unique owned projects and refuse existing resources.
-  Cleanup begins only after their own creation starts. Shared image builds/default
-  host ports still need serialized lanes. No new local disposable dataset is allowed.
+- Settings records append-only owner/provider/action permissions and history.
+  Ten Gemini actions require current scope/version permission plus per-action
+  acknowledgement. Dispatched external outputs retain the precise grant.
+  Research chat discloses retrieved excerpts and checks before saving/sending.
+  No migration or historical output grants permission; Mock Data stays local.
+- Two older private-brief snapshots remain opaque integer-version-1 records,
+  readable without rewriting their content or inventing current review status.
+  The UI labels the unsupported historical format. Current validation stays strict.
+- Browser/release runners own unique projects and reject existing resources.
+  Cleanup starts only after their own creation begins. Shared tags/default ports
+  still need coordinated lanes. No new local disposable dataset is allowed.
+- CI keeps all five gates on PR merge candidates, current default-branch pushes
+  and all tags. Feature branches run CI when a PR opens, avoiding duplicate builds.
 
-## Validation and remaining integration
+## Verified local release
 
-- Integrated source: 1,875 backend tests pass, six PostgreSQL opt-in tests skipped,
-  five upstream warnings. Frontend: 332 tests, TypeScript and 26 contracts pass.
-- Locked Linux ARM64 test/backend/builder/frontend images are built as
-  20261104-independent-r1. The exact selected context has 1,024 files, excluding
-  protected settings. Do not overwrite those release tags.
-- Focused briefing and consent checks cover source parity, caps, stale permissions,
-  owner isolation, revocation, no hidden provider calls and migration preservation.
-  Failed harness/integration checks remain retained with subsequent passing proof.
-- Complete permitted normal-data browser proof, backup/install preservation and
-  curated GitHub publication. The last remote baseline is merged PR4 at a3970d3b
-  with five passing jobs. Publish only explicitly reviewed paths from that tree.
-- Finish current-doc validation after integration and replace pending statements
-  with actual results. Logs/before-copies/hashes are under
-  output/milestones/independent-completion-20261104/.
+- 1,882 backend tests pass, six PostgreSQL opt-in skips, five upstream warnings.
+  Frontend: 332 tests, TypeScript and 26 contracts pass. Repository: 75 tests;
+  ownership: ten cases and 132 disjoint reservations. Locked ARM64 builds pass.
+- Installed 20261104-independent-r2: backend/workers 285827fb5238, frontend
+  5857415cadec. All 456 backend runtime source files match. The 1,024-file build
+  context excludes protected settings; only the subsequent CI-trigger change is
+  outside that frozen context and is not copied into application images.
+- Twelve existing-data desktop/mobile views and three intercepted permission
+  workflows pass. Zero detected accessibility, overflow, duplicate-ID or page
+  errors. Browser reads preserve all 110 table/asset fingerprints and grant nothing.
+- Original PostgreSQL/settings remain. Schema u3u3u3u3u3u3 adds an empty permission
+  table and nullable AI-output link; original application content is preserved.
+  Daily Brief runs; source refresh/pgAdmin stay stopped. Ports remain localhost-only.
+- The fresh 128,445,245-byte backup passes archive/hash checks, not a new restore
+  drill. Original/intermediate containers, immutable tags and failed evidence remain.
+  Local audit root: output/milestones/independent-completion-20261104/.
 
-## Preservation and runtime boundary
+## Remaining release step
 
-The prior installed release is 20261103-models-final: backend/workers cb7b568ad74f,
-frontend 2e326fe94772, schema t2t2t2t2t2t2. The disclosure receipt records localhost
-ports, Daily Brief running and source refresh/pgAdmin stopped. Recheck before
-replacement; never load protected environment files through Compose/settings.
-Runtime settings may pass in memory, never printed or serialized. Preserve the
-original PostgreSQL volume, backups, immutable release tags and rollback containers.
-The prior 128,445,245-byte backup has archive/hash proof, not a new restore drill.
+Verify PR5's final remote release, recovery, browser, dependency and container
+checks, then complete the authorized merge. Initial signed-package downloads
+returned HTTP503 and one build timed out before browser tests. Those failures
+remain recorded; no dependency pin, signature check or security gate was weakened.
+Update this section with the observed final result, not inferred success.
 
-The shared branch/index contains extensive prior work and remains at local HEAD
-fba390bf. Never reset, clean, stage all or publish an uncurated snapshot. The supplied
-DELIVERY_VALIDATION.md remains unchanged. Its unavailable package checks are
-reported, not reproduced; no missing payload or ticket backlog was fabricated.
+The shared checkout stays on local HEAD fba390bf and contains extensive prior
+work. Never reset, clean, stage all or publish an uncurated snapshot. Protected
+settings pass only in memory during runtime replacement, never through file reads
+or serialized receipts. DELIVERY_VALIDATION.md remains unchanged; absent package
+utilities/payload were neither fabricated nor claimed as independently validated.
 
-## Independent completion limits
+## Maintenance and acceptance boundaries
 
 [The single ledger](agent_capabilities_and_limitations.md#ordered-operator-handoff)
-owns missing issuer claim/settlement facts, HDFC comparability and Reliance external
-revenue allocation. Preserve models 2-12, assumptions 3-13, eleven inactive disclosure
-notes, financial histories and all explicit/delegated review receipts. Do not repeat
-completed credential rotation, scenario approvals or PR3/PR4 merges.
+owns missing issuer facts, HDFC comparability and Reliance revenue allocation.
+Preserve models 2-12, assumptions 3-13, eleven inactive disclosure notes, financial
+histories and review receipts. Do not repeat completed credential rotation,
+scenario approvals or PR3/PR4 merges. New provider or interpretation work needs its
+own evidence; source linkage and automatic checks do not establish financial truth.
 
-The user reports zero actual-use days. Agent tests cannot supply five business days
-or final user acceptance. Mac/off-device setup and populated recovery rehearsal
-remain deferred; genuine portfolio history is outside research/demo v1. Do not ask
-for those again as current prerequisites or invent facts to close gates. No public
-hosting, broker actions or real-user AI grants are authorized by implementation work.
-M01-M04 remain accepted at 40 points; later acceptance dependencies stay explicit.
-
-Commands belong in the [runbook](08-execution-runbook.md). Use the code map and
-current ownership manifest; central docs and shared integration are coordinator-owned.
+The user reports zero actual-use days. Agent tests cannot supply five business
+days or final acceptance. Deferred Mac/off-device protection and populated recovery
+rehearsal remain unpassed; genuine portfolio history is outside research/demo v1.
+No public hosting, broker actions or real-user AI grants are authorized by this
+implementation pass. M01-M04 remain accepted at 40 points; dependencies stay explicit.
+Commands belong in the [runbook](08-execution-runbook.md).

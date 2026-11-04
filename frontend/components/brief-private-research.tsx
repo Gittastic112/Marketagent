@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { EmptyState, Panel } from "@/components/page";
-import type { BriefResearchContext, BriefResearchDecision } from "@/lib/api/brief-context";
+import type { SavedBriefResearchContext, BriefResearchDecision } from "@/lib/api/brief-context";
 
 function Decision({ item }: { item: BriefResearchDecision }) {
   return <article className="brief-item">
@@ -17,7 +17,10 @@ function Decision({ item }: { item: BriefResearchDecision }) {
   </article>;
 }
 
-export function BriefPrivateResearch({ context }: { context?: BriefResearchContext | null }) {
+export function BriefPrivateResearch({ context }: { context?: SavedBriefResearchContext | null }) {
+  if (context?.version === 1) return <Panel title="Private research as generated">
+    <p className="basis-note">This brief contains a legacy private research snapshot (version 1). Its original data is preserved, but this format is not supported by the current review view. No current reviewed or pending status is inferred.</p>
+  </Panel>;
   return <Panel title="Private research as generated">
     {!context ? <EmptyState label="This older brief has no private research snapshot. Its saved evidence has not been rewritten." /> : <>
       <p className="basis-note">Saved as generated {context.captured_at}. Sources and receipts may have changed since this snapshot. {context.status.replaceAll("_", " ")} coverage.</p>

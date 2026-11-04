@@ -2,6 +2,8 @@ name: CI
 
 on:
   push:
+    branches: [codex/worktree-recovery]
+    tags: ['**']
   pull_request:
 
 permissions:
