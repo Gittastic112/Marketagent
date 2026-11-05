@@ -99,7 +99,7 @@ unselected repository blobs match the base. Local HEAD/index remains unchanged;
 local verification and remote checks retain their separate evidence boundaries.
 
 The available kit report describes 76 files, 52 documentation files, 14 specs,
-45 proposed tickets, 135 proposed acceptance cases, four schemas/examples and six
+45 proposed tickets, 135 proposed acceptance cases, four schemas and four examples, and six
 workflow references. Its actual ZIP payload/installer/AGENT_PROMPT are absent.
 The two concrete priorities, brief coverage/provenance and scoped AI permissions,
 shipped in PR5; the projection-year defect was already fixed. Unseen ticket contents
