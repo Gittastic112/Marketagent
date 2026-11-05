@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-11-04. This document owns commands, not historical phase records.
+Updated: 2026-11-05. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -42,12 +42,12 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. From the repository root, use the verified November 4 image override and validate
+2. From the repository root, use the verified November 5 image override and validate
    configuration without printing it:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml config --quiet
-   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml stop frontend backend scheduler source_scheduler
+   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml config --quiet
+   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml stop frontend backend scheduler source_scheduler
    docker exec -it market_intel_postgres psql -X -U marketintel -d marketintel
    ~~~
 
@@ -58,12 +58,13 @@ password into chat or commands. Never use `docker compose down -v`.
    the current image versions and stopped optional services:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
-   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml create --no-build source_scheduler pgadmin
-   docker compose -f docker-compose.yml -f output/milestones/independent-completion-20261104/runtime-images.yml ps --all
+   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
+   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml create --no-build source_scheduler pgadmin
+   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml ps --all
    ~~~
 
-5. Verify backend/frontend/database health, sign-in and an existing company page.
+5. Verify backend/frontend/database health, sign-in and the company list (currently
+   empty after the approved removal; do not seed example companies).
    Test password authentication with `docker exec -it market_intel_postgres psql
    -h 127.0.0.1 -U marketintel -d marketintel -W`, then `SELECT 1;` and `\q`.
    Source scheduling and pgAdmin must remain stopped. Record status only, never
@@ -73,7 +74,7 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The local override retains the November 4 installed images. On another checkout,
+The local override retains the November 5 frontend and November 4 backend images. On another checkout,
 use that installation's verified image override; do not substitute older tags.
 
 ## Dependency and container updates

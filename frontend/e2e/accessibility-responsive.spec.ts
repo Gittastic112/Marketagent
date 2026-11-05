@@ -77,6 +77,25 @@ test("a mobile table can be reached and scrolled with the keyboard", async ({ pa
   await expect.poll(() => region.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
 });
 
+test("mobile company setup steps are keyboard reachable without creating a company", async ({ page }, testInfo) => {
+  await signIn(page);
+  await verifyRoutes(page, testInfo, [["company-create", "/companies?create=1"]],
+    { width: 390, height: 844 }, "Isolated Mock Data browser seed; no company submitted");
+  await page.goto("/companies?create=1");
+  const steps = page.getByRole("list", { name: "Company setup step 1 of 5", exact: true });
+  expect(await steps.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  for (let attempt = 0; attempt < 40 && !await steps.evaluate(element => element === document.activeElement); attempt++) {
+    await page.keyboard.press("Tab");
+  }
+  await expect(steps).toBeFocused();
+  await page.keyboard.press("ArrowRight");
+  await expect.poll(() => steps.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  await expect(page.getByLabel("Ticker", { exact: true })).toHaveValue("");
+  await expect(page.getByRole("button", { name: "Next Step", exact: true })).toBeDisabled();
+  await page.getByRole("link", { name: "Close", exact: true }).click();
+  await expect(page.getByRole("heading", { name: "Company Setup Wizard", exact: true })).toHaveCount(0);
+});
+
 test("mobile decision fields remain inside their panels and can be edited", async ({ page }, testInfo) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await signIn(page);

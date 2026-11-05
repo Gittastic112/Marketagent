@@ -70,7 +70,7 @@ function Comparison({ companyId, includeMock }: { companyId: number; includeMock
         {data.coverage.not_examined > 0 && <p className="basis-note" role="status">Partial coverage: {data.coverage.not_examined} older active sources are outside the newest {data.coverage.source_limit}. Open the source library to inspect them.</p>}
         {Object.keys(data.coverage.excluded).length > 0 && <div className="basis-note"><strong>Other exclusions from this comparison</strong><ul className="compact-list">
           {Object.entries(data.coverage.excluded).map(([reason, count]) => <li key={reason}>{reason === "unusable" ? "Unusable or unverified output" : reason === "mock" ? "Mock Data (not included)" : reason.replaceAll("_", " ")}: {count}</li>)}
-        </ul><Link href="/daily-brief">Inspect or scan sources in the inbox →</Link></div>}
+        </ul><Link href="/daily-brief" prefetch={false}>Inspect or scan sources in the inbox →</Link></div>}
         <details className="triage-method"><summary>How to read this comparison</summary>
           <ul className="compact-list">{data.warnings.map(warning => <li key={warning}>{warning}</li>)}</ul>
           <p className="muted">Method: {data.methodology}. A reviewed AI interpretation is still not an approved financial input.</p>
@@ -85,7 +85,7 @@ function Comparison({ companyId, includeMock }: { companyId: number; includeMock
       </Panel>}
       {!data.sources.length ? <Panel title="No eligible findings yet">
         <p>{data.coverage.active_sources ? "The examined active sources have no eligible completed scans for this view." : "This company has no active private sources in your inbox."} Nothing has been inferred.</p>
-        <Link className="btn btn-primary" href="/daily-brief">Add or inspect research sources</Link>
+        <Link className="btn btn-primary" href="/daily-brief" prefetch={false}>Add or inspect research sources</Link>
       </Panel> : <>
         <div className="triage-filters">
           <label>Valuation input<select value={field} onChange={event => setField(event.target.value)}><option value="">All mapped inputs</option>{data.groups.map(group => <option key={group.field} value={group.field}>{group.label}</option>)}</select></label>

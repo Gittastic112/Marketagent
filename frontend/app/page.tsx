@@ -24,6 +24,7 @@ export default async function HomePage() {
   const activeAlerts = alerts.filter(alert => ["unreviewed", "needs_follow_up"].includes(alert.review_status));
   const recentRuns = runs.slice(0, 5);
   const failedRuns = recentRuns.filter(run => ["failed", "error"].includes(run.status));
+  const snapshotNeedsInputs = Boolean(snapshot && snapshot.calculation_status !== "complete");
 
   return <>
     {heading}
@@ -34,6 +35,12 @@ export default async function HomePage() {
         <div className="metric-label"><BriefcaseBusiness size={16} aria-hidden="true" />Portfolio value</div>
         <div className="metric-value">{snapshot?.total_portfolio_value == null ? "Not available" : formatCurrency(snapshot.total_portfolio_value, snapshot.base_currency || portfolio?.base_currency || "USD")}</div>
         {portfolio && <div className="metric-detail">{portfolio.name}</div>}
+        {snapshotNeedsInputs && snapshot && <div className="metric-detail">
+          {snapshot.priced_holdings_count} of {snapshot.holdings_count} holdings priced.
+          {snapshot.missing_price_tickers_json.length > 0 && ` Prices needed: ${snapshot.missing_price_tickers_json.join(", ")}.`}
+          {snapshot.missing_fx_pairs_json.length > 0 && ` FX rates needed: ${snapshot.missing_fx_pairs_json.join(", ")}.`}
+          {" Open portfolio to review missing inputs."}
+        </div>}
         <div className="metric-detail">{snapshot ? `Stored snapshot · ${snapshot.snapshot_date}` : portfolio ? "Capture a priced snapshot" : "Set up a portfolio"}<ArrowUpRight size={14} aria-hidden="true" /></div>
       </Link>
       <Link prefetch={false} className="metric" href="/alerts"><div className="metric-label"><Bell size={16} aria-hidden="true" />Alerts to review</div><div className="metric-value">{activeAlerts.length}</div><div className="metric-detail">From the latest loaded alerts<ArrowUpRight size={14} aria-hidden="true" /></div></Link>

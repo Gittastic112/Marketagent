@@ -6,39 +6,49 @@ import { HealthMetric, statusBadge } from "./health-ui";
 
 type DiagnosticProps = Pick<DataHealthData, "evidenceIntegrityRes" | "eventBackfillRes" | "damodaranCoverageRes" | "evidenceIntegrity" | "eventBackfill" | "damodaranCoverage">;
 
-export function HealthDiagnosticSummary({ evidenceIntegrityRes, evidenceIntegrity }: Pick<DiagnosticProps, "evidenceIntegrityRes" | "evidenceIntegrity">) {
-  const unavailableLabel = evidenceIntegrityRes ? "Unavailable" : "Not run";
+export function HealthDiagnosticSummary({ evidenceIntegrityRes, eventBackfillRes, damodaranCoverageRes, evidenceIntegrity, eventBackfill, damodaranCoverage }: DiagnosticProps) {
+  const checks = [
+    { name: "Evidence and financial certification", mode: "evidence", response: evidenceIntegrityRes, result: evidenceIntegrity, action: "Run deep evidence audit" },
+    { name: "Benchmark coverage", mode: "coverage", response: damodaranCoverageRes, result: damodaranCoverage, action: "Check benchmark coverage" },
+    { name: "Historical event evidence", mode: "backfill", response: eventBackfillRes, result: eventBackfill, action: "Preview evidence backfill" },
+  ];
   return (
       <section className="health-summary-section health-diagnostic-summary" aria-labelledby="diagnostic-status-title">
         <div className="health-section-heading">
           <div>
-            <h2 id="diagnostic-status-title">Diagnostic status</h2>
-            <p>These values remain unavailable until the explicit evidence audit runs.</p>
+            <h2 id="diagnostic-status-title">Optional diagnostics</h2>
+            <p>These checks run only when selected. Status applies to this visit.</p>
           </div>
-          {!evidenceIntegrity ? <Link prefetch={false} href="/data-health?audit=evidence">Run audit</Link> : null}
         </div>
-        <div className="health-diagnostic-grid">
-          <HealthMetric compact label="Evidence errors" value={evidenceIntegrity ? evidenceIntegrity.error_count : unavailableLabel} tone={!evidenceIntegrity ? "muted" : evidenceIntegrity.error_count > 0 ? "danger" : "success"} />
-          <HealthMetric compact label="Evidence warnings" value={evidenceIntegrity ? evidenceIntegrity.warning_count : unavailableLabel} tone={!evidenceIntegrity ? "muted" : evidenceIntegrity.warning_count > 0 ? "warning" : "neutral"} />
-          <HealthMetric compact label="Documents checked" value={evidenceIntegrity ? evidenceIntegrity.checked_documents : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-          <HealthMetric compact label="Exact references" value={evidenceIntegrity ? evidenceIntegrity.checked_references : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-          <HealthMetric compact label="Financial facts" value={evidenceIntegrity ? evidenceIntegrity.checked_financial_candidates : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-          <HealthMetric compact label="Annual periods" value={evidenceIntegrity ? evidenceIntegrity.checked_financial_periods : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-          <HealthMetric compact label="Certified histories" value={evidenceIntegrity ? evidenceIntegrity.certified_financial_history_count : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-          <HealthMetric compact label="Certified markets" value={evidenceIntegrity ? evidenceIntegrity.certified_markets.join(", ") || "None" : unavailableLabel} tone={evidenceIntegrity ? "neutral" : "muted"} />
-        </div>
+        <dl style={{ margin: 0, display: "grid", gap: "0.75rem" }}>
+          {checks.map((check) => (
+            <div key={check.mode} style={{ display: "flex", justifyContent: "space-between", gap: "0.5rem 1rem", flexWrap: "wrap" }}>
+              <dt>{check.name}</dt>
+              <dd style={{ margin: 0, display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+                <span style={{ color: "var(--text-secondary)" }}>{!check.response ? "Not run" : !check.result ? "Unavailable" : "Results below"}</span>
+                <Link prefetch={false} href={`/data-health?audit=${check.mode}`}>{check.action}</Link>
+              </dd>
+            </div>
+          ))}
+        </dl>
+        {evidenceIntegrity ? <div className="health-diagnostic-grid" style={{ marginTop: "1rem" }}>
+          <HealthMetric compact label="Evidence errors" value={evidenceIntegrity.error_count} tone={evidenceIntegrity.error_count > 0 ? "danger" : "success"} />
+          <HealthMetric compact label="Evidence warnings" value={evidenceIntegrity.warning_count} tone={evidenceIntegrity.warning_count > 0 ? "warning" : "neutral"} />
+          <HealthMetric compact label="Documents checked" value={evidenceIntegrity.checked_documents} />
+          <HealthMetric compact label="Exact references" value={evidenceIntegrity.checked_references} />
+          <HealthMetric compact label="Financial facts" value={evidenceIntegrity.checked_financial_candidates} />
+          <HealthMetric compact label="Annual periods" value={evidenceIntegrity.checked_financial_periods} />
+          <HealthMetric compact label="Certified histories" value={evidenceIntegrity.certified_financial_history_count} />
+          <HealthMetric compact label="Certified markets" value={evidenceIntegrity.certified_markets.join(", ") || "None"} />
+        </div> : null}
       </section>
   );
 }
 
 export function HealthDiagnostics({ evidenceIntegrityRes, eventBackfillRes, damodaranCoverageRes, evidenceIntegrity, eventBackfill, damodaranCoverage }: DiagnosticProps) {
   return <>
-      <Panel title="Damodaran Application Coverage">
-        {!damodaranCoverageRes ? (
-          <div className="empty">
-            Coverage reconciliation is not run during the fast health check. <Link prefetch={false} href="/data-health?audit=coverage">Check benchmark coverage</Link>.
-          </div>
-        ) : !damodaranCoverage ? (
+      {damodaranCoverageRes ? <Panel title="Damodaran Application Coverage">
+        {!damodaranCoverage ? (
           <ErrorState message="Damodaran application coverage is unavailable." errors={damodaranCoverageRes.errors} />
         ) : (
           <>
@@ -148,14 +158,10 @@ export function HealthDiagnostics({ evidenceIntegrityRes, eventBackfillRes, damo
             </div>
           </>
         )}
-      </Panel>
+      </Panel> : null}
 
-      <Panel title="Financial History Certification">
-        {!evidenceIntegrityRes ? (
-          <div className="empty">
-            Financial certification is part of the explicit evidence audit. <Link prefetch={false} href="/data-health?audit=evidence">Run deep evidence audit</Link>.
-          </div>
-        ) : !evidenceIntegrity ? (
+      {evidenceIntegrityRes ? <Panel title="Financial History Certification">
+        {!evidenceIntegrity ? (
           <ErrorState message="Financial certification details are unavailable." errors={evidenceIntegrityRes.errors} />
         ) : evidenceIntegrity.financial_histories.length === 0 ? (
           <EmptyState label="No promoted financial histories are available for certification." />
@@ -198,14 +204,10 @@ export function HealthDiagnostics({ evidenceIntegrityRes, eventBackfillRes, damo
             </table>
           </div>
         )}
-      </Panel>
+      </Panel> : null}
 
-      <Panel title="Evidence Integrity">
-        {!evidenceIntegrityRes ? (
-          <div className="empty">
-            Deep asset and exact-reference verification is not run automatically. <Link prefetch={false} href="/data-health?audit=evidence">Run deep evidence audit</Link>.
-          </div>
-        ) : !evidenceIntegrity ? (
+      {evidenceIntegrityRes ? <Panel title="Evidence Integrity">
+        {!evidenceIntegrity ? (
           <ErrorState message="Evidence integrity report is unavailable." errors={evidenceIntegrityRes.errors} />
         ) : evidenceIntegrity.issues.length === 0 ? (
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem", flexWrap: "wrap" }}>
@@ -271,14 +273,10 @@ export function HealthDiagnostics({ evidenceIntegrityRes, eventBackfillRes, damo
             </div>
           </>
         )}
-      </Panel>
+      </Panel> : null}
 
-      <Panel title="Historical Event Evidence Backfill">
-        {!eventBackfillRes ? (
-          <div className="empty">
-            Historical backfill preview is not run automatically. <Link prefetch={false} href="/data-health?audit=backfill">Preview evidence backfill</Link>.
-          </div>
-        ) : !eventBackfill ? (
+      {eventBackfillRes ? <Panel title="Historical Event Evidence Backfill">
+        {!eventBackfill ? (
           <ErrorState message="The historical evidence preview is unavailable." errors={eventBackfillRes.errors} />
         ) : eventBackfill.entries.length === 0 ? (
           <EmptyState label="No unreferenced events are available in the current bounded batch." />
@@ -351,6 +349,6 @@ export function HealthDiagnostics({ evidenceIntegrityRes, eventBackfillRes, damo
             </div>
           </>
         )}
-      </Panel>
+      </Panel> : null}
   </>;
 }

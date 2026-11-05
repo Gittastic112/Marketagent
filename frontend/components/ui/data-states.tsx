@@ -59,7 +59,7 @@ export function StaleDataBanner({ message, lastUpdated }: { message?: string; la
         <polyline points="12 6 12 12 16 14"></polyline>
       </svg>
       <div>
-        <span style={{ color: "var(--warning-text)", fontWeight: 500 }}>Stale Data</span>
+        <span style={{ color: "var(--warning-text)", fontWeight: 500 }}>Older source data</span>
         {` - ${message || "Stored source data is older than its freshness threshold. Refresh or re-run the owning source."}`}
         {lastUpdated ? ` (Last updated: ${new Date(lastUpdated).toLocaleString()})` : ""}
       </div>
@@ -203,7 +203,7 @@ export function NotConfiguredState({ sourceName, title, description, actionText,
   );
 }
 
-export function PartialDataNotice({ message }: { message: string }) {
+export function PartialDataNotice({ message, title = "Data coverage" }: { message: string; title?: string }) {
   return (
     <div style={{
       padding: "10px 14px",
@@ -221,7 +221,7 @@ export function PartialDataNotice({ message }: { message: string }) {
         <path d="M22 12A10 10 0 1 1 12 2v0"></path>
       </svg>
       <span>
-        <strong style={{ color: "#1d4ed8" }}>Partial Data: </strong>
+        <strong style={{ color: "var(--color-info)" }}>{title}: </strong>
         {message}
       </span>
     </div>
@@ -244,29 +244,38 @@ export function DataStateNotices({
   manualMessage?: string;
 }) {
   const dataState = summarizeApiMetas(metas);
+  const unavailableText = unavailableMessage || (dataState.allUnavailable
+    ? "Data could not be loaded. Try again from the affected section."
+    : "Some sections could not load. The other sections remain available.");
+  const freshnessText = (dataState.allStale ? staleMessage : partialMessage)
+    || "Check the source date before using these figures. Refresh the relevant source when needed.";
+  const displayedMessages = [
+    ...(dataState.someUnavailable ? [unavailableText] : []),
+    ...(dataState.someStale ? [freshnessText] : []),
+    ...(dataState.hasMock && mockMessage ? [mockMessage] : []),
+    ...(dataState.hasManual && !dataState.hasMock && manualMessage ? [manualMessage] : []),
+  ].map(message => message.trim());
+  const warnings = dataState.warnings.filter(warning => !displayedMessages.includes(warning));
 
   return (
     <>
-      {dataState.allUnavailable && <UnavailableDataNotice message={unavailableMessage} />}
+      {dataState.allUnavailable && <UnavailableDataNotice message={unavailableText} />}
       {!dataState.allUnavailable && dataState.someUnavailable && (
-        <PartialDataNotice message={unavailableMessage || "Some requests failed. Available panels use returned data; missing panels are not cache fallbacks."} />
+        <PartialDataNotice title="Some sections could not load" message={unavailableText} />
       )}
-      {dataState.allStale && <StaleDataBanner message={staleMessage} />}
-      {!dataState.allStale && dataState.someStale && (
-        <PartialDataNotice message={partialMessage || "Some successful responses contain source data older than their freshness threshold."} />
-      )}
+      {dataState.someStale && <StaleDataBanner message={freshnessText} />}
       {dataState.hasMock && (
         <MockDataState message={mockMessage || "One or more panels are using mock data. Treat affected values as placeholders."} />
       )}
       {dataState.hasManual && !dataState.hasMock && (
         <ManualDataState message={manualMessage || "One or more panels are using manual overrides. Treat affected values as user-specified."} />
       )}
-      {dataState.warnings.length > 0 && (
+      {warnings.length > 0 && (
         <div style={{
           padding: "10px 14px",
           borderRadius: "6px",
-          background: "rgba(234, 179, 8, 0.1)",
-          border: "1px solid rgba(234, 179, 8, 0.2)",
+          background: "var(--surface)",
+          border: "1px solid var(--border)",
           color: "var(--text-secondary)",
           fontSize: "0.85rem",
           display: "flex",
@@ -274,10 +283,14 @@ export function DataStateNotices({
           gap: "4px",
           marginBottom: "1rem"
         }}>
-          <strong style={{ color: "var(--warning-text)" }}>Warnings:</strong>
-          <ul style={{ margin: 0, paddingLeft: "1.5rem" }}>
-            {dataState.warnings.map((w, i) => <li key={i}>{w}</li>)}
-          </ul>
+          <strong>Data notes</strong>
+          <p style={{ margin: 0 }}>{warnings[0]}</p>
+          {warnings.length > 1 && <details>
+            <summary>Show {warnings.length - 1} more data note{warnings.length === 2 ? "" : "s"}</summary>
+            <ul style={{ margin: "0.5rem 0 0", paddingLeft: "1.5rem" }}>
+              {warnings.slice(1).map(warning => <li key={warning}>{warning}</li>)}
+            </ul>
+          </details>}
         </div>
       )}
     </>

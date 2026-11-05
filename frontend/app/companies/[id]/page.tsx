@@ -11,7 +11,7 @@ import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
 import { ManualDataBadge } from "@/components/ui/data-states";
-import { summarizeApiMetas } from "@/lib/data-state-meta";
+import { hasUsableData, summarizeApiMetas } from "@/lib/data-state-meta";
 import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialStatementPeriod } from "@/lib/api";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { buildCompanyDetail } from "@/lib/company-detail";
@@ -103,13 +103,19 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
       serverFetchApiResponse<ExposureTag[]>("/exposure-tags")
     ]);
 
-    const companies = companiesRes.data || [];
-    const documents = documentsRes.data || [];
-    const events = eventsRes.data || [];
-    const alerts = alertsRes.data || [];
-    const thesisNotes = thesisNotesRes.data || [];
-    const sources = sourcesRes.data || [];
-    const allExposureTags = allExposureTagsRes.data || [];
+    const companies = hasUsableData(companiesRes) ? companiesRes.data : [];
+    const documentsAvailable = hasUsableData(documentsRes);
+    const eventsAvailable = hasUsableData(eventsRes);
+    const alertsAvailable = hasUsableData(alertsRes);
+    const thesisNotesAvailable = hasUsableData(thesisNotesRes);
+    const sourcesAvailable = hasUsableData(sourcesRes);
+    const exposureTagsAvailable = hasUsableData(allExposureTagsRes);
+    const documents = documentsAvailable ? documentsRes.data : [];
+    const events = eventsAvailable ? eventsRes.data : [];
+    const alerts = alertsAvailable ? alertsRes.data : [];
+    const thesisNotes = thesisNotesAvailable ? thesisNotesRes.data : [];
+    const sources = sourcesAvailable ? sourcesRes.data : [];
+    const allExposureTags = exposureTagsAvailable ? allExposureTagsRes.data : [];
 
     const dataState = summarizeApiMetas([
       companiesRes.meta,
@@ -124,9 +130,11 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     const company = companies.find((item) => item.id === companyId);
 
     if (!company) {
-      if (companiesRes.errors.length || companiesRes.meta.status !== "success") {
+      if (!hasUsableData(companiesRes) || companiesRes.errors.length) {
         return <><PageHeader eyebrow="Company" title="Company unavailable" />
-          <ErrorState message="Company records could not be loaded." errors={companiesRes.errors} /></>;
+          <ErrorState message="Company records could not be loaded." errors={companiesRes.errors} />
+          <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}`}>Try again</a>
+            <Link href="/companies">Back to companies</Link></div></>;
       }
       return (
         <>
@@ -178,6 +186,10 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           metas={[companiesRes.meta, documentsRes.meta, eventsRes.meta, alertsRes.meta, thesisNotesRes.meta, sourcesRes.meta, allExposureTagsRes.meta]}
           mockMessage="One or more company panels are using mock data. Treat affected evidence, alerts, or thesis signals as placeholders."
         />
+        {(!documentsAvailable || !eventsAvailable || !alertsAvailable || !thesisNotesAvailable || !sourcesAvailable || !exposureTagsAvailable) && <p className="button-row">
+          <a className="secondary-button" href={`/companies/${company.id}`}>Try again</a>
+          <Link href="/data-health">Check data connections</Link>
+        </p>}
         <header className="company-overview-header">
           <div className="company-overview-identity">
               <div className="company-meta-line">
@@ -213,19 +225,19 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
         <section className="metric-grid company-metric-grid">
           <div className="metric">
             <div className="metric-label">Recorded activity</div>
-            <div className="metric-value">{detail.counts.events + detail.counts.alerts}</div>
+            <div className="metric-value">{eventsAvailable && alertsAvailable ? detail.counts.events + detail.counts.alerts : "Unavailable"}</div>
           </div>
           <div className="metric">
             <div className="metric-label">Recorded alerts</div>
-            <div className="metric-value">{detail.counts.alerts}</div>
+            <div className="metric-value">{alertsAvailable ? detail.counts.alerts : "Unavailable"}</div>
           </div>
           <div className="metric">
             <div className="metric-label">Documents</div>
-            <div className="metric-value">{detail.counts.documents}</div>
+            <div className="metric-value">{documentsAvailable ? detail.counts.documents : "Unavailable"}</div>
           </div>
           <div className="metric">
             <div className="metric-label">Thesis</div>
-            <div className="metric-value">{detail.counts.thesisNotes > 0 ? "Active" : "None"}</div>
+            <div className="metric-value">{thesisNotesAvailable ? detail.counts.thesisNotes > 0 ? "Active" : "None" : "Unavailable"}</div>
           </div>
         </section>
 
@@ -233,7 +245,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           {/* Left Column */}
           <div className="company-overview-column">
             <Panel title="Thesis Notes">
-              {detail.thesisNotes.length === 0 ? (
+              {!thesisNotesAvailable ? <ErrorState message="Thesis notes could not be loaded." errors={thesisNotesRes.errors} /> : detail.thesisNotes.length === 0 ? (
                 <EmptyState label="No linked thesis notes." />
               ) : (
                 <div className="brief-list">
@@ -268,7 +280,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                 ) : (
                   <EmptyState label="No exposure factors linked." />
                 )}
-                <RetainedActionForm label="Add company exposure tag" action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
+                {!exposureTagsAvailable ? <ErrorState message="Exposure tags could not be loaded." errors={allExposureTagsRes.errors} /> : <RetainedActionForm label="Add company exposure tag" action={addCompanyExposureTag} style={{ display: "flex", gap: "0.5rem" }}>
                   <input type="hidden" name="company_id" value={company.id} />
                   <select name="tag_id" aria-label="Exposure tag" className="input" style={{ flex: 1, fontSize: "0.85rem" }} defaultValue="">
                     <option value="" disabled>Add an exposure tag...</option>
@@ -277,7 +289,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                     ))}
                   </select>
                   <button type="submit" style={{ fontSize: "0.85rem" }}>Add</button>
-                </RetainedActionForm>
+                </RetainedActionForm>}
               </div>
             </Panel>
 
@@ -285,6 +297,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
 
             <Panel title={company.market === "IN" ? "Filing Source" : "SEC Filing Picker"}>
               <div className="brief-list">
+                {!sourcesAvailable && <ErrorState message="Filing sources could not be loaded." errors={sourcesRes.errors} />}
                 {company.market === "IN" ? (
                   <EmptyState label="India automated filing provider not configured. Add exchange filing links manually from the Documents page." />
                 ) : !company.cik ? (
@@ -335,7 +348,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <div className="field field-wide">
                             <label>SEC Source</label>
                             <div className="data-line">
-                              <strong>{preferredSecSource?.name ?? "SEC EDGAR (automatic)"}</strong>
+                              <strong>{sourcesAvailable ? preferredSecSource?.name ?? "SEC EDGAR (automatic)" : "Source list unavailable"}</strong>
                             </div>
                           </div>
                           <div className="field field-wide">
@@ -356,7 +369,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                             name="download_text"
                           />
                           <div className="button-row">
-                            <button type="submit">Import selected filing</button>
+                            <button type="submit" disabled={!sourcesAvailable}>Import selected filing</button>
                           </div>
                         </RetainedActionForm>
                       )
@@ -367,7 +380,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
             </Panel>
 
             <Panel title="Raw Documents">
-              {detail.documents.length === 0 ? (
+              {!documentsAvailable ? <ErrorState message="Documents could not be loaded." errors={documentsRes.errors} /> : detail.documents.length === 0 ? (
                 <EmptyState label="No linked documents." />
               ) : (
                 <div tabIndex={0} className="table-wrap">
@@ -399,7 +412,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           {/* Right Column */}
           <div className="company-overview-column">
             <Panel title="News Flow (Events)">
-              {detail.events.length === 0 ? (
+              {!eventsAvailable ? <ErrorState message="Events could not be loaded." errors={eventsRes.errors} /> : detail.events.length === 0 ? (
                 <EmptyState label="No linked events." />
               ) : (
                 <div className="company-event-list">
@@ -440,7 +453,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
             </Panel>
 
             <Panel title="Risks (Alerts)">
-              {detail.alerts.length === 0 ? (
+              {!alertsAvailable ? <ErrorState message="Alerts could not be loaded." errors={alertsRes.errors} /> : detail.alerts.length === 0 ? (
                 <EmptyState label="No active alerts." />
               ) : (
                 <div tabIndex={0} className="table-wrap">
@@ -487,6 +500,8 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
       <>
         <PageHeader eyebrow="Company" title="Company detail" />
         <ErrorState message="Could not load company detail from the backend API." />
+        <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}`}>Try again</a>
+          <Link href="/companies">Back to companies</Link></div>
       </>
     );
   }

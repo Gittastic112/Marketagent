@@ -1,5 +1,16 @@
 # owner<TAB>kind (file or tree)<TAB>repository-relative path
 # Exact files only; tree reservations end in /. Unlisted paths are frozen.
+W1	file	frontend/components/ui/data-states.tsx
+W1	file	frontend/lib/data-state-meta.ts
+W1	file	frontend/lib/data-state-meta.test.ts
+W1	file	frontend/lib/data-panels.test.ts
+W1	file	frontend/app/page.tsx
+W1	file	frontend/components/data-health/health-diagnostics.tsx
+W1	file	frontend/components/data-health/provider-health.tsx
+W1	file	frontend/lib/data-health.test.ts
+W2	file	frontend/app/companies/[id]/page.tsx
+W2	file	frontend/app/companies/[id]/valuation/page.tsx
+W2	file	frontend/lib/server-page-states.test.ts
 W1	file	backend/app/api/schemas.py
 W1	file	backend/app/schemas/daily_brief.py
 W1	file	backend/app/schemas/brief.py
@@ -134,3 +145,8 @@ W5	file	scripts/run_browser_workflows.sh
 W5	file	scripts/test_local_compose.py
 W5	tree	scripts/workstreams/w5/
 W5	tree	docs/workstreams/evidence/W5/
+W1	file	frontend/lib/frontend-integrity.test.ts
+W1	file	frontend/app/daily-brief/triage/page.tsx
+W1	file	frontend/app/daily-brief/sources/[id]/page.tsx
+W1	file	frontend/components/company-setup-wizard.tsx
+W1	file	frontend/e2e/accessibility-responsive.spec.ts

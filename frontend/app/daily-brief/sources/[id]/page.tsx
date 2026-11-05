@@ -14,7 +14,7 @@ export default async function BriefSourcePage({ params }: { params: Promise<{ id
   if (!source) return <ErrorState message="Source is unavailable or does not belong to this account." errors={response.errors} />;
   return <>
     <PageHeader eyebrow={`Private research · ${source.ticker}`} title={source.title} status={source.as_of_date || "Source date unknown"} />
-    <div className="section-intro"><Link href="/daily-brief">← Research inbox</Link><Link href={`/companies/${source.company_id}`}>Company workspace</Link>
+    <div className="section-intro"><Link href="/daily-brief" prefetch={false}>← Research inbox</Link><Link href={`/companies/${source.company_id}`}>Company workspace</Link>
       <Link prefetch={false} href={`/daily-brief/triage?company_id=${source.company_id}`}>Compare this company&apos;s sources</Link>
       {source.source_kind === "pdf" && <a href={`/api/backend/brief-sources/${source.id}/pdf`} target="_blank" rel="noopener noreferrer">Open original PDF ↗</a>}
       {source.source_url && <a href={source.source_url} target="_blank" rel="noopener noreferrer">Supplied source URL ↗</a>}

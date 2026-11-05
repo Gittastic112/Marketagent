@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Company, ValuationCompanyContext, ValuationModelSummary } from "@/lib/api";
 import { serverFetchApi } from "@/lib/server-api";
+import { ApiError } from "@/lib/api/contract";
 import { deleteValuationModelWithState } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
-import { ErrorState, NotConfiguredState, PageHeader, Panel } from "@/components/page";
+import { ErrorState, PageHeader, Panel } from "@/components/page";
 import { MarketContextPanel } from "@/components/valuation/market-context-panel";
 import { formatCurrency } from "@/lib/formatting";
 import { IndustryMappingSection } from "./industry-mapping-section";
@@ -24,16 +25,21 @@ function modelReadiness(model: ValuationModelSummary): { label: string; detail: 
 
 export default async function ValuationPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const companyId = parseInt(params.id, 10);
-  if (isNaN(companyId)) {
+  const companyId = Number(params.id);
+  if (!Number.isInteger(companyId) || companyId <= 0) {
     notFound();
   }
 
   let company: Company;
   try {
     company = await serverFetchApi<Company>(`/companies/${companyId}`);
-  } catch {
-    notFound();
+    if (!company) throw new Error("Company response is unavailable");
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    return <><PageHeader eyebrow="Company" title="Valuation Models" />
+      <ErrorState message="Company information could not be loaded." />
+      <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a>
+        <Link href="/companies">Back to companies</Link></div></>;
   }
 
   const [contextResult, modelsResult] = await Promise.allSettled([
@@ -41,13 +47,14 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
     serverFetchApi<ValuationModelSummary[]>(`/companies/${companyId}/valuation-model-summaries`),
   ]);
   const context = contextResult.status === "fulfilled" ? contextResult.value : null;
-  const models = modelsResult.status === "fulfilled" ? modelsResult.value : [];
+  const modelsAvailable = modelsResult.status === "fulfilled" && Array.isArray(modelsResult.value);
+  const models = modelsAvailable ? modelsResult.value : [];
   const deleteModelAction = deleteValuationModelWithState.bind(null, companyId.toString());
 
   return (
     <>
       <div className="valuation-page-titlebar">
-        <PageHeader eyebrow={company.ticker} title="Valuation Models" status={`${models.length} model${models.length !== 1 ? "s" : ""}`} />
+        <PageHeader eyebrow={company.ticker} title="Valuation Models" status={modelsAvailable ? `${models.length} model${models.length !== 1 ? "s" : ""}` : "Models unavailable"} />
         <Link href={`/companies/${company.id}`} className="secondary-button">&larr; Back to Company</Link>
       </div>
 
@@ -58,10 +65,10 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
         <MarketContextPanel context={context} />
       ) : (
         <Panel title="Market Context">
-          <NotConfiguredState
-            title="Market context unavailable"
-            description="Currency and benchmark context could not be loaded. Model creation remains available, but verify market, country, and currency before relying on discount-rate assumptions."
-          />
+          <ErrorState message="Market context could not be loaded." />
+          <p>Model creation remains available. Review market, country and currency before using discount-rate assumptions.</p>
+          <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a>
+            <Link href={`/companies/${companyId}/setup`}>Review company setup</Link></div>
         </Panel>
       )}
 
@@ -79,8 +86,9 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
       </Panel>
 
       <Panel title="Valuation Models">
-        {modelsResult.status === "rejected" ? (
-          <ErrorState message="Could not load valuation models. No cached or placeholder models are being shown." />
+        {!modelsAvailable ? (
+          <><ErrorState message="Could not load valuation models." />
+            <a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a></>
         ) : models.length === 0 ? (
           <div className="empty">
             <strong>No valuation models yet.</strong>
