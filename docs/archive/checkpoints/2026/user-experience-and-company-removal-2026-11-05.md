@@ -93,9 +93,10 @@ localhost bindings remain. Prior worker states are restored. Retained images and
 containers permit application rollback. Restoring removed data requires a separate
 explicit decision and must not silently undo the approved deletion.
 
-GitHub publication is being prepared from PR5 merge base 9eea5d9d using only this
-pass's reviewed files. Local HEAD/index remains unchanged. Record remote checks
-and merge status separately before claiming publication.
+[PR6](https://github.com/Gittastic112/Marketagent/pull/6) publishes 27 curated files
+from PR5 merge base 9eea5d9d and owns current remote checks/merge status. All 1,434
+unselected repository blobs match the base. Local HEAD/index remains unchanged;
+local verification and remote checks retain their separate evidence boundaries.
 
 The available kit report describes 76 files, 52 documentation files, 14 specs,
 45 proposed tickets, 135 proposed acceptance cases, four schemas/examples and six

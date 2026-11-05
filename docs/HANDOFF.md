@@ -4,7 +4,8 @@ November 5, 2026 UTC: the UI review and explicitly approved US/India company
 removal are complete locally. The [checkpoint](archive/checkpoints/2026/user-experience-and-company-removal-2026-11-05.md)
 and [portable receipt](../data/reviews/user-experience-20261105.json) own evidence.
 The prior implementation release is merged in [PR5](https://github.com/Gittastic112/Marketagent/pull/5).
-This pass's GitHub publication status is recorded in the new checkpoint.
+[PR6](https://github.com/Gittastic112/Marketagent/pull/6) owns this pass's current
+GitHub checks and merge status.
 
 ## Current database boundary
 
