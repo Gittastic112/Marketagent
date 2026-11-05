@@ -8,6 +8,8 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import { errorResponse, type ApiResponse } from "./api/contract.ts";
+import type { DashboardOverview } from "./api/health.ts";
+import type { PortfolioSnapshot } from "./api/portfolio.ts";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const nativeRequire = createRequire(import.meta.url);
@@ -18,7 +20,7 @@ function success(data: unknown): ApiResponse<unknown> {
 
 // Render actual page output with only the request boundary replaced. This
 // exercises successful-empty versus failed-envelope behavior, not source text.
-async function pageHtml(relative: string, responseFor: (url: string) => ApiResponse<unknown>,
+async function pageHtml(relative: string, responseFor: (url: string) => ApiResponse<unknown> & {httpStatus?: number},
   component?: {exportName: string; props: Record<string, unknown>},
   searchParams: Record<string, string | string[]> = {tab: "series"}) {
   const cache = new Map<string, any>();
@@ -35,7 +37,13 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
     const require = (name: string): any => {
       if (name === "server-only") return {};
       if (name === "@/lib/server-api") return {serverFetchApiResponse: async (url: string) => responseFor(url),
-        serverFetchApi: async (url: string) => responseFor(url).data};
+        serverFetchApi: async (url: string) => {
+          const response = responseFor(url);
+          if (response.errors.length || response.meta.status !== "success") {
+            throw new (load("lib/api/contract").ApiError)(response.errors[0]?.message || "Request failed", response.httpStatus || 503);
+          }
+          return response.data;
+        }};
       if (name === "@/app/actions") return new Proxy({}, {get: () => async () => undefined});
       if (name === "next/link") return {__esModule: true, default: ({href, children}: any) => createElement("a", {href}, children)};
       if (name === "next/navigation") return {notFound: () => {throw new Error("Not found");},
@@ -53,6 +61,144 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
 }
 
 const company = {id: 7, name: "Mock Data company", ticker: "MOCK", market: "US"};
+
+function dashboardData(snapshot: PortfolioSnapshot | null): DashboardOverview {
+  return {companies: [], events: [], alerts: [], thesis_notes: [], processing_runs: [], portfolio_analytics: null,
+    default_portfolio: {id: 41, name: "Mock Data portfolio", base_currency: "USD", description: null},
+    default_portfolio_snapshot: snapshot,
+    daily_brief: {summary: "Mock Data stored preview", calculation_status: "complete", valuation_analysis_status: "not_run",
+      contradiction_analysis_status: "not_run", last_reviewed_at: null, new_since_last_review: {filings: [], portfolio_moves: []},
+      high_materiality_events: [], thesis_contradictions: [], thesis_confirmations: [], valuation_relevance: [],
+      processing_failures: [], inspection_queue: [], warnings: [], contains_mock_data: true, contains_stale_data: false,
+      source_event_ids: [], source_raw_document_ids: [], source_market_price_ids: [], source_alert_ids: []}};
+}
+
+test("dashboard incomplete snapshot names exact price and FX gaps within the portfolio link", async () => {
+  for (const calculation_status of ["partial", "not_available"] as const) {
+    const snapshot: PortfolioSnapshot = {id: 42, portfolio_id: 41, snapshot_date: "2026-11-04",
+      total_market_value: null, total_cost_basis: null, total_cash: 0, total_portfolio_value: null,
+      base_currency: "USD", calculation_status, holdings_count: 4, priced_holdings_count: 2,
+      missing_price_tickers_json: ["MISSING-US", "MISSING-IN"], missing_fx_pairs_json: ["INR/USD"],
+      payload_json: null, created_at: "2026-11-04T12:00:00Z"};
+    const html = await pageHtml("app/page", url => {
+      assert.equal(url, "/dashboard/overview");
+      return success(dashboardData(snapshot));
+    });
+    const card = html.match(/<a href="\/portfolio\/41">([\s\S]*?)<\/a>/)?.[1];
+    assert.ok(card, "Missing-input guidance must navigate to the affected portfolio");
+    assert.match(card, /2 of 4 holdings priced\./);
+    assert.match(card, /Prices needed: MISSING-US, MISSING-IN\./);
+    assert.match(card, /FX rates needed: INR\/USD\./);
+    assert.match(card, /Open portfolio to review missing inputs\./);
+    assert.match(card, /Not available/);
+    assert.match(card, /Stored snapshot · 2026-11-04/);
+    assert.doesNotMatch(card, /\$0\.00/);
+  }
+});
+
+test("dashboard complete and valid zero snapshots never claim missing inputs", async () => {
+  for (const value of [0, 125]) {
+    const snapshot: PortfolioSnapshot = {id: 42, portfolio_id: 41, snapshot_date: "2026-11-04",
+      total_market_value: value, total_cost_basis: value, total_cash: 0, total_portfolio_value: value,
+      base_currency: "USD", calculation_status: "complete", holdings_count: value === 0 ? 0 : 2,
+      priced_holdings_count: value === 0 ? 0 : 2, missing_price_tickers_json: [], missing_fx_pairs_json: [],
+      payload_json: null, created_at: "2026-11-04T12:00:00Z"};
+    const html = await pageHtml("app/page", () => success(dashboardData(snapshot)));
+    const card = html.match(/<a href="\/portfolio\/41">([\s\S]*?)<\/a>/)?.[1];
+    assert.ok(card);
+    assert.match(card, value === 0 ? /\$0\.00/ : /\$125\.00/);
+    assert.match(card, /Stored snapshot · 2026-11-04/);
+    assert.doesNotMatch(card, /holdings priced|Prices needed|FX rates needed|review missing inputs|Not available/);
+  }
+  const absent = await pageHtml("app/page", () => success(dashboardData(null)));
+  const card = absent.match(/<a href="\/portfolio\/41">([\s\S]*?)<\/a>/)?.[1];
+  assert.ok(card);
+  assert.match(card, /Capture a priced snapshot/);
+  assert.doesNotMatch(card, /holdings priced|Prices needed|FX rates needed|review missing inputs/);
+});
+
+test("company overview keeps failed collections unavailable and preserves loaded evidence", async () => {
+  const document = {id: 21, company_id: 7, title: "Mock Data retained filing", document_type: "manual", source_id: 2, content_hash: "mock-hash"};
+  const html = await pageHtml("app/companies/[id]/page", url => url === "/companies" ? success([{...company, cik: "0000000007", exposure_tags: []}])
+    : url === "/raw-documents/summaries" ? success([document])
+    : url === "/api/market/quote?ticker=MOCK&market=US" ? success(null)
+    : url === "/companies/7/financial-periods" || url.startsWith("/company-research/profiles") ? success([])
+    : {...errorResponse("NETWORK_ERROR", "Mock Data collection outage"), data: [{id: 999, company_id: 7, title: "Untrusted failed payload"}]});
+  for (const label of ["Events could not be loaded", "Alerts could not be loaded", "Thesis notes could not be loaded", "Exposure tags could not be loaded", "Filing sources could not be loaded"]) assert.match(html, new RegExp(label));
+  assert.match(html, /Mock Data retained filing/);
+  assert.match(html, /href="\/companies\/7"[^>]*>Try again/);
+  assert.doesNotMatch(html, /No linked events|No active alerts|No linked thesis notes|Untrusted failed payload/);
+  for (const label of ["Recorded activity", "Recorded alerts", "Thesis"]) {
+    assert.match(html, new RegExp(`${label}<\\/div><div class="metric-value">Unavailable<`));
+  }
+  assert.match(html, /Documents<\/div><div class="metric-value">1</);
+});
+
+test("company overview successful empty collections stay empty and failed documents do not become zero", async () => {
+  const loaded = await pageHtml("app/companies/[id]/page", url => success(url === "/companies" ? [{...company, exposure_tags: []}]
+    : url.startsWith("/api/market/quote") ? null : []));
+  for (const text of [/No linked documents/, /No linked events/, /No active alerts/, /No linked thesis notes/]) assert.match(loaded, text);
+  assert.match(loaded, /Recorded activity<\/div><div class="metric-value">0</);
+  assert.match(loaded, /Thesis<\/div><div class="metric-value">None</);
+  const failed = await pageHtml("app/companies/[id]/page", url => url === "/raw-documents/summaries"
+    ? errorResponse("NETWORK_ERROR", "Mock Data document outage")
+    : success(url === "/companies" ? [{...company, exposure_tags: []}] : url.startsWith("/api/market/quote") ? null : []));
+  assert.match(failed, /Documents could not be loaded/);
+  assert.match(failed, /Documents<\/div><div class="metric-value">Unavailable</);
+  assert.doesNotMatch(failed, /No linked documents/);
+});
+
+test("company overview distinguishes unavailable identity from a missing company", async () => {
+  for (const response of [errorResponse("NETWORK_ERROR", "Mock Data identity outage"), success(null)]) {
+    const unavailable = await pageHtml("app/companies/[id]/page", () => response);
+    assert.match(unavailable, /Company records could not be loaded/);
+    assert.match(unavailable, /href="\/companies\/7"[^>]*>Try again/);
+    assert.doesNotMatch(unavailable, /No company exists/);
+  }
+  const missing = await pageHtml("app/companies/[id]/page", () => success([]));
+  assert.match(missing, /No company exists for this ID/);
+});
+
+test("valuation identity transport failures are recoverable while actual 404 stays not found", async () => {
+  const unavailable = await pageHtml("app/companies/[id]/valuation/page", () => errorResponse("NETWORK_ERROR", "Mock Data identity outage"));
+  assert.match(unavailable, /Company information could not be loaded/);
+  assert.match(unavailable, /href="\/companies\/7\/valuation"[^>]*>Try again/);
+  assert.match(unavailable, /href="\/companies"/);
+  assert.doesNotMatch(unavailable, /No valuation models yet|0 models/);
+  await assert.rejects(pageHtml("app/companies/[id]/valuation/page", () => ({
+    ...errorResponse("NOT_FOUND", "Company not found"), httpStatus: 404,
+  })), /Not found/);
+});
+
+test("valuation failed model loading preserves available context without claiming zero models", async () => {
+  const html = await pageHtml("app/companies/[id]/valuation/page", url => url === "/companies/7" ? success(company)
+    : url.includes("/context/") ? success({market: "US", country: "United States", default_currency: "USD", recommended_benchmark_country: "United States", warnings: []})
+    : errorResponse("NETWORK_ERROR", "Mock Data models outage"));
+  assert.match(html, /Models unavailable/);
+  assert.match(html, /Could not load valuation models/);
+  assert.match(html, /United States/);
+  assert.match(html, /href="\/companies\/7\/valuation"[^>]*>Try again/);
+  assert.match(html, /Create Valuation Model/);
+  assert.doesNotMatch(html, /0 models|No valuation models yet/);
+});
+
+test("valuation context failure preserves saved models and successful empty models stay empty", async () => {
+  const model = {id: 31, name: "Mock Data retained model", model_type: "fcff", readiness: "calculated",
+    readiness_detail: "Mock Data calculated estimate", intrinsic_value_per_share: 10, cash_flow_currency: "INR", assumption_set_count: 1};
+  const html = await pageHtml("app/companies/[id]/valuation/page", url => url === "/companies/7" ? success(company)
+    : url.endsWith("valuation-model-summaries") ? success([model]) : errorResponse("NETWORK_ERROR", "Mock Data context outage"));
+  assert.match(html, /Market context could not be loaded/);
+  assert.match(html, /Mock Data retained model/);
+  assert.match(html, /1 model/);
+  assert.match(html, /href="\/companies\/7\/valuation\/31"/);
+  assert.match(html, /Review company setup/);
+  assert.doesNotMatch(html, /Not Configured|0 models|No valuation models yet/);
+  const empty = await pageHtml("app/companies/[id]/valuation/page", url => success(url === "/companies/7" ? company
+    : url.endsWith("valuation-model-summaries") ? [] : {market: "US", country: "United States", default_currency: "USD", warnings: []}));
+  assert.match(empty, /0 models/);
+  assert.match(empty, /No valuation models yet/);
+  assert.doesNotMatch(empty, /Models unavailable|Could not load valuation models/);
+});
 
 test("data health failures remain unavailable instead of empty results or healthy zero counts", async () => {
   const html = await pageHtml("app/data-health/page", () => errorResponse("NETWORK_ERROR", "Mock Data outage"));

@@ -11,7 +11,7 @@ export default async function BriefTriagePage({ searchParams }: { searchParams: 
   return <>
     <PageHeader eyebrow="Private research" title="Compare input evidence" status="Evidence-linked review" />
     <p>See how stored AI findings relate to the same valuation input. Compare exact passages, source dates and opposing suggestions before deciding what deserves a closer look.</p>
-    <div className="section-intro"><Link href="/daily-brief">← Research inbox</Link></div>
+    <div className="section-intro"><Link href="/daily-brief" prefetch={false}>← Research inbox</Link></div>
     {response.data ? <BriefSourceTriage key={selected ?? "unselected"} companies={response.data} initialCompanyId={selected} />
       : <ErrorState message="Company selection is unavailable. Reload this page to retry." errors={response.errors} />}
   </>;

@@ -565,8 +565,9 @@ test("data health exposes the authenticated evidence integrity report", () => {
   assert.match(page, /aria-labelledby="operations-health-title"/);
   assert.match(page, /aria-labelledby="provider-readiness-title"/);
   assert.match(page, /aria-labelledby="diagnostic-status-title"/);
-  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.error_count : unavailableLabel/);
-  assert.match(page, /evidenceIntegrity \? evidenceIntegrity\.certified_markets\.join\(", "\) \|\| "None" : unavailableLabel/);
+  assert.match(page, /evidenceIntegrity \? <div className="health-diagnostic-grid"/);
+  assert.match(page, /label="Evidence errors" value=\{evidenceIntegrity\.error_count\}/);
+  assert.match(page, /label="Certified markets" value=\{evidenceIntegrity\.certified_markets\.join\(", "\) \|\| "None"\}/);
   assert.doesNotMatch(page, /className="metric-grid" style=\{\{ marginBottom: "2rem" \}\}/);
   assert.match(styles, /\.health-metric-grid/);
   assert.match(styles, /\.health-diagnostic-grid/);
@@ -594,7 +595,7 @@ test("stale and unavailable notices describe distinct data states", () => {
   assert.match(states, /Stored source data is older than its freshness threshold/);
   assert.match(states, /Data unavailable:/);
   assert.match(states, /No cached replacement is being shown/);
-  assert.match(states, /missing panels are not cache fallbacks/);
+  assert.match(states, /dataState\.someUnavailable[\s\S]*?<PartialDataNotice title="Some sections could not load"/);
   assert.doesNotMatch(states, /backend is currently unreachable/);
   assert.doesNotMatch(states, /showing cached data/i);
   assert.doesNotMatch(states, /fontSize: "0\.7rem"/);
@@ -622,7 +623,8 @@ test("provider health exposes run classification, freshness, and owned coverage"
   assert.match(page, /provider\.freshness_label/);
   assert.match(page, /provider\.coverage_state/);
   assert.match(page, /provider\.requirement_level/);
-  assert.match(page, /label="Required config gaps"/);
+  assert.match(page, /label="Capability setup gaps" value=\{missingCoreProviders\}/);
+  assert.match(page, /US filing ingestion/);
   assert.match(page, /label="Optional integrations"/);
   assert.match(api, /last_attempt_at: string \| null/);
   assert.match(api, /requirement_level: "core" \| "optional" \| "manual"/);
@@ -808,7 +810,7 @@ test("valuation pages expose load and action failures instead of swallowing them
   const workspace = readFrontendFile("components/advanced-workspace.tsx");
 
   assert.doesNotMatch(modelsPage, /Ignored if missing/);
-  assert.match(modelsPage, /Market context unavailable/);
+  assert.match(modelsPage, /<ErrorState message="Market context could not be loaded\."/);
   assert.match(modelsPage, /Model readiness/);
   assert.doesNotMatch(detailPage, /models\.find/);
   assert.match(detailPage, /\/valuation-models\/\$\{modelId\}/);

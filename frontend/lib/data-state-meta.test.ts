@@ -16,8 +16,7 @@ test("successful stored data is available without asserting live freshness", () 
   });
 
   assert.deepEqual(badges, [
-    { label: "Available", tone: "success" },
-    { label: "24ms", tone: "muted" }
+    { label: "Available", tone: "success" }
   ]);
 });
 
@@ -70,8 +69,7 @@ test("buildDataStateBadges prioritizes request errors over legacy stale flags", 
   });
 
   assert.deepEqual(badges, [
-    { label: "Error", tone: "danger" },
-    { label: "None confidence", tone: "muted" }
+    { label: "Error", tone: "danger" }
   ]);
 });
 
@@ -174,4 +172,11 @@ test("summarizeApiMetas reports all requests unavailable without calling them st
   assert.equal(summary.someUnavailable, true);
   assert.equal(summary.allStale, false);
   assert.equal(summary.someStale, false);
+});
+
+test("manual inputs are a source label rather than a warning, and request timing is not a quality badge", () => {
+  assert.deepEqual(buildDataStateBadges({ status: "success", source: "manual",
+    last_updated: null, is_stale: false, warnings: [], confidence: "unknown", processing_time_ms: 12 }), [
+    { label: "Available", tone: "success" }, { label: "Manual Data", tone: "muted" },
+  ]);
 });

@@ -30,7 +30,7 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
             <h4 style={{ fontSize: "0.85rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--text-muted)", marginBottom: "0.5rem" }}>
               High-Materiality Events
             </h4>
-            <p className="basis-note">Up to three headlines from the selected inputs.</p>
+            <p className="muted" style={{ fontSize: "var(--font-size-sm)" }}>Up to three headlines from the selected inputs.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
               {dailyBrief.high_materiality_events.slice(0, 3).map((event) => (
                 <div key={event.event_id}>
@@ -53,7 +53,7 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
                   <span style={{ color: "var(--accent)", marginRight: "0.5rem" }}>→</span>
                   {event.headline}
                 </Link>
-                <p className="basis-note">{event.claim_type} · Evidence: {event.evidence_status === "source_linked" ? "Source linked" : "Manual record"}{event.source_name ? ` · ${event.source_name}` : ""} · {event.status}{event.source_published_at ? ` · Published ${event.source_published_at.slice(0, 10)}` : " · Publication date unknown"}</p>
+                <p className="muted" style={{ fontSize: "var(--font-size-sm)", margin: "0.4rem 0 0" }}>{event.claim_type} · Evidence: {event.evidence_status === "source_linked" ? "Source linked" : "Manual record"}{event.source_name ? ` · ${event.source_name}` : ""} · {event.status}{event.source_published_at ? ` · Published ${event.source_published_at.slice(0, 10)}` : " · Publication date unknown"}</p>
                 </div>
               ))}
             </div>
@@ -61,7 +61,7 @@ export function DailyBriefPanel({ dailyBrief }: DailyBriefPanelProps) {
         )}
 
         <div style={{ marginTop: "0.5rem" }}>
-          <Link href="/daily-brief" className="btn btn-outline" style={{ fontSize: "0.85rem" }}>
+          <Link href="/daily-brief" prefetch={false} className="btn btn-outline" style={{ fontSize: "0.85rem" }}>
             Open Daily Brief →
           </Link>
         </div>

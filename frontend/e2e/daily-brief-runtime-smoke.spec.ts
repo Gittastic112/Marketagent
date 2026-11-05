@@ -178,7 +178,7 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await expect(page.getByRole("heading", { name: "Local Brief Schedule" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Private research as generated" })).toBeVisible();
   const coveragePanel = page.locator("section.panel").filter({has: page.getByRole("heading", {name: "Stored Source Coverage", exact: true})});
-  await expect(coveragePanel.getByText(/Stored-input selection:/)).toBeVisible();
+  await expect(coveragePanel.getByText(/Selected event inputs: \d+(?: of \d+)?/)).toBeVisible();
   await expect(coveragePanel.getByText("These counts do not establish complete provider coverage or verify source claims.")).toBeVisible();
   await expect(coveragePanel.getByRole("rowheader", {name: "Public events", exact: true})).toBeVisible();
   await expect(page.getByRole("main").getByText(/^Saved as generated \d{4}-/)).toBeVisible();
@@ -195,7 +195,7 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await page.goto("/");
   const dashboardBrief = page.locator("section.panel").filter({has: page.getByRole("heading", {name: "Daily Intelligence Brief", exact: true})});
   await expect(dashboardBrief.getByText("Source Summary · Evidence: Source linked · Briefing Runtime Official Source")).toBeVisible();
-  await expect(dashboardBrief.getByText(/Stored-input selection:/)).toBeVisible();
+  await expect(dashboardBrief.getByText(/Selected event inputs: \d+(?: of \d+)?/)).toBeVisible();
   const eventLink = page.getByRole("link", {name: /BRIEF filing update/}).first();
   await expect(eventLink).toHaveAttribute("href", `/events/${event.id}/evidence-resolution`);
   await eventLink.click();

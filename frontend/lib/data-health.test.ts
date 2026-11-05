@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { test } from "node:test";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
 import { summarizeProcessingRuns } from "./data-health-summary.ts";
 import { hasUsableData } from "./data-state-meta.ts";
@@ -116,4 +121,128 @@ test("health requests never reuse another request's source or run data", async (
   assert.equal(count, 12);
   assert.notEqual(first.latestBySource, second.latestBySource);
   assert.notEqual(first.byType, second.byType);
+});
+
+const frontendRoot = fileURLToPath(new URL("../", import.meta.url));
+const nativeRequire = createRequire(import.meta.url);
+function componentHtml(file: string, exportName: string, props: Record<string, unknown>) {
+  const cache = new Map<string, any>();
+  function load(relative: string): any {
+    const candidate = path.resolve(frontendRoot, relative);
+    const filename = [candidate, `${candidate}.tsx`, `${candidate}.ts`]
+      .find(name => existsSync(name) && statSync(name).isFile())!;
+    if (cache.has(filename)) return cache.get(filename);
+    const module = {exports: {} as any};
+    cache.set(filename, module.exports);
+    const code = ts.transpileModule(readFileSync(filename, "utf8"), {compilerOptions: {
+      module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022,
+      jsx: ts.JsxEmit.ReactJSX, esModuleInterop: true,
+    }}).outputText;
+    const require = (name: string): any => {
+      if (name === "@/app/actions") return {applyEventEvidenceBackfill: () => {throw new Error("Unexpected write");}};
+      if (name === "next/link") return {__esModule: true, default: ({href, children}: any) => createElement("a", {href}, children)};
+      return name.startsWith("@/") ? load(name.slice(2))
+        : name.startsWith(".") ? load(path.resolve(path.dirname(filename), name)) : nativeRequire(name);
+    };
+    new Function("require", "module", "exports", code)(require, module, module.exports);
+    return module.exports;
+  }
+  return renderToStaticMarkup(createElement(load(file)[exportName], props));
+}
+
+function success(data: unknown): ApiResponse<unknown> {
+  return {data, meta: {status: "success", source: "internal", is_stale: false, last_updated: null,
+    warnings: [], confidence: "unknown", processing_time_ms: null}, errors: []};
+}
+const diagnosticsFile = "components/data-health/health-diagnostics";
+const diagnostics = {evidenceIntegrityRes: null, eventBackfillRes: null, damodaranCoverageRes: null,
+  evidenceIntegrity: null, eventBackfill: null, damodaranCoverage: null};
+
+test("fast health groups optional diagnostics without metric placeholders or unrequested result panels", () => {
+  const summary = componentHtml(diagnosticsFile, "HealthDiagnosticSummary", diagnostics);
+  assert.match(summary, /Optional diagnostics/);
+  assert.equal((summary.match(/Not run/g) || []).length, 3);
+  for (const mode of ["evidence", "coverage", "backfill"]) assert.match(summary, new RegExp(`href="/data-health\\?audit=${mode}"`));
+  assert.doesNotMatch(summary, /health-metric-card|Unavailable|Evidence errors/);
+  assert.equal(componentHtml(diagnosticsFile, "HealthDiagnostics", diagnostics), "");
+});
+
+test("requested diagnostic failures remain unavailable and other audits remain not run", () => {
+  const failure = errorResponse("NETWORK_ERROR", "Mock Data audit outage");
+  for (const [responseKey, message] of [
+    ["evidenceIntegrityRes", "Evidence integrity report is unavailable"],
+    ["damodaranCoverageRes", "Damodaran application coverage is unavailable"],
+    ["eventBackfillRes", "The historical evidence preview is unavailable"],
+  ]) {
+    const props = {...diagnostics, [responseKey]: failure};
+    const summary = componentHtml(diagnosticsFile, "HealthDiagnosticSummary", props);
+    assert.match(summary, /Unavailable/);
+    assert.equal((summary.match(/Not run/g) || []).length, 2);
+    assert.doesNotMatch(summary, /health-metric-card/);
+    const results = componentHtml(diagnosticsFile, "HealthDiagnostics", props);
+    assert.match(results, new RegExp(message));
+    assert.match(results, /Mock Data audit outage/);
+    assert.doesNotMatch(results, /not run automatically|No evidence integrity issues|No unreferenced events/);
+  }
+});
+
+test("completed evidence diagnostics retain measured zeros and actual empty certification results", () => {
+  const evidenceIntegrity = {error_count: 0, warning_count: 0, checked_documents: 0, checked_assets: 0,
+    checked_references: 0, checked_financial_candidates: 0, checked_financial_periods: 0,
+    certified_financial_history_count: 0, certified_markets: [], financial_histories: [], issues: [],
+    status: "healthy", financial_certification_status: "not_available"};
+  const props = {...diagnostics, evidenceIntegrity, evidenceIntegrityRes: success(evidenceIntegrity)};
+  const summary = componentHtml(diagnosticsFile, "HealthDiagnosticSummary", props);
+  assert.equal((summary.match(/class="health-metric-value">0</g) || []).length, 7);
+  assert.match(summary, /class="health-metric-value">None</);
+  const results = componentHtml(diagnosticsFile, "HealthDiagnostics", props);
+  assert.match(results, /No promoted financial histories are available for certification/);
+  assert.match(results, /No evidence integrity issues detected/);
+  assert.doesNotMatch(results, /Damodaran Application Coverage|Historical Event Evidence Backfill/);
+  const backfill = {...diagnostics, eventBackfillRes: success({entries: []}), eventBackfill: {entries: []}};
+  assert.match(componentHtml(diagnosticsFile, "HealthDiagnostics", backfill), /No unreferenced events are available in the current bounded batch/);
+});
+
+const providersFile = "components/data-health/provider-health";
+const providerBase = {configured: false, market: "US", requirement_level: "core", status: "missing_key",
+  freshness_label: "missing", recent_run_count: 0, consecutive_failures: 0};
+test("provider setup gaps name their affected capabilities without blocking the whole application", () => {
+  const providerHealth = [
+    {...providerBase, provider_name: "SEC EDGAR", capability: "filings"},
+    {...providerBase, provider_name: "Damodaran Benchmarks", capability: "benchmarks", market: "Global", status: "not_configured"},
+  ];
+  const summary = componentHtml(providersFile, "ProviderHealthSummary", {providerHealth,
+    providerHealthRes: success(providerHealth), workingProviders: 0, missingCoreProviders: 2, missingOptionalProviders: 0, failingProviders: 0});
+  assert.match(summary, /US filing ingestion/);
+  assert.match(summary, /benchmark autofill/);
+  assert.match(summary, /Capability setup gaps/);
+  assert.doesNotMatch(summary, /gaps are blockers|data-tone="danger"/);
+});
+
+test("provider unavailable and successful empty states do not become healthy zero summaries", () => {
+  const props = {providerHealth: [], workingProviders: 0, missingCoreProviders: 0, missingOptionalProviders: 0, failingProviders: 0};
+  const unavailable = componentHtml(providersFile, "ProviderHealthSummary", {...props,
+    providerHealthRes: errorResponse("NETWORK_ERROR", "Mock Data provider outage")});
+  assert.match(unavailable, /Provider health could not be loaded/);
+  assert.doesNotMatch(unavailable, /health-metric-value|No provider health information/);
+  const empty = componentHtml(providersFile, "ProviderHealthSummary", {...props, providerHealthRes: success([])});
+  assert.match(empty, /No provider health information available/);
+  assert.doesNotMatch(empty, /health-metric-value|could not be loaded/);
+});
+
+test("provider details preserve mock, manual, configuration and recorded failure distinctions", () => {
+  const providerHealth = [
+    {...providerBase, provider_name: "Mock Data SEC", capability: "filings"},
+    {...providerBase, provider_name: "Mock Data AI", capability: "ai_analysis", requirement_level: "optional", status: "mock"},
+    {...providerBase, provider_name: "Mock Data India", capability: "filings", requirement_level: "manual", market: "IN", status: "manual_only"},
+    {...providerBase, provider_name: "Mock Data prices", capability: "market_prices", requirement_level: "optional", status: "not_configured"},
+    {...providerBase, provider_name: "Mock Data failed source", capability: "news", status: "failing",
+      last_failure_at: "2026-11-05T00:00:00Z", failure_reason: "Mock Data fetch failed", consecutive_failures: 2},
+  ];
+  const html = componentHtml(providersFile, "ProviderHealthTable", {providerHealth, providerHealthRes: success(providerHealth)});
+  for (const label of ["missing_key", "mock", "manual_only", "not_configured", "failing", "Mock Data fetch failed", "2 consecutive failures"]) assert.match(html, new RegExp(label));
+  const failed = componentHtml(providersFile, "ProviderHealthTable", {providerHealth,
+    providerHealthRes: {...errorResponse("NETWORK_ERROR", "Mock Data outage"), data: providerHealth}});
+  assert.match(failed, /Provider health could not be loaded/);
+  assert.doesNotMatch(failed, /Mock Data SEC|Mock Data AI/);
 });

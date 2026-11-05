@@ -5,21 +5,36 @@ import { formatDate, HealthMetric, statusBadge } from "./health-ui";
 
 type ProviderProps = Pick<DataHealthData, "providerHealthRes" | "providerHealth" | "workingProviders" | "missingCoreProviders" | "missingOptionalProviders" | "failingProviders">;
 
-export function ProviderHealthSummary({ providerHealthRes, workingProviders, missingCoreProviders, missingOptionalProviders, failingProviders }: ProviderProps) {
+export function ProviderHealthSummary({ providerHealthRes, providerHealth, workingProviders, missingCoreProviders, missingOptionalProviders, failingProviders }: ProviderProps) {
+  const capabilityGaps = providerHealth.filter((provider) => provider.requirement_level === "core" &&
+    ["missing_key", "not_configured"].includes(provider.status));
   return (
       <section className="health-summary-section" aria-labelledby="provider-readiness-title">
         <div className="health-section-heading">
           <div>
             <h2 id="provider-readiness-title">Provider readiness</h2>
-            <p>Required gaps are blockers. Optional connections are informational.</p>
+            <p>Setup requirements apply to the named capability and market. Optional connections are informational.</p>
           </div>
         </div>
-        {!hasUsableData(providerHealthRes) ? <ErrorState message="Provider health could not be loaded." errors={providerHealthRes.errors} /> : <div className="health-metric-grid">
+        {!hasUsableData(providerHealthRes) ? <ErrorState message="Provider health could not be loaded." errors={providerHealthRes.errors} /> : providerHealth.length === 0 ? (
+          <EmptyState label="No provider health information available." />
+        ) : <>
+        <div className="health-metric-grid">
           <HealthMetric label="Working providers" value={workingProviders} tone="success" />
-          <HealthMetric label="Required config gaps" value={missingCoreProviders} tone={missingCoreProviders > 0 ? "danger" : "success"} />
+          <HealthMetric label="Capability setup gaps" value={missingCoreProviders} tone={missingCoreProviders > 0 ? "warning" : "neutral"} />
           <HealthMetric label="Failing providers" value={failingProviders} tone={failingProviders > 0 ? "danger" : "neutral"} />
           <HealthMetric label="Optional integrations" value={missingOptionalProviders} detail="Not configured" tone="muted" />
-        </div>}
+        </div>
+        {capabilityGaps.length > 0 ? <ul style={{ marginBottom: 0, color: "var(--text-secondary)" }}>
+          {capabilityGaps.map((provider) => <li key={`${provider.provider_name}-${provider.capability}-${provider.market ?? "global"}`}>
+            <strong>{provider.provider_name}</strong>: setup needed for {provider.provider_name === "SEC EDGAR" && provider.capability === "filings" && provider.market === "US"
+              ? "US filing ingestion"
+              : provider.provider_name === "Damodaran Benchmarks" && provider.capability === "benchmarks"
+                ? "benchmark autofill"
+                : `${provider.capability.replaceAll("_", " ")} (${provider.market ?? "Global"})`}.
+          </li>)}
+        </ul> : null}
+        </>}
       </section>
   );
 }
@@ -36,7 +51,7 @@ export function ProviderHealthTable({ providerHealthRes, providerHealth }: Pick<
                 <tr>
                   <th>Provider</th>
                   <th>Capability</th>
-                  <th>Requirement</th>
+                  <th>Capability requirement</th>
                   <th>Market</th>
                   <th>Coverage</th>
                   <th>Status</th>

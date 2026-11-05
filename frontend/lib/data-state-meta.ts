@@ -46,18 +46,20 @@ export function buildDataStateBadges(meta: (ApiMeta & { is_mock?: boolean }) | n
   if (meta.is_mock || meta.source === "mock") {
     badges.push({ label: "Mock Data", tone: "warning" });
   } else if (meta.source === "manual" || (meta as any).is_manual) {
-    badges.push({ label: "Manual Data", tone: "warning" });
+    badges.push({ label: "Manual Data", tone: "muted" });
   }
 
-  if (meta.confidence && meta.confidence !== "high") {
+  if (meta.confidence && !["high", "none", "unknown"].includes(meta.confidence)) {
     badges.push({ label: `${sentenceCase(meta.confidence)} confidence`, tone: "muted" });
   }
 
-  if (meta.processing_time_ms !== null && meta.processing_time_ms !== undefined) {
-    badges.push({ label: `${meta.processing_time_ms}ms`, tone: "muted" });
-  }
-
   return badges;
+}
+
+function uniqueWarnings(metas: Array<ApiMeta & { is_mock?: boolean }>): string[] {
+  return Array.from(new Set(metas.flatMap(meta => meta.warnings || [])
+    .filter(warning => typeof warning === "string")
+    .map(warning => warning.trim()).filter(Boolean)));
 }
 
 export function summarizeApiMetas(
@@ -87,7 +89,7 @@ export function summarizeApiMetas(
     someUnavailable: unavailableMetas.length > 0,
     hasMock: presentMetas.some((meta) => Boolean(meta.is_mock) || meta.source === "mock"),
     hasManual: presentMetas.some((meta) => meta.source === "manual" || (meta as any).is_manual),
-    warnings: Array.from(new Set(presentMetas.flatMap((meta) => meta.warnings || [])))
+    warnings: uniqueWarnings(presentMetas)
   };
 }
 
@@ -95,5 +97,5 @@ export function extractWarnings(
   metas: Array<(ApiMeta & { is_mock?: boolean }) | null | undefined>
 ): string[] {
   const presentMetas = metas.filter((meta): meta is ApiMeta & { is_mock?: boolean } => Boolean(meta));
-  return Array.from(new Set(presentMetas.flatMap((meta) => meta.warnings || [])));
+  return uniqueWarnings(presentMetas);
 }

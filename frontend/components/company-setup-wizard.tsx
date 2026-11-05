@@ -126,7 +126,7 @@ export function CompanySetupWizard() {
   function renderStepIndicator() {
     const steps = ["Identity", "Lookup", "Fundamentals", "Industry", "Review"];
     return (
-      <ol className="company-setup-steps" aria-label={`Company setup step ${step} of ${steps.length}`}>
+      <ol className="company-setup-steps" tabIndex={0} aria-label={`Company setup step ${step} of ${steps.length}`}>
         {steps.map((s, idx) => (
           <li className={step >= idx + 1 ? "is-reached" : ""} key={s}>
             <span>{idx + 1}</span>

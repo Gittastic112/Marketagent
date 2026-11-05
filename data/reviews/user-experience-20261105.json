@@ -1,0 +1,32 @@
+{
+  "version": "user-experience-review-v1",
+  "date_utc": "2026-11-05",
+  "status": "local_complete_remote_publication_pending",
+  "scope": "UI request-state repairs, source-note presentation, brief prefetch prevention, mobile setup accessibility and explicitly approved local company-data removal",
+  "frontend_tests": {"passed": 351, "failed": 0, "typecheck": "passed"},
+  "build": {"platform": "linux/arm64", "production_compilation": "passed", "dependency_basis": "Verified November 4 R2 images; current manifest and lock hashes match", "fresh_os_download": "failed_upstream_http503", "pins_changed": false},
+  "browser": {"populated_views": 19, "empty_views": 13, "empty_setup_workflows": 2, "final_page_errors": 0, "final_page_overflow": 0, "final_unintended_requests": 0, "scoped_accessibility_violations": 0, "inconclusive_checks_retained": true, "each_pass_preserves_its_database_baseline": true},
+  "removal": {
+    "authorization": "Explicit confirmation of the full concrete removal plan",
+    "approved_scope_sha256": "6d4e92566dfd1127f66bf8561094391a28c001b326eb45768361ea06be17c7ca",
+    "reviewed_sql_sha256": "1463c11423ad3f5a8f9125cb9048a1bd61515142cd2c6ff4632a0dd091210755",
+    "status": "committed_and_verified",
+    "companies_removed": 12,
+    "markets": {"US": 7, "IN": 5},
+    "rows_removed": 7314,
+    "tables_changed": 28,
+    "tables_unchanged": 82,
+    "table_fingerprints_verified_before_and_after": 110,
+    "metadata_member_removals": 2,
+    "portfolio_account_settings_shared_sources_global_references_preserved": true,
+    "repository_files_removed": 0,
+    "normal_records_created_by_verification": 0,
+    "schema_or_sequence_reset": false
+  },
+  "backup": {"bytes": 128449855, "sha256": "195305350b932945e76d7599ed175a7c606e54d781569f795e43c6f0962684b3", "mode": "0600", "quiesced": true, "archive_listing_and_full_payload_verified": true, "restore_tested": false, "previous_backups_preserved": true},
+  "runtime": {"frontend_image": "sha256:105d5bc11069869b3b0f04bbc1fbad9b062a171033ab04ffd6e9799cc6b64148", "frontend_tag": "market-intelligence-review-frontend:20261105-ux-r3", "backend_image": "sha256:285827fb5238e2d5c0e65531761e36265acf4dc45e3a40811e60e336e2af34f9", "schema": "u3u3u3u3u3u3", "settings_and_original_database_volume_preserved": true, "ports": "localhost_only", "daily_brief_worker": "running", "source_worker_and_pgadmin": "stopped"},
+  "preservation": {"local_head": "fba390bf4d22146229cfabd2d621b8ebd9975fe2", "git_index_unchanged": true, "protected_settings_read": false, "source_originals_and_failed_evidence_preserved": true},
+  "publication": {"base": "9eea5d9d58f66f2ef7a3c91d5f35745762f410e0", "status": "pending_curated_publication", "private_sql_inventories_backups_included": false},
+  "limits": ["Financial fact completeness is not established by this UI pass or company removal", "Five actual business days and final acceptance remain unperformed", "No new disposable local database or populated restore drill", "No public deployment, broker activity or external AI permission grant"],
+  "local_evidence": "output/playwright/user-experience-20261105/"
+}
