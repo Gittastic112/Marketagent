@@ -1,7 +1,7 @@
 # Product Roadmap
 
 **Prioritized:** 2026-08-24. Product evidence: see Current State.
-Completion sequencing reconciled: 2026-11-04 against the supplied delivery report, current source and independent completion work.
+Completion sequencing reconciled: 2026-11-07 against the supplied delivery report, current source and independent completion work.
 
 **Completion requests:** use the [ten-milestone tracker](completion-tracker.md).
 It defines ten acceptance gates for the remaining local release, not an estimate
@@ -59,9 +59,10 @@ Acceptance gates:
 
 ## Priority 2: Broader Real-Issuer and India Provider Coverage (REFERENCE GATE PASSED, EXPANSION OPEN)
 
-Preserve the dated AAPL/APSEZ reference certification and the reviewed histories
-for all 11 scoped securities. Resolve remaining complete valuation-input scopes;
-broader issuer/layout expansion and new official India adapters are future scope.
+Preserve the dated AAPL/APSEZ certification and the historical receipts for the
+11 removed securities. Do not restore them automatically. The current company
+universe is empty. Broader issuer/layout validation needs an authorized company
+and source scope; complete claim values cannot be inferred from source counts.
 
 Acceptance gates:
 
@@ -195,7 +196,9 @@ blocked/evaluation state, owner-scoped review, and approval gating. Reviewers ca
 now request bounded, deterministic exact-passage candidates from the declared
 stored raw documents. Candidates include exact character offsets, numeric-aware
 lexical coverage, confidence, source links, and limitations; choosing one only
-fills the review draft and never validates or approves it. Provider-generated
+fills the review draft and never validates or approves it. Evaluation v4 adds per-marker numeric-literal, multiple-period and instruction/inference cues.
+Flagged claims require review notes before approval; changed citation evidence
+resets approval while retaining its prior review receipt. Provider-generated
 citation completeness and claim-level semantic entailment remain partial.
 Stored-research search now unifies the primary evidence and research objects,
 keeps shared narratives visibly interpretive, scopes private notes/sessions to
@@ -224,6 +227,21 @@ Delivered behavior, retaining the existing per-action gates:
   The additive migration grants nothing. New external outputs retain the exact
   permitting decision. Current policy covers ten Gemini actions; unsupported
   internal actions remain unavailable and actual Mock Data generation stays local.
+
+## November 7 development sequence
+
+The first three increments are implemented in the [current checkpoint](../archive/checkpoints/2026/product-development-2026-11-07.md).
+They improve the existing workflows without creating companies or research activity.
+
+| Increment | Delivered behavior or prerequisite |
+|---|---|
+| Financial evidence planning | Read-only three-year review tracks for operating companies, bank equity and equity cash flow. Missing disclosures, unit conflicts, duplicate scopes and source linkage lead to existing review actions. No completeness certificate or new financial values |
+| Macro workbench | Real canonical calculations replace fixed compatibility coefficients; constant regressors stay unavailable, missing segment coefficients withhold full-company totals, and forms preserve explicit zeros and errors. Signed top-down duration remains distinct from source-convention coefficients |
+| AI claim review | Bounded deterministic cues and required review rationale strengthen exact-citation review without provider calls or automatic approval |
+| Next issuer/layout | Select a new company and dated official filings after the deliberate company reset; run source hashes, units, periods, scope and identity reconciliation before promotion. The existing harness remains available, but no new company is implied by this pass |
+| India provider integration | Establish a documented official endpoint, intended-use rights, response examples, freshness and rate limits before an adapter. Require bounded transport, Processing Runs, fixtures and read-only preview before apply. Manual official-source intake remains supported |
+| Peer comparison expansion | Obtain permitted peer data with currency/accounting/period definitions before FX normalization or calibrated scoring. Do not treat missing comparisons as zero or invent a score |
+| Operating acceptance | Record actual use and failures. Agent tests do not create business-day usage, genuine transactions or off-device recovery evidence |
 
 ## Deferred
 

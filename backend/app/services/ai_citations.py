@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.models.ai import AiOutput
 from app.models.raw_document import RawDocument
+from app.services.ai_claim_review import review_claim_literals
 
 
 PROHIBITED_RECOMMENDATION_PATTERNS = (
@@ -129,6 +130,18 @@ def validate_ai_citations(
         status = "partial"
     else:
         status = "invalid"
+    if output.human_review_status == "approved" and results != (output.citations_json or []):
+        history = dict(output.evaluation_json or {})
+        history["prior_human_reviews"] = [*history.get("prior_human_reviews", []), {
+            "status": output.human_review_status, "notes": output.review_notes,
+            "reviewer_id": output.reviewer_id,
+            "reviewed_at": output.reviewed_at.isoformat() if output.reviewed_at else None,
+            "reason": "Citation evidence changed; renewed human review is required.",
+        }]
+        output.evaluation_json = history
+        output.human_review_status = "pending"
+        output.reviewer_id = None
+        output.reviewed_at = None
     output.citations_json = results
     output.citation_validation_status = status
     output.evaluation_json = evaluate_ai_output(output)
@@ -168,12 +181,15 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
         if key != "citations_required"
     )
     return {
-        "version": "ai-output-eval-v3",
+        "version": "ai-output-eval-v4",
         # Generation provenance is immutable even when citation/review checks change.
         **({"valuation_basis": output.evaluation_json["valuation_basis"]}
            if isinstance(output.evaluation_json, dict) and "valuation_basis" in output.evaluation_json else {}),
+        **({"prior_human_reviews": output.evaluation_json["prior_human_reviews"]}
+           if isinstance(output.evaluation_json, dict) and "prior_human_reviews" in output.evaluation_json else {}),
         "evaluation_scope": "citation_and_policy_checks_only",
         "interpretation_quality": "not_evaluated",
+        "claim_review": review_claim_literals(output.output_text or "", output.citations_json or []),
         "limitations": [
             "Exact source spans and recommendation-language checks do not validate numeric accuracy, period alignment, causal claims or source-text instructions.",
             "Human review of interpretation is separate and is never granted by these automated checks.",

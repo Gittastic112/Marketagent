@@ -131,6 +131,7 @@ def test_post_macro_scenario_translates_shocks():
                 "gdp_shock": -0.02,
                 "inflation_shock": 0.015,
                 "currency_shock": 0.05,
+                "currencyVariableDirection": "Mock Data source: stronger USD",
             },
         )
 

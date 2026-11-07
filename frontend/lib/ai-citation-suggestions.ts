@@ -23,7 +23,20 @@ export function readableEvaluation(output: Pick<AiOutput, "evaluation_json">) {
   const evaluation = output.evaluation_json;
   const raw = evaluation?.checks;
   const checks = raw && typeof raw === "object" && !Array.isArray(raw) ? Object.entries(raw) : [];
+  const claimReview = evaluation?.claim_review as {requires_review_notes?: unknown; claims?: unknown} | undefined;
+  const claims = Array.isArray(claimReview?.claims) ? claimReview.claims : [];
+  const claimFlags = claims.flatMap((claim: unknown) => {
+    if (!claim || typeof claim !== "object") return [];
+    const item = claim as {source_id?: unknown; claim_text?: unknown; flags?: unknown};
+    if (!Array.isArray(item.flags)) return [];
+    return item.flags.filter((flag: unknown): flag is {message: string; code: string} => !!flag && typeof flag === "object"
+      && typeof (flag as {message?: unknown}).message === "string" && typeof (flag as {code?: unknown}).code === "string")
+      .map(flag => ({...flag, sourceId: typeof item.source_id === "string" ? item.source_id : "Unknown source",
+        claimText: typeof item.claim_text === "string" ? item.claim_text : ""}));
+  });
   return {
+    claimFlags,
+    requiresReviewNotes: claimReview?.requires_review_notes === true,
     passed: evaluation?.passed === true && checks.length > 0
       && checks.every(([name, value]) => typeof value === "boolean" && (name === "citations_required" || value === true)),
     failedChecks: checks.filter(([name, value]) => name !== "citations_required" && value !== true).map(([name]) => name),

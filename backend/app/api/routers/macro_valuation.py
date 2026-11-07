@@ -2,11 +2,14 @@ from datetime import date
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.schemas.common import ApiResponse
+from app.schemas.macro import (
+    MacroScenarioRequest, TopDownMacroPeriod, TopDownMacroRequest,
+    BottomUpMacroSegment, BottomUpMacroRequest,
+)
 from app.api.errors import PublicApiError
 from app.db.session import get_db
 from app.models.macro import MacroObservation, MacroSeries
@@ -21,50 +24,6 @@ from app.services.macro_scenario_translation import MacroScenarioTranslationServ
 from app.services.top_down_macro_sensitivity import TopDownMacroSensitivityService
 
 router = APIRouter(prefix="/api/valuation/macro", tags=["valuation-macro"])
-
-
-class MacroScenarioRequest(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    market: str = DEFAULT_MACRO_MARKET
-    country: str = DEFAULT_MACRO_COUNTRY
-    sic_code: str = Field(..., min_length=1)
-    rate_shock: float = 0.0
-    gdp_shock: float = 0.0
-    inflation_shock: float = 0.0
-    currency_shock: float = 0.0
-    currency_variable_direction: str | None = Field(default=None, alias="currencyVariableDirection")
-
-
-class TopDownMacroPeriod(BaseModel):
-    period: str
-    operating_income: float
-    market_cap: float
-    total_debt: float
-    enterprise_value: float | None = None
-    change_in_long_term_bond_rate: float
-    gdp_growth: float
-    inflation_change: float
-    currency_change: float
-
-
-class TopDownMacroRequest(BaseModel):
-    frequency: str = "annual"
-    periods: list[TopDownMacroPeriod]
-
-
-class BottomUpMacroSegment(BaseModel):
-    model_config = ConfigDict(populate_by_name=True)
-
-    name: str
-    sic_code: str = Field(..., alias="sicCode")
-    value: float
-
-
-class BottomUpMacroRequest(BaseModel):
-    market: str = DEFAULT_MACRO_MARKET
-    country: str = DEFAULT_MACRO_COUNTRY
-    segments: list[BottomUpMacroSegment]
 
 
 @router.get("/sector", response_model=ApiResponse[dict[str, Any]])
@@ -167,6 +126,9 @@ def run_macro_scenario(
             code="MACRO_BENCHMARK_NOT_FOUND",
             message="Sector macro sensitivity benchmark not found",
         ) from exc
+    except ValueError as exc:
+        raise PublicApiError(status_code=400, code="MACRO_SCENARIO_INVALID",
+            message="Use finite shocks and an unambiguous sector benchmark.") from exc
 
     return ApiResponse(data=result)
 
@@ -182,7 +144,7 @@ def run_top_down_macro_sensitivity(payload: TopDownMacroRequest):
         raise PublicApiError(
             status_code=400,
             code="MACRO_PERIODS_INVALID",
-            message="At least 3 periods with valid macro inputs are required.",
+            message="At least 3 periods and at most 120 unique chronological periods with finite company and macro inputs are required; use YYYY, YYYY-QN or ISO dates.",
             field="periods",
         ) from exc
 
@@ -211,7 +173,7 @@ def run_bottom_up_macro_sensitivity(
         raise PublicApiError(
             status_code=400,
             code="MACRO_SEGMENTS_INVALID",
-            message="Total segment value must be greater than zero.",
+            message="Total segment value must be greater than zero; use finite non-negative values and unambiguous sector benchmarks.",
             field="segments",
         ) from exc
 

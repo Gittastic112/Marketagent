@@ -88,6 +88,32 @@ def test_ai_citation_fixture_cases(
         # These deliberately incorrect Mock Data claims pass text matching, never semantic review.
         assert data["citation_validation_status"] == "valid"
         assert data["reviewer_id"] is None and data["reviewed_at"] is None
+        assert data["evaluation_json"]["claim_review"]["requires_review_notes"] is True
+
+
+def test_claim_flags_require_review_notes_and_changed_evidence_invalidates_approval(client, db_session):
+    case = CASES[4]
+    output, document = _create_output(db_session, case, suffix="claim-notes")
+    path = f"/ai-outputs/{output.id}"
+    citations = {"citations": [{"source_id": f"raw_document:{document.id}", "quote": case["quote"]}]}
+    assert client.post(path + "/citations/validate", json=citations).status_code == 200
+    assert client.patch(path + "/review", json={"status": "approved"}).status_code == 409
+    approved = client.patch(path + "/review", json={"status": "approved", "notes": "Mock Data review reasoning."})
+    assert approved.status_code == 200
+    unchanged = client.post(path + "/citations/validate", json=citations).json()["data"]
+    assert unchanged["human_review_status"] == "approved"
+    changed = client.post(path + "/citations/validate", json={"citations": [{
+        "source_id": f"raw_document:{document.id}", "quote": "Mock Data: " + case["quote"]}]}).json()["data"]
+    assert changed["human_review_status"] == "pending"
+    assert changed["reviewer_id"] is None
+    assert changed["evaluation_json"]["prior_human_reviews"][0]["notes"] == "Mock Data review reasoning."
+
+
+def test_re_evaluation_refreshes_blocked_state(client, db_session):
+    output, _ = _create_output(db_session, CASES[1], suffix="refresh-blocked")
+    output.is_blocked = False; db_session.commit()
+    result = client.post(f"/ai-outputs/{output.id}/evaluate").json()["data"]
+    assert result["is_blocked"] is True
 
 
 def test_ai_citation_validation_requires_output_source_markers(

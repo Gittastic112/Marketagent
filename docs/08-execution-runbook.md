@@ -30,6 +30,31 @@ Compose explicitly select the test target. Supported Linux/Python 3.14 environme
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
 
+## Review financial evidence and macro inputs
+
+For an existing company, open Fundamentals and use Financial review plan. Choose
+Operating company, Bank / financial-services equity, or Equity cash flow and
+dividends. The optional latest year creates a read-only three-year checklist; it
+does not create financial periods. Follow each source/candidate link, resolve
+units and conflicting scopes, then use the existing explicit promotion workflow.
+Bank review deliberately excludes deposits-as-FCFF-debt assumptions. Source-linked
+counts are traceability, not independent completeness certification.
+
+The authenticated GET /api/companies/{company_id}/financial-statements/review-plan
+accepts track and optional latest_year. Unknown companies return 404, invalid
+tracks/future years return 422. Its reads are bounded and never call providers.
+
+Macro Workbench calculations do not save history or models. Enter explicit zero
+only when intended, use chronological consistent period labels and align currency,
+scale and macro directions. Update period count expands history to 24 UI periods
+(120 through the API). Missing factors stay unavailable. Covered segment/scenario
+contributions are partial sums; they are not complete company estimates.
+
+AI output review shows exact citations separately from claim-review cues. Resolve
+numeric, period or instruction/inference flags and record your rationale before
+approval. Changing the citation evidence resets approval and retains its prior
+review receipt. No new external AI call occurs in these deterministic checks.
+
 ## Rotate the local database password
 
 This is an operator maintenance step, not an instruction for an agent to read
@@ -42,12 +67,12 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. From the repository root, use the verified November 5 image override and validate
+2. From the repository root, use the verified November 7 image override and validate
    configuration without printing it:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml config --quiet
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml stop frontend backend scheduler source_scheduler
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml config --quiet
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml stop frontend backend scheduler source_scheduler
    docker exec -it market_intel_postgres psql -X -U marketintel -d marketintel
    ~~~
 
@@ -58,9 +83,9 @@ password into chat or commands. Never use `docker compose down -v`.
    the current image versions and stopped optional services:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml create --no-build source_scheduler pgadmin
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml ps --all
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml create --no-build source_scheduler pgadmin
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml ps --all
    ~~~
 
 5. Verify backend/frontend/database health, sign-in and the company list (currently
@@ -74,7 +99,7 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The local override retains the November 5 frontend and November 4 backend images. On another checkout,
+The local override selects the November 7 product frontend R3 and backend/workers R2. On another checkout,
 use that installation's verified image override; do not substitute older tags.
 
 ## Dependency and container updates

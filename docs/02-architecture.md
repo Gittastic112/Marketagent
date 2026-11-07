@@ -309,6 +309,19 @@ records must retain explicit fallback states.
 
 ### Financials to valuation
 
+The read-only financial review planner joins company-scoped periods, scalar
+metrics, reviewed candidates and active source revisions. It never loads binary
+document payloads or promotes evidence. Bounded source/candidate links and separate operating,
+bank-equity and equity-cash-flow tracks guide the Fundamentals panel; traceability
+counts do not certify completeness. The normalization route verifies that the
+selected period belongs to the company before any write.
+
+Macro canonical and compatibility routes share backend calculation services and
+pure domain contracts. Compatibility calls verify company/model ownership and
+do not persist inputs/results. Chronological consecutive observations, nullable
+constant-factor slopes, per-factor segment coverage and incomplete scenario totals
+cross the API unchanged; the frontend only formats results and validates forms.
+
 ```mermaid
 flowchart LR
     F["Filing, XBRL, spreadsheet"] --> C["Extraction candidates"]
@@ -347,6 +360,14 @@ same worker lock, retaining its audit record and unlocking draft editing; runnin
 or completed jobs cannot be cancelled. This does not add a general-purpose job platform.
 
 ### AI claim to exact evidence
+
+Evaluation v4 separates citation/policy pass status from bounded per-marker
+literal review cues. The claim-review service compares numeric tokens, flags
+multiple source periods and instruction/inference language, and exposes its
+100-marker/100,000-character limit. Approval requires notes for flags or truncation;
+it is still a human judgment. Citation changes reset existing approval and retain
+its prior review receipt in evaluation metadata. Re-evaluation synchronizes the
+blocked state without a provider request or bulk rewrite of historical output.
 
 The Daily Brief research inbox has a separate private-source workflow:
 `brief_sources` routes -> intake/extraction service -> owner-scoped source table

@@ -75,6 +75,57 @@ class FinancialStatementPeriodRead(FinancialStatementPeriodCreate):
 CandidateReviewStatus = Literal["needs_review", "reviewed", "rejected", "overridden"]
 
 
+class FinancialReviewSourceLink(BaseModel):
+    candidate_id: int
+    document_id: int
+    href: str
+
+
+class FinancialReviewFieldRead(BaseModel):
+    metric: str
+    label: str
+    status: Literal["missing", "ambiguous", "unit_review", "source_review", "recorded_with_source", "promotion_review", "candidate_review"]
+    action: str
+    recorded_metric_ids: list[int]
+    candidate_ids: list[int]
+    candidate_count: int
+    source_document_ids: list[int]
+    source_links: list[FinancialReviewSourceLink]
+
+
+class FinancialReviewPeriodRead(BaseModel):
+    year: int
+    period_id: int | None
+    currency: str | None
+    report_date: date | None
+    notes: list[str]
+    fields: list[FinancialReviewFieldRead]
+    source_linked_count: int
+    checklist_count: int
+
+
+class FinancialReviewActionRead(BaseModel):
+    label: str
+    href: str
+    reason: str
+
+
+class FinancialReviewPlanRead(BaseModel):
+    version: Literal["financial-review-plan-v1"]
+    company_id: int
+    ticker: str
+    track: Literal["operating", "bank_equity", "equity_cash_flow"]
+    generated_at: datetime
+    claim_type: Literal["Calculation"]
+    source_document_count: int
+    latest_year: int | None
+    periods: list[FinancialReviewPeriodRead]
+    actions: list[FinancialReviewActionRead]
+    truncated: bool
+    basis: str
+    limitations: list[str]
+
+
 class FinancialCandidateReviewUpdate(BaseModel):
     review_status: CandidateReviewStatus
     expected_updated_at: datetime | None = None

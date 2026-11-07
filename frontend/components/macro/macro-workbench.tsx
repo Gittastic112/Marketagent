@@ -19,10 +19,13 @@ export function MacroWorkbenchTabs({ activeTab }: { activeTab: MacroWorkbenchTab
   );
 }
 
-export function ClaimTypeBadges() {
+export function ClaimTypeBadges({activeTab}: {activeTab: MacroWorkbenchTab}) {
+  const labels = activeTab === "top-down" ? ["User Assumption", "Calculation"]
+    : activeTab === "sector" || activeTab === "series" ? ["Source Summary"]
+    : ["Source Summary", "User Assumption", "Calculation"];
   return (
     <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginBottom: "1rem" }}>
-      {["Fact", "Calculation", "Source Summary", "User Assumption"].map((label) => (
+      {labels.map((label) => (
         <span key={label} className="badge">
           {label}
         </span>
@@ -33,14 +36,14 @@ export function ClaimTypeBadges() {
 
 export function MacroLimitationsNotice() {
   return (
-    <div className="section-block" style={{ marginBottom: "1rem" }}>
-      <strong>Required interpretation guardrails</strong>
+    <details className="section-block" style={{ marginBottom: "1rem" }}>
+      <summary>How to interpret macro results</summary>
       <ul style={{ marginBottom: 0 }}>
         <li>Coefficient signs are preserved from the source file.</li>
-        <li>Macro scenarios do not mutate DCF assumptions automatically.</li>
+        <li>These scenarios leave your saved valuation assumptions unchanged.</li>
         <li>Currency direction must be defined for currency shocks.</li>
-        <li>Missing SIC coverage reduces confidence.</li>
+        <li>Missing coefficients withhold full-company estimates; covered contributions stay visible.</li>
       </ul>
-    </div>
+    </details>
   );
 }

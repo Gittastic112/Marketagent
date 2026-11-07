@@ -1,0 +1,94 @@
+{
+  "date": "2026-11-07",
+  "kind": "local_software_verification",
+  "scope": [
+    "financial_review_plan",
+    "macro_calculation_integrity",
+    "ai_claim_review",
+    "documentation_reconciliation"
+  ],
+  "tests": {
+    "backend": {
+      "passed": 1921,
+      "skipped": 6,
+      "upstream_warnings": 5
+    },
+    "frontend": {
+      "passed": 363,
+      "typecheck": "passed"
+    },
+    "repository": {
+      "passed": 75
+    },
+    "contract_routes": 28,
+    "locked_runtime_packages": 66,
+    "locked_test_packages": 70
+  },
+  "production": {
+    "backend_image": "sha256:d5fcc821cade11026e9392ec781dc619a0a99016a076c17e26ec6b2e80248372",
+    "frontend_image": "sha256:0b34cf0e38d15ec188b0cdbafbb8eb5e15f944088d945c8f7c2bd07e77fdc066",
+    "signed_pinned_builds": true,
+    "dependencies_added": false,
+    "application_source_files_match_build_manifest": 710,
+    "test_only_browser_locator_edits_after_build": true
+  },
+  "browser": {
+    "status": "success",
+    "engine": "owned isolated Chromium",
+    "user_browser_profile_used": false,
+    "viewports": [
+      1440,
+      390
+    ],
+    "views": 22,
+    "interactions": 6,
+    "unexpected_errors": 0,
+    "blocked_requests": 0,
+    "horizontal_overflow": false,
+    "scoped_accessibility_violations": 0,
+    "some_contrast_checks_inconclusive": true,
+    "calculation_input_basis": "Mock Data, transient and not saved"
+  },
+  "preservation": {
+    "database_tables_unchanged": 110,
+    "stored_assets_unchanged": true,
+    "original_postgres_preserved": true,
+    "company_count": 0,
+    "preexisting_empty_universe_briefs": 1,
+    "schema": "u3u3u3u3u3u3",
+    "worker_states_restored": true,
+    "localhost_ports_only": true,
+    "local_head": "fba390bf4d22146229cfabd2d621b8ebd9975fe2",
+    "local_index_sha256": "0f7cb26c0e162730396ea97090223c4eab69cf697f9b5124b156363f5cd7231e",
+    "preexisting_dirty_entries": 848,
+    "protected_files_read": false
+  },
+  "backup": {
+    "bytes": 551827,
+    "sha256": "132d1ae9b41a86b1d3ccfe96452116041716bbe9a1b649d29be25f36c4cf8228",
+    "mode": "0600",
+    "full_archive_read": "passed",
+    "restore_drill_performed": false
+  },
+  "publication": {
+    "base_sha": "4d96c5e2da83671f3740a1e50bd342c762582171",
+    "branch": "codex/product-review-20261107",
+    "status_authority": "GitHub pull request and check records; local checks are separate"
+  },
+  "limits": [
+    "No company facts or scenarios inserted after the approved reset.",
+    "Mock Data browser calculations were transient and not saved.",
+    "AI review cues are not semantic certification or automatic approval.",
+    "Historical disclosure gaps, provider permissions and actual-use acceptance remain external.",
+    "No new populated restore drill, public deployment or broker integration."
+  ],
+  "local_evidence_sha256": {
+    "logs/backend-full-2.txt": "64f5161902eb4b35e0d5a71882b3d51ae86ac5eedcfd18f5300165ca138ba09e",
+    "logs/frontend-final-3.txt": "0c2db254f0c316064befa85a7e073859c339dbae1742a1c8711b2c8132de6c77",
+    "logs/repository-tests-final.txt": "509faf191b5de503b57f898609ad31245a9502a8245e52543a14e2b8379757ec",
+    "logs/dependency-locks.txt": "81bacb9e6f2ef49561bf9b5130f831c73e4b4945f1b37d2c53d5136ee948ed3e",
+    "browser-r5/results.json": "773f69fbf8c303701dd6734ac7766f9ff26c39ee5da2e642ae1440ae35a96425",
+    "runtime-final.json": "ee6a661154f5f02afa7635781e268d4f4e7cea6235c3a9c7568bcd57d618da88",
+    "source-manifest.json": "2b00a53692ebfe7315aa52fd65330f2ea43374d35662b5410f0a655409c5535b"
+  }
+}

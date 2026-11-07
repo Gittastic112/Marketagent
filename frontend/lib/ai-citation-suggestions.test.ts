@@ -9,6 +9,18 @@ import {
   readableEvaluation,
 } from "./ai-citation-suggestions.ts";
 
+test("claim flags remain review guidance and malformed diagnostic fields do not crash", () => {
+  const result = readableEvaluation({evaluation_json: {passed: true, checks: {citations_valid: true}, claim_review: {
+    requires_review_notes: true, claims: [null, {flags: [false]}, {source_id: "raw_document:7", claim_text: "Mock Data 21%",
+      flags: [{code: "numeric_literals_unmatched", message: "Review the amount."}]}],
+  }}});
+  assert.equal(result.passed, true);
+  assert.equal(result.requiresReviewNotes, true);
+  assert.equal(result.claimFlags.length, 1);
+  assert.equal(result.claimFlags[0].claimText, "Mock Data 21%");
+  assert.equal(readableEvaluation({evaluation_json: {claim_review: []}}).requiresReviewNotes, false);
+});
+
 test("legacy metadata cannot crash citations or approve an unverified evaluation", () => {
   const [citation] = readableCitations({citations_json: [{quote: {html: "untrusted"}, source_id: 7, internal_href: "//example.invalid", start_char: -1}]});
   assert.equal(citation.quote, "");

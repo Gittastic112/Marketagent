@@ -37,6 +37,7 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
     const require = (name: string): any => {
       if (name === "server-only") return {};
       if (name === "@/lib/server-api") return {serverFetchApiResponse: async (url: string) => responseFor(url),
+        serverPostApiResponse: async (url: string) => responseFor(url),
         serverFetchApi: async (url: string) => {
           const response = responseFor(url);
           if (response.errors.length || response.meta.status !== "success") {
@@ -61,6 +62,89 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
 }
 
 const company = {id: 7, name: "Mock Data company", ticker: "MOCK", market: "US"};
+
+test("financial review plan renders source actions and keeps absent evidence distinct", async () => {
+  const report = {basis: "Mock Data review", source_document_count: 1, generated_at: "2026-11-07T12:00:00Z", actions: [],
+    periods: [{year: 2025, currency: "USD", report_date: null, source_linked_count: 1, checklist_count: 2, notes: [], fields: [
+      {metric: "debt", label: "Debt", status: "recorded_with_source", action: "Inspect exact evidence", candidate_count: 1,
+        source_links: [{candidate_id: 4, document_id: 3, href: "/documents/3/sections"}]},
+      {metric: "cash", label: "Cash", status: "missing", action: "An absent disclosure is not zero", candidate_count: 0, source_links: []},
+    ]}], limitations: []};
+  const html = await pageHtml("components/financial-review-plan", () => success(null), {
+    exportName: "FinancialReviewPlanPanel", props: {report, track: "operating", year: "2025"},
+  });
+  assert.match(html, /1 of 2 checklist items linked/);
+  assert.match(html, /Source linked/); assert.match(html, /Find disclosure/);
+  assert.match(html, /href="\/documents\/3\/sections"/);
+  assert.match(html, /Bank \/ financial-services equity/);
+  assert.doesNotMatch(html, /NaN|undefined|100% complete/);
+});
+
+test("bottom-up macro results render partial coverage without a complete company estimate", async () => {
+  const html = await pageHtml("components/macro/macro-results", () => success(null), {
+    exportName: "BottomUpResult", props: {result: {
+      method: "bottom_up", firm_value: {duration: null, cyclicality: 0, inflation_sensitivity: null, currency_sensitivity: null},
+      metric_coverage: {duration: .6, cyclicality: 1}, covered_contributions: {duration: 1.2, cyclicality: 0},
+      warnings: [], basis: "Mock Data segment values",
+    }},
+  });
+  assert.match(html, /Not available/);
+  assert.match(html, /60\.00%/);
+  assert.match(html, /100\.00%/);
+  assert.match(html, /<td>1\.2<\/td>/);
+  assert.match(html, /covered contribution is a partial sum/);
+  assert.doesNotMatch(html, /NaN|undefined/);
+});
+
+test("macro top-down form supports labeled expanded history without inventing values", async () => {
+  const html = await pageHtml("components/macro/macro-top-down-form", () => success(null), {
+    exportName: "MacroTopDownForm", props: {market: "IN", country: "India", sic: "", values: {period_count: "9"}},
+  });
+  assert.match(html, /Period 9 label/);
+  assert.match(html, /for="macro-gdp_growth-9"/);
+  assert.match(html, /Update period count/);
+  assert.doesNotMatch(html, /placeholder="Operating income"/);
+});
+
+test("macro assumption tabs do not label entered values as facts or show an expanded warning wall", async () => {
+  const html = await pageHtml("app/macro/page", () => success([]), undefined, {tab:"top-down"});
+  assert.match(html, /User Assumption/);
+  assert.doesNotMatch(html, />Fact<|mutate DCF/);
+  assert.match(html, /<details[^>]*><summary>How to interpret macro results<\/summary>/);
+});
+
+test("macro workbench consumes canonical bottom-up result and preserves invalid form entries", async () => {
+  let posts = 0;
+  const result = {method: "bottom_up", firm_value: {duration: 0, cyclicality: null},
+    operating_income: {}, metric_coverage: {duration: 1}, covered_contributions: {duration: 0}, warnings: []};
+  const response = (url: string) => {
+    if (url === "/api/valuation/macro/bottom-up") { posts++; return success(result); }
+    return success([]);
+  };
+  const html = await pageHtml("app/macro/page", response, undefined, {
+    tab: "bottom-up", run: "bottom-up", segment_1_name: "Mock Data", segment_1_sic: "1234", segment_1_value: "100",
+  });
+  assert.equal(posts, 1);
+  assert.match(html, /Bottom-up sensitivity coverage/);
+  assert.match(html, /100\.00%/);
+  const invalid = await pageHtml("app/macro/page", response, undefined, {
+    tab: "bottom-up", run: "bottom-up", segment_1_name: "Mock Data", segment_1_sic: "1234", segment_1_value: "",
+  });
+  assert.equal(posts, 1, "Incomplete inputs must not be sent as zeros");
+  assert.match(invalid, /Enter a finite number for segment 1 value/);
+  assert.match(invalid, /value="Mock Data"/);
+});
+
+test("macro transport and calculation failures render recoverable errors on the selected tab", async () => {
+  for (const tab of ["sector", "bottom-up"]) {
+    const html = await pageHtml("app/macro/page", url => url.includes("/valuation/macro/")
+      ? errorResponse("NETWORK_ERROR", "Mock Data calculation unavailable") : success([]), undefined, {
+      tab, sic:"1234", run:tab, segment_1_name:"Mock Data",segment_1_sic:"1234",segment_1_value:"100",
+    });
+    assert.match(html, /Mock Data calculation unavailable/);
+    assert.doesNotMatch(html, /Enter one or more SIC-backed segments|Select a market and SIC|macro benchmark is not available/);
+  }
+});
 
 function dashboardData(snapshot: PortfolioSnapshot | null): DashboardOverview {
   return {companies: [], events: [], alerts: [], thesis_notes: [], processing_runs: [], portfolio_analytics: null,
@@ -359,7 +443,7 @@ test("financial reconciliation needs actual comparable metrics before claiming a
     const html = await pageHtml("app/companies/[id]/fundamentals/page", url => success(url === "/companies/7" ? company
       : url.endsWith("/reconciliation") ? {periods:exactCount ? [{period_id:1, year:2025, period_type:"annual", items:[{status:"exact", metric_code:"revenue", source_value:100, normalized_value:100}]}] : [],
         exact_count:exactCount, mismatch_count:0, normalized_only_count:0, missing_normalized_count:0}
-      : url.endsWith("/coverage") || url.endsWith("/identities") ? null : []));
+      : url.endsWith("/coverage") || url.endsWith("/identities") || url.includes("/review-plan?") ? null : []));
     if (exactCount === 0) {
       assert.match(html, /No comparable reviewed metrics are available/);
       assert.doesNotMatch(html, /All comparable source metrics match/);

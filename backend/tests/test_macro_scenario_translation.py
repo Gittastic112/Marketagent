@@ -45,6 +45,7 @@ def test_translates_sector_macro_shocks_into_estimated_impacts():
         gdp_shock=-0.02,
         inflation_shock=0.015,
         currency_shock=0.05,
+        currency_variable_direction="Mock Data source: stronger USD",
     )
 
     assert result["method"] == "sector_macro_sensitivity"
