@@ -1,6 +1,6 @@
 # Local Development
 
-Reviewed against checked-in configuration: 2026-11-02.
+Reviewed against checked-in configuration and installed runtime: 2026-11-07.
 
 This guide owns setup and troubleshooting. The [runbook](08-execution-runbook.md)
 owns test, build, migration and operational commands. Historical company IDs and
@@ -51,6 +51,12 @@ your local process environment without exposing them. Conversely,
 frontend/.env.local does not configure Docker services.
 
 ## Start and sign in
+
+For the existing November 7 installation, select its verified runtime override
+using [the runbook](08-execution-runbook.md#select-the-installed-local-stack).
+It identifies the active services, original database volume and patched images;
+retained rollback containers belong to the former project. The commands below
+are for a first-time installation without that existing runtime.
 
 Startup changes the normal runtime and automatically attempts database migration.
 Run it only when starting/deploying the app is intended:

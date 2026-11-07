@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-11-05. This document owns commands, not historical phase records.
+Updated: 2026-11-07. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -29,6 +29,27 @@ The backend runtime target now also excludes pytest and backend/tests. Unit/E2E
 Compose explicitly select the test target. Supported Linux/Python 3.14 environments
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
+
+## Select the installed local stack
+
+The November 7 installation uses Compose project market-intelligence-product-20261107
+and the original database volume. Its ignored runtime-images.yml selects reviewed
+images, the existing network and preserved volumes. Normal-runtime commands in
+this runbook include that override so retained rollback containers are excluded.
+On another checkout, use that installation's verified override; first-time setup
+is covered in [local development](07-local-development.md#start-and-sign-in).
+
+~~~bash
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile '*' ps --all
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-build postgres backend frontend scheduler
+~~~
+
+The source-refresh worker and pgAdmin stay stopped unless deliberately enabled.
+Existing backup/restore helpers select a project separately: set
+COMPOSE_PROJECT_NAME=market-intelligence-product-20261107 for this installation.
+Their ordinary operator environment behavior remains; agent verification uses
+/dev/null plus settings held only in memory. The full backup helper creates a
+disposable proof database, so it remains outside the current no-new-datasets scope.
 
 ## Review financial evidence and macro inputs
 
@@ -67,7 +88,7 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. After Docker health is restored, use the last verified November 7 image override and validate
+2. Use the verified November 7 security image override and validate
    configuration without printing it:
 
    ~~~bash
@@ -99,8 +120,8 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The local override selects the November 7 product frontend R3 and backend/workers R2. On another checkout,
-use that installation's verified image override; do not substitute older tags.
+The local override selects November 7 security frontend/backend/workers R3 and
+PostgreSQL R2. On another checkout, use that installation's verified image override.
 
 ## Dependency and container updates
 
@@ -202,11 +223,18 @@ npm test
 npm run typecheck
 ~~~
 
-Production build, from root:
+Production builds, from root. Replace the example tag with an unused release tag;
+keep currently installed and rollback tags intact:
 
 ~~~bash
-docker compose --profile automation build backend frontend scheduler source_scheduler
+release_tag=review-YYYYMMDD-N
+docker build -f backend/Dockerfile -t "market-intelligence-backend:$release_tag" .
+docker build -t "market-intelligence-frontend:$release_tag" frontend
+docker build -t "market-intelligence-postgres:$release_tag" docker/postgres
 ~~~
+
+After validation, a new deployment selects these reviewed images in its runtime
+override. Restarting the installed stack does not deploy changed source files.
 
 Host frontend builds may lack the macOS SWC native package. The Docker production
 build is the supported build gate. Do not weaken .env exclusions to make a build
@@ -380,9 +408,9 @@ America/New_York; DST is handled automatically. The scope is active companies
 with exchange/local-symbol identities, not arbitrary test catalog rows.
 
 ~~~bash
-docker compose --profile automation up --build -d backend source_scheduler
-docker compose --profile automation ps
-docker compose logs --tail=50 source_scheduler
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile automation up --no-build -d backend source_scheduler
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile automation ps
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml logs --tail=50 source_scheduler
 ~~~
 
 Manual refresh: open a company's valuation draft and choose **Fetch latest source
@@ -404,10 +432,10 @@ These commands change the normal local runtime; use only within the requested
 workflow. A code review or diagnosis alone does not authorize deploying changes.
 
 ~~~bash
-docker compose up --build -d
-docker compose ps
-docker compose logs backend --tail=100
-docker compose logs frontend --tail=100
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up --no-build -d
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml ps
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml logs backend --tail=100
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml logs frontend --tail=100
 curl --fail http://localhost:8000/api/health
 curl --fail http://localhost:8000/api/readiness
 ~~~
@@ -416,9 +444,9 @@ Readiness checks DB/schema/migrations; liveness only proves a responding process
 If readiness fails, inspect returned blockers before changing the database.
 
 ~~~bash
-docker compose exec backend alembic heads
-docker compose exec backend alembic current
-docker compose exec backend alembic upgrade head
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml exec backend alembic heads
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml exec backend alembic current
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml exec backend alembic upgrade head
 ~~~
 
 Upgrade only an intact compatible migration chain. Never stamp/drop/reset data
@@ -428,9 +456,9 @@ context and permissions instead.
 Optional deterministic worker:
 
 ~~~bash
-docker compose --profile automation up --build -d scheduler
-docker compose logs scheduler --tail=100
-docker compose stop scheduler
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile automation up --no-build -d scheduler
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml logs scheduler --tail=100
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml stop scheduler
 ~~~
 
 Scheduled briefs do not call external AI. Explicit AI refresh remains user-driven.
@@ -448,15 +476,15 @@ Desktop's VM can use additional memory outside these container measurements.
 ~~~bash
 docker stats --no-stream
 docker system df
-docker compose ps --all
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml ps --all
 ~~~
 
 For occasional database administration, start pgAdmin explicitly and stop it
 when finished. It has no automatic restart policy in the current configuration:
 
 ~~~bash
-docker compose --profile admin up -d pgadmin
-docker compose stop pgadmin
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile admin up -d pgadmin
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml stop pgadmin
 ~~~
 
 Inspect disk usage before a requested cleanup. A bounded build-cache cleanup,
@@ -485,7 +513,7 @@ The user-approved US-specific January 2026 sources have separate dated filenames
 This explicit, audited import does not fetch new versions or approve mappings:
 
 ~~~bash
-docker compose exec -T backend python scripts/ingest_damodaran.py --market US
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml exec -T backend python scripts/ingest_damodaran.py --market US
 ~~~
 
 It supports beta_methods, wacc_methods, margin, capex, roe and working_capital.
@@ -512,8 +540,8 @@ remain review-required and do not alter saved models.
   or research records are sent. After a deliberate local configuration change:
 
   ~~~bash
-  docker compose up -d --no-deps backend
-  docker compose exec -T backend python backend/scripts/check_ai_provider.py
+  docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-deps backend
+  docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml exec -T backend python backend/scripts/check_ai_provider.py
   ~~~
 
   Rebuild the backend first if source changed. An optional `--model` probes an

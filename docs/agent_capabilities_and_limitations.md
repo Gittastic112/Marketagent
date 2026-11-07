@@ -134,14 +134,14 @@ The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-
 
 ### Ordered operator handoff
 
-November 7 immediate blocker: Docker storage became read-only during the final
-security build, then the engine stopped responding. A Docker Desktop restart is
-requested. The host had 2.1 GiB free; 1.6 GiB of this pass's regenerable scan cache
-was cleared, retaining every scan report, original, backup and rollback image.
-After restart, inspect storage, finish the prepared builds/scans and reversible
-rollout on the existing volume, then repeat browser and preservation checks.
-The latest source fixes are not yet fully installed. This is separate from the
-previously deferred Mac protection/off-device work below.
+November 7 local installation is complete after the user's Docker restart.
+Security images and the promoted-candidate correction are installed; final browser,
+Compose/backup-selection and all-table/asset preservation checks pass. The original
+database volume and PostgreSQL binaries remain; former containers are retained
+stopped. Removing only 77 identified unused, unshared build-cache records reclaims
+a Docker-reported 5.35GB without changing image, container or volume inventories.
+The failed first rollout and its backup remain evidence. Mac protection/off-device
+recovery and the real-input/acceptance prerequisites below remain separate.
 
 November 5 UTC: the user explicitly approved clearing all 12 US/Indian companies
 and linked research, including the eleven historical scenarios, portfolio contents
@@ -426,7 +426,7 @@ records verification and scope. No clean scanner result proves absence of bugs.
 | Medium: untrusted parsers and availability | M03 source isolates four PDF operations in Linux children with CPU, address-space, output, wall-time and concurrency limits and sanitized errors. This is not an arbitrary-code/filesystem sandbox, malware scanner or comprehensive hostile-parser/load certification. A malicious local account can still exhaust disk/resources. Installed in the October 12 normal rollout. |
 | Medium: outbound clients | SEC metadata/companyfacts share the DNS-pinned RSS/filing transport. FRED/Alpha Vantage/Gemini bound responses and reject redirects/proxies/compression; query keys stay out of HTTPX URL logs. M04 bounds yfinance in disposable Linux children with no app secrets or proxy environment, but does not independently allowlist every SDK endpoint or sandbox filesystem/native-code access. Fixed-host clients rely on verified TLS and normal DNS. Strict rejection/pinning can reduce availability; failures stay explicit. Installed in the October 12 normal rollout. |
 | Medium: browser policy and secrets | Basic CSP/frame/type/referrer protections are enabled, not a nonce-based strict script policy. Secret scanning is heuristic over the working tree, not a full-history or credential-revocation audit. Provider keys were not printed or rotated. Database credentials were privately rotated by the operator and verified without emitting values; protected-file contents/current permissions were not inspected. Legacy global OAuth storage is disabled, not a broker integration |
-| High until current image rollout: supply chain | November 7 scans identify available APT CVE-2026-109518 and trixie zlib CVE-2026-76844/CVE-2026-85091 fixes. Source now advances the signed snapshot, checks patched APT before enabling HTTP retries, and builds pinned PostgreSQL 16.15 with the same OS-update policy. [PR7](https://github.com/Gittastic112/Marketagent/pull/7) owns current remote scan results; local installation is blocked by the Docker failure above. Historical clean update gates are not current security clearance. Unfixed findings, including libxml2 and source/binary applicability differences, remain visible without suppression. Optional stopped pgAdmin and host Docker remain separate assessments; scanning cannot certify exploitability or completeness |
+| High: unresolved supply-chain findings | November 7 installs the available APT CVE-2026-109518 and trixie zlib CVE-2026-76844/CVE-2026-85091 fixes through signed snapshot builds, with patched APT bootstrap checks and pinned PostgreSQL 16.15 binaries. All three installed image scans report zero available HIGH/CRITICAL fixes; [PR7](https://github.com/Gittastic112/Marketagent/pull/7) also passes its post-merge scan. Unfixed findings, including libxml2 and source/binary applicability differences, remain visible without suppression. This is not a clean security audit. Optional stopped pgAdmin and host Docker remain separate assessments; scanning cannot certify exploitability or completeness |
 | AI and research integrity | Provider output and source text remain untrusted. Automated Evaluation v4 keeps citation/policy pass status separate from bounded literal review cues. Numeric mismatches, multiple periods and instruction/inference cues require recorded review reasoning before approval. Changing citation evidence resets approval and preserves the prior review receipt. These checks do not establish semantic truth. A separate October 18 delegated review judges six saved actual responses and four adversarial fixtures, rejecting unsupported mappings and all four misleading fixture interpretations despite valid citations. Human fields stay unchanged. This is a selected review set, not statistical accuracy or future live-provider injection-resistance proof. Explicit scans disclose source transmission; ordinary review/browser reads make no provider call |
 
 Local credential authentication and owner scoping reduce accidental cross-user
