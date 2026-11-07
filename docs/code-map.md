@@ -30,7 +30,7 @@ below locate code; they do not grant another agent permission to edit it.
 | Database | [session.py](../backend/app/db/session.py), [models](../backend/app/models/), [migrations](../backend/alembic/versions/) | SQLAlchemy unit of work, persistence, ordered schema changes |
 | Workers | [daily_brief_scheduler.py](../backend/app/workers/daily_brief_scheduler.py), [valuation_source_scheduler.py](../backend/app/workers/valuation_source_scheduler.py) | Separate deterministic briefs and queued public-source/draft refreshes; no external AI |
 | Configuration | [.env.example](../.env.example), [config.py](../backend/app/core/config.py) | Documented variable names and backend settings; never read secrets into docs |
-| Runtime build | [Compose](../docker-compose.yml), [dev override](../docker-compose.dev.yml), [backend Dockerfile](../backend/Dockerfile), [frontend Dockerfile](../frontend/Dockerfile) | Python 3.14, Node 24, PostgreSQL 16, production images; source mounts opt-in |
+| Runtime build | [Compose](../docker-compose.yml), [dev override](../docker-compose.dev.yml), [backend Dockerfile](../backend/Dockerfile), [frontend Dockerfile](../frontend/Dockerfile), [PostgreSQL Dockerfile](../docker/postgres/Dockerfile) | Python 3.14, Node 24, pinned PostgreSQL 16 binaries; signed dated OS updates in all three builds; source mounts opt-in |
 | Dependency manifests | [requirements](../backend/requirements.txt), [package.json](../frontend/package.json), [lockfile](../frontend/package-lock.json) | Backend pinned dependencies; frontend declared ranges and exact resolved tree |
 
 Backend [test requirements](../backend/requirements-test.txt) include the runtime

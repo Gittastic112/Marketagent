@@ -1,13 +1,7 @@
 {
   "date": "2026-11-07",
-  "kind": "local_software_verification",
-  "scope": [
-    "financial_review_plan",
-    "macro_calculation_integrity",
-    "ai_claim_review",
-    "documentation_reconciliation"
-  ],
-  "tests": {
+  "kind": "implementation_and_delivery_evidence",
+  "initial_local_checks": {
     "backend": {
       "passed": 1921,
       "skipped": 6,
@@ -24,30 +18,73 @@
     "locked_runtime_packages": 66,
     "locked_test_packages": 70
   },
-  "production": {
+  "followup_local_checks": {
+    "financial_promotion": 27,
+    "frontend_headers_and_states": 45,
+    "configuration_and_backup": 31
+  },
+  "last_verified_runtime": {
+    "at": "2026-11-07T19:25:35.235122+00:00",
     "backend_image": "sha256:d5fcc821cade11026e9392ec781dc619a0a99016a076c17e26ec6b2e80248372",
-    "frontend_image": "sha256:0b34cf0e38d15ec188b0cdbafbb8eb5e15f944088d945c8f7c2bd07e77fdc066",
-    "signed_pinned_builds": true,
-    "dependencies_added": false,
-    "application_source_files_match_build_manifest": 710,
-    "test_only_browser_locator_edits_after_build": true
+    "frontend_image": "sha256:e800a65be6f31643c62d840d4c451c2008885fced0afac94f7d74ffc275370dc",
+    "postgres_image": "sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d",
+    "schema": "u3u3u3u3u3u3",
+    "tables_unchanged": 110,
+    "assets_unchanged": true,
+    "company_count": 0,
+    "preexisting_empty_universe_briefs": 1,
+    "worker_states_preserved": true,
+    "localhost_ports_only": true
   },
   "browser": {
-    "status": "success",
     "engine": "owned isolated Chromium",
-    "user_browser_profile_used": false,
-    "viewports": [
-      1440,
-      390
-    ],
     "views": 22,
     "interactions": 6,
+    "status": "success",
     "unexpected_errors": 0,
     "blocked_requests": 0,
-    "horizontal_overflow": false,
     "scoped_accessibility_violations": 0,
     "some_contrast_checks_inconclusive": true,
     "calculation_input_basis": "Mock Data, transient and not saved"
+  },
+  "backup": {
+    "bytes": 551827,
+    "sha256": "132d1ae9b41a86b1d3ccfe96452116041716bbe9a1b649d29be25f36c4cf8228",
+    "mode": "0600",
+    "full_archive_read": "passed",
+    "restore_drill_performed": false
+  },
+  "security_followup": {
+    "source_revision": "e883cdbbeccdc4d6ccc8bbfb1837d9f2c0015b71",
+    "snapshot": "20261107T180000Z",
+    "fixed_findings": [
+      "CVE-2026-109518",
+      "CVE-2026-76844",
+      "CVE-2026-85091"
+    ],
+    "github_run": 42407662530,
+    "available_high_critical_fix_occurrences": [
+      0,
+      0,
+      0
+    ],
+    "unfixed_findings_retained": true,
+    "postgres_version": "16.15",
+    "application_dependency_locks_changed": false,
+    "local_security_rollout_performed": false
+  },
+  "local_blocker": {
+    "observed": "Docker storage became read-only during the frontend security build; engine then stopped responding",
+    "restart_requested": true,
+    "host_free_gib_at_failure": 2.1,
+    "generated_scan_cache_allocated_bytes_reclaimed": 1679474688,
+    "backups_reports_and_rollback_images_preserved": true,
+    "prepared_rollout_executed": false
+  },
+  "publication": {
+    "pull_request": "https://github.com/Gittastic112/Marketagent/pull/7",
+    "branch": "codex/product-review-20261107",
+    "status_authority": "GitHub pull request and latest checks; local installation is separate"
   },
   "preservation": {
     "database_tables_unchanged": 110,
@@ -63,18 +100,6 @@
     "preexisting_dirty_entries": 848,
     "protected_files_read": false
   },
-  "backup": {
-    "bytes": 551827,
-    "sha256": "132d1ae9b41a86b1d3ccfe96452116041716bbe9a1b649d29be25f36c4cf8228",
-    "mode": "0600",
-    "full_archive_read": "passed",
-    "restore_drill_performed": false
-  },
-  "publication": {
-    "base_sha": "4d96c5e2da83671f3740a1e50bd342c762582171",
-    "branch": "codex/product-review-20261107",
-    "status_authority": "GitHub pull request and check records; local checks are separate"
-  },
   "limits": [
     "No company facts or scenarios inserted after the approved reset.",
     "Mock Data browser calculations were transient and not saved.",
@@ -86,9 +111,29 @@
     "logs/backend-full-2.txt": "64f5161902eb4b35e0d5a71882b3d51ae86ac5eedcfd18f5300165ca138ba09e",
     "logs/frontend-final-3.txt": "0c2db254f0c316064befa85a7e073859c339dbae1742a1c8711b2c8132de6c77",
     "logs/repository-tests-final.txt": "509faf191b5de503b57f898609ad31245a9502a8245e52543a14e2b8379757ec",
-    "logs/dependency-locks.txt": "81bacb9e6f2ef49561bf9b5130f831c73e4b4945f1b37d2c53d5136ee948ed3e",
-    "browser-r5/results.json": "773f69fbf8c303701dd6734ac7766f9ff26c39ee5da2e642ae1440ae35a96425",
-    "runtime-final.json": "ee6a661154f5f02afa7635781e268d4f4e7cea6235c3a9c7568bcd57d618da88",
-    "source-manifest.json": "2b00a53692ebfe7315aa52fd65330f2ea43374d35662b5410f0a655409c5535b"
+    "logs/financial-promotion-after.txt": "deb1b89b1592ae9d6106749ce39bcbfc959f79d03377abe122e80badea6d77d3",
+    "logs/frontend-row-headers.txt": "26ba336cd9603f912f4b6b31043052eeab9997d4a5a3d52054b2e8ffb8aad942",
+    "logs/security-config-backup-tests.txt": "acd5eaf63a094e8e589b3f8231b8ec3de75a06a7fbc262f49cf70528008f82ef",
+    "browser-r6/results.json": "773f69fbf8c303701dd6734ac7766f9ff26c39ee5da2e642ae1440ae35a96425",
+    "runtime-final.json": "b430ad9152961294fdb82b675cee2331b64c4b5211753aff986d59113f501cbc",
+    "source-manifest-r4.json": "e58ccdecb81fb3f5be3e3336c5c97cf377673a711ef37540266b6ec5c65eef21",
+    "cache-cleanup.json": "d4d5d485facc9dd0836465244ab71c4abc2f767a2dad71e2cc29174e34507411"
+  },
+  "github_source_verification": {
+    "sha": "e883cdbbeccdc4d6ccc8bbfb1837d9f2c0015b71",
+    "run_id": 42407662530,
+    "backend_passed": 1922,
+    "backend_skipped": 6,
+    "frontend_passed": 363,
+    "typecheck": "passed",
+    "production_builds": "passed",
+    "repository_checks": "passed",
+    "dependency_security": "passed",
+    "container_security": "passed",
+    "isolated_recovery": "passed",
+    "browser_status_authority": "Latest GitHub PR checks",
+    "all_five_jobs": "passed",
+    "browser_workflows_passed": 71,
+    "postgres_integration_passed": 6
   }
 }

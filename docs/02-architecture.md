@@ -81,6 +81,13 @@ secrets and generated caches. Development watches backend/app only and keeps
 runtime data read-only; its frontend receives 2 GiB for the configured 1.5 GiB heap.
 These source changes require recreation to affect existing normal containers.
 
+The PostgreSQL image has its own narrow build context under docker/postgres.
+It retains pinned PostgreSQL 16.15 binaries while applying the same signed Debian
+snapshot policy as the application images. The rolling PGDG repository is excluded
+from OS updates. Runtime, browser and recovery Compose files share this build.
+Backup verification selects the running database's immutable image ID unless an
+operator explicitly overrides it, and rejects ambiguous service selection.
+
 An independent tools target adds Git and shasum for repository/recovery checks.
 docker-compose.tools.yml runs it with no network, a read-only source tree and an
 executable temporary filesystem for the recovery tests' fake Docker CLI. It has

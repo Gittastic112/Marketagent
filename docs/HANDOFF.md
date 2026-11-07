@@ -1,11 +1,12 @@
 # Agent Handoff
 
 November 7, 2026: financial review planning, macro calculation integrity, AI
-claim-review guidance and current-documentation reconciliation are implemented.
+claim-review guidance and OS security updates are implemented in source.
 The [checkpoint](archive/checkpoints/2026/product-development-2026-11-07.md) owns
 validation and preservation evidence. Delivery uses
 [codex/product-review-20261107](https://github.com/Gittastic112/Marketagent/tree/codex/product-review-20261107)
-from PR6 merge 4d96c5e2. GitHub's PR/check records own publication status;
+from PR6 merge 4d96c5e2. [PR7](https://github.com/Gittastic112/Marketagent/pull/7)
+and its checks own publication status;
 the exact local receipt is output/milestones/product-development-20261107/github-publication.json.
 
 ## Current data boundary
@@ -46,16 +47,30 @@ for this release. Private settings pass only in memory, never through file reads
 ## Verified release and operations
 
 Use [Current State](00-current-state.md) for exact test/build/browser counts and
-the checkpoint for failed attempts and scope. Backend/workers use
-20261107-product-r2; frontend uses 20261107-product-r3. Production builds retain
-signed pinned OS packages and locked dependencies. No dependencies were added.
+the checkpoint for failed attempts and scope. The last verified local installation
+uses backend/workers 20261107-product-r2 and frontend 20261107-product-r4.
+The later promoted-candidate fix and security image revision are not installed yet.
+Application dependency locks are unchanged.
+
+Docker storage became read-only during the final frontend security build and the
+engine stopped responding. The Mac had 2.1 GiB free; removing only this pass's
+regenerable scan cache recovered 1,679,474,688 allocated bytes. Reports, original
+files, backups and rollback images remain. A Docker Desktop restart is requested.
+After restart, inspect storage and reclaim only identified generated build cache
+if necessary; finish the prepared security builds, scan all three images and run
+the reversible rollout/browser checks. Do not claim current runtime health from
+the earlier healthy snapshot.
 
 The fresh quiesced backup passes full archive reading and hash verification;
 it is not a new populated restore drill. Earlier backups and rollback containers
-remain. Daily Brief's original worker state is restored after browser verification;
-source refresh and pgAdmin remain stopped. Published ports stay localhost-only.
+remain. At the last successful browser check, Daily Brief's original worker state
+was restored; source refresh and pgAdmin were stopped. Ports were localhost-only.
 The local image override is output/milestones/product-development-20261107/runtime-images.yml.
 Commands and operator workflows belong in the [runbook](08-execution-runbook.md).
+The prepared install-security.py uses the original database volume and PostgreSQL
+16.15 binaries, retains all old containers, and moves active service registration
+to a separate Compose project so rollback containers cannot be selected by mistake.
+It has not run. Do not bypass its backup, mount, collation or row-fingerprint checks.
 
 ## Remaining boundary
 

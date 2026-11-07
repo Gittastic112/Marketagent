@@ -63,6 +63,6 @@ Use the roadmap when selecting work, not as evidence that a feature is finished.
 Latest foundation verification: [October 10 M01 rollout and browser proof](archive/checkpoints/2026/m01-foundation-complete-2026-10-10.md).
 Broader product verification remains separately dated in Current State.
 Latest documentation reconciliation: [November 4 supplied delivery report](archive/checkpoints/2026/delivery-report-reconciliation-2026-11-04.md), with reported package checks separated from source inspection and current GitHub evidence.
-Latest independent implementation: [November 7 financial planning, macro integrity and AI claim review](archive/checkpoints/2026/product-development-2026-11-07.md). The November 4 delivery-report boundary remains: the absent installer/payload is not represented as validated.
+Latest source and delivery boundary: [November 7 financial planning, macro integrity, AI review and OS security updates](archive/checkpoints/2026/product-development-2026-11-07.md). The final local installation needs Docker recovery. The November 4 delivery-report boundary remains: the absent installer/payload is not represented as validated.
 
 [Archive](archive/) contains older instructions, checkpoints, research and plans.

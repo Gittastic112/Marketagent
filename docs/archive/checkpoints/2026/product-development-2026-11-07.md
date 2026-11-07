@@ -13,7 +13,8 @@ The unseen integration-kit payload/installer is not claimed as validated.
   Three consecutive annual years expose missing disclosures, candidate review,
   unit conflicts, duplicate scopes and exact source linkage. Manual zero stays
   distinct from missing data. Source-linked counts are not certification.
-  Normalization now rejects a period belonging to another company.
+  Normalization now rejects a period belonging to another company. Checklist
+  row/column headers support assistive navigation.
 - Legacy macro routes delegate to actual canonical calculations and validate
   owned context instead of returning fixed coefficients or persisting inputs.
   Finite, consecutive, chronological inputs are required. Constant factors are
@@ -55,12 +56,12 @@ These references do not certify the app's source-series conventions or forecasts
 
 ## Validation and delivery
 
-- Backend: 1,921 passed, six skipped, five upstream warnings. Frontend: 363 passed
+- Initial full local gate: backend 1,921 passed, six skipped, five upstream warnings. Frontend: 363 passed
   and TypeScript passed. All 75 repository tests pass. Contract inventory covers
   28 routes; dependency locks remain at 66 runtime and 70 test packages.
 - Fresh production builds use signed pinned OS packages and locked dependencies.
-  Backend/workers run 20261107-product-r2; frontend runs 20261107-product-r3.
-  The final browser-selector corrections affect tests only, after compilation.
+  Last verified installation: backend/workers 20261107-product-r2; frontend 20261107-product-r4.
+  A final checklist row-header correction also passes the focused render tests.
 - An owned isolated browser, without the user's Chrome profile, verifies 22 views
   at 1440px and 390px and six interactions. It checks period expansion, invalid
   inputs, explicit Mock Data regression, constant-factor availability and empty
@@ -78,7 +79,42 @@ These references do not certify the app's source-series conventions or forecasts
   the unchanged yfinance resource-limit test and release-runner group passed
   separately after timeouts under concurrent load. Both full suites subsequently
   passed. Early browser harness assumptions/selectors were corrected for the
-  retained brief and hidden page trees; final browser-r5 passed without data writes.
+  retained brief and hidden page trees; final browser-r6 passed without data writes.
+
+The first GitHub pass completed 70 browser workflows and found a real review-plan
+bug: promotion changes the candidate status to `promoted`, which the new source
+link check omitted. A regression reproduced that failure; the correction passes
+27 financial tests and preserves active revision/value/unit checks. A missing
+metric for an already-promoted candidate now requests reconciliation, not another
+promotion. The row-header correction passes 45 focused frontend checks.
+
+The same GitHub run and a fresh local scan identify ten available severe-fix
+occurrences across three images: [APT](https://security-tracker.debian.org/tracker/CVE-2026-109518)
+and trixie zlib [write-state](https://security-tracker.debian.org/tracker/CVE-2026-76844)
+and [buffer](https://security-tracker.debian.org/tracker/CVE-2026-85091) findings.
+The source advances all signed snapshots to 20261107T180000Z, checks APT bootstrap
+safety and adds a pinned PostgreSQL 16.15 OS security build. Backup verification
+now selects the running database image and rejects ambiguous service selection;
+31 configuration/backup tests pass. No severe-fix check is suppressed.
+
+The revised [GitHub run](https://github.com/Gittastic112/Marketagent/actions/runs/42407662530)
+verifies 1,922 backend tests (six skipped), 363 frontend tests, TypeScript,
+production builds, repository gates, six PostgreSQL integration checks, 71 browser
+workflows and isolated recovery. All five jobs pass. All three OS image
+scans report zero available HIGH/CRITICAL fixes; unfixed findings stay visible.
+The PR's latest check records own the final documentation and merged-revision status.
+
+Local security PostgreSQL/backend/test images build, but the frontend build stops
+when Docker storage becomes read-only. The engine then becomes unresponsive.
+At failure the Mac has 2.1 GiB free; deleting only the regenerable scan database
+cache releases 1,679,474,688 allocated bytes. Empty directories, complete scan
+reports, logs, originals, backups and all rollback images remain. A Docker restart
+is requested. Security installation and the promotion fix remain pending locally.
+The last healthy verification at 19:25 UTC must not be treated as current health.
+The prepared rollout preserves the original PostgreSQL volume/version/collations,
+retains the old containers, and uses separate active Compose registration. It has
+not run. [PR7's checks](https://github.com/Gittastic112/Marketagent/pull/7/checks)
+own the full latest-source, browser, recovery and security results.
 
 The [portable receipt](../../../../data/reviews/product-development-20261107.json)
 records the local verification. Detailed logs, before-images and the publication

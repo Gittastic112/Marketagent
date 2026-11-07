@@ -67,7 +67,7 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. From the repository root, use the verified November 7 image override and validate
+2. After Docker health is restored, use the last verified November 7 image override and validate
    configuration without printing it:
 
    ~~~bash
@@ -118,9 +118,16 @@ From the root, run `python3 scripts/check_dependency_locks.py`, the backend suit
 dependency audits and affected browser workflows. Frontend uses `npm ci` with its
 existing lockfile. CI action SHAs and Python/Node/PostgreSQL image digests are pinned;
 review updated official references rather than replacing them with floating tags.
-The Dockerfiles also freeze signed Debian security packages to a dated snapshot.
-Advance both snapshots together, retain signature checking, fail incomplete updates,
-and rebuild both images before claiming the fixes are installed.
+The backend, frontend and PostgreSQL Dockerfiles freeze signed Debian security
+packages to a dated snapshot. Advance all three snapshots together, retain signature
+checking, fail incomplete updates, and rebuild all images before claiming fixes are
+installed. PostgreSQL's build keeps its pinned version-16 binaries and excludes the
+rolling PGDG repository from OS updates. Build it with the normal Compose project;
+the browser and recovery projects use the same Dockerfile.
+The backup verifier defaults to the immutable image ID of the selected running
+database, so a moving local tag cannot silently choose a different build.
+RECOVERY_POSTGRES_IMAGE remains an explicit override. Ambiguous database service
+selection fails before a verifier starts.
 
 Scan explicitly selected built runtime images, with Python 3 and Docker available:
 
@@ -603,7 +610,10 @@ run CI when a pull request opens; this avoids duplicate branch-push and PR build
 Keep this branch filter aligned if the repository default branch changes. Upstream
 package-download failures remain failures and may be retried without changing pins.
 
-All seven image-build APT commands use three per-file retries and 30-second HTTP/
-HTTPS connection/data timeouts. These are not whole-build deadlines; CI job limits
-remain. Snapshot dates, package hashes, Debian signatures and failure propagation
-are unchanged. See [Debian's transport timeout definition](https://manpages.debian.org/trixie/apt/apt-transport-http.1.en.html).
+Image-build APT commands use 30-second HTTP/HTTPS connection/data timeouts.
+The frontend disables HTTP retries until APT 2.6.2 is installed; PostgreSQL checks
+APT 3.0.4 before bootstrapping certificates. Signed-package checks remain enabled,
+then sources switch to HTTPS. Patched APT and existing HTTPS paths retain three
+per-file retries. This addresses [CVE-2026-109518](https://security-tracker.debian.org/tracker/CVE-2026-109518).
+The November 7 snapshot also supplies the available trixie zlib fixes. These are
+not whole-build deadlines; CI job limits remain. See [Debian's transport timeout definition](https://manpages.debian.org/trixie/apt/apt-transport-http.1.en.html).
