@@ -22,7 +22,9 @@ Configure the root environment using [.env.example](.env.example), including
 local credentials, a session secret and SEC contact identity. Never overwrite
 an existing .env or commit secrets. See [local setup](docs/07-local-development.md).
 
-From the repository root:
+For a new installation, run these commands from the repository root. Existing
+verified installations use [the installed-stack instructions](docs/08-execution-runbook.md#select-the-installed-local-stack)
+for their reviewed images and preserved volumes.
 
 ~~~bash
 docker compose up --build -d
