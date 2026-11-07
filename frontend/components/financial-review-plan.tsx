@@ -36,9 +36,9 @@ export function FinancialReviewPlanPanel({report, error, track, year}: {
           <p className="muted">Currency: {period.currency || "Not recorded"} · Reporting date: {period.report_date || "Not recorded"}. Linked sources still require scope review.</p>
           {period.notes.length ? <ul>{period.notes.map(note => <li key={note}>{note}</li>)}</ul> : null}
           <div className="table-wrap" tabIndex={0} aria-label={"Financial review checklist for " + period.year}>
-            <table><thead><tr><th>Input</th><th>Next step</th><th>Evidence and action</th></tr></thead>
+            <table><thead><tr><th scope="col">Input</th><th scope="col">Next step</th><th scope="col">Evidence and action</th></tr></thead>
               <tbody>{period.fields.map(field => <tr key={field.metric}>
-                <th>{field.label}</th><td>{STATUS[field.status]}</td><td><p>{field.action}</p>
+                <th scope="row">{field.label}</th><td>{STATUS[field.status]}</td><td><p>{field.action}</p>
                   {field.source_links.map(source => <Link key={source.candidate_id} href={source.href} className="secondary-button">Source {source.document_id}, candidate {source.candidate_id}</Link>)}
                   {field.candidate_count > field.source_links.length ? <p className="muted">{field.candidate_count} candidate occurrences; first {field.source_links.length} source links shown.</p> : null}
                 </td>

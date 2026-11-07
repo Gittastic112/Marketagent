@@ -124,7 +124,7 @@ def build_financial_review_plan(db: Session, company_id: int, *, track: str = "o
             elif recorded:
                 for candidate in evidence:
                     revision = revision_by_candidate.get(candidate.id)
-                    if (revision and candidate.content_hash and candidate.review_status in {"reviewed", "overridden"}
+                    if (revision and candidate.content_hash and candidate.review_status in {"reviewed", "overridden", "promoted"}
                         and revision.fact_key in aliases and revision.effective_at.year == year
                         and _scaled(field, candidate.value, candidate.unit, currency) == scaled[0]
                         and _scaled(field, revision.value, revision.unit, currency) == scaled[0]):
@@ -133,6 +133,8 @@ def build_financial_review_plan(db: Session, company_id: int, *, track: str = "o
                     status, action = "recorded_with_source", "Inspect the linked source, period and scope. This is traceability, not independent certification."
                 else:
                     status, action = "source_review", "Trace this recorded value to reviewed source evidence; a manual value or normalized row alone is insufficient."
+            elif any(row.review_status == "promoted" for row in evidence):
+                status, action = "source_review", "A promoted source has no matching recorded metric. Inspect source history and period scope; do not promote it again."
             elif evidence:
                 reviewed = [row for row in evidence if row.review_status in {"reviewed", "overridden"}]
                 reviewed_values = {_scaled(field, row.value, row.unit, currency) for row in reviewed}

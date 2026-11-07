@@ -284,6 +284,34 @@ class ReleaseRunnerTests(RunnerCommandFixture):
 
 
 class LocalComposeTests(unittest.TestCase):
+    def test_postgres_security_build_is_shared_by_runtime_browser_and_recovery(self):
+        for name in ("docker-compose.yml", "docker-compose.e2e.yml", "docker-compose.recovery.yml"):
+            with self.subTest(compose=name):
+                source = (ROOT / name).read_text()
+                self.assertIn("image: market-intelligence-postgres:local\n    build:\n      context: ./docker/postgres", source)
+        postgres = (ROOT / "docker/postgres/Dockerfile").read_text()
+        self.assertRegex(postgres, r"FROM postgres:16\.15-trixie@sha256:[a-f0-9]{64}")
+        self.assertIn("/etc/apt/sources.list.d/pgdg.list", postgres)
+        self.assertNotIn("COPY", postgres)
+        self.assertLess(postgres.index("ge 3.0.4"), postgres.index("apt-get"))
+        self.assertIn("inspect --format '{{.Image}}'", (ROOT / "scripts/backup_local.sh").read_text())
+        self.assertIn("build postgres-e2e backend-e2e", (ROOT / "scripts/drill_backup_restore.sh").read_text())
+
+    def test_security_snapshots_align_and_http_bootstrap_cannot_retry_vulnerable_apt(self):
+        snapshots = set()
+        for name in ("backend/Dockerfile", "frontend/Dockerfile", "docker/postgres/Dockerfile"):
+            source = (ROOT / name).read_text()
+            snapshots.update(re.findall(r"snapshot\.debian\.org/archive/[^/]+/(\d{8}T\d{6}Z)", source))
+            self.assertIn("APT::Update::Error-Mode=any", source)
+            self.assertNotIn("--allow-unauthenticated", source)
+            self.assertNotIn("trusted=yes", source)
+            self.assertIn("dpkg --compare-versions", source)
+        self.assertEqual(snapshots, {"20261107T180000Z"})
+        frontend = (ROOT / "frontend/Dockerfile").read_text()
+        before_fixed = frontend.split("ge 2.6.2", 1)[0]
+        self.assertEqual(before_fixed.count("Acquire::Retries=0"), 2)
+        self.assertNotIn("Acquire::Retries=3", before_fixed)
+
     def test_normal_services_require_private_database_password(self):
         source = (ROOT / "docker-compose.yml").read_text()
         self.assertNotIn("marketintel_password", source)

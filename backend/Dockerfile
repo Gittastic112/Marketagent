@@ -1,9 +1,11 @@
 FROM python:3.14-slim@sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6500b1eff50061 AS dependencies
 
 # Keep OS security fixes reproducible. Advance the snapshot with an audited rebuild.
-RUN sed -i 's|http://deb.debian.org/debian-security|https://snapshot.debian.org/archive/debian-security/20261028T000000Z|;s|http://deb.debian.org/debian|https://snapshot.debian.org/archive/debian/20261028T000000Z|' /etc/apt/sources.list.d/debian.sources \
+RUN sed -i 's|http://deb.debian.org/debian-security|https://snapshot.debian.org/archive/debian-security/20261107T180000Z|;s|http://deb.debian.org/debian|https://snapshot.debian.org/archive/debian/20261107T180000Z|' /etc/apt/sources.list.d/debian.sources \
     && apt-get -o APT::Update::Error-Mode=any -o Acquire::Check-Valid-Until=false -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 update \
     && DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=3 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 upgrade -y --no-install-recommends \
+    && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' apt)" ge 3.0.4 \
+    && dpkg --compare-versions "$(dpkg-query -W -f='${Version}' zlib1g)" ge '1:1.3.dfsg+really1.3.1-1+deb13u1' \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PYTHONDONTWRITEBYTECODE=1

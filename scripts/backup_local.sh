@@ -42,13 +42,26 @@ trap 'exit 143' TERM
 
 # All manifest evidence comes from this completed dump, never from later live
 # counts. This container has no network, published ports or persistent volume.
+proof_image="${RECOVERY_POSTGRES_IMAGE:-}"
+if [[ -z "$proof_image" ]]; then
+  source_container="$("${compose[@]}" ps -q "$POSTGRES_SERVICE")"
+  if [[ ! "$source_container" =~ ^[a-f0-9]{64}$ ]]; then
+    printf 'Select exactly one running database service before verifying a backup.\n' >&2
+    exit 1
+  fi
+  proof_image="$("$DOCKER_BIN" inspect --format '{{.Image}}' "$source_container")"
+  if [[ ! "$proof_image" =~ ^sha256:[a-f0-9]{64}$ ]]; then
+    printf 'Could not identify the running database image for backup verification.\n' >&2
+    exit 1
+  fi
+fi
 scratch_id="$("$DOCKER_BIN" run --detach --rm --pull never \
   --name "mi-backup-proof-${timestamp}-$$-$RANDOM" \
   --label com.market-intelligence.purpose=backup-verification \
   --network none --memory 1g --cpus 1 --pids-limit 128 \
   --tmpfs /var/lib/postgresql/data:rw,noexec,nosuid,size=2g \
   -e POSTGRES_USER=proof -e POSTGRES_DB=proof -e POSTGRES_HOST_AUTH_METHOD=trust \
-  "${RECOVERY_POSTGRES_IMAGE:-postgres:16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d}")"
+  "$proof_image")"
 if [[ ! "$scratch_id" =~ ^[a-f0-9]{64}$ ]]; then
   scratch_id=""
   printf 'Recovery verifier did not return a container identity.\n' >&2

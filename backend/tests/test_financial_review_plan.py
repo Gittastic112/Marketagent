@@ -9,6 +9,7 @@ from app.models.source import Source
 from app.models.raw_document import RawDocument
 from app.models.source_fact_revision import SourceFactRevision
 from app.services.financial_review_plan import build_financial_review_plan
+from app.services.financial_extraction import promote_reviewed_candidates
 
 
 def company(db):
@@ -102,6 +103,29 @@ def test_duplicate_periods_never_select_arbitrary_financials(db_session):
     report = build_financial_review_plan(db_session, owner.id)
     assert field(report, "revenue")["status"] == "ambiguous"
     assert report["periods"][0]["period_id"] is None
+
+
+def test_actual_promotion_remains_source_linked_and_missing_metric_requires_reconciliation(db_session):
+    owner = company(db_session)
+    source = Source(name="Mock Data promotion source", source_type="manual")
+    db_session.add(source); db_session.flush()
+    document = RawDocument(company_id=owner.id, source_id=source.id, title="Mock Data promoted report",
+        document_type="annual_report", raw_text="Revenue 13000 INR crore", content_hash="mock-promotion-source")
+    db_session.add(document); db_session.flush()
+    candidate = FinancialExtractionCandidate(company_id=owner.id, raw_document_id=document.id,
+        metric_code="revenue", reported_label="Mock Data revenue", value=13000, unit="INR crore",
+        fiscal_year=2025, period_type="annual", source_text="Revenue 13000 INR crore", review_status="overridden")
+    db_session.add(candidate); db_session.commit()
+    assert promote_reviewed_candidates(db_session, owner.id) == 1
+    assert candidate.review_status == "promoted"
+    report = build_financial_review_plan(db_session, owner.id)
+    assert field(report, "revenue")["status"] == "recorded_with_source"
+    assert field(report, "revenue")["source_links"][0]["candidate_id"] == candidate.id
+    metric = db_session.scalar(select(FinancialMetric).where(FinancialMetric.metric_name == "revenue"))
+    db_session.delete(metric); db_session.commit()
+    missing = field(build_financial_review_plan(db_session, owner.id), "revenue")
+    assert missing["status"] == "source_review"
+    assert "do not promote" in missing["action"]
 
 
 def test_financial_review_route_rejects_unknown_company_track_and_future_year(client, db_session):

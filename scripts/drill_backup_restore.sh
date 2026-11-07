@@ -33,7 +33,7 @@ if [[ -n "$("${compose[@]}" ps -aq)" ]]; then
 fi
 start_time="$(date +%s)"
 if [[ "${RESTORE_DRILL_SKIP_BUILD:-false}" != true ]]; then
-  "${compose[@]}" build backend-e2e
+  "${compose[@]}" build postgres-e2e backend-e2e
 fi
 started=true
 "${compose[@]}" up --detach postgres-e2e backend-e2e

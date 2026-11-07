@@ -23,9 +23,9 @@ jobs:
         run: |
           docker build -f backend/Dockerfile -t market-intelligence-os-backend .
           docker build -t market-intelligence-os-frontend frontend
-          docker pull postgres:16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d
+          docker build -t market-intelligence-postgres:local docker/postgres
       - name: Inventory container OS packages and block available severe fixes
-        run: bash scripts/scan_container_images.sh market-intelligence-os-backend market-intelligence-os-frontend postgres:16@sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d
+        run: bash scripts/scan_container_images.sh market-intelligence-os-backend market-intelligence-os-frontend market-intelligence-postgres:local
       - name: Preserve complete container scan reports
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

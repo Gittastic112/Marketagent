@@ -75,6 +75,7 @@ test("financial review plan renders source actions and keeps absent evidence dis
   });
   assert.match(html, /1 of 2 checklist items linked/);
   assert.match(html, /Source linked/); assert.match(html, /Find disclosure/);
+  assert.match(html, /<th scope="row">/); assert.match(html, /<th scope="col">Input<\/th>/);
   assert.match(html, /href="\/documents\/3\/sections"/);
   assert.match(html, /Bank \/ financial-services equity/);
   assert.doesNotMatch(html, /NaN|undefined|100% complete/);
