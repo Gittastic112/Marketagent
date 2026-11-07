@@ -188,5 +188,20 @@
     "scan_cache_allocated_bytes_removed": 1679540224,
     "images_containers_volumes_preserved_by_cleanup": true
   },
-  "local_installation_evidence_policy": "Detailed runtime inventories, activity and backup receipts stay in the ignored local audit directory."
+  "local_installation_evidence_policy": "Detailed runtime inventories, activity and backup receipts stay in the ignored local audit directory.",
+  "browser_session_fixture": {
+    "failed_run": 42422973924,
+    "failed_attempt": 1,
+    "browser_passed": 70,
+    "browser_failed": 1,
+    "failure": "Malformed-cookie redirect check can race an earlier valid session refresh",
+    "controlled_reproduction": true,
+    "isolated_invalid_context_checks": 10,
+    "focused_repetitions_passed": 3,
+    "repair": "Use a fresh browser context for the malformed cookie",
+    "assertions_retained": true,
+    "retries": 0,
+    "application_authentication_unchanged": true,
+    "no_database_or_host_ports": true
+  }
 }

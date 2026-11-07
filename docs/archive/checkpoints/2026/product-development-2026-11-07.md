@@ -146,6 +146,16 @@ attempts remain under installation-resume/, security-r3/ and rollout-security-r2
 inside the local evidence directory below. The repository receipt summarizes
 software verification without exporting the detailed operating records.
 
+The final installation-documentation browser run passes 70 workflows and fails
+the malformed-session redirect check. A controlled isolated-frontend experiment
+reproduces its timing hazard: a pending valid session refresh can restore a cookie
+after the test replaces it. Ten fresh malformed-cookie contexts correctly reject
+the API request and redirect the page. The browser check now uses a separate
+context, retaining every assertion, the original timeout and zero retries. Three
+focused repetitions pass. Application authentication code and installed images
+are unchanged. The original failed run remains recorded; the final PR checks
+provide the full-suite result. This experiment has no database or host ports.
+
 The [portable receipt](../../../../data/reviews/product-development-20261107.json)
 records the local verification. Detailed logs, before-images and the publication
 receipt are under output/milestones/product-development-20261107/; private backups
