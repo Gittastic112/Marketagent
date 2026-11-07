@@ -24,17 +24,21 @@
     "configuration_and_backup": 31
   },
   "last_verified_runtime": {
-    "at": "2026-11-07T19:25:35.235122+00:00",
-    "backend_image": "sha256:d5fcc821cade11026e9392ec781dc619a0a99016a076c17e26ec6b2e80248372",
-    "frontend_image": "sha256:e800a65be6f31643c62d840d4c451c2008885fced0afac94f7d74ffc275370dc",
-    "postgres_image": "sha256:ca0bd484cb98bf4b24eb1010e73fb3fcbd6714d240fbc1a10eea5b7dbecb641d",
+    "backend_image": "sha256:a89775468783d0583fe97a22e7de3e0e80e60b2600488f163715717f53b54a35",
+    "frontend_image": "sha256:49c3087a0cc29a343393c303cddcb299ac2a0846d5f6c9530bcaa805036e9c29",
+    "postgres_image": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e",
     "schema": "u3u3u3u3u3u3",
     "tables_unchanged": 110,
     "assets_unchanged": true,
     "company_count": 0,
-    "preexisting_empty_universe_briefs": 1,
     "worker_states_preserved": true,
-    "localhost_ports_only": true
+    "localhost_ports_only": true,
+    "active_compose_project": "market-intelligence-product-20261107",
+    "original_database_volume_preserved": true,
+    "previous_containers_retained_stopped": true,
+    "postgres_binary_and_collation_versions_unchanged": true,
+    "date": "2026-11-07",
+    "scope": "Point-in-time installation and browser verification; detailed operating records retained locally"
   },
   "browser": {
     "engine": "owned isolated Chromium",
@@ -45,24 +49,25 @@
     "blocked_requests": 0,
     "scoped_accessibility_violations": 0,
     "some_contrast_checks_inconclusive": true,
-    "calculation_input_basis": "Mock Data, transient and not saved"
+    "calculation_input_basis": "Mock Data, transient and not saved",
+    "attempt": "browser-r7"
   },
   "backup": {
-    "bytes": 551827,
-    "sha256": "132d1ae9b41a86b1d3ccfe96452116041716bbe9a1b649d29be25f36c4cf8228",
     "mode": "0600",
     "full_archive_read": "passed",
-    "restore_drill_performed": false
+    "hash_verification": "passed",
+    "restore_drill_performed": false,
+    "detailed_receipt": "retained locally"
   },
   "security_followup": {
-    "source_revision": "e883cdbbeccdc4d6ccc8bbfb1837d9f2c0015b71",
+    "source_revision": "cc759af39d2921bf5fcba209f17b799d695f6639",
     "snapshot": "20261107T180000Z",
     "fixed_findings": [
       "CVE-2026-109518",
       "CVE-2026-76844",
       "CVE-2026-85091"
     ],
-    "github_run": 42407662530,
+    "github_run": 42409448448,
     "available_high_critical_fix_occurrences": [
       0,
       0,
@@ -71,34 +76,49 @@
     "unfixed_findings_retained": true,
     "postgres_version": "16.15",
     "application_dependency_locks_changed": false,
-    "local_security_rollout_performed": false
-  },
-  "local_blocker": {
-    "observed": "Docker storage became read-only during the frontend security build; engine then stopped responding",
-    "restart_requested": true,
-    "host_free_gib_at_failure": 2.1,
-    "generated_scan_cache_allocated_bytes_reclaimed": 1679474688,
-    "backups_reports_and_rollback_images_preserved": true,
-    "prepared_rollout_executed": false
+    "local_security_rollout_performed": true,
+    "installed_package_versions": {
+      "backend": [
+        "apt 3.0.4",
+        "libc6 2.41-12+deb13u4",
+        "zlib1g 1:1.3.dfsg+really1.3.1-1+deb13u1"
+      ],
+      "frontend": [
+        "apt 2.6.2",
+        "libc6 2.36-9+deb12u14",
+        "zlib1g 1:1.2.13.dfsg-1"
+      ],
+      "postgres": [
+        "apt 3.0.4",
+        "libc6 2.41-12+deb13u4",
+        "zlib1g 1:1.3.dfsg+really1.3.1-1+deb13u1"
+      ]
+    }
   },
   "publication": {
     "pull_request": "https://github.com/Gittastic112/Marketagent/pull/7",
     "branch": "codex/product-review-20261107",
-    "status_authority": "GitHub pull request and latest checks; local installation is separate"
+    "status_authority": "GitHub pull request and latest checks; local installation is separate",
+    "implementation_merge_sha": "cc759af39d2921bf5fcba209f17b799d695f6639",
+    "implementation_post_merge_run": 42409448448,
+    "local_installation_documentation_branch": "codex/local-installation-20261107"
   },
   "preservation": {
     "database_tables_unchanged": 110,
     "stored_assets_unchanged": true,
     "original_postgres_preserved": true,
     "company_count": 0,
-    "preexisting_empty_universe_briefs": 1,
     "schema": "u3u3u3u3u3u3",
     "worker_states_restored": true,
     "localhost_ports_only": true,
     "local_head": "fba390bf4d22146229cfabd2d621b8ebd9975fe2",
     "local_index_sha256": "0f7cb26c0e162730396ea97090223c4eab69cf697f9b5124b156363f5cd7231e",
     "preexisting_dirty_entries": 848,
-    "protected_files_read": false
+    "protected_files_read": false,
+    "original_postgres_status": "retained_stopped_for_rollback",
+    "original_database_volume_preserved": true,
+    "postgres_container_replaced": true,
+    "saved_briefs_preserved": true
   },
   "limits": [
     "No company facts or scenarios inserted after the approved reset.",
@@ -120,8 +140,8 @@
     "cache-cleanup.json": "d4d5d485facc9dd0836465244ab71c4abc2f767a2dad71e2cc29174e34507411"
   },
   "github_source_verification": {
-    "sha": "e883cdbbeccdc4d6ccc8bbfb1837d9f2c0015b71",
-    "run_id": 42407662530,
+    "sha": "cc759af39d2921bf5fcba209f17b799d695f6639",
+    "run_id": 42409448448,
     "backend_passed": 1922,
     "backend_skipped": 6,
     "frontend_passed": 363,
@@ -131,9 +151,57 @@
     "dependency_security": "passed",
     "container_security": "passed",
     "isolated_recovery": "passed",
-    "browser_status_authority": "Latest GitHub PR checks",
+    "browser_status_authority": "Successful PR7 post-merge run",
     "all_five_jobs": "passed",
     "browser_workflows_passed": 71,
     "postgres_integration_passed": 6
+  },
+  "recovered_interruption": {
+    "observed": "Docker storage became read-only during the frontend security build; engine then stopped responding",
+    "restart_requested": false,
+    "host_free_gib_at_failure": 2.1,
+    "generated_scan_cache_allocated_bytes_reclaimed": 1679474688,
+    "backups_reports_and_rollback_images_preserved": true,
+    "prepared_rollout_executed": true,
+    "status": "resolved",
+    "resumed_after_user_restart": true,
+    "first_rollout_rolled_back_safely": true,
+    "duplicate_optional_admin_mount_corrected": true
+  },
+  "installation_verification": {
+    "compose_and_backup_selection": {
+      "project": "market-intelligence-product-20261107",
+      "exact_active_services_selected": true,
+      "protected_settings_files_read": false,
+      "backup_helper_selects_active_postgres": true,
+      "no_restore_dataset_created": true,
+      "settings_passed_in_memory_only": true,
+      "rollback_containers_excluded": true
+    },
+    "packaged_backend_source": {
+      "image_source_files_verified": 458,
+      "mismatches": 0
+    },
+    "postgres_version": "postgres (PostgreSQL) 16.15 (Debian 16.15-1.pgdg13+2)",
+    "build_cache_records_removed": 77,
+    "docker_reported_cache_reclaimed": "5.35GB",
+    "scan_cache_allocated_bytes_removed": 1679540224,
+    "images_containers_volumes_preserved_by_cleanup": true
+  },
+  "local_installation_evidence_policy": "Detailed runtime inventories, activity and backup receipts stay in the ignored local audit directory.",
+  "browser_session_fixture": {
+    "failed_run": 42422973924,
+    "failed_attempt": 1,
+    "browser_passed": 70,
+    "browser_failed": 1,
+    "failure": "Malformed-cookie redirect check can race an earlier valid session refresh",
+    "controlled_reproduction": true,
+    "isolated_invalid_context_checks": 10,
+    "focused_repetitions_passed": 3,
+    "repair": "Use a fresh browser context for the malformed cookie",
+    "assertions_retained": true,
+    "retries": 0,
+    "application_authentication_unchanged": true,
+    "no_database_or_host_ports": true
   }
 }

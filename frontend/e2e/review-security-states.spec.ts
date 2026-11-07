@@ -35,18 +35,25 @@ test("exact citation checks leave incorrect Mock Data interpretation pending for
   await page.screenshot({path:test.info().outputPath("ai-review-boundary-mobile.png"),fullPage:true});
 });
 
-test("an invalidated local session cannot reopen private pages or access the backend proxy", async ({page}) => {
+test("a malformed local session cookie cannot reopen private pages or access the backend proxy", async ({page, browser}) => {
   await signIn(page);
   const cookies = await page.context().cookies();
   const session = cookies.find(cookie => cookie.name.includes("session-token"))!;
   expect(session).toBeTruthy();
-  await page.context().clearCookies();
-  await page.context().addCookies([{...session, value:"invalid-session-signature"}]);
-  const response = await page.request.get("/api/backend/portfolios");
-  expect(response.status()).toBe(401);
-  expect((await response.json()).data).toBeNull();
-  await page.goto("/portfolio");
-  await expect(page).toHaveURL(/\/auth\/signin/);
-  await expect(page.getByRole("button", {name:"Sign in", exact:true})).toBeEnabled();
-  await expect(page.getByText("Mock Data Multi-Currency Portfolio", {exact:true})).toHaveCount(0);
+  // A late session refresh from the signed-in page can renew its cookie. Keep
+  // that page's requests out of the deliberately malformed-cookie context.
+  const invalidContext = await browser.newContext({baseURL:new URL(page.url()).origin});
+  try {
+    await invalidContext.addCookies([{...session, value:"invalid-session-signature"}]);
+    const response = await invalidContext.request.get("/api/backend/portfolios");
+    expect(response.status()).toBe(401);
+    expect((await response.json()).data).toBeNull();
+    const invalidPage = await invalidContext.newPage();
+    await invalidPage.goto("/portfolio");
+    await expect(invalidPage).toHaveURL(/\/auth\/signin/);
+    await expect(invalidPage.getByRole("button", {name:"Sign in", exact:true})).toBeEnabled();
+    await expect(invalidPage.getByText("Mock Data Multi-Currency Portfolio", {exact:true})).toHaveCount(0);
+  } finally {
+    await invalidContext.close();
+  }
 });

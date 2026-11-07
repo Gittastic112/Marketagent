@@ -1,13 +1,14 @@
 # Agent Handoff
 
 November 7, 2026: financial review planning, macro calculation integrity, AI
-claim-review guidance and OS security updates are implemented in source.
+claim-review guidance and OS security updates are installed and locally verified.
 The [checkpoint](archive/checkpoints/2026/product-development-2026-11-07.md) owns
 validation and preservation evidence. Delivery uses
 [codex/product-review-20261107](https://github.com/Gittastic112/Marketagent/tree/codex/product-review-20261107)
 from PR6 merge 4d96c5e2. [PR7](https://github.com/Gittastic112/Marketagent/pull/7)
-and its checks own publication status;
-the exact local receipt is output/milestones/product-development-20261107/github-publication.json.
+is merged at cc759af3 with five passing post-merge checks. The installation
+documentation follows on codex/local-installation-20261107; its publication
+receipt is output/milestones/product-development-20261107/installation-resume/github-publication.json.
 
 ## Current data boundary
 
@@ -15,13 +16,16 @@ All 12 US/Indian companies and their linked research were removed under the
 explicitly approved November 5 plan. Do not reseed companies, restore the eleven
 historical scenarios or recreate demonstration activity automatically.
 November 7 verifies zero companies, financial periods, holdings, transactions,
-thesis notes and AI outputs. One pre-existing empty-universe brief is preserved.
+thesis notes and AI outputs. Saved briefs are preserved. Detailed runtime
+inventories, operational activity and backup receipts stay in local evidence.
 Historical approvals, original sources and pre-removal backups remain evidence.
 
-The original PostgreSQL container/volume, schema u3u3u3u3u3u3, portfolio account,
-settings, shared sources and global references remain. Runtime checks compare all
-110 table fingerprints and stored assets. No migration or data rewrite is needed
-for this release. Private settings pass only in memory, never through file reads.
+The original database volume, schema u3u3u3u3u3u3, portfolio account, settings,
+shared sources and global references remain. The former PostgreSQL container is
+retained stopped; its replacement uses the same 16.15 binaries and collation
+versions with patched OS packages. Rollout/browser checks preserve all table
+fingerprints and stored assets. No migration or data rewrite occurred.
+Settings passed only in memory; verification is a point-in-time observation.
 
 ## Delivered workflows
 
@@ -47,30 +51,28 @@ for this release. Private settings pass only in memory, never through file reads
 ## Verified release and operations
 
 Use [Current State](00-current-state.md) for exact test/build/browser counts and
-the checkpoint for failed attempts and scope. The last verified local installation
-uses backend/workers 20261107-product-r2 and frontend 20261107-product-r4.
-The later promoted-candidate fix and security image revision are not installed yet.
-Application dependency locks are unchanged.
+the checkpoint for failed attempts and scope. Backend/workers and frontend use
+20261107-security-r3; PostgreSQL uses 20261107-security-r2. The promoted-candidate
+fix is installed. All three image scans show zero available HIGH/CRITICAL fixes;
+unfixed findings remain recorded. Application dependency locks are unchanged.
 
-Docker storage became read-only during the final frontend security build and the
-engine stopped responding. The Mac had 2.1 GiB free; removing only this pass's
-regenerable scan cache recovered 1,679,474,688 allocated bytes. Reports, original
-files, backups and rollback images remain. A Docker Desktop restart is requested.
-After restart, inspect storage and reclaim only identified generated build cache
-if necessary; finish the prepared security builds, scan all three images and run
-the reversible rollout/browser checks. Do not claim current runtime health from
-the earlier healthy snapshot.
+Docker recovered after the user's restart. Removing 77 identified unused,
+unshared build-cache records reclaimed a Docker-reported 5.35GB; image, container
+and volume inventories were unchanged. The first rollout restored the old runtime
+after detecting a duplicate pgAdmin mount. The corrected rollout and isolated
+desktop/mobile browser checks pass. Failed evidence and all rollback images remain.
 
 The fresh quiesced backup passes full archive reading and hash verification;
 it is not a new populated restore drill. Earlier backups and rollback containers
-remain. At the last successful browser check, Daily Brief's original worker state
-was restored; source refresh and pgAdmin were stopped. Ports were localhost-only.
+remain. Daily Brief's original running state is restored; source refresh and
+pgAdmin remain stopped. Published ports are localhost-only.
 The local image override is output/milestones/product-development-20261107/runtime-images.yml.
 Commands and operator workflows belong in the [runbook](08-execution-runbook.md).
-The prepared install-security.py uses the original database volume and PostgreSQL
-16.15 binaries, retains all old containers, and moves active service registration
-to a separate Compose project so rollback containers cannot be selected by mistake.
-It has not run. Do not bypass its backup, mount, collation or row-fingerprint checks.
+The active Compose project is market-intelligence-product-20261107. Use the local
+override for normal Compose operations and the matching project name for backup
+helpers, as documented in the runbook. Actual Compose/backup-helper selection
+resolves the six current services and excludes retained rollback containers.
+runtime-security-final.json and rollout-security-r2/ record the completed rollout.
 
 ## Remaining boundary
 
