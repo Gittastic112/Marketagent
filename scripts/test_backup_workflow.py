@@ -63,7 +63,12 @@ elif "rm" in args:
 elif "alembic" in args:
     print("mock_revision (head)")
 elif "ps" in args:
-    print(os.environ.get("FAKE_RUNNING_SERVICES", "backend\\nfrontend\\npostgres"))
+    if "-q" in args:
+        print(os.environ.get("FAKE_SOURCE_CONTAINERS", "b" * 64))
+    else:
+        print(os.environ.get("FAKE_RUNNING_SERVICES", "backend\\nfrontend\\npostgres"))
+elif "inspect" in args:
+    print("sha256:" + "c" * 64)
 elif any(command in args for command in ("stop", "dropdb", "createdb", "up")):
     pass
 else:
@@ -125,6 +130,21 @@ class BackupWorkflowTests(unittest.TestCase):
         sleep = self.directory / "sleep"
         sleep.write_text("#!/usr/bin/env bash\nexit 0\n")
         sleep.chmod(0o755)
+
+    def test_backup_verifier_uses_the_running_database_image(self):
+        result = self.run_script("backup_local.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        calls = [json.loads(line) for line in Path(self.env["FAKE_DOCKER_LOG"]).read_text().splitlines()]
+        proof = next(call for call in calls if "run" in call and "--detach" in call)
+        self.assertEqual(proof[-1], "sha256:" + "c" * 64)
+
+    def test_backup_rejects_ambiguous_database_selection_before_creating_verifier(self):
+        self.env["FAKE_SOURCE_CONTAINERS"] = "b" * 64 + "\n" + "d" * 64
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("exactly one running database", result.stderr)
+        calls = [json.loads(line) for line in Path(self.env["FAKE_DOCKER_LOG"]).read_text().splitlines()]
+        self.assertFalse(any("run" in call and "--detach" in call for call in calls))
 
     def test_backup_waits_for_tcp_query_on_intended_proof_database(self):
         self.fake_sleep()

@@ -94,6 +94,7 @@ def evaluate_output(
 ) -> ApiResponse[AiOutput]:
     output = _owned_output(db, output_id, current_user["id"])
     output.evaluation_json = evaluate_ai_output(output)
+    output.is_blocked = not output.evaluation_json["passed"]
     db.commit()
     db.refresh(output)
     return ApiResponse(data=output)
@@ -113,7 +114,10 @@ def review_output(
             status_code=409,
             detail="AI output cannot be approved until execution, citation, and recommendation-language checks pass",
         )
+    if payload.status == "approved" and evaluation["claim_review"]["requires_review_notes"] and not (payload.notes or "").strip():
+        raise HTTPException(status_code=409, detail="Resolve the claim-review flags and record your reasoning in review notes before approval")
     output.evaluation_json = evaluation
+    output.is_blocked = not evaluation["passed"]
     output.human_review_status = payload.status
     output.review_notes = (payload.notes or "").strip() or None
     output.reviewer_id = current_user["id"]

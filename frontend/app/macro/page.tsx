@@ -10,8 +10,7 @@ import { MacroTopDownForm } from "@/components/macro/macro-top-down-form";
 import { ClaimTypeBadges, MacroLimitationsNotice, MacroWorkbenchTabs } from "@/components/macro/macro-workbench";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataFreshnessIndicator, DataStateNotices, NotConfiguredState } from "@/components/ui/data-states";
-import { ApiError } from "@/lib/api";
-import { serverFetchApi, serverFetchApiResponse, serverPostApiResponse } from "@/lib/server-api";
+import { serverFetchApiResponse, serverPostApiResponse } from "@/lib/server-api";
 import type {
   ApiResponse,
   ApiMeta,
@@ -19,11 +18,10 @@ import type {
   MacroSectorSensitivity,
   MacroSeries,
   MacroSensitivityResult,
-  BottomUpMacroSegment,
-  TopDownMacroPeriod,
   ProviderHealthRead
 } from "@/lib/api";
-import { normalizeMacroWorkbenchTab } from "@/lib/macro-workbench";
+import { normalizeMacroWorkbenchTab, macroNumber, macroPeriodCount, macroTopDownPeriods, macroBottomUpSegments } from "@/lib/macro-workbench";
+import { ScenarioResult, TopDownResult, BottomUpResult } from "@/components/macro/macro-results";
 
 type MacroPageProps = {
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
@@ -40,118 +38,19 @@ function stringParam(params: Record<string, string | string[] | undefined>, key:
   return firstParam(params[key])?.trim() || fallback;
 }
 
-function numberParam(params: Record<string, string | string[] | undefined>, key: string, fallback = 0) {
-  const value = Number(stringParam(params, key));
-  return Number.isFinite(value) ? value : fallback;
-}
-
 function stringParams(params: Record<string, string | string[] | undefined>) {
   return Object.fromEntries(
     Object.entries(params).map(([key, value]) => [key, firstParam(value)?.trim() || ""])
   );
 }
 
-function formatNumber(value: number | null | undefined, digits = 4) {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return "-";
-  }
-  return value.toLocaleString("en-US", { maximumFractionDigits: digits });
-}
-
-function formatPercent(value: number | null | undefined) {
-  if (value === null || value === undefined || Number.isNaN(value)) {
-    return "-";
-  }
-  return `${(value * 100).toFixed(2)}%`;
-}
-
 function errorMessage(error: unknown) {
-  if (error instanceof ApiError) {
-    return error.message;
-  }
   return error instanceof Error ? error.message : "Could not load macro result.";
 }
 
-function ScenarioResult({ result }: { result: MacroScenarioResult }) {
-  return (
-    <div className="brief-list">
-      <div className="metric-grid">
-        <div className="metric">
-          <div className="metric-label">Value Impact</div>
-          <div className="metric-value">{formatPercent(result.estimated_value_impact_pct)}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Operating Income Impact</div>
-          <div className="metric-value">{formatPercent(result.estimated_operating_income_impact_pct)}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Confidence</div>
-          <div className="metric-value">{result.confidence}</div>
-        </div>
-      </div>
-      {result.warnings.length > 0 ? (
-        <div className="section-block">
-          <strong>Warnings</strong>
-          <ul>
-            {result.warnings.map((warning) => <li key={warning}>{warning}</li>)}
-          </ul>
-        </div>
-      ) : null}
-      <p className="muted">{result.formula}</p>
-    </div>
-  );
-}
-
-function BottomUpResult({ result }: { result: MacroSensitivityResult }) {
-  return (
-    <div className="brief-list">
-      <div className="metric-grid">
-        <div className="metric">
-          <div className="metric-label">Weighted Duration</div>
-          <div className="metric-value">{formatNumber(result.firm_value.duration)}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Cyclicality</div>
-          <div className="metric-value">{formatNumber(result.firm_value.cyclicality)}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Confidence</div>
-          <div className="metric-value">{result.confidence_label}</div>
-        </div>
-      </div>
-      {result.warnings && result.warnings.length > 0 ? (
-        <ul>
-          {result.warnings.map((warning: string) => <li key={warning}>{warning}</li>)}
-        </ul>
-      ) : null}
-    </div>
-  );
-}
-
-function TopDownResult({ result }: { result: MacroSensitivityResult }) {
-  return (
-    <div className="brief-list">
-      <div className="metric-grid">
-        <div className="metric">
-          <div className="metric-label">Observations</div>
-          <div className="metric-value">{result.observation_count}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Firm Value Duration</div>
-          <div className="metric-value">{formatNumber(result.firm_value.duration)}</div>
-        </div>
-        <div className="metric">
-          <div className="metric-label">Confidence</div>
-          <div className="metric-value">{result.confidence_label}</div>
-        </div>
-      </div>
-      {result.warnings && result.warnings.length > 0 ? (
-        <ul>
-          {result.warnings.map((warning: string) => <li key={warning}>{warning}</li>)}
-        </ul>
-      ) : null}
-    </div>
-  );
+function calculationData<T>(response: ApiResponse<T>): T {
+  if (!hasUsableData(response)) throw new Error(response.errors[0]?.message || "Macro calculation is unavailable. Review inputs or retry.");
+  return response.data;
 }
 
 export default async function MacroPage({ searchParams }: MacroPageProps) {
@@ -183,30 +82,35 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
     const fredConfigured = (providerHealthRes.data || [])
       .find((provider) => provider.provider_name === "FRED")?.configured ?? false;
 
-    if (sic) {
+    if (sic && (activeTab === "sector" || activeTab === "scenario")) {
       try {
         const sectorQuery = new URLSearchParams({ market, country, sic });
         const res = await serverFetchApiResponse<MacroSectorSensitivity>(`/api/valuation/macro/sector?${sectorQuery.toString()}`);
-        sectorResult = res.data;
+        sectorResult = calculationData(res);
         if (res.meta) metas.push(res.meta);
       } catch (error) {
         workbenchError = errorMessage(error);
       }
     }
 
-    if (run === "scenario" && sic) {
+    if (run === "configure") {
+      try { macroPeriodCount(values.period_count); } catch (error) { workbenchError = errorMessage(error); }
+    }
+
+    if (run === "scenario") {
       try {
+        if (!sic) throw new Error("Enter a SIC code before running a sector scenario.");
         const res = await serverPostApiResponse<MacroScenarioResult>("/api/valuation/macro/scenario", {
           market,
           country,
           sic_code: sic,
-          rate_shock: numberParam(query, "rate_shock"),
-          gdp_shock: numberParam(query, "gdp_shock"),
-          inflation_shock: numberParam(query, "inflation_shock"),
-          currency_shock: numberParam(query, "currency_shock"),
+          rate_shock: macroNumber(values.rate_shock, "rate shock"),
+          gdp_shock: macroNumber(values.gdp_shock, "GDP shock"),
+          inflation_shock: macroNumber(values.inflation_shock, "inflation shock"),
+          currency_shock: macroNumber(values.currency_shock, "currency shock"),
           currencyVariableDirection: stringParam(query, "currency_variable_direction") || null
         });
-        scenarioResult = res.data;
+        scenarioResult = calculationData(res);
         if (res.meta) metas.push(res.meta);
       } catch (error) {
         workbenchError = errorMessage(error);
@@ -214,66 +118,45 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
     }
 
     if (run === "bottom-up") {
-      const segments: BottomUpMacroSegment[] = [1, 2, 3]
-        .map((index) => ({
-          segment_name: stringParam(query, `segment_${index}_name`),
-          sic_code: stringParam(query, `segment_${index}_sic`),
-          segment_value: numberParam(query, `segment_${index}_value`)
-        }))
-        .filter((segment) => segment.segment_name && segment.sic_code && segment.segment_value && segment.segment_value > 0);
-      if (segments.length > 0) {
-        try {
-          const res = await serverPostApiResponse<MacroSensitivityResult>("/api/valuation/macro/bottom-up", {
-            market,
-            country,
-            segments: segments.map((segment) => ({
-              name: segment.segment_name,
-              sicCode: segment.sic_code,
-              value: segment.segment_value,
-            })),
-          });
-          bottomUpResult = res.data;
-          if (res.meta) metas.push(res.meta);
-        } catch (error) {
-          workbenchError = errorMessage(error);
-        }
+      try {
+        const segments = macroBottomUpSegments(values);
+        const res = await serverPostApiResponse<MacroSensitivityResult>("/api/valuation/macro/bottom-up", {
+          market,
+          country,
+          segments: segments.map((segment) => ({
+            name: segment.segment_name,
+            sicCode: segment.sic_code,
+            value: segment.segment_value,
+          })),
+        });
+        bottomUpResult = calculationData(res);
+        if (res.meta) metas.push(res.meta);
+      } catch (error) {
+        workbenchError = errorMessage(error);
       }
     }
 
     if (run === "top-down") {
-      const periods: TopDownMacroPeriod[] = [1, 2, 3]
-        .map((index) => ({
-          period_label: stringParam(query, `period_${index}`),
-          operating_income: numberParam(query, `operating_income_${index}`),
-          market_cap: numberParam(query, `market_cap_${index}`),
-          total_debt: numberParam(query, `total_debt_${index}`),
-          change_in_long_term_bond_rate: numberParam(query, `rate_change_${index}`),
-          gdp_growth: numberParam(query, `gdp_growth_${index}`),
-          inflation_change: numberParam(query, `inflation_change_${index}`),
-          currency_change: numberParam(query, `currency_change_${index}`)
-        }))
-        .filter((period) => period.period_label);
-      if (periods.length >= 3) {
-        try {
-          const res = await serverPostApiResponse<MacroSensitivityResult>("/api/valuation/macro/top-down", {
-            frequency: "annual",
-            periods: periods.map((period) => ({
-              period: period.period_label,
-              operating_income: period.operating_income,
-              market_cap: period.market_cap,
-              total_debt: period.total_debt,
-              enterprise_value: period.enterprise_value,
-              change_in_long_term_bond_rate: period.change_in_long_term_bond_rate,
-              gdp_growth: period.gdp_growth,
-              inflation_change: period.inflation_change,
-              currency_change: period.currency_change,
-            })),
-          });
-          topDownResult = res.data;
-          if (res.meta) metas.push(res.meta);
-        } catch (error) {
-          workbenchError = errorMessage(error);
-        }
+      try {
+        const periods = macroTopDownPeriods(values);
+        const res = await serverPostApiResponse<MacroSensitivityResult>("/api/valuation/macro/top-down", {
+          frequency: values.frequency || "annual",
+          periods: periods.map((period) => ({
+            period: period.period_label,
+            operating_income: period.operating_income,
+            market_cap: period.market_cap,
+            total_debt: period.total_debt,
+            enterprise_value: period.enterprise_value,
+            change_in_long_term_bond_rate: period.change_in_long_term_bond_rate,
+            gdp_growth: period.gdp_growth,
+            inflation_change: period.inflation_change,
+            currency_change: period.currency_change,
+          })),
+        });
+        topDownResult = calculationData(res);
+        if (res.meta) metas.push(res.meta);
+      } catch (error) {
+        workbenchError = errorMessage(error);
       }
     }
 
@@ -285,8 +168,9 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
           mockMessage="Macro series data is mocked. Do not use it for valuation sensitivity until source-backed data is configured."
         />
         <MacroWorkbenchTabs activeTab={activeTab} />
-        <ClaimTypeBadges />
+        <ClaimTypeBadges activeTab={activeTab} />
         <MacroLimitationsNotice />
+        {workbenchError && activeTab !== "sector" ? <ErrorState message={workbenchError} /> : null}
 
         {activeTab === "sector" && <Panel title="Sector Sensitivity">
           <form className="form-grid" method="get">
@@ -297,10 +181,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
             </div>
           </form>
           {workbenchError && !sectorResult ? (
-            <NotConfiguredState
-              title="Not available yet"
-              description={`${market}/${country} macro benchmark is not available for SIC ${sic || "the selected sector"}. ${workbenchError}`}
-            />
+            <ErrorState message={workbenchError} />
           ) : null}
           {sectorResult ? <MacroSensitivityTable result={sectorResult} /> : !workbenchError ? <EmptyState label="Select a market and SIC to load real benchmark data." /> : null}
           {seriesListRes.meta ? <DataFreshnessIndicator meta={seriesListRes.meta} /> : null}
@@ -308,17 +189,17 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
 
         {activeTab === "scenario" && <Panel title="Macro Shock Scenario">
           <MacroScenarioForm country={country} market={market} sic={sic} values={values} />
-          {scenarioResult ? <ScenarioResult result={scenarioResult} /> : <EmptyState label="Run a scenario to estimate source-backed sector impact." />}
+          {scenarioResult ? <ScenarioResult result={scenarioResult} /> : !workbenchError ? <EmptyState label="Run a scenario to estimate source-backed sector impact." /> : null}
         </Panel>}
 
         {activeTab === "bottom-up" && <Panel title="Bottom-Up Segment Sensitivity">
           <MacroBottomUpForm country={country} market={market} sic={sic} values={values} />
-          {bottomUpResult ? <BottomUpResult result={bottomUpResult} /> : <EmptyState label="Enter one or more SIC-backed segments to calculate weighted exposure." />}
+          {bottomUpResult ? <BottomUpResult result={bottomUpResult} /> : !workbenchError ? <EmptyState label="Enter one or more SIC-backed segments to calculate weighted exposure." /> : null}
         </Panel>}
 
         {activeTab === "top-down" && <Panel title="Top-Down Company History">
           <MacroTopDownForm country={country} market={market} sic={sic} values={values} />
-          {topDownResult ? <TopDownResult result={topDownResult} /> : <EmptyState label="Enter at least three periods to estimate company-specific macro sensitivity." />}
+          {topDownResult ? <TopDownResult result={topDownResult} /> : !workbenchError ? <EmptyState label="Enter at least three periods to estimate company-specific macro sensitivity." /> : null}
         </Panel>}
 
         {activeTab === "series" && <><Panel title="Import from FRED">

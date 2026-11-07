@@ -67,7 +67,12 @@ def calculate_top_down_macro(
     """
     Run top-down regression of company history vs macro variables.
     """
-    result = run_top_down_macro_sensitivity(db, request)
+    try:
+        result = run_top_down_macro_sensitivity(db, request, user_id=current_user["id"])
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="Company or owned valuation not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Provide complete finite company/macro inputs in unique chronological periods; use explicit enterprise value for cash adjustments.") from exc
     return ApiResponse(data=result)
 
 
@@ -79,5 +84,10 @@ def calculate_bottom_up_macro(
     """
     Run bottom-up calculation of company macro sensitivity using segment weights.
     """
-    result = run_bottom_up_macro_sensitivity(db, request)
+    try:
+        result = run_bottom_up_macro_sensitivity(db, request, user_id=current_user["id"])
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="Company, owned valuation or sector benchmark not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail="Use matching markets, explicit SIC codes and one complete finite non-negative segment basis; explicit weights must sum to one.") from exc
     return ApiResponse(data=result)

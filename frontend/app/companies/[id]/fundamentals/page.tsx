@@ -19,11 +19,13 @@ import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
+import { FinancialReviewPlanPanel } from "@/components/financial-review-plan";
+import type { FinancialReviewPlan } from "@/lib/api/financials";
 import { ScreenerUpload } from "@/components/screener-upload";
 import { formatNumber } from "@/lib/formatting";
 import { financialIdentityFormula, financialMetricLabel } from "@/lib/financial-evidence";
 
-export default async function FundamentalsPage(props: { params: Promise<{ id: string }> }) {
+export default async function FundamentalsPage(props: { params: Promise<{ id: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const params = await props.params;
   const companyId = parseInt(params.id, 10);
   if (isNaN(companyId)) {
@@ -38,7 +40,13 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
     return <ErrorState message="Company fundamentals could not be loaded. Reload to retry." />;
   }
 
-  const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse] = await Promise.all([
+  const query = (await props.searchParams) ?? {};
+  const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
+  const reviewTrack = first(query.review_track) || "operating";
+  const reviewYear = first(query.review_year);
+  const reviewParams = new URLSearchParams({track: reviewTrack});
+  if (reviewYear) reviewParams.set("latest_year", reviewYear);
+  const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse, reviewPlanResponse] = await Promise.all([
     serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`),
     serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`),
     serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`),
@@ -49,6 +57,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
     serverFetchApiResponse<FinancialStatementIdentityReport>(
       `/api/companies/${companyId}/financial-statements/identities`,
     ),
+    serverFetchApiResponse<FinancialReviewPlan>("/api/companies/" + companyId + "/financial-statements/review-plan?" + reviewParams),
   ]);
   const periods = periodsRes.data || [];
   const extractedCandidates = extractedCandidatesRes.data || [];
@@ -94,6 +103,9 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
           &larr; Back to Dashboard
         </Link>
       </div>
+
+      <FinancialReviewPlanPanel report={hasUsableData(reviewPlanResponse) ? reviewPlanResponse.data : null}
+        error={reviewPlanResponse.errors[0]?.message} track={reviewTrack} year={reviewYear} />
 
       <section className="border-y border-gray-200 bg-white px-4 py-5 sm:px-6" aria-labelledby="normalization-coverage-title">
         <div className="flex flex-wrap items-start justify-between gap-4">
@@ -368,7 +380,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
             </Link>
           </div>
           <div className="mt-4 flow-root">
-            {hasUsableData(extractedCandidatesRes) ? <FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} />
+            {hasUsableData(extractedCandidatesRes) ? <div id="financial-candidate-review"><FinancialCandidateReview initialCandidates={extractedCandidates} companyId={company.id} /></div>
               : <ErrorState message="Financial candidates could not be loaded. Reload to retry." />}
           </div>
         </div>

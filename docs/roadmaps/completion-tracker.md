@@ -4,6 +4,15 @@ Created October 10, 2026. **Accepted milestones: 4/10 (40%). Next: M05.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
 Much of the implementation exists; historical tests do not close today's gates.
 
+**Current data boundary, November 7:** the user approved removal of all 12
+companies and linked research on November 5. The populated-company counts,
+scenarios and examples below describe historical evidence, not current records
+or instructions to reseed them. [PR6](https://github.com/Gittastic112/Marketagent/pull/6)
+is merged. The [November 7 implementation](../archive/checkpoints/2026/product-development-2026-11-07.md)
+adds financial review planning, correct macro computation and claim-review cues.
+It does not supply missing issuer disclosures, actual-use days or extra acceptance
+points. New company intake requires a selected research scope after the reset.
+
 ## What 100% means
 
 A local, single-user research/demo app using the existing database for the confirmed
@@ -289,7 +298,7 @@ views. The subsequent [India review](../archive/checkpoints/2026/india-financial
 adds four issuers, 492 source occurrences, 456 facts, 12 periods and 72 normalized
 values. The [latest HDFC review](../archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md)
 adds FY2026 and bonus-adjusted FY2025 comparatives, preserving FY2024 and one explicit
-EPS exception. All 11 scoped securities now have 33 periods and 332 normalized values.
+EPS exception. At that historical checkpoint, all 11 scoped securities had 33 periods and 332 normalized values.
 Six new normal views pass. M05-04 verifies selected reviewed histories and retained
 prior values. M05-HDFCBANK-15 adds 24 exact checks for issued shares, awards,
 provisions, parent earnings, equity scope and segment eliminations. Its source
@@ -313,7 +322,7 @@ are promoted with their USD1m component discrepancy retained. Current totals are
 M05-DEBT-21 then verifies 34 original cells, four inline facts and 12 equations
 across five retained reports. Runs 152-159 add 23 unchanged historical candidates
 for NVIDIA, Alphabet and Microsoft; six Alphabet face totals and one unsupported
-NVIDIA commercial-paper zero stay held. Current totals: 33 periods, 929 facts,
+NVIDIA commercial-paper zero stay held. Historical checkpoint totals: 33 periods, 929 facts,
 1,003 revisions and 336 normalized values. All 906 earlier facts and all normalized
 amounts/units/warnings remain unchanged. Thirty-six fresh normal browser views pass.
 The November [financial follow-up](../archive/checkpoints/2026/release-publication-and-financial-followup-2026-11-02.md)

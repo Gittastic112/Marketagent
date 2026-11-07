@@ -19,6 +19,9 @@ test("exact citation checks leave incorrect Mock Data interpretation pending for
   await review.getByRole("button", {name:"Validate all cited sources"}).click();
   await expect(review.getByText("Exact citation verified.", {exact:true})).toBeVisible();
   await expect(review.getByText("Status: pending", {exact:true})).toBeVisible();
+  await expect(review.getByText(/Claims needing review/)).toBeVisible();
+  await expect(review.getByRole("button", {name:"Approve", exact:true})).toBeDisabled();
+  await expect(review.getByText(/Some claim numbers are absent/)).toBeVisible();
   const outputs = await backendData<Array<{evaluation_json:{interpretation_quality:string}; human_review_status:string}>>(
     page, `/raw-documents/${sourceDocument.id}/ai-outputs`);
   expect(outputs[0].evaluation_json.interpretation_quality).toBe("not_evaluated");

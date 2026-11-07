@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-11-05 (UI recovery, accessibility and approved company-data removal).
+**Updated:** 2026-11-07 (financial review planning, macro integrity and AI review cues).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -76,8 +76,8 @@ of 402 selected candidates into 18 periods across six securities. 47 selected
 gaps and 265 older candidates remain unpromoted. The later [India review](archive/checkpoints/2026/india-financial-review-2026-10-18.md)
 adds Reliance, Airtel, ICICI and SBI: 456 facts, 492 source revisions and 12 periods,
 with 164 older comparative entries held. The [latest HDFC application](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md)
-adds FY2026 and bonus-adjusted FY2025 comparatives. The normal database now has 33
-periods, 929 facts, 1,003 revisions and 336 normalized values across 11 securities after the October 24 additions.
+adds FY2026 and bonus-adjusted FY2025 comparatives. Before the November 5 approved removal, the normal database had 33
+periods, 929 facts, 1,003 revisions and 336 normalized values across 11 securities after the October 24 additions. These counts are historical; the active company universe is empty.
 FY2024 stays pre-bonus; one FY2025 EPS exception, broader notes, merger comparability,
 model bridges and weighted mappings remain explicit.
 Certification v3 checks retained hashes, units, annual XBRL periods
@@ -133,6 +133,15 @@ off-device recovery, actual portfolio history, financial review or user acceptan
 The [dated follow-up](archive/checkpoints/2026/m03-m09-runtime-followup-2026-10-12.md) records the evidence.
 
 ### Ordered operator handoff
+
+November 7 immediate blocker: Docker storage became read-only during the final
+security build, then the engine stopped responding. A Docker Desktop restart is
+requested. The host had 2.1 GiB free; 1.6 GiB of this pass's regenerable scan cache
+was cleared, retaining every scan report, original, backup and rollback image.
+After restart, inspect storage, finish the prepared builds/scans and reversible
+rollout on the existing volume, then repeat browser and preservation checks.
+The latest source fixes are not yet fully installed. This is separate from the
+previously deferred Mac protection/off-device work below.
 
 November 5 UTC: the user explicitly approved clearing all 12 US/Indian companies
 and linked research, including the eleven historical scenarios, portfolio contents
@@ -417,8 +426,8 @@ records verification and scope. No clean scanner result proves absence of bugs.
 | Medium: untrusted parsers and availability | M03 source isolates four PDF operations in Linux children with CPU, address-space, output, wall-time and concurrency limits and sanitized errors. This is not an arbitrary-code/filesystem sandbox, malware scanner or comprehensive hostile-parser/load certification. A malicious local account can still exhaust disk/resources. Installed in the October 12 normal rollout. |
 | Medium: outbound clients | SEC metadata/companyfacts share the DNS-pinned RSS/filing transport. FRED/Alpha Vantage/Gemini bound responses and reject redirects/proxies/compression; query keys stay out of HTTPX URL logs. M04 bounds yfinance in disposable Linux children with no app secrets or proxy environment, but does not independently allowlist every SDK endpoint or sandbox filesystem/native-code access. Fixed-host clients rely on verified TLS and normal DNS. Strict rejection/pinning can reduce availability; failures stay explicit. Installed in the October 12 normal rollout. |
 | Medium: browser policy and secrets | Basic CSP/frame/type/referrer protections are enabled, not a nonce-based strict script policy. Secret scanning is heuristic over the working tree, not a full-history or credential-revocation audit. Provider keys were not printed or rotated. Database credentials were privately rotated by the operator and verified without emitting values; protected-file contents/current permissions were not inspected. Legacy global OAuth storage is disabled, not a broker integration |
-| Medium: supply chain | Hash-locked backend transitives, pinned image/CI references and signed dated OS updates remain. The [October 28 rollout](archive/checkpoints/2026/locked-build-and-local-rollout-2026-10-28.md) fixes the two OpenSSL package findings and passes that dated available HIGH/CRITICAL-fix gate for all three supported images. PR2, PR3 and [PR4](https://github.com/Gittastic112/Marketagent/pull/4) are merged; PR4 has five passing remote jobs. The [November 4 completion checkpoint](archive/checkpoints/2026/independent-completion-2026-11-04.md) owns the subsequent release evidence. Unfixed findings remain, including PostgreSQL libxml2 CVE-2026-6653 (scanner critical, Debian minor/no-DSA) and the frontend zlib/MiniZip flag (Debian's built binary unaffected). Neither is suppressed. Optional stopped pgAdmin and host Docker require a separate upgrade assessment; scanners cannot establish exploitability or completeness |
-| AI and research integrity | Provider output and source text remain untrusted. Automated Evaluation v3 reports citation/policy checks, not semantic truth. A separate October 18 delegated review judges six saved actual responses and four adversarial fixtures, rejecting unsupported mappings and all four misleading fixture interpretations despite valid citations. Human fields stay unchanged. This is a selected review set, not statistical accuracy or future live-provider injection-resistance proof. Explicit scans disclose source transmission; ordinary review/browser reads make no provider call |
+| High until current image rollout: supply chain | November 7 scans identify available APT CVE-2026-109518 and trixie zlib CVE-2026-76844/CVE-2026-85091 fixes. Source now advances the signed snapshot, checks patched APT before enabling HTTP retries, and builds pinned PostgreSQL 16.15 with the same OS-update policy. [PR7](https://github.com/Gittastic112/Marketagent/pull/7) owns current remote scan results; local installation is blocked by the Docker failure above. Historical clean update gates are not current security clearance. Unfixed findings, including libxml2 and source/binary applicability differences, remain visible without suppression. Optional stopped pgAdmin and host Docker remain separate assessments; scanning cannot certify exploitability or completeness |
+| AI and research integrity | Provider output and source text remain untrusted. Automated Evaluation v4 keeps citation/policy pass status separate from bounded literal review cues. Numeric mismatches, multiple periods and instruction/inference cues require recorded review reasoning before approval. Changing citation evidence resets approval and preserves the prior review receipt. These checks do not establish semantic truth. A separate October 18 delegated review judges six saved actual responses and four adversarial fixtures, rejecting unsupported mappings and all four misleading fixture interpretations despite valid citations. Human fields stay unchanged. This is a selected review set, not statistical accuracy or future live-provider injection-resistance proof. Explicit scans disclose source transmission; ordinary review/browser reads make no provider call |
 
 Local credential authentication and owner scoping reduce accidental cross-user
 access, but they do not make the application safe for the public internet. Public
@@ -444,7 +453,7 @@ provider licensing/freshness and every browser state were not re-certified.
 | Type synchronization | Frontend contracts still mirror backend types manually. Generated contracts need an approved handling strategy for aliases, envelopes and response-only reconciliation before replacing them |
 | Frontend test depth | Source-integrity checks remain alongside rendered/component tests and real browser save/retry/navigation/race checks. The October 13 state/control matrix records supported active workflows; future form edits need behavioral verification, and unmounted legacy components are not implicitly certified |
 | Current UI and empty universe | November 5 separates source notes from unavailable/freshness states, explains selected brief inputs, scopes optional diagnostics and keeps failed company requests recoverable. Direct Daily Brief links no longer prefetch its potentially generating GET. Mobile company-setup steps gain keyboard scrolling. Ordinary source facts, dates, Mock Data and financial gaps remain explicit. The approved company cleanup removes data, not these financial/research limitations; empty onboarding must not seed replacements |
-| November research-model completion | Eleven explicitly approved historical scenarios were saved and verified in 82 normal desktop/mobile views, then removed from the active database by the approved November 5 cleanup. Narrative/source evidence and pre-removal backups remain. Direct-rate and bank promotion repairs preserve required financial gates. PR2, PR3, PR4 and PR5 are merged; PR6 owns the latest UI publication. Native Node remains absent: the official download returned a network-allowlist 403 even with escalation. The earlier native removal of the first empty helper folder returned EPERM; zero files/directories were removed. All 32 retained helper files remain, including one that differs from its historical move hash |
+| November research-model completion | Eleven explicitly approved historical scenarios were saved and verified in 82 normal desktop/mobile views, then removed from the active database by the approved November 5 cleanup. Narrative/source evidence and pre-removal backups remain. Direct-rate and bank promotion repairs preserve required financial gates. PR2 through PR6 are merged; the November 7 checkpoint owns subsequent delivery. Native Node remains absent: the official download returned a network-allowlist 403 even with escalation. The earlier native removal of the first empty helper folder returned EPERM; zero files/directories were removed. All 32 retained helper files remain, including one that differs from its historical move hash |
 | Legacy request conventions | The compatibility facade intentionally retains data-only, metadata and default-client envelope behaviors, including distinct error handling. Do not silently switch consumers between them |
 | Scratch and historical files | M02 preserves 18 unused one-off scripts in the ignored retired/local directory with an inventory; it does not publish their contents. Unclassified local configuration, generated maps, caches and plans remain preserved. Use the code map and maintained scripts, not historical recipes as current workflow instructions |
 | Dependency hygiene | [October 21-22 repairs](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) install Pillow 13.0.0/certifi 2026.10.19 and Next.js 16.4.1. October 28 locks and signed OS snapshots remain unchanged. [November 4 source gates](archive/checkpoints/2026/independent-completion-2026-11-04.md) pass remote dependency/container scans and AMD64 builds. November 5 installs the UX R3 frontend compiled offline from verified R2 dependencies with matching manifest/lock hashes; backend/workers retain R2. Fresh signed-package attempts failed upstream HTTP503/504 and remain recorded. No partial build replaces the verified runtime. Host-tree drift and unfixed OS findings remain separately recorded; dated scans cannot guarantee future safety |
@@ -457,13 +466,36 @@ provider licensing/freshness and every browser state were not re-certified.
 | Current normal data and resources | October 22 after verification: four normal containers sampled 1,258.11 MiB working set and 0.77% combined CPU, excluding VM overhead. Zero restarts and localhost-only published ports. Docker reports 25.88GB images, 3.339GB volumes and 4.487GB build cache; shared accounting is not additive. Host free space is about 26GiB. Ten rollback registrations are separate from the six-service project with files/logs/images retained. Removing only the new successful builder stage recovers 849,703,505 layer bytes. Backups, volumes and failed evidence remain. This is a dated observation, not a permanent resource guarantee or monitoring service |
 | Runtime evidence boundary | Current State and checkpoint image/source fingerprints own runtime identity; inherited container source-commit labels are historical. Earlier read-side catalog/discovery/regime changes and later identical rollout/browser fingerprints are separate evidence. Architecture/import refactors do not authorize reseeding, source promotion or rewriting saved models |
 
+## November 7 review and calculation boundaries
+
+The [product-development checkpoint](archive/checkpoints/2026/product-development-2026-11-07.md)
+owns source, browser and publication evidence. Financial review planning is a
+read-only checklist, not a financial-fact certification: it checks three annual
+years, explicit unit alignment, reviewed candidate/revision linkage and conflicts.
+It does not value employee claims, certify share-class scope, derive undisclosed
+amounts or approve forecasts. More than 2,000 rows per evidence class is explicitly
+truncated. A linked source can still contain a wrong or inapplicable statement.
+
+Macro compatibility routes now delegate to actual, non-writing calculations.
+Constant regressors yield no estimate. Full-company bottom-up totals require all
+weighted segments to have each coefficient; partial contributions are not
+renormalized. Top-down signed duration is negative rate slope, while sector
+coefficients preserve their source convention. Single-factor OLS does not prove
+causality, statistical significance, stable future exposure or aligned source
+units. Nonzero currency shocks require an explicit source-consistent direction.
+
+AI literal review inspects at most 100 markers/100,000 characters and requires
+notes when truncated. Numeric overlap does not verify units, calculations, period
+assignment or interpretation. These cues are review aids, not an automatic truth
+score; no external model call or existing-output bulk reevaluation occurs.
+
 ## Future scope after release acceptance
 
-1. Use the eleven approved historical research scenarios within their stated limits. Complete issuer-claim evidence remains separate future work; record actual research/demo use. Agent checks do not substitute for actual use.
+1. Preserve the empty company universe. The eleven approved historical scenarios were removed and remain only in receipts/backups; do not restore them automatically. Future research needs a selected company and dated sources. Agent checks do not substitute for actual use.
 2. Add compliant provider adapters where licensing and stored-record provenance allow them.
 3. Add licensed comparable-company adapters before attempting deeper peer normalization or calibration.
 4. Broaden issuer/layout coverage beyond the existing reviewed universe and improve official India providers; the older AAPL/APSEZ reference certification retains its narrower dated scope.
-5. Turn separate modules into one daily evidence-to-decision workflow.
+5. Extend the existing daily evidence-to-decision workflow when actual usage reveals a concrete gap. The new financial review plan connects missing inputs to source/candidate/valuation review without generating facts.
 6. Improve automatic exact-passage selection while retaining review gates.
 
 The former 2,450-line audit is preserved at

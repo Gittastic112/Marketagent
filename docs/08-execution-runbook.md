@@ -30,6 +30,31 @@ Compose explicitly select the test target. Supported Linux/Python 3.14 environme
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
 
+## Review financial evidence and macro inputs
+
+For an existing company, open Fundamentals and use Financial review plan. Choose
+Operating company, Bank / financial-services equity, or Equity cash flow and
+dividends. The optional latest year creates a read-only three-year checklist; it
+does not create financial periods. Follow each source/candidate link, resolve
+units and conflicting scopes, then use the existing explicit promotion workflow.
+Bank review deliberately excludes deposits-as-FCFF-debt assumptions. Source-linked
+counts are traceability, not independent completeness certification.
+
+The authenticated GET /api/companies/{company_id}/financial-statements/review-plan
+accepts track and optional latest_year. Unknown companies return 404, invalid
+tracks/future years return 422. Its reads are bounded and never call providers.
+
+Macro Workbench calculations do not save history or models. Enter explicit zero
+only when intended, use chronological consistent period labels and align currency,
+scale and macro directions. Update period count expands history to 24 UI periods
+(120 through the API). Missing factors stay unavailable. Covered segment/scenario
+contributions are partial sums; they are not complete company estimates.
+
+AI output review shows exact citations separately from claim-review cues. Resolve
+numeric, period or instruction/inference flags and record your rationale before
+approval. Changing the citation evidence resets approval and retains its prior
+review receipt. No new external AI call occurs in these deterministic checks.
+
 ## Rotate the local database password
 
 This is an operator maintenance step, not an instruction for an agent to read
@@ -42,12 +67,12 @@ password into chat or commands. Never use `docker compose down -v`.
    characters (letters, digits, `_`, `-`). Preserve all other settings. Update any
    separately configured host DATABASE_URL privately. Leave pgAdmin disabled and
    PGADMIN_DEFAULT_PASSWORD unset unless that separate service is required.
-2. From the repository root, use the verified November 5 image override and validate
+2. After Docker health is restored, use the last verified November 7 image override and validate
    configuration without printing it:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml config --quiet
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml stop frontend backend scheduler source_scheduler
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml config --quiet
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml stop frontend backend scheduler source_scheduler
    docker exec -it market_intel_postgres psql -X -U marketintel -d marketintel
    ~~~
 
@@ -58,9 +83,9 @@ password into chat or commands. Never use `docker compose down -v`.
    the current image versions and stopped optional services:
 
    ~~~bash
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml create --no-build source_scheduler pgadmin
-   docker compose -f docker-compose.yml -f output/playwright/user-experience-20261105/runtime-images.yml ps --all
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-build --force-recreate postgres backend frontend scheduler
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml create --no-build source_scheduler pgadmin
+   docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml ps --all
    ~~~
 
 5. Verify backend/frontend/database health, sign-in and the company list (currently
@@ -74,7 +99,7 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The local override retains the November 5 frontend and November 4 backend images. On another checkout,
+The local override selects the November 7 product frontend R3 and backend/workers R2. On another checkout,
 use that installation's verified image override; do not substitute older tags.
 
 ## Dependency and container updates
@@ -93,9 +118,16 @@ From the root, run `python3 scripts/check_dependency_locks.py`, the backend suit
 dependency audits and affected browser workflows. Frontend uses `npm ci` with its
 existing lockfile. CI action SHAs and Python/Node/PostgreSQL image digests are pinned;
 review updated official references rather than replacing them with floating tags.
-The Dockerfiles also freeze signed Debian security packages to a dated snapshot.
-Advance both snapshots together, retain signature checking, fail incomplete updates,
-and rebuild both images before claiming the fixes are installed.
+The backend, frontend and PostgreSQL Dockerfiles freeze signed Debian security
+packages to a dated snapshot. Advance all three snapshots together, retain signature
+checking, fail incomplete updates, and rebuild all images before claiming fixes are
+installed. PostgreSQL's build keeps its pinned version-16 binaries and excludes the
+rolling PGDG repository from OS updates. Build it with the normal Compose project;
+the browser and recovery projects use the same Dockerfile.
+The backup verifier defaults to the immutable image ID of the selected running
+database, so a moving local tag cannot silently choose a different build.
+RECOVERY_POSTGRES_IMAGE remains an explicit override. Ambiguous database service
+selection fails before a verifier starts.
 
 Scan explicitly selected built runtime images, with Python 3 and Docker available:
 
@@ -578,7 +610,10 @@ run CI when a pull request opens; this avoids duplicate branch-push and PR build
 Keep this branch filter aligned if the repository default branch changes. Upstream
 package-download failures remain failures and may be retried without changing pins.
 
-All seven image-build APT commands use three per-file retries and 30-second HTTP/
-HTTPS connection/data timeouts. These are not whole-build deadlines; CI job limits
-remain. Snapshot dates, package hashes, Debian signatures and failure propagation
-are unchanged. See [Debian's transport timeout definition](https://manpages.debian.org/trixie/apt/apt-transport-http.1.en.html).
+Image-build APT commands use 30-second HTTP/HTTPS connection/data timeouts.
+The frontend disables HTTP retries until APT 2.6.2 is installed; PostgreSQL checks
+APT 3.0.4 before bootstrapping certificates. Signed-package checks remain enabled,
+then sources switch to HTTPS. Patched APT and existing HTTPS paths retain three
+per-file retries. This addresses [CVE-2026-109518](https://security-tracker.debian.org/tracker/CVE-2026-109518).
+The November 7 snapshot also supplies the available trixie zlib fixes. These are
+not whole-build deadlines; CI job limits remain. See [Debian's transport timeout definition](https://manpages.debian.org/trixie/apt/apt-transport-http.1.en.html).

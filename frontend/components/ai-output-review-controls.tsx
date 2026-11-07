@@ -39,7 +39,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
   const citedSourceIds = Array.from(
     output.output_text.matchAll(/\[source_id:([^\]]+)\]/g),
     (match) => match[1].trim(),
-  ).filter((source, index, sources) => source.startsWith("raw_document:") && sources.indexOf(source) === index);
+  ).filter((source, index, sources) => /^(raw_document|brief_source):/.test(source) && sources.indexOf(source) === index);
   const citationPayload = buildCitationValidationPayload(citedSourceIds, drafts);
   const evaluation = readableEvaluation(output);
 
@@ -208,7 +208,13 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
         <h4 style={{ marginBottom: "0.5rem", color: "var(--text-secondary)" }}>Human review</h4>
         <p><strong>Status:</strong> {output.human_review_status.replace("_", " ")}</p>
         <p><strong>Automated checks:</strong> {evaluation.passed ? "passed" : "not passed"}</p>
-        <p className="muted">Automated scope: source citations and policy checks only. Interpretation quality is not evaluated. Review numbers, periods, causal claims and source-text instructions before approving; an exact quote does not prove the claim.</p>
+        <p className="muted">Automated checks validate exact citations and policy rules. Literal checks flag numbers, multiple periods and instruction-like text for review. Interpretation quality is not evaluated; an exact quote or absence of flags does not prove the claim.</p>
+        {evaluation.claimFlags.length ? <details open><summary>Claims needing review ({evaluation.claimFlags.length})</summary>
+          <ul>{evaluation.claimFlags.map((flag, index) => <li key={index}>
+            <p><strong>{flag.sourceId}:</strong> {flag.claimText}</p><p>{flag.message}</p>
+          </li>)}</ul>
+        </details> : null}
+        {evaluation.requiresReviewNotes ? <p>Resolve these flags, then record the evidence or calculation in review notes. Approval requires those notes.</p> : null}
         {output.evaluation_json && !evaluation.passed ? (
           <ul>
             {evaluation.failedChecks.map(name => <li key={name}>{name.replaceAll("_", " ")}</li>)}
@@ -219,7 +225,7 @@ export function AiOutputReviewControls({ initialOutput }: Props) {
           <textarea value={notes} onChange={(event) => setNotes(event.target.value)} rows={3} />
         </label>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
-          <button className="btn btn-primary" type="button" disabled={busy || !evaluation.passed} onClick={() => review("approved")}>Approve</button>
+          <button className="btn btn-primary" type="button" disabled={busy || !evaluation.passed || (evaluation.requiresReviewNotes && !notes.trim())} onClick={() => review("approved")}>Approve</button>
           <button className="btn btn-secondary" type="button" disabled={busy || !notes.trim()} onClick={() => review("needs_revision")}>Request revision</button>
           <button className="btn btn-secondary" type="button" disabled={busy || !notes.trim()} onClick={() => review("rejected")}>Reject</button>
         </div>

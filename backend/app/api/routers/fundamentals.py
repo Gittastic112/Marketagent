@@ -3,9 +3,10 @@ import os
 import tempfile
 from pathlib import Path
 from typing import Sequence
+from typing import Literal
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Query
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -23,7 +24,9 @@ from app.models.raw_document import RawDocument
 from app.models.source import Source
 from app.api.schemas import ApiResponse, FinancialExtractionCandidateRead, FinancialExtractionResultRead, FinancialPeriodRead
 from app.api.errors import PublicApiError
-from app.schemas.financials import FinancialCandidatePromotion
+from app.schemas.financials import FinancialCandidatePromotion, FinancialReviewPlanRead
+from app.api.dependencies import get_current_user
+from app.services.financial_review_plan import build_financial_review_plan
 from app.services.financial_extraction import (
     extract_financial_candidates_from_filing,
     list_extracted_financial_candidates,
@@ -43,6 +46,21 @@ from app.providers.fundamentals.screener import ScreenerExcelParser
 from app.services.workbook_safety import validate_workbook_bytes
 
 router = APIRouter(tags=["fundamentals"])
+
+
+@router.get("/api/companies/{company_id}/financial-statements/review-plan",
+            response_model=ApiResponse[FinancialReviewPlanRead])
+def financial_review_plan(company_id: int,
+    track: Literal["operating", "bank_equity", "equity_cash_flow"] = "operating",
+    latest_year: int | None = Query(default=None, ge=1900, le=2100),
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    try:
+        report = build_financial_review_plan(db, company_id, track=track, latest_year=latest_year)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="Company not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail="Choose a supported review track and a historical or current calendar year.") from exc
+    return ApiResponse(data=report)
 
 
 @router.post(
@@ -398,6 +416,11 @@ def normalize_financial_period(company_id: int, period_id: int, db: Session = De
     company = db.get(Company, company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
+
+    period = db.scalar(select(FinancialStatementPeriod).where(
+        FinancialStatementPeriod.id == period_id, FinancialStatementPeriod.company_id == company_id))
+    if period is None:
+        raise HTTPException(status_code=404, detail="Financial period not found for this company")
 
     try:
         snapshot = MetricNormalizationEngine.normalize_period(db, period_id)

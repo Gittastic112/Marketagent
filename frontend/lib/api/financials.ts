@@ -26,6 +26,28 @@ export type FinancialStatementPeriod = {
   metrics: FinancialMetric[];
 };
 
+export type FinancialReviewTrack = "operating" | "bank_equity" | "equity_cash_flow";
+export type FinancialReviewField = {
+  metric: string; label: string;
+  status: "missing" | "ambiguous" | "unit_review" | "source_review" | "recorded_with_source" | "promotion_review" | "candidate_review";
+  action: string; recorded_metric_ids: number[]; candidate_ids: number[]; candidate_count: number;
+  source_document_ids: number[];
+  source_links: Array<{candidate_id: number; document_id: number; href: string}>;
+};
+export type FinancialReviewPlan = {
+  version: "financial-review-plan-v1"; company_id: number; ticker: string; track: FinancialReviewTrack;
+  generated_at: string; claim_type: "Calculation"; source_document_count: number; latest_year: number | null;
+  periods: Array<{year: number; period_id: number | null; currency: string | null; report_date: string | null;
+    notes: string[]; fields: FinancialReviewField[]; source_linked_count: number; checklist_count: number}>;
+  actions: Array<{label: string; href: string; reason: string}>; truncated: boolean; basis: string; limitations: string[];
+};
+
+export async function getFinancialReviewPlan(companyId: number, track: FinancialReviewTrack = "operating", latestYear?: number): Promise<FinancialReviewPlan> {
+  const query = new URLSearchParams({track});
+  if (latestYear !== undefined) query.set("latest_year", String(latestYear));
+  return fetchApi<FinancialReviewPlan>("/api/companies/" + companyId + "/financial-statements/review-plan?" + query);
+}
+
 export type FinancialExtractionCandidate = {
   id: number;
   company_id: number;

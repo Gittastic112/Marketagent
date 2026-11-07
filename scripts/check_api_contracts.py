@@ -24,7 +24,9 @@ CONTRACTS = {
     "research": {"ResearchSession": research.ResearchSessionDetail, "ResearchMessage": research.ResearchMessageRead,
                  "DecisionLog": research.DecisionLogRead, "OutcomeReview": research.OutcomeReviewRead,
                  "EvidenceLedgerItem": research.EvidenceLedgerItemRead, "VariantPerception": research.VariantPerceptionRead},
-    "financials": {"FinancialExtractionCandidate": financials.FinancialExtractionCandidateRead},
+    "financials": {"FinancialExtractionCandidate": financials.FinancialExtractionCandidateRead,
+                   "FinancialReviewPlan": financials.FinancialReviewPlanRead,
+                   "FinancialReviewField": financials.FinancialReviewFieldRead},
     "ai-consent": {
         "AIConsentDecision": ai_consent.AIConsentDecisionRead,
         "AIConsentAction": ai_consent.AIConsentActionRead,

@@ -107,7 +107,9 @@ def test_bottom_up_sensitivity_reports_missing_segment_coverage():
         ],
     )
 
-    assert result["duration"] == pytest.approx(1.8)
+    assert result["duration"] is None
+    assert result["covered_contributions"]["duration"] == pytest.approx(1.8)
+    assert result["metric_coverage"]["duration"] == pytest.approx(0.6)
     assert result["covered_weight"] == 0.6
     assert result["confidence"] == "low"
     assert result["missing_segments"] == [{"name": "Unknown", "sic_code": "0000", "weight": 0.4}]

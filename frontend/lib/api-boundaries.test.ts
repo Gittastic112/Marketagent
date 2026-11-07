@@ -57,6 +57,7 @@ const expectedExports = [
   "getDcfScenarios",
   "getFinancialCandidate",
   "getFinancialReconciliation",
+  "getFinancialReviewPlan",
   "getFinancialStatementIdentities",
   "getNormalizedCoverage",
   "getPeerCsvTemplate",

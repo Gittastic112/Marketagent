@@ -65,8 +65,13 @@ export type MacroScenarioResult = {
   sic_code: string;
   industry_name: string;
   source_file: string;
-  estimated_value_impact_pct: number;
-  estimated_operating_income_impact_pct: number;
+  estimated_value_impact_pct: number | null;
+  estimated_operating_income_impact_pct: number | null;
+  covered_value_impact_pct: number;
+  covered_operating_income_impact_pct: number;
+  missing_value_factors: string[];
+  missing_operating_income_factors: string[];
+  claim_type: "Calculation";
   affected_assumptions: string[];
   warnings: string[];
   formula: string;
@@ -96,6 +101,14 @@ export type MacroSensitivityResult = {
   operating_income: MacroSensitivityMetrics;
   confidence_label: string | null;
   warnings: string[] | null;
+  claim_type: "Calculation";
+  basis?: string;
+  formula?: string;
+  covered_weight?: number;
+  metric_coverage?: Record<string, number>;
+  covered_contributions?: Record<string, number>;
+  factor_diagnostics?: Record<string, { status: string; observation_count: number }>;
+  segment_exposures?: Array<{ name: string; sic_code: string; weight: number; source_file: string; source_record_id: number }>;
 };
 
 export type TopDownMacroPeriod = {

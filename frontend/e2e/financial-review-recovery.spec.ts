@@ -62,6 +62,15 @@ test("financial review rejects stale evidence, preserves corrections and promote
     page, `/companies/${company.id}/financial-periods`);
   expect(periods).toHaveLength(1);
   expect(periods[0].metrics).toEqual(expect.arrayContaining([expect.objectContaining({metric_name: "revenue", value: 13000})]));
+  await page.reload();
+  const plan = page.getByRole("region", {name: "Financial review plan", exact: true});
+  await expect(plan.getByText("Source linked", {exact: true})).toBeVisible();
+  await plan.getByLabel("Review track", {exact: true}).selectOption("bank_equity");
+  await plan.getByRole("button", {name: "Update review plan", exact: true}).click();
+  await expect(plan.getByRole("columnheader", {name: "Input", exact: true}).first()).toBeVisible();
+  await expect(plan.getByRole("rowheader", {name: "Book equity", exact: true}).first()).toBeVisible();
+  await expect(plan.getByRole("rowheader", {name: "Debt", exact: true})).toHaveCount(0);
+  expect(await backendData(page, `/companies/${company.id}/financial-periods`)).toEqual(periods);
   await page.setViewportSize({width: 390, height: 844});
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   await page.screenshot({path: test.info().outputPath("financial-review-recovery-mobile.png"), fullPage: true});

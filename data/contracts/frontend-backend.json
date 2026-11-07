@@ -6943,6 +6943,400 @@
         ],
         "title": "FinancialExtractionCandidateRead",
         "type": "object"
+      },
+      "FinancialReviewField": {
+        "$defs": {
+          "FinancialReviewSourceLink": {
+            "properties": {
+              "candidate_id": {
+                "title": "Candidate Id",
+                "type": "integer"
+              },
+              "document_id": {
+                "title": "Document Id",
+                "type": "integer"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              }
+            },
+            "required": [
+              "candidate_id",
+              "document_id",
+              "href"
+            ],
+            "title": "FinancialReviewSourceLink",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "candidate_count": {
+            "title": "Candidate Count",
+            "type": "integer"
+          },
+          "candidate_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Candidate Ids",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "metric": {
+            "title": "Metric",
+            "type": "string"
+          },
+          "recorded_metric_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Recorded Metric Ids",
+            "type": "array"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "source_links": {
+            "items": {
+              "$ref": "#/$defs/FinancialReviewSourceLink"
+            },
+            "title": "Source Links",
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "missing",
+              "ambiguous",
+              "unit_review",
+              "source_review",
+              "recorded_with_source",
+              "promotion_review",
+              "candidate_review"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "metric",
+          "label",
+          "status",
+          "action",
+          "recorded_metric_ids",
+          "candidate_ids",
+          "candidate_count",
+          "source_document_ids",
+          "source_links"
+        ],
+        "title": "FinancialReviewFieldRead",
+        "type": "object"
+      },
+      "FinancialReviewPlan": {
+        "$defs": {
+          "FinancialReviewActionRead": {
+            "properties": {
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "label": {
+                "title": "Label",
+                "type": "string"
+              },
+              "reason": {
+                "title": "Reason",
+                "type": "string"
+              }
+            },
+            "required": [
+              "label",
+              "href",
+              "reason"
+            ],
+            "title": "FinancialReviewActionRead",
+            "type": "object"
+          },
+          "FinancialReviewFieldRead": {
+            "properties": {
+              "action": {
+                "title": "Action",
+                "type": "string"
+              },
+              "candidate_count": {
+                "title": "Candidate Count",
+                "type": "integer"
+              },
+              "candidate_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Candidate Ids",
+                "type": "array"
+              },
+              "label": {
+                "title": "Label",
+                "type": "string"
+              },
+              "metric": {
+                "title": "Metric",
+                "type": "string"
+              },
+              "recorded_metric_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Recorded Metric Ids",
+                "type": "array"
+              },
+              "source_document_ids": {
+                "items": {
+                  "type": "integer"
+                },
+                "title": "Source Document Ids",
+                "type": "array"
+              },
+              "source_links": {
+                "items": {
+                  "$ref": "#/$defs/FinancialReviewSourceLink"
+                },
+                "title": "Source Links",
+                "type": "array"
+              },
+              "status": {
+                "enum": [
+                  "missing",
+                  "ambiguous",
+                  "unit_review",
+                  "source_review",
+                  "recorded_with_source",
+                  "promotion_review",
+                  "candidate_review"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "metric",
+              "label",
+              "status",
+              "action",
+              "recorded_metric_ids",
+              "candidate_ids",
+              "candidate_count",
+              "source_document_ids",
+              "source_links"
+            ],
+            "title": "FinancialReviewFieldRead",
+            "type": "object"
+          },
+          "FinancialReviewPeriodRead": {
+            "properties": {
+              "checklist_count": {
+                "title": "Checklist Count",
+                "type": "integer"
+              },
+              "currency": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Currency"
+              },
+              "fields": {
+                "items": {
+                  "$ref": "#/$defs/FinancialReviewFieldRead"
+                },
+                "title": "Fields",
+                "type": "array"
+              },
+              "notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Notes",
+                "type": "array"
+              },
+              "period_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Period Id"
+              },
+              "report_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Report Date"
+              },
+              "source_linked_count": {
+                "title": "Source Linked Count",
+                "type": "integer"
+              },
+              "year": {
+                "title": "Year",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "year",
+              "period_id",
+              "currency",
+              "report_date",
+              "notes",
+              "fields",
+              "source_linked_count",
+              "checklist_count"
+            ],
+            "title": "FinancialReviewPeriodRead",
+            "type": "object"
+          },
+          "FinancialReviewSourceLink": {
+            "properties": {
+              "candidate_id": {
+                "title": "Candidate Id",
+                "type": "integer"
+              },
+              "document_id": {
+                "title": "Document Id",
+                "type": "integer"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              }
+            },
+            "required": [
+              "candidate_id",
+              "document_id",
+              "href"
+            ],
+            "title": "FinancialReviewSourceLink",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/$defs/FinancialReviewActionRead"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "basis": {
+            "title": "Basis",
+            "type": "string"
+          },
+          "claim_type": {
+            "const": "Calculation",
+            "title": "Claim Type",
+            "type": "string"
+          },
+          "company_id": {
+            "title": "Company Id",
+            "type": "integer"
+          },
+          "generated_at": {
+            "format": "date-time",
+            "title": "Generated At",
+            "type": "string"
+          },
+          "latest_year": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Latest Year"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "periods": {
+            "items": {
+              "$ref": "#/$defs/FinancialReviewPeriodRead"
+            },
+            "title": "Periods",
+            "type": "array"
+          },
+          "source_document_count": {
+            "title": "Source Document Count",
+            "type": "integer"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "track": {
+            "enum": [
+              "operating",
+              "bank_equity",
+              "equity_cash_flow"
+            ],
+            "title": "Track",
+            "type": "string"
+          },
+          "truncated": {
+            "title": "Truncated",
+            "type": "boolean"
+          },
+          "version": {
+            "const": "financial-review-plan-v1",
+            "title": "Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "version",
+          "company_id",
+          "ticker",
+          "track",
+          "generated_at",
+          "claim_type",
+          "source_document_count",
+          "latest_year",
+          "periods",
+          "actions",
+          "truncated",
+          "basis",
+          "limitations"
+        ],
+        "title": "FinancialReviewPlanRead",
+        "type": "object"
       }
     },
     "market": {
