@@ -27,8 +27,9 @@ removed; newer backups, source originals and review reports remain.
 The original database volume, schema u3u3u3u3u3u3, portfolio account, settings,
 shared sources and global references remain. The former PostgreSQL container is
 retained stopped; its replacement uses the same 16.15 binaries and collation
-versions with patched OS packages. Rollout/browser checks preserve all table
-fingerprints and stored assets. No migration or data rewrite occurred.
+versions with patched OS packages. Rollout checks preserve all table fingerprints
+and stored assets. Browser verification then explicitly refreshes one unreviewed
+deterministic brief. No migration or destructive data rewrite occurred.
 Settings passed only in memory; verification is a point-in-time observation.
 
 ## Delivered workflows
