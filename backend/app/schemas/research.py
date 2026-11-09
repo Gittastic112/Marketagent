@@ -57,12 +57,18 @@ class ThesisNoteUpdate(BaseModel):
 class ThesisAssumptionCreate(BaseModel):
     thesis_note_id: int
     description: str
+    category: str | None = Field(default=None, max_length=100)
+    importance: str | None = Field(default="medium", max_length=40)
+    falsification_trigger: str | None = Field(default=None, max_length=20_000)
     original_confidence: str = "medium"
     current_confidence: str = "medium"
 
 
 class ThesisAssumptionUpdate(BaseModel):
     description: str | None = None
+    category: str | None = Field(default=None, max_length=100)
+    importance: str | None = Field(default=None, max_length=40)
+    falsification_trigger: str | None = Field(default=None, max_length=20_000)
     original_confidence: str | None = None
     current_confidence: str | None = None
 

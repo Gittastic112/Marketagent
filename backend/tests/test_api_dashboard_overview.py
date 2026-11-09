@@ -8,7 +8,7 @@ from app.api.dependencies import get_current_user
 from app.db.session import get_db
 from app.api.routers.dashboard import DASHBOARD_QUERY_BUDGET, DASHBOARD_RESPONSE_BUDGET_MS
 from app.main import app
-from app.models import Event, PortfolioSnapshot, ProcessingRun, RawDocument, Source, ThesisAssumption, ThesisNote
+from app.models import Event, PortfolioCashBalance, PortfolioSnapshot, ProcessingRun, RawDocument, Source, ThesisAssumption, ThesisNote
 from helpers import response_data
 
 
@@ -18,6 +18,36 @@ def _use_user(user_id: str) -> None:
         "email": f"{user_id}@example.com",
         "name": user_id,
     }
+
+
+def test_dashboard_prefers_funded_portfolio_and_preserves_explicit_empty_choice(client, db_session):
+    empty = response_data(client.post("/portfolios", json={"name": "Old empty account"}))
+    funded = response_data(client.post("/portfolios", json={"name": "Technology | Sample"}))
+    db_session.add(PortfolioCashBalance(portfolio_id=funded["id"], amount=45800,
+        currency="USD", as_of_date=date.today()))
+    db_session.add(PortfolioSnapshot(portfolio_id=funded["id"], snapshot_date=date.today(),
+        total_market_value=0, total_cost_basis=0, total_cash=45800, total_portfolio_value=45800,
+        base_currency="USD", calculation_status="complete", holdings_count=0, priced_holdings_count=0,
+        missing_price_tickers_json=[], missing_fx_pairs_json=[], payload_json={}))
+    db_session.commit()
+    result = response_data(client.get("/dashboard/overview"))
+    assert result["default_portfolio"]["id"] == funded["id"]
+    assert result["default_portfolio_snapshot"]["total_portfolio_value"] == 45800
+    assert {p["id"] for p in result["portfolios"]} == {empty["id"], funded["id"]}
+    chosen = response_data(client.get(f'/dashboard/overview?portfolio_id={empty["id"]}'))
+    assert chosen["default_portfolio"]["id"] == empty["id"]
+    assert chosen["default_portfolio_snapshot"] is None
+
+
+def test_dashboard_selection_rejects_foreign_missing_and_invalid_portfolios(client):
+    private = response_data(client.post("/portfolios", json={"name": "Private account"}))
+    _use_user("other-dashboard-user")
+    for portfolio_id in (private["id"], 999999):
+        response = client.get(f"/dashboard/overview?portfolio_id={portfolio_id}")
+        assert response.status_code == 404
+        assert "Private account" not in response.text
+    for invalid in ("0", "-1", "bad"):
+        assert client.get(f"/dashboard/overview?portfolio_id={invalid}").status_code == 422
 
 
 def test_dashboard_overview_consolidates_data_and_enforces_ownership(
@@ -72,7 +102,7 @@ def test_dashboard_overview_consolidates_data_and_enforces_ownership(
     assert overview["companies"][0]["ticker"] == "DASH"
     assert overview["daily_brief"]["summary"] == (
         "0 events in the stored-event preview; 0 unresolved contradiction alerts; "
-        "0 affected held companies."
+        "portfolio impact is not calculated in this preview."
     )
     assert len(statements) <= DASHBOARD_QUERY_BUDGET
     assert response.json()["meta"]["processing_time_ms"] <= DASHBOARD_RESPONSE_BUDGET_MS

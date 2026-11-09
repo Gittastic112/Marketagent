@@ -1,5 +1,7 @@
 # 2026 Checkpoints
 
+- [Portfolio visibility and research UI, November 9](portfolio-ui-2026-11-09.md)
+- [Analyst workflows and approved backup cleanup, November 9](analyst-workflows-2026-11-09.md)
 - [Financial planning, macro integrity and claim-review development, November 7](product-development-2026-11-07.md)
 
 Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.

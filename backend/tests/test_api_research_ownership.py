@@ -30,6 +30,33 @@ def create_company(client: TestClient) -> dict:
     )
 
 
+def test_thesis_assumption_review_fields_survive_edits_and_remain_owned(client: TestClient) -> None:
+    company = create_company(client)
+    note = response_data(client.post("/thesis-notes", json={
+        "company_id": company["id"], "title": "Mock Data thesis",
+        "thesis_text": "Mock Data review criteria",
+    }))
+    criteria = {"category": "Profitability", "importance": "high",
+                "falsification_trigger": "Two annual periods below the stated margin threshold."}
+    assumption = response_data(client.post(f"/thesis-notes/{note['id']}/assumptions", json={
+        "thesis_note_id": note["id"], "description": "Mock Data margin assumption", **criteria,
+    }))
+    for field, value in criteria.items():
+        assert assumption[field] == value
+    updated = response_data(client.patch(f"/thesis-assumptions/{assumption['id']}",
+                                         json={"current_confidence": "low"}))
+    for field, value in criteria.items():
+        assert updated[field] == value
+    read = response_data(client.get(f"/thesis-notes/{note['id']}"))["assumptions"][0]
+    assert read["falsification_trigger"] == criteria["falsification_trigger"]
+    cleared = response_data(client.patch(f"/thesis-assumptions/{assumption['id']}",
+                                         json={"category": None, "falsification_trigger": None}))
+    assert cleared["category"] is None and cleared["falsification_trigger"] is None
+    assert cleared["importance"] == "high"
+    use_user("other-user")
+    assert client.patch(f"/thesis-assumptions/{assumption['id']}", json=criteria).status_code == 404
+
+
 def test_company_thesis_filter_keeps_company_and_owner_scope(client: TestClient) -> None:
     company = create_company(client)
     other = response_data(client.post("/companies", json={"ticker": "OTHER", "name": "Mock Data other company"}))

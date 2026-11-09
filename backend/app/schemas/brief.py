@@ -47,6 +47,7 @@ class BriefingPortfolioExposure(BaseModel):
 
 
 class BriefingPortfolioMove(BaseModel):
+    provenance_notes: list[str] = Field(default_factory=list)
     ticker: str
     event_headline: str
     event_id: int
@@ -169,6 +170,7 @@ class BriefPublicCoverage(BaseModel):
 
 
 class DailyBriefPayload(BaseModel):
+    provenance_notes: list[str] = Field(default_factory=list)
     private_research: BriefResearchContext | LegacyBriefResearchContext | None = None
     public_coverage: BriefPublicCoverage | None = None
     summary: str = "Daily brief summary unavailable."

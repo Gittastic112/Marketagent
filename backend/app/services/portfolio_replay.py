@@ -1,7 +1,7 @@
 """Dated recorded activity, without inferred opening positions or broker claims."""
 from collections import defaultdict
 from datetime import date
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 from hashlib import sha256
 import json
 from types import SimpleNamespace
@@ -96,7 +96,7 @@ def _book(transactions, convert_cost=None):
             elif fees != 0:
                 blockers.add("UNSUPPORTED_CORPORATE_ACTION_FEES")
             elif kind == "split":
-                position.quantity = (position.quantity * quantity).quantize(PRECISION)
+                position.quantity = (position.quantity * quantity).quantize(PRECISION, rounding=ROUND_HALF_UP)
             else:
                 position.quantity += quantity
         elif kind in {"deposit", "dividend"}:
@@ -106,7 +106,8 @@ def _book(transactions, convert_cost=None):
         else:
             blockers.add("UNSUPPORTED_ACTIVITY_TYPE")
             continue
-        cash[currency] = (cash[currency] + delta).quantize(PRECISION)
+        # Match PostgreSQL NUMERIC persistence, including half-unit ties.
+        cash[currency] = (cash[currency] + delta).quantize(PRECISION, rounding=ROUND_HALF_UP)
         if cash[currency] < 0:
             blockers.add("NEGATIVE_CASH_OR_MISSING_OPENING_FUNDING")
     return positions, dict(cash), blockers, missing_fx

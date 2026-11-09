@@ -60,6 +60,7 @@ test("manual narrative and pasted social text remain literal and have working ed
   await signIn(page);
   const label = `Mock Data narrative ${Date.now()}`;
   await page.goto("/narratives");
+  await page.locator("summary:visible").filter({hasText: "Track a New Narrative"}).click();
   await page.getByLabel("Narrative Name", {exact: true}).fill(label);
   await page.getByLabel("Description", {exact: true}).fill("Mock Data manual interpretation, not an AI conclusion");
   await page.getByRole("button", {name: "Create Narrative", exact: true}).click();

@@ -59,6 +59,9 @@ def build_intelligence_review_queue(
         .where((FilingSectionDiff.added_words + FilingSectionDiff.removed_words) > 0)
         .order_by(FilingSectionDiff.created_at.desc(), FilingSectionDiff.id.desc())
     )
+    if company_id is not None:
+        diff_query = diff_query.where(FilingSectionDiff.current_section.has(
+            FilingSection.raw_document.has(company_id=company_id)))
     diffs = list(db.scalars(diff_query.limit(limit)))
     for diff in diffs:
         current_document = diff.current_section.raw_document
@@ -66,12 +69,13 @@ def build_intelligence_review_queue(
         if company_id is not None and current_document.company_id != company_id:
             continue
         items.append({
-            "item_type": "filing_language_change",
+            "item_type": "filing_language_change" if prior_document else "filing_baseline",
             "item_id": f"filing_diff:{diff.id}",
             "company_id": current_document.company_id,
-            "title": f"{diff.current_section.item_name}: filing language changed",
-            "summary": f"{diff.added_words} words added and {diff.removed_words} words removed.",
-            "severity": _change_severity(diff.added_words, diff.removed_words),
+            "title": f"{diff.current_section.item_name}: " + ("filing language changed" if prior_document else "section recorded"),
+            "summary": (f"{diff.added_words} words added and {diff.removed_words} words removed." if prior_document
+                else "No matching prior section is available. This is a baseline, not evidence of a language change."),
+            "severity": _change_severity(diff.added_words, diff.removed_words) if prior_document else "info",
             "claim_type": "Calculation",
             "current_document_id": current_document.id,
             "prior_document_id": prior_document.id if prior_document else None,

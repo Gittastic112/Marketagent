@@ -241,12 +241,12 @@ class EventEvidenceBackfillRequest(BaseModel):
 
 
 class IntelligenceReviewItemRead(BaseModel):
-    item_type: Literal["contradiction", "filing_language_change"]
+    item_type: Literal["contradiction", "filing_language_change", "filing_baseline"]
     item_id: str
     company_id: int | None = None
     title: str
     summary: str
-    severity: Literal["low", "medium", "high"]
+    severity: Literal["low", "medium", "high", "info"]
     claim_type: Literal["User Assumption", "Calculation"]
     source_event_id: int | None = None
     target_event_id: int | None = None

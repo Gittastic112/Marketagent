@@ -24,6 +24,52 @@ from app.services.morning_briefing_engine import MorningBriefingEngine
 USER_ID = "brief-owner"
 
 
+@pytest.mark.parametrize("name,description,is_mock", [
+    ("Technology Portfolio | Sample", "Hypothetical activity", True),
+    ("Technology Portfolio", "Mock Data: hypothetical allocation", True),
+    ("Technology Portfolio", "An actual account", False),
+])
+def test_real_market_prices_do_not_hide_explicit_sample_holdings(name, description, is_mock):
+    company = Company(ticker="AAPL", name="Apple")
+    portfolio = Portfolio(id=1, name=name, description=description, base_currency="USD")
+    holding = PortfolioHolding(portfolio=portfolio, portfolio_id=1, ticker="AAPL", quantity=1, currency="USD")
+    event = Event(company=company, id=1, title="A sourced event")
+    prices = [MarketPrice(id=2, ticker="AAPL", price=110, currency="USD", provider_name="official",
+        price_type="end_of_day", as_of_date=date(2026, 1, 2)),
+        MarketPrice(id=1, ticker="AAPL", price=100, currency="USD", provider_name="official",
+        price_type="end_of_day", as_of_date=date(2026, 1, 1))]
+    move = MorningBriefingEngine._portfolio_move(event, [holding], prices, date(2026, 1, 2))
+    assert move["move_percent"] == pytest.approx(10)
+    assert move["contains_mock_data"] is is_mock
+    assert any("sample holdings" in note for note in move["provenance_notes"]) is is_mock
+    assert move["warnings"] == []
+    assert move["calculation_status"] == "complete"
+
+
+def test_sample_provenance_does_not_mean_missing_brief_inputs(client, db_session):
+    from helpers import response_data
+    from app.services.brief_public_coverage import public_coverage_context
+    company = response_data(client.post("/companies", json={"ticker": "SAMPLE", "name": "Sample company"}))
+    portfolio = response_data(client.post("/portfolios", json={"name": "Technology | Sample"}))
+    event = Event(company_id=company["id"], title="Stored sample event", event_type="manual", information_speed="slow", priority_score=0)
+    db_session.add(event)
+    db_session.add(PortfolioHolding(portfolio_id=portfolio["id"], company_id=company["id"], ticker="SAMPLE",
+        quantity=1, average_cost=100, currency="USD", as_of_date=date(2026, 1, 1)))
+    for day, price in [(1, 100), (2, 110)]:
+        db_session.add(MarketPrice(company_id=company["id"], ticker="SAMPLE", price=price, currency="USD",
+            provider_name="official", as_of_date=date(2026, 1, day)))
+    db_session.commit()
+    now = datetime.now(timezone.utc)
+    coverage = public_coverage_context(captured_at=now, start=None, end=now, basis="since_last_review",
+        event_total=1, event_included=1, event_cap=100, failed_run_total=0, failed_run_included=0, failed_run_cap=10)
+    payload = MorningBriefingEngine.build_briefing_payload(db_session, "admin_user_id_fallback", [event], [],
+        allow_generation=False, as_of_date=date(2026, 1, 2), public_coverage=coverage)
+    assert payload["contains_mock_data"] is True
+    assert payload["calculation_status"] == "complete"
+    assert payload["warnings"] == []
+    assert "sample holdings" in payload["provenance_notes"][0]
+
+
 def test_generate_daily_brief_ranks_events_and_preserves_evidence() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)

@@ -29,6 +29,7 @@ export type BriefPublicCoverage = {
 };
 
 export type DailyBriefPayload = {
+  provenance_notes?: string[];
   private_research?: SavedBriefResearchContext | null;
   public_coverage?: BriefPublicCoverage | null;
   summary: string;

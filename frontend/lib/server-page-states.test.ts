@@ -148,7 +148,7 @@ test("macro transport and calculation failures render recoverable errors on the 
 });
 
 function dashboardData(snapshot: PortfolioSnapshot | null): DashboardOverview {
-  return {companies: [], events: [], alerts: [], thesis_notes: [], processing_runs: [], portfolio_analytics: null,
+  return {portfolios: [{id: 41, name: "Mock Data portfolio", base_currency: "USD", description: null}], companies: [], events: [], alerts: [], thesis_notes: [], processing_runs: [], portfolio_analytics: null,
     default_portfolio: {id: 41, name: "Mock Data portfolio", base_currency: "USD", description: null},
     default_portfolio_snapshot: snapshot,
     daily_brief: {summary: "Mock Data stored preview", calculation_status: "complete", valuation_analysis_status: "not_run",
@@ -157,6 +157,21 @@ function dashboardData(snapshot: PortfolioSnapshot | null): DashboardOverview {
       processing_failures: [], inspection_queue: [], warnings: [], contains_mock_data: true, contains_stale_data: false,
       source_event_ids: [], source_raw_document_ids: [], source_market_price_ids: [], source_alert_ids: []}};
 }
+
+test("dashboard selector preserves explicit selection and never substitutes after errors", async () => {
+  const data = dashboardData(null);
+  data.portfolios.push({id: 1, name: "Old empty account", base_currency: "USD", description: null});
+  const html = await pageHtml("app/page", url => {
+    assert.equal(url, "/dashboard/overview?portfolio_id=41");
+    return success(data);
+  }, undefined, {portfolio_id: "41"});
+  assert.match(html, /name="portfolio_id"/);
+  assert.match(html, /<option value="41" selected="">Mock Data portfolio/);
+  assert.match(html, /Show portfolio/);
+  const failed = await pageHtml("app/page", () => errorResponse("NOT_FOUND", "Portfolio not found"), undefined, {portfolio_id: "99"});
+  assert.match(failed, /dashboard could not be loaded/);
+  assert.doesNotMatch(failed, /Mock Data portfolio|Portfolio value/);
+});
 
 test("dashboard incomplete snapshot names exact price and FX gaps within the portfolio link", async () => {
   for (const calculation_status of ["partial", "not_available"] as const) {

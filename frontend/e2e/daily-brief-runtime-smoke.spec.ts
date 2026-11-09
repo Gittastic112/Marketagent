@@ -177,11 +177,15 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await expect(page.getByRole("main").getByText("Reviewed", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Local Brief Schedule" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Private research as generated" })).toBeVisible();
-  const coveragePanel = page.locator("section.panel").filter({has: page.getByRole("heading", {name: "Stored Source Coverage", exact: true})});
+  await page.locator("summary:visible").filter({hasText: "Stored Source Coverage"}).click();
+  const privateSummary = page.locator("summary:visible").filter({hasText: "Private research as generated"});
+  if (await privateSummary.count()) await privateSummary.click();
+  await page.locator("summary:visible").filter({hasText: "Local Brief Schedule"}).click();
+  const coveragePanel = page.locator(".panel").filter({has: page.getByRole("heading", {name: "Stored Source Coverage", exact: true})});
   await expect(coveragePanel.getByText(/Selected event inputs: \d+(?: of \d+)?/)).toBeVisible();
   await expect(coveragePanel.getByText("These counts do not establish complete provider coverage or verify source claims.")).toBeVisible();
   await expect(coveragePanel.getByRole("rowheader", {name: "Public events", exact: true})).toBeVisible();
-  await expect(page.getByRole("main").getByText(/^Saved as generated \d{4}-/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Saved as generated /)).toBeVisible();
   const scheduleStatus = page
     .getByRole("main")
     .getByRole("complementary", { name: "Daily Brief schedule status" });
@@ -206,7 +210,11 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await assumptionsLink.click();
   await page.getByLabel("Description", {exact: true}).fill("Mock Data: review the margin evidence before changing forecasts");
   await page.getByRole("button", {name: "Add Assumption", exact: true}).click();
-  await expect(page.getByRole("cell", {name: "Mock Data: review the margin evidence before changing forecasts", exact: true})).toBeVisible();
+  const savedAssumptionCell = page.getByRole("cell", {name: "Mock Data: review the margin evidence before changing forecasts"});
+  await expect(savedAssumptionCell).toBeVisible();
+  await expect(savedAssumptionCell).toContainText("What would disprove this: Not recorded");
+  const savedThesis = await backendData<{assumptions: Array<{description: string; falsification_trigger: string | null}>}>(page, `/thesis-notes/${thesis.id}`);
+  expect(savedThesis.assumptions).toContainEqual(expect.objectContaining({description: "Mock Data: review the margin evidence before changing forecasts", falsification_trigger: null}));
   await page.goto(`/events/${event.id}/evidence-resolution`);
   await steps.getByRole("link", {name: "Review valuation input sources"}).click();
   await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();

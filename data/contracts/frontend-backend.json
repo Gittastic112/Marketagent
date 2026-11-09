@@ -2409,6 +2409,13 @@
                 "default": null,
                 "title": "Price Start Date"
               },
+              "provenance_notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Provenance Notes",
+                "type": "array"
+              },
               "source_market_price_ids": {
                 "items": {
                   "type": "integer"
@@ -2775,6 +2782,13 @@
                   "$ref": "#/$defs/BriefingProcessingFailure"
                 },
                 "title": "Processing Failures",
+                "type": "array"
+              },
+              "provenance_notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Provenance Notes",
                 "type": "array"
               },
               "public_coverage": {
@@ -4221,6 +4235,13 @@
                 "default": null,
                 "title": "Price Start Date"
               },
+              "provenance_notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Provenance Notes",
+                "type": "array"
+              },
               "source_market_price_ids": {
                 "items": {
                   "type": "integer"
@@ -4678,6 +4699,13 @@
               "$ref": "#/$defs/BriefingProcessingFailure"
             },
             "title": "Processing Failures",
+            "type": "array"
+          },
+          "provenance_notes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Provenance Notes",
             "type": "array"
           },
           "public_coverage": {
@@ -6132,6 +6160,13 @@
                 "default": null,
                 "title": "Price Start Date"
               },
+              "provenance_notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Provenance Notes",
+                "type": "array"
+              },
               "source_market_price_ids": {
                 "items": {
                   "type": "integer"
@@ -6498,6 +6533,13 @@
                   "$ref": "#/$defs/BriefingProcessingFailure"
                 },
                 "title": "Processing Failures",
+                "type": "array"
+              },
+              "provenance_notes": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Provenance Notes",
                 "type": "array"
               },
               "public_coverage": {

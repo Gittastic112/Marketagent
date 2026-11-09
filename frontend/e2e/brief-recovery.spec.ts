@@ -14,6 +14,7 @@ test("duplicate intake preserves archived original evidence and explicit restore
     method: "POST", data: {archived: true, expected_version: original.lifecycle_version}});
   await page.setViewportSize({width: 390, height: 844});
   await page.goto("/daily-brief");
+  await page.locator("summary:visible").filter({hasText: "Add or browse private research sources"}).click();
   const intake = page.getByRole("group", {name: "Add a private research source"});
   await intake.getByLabel(/^Company/).selectOption(String(company.id));
   await intake.getByLabel("Source title", {exact: true}).fill("Mock Data attempted replacement title");
@@ -44,6 +45,7 @@ test("unconfigured scan is explicit and late retry failure cannot follow navigat
     company_id: company.id, title: "Mock Data interrupted scan",
     text: "Mock Data: A private source for controlled scan failure and navigation verification only."}});
   await page.goto("/daily-brief");
+  await page.locator("summary:visible").filter({hasText: "Add or browse private research sources"}).click();
   const library = page.getByRole("region", {name: "Saved research sources"});
   await library.getByLabel("Filter by company").selectOption(String(company.id));
   await library.getByRole("button", {name: "Search sources", exact: true}).click();
@@ -72,6 +74,7 @@ test("unconfigured scan is explicit and late retry failure cannot follow navigat
     await expect(page.getByRole("heading", {name: "Companies", exact: true})).toBeVisible();
     await expect(page.getByText("Mock Data delayed timeout", {exact: true})).toHaveCount(0);
     await page.goto("/daily-brief");
+    await page.locator("summary:visible").filter({hasText: "Add or browse private research sources"}).click();
     await expect(page.getByRole("button", {name: "Save source privately"})).toBeEnabled();
     await expect(page.getByText("Mock Data delayed timeout", {exact: true})).toHaveCount(0);
     expect(attempts).toBe(1);

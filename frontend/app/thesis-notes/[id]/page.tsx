@@ -89,7 +89,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
         <Panel title="Thesis">
           <div className="brief-list">
             <div className="brief-item">
-              <p>{note.thesis_text}</p>
+              <p style={{ whiteSpace: "pre-wrap", overflowWrap: "anywhere" }}>{note.thesis_text}</p>
             </div>
           </div>
         </Panel>
@@ -99,6 +99,11 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
           <RetainedActionForm label="Create assumption" resetOnSuccess action={createAssumptionAction} className="form-grid">
             <input name="thesis_note_id" type="hidden" value={note.id} />
             <TextAreaField className="field field-wide" id="new-assumption-desc" label="Description" name="description" required rows={2} />
+            <TextField id="new-assumption-category" label="Category" name="category" maxLength={100} />
+            <SelectField defaultValue="medium" id="new-assumption-importance" label="Importance" name="importance">
+              {confidenceOptions()}
+            </SelectField>
+            <TextAreaField className="field field-wide" id="new-assumption-falsification" label="What would disprove this?" name="falsification_trigger" maxLength={20000} rows={2} />
             <SelectField defaultValue="medium" id="new-assumption-orig" label="Original Confidence" name="original_confidence">
               {confidenceOptions()}
             </SelectField>
@@ -125,7 +130,11 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
                 <tbody>
                   {note.assumptions.map((a) => (
                     <tr key={a.id}>
-                      <td>{a.description}</td>
+                      <td>
+                        {a.description}
+                        <p className="muted">{a.category || "General"} · Importance: {a.importance || "Not recorded"}</p>
+                        <p style={{ whiteSpace: "pre-wrap" }}>What would disprove this: {a.falsification_trigger || "Not recorded"}</p>
+                      </td>
                       <td>
                         <span className={confidenceBadgeClass(a.original_confidence)}>{a.original_confidence}</span>
                       </td>
@@ -140,6 +149,12 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
                               <input name="id" type="hidden" value={a.id} />
                               <input name="thesis_note_id" type="hidden" value={note.id} />
                               <TextAreaField className="field field-full" defaultValue={a.description} id={`edit-desc-${a.id}`} label="Description" name="description" required rows={2} />
+                              <TextField defaultValue={a.category ?? ""} id={`edit-category-${a.id}`} label="Category" name="category" maxLength={100} />
+                              <SelectField defaultValue={a.importance ?? ""} id={`edit-importance-${a.id}`} label="Importance" name="importance">
+                                <option value="">Not recorded</option>
+                                {confidenceOptions()}
+                              </SelectField>
+                              <TextAreaField className="field field-full" defaultValue={a.falsification_trigger ?? ""} id={`edit-falsification-${a.id}`} label="What would disprove this?" name="falsification_trigger" maxLength={20000} rows={2} />
                               <SelectField defaultValue={a.original_confidence} id={`edit-orig-${a.id}`} label="Original Confidence" name="original_confidence">
                                 {confidenceOptions()}
                               </SelectField>

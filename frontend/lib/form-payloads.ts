@@ -417,12 +417,16 @@ export function buildNarrativeMentionPayload(formData: FormData): JsonPayload {
 }
 
 export function buildThesisAssumptionPayload(formData: FormData): JsonPayload {
-  return {
+  const payload: JsonPayload = {
     thesis_note_id: requiredNumber(formData, "thesis_note_id"),
     description: requiredString(formData, "description"),
     original_confidence: optionalString(formData, "original_confidence") ?? "medium",
     current_confidence: optionalString(formData, "current_confidence") ?? "medium"
   };
+  for (const field of ["category", "importance", "falsification_trigger"]) {
+    if (formData.has(field)) payload[field] = optionalString(formData, field);
+  }
+  return payload;
 }
 
 export function buildThesisChangePayload(formData: FormData): JsonPayload {

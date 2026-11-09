@@ -105,6 +105,7 @@ class ProviderHealthRead(BaseModel):
 
 
 class DashboardOverviewRead(BaseModel):
+    portfolios: list[PortfolioRead] = Field(default_factory=list)
     companies: list[CompanyRead]
     events: list[EventRead]
     alerts: list[AlertRead]

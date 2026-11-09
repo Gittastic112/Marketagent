@@ -191,7 +191,7 @@ test("production workflows do not use blocking browser dialogs", () => {
 
 test("dashboard uses the consolidated overview endpoint", () => {
   const dashboard = readFrontendFile("app/page.tsx");
-  assert.match(dashboard, /serverFetchApiResponse<DashboardOverview>\("\/dashboard\/overview"/);
+  assert.match(dashboard, /serverFetchApiResponse<DashboardOverview>\(`\/dashboard\/overview\$\{query\}`/);
   assert.match(dashboard, /timeoutMs: 30_000/);
   for (const legacyPath of ["/companies", "/events", "/alerts", "/thesis-notes", "/processing-runs"]) {
     assert.doesNotMatch(dashboard, new RegExp(`serverFetchApiResponse[^\\n]+${legacyPath}`));
@@ -236,10 +236,10 @@ test("daily brief keeps portfolio moves nullable and every important claim sourc
   assert.match(page, /valuation_analysis_status === "not_run"/);
   assert.match(page, /AI Interpretation until reviewed/);
   assert.match(page, /source_market_price_ids\.length/);
-  assert.match(page, /title="Inspection Queue"/);
+  assert.match(page, /title=\{`Inspection Queue/);
   assert.match(page, /action\.source_event_ids\.map/);
   assert.match(page, /action\.source_raw_document_ids\.map/);
-  assert.match(page, /title="Processing Failures"/);
+  assert.match(page, /title=\{`Processing Failures/);
   assert.match(page, /brief\.reviewed_at/);
   assert.match(page, /serverFetchApiResponse<DailyBriefSchedule \| null>\("\/daily-brief-schedule"\)/);
   assert.match(page, /<DailyBriefScheduleForm schedule=\{scheduleRes\.data\}/);

@@ -54,12 +54,12 @@ export type EventLinkSummary = {
 };
 
 export type IntelligenceReviewItem = {
-  item_type: "contradiction" | "filing_language_change";
+  item_type: "contradiction" | "filing_language_change" | "filing_baseline";
   item_id: string;
   company_id: number | null;
   title: string;
   summary: string;
-  severity: "low" | "medium" | "high";
+  severity: "low" | "medium" | "high" | "info";
   claim_type: "User Assumption" | "Calculation";
   evidence_href: string;
   source_timestamp: string;
@@ -283,7 +283,7 @@ export type ThesisAssumption = {
   thesis_note_id: number;
   description: string;
   category: string | null;
-  importance: string;
+  importance: string | null;
   original_confidence: string;
   current_confidence: string;
   status: string;

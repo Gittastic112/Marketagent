@@ -1,6 +1,7 @@
 """Mock Data: independently reconciled dated activity, never normal records."""
 from datetime import date
 from decimal import Decimal
+from types import SimpleNamespace
 
 import pytest
 
@@ -9,6 +10,40 @@ from app.services.portfolio_valuation import calculate_portfolio_valuation
 from app.services.portfolio_analytics import record_daily_snapshot
 from app.services.portfolio_holdings import apply_transaction_to_cash, apply_transaction_to_holding
 from app.services.portfolio_risk_return import calculate_portfolio_risk_return
+from app.services.portfolio_replay import _book
+
+
+@pytest.mark.parametrize("deposit, expected_cash, negative", [
+    ("1", "0.999997", False),
+    ("0", "-0.000006", True),
+])
+def test_fractional_trades_match_postgres_numeric_tie_rounding(deposit, expected_cash, negative):
+    # PostgreSQL NUMERIC rounds ties away from zero at each persisted cash update.
+    # Three $0.0000015 debits must not accumulate a false reconciliation gap.
+    rows = [SimpleNamespace(id=1, company_id=None, ticker="CASH", currency="USD",
+        transaction_type="deposit", quantity=Decimal(deposit), price=Decimal(0),
+        fees=Decimal(0), transaction_date=date(2026, 1, 1))]
+    rows.extend(SimpleNamespace(id=index, company_id=1, ticker="MOCK", currency="USD",
+        transaction_type="buy", quantity=Decimal("0.000001"), price=Decimal("1.5"),
+        fees=Decimal(0), transaction_date=date(2026, 1, 1)) for index in range(2, 5))
+    _, cash, blockers, _ = _book(rows)
+    assert cash["USD"] == Decimal(expected_cash)
+    assert ("NEGATIVE_CASH_OR_MISSING_OPENING_FUNDING" in blockers) is negative
+
+
+def test_fractional_split_matches_persisted_numeric_precision():
+    rows = [SimpleNamespace(id=1, company_id=None, ticker="CASH", currency="USD",
+        transaction_type="deposit", quantity=Decimal(1), price=Decimal(0),
+        fees=Decimal(0), transaction_date=date(2026, 1, 1)),
+        SimpleNamespace(id=2, company_id=1, ticker="MOCK", currency="USD",
+        transaction_type="buy", quantity=Decimal("0.000001"), price=Decimal(1),
+        fees=Decimal(0), transaction_date=date(2026, 1, 1)),
+        SimpleNamespace(id=3, company_id=1, ticker="MOCK", currency="USD",
+        transaction_type="split", quantity=Decimal("2.5"), price=Decimal(0),
+        fees=Decimal(0), transaction_date=date(2026, 1, 2))]
+    positions, _, blockers, _ = _book(rows)
+    assert positions[(1, "MOCK", "USD")].quantity == Decimal("0.000003")
+    assert not blockers
 
 
 def record_activity(db, portfolio, company, day, kind, qty, price=0, fees=0):
