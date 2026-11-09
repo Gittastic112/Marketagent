@@ -60,8 +60,10 @@ their text. Consent and source-review controls remain intact.
   disposable recovery checks. Browser workflows initially pass 63 of 71: six
   selectors also matched hidden streamed controls, and two expected the thesis
   description to be the whole cell after criteria were added. Follow-up selectors
-  require visible controls and the description within its cell; API assertions
-  separately verify stored descriptions and absent criteria. Rerun results belong
+  require visible controls. A later run passes 69 workflows; two cell text filters
+  also matched hidden edit-form text. The corrected checks use the description
+  cell's accessible name and verify its displayed absent-criteria message. API
+  assertions separately verify stored descriptions and absent criteria. Rerun results belong
   to the PR's current checks, not this initial-run record.
 - The source pass includes the preceding [analyst-workflow changes](analyst-workflows-2026-11-09.md).
   The separate local audit directory is output/milestones/dashboard-portfolio-20261109.

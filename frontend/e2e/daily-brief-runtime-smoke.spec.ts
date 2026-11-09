@@ -210,7 +210,9 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await assumptionsLink.click();
   await page.getByLabel("Description", {exact: true}).fill("Mock Data: review the margin evidence before changing forecasts");
   await page.getByRole("button", {name: "Add Assumption", exact: true}).click();
-  await expect(page.getByRole("cell").filter({hasText: "Mock Data: review the margin evidence before changing forecasts"})).toBeVisible();
+  const savedAssumptionCell = page.getByRole("cell", {name: "Mock Data: review the margin evidence before changing forecasts"});
+  await expect(savedAssumptionCell).toBeVisible();
+  await expect(savedAssumptionCell).toContainText("What would disprove this: Not recorded");
   const savedThesis = await backendData<{assumptions: Array<{description: string; falsification_trigger: string | null}>}>(page, `/thesis-notes/${thesis.id}`);
   expect(savedThesis.assumptions).toContainEqual(expect.objectContaining({description: "Mock Data: review the margin evidence before changing forecasts", falsification_trigger: null}));
   await page.goto(`/events/${event.id}/evidence-resolution`);
