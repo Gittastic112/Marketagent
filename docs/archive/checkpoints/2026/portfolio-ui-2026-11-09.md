@@ -44,11 +44,20 @@ their text. Consent and source-review controls remain intact.
 - Initial test-command, fixture, contract-manifest and layout-guard failures are
   retained locally. The manifest was regenerated from the owning backend schemas;
   existing guards and browser tests were updated for explicit disclosure opening.
+- [PR9's first CI run](https://github.com/Gittastic112/Marketagent/actions/runs/42660773520)
+  passes the release baseline (1,936 backend tests, six skips, five warnings;
+  365 frontend tests and production builds), dependency/container security and
+  disposable recovery checks. Browser workflows initially pass 63 of 71: six
+  selectors also matched hidden streamed controls, and two expected the thesis
+  description to be the whole cell after criteria were added. Follow-up selectors
+  require visible controls and the description within its cell; API assertions
+  separately verify stored descriptions and absent criteria. Rerun results belong
+  to the PR's current checks, not this initial-run record.
 - The source pass includes the preceding [analyst-workflow changes](analyst-workflows-2026-11-09.md).
   The separate local audit directory is output/milestones/dashboard-portfolio-20261109.
   Screenshots, private portfolio details, runtime inventories and backups are not
   part of publication. The existing checkout/index and unrelated work are preserved.
-- Publication uses codex/portfolio-ui-20261109 from PR8's merged default-branch
+- [PR9](https://github.com/Gittastic112/Marketagent/pull/9) uses codex/portfolio-ui-20261109 from PR8's merged default-branch
   commit 6f97c6f6. The user requested a PR to approve; this pass does not merge it.
 
 The [limitation ledger](../../../agent_capabilities_and_limitations.md) retains

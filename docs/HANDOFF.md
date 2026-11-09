@@ -7,8 +7,8 @@ intake/scheduling controls. Sample provenance is separate from missing inputs,
 and unmatched filing sections are baselines rather than language-change alerts.
 The [portfolio/UI checkpoint](archive/checkpoints/2026/portfolio-ui-2026-11-09.md)
 owns this pass. The [analyst checkpoint](archive/checkpoints/2026/analyst-workflows-2026-11-09.md)
-owns preceding local work and cleanup. Publication targets
-[codex/portfolio-ui-20261109](https://github.com/Gittastic112/Marketagent/tree/codex/portfolio-ui-20261109)
+owns preceding local work and cleanup. [PR9](https://github.com/Gittastic112/Marketagent/pull/9) publishes
+codex/portfolio-ui-20261109
 for user review; merge is not authorized in this pass. [PR8](https://github.com/Gittastic112/Marketagent/pull/8)
 is the preceding merged installation/documentation release at 6f97c6f6.
 
@@ -59,7 +59,7 @@ Settings passed only in memory; verification is a point-in-time observation.
 ## Verified release and operations
 
 Use [Current State](00-current-state.md) for exact test/build/browser counts and
-the checkpoint for failed attempts and scope. Backend/workers use 20261109-readiness;
+the checkpoint for failed attempts and scope. Backend/workers use 20261109-dashboard;
 frontend uses 20261109-dashboard; PostgreSQL remains 20261107-security-r2. The November 7 image
 scans retain their dated scope; no fresh scan of the new derivatives is claimed.
 Application dependency locks are unchanged.

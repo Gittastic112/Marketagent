@@ -89,7 +89,9 @@ test("recorded official evidence remains dated and linked through a morning revi
   const assumption="Mock Data next review: compare the dated revenue statement with reviewed financials before updating a forecast.";
   await page.getByLabel("Description",{exact:true}).fill(assumption);
   await page.getByRole("button",{name:"Add Assumption",exact:true}).click();
-  await expect(page.getByRole("cell",{name:assumption,exact:true})).toBeVisible();
+  await expect(page.getByRole("cell").filter({hasText:assumption})).toBeVisible();
+  const savedThesis = await backendData<{assumptions:Array<{description:string;falsification_trigger:string|null}>}>(page, `/thesis-notes/${thesis.id}`);
+  expect(savedThesis.assumptions).toContainEqual(expect.objectContaining({description:assumption,falsification_trigger:null}));
   await page.goto(eventPath);
   await steps.getByRole("link",{name:"Inspect saved valuations",exact:true}).click();
   await page.getByRole("link",{name:"Mock Data public-source review assumptions",exact:true}).click();
