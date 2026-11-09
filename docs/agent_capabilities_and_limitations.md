@@ -1,6 +1,6 @@
 # Agent Capabilities and Limitations
 
-**Updated:** 2026-11-07 (financial review planning, macro integrity and AI review cues).
+**Updated:** 2026-11-09 (authorized analyst workflows and historical backup cleanup).
 Product validation dates remain in Current State.
 
 October 11 M06 source introduces versioned canonical FCFF sensitivities with
@@ -13,6 +13,14 @@ This document is the practical trust boundary for the product. It intentionally
 summarizes capabilities instead of duplicating route-by-route implementation.
 
 ## Confirmed Scope and Input Checklist
+
+November 9 supersedes the empty-universe boundary only for the four explicitly
+selected technology companies, hypothetical portfolio and Sample Apple research.
+The sourced Apple valuation is an Estimate with analyst assumptions, not Sample.
+Selected three-year financial inputs and independent arithmetic checks do not
+certify all disclosures. No genuine trade history, future outcome or external AI
+permission is implied. Exactly 60 named historical database archives were removed
+after explicit confirmation; newer backups, source originals and reports remain.
 
 October 17 scope revision: the user explicitly chose a local research/demo first
 release using the existing data, with Mac settings and off-device backup deferred.
@@ -77,7 +85,7 @@ gaps and 265 older candidates remain unpromoted. The later [India review](archiv
 adds Reliance, Airtel, ICICI and SBI: 456 facts, 492 source revisions and 12 periods,
 with 164 older comparative entries held. The [latest HDFC application](archive/checkpoints/2026/hdfc-latest-history-2026-10-22.md)
 adds FY2026 and bonus-adjusted FY2025 comparatives. Before the November 5 approved removal, the normal database had 33
-periods, 929 facts, 1,003 revisions and 336 normalized values across 11 securities after the October 24 additions. These counts are historical; the active company universe is empty.
+periods, 929 facts, 1,003 revisions and 336 normalized values across 11 securities after the October 24 additions. These counts are historical and do not describe the separately authorized November 9 research scope.
 FY2024 stays pre-bonus; one FY2025 EPS exception, broader notes, merger comparability,
 model bridges and weighted mappings remain explicit.
 Certification v3 checks retained hashes, units, annual XBRL periods
@@ -452,8 +460,8 @@ provider licensing/freshness and every browser state were not re-certified.
 | Provider placement | Both price routes share one audited atomic ingestion service. Health now selects latest runs per normalized status and aggregates historical counts in SQL, without materializing full run histories. Adapter/factory/persistence files still span services/market_data and providers; keep the factory authoritative until a tested domain move removes that split |
 | Type synchronization | Frontend contracts still mirror backend types manually. Generated contracts need an approved handling strategy for aliases, envelopes and response-only reconciliation before replacing them |
 | Frontend test depth | Source-integrity checks remain alongside rendered/component tests and real browser save/retry/navigation/race checks. The October 13 state/control matrix records supported active workflows; future form edits need behavioral verification, and unmounted legacy components are not implicitly certified |
-| Current UI and empty universe | November 5 separates source notes from unavailable/freshness states, explains selected brief inputs, scopes optional diagnostics and keeps failed company requests recoverable. Direct Daily Brief links no longer prefetch its potentially generating GET. Mobile company-setup steps gain keyboard scrolling. Ordinary source facts, dates, Mock Data and financial gaps remain explicit. The approved company cleanup removes data, not these financial/research limitations; empty onboarding must not seed replacements |
-| November research-model completion | Eleven explicitly approved historical scenarios were saved and verified in 82 normal desktop/mobile views, then removed from the active database by the approved November 5 cleanup. Narrative/source evidence and pre-removal backups remain. Direct-rate and bank promotion repairs preserve required financial gates. PR2 through PR6 are merged; the November 7 checkpoint owns subsequent delivery. Native Node remains absent: the official download returned a network-allowlist 403 even with escalation. The earlier native removal of the first empty helper folder returned EPERM; zero files/directories were removed. All 32 retained helper files remain, including one that differs from its historical move hash |
+| Current UI and research scope | November 9 adds editable thesis categories, importance and falsification criteria, preserved thesis paragraphs, database-consistent fractional cash replay and Sample holding provenance in Daily Brief. The dashboard defaults to a funded owned account with explicit URL selection, and retains dated snapshots rather than claiming live pricing. Sample brief provenance is separate from missing inputs. Unmatched filing sections are informational baselines. Source facts, dates and genuine financial gaps remain explicit. The four-company scope is user-selected; empty onboarding must not seed other replacements |
+| November research-model completion | Eleven approved historical scenarios were verified, then removed November 5. Narrative/source evidence remains; the 60 named old database archives were deleted with explicit approval November 9. The newly sourced Apple estimate has separate provenance and does not restore those scenarios. PR2 through PR8 are merged; the November 9 portfolio/UI branch is prepared for user review and must not be merged without approval. Native Node remains unavailable/restricted; Docker supplies the supported build environment. The 32 retained historical helper files remain |
 | Legacy request conventions | The compatibility facade intentionally retains data-only, metadata and default-client envelope behaviors, including distinct error handling. Do not silently switch consumers between them |
 | Scratch and historical files | M02 preserves 18 unused one-off scripts in the ignored retired/local directory with an inventory; it does not publish their contents. Unclassified local configuration, generated maps, caches and plans remain preserved. Use the code map and maintained scripts, not historical recipes as current workflow instructions |
 | Dependency hygiene | [October 21-22 repairs](archive/checkpoints/2026/dependency-and-pdf-evidence-2026-10-21.md) install Pillow 13.0.0/certifi 2026.10.19 and Next.js 16.4.1. October 28 locks and signed OS snapshots remain unchanged. [November 4 source gates](archive/checkpoints/2026/independent-completion-2026-11-04.md) pass remote dependency/container scans and AMD64 builds. November 5 installs the UX R3 frontend compiled offline from verified R2 dependencies with matching manifest/lock hashes; backend/workers retain R2. Fresh signed-package attempts failed upstream HTTP503/504 and remain recorded. No partial build replaces the verified runtime. Host-tree drift and unfixed OS findings remain separately recorded; dated scans cannot guarantee future safety |
@@ -491,7 +499,7 @@ score; no external model call or existing-output bulk reevaluation occurs.
 
 ## Future scope after release acceptance
 
-1. Preserve the empty company universe. The eleven approved historical scenarios were removed and remain only in receipts/backups; do not restore them automatically. Future research needs a selected company and dated sources. Agent checks do not substitute for actual use.
+1. Preserve the November 9 four-company research scope. Do not restore the eleven removed scenarios or expand the sample portfolio automatically. Sixty historical database archives were deliberately deleted; source/review receipts remain. Additional research needs explicit scope and dated sources. Agent checks do not substitute for actual use.
 2. Add compliant provider adapters where licensing and stored-record provenance allow them.
 3. Add licensed comparable-company adapters before attempting deeper peer normalization or calibration.
 4. Broaden issuer/layout coverage beyond the existing reviewed universe and improve official India providers; the older AAPL/APSEZ reference certification retains its narrower dated scope.

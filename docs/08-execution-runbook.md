@@ -1,6 +1,6 @@
 # Execution Runbook
 
-Updated: 2026-11-07. This document owns commands, not historical phase records.
+Updated: 2026-11-09. This document owns commands, not historical phase records.
 Run commands from the repository root unless a different directory is stated.
 
 ## Start a change
@@ -32,7 +32,7 @@ is runtime-only. The `.txt` files declare direct dependencies; Docker installs l
 
 ## Select the installed local stack
 
-The November 7 installation uses Compose project market-intelligence-product-20261107
+The installation, updated November 9, uses Compose project market-intelligence-product-20261107
 and the original database volume. Its ignored runtime-images.yml selects reviewed
 images, the existing network and preserved volumes. Normal-runtime commands in
 this runbook include that override so retained rollback containers are excluded.
@@ -45,11 +45,29 @@ docker compose -f docker-compose.yml -f output/milestones/product-development-20
 ~~~
 
 The source-refresh worker and pgAdmin stay stopped unless deliberately enabled.
+Backend/frontend health checks use 30-second steady-state intervals and
+five-second startup intervals. An unhealthy transition can therefore take longer
+to report than the former ten-second polling; endpoints remain available for
+an immediate explicit check. Startup/schema validation is unchanged.
 Existing backup/restore helpers select a project separately: set
 COMPOSE_PROJECT_NAME=market-intelligence-product-20261107 for this installation.
 Their ordinary operator environment behavior remains; agent verification uses
 /dev/null plus settings held only in memory. The full backup helper creates a
 disposable proof database, so it remains outside the current no-new-datasets scope.
+
+## Dashboard and brief navigation
+
+The dashboard defaults to the first owned portfolio with nonzero holdings or cash.
+Use Portfolio and Show portfolio to select another account; the choice is in the
+URL. Values come from the latest stored snapshot, with its date and missing-input
+state. Open the portfolio to inspect current stored quotes or capture a snapshot.
+The sample portfolio is hypothetical even when its price inputs are sourced.
+
+Daily Brief starts with the stored briefing. Open Add or browse private research
+sources for intake and search, or Local Brief Schedule for optional scheduling.
+Empty queues and snapshot details are collapsible. Mock Data provenance, missing
+inputs and source coverage remain separate. Refresh stored evidence creates a
+new deterministic brief without AI or a human review receipt.
 
 ## Review financial evidence and macro inputs
 
@@ -109,8 +127,8 @@ password into chat or commands. Never use `docker compose down -v`.
    docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml ps --all
    ~~~
 
-5. Verify backend/frontend/database health, sign-in and the company list (currently
-   empty after the approved removal; do not seed example companies).
+5. Verify backend/frontend/database health, sign-in and the user-selected company
+   list. Preserve the November 9 research scope; do not automatically reseed or restore removed companies.
    Test password authentication with `docker exec -it market_intel_postgres psql
    -h 127.0.0.1 -U marketintel -d marketintel -W`, then `SELECT 1;` and `\q`.
    Source scheduling and pgAdmin must remain stopped. Record status only, never
