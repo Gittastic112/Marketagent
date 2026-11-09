@@ -102,7 +102,7 @@ def test_dashboard_overview_consolidates_data_and_enforces_ownership(
     assert overview["companies"][0]["ticker"] == "DASH"
     assert overview["daily_brief"]["summary"] == (
         "0 events in the stored-event preview; 0 unresolved contradiction alerts; "
-        "0 affected held companies."
+        "portfolio impact is not calculated in this preview."
     )
     assert len(statements) <= DASHBOARD_QUERY_BUDGET
     assert response.json()["meta"]["processing_time_ms"] <= DASHBOARD_RESPONSE_BUDGET_MS

@@ -501,10 +501,14 @@ class MorningBriefingEngine:
         elif coverage["status"] == "unknown":
             warnings.append("Stored-input coverage was not fully counted; complete source coverage is unknown.")
         event_scope = "in the stored-event preview" if coverage["selection_basis"] == "dashboard_preview" else "since the last reviewed brief"
+        portfolio_scope = (
+            f"{len(portfolio_moves)} affected held companies."
+            if include_portfolio_moves else "portfolio impact is not calculated in this preview."
+        )
         summary = (
             f"{len(events)} {'event' if len(events) == 1 else 'events'} {event_scope}; "
             f"{len(thesis_contradictions_payload)} unresolved contradiction alerts; "
-            f"{len(portfolio_moves)} affected held companies."
+            f"{portfolio_scope}"
         )
         return {
             "summary": summary,

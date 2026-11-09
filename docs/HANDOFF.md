@@ -5,6 +5,7 @@ with an explicit URL selector. The requested Sample portfolio already existed;
 no duplicate account or activity was created. Briefing content leads optional
 intake/scheduling controls. Sample provenance is separate from missing inputs,
 and unmatched filing sections are baselines rather than language-change alerts.
+Dashboard preview text distinguishes uncalculated portfolio impact from zero.
 The [portfolio/UI checkpoint](archive/checkpoints/2026/portfolio-ui-2026-11-09.md)
 owns this pass. The [analyst checkpoint](archive/checkpoints/2026/analyst-workflows-2026-11-09.md)
 owns preceding local work and cleanup. [PR9](https://github.com/Gittastic112/Marketagent/pull/9) publishes
@@ -60,7 +61,7 @@ Settings passed only in memory; verification is a point-in-time observation.
 ## Verified release and operations
 
 Use [Current State](00-current-state.md) for exact test/build/browser counts and
-the checkpoint for failed attempts and scope. Backend/workers use 20261109-dashboard;
+the checkpoint for failed attempts and scope. Backend/workers use 20261109-dashboard-r2;
 frontend uses 20261109-dashboard; PostgreSQL remains 20261107-security-r2. The November 7 image
 scans retain their dated scope; no fresh scan of the new derivatives is claimed.
 Application dependency locks are unchanged.
