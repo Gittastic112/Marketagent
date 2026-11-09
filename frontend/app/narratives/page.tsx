@@ -46,7 +46,7 @@ export default async function NarrativesPage() {
         />
 
         {/* Action Panel */}
-        <Panel title="Automated Extraction">
+        <Panel title="Extract narratives with AI (optional)" collapsible>
           <div className="narrative-extraction-layout">
             <div>
               <h3 style={{ margin: "0 0 0.5rem 0" }}>Automated Extraction</h3>
@@ -70,7 +70,7 @@ export default async function NarrativesPage() {
         </Panel>
 
         {/* Create New Narrative Cluster */}
-        <Panel title="Track a New Narrative">
+        <Panel title="Track a New Narrative" collapsible>
           <RetainedActionForm label="Create narrative cluster" resetOnSuccess action={createNarrativeCluster} className="form-grid">
             <TextField id="narrative-name" label="Narrative Name" name="name" placeholder="e.g. AI Capex Supercycle" required />
             <TextAreaField className="field field-wide" id="narrative-desc" label="Description" name="description" placeholder="Describe the market narrative or thesis being tracked" rows={2} />

@@ -69,9 +69,9 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                       <td>{company.market ?? "-"} · {company.currency ?? "-"}<span className="cell-secondary">{company.primary_exchange ?? company.exchange ?? "-"}</span></td>
                       <td>{company.sector ?? "-"}</td>
                       <td>
-                        <div className="flex flex-wrap gap-1 max-w-[150px]">
+                        <div className="company-exposure-tags">
                           {company.exposure_tags?.map(tag => (
-                            <span key={tag.id} className="bg-gray-100 text-xs px-1 rounded truncate" title={tag.name}>{tag.name}</span>
+                            <span key={tag.id}>{tag.name}</span>
                           )) || "-"}
                         </div>
                       </td>

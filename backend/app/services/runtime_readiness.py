@@ -175,11 +175,19 @@ def check_runtime_readiness(db: Session) -> dict:
         missing_tables = sorted(set(REQUIRED_SCHEMA) - table_names)
         missing_columns: list[str] = []
         missing_constraints: list[str] = []
+        column_tables = sorted(set(REQUIRED_SCHEMA) & table_names)
+        constraint_tables = sorted(set(REQUIRED_UNIQUE_CONSTRAINTS) & table_names)
+        columns_by_table = (
+            inspector.get_multi_columns(filter_names=column_tables) if column_tables else {}
+        )
+        constraints_by_table = (
+            inspector.get_multi_unique_constraints(filter_names=constraint_tables) if constraint_tables else {}
+        )
         for table_name, required_columns in REQUIRED_SCHEMA.items():
             if table_name not in table_names:
                 continue
             present_columns = {
-                column["name"] for column in inspector.get_columns(table_name)
+                column["name"] for column in columns_by_table.get((None, table_name), [])
             }
             missing_columns.extend(
                 f"{table_name}.{column_name}"
@@ -190,7 +198,7 @@ def check_runtime_readiness(db: Session) -> dict:
                 continue
             present_constraints = {
                 constraint["name"]
-                for constraint in inspector.get_unique_constraints(table_name)
+                for constraint in constraints_by_table.get((None, table_name), [])
                 if constraint.get("name")
             }
             missing_constraints.extend(

@@ -38,12 +38,18 @@ export function Panel({
   children,
   className,
   actions,
+  collapsible = false,
 }: {
   title: ReactNode;
   children: ReactNode;
   className?: string;
   actions?: ReactNode;
+  collapsible?: boolean;
 }) {
+  if (collapsible) return <details className={["panel", "panel-disclosure", className].filter(Boolean).join(" ")}>
+    <summary className="panel-header"><h2>{title}</h2>{actions}</summary>
+    <div className="panel-content">{children}</div>
+  </details>;
   return (
     <section className={["panel", className].filter(Boolean).join(" ")}>
       <div className="panel-header">

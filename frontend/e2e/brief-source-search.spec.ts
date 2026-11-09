@@ -16,6 +16,7 @@ test("private research finds older sources, preserves filters after saves, and o
   let scans = 0;
   page.on("request", request => { if (/brief-sources\/\d+\/analyze/.test(request.url())) scans++; });
   await page.goto("/daily-brief");
+  await page.locator("summary").filter({hasText: "Add or browse private research sources"}).click();
   const library = page.getByRole("region", { name: "Saved research sources" });
   await library.getByLabel("Filter by company").selectOption(String(company.id));
   await library.getByRole("button", { name: "Search sources", exact: true }).click();
@@ -52,6 +53,7 @@ test("private research finds older sources, preserves filters after saves, and o
 test("search failures clear old results and late replies cannot replace a newer search", async ({ page }) => {
   await signIn(page);
   await page.goto("/daily-brief");
+  await page.locator("summary").filter({hasText: "Add or browse private research sources"}).click();
   const library = page.getByRole("region", { name: "Saved research sources" });
   let releaseSlow!: () => void;
   const slow = new Promise<void>(resolve => { releaseSlow = resolve; });
@@ -94,6 +96,7 @@ test("mobile source retrieval remains usable when the company catalog fails", as
     json: { errors: [{ message: "Company catalog temporarily unavailable" }] } }));
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto("/daily-brief");
+  await page.locator("summary").filter({hasText: "Add or browse private research sources"}).click();
   await expect(page.getByRole("alert").filter({ hasText: "Company catalog temporarily unavailable" })).toBeVisible();
   const library = page.getByRole("region", { name: "Saved research sources" });
   await library.getByLabel("Search saved sources").fill("Mock Data mobile source");

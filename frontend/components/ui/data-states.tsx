@@ -234,7 +234,9 @@ export function DataStateNotices({
   partialMessage,
   unavailableMessage,
   mockMessage,
-  manualMessage
+  manualMessage,
+  showMockNotice = true,
+  showWarnings = true,
 }: {
   metas: Array<ApiMeta | null | undefined>;
   staleMessage?: string;
@@ -242,6 +244,9 @@ export function DataStateNotices({
   unavailableMessage?: string;
   mockMessage?: string;
   manualMessage?: string;
+  /** Use false only when the same information is rendered in the owning panel. */
+  showMockNotice?: boolean;
+  showWarnings?: boolean;
 }) {
   const dataState = summarizeApiMetas(metas);
   const unavailableText = unavailableMessage || (dataState.allUnavailable
@@ -264,13 +269,13 @@ export function DataStateNotices({
         <PartialDataNotice title="Some sections could not load" message={unavailableText} />
       )}
       {dataState.someStale && <StaleDataBanner message={freshnessText} />}
-      {dataState.hasMock && (
+      {dataState.hasMock && showMockNotice && (
         <MockDataState message={mockMessage || "One or more panels are using mock data. Treat affected values as placeholders."} />
       )}
       {dataState.hasManual && !dataState.hasMock && (
         <ManualDataState message={manualMessage || "One or more panels are using manual overrides. Treat affected values as user-specified."} />
       )}
-      {warnings.length > 0 && (
+      {warnings.length > 0 && showWarnings && (
         <div style={{
           padding: "10px 14px",
           borderRadius: "6px",

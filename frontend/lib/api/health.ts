@@ -6,6 +6,7 @@ import type { Portfolio, PortfolioAnalytics, PortfolioSnapshot } from "./portfol
 import type { ProcessingRun } from "./operations.ts";
 
 export type DashboardOverview = {
+  portfolios: Portfolio[];
   companies: Company[];
   events: EventRecord[];
   alerts: AlertRecord[];

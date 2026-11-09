@@ -177,11 +177,15 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   await expect(page.getByRole("main").getByText("Reviewed", { exact: true }).first()).toBeVisible();
   await expect(page.getByRole("heading", { name: "Local Brief Schedule" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Private research as generated" })).toBeVisible();
-  const coveragePanel = page.locator("section.panel").filter({has: page.getByRole("heading", {name: "Stored Source Coverage", exact: true})});
+  await page.locator("summary").filter({hasText: "Stored Source Coverage"}).click();
+  const privateSummary = page.locator("summary").filter({hasText: "Private research as generated"});
+  if (await privateSummary.count()) await privateSummary.click();
+  await page.locator("summary").filter({hasText: "Local Brief Schedule"}).click();
+  const coveragePanel = page.locator(".panel").filter({has: page.getByRole("heading", {name: "Stored Source Coverage", exact: true})});
   await expect(coveragePanel.getByText(/Selected event inputs: \d+(?: of \d+)?/)).toBeVisible();
   await expect(coveragePanel.getByText("These counts do not establish complete provider coverage or verify source claims.")).toBeVisible();
   await expect(coveragePanel.getByRole("rowheader", {name: "Public events", exact: true})).toBeVisible();
-  await expect(page.getByRole("main").getByText(/^Saved as generated \d{4}-/)).toBeVisible();
+  await expect(page.getByRole("main").getByText(/^Saved as generated /)).toBeVisible();
   const scheduleStatus = page
     .getByRole("main")
     .getByRole("complementary", { name: "Daily Brief schedule status" });

@@ -21,10 +21,13 @@ export function BriefPrivateResearch({ context }: { context?: SavedBriefResearch
   if (context?.version === 1) return <Panel title="Private research as generated">
     <p className="basis-note">This brief contains a legacy private research snapshot (version 1). Its original data is preserved, but this format is not supported by the current review view. No current reviewed or pending status is inferred.</p>
   </Panel>;
-  return <Panel title="Private research as generated">
+  return <Panel title={`Private research as generated${context ? ` · ${context.status.replaceAll("_", " ")} coverage` : ""}`}
+    collapsible={!context || (context.reviewed.length === 0 && context.review_queue.length === 0)}>
     {!context ? <EmptyState label="This older brief has no private research snapshot. Its saved evidence has not been rewritten." /> : <>
-      <p className="basis-note">Saved as generated {context.captured_at}. Sources and receipts may have changed since this snapshot. {context.status.replaceAll("_", " ")} coverage.</p>
-      {context.limitations.map(note => <p className="basis-note" key={note}>{note}</p>)}
+      <p className="muted">Saved as generated {new Date(context.captured_at).toLocaleString()}. Sources and receipts may have changed since this snapshot. {context.status.replaceAll("_", " ")} coverage.</p>
+      <details className="disclosure basis-disclosure"><summary>Snapshot basis and limitations</summary>
+        <ul className="compact-list">{context.limitations.map(note => <li key={note}>{note}</li>)}</ul>
+      </details>
       <h3>Reviewed analyst context</h3>
       {context.reviewed.length ? <div className="briefing-card-grid">{context.reviewed.map(item => <Decision key={`${item.company_id}:${item.field}`} item={item} />)}</div> : <EmptyState label="No current analyst receipts with approved source interpretations were included." />}
       <h3>Private research review queue</h3>

@@ -15,10 +15,32 @@ import {
   buildSecFilingIngestionPayload,
   buildSourcePayload,
   buildThesisNotePayload,
+  buildThesisAssumptionPayload,
   buildMarketPricePayload,
   buildDcfAssumptionSetPayload,
   getRequiredFormId
 } from "./form-payloads.ts";
+
+test("thesis review criteria preserve omission and intentional clears", () => {
+  const form = new FormData();
+  form.set("thesis_note_id", "1");
+  form.set("description", "Mock Data margin assumption");
+  const legacy = buildThesisAssumptionPayload(form);
+  for (const field of ["category", "importance", "falsification_trigger"]) {
+    assert.equal(field in legacy, false);
+  }
+  form.set("category", " Profitability ");
+  form.set("importance", "high");
+  form.set("falsification_trigger", "Two annual periods below the threshold.");
+  const payload = buildThesisAssumptionPayload(form);
+  assert.equal(payload.category, "Profitability");
+  assert.equal(payload.importance, "high");
+  assert.equal(payload.falsification_trigger, "Two annual periods below the threshold.");
+  form.set("category", ""); form.set("falsification_trigger", "");
+  const cleared = buildThesisAssumptionPayload(form);
+  assert.equal(cleared.category, null);
+  assert.equal(cleared.falsification_trigger, null);
+});
 
 test("versioned DCF form distinguishes omitted fields from explicit clears and zero", () => {
   const form = new FormData();

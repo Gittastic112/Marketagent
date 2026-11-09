@@ -2,8 +2,8 @@ import logging
 from datetime import UTC, datetime
 from time import perf_counter
 
-from fastapi import APIRouter, Depends
-from sqlalchemy import select
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import or_, select
 from sqlalchemy.orm import Session, joinedload, noload, selectinload
 
 from app.api.dependencies import get_current_user
@@ -14,6 +14,8 @@ from app.models import (
     Company,
     Event,
     Portfolio,
+    PortfolioCashBalance,
+    PortfolioHolding,
     PortfolioSnapshot,
     ProcessingRun,
     RawDocument,
@@ -33,6 +35,7 @@ DASHBOARD_RESPONSE_BUDGET_MS = 1_000
 
 @router.get("/dashboard/overview", response_model=ApiResponse[DashboardOverviewRead])
 def get_dashboard_overview(
+    portfolio_id: int | None = Query(default=None, gt=0),
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ) -> ApiResponse[dict]:
@@ -99,13 +102,18 @@ def get_dashboard_overview(
             .limit(20)
         )
     )
-    portfolio = db.scalar(
+    portfolios = list(db.scalars(
         select(Portfolio)
         .options(noload("*"))
         .where(Portfolio.user_id == user_id)
-        .order_by(Portfolio.id)
-        .limit(1)
-    )
+        .order_by(or_(
+            Portfolio.holdings.any(PortfolioHolding.quantity != 0),
+            Portfolio.cash_balances.any(PortfolioCashBalance.amount != 0),
+        ).desc(), Portfolio.id)
+    ))
+    portfolio = next((item for item in portfolios if item.id == portfolio_id), None) if portfolio_id is not None else next(iter(portfolios), None)
+    if portfolio_id is not None and portfolio is None:
+        raise HTTPException(status_code=404, detail="Portfolio not found.")
     portfolio_snapshot = None
     warnings: list[str] = []
     if portfolio is not None:
@@ -149,6 +157,7 @@ def get_dashboard_overview(
             "thesis_notes": thesis_notes,
             "daily_brief": daily_brief,
             "processing_runs": processing_runs,
+            "portfolios": portfolios,
             "default_portfolio": portfolio,
             "default_portfolio_snapshot": portfolio_snapshot,
             "portfolio_analytics": None,

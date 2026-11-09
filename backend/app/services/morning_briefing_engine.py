@@ -201,8 +201,17 @@ class MorningBriefingEngine:
             or "mock" in (price.provider_name or "").lower()
             for price in source_prices
         )
+        sample_holdings = any(
+            (label or "").strip().lower().startswith("mock data:")
+            or (label or "").strip().lower().endswith("| sample")
+            for holding in holdings
+            for label in (holding.portfolio.name, holding.portfolio.description)
+        )
+        if sample_holdings:
+            contains_mock_data = True
         return {
             "ticker": event.company.ticker.upper() if event.company else holdings[0].ticker.upper(),
+            "provenance_notes": ["Mock Data: affected portfolios include explicitly labeled sample holdings; sourced prices do not verify those positions."] if sample_holdings else [],
             "event_headline": event.title,
             "event_id": event.id,
             "move_percent": move_percent,
@@ -291,6 +300,7 @@ class MorningBriefingEngine:
         valuation_relevance: list[dict[str, Any]] = []
         portfolio_moves: list[dict[str, Any]] = []
         warnings = list(contradiction_warnings)
+        provenance_notes: list[str] = []
         seen_moves: set[str] = set()
         valuation_attempts = 0
         valuation_successes = 0
@@ -315,6 +325,7 @@ class MorningBriefingEngine:
                 )
                 portfolio_moves.append(move)
                 warnings.extend(f"{ticker}: {warning}" for warning in move["warnings"])
+                provenance_notes.extend(f"{ticker}: {note}" for note in move["provenance_notes"])
                 contains_mock_data = contains_mock_data or move["contains_mock_data"]
                 seen_moves.add(ticker)
 
@@ -526,6 +537,7 @@ class MorningBriefingEngine:
             ],
             "inspection_queue": inspection_queue[:INSPECTION_ACTION_CAP],
             "warnings": sorted(set(warnings)),
+            "provenance_notes": sorted(set(provenance_notes)),
             "contains_mock_data": contains_mock_data,
             "contains_stale_data": (
                 any(move["calculation_status"] == "stale" for move in portfolio_moves)

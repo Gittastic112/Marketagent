@@ -2,6 +2,33 @@ from app.models import FilingSection, FilingSectionDiff
 from helpers import response_data
 
 
+def test_unmatched_filing_sections_are_baselines_and_company_filter_precedes_limit(client, db):
+    from app.services.intelligence_review import build_intelligence_review_queue
+    source = response_data(client.post("/sources", json={"name": "Baseline source", "source_type": "filing"}))
+    for index in range(2):
+        company = response_data(client.post("/companies", json={"ticker": f"BASE{index}", "name": "Baseline Co"}))
+        document = response_data(client.post("/raw-documents", json={
+            "company_id": company["id"], "source_id": source["id"], "document_type": "10-K", "title": "First filing",
+            "raw_text": "Initial text", "content_hash": f"baseline-{index}"}))
+        section = FilingSection(raw_document_id=document["id"], item_name="Risk Factors", text_content="Initial text", word_count=500)
+        db.add(section)
+        db.flush()
+        db.add(FilingSectionDiff(current_section_id=section.id, prior_section_id=None,
+            added_words=500, removed_words=0, diff_html=""))
+        db.commit()
+        if index == 0:
+            first_id = company["id"]
+    items = build_intelligence_review_queue(db, company_id=first_id, limit=1)
+    assert len(items) == 1
+    assert items[0]["company_id"] == first_id
+    assert items[0]["item_type"] == "filing_baseline"
+    assert items[0]["severity"] == "info"
+    assert "not evidence of a language change" in items[0]["summary"]
+    assert items[0]["prior_document_id"] is None
+    response = response_data(client.get(f"/intelligence/review?company_id={first_id}"))
+    assert response[0]["item_type"] == "filing_baseline"
+
+
 def test_intelligence_review_combines_explicit_contradictions_and_filing_diffs(client, db):
     company = response_data(client.post("/companies", json={"ticker": "REVW", "name": "Review Co"}))
     source = response_data(client.post("/sources", json={"name": "Review source", "source_type": "filing"}))

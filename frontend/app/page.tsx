@@ -10,8 +10,10 @@ import type { DashboardOverview } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage() {
-  const overviewRes = await serverFetchApiResponse<DashboardOverview>("/dashboard/overview", { timeoutMs: 30_000 });
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ portfolio_id?: string }> }) {
+  const { portfolio_id: selectedId } = await searchParams;
+  const query = selectedId === undefined ? "" : `?portfolio_id=${encodeURIComponent(selectedId)}`;
+  const overviewRes = await serverFetchApiResponse<DashboardOverview>(`/dashboard/overview${query}`, { timeoutMs: 30_000 });
   const overview = overviewRes.data;
   const heading = <PageHeader eyebrow="Research workspace" title="Overview"
     description="What changed, what needs attention, and where to look next."
@@ -30,6 +32,14 @@ export default async function HomePage() {
     {heading}
     <DataStateNotices metas={[overviewRes.meta]}
       mockMessage="One or more dashboard panels use Mock Data, not source-backed research." />
+    {overview.portfolios.length > 1 && <form action="/" className="dashboard-portfolio-picker">
+      <label htmlFor="dashboard-portfolio">Portfolio</label>
+      <select id="dashboard-portfolio" name="portfolio_id" defaultValue={portfolio?.id}>
+        {overview.portfolios.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+      </select>
+      <button className="secondary-button" type="submit">Show portfolio</button>
+      <Link href="/portfolio">View all portfolios</Link>
+    </form>}
     <section className="metric-grid dashboard-metrics" aria-label="Research summary">
       <Link prefetch={false} className="metric metric-featured" href={portfolio ? `/portfolio/${portfolio.id}` : "/portfolio/manage"}>
         <div className="metric-label"><BriefcaseBusiness size={16} aria-hidden="true" />Portfolio value</div>

@@ -52,9 +52,8 @@ export default async function DailyBriefPage() {
     return (
       <>
         <PageHeader eyebrow="Daily output" title={brief.title} status={brief.brief_date} />
-        <DataStateNotices metas={[briefRes.meta, savedBriefsRes.meta, scheduleRes.meta]} />
-        <BriefSourceInbox />
-
+        <DataStateNotices metas={[briefRes.meta]} showMockNotice={false} showWarnings={false} />
+        <DataStateNotices metas={[savedBriefsRes.meta, scheduleRes.meta]} />
         <Panel title="Briefing State">
           <div className="briefing-summary-grid">
             <div className="briefing-summary-copy">
@@ -70,6 +69,7 @@ export default async function DailyBriefPage() {
                 </span>
                 {payload.contains_mock_data && <MockDataBadge />}
               </div>
+              {payload.provenance_notes?.map(note => <p className="muted" key={note}>{note}</p>)}
               <p className="briefing-summary-text">{brief.summary}</p>
               <p className="briefing-context-note">
                 {payload.last_reviewed_at
@@ -78,7 +78,7 @@ export default async function DailyBriefPage() {
               </p>
               {payload.warnings.length > 0 && (
                 <div className="briefing-warning-box">
-                  <strong>Partial inputs</strong>
+                  <strong>Data notes</strong>
                   <ul className="compact-list">
                     {payload.warnings.map((warning) => <li key={warning}>{warning}</li>)}
                   </ul>
@@ -111,17 +111,10 @@ export default async function DailyBriefPage() {
           </div>
         </Panel>
 
-        <Panel title="Local Brief Schedule">
-          {scheduleRes.errors.length > 0 ? (
-            <ErrorState message="The optional local schedule is unavailable." errors={scheduleRes.errors} />
-          ) : (
-            <DailyBriefScheduleForm schedule={scheduleRes.data} />
-          )}
-        </Panel>
 
-        <BriefPrivateResearch context={payload.private_research} />
 
-        <Panel title="Inspection Queue">
+
+        <Panel title={`Inspection Queue (${payload.inspection_queue.length})`} collapsible={payload.inspection_queue.length === 0}>
           {payload.inspection_queue.length === 0 ? (
             <EmptyState label="No blocking inspection actions were derived from the current brief." />
           ) : (
@@ -155,7 +148,7 @@ export default async function DailyBriefPage() {
           )}
         </Panel>
 
-        <Panel title="Processing Failures">
+        <Panel title={`Processing Failures (${payload.processing_failures.length})`} collapsible={payload.processing_failures.length === 0}>
           {payload.processing_failures.length === 0 ? (
             <EmptyState label="No failed or partial processing runs were recorded since the last review." />
           ) : (
@@ -299,7 +292,7 @@ export default async function DailyBriefPage() {
           )}
         </Panel>
 
-        <Panel title="Contradiction Alerts" className={payload.thesis_contradictions.length > 0 ? "danger-panel" : undefined}>
+        <Panel title="Contradiction Alerts" collapsible={payload.thesis_contradictions.length === 0} className={payload.thesis_contradictions.length > 0 ? "danger-panel" : undefined}>
           {payload.thesis_contradictions.length === 0 ? (
             <EmptyState
               label={payload.contradiction_analysis_status === "not_run"
@@ -338,7 +331,7 @@ export default async function DailyBriefPage() {
           )}
         </Panel>
 
-        <Panel title="Valuation Relevance">
+        <Panel title="Valuation Relevance" collapsible={payload.valuation_relevance.length === 0 && payload.valuation_analysis_status !== "failed"}>
           {payload.valuation_relevance.length === 0 ? (
             <EmptyState
               label={payload.valuation_analysis_status === "not_run"
@@ -378,7 +371,19 @@ export default async function DailyBriefPage() {
           )}
         </Panel>
 
-        <Panel title="Stored Source Coverage">
+        <BriefPrivateResearch context={payload.private_research} />
+
+        <details className="disclosure"><summary>Add or browse private research sources</summary><BriefSourceInbox /></details>
+
+        <Panel title="Local Brief Schedule" collapsible>
+          {scheduleRes.errors.length > 0 ? (
+            <ErrorState message="The optional local schedule is unavailable." errors={scheduleRes.errors} />
+          ) : (
+            <DailyBriefScheduleForm schedule={scheduleRes.data} />
+          )}
+        </Panel>
+
+        <Panel title="Stored Source Coverage" collapsible>
           <BriefPublicCoverage coverage={payload.public_coverage} />
           <p className="basis-note">Included evidence identifiers:</p>
           <div className="briefing-source-grid panel-content">
@@ -389,7 +394,7 @@ export default async function DailyBriefPage() {
           </div>
         </Panel>
 
-        <Panel title="Saved Briefs">
+        <Panel title="Saved Briefs" collapsible>
           {savedBriefs.length === 0 ? (
             <EmptyState label="No saved briefs yet." />
           ) : (
