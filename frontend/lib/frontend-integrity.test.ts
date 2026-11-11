@@ -1,3 +1,4 @@
+import { readStyles } from "./test-support/read-styles.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
@@ -23,7 +24,7 @@ function readRepositoryFile(filePath: string): string {
 
 test("frontend utility compiler and project tokens are wired", () => {
   const postcss = readFrontendFile("postcss.config.mjs");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(postcss, /@tailwindcss\/postcss/);
   assert.match(styles, /^@import "tailwindcss";/);
@@ -90,7 +91,7 @@ test("Docker defaults to a bounded production runtime with an explicit developme
 test("navigation and company route infrastructure are centralized", () => {
   const sidebar = readFrontendFile("components/sidebar.tsx");
   const companyLayout = readFrontendFile("app/companies/[id]/layout.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   for (const group of ["Today", "Portfolio", "Research", "Data", "System"]) {
     assert.match(sidebar, new RegExp(`label: "${group}"`));
@@ -106,7 +107,7 @@ test("company workspace typography and layout do not force page-level horizontal
   const detail = readFrontendFile("app/companies/[id]/page.tsx");
   const wizard = readFrontendFile("components/company-setup-wizard.tsx");
   const page = readFrontendFile("components/page.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(detail, /company-overview-header/);
   assert.match(detail, /company-overview-grid/);
@@ -208,7 +209,7 @@ test("research routes use parallel requests and responsive layouts", () => {
   const brief = readFrontendFile("app/daily-brief/page.tsx");
   const research = readFrontendFile("app/research/page.tsx");
   const narratives = readFrontendFile("app/narratives/page.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(brief, /const \[briefRes, savedBriefsRes, scheduleRes\] = await Promise\.all/);
   assert.match(brief, /className="brief-comparison-grid"/);
@@ -227,7 +228,7 @@ test("daily brief keeps portfolio moves nullable and every important claim sourc
   const card = readFrontendFile("components/briefing-event-card.tsx");
   const api = readFrontendFile("lib/api/daily-brief.ts");
   const actions = readFrontendFile("app/actions/brief.ts");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
   const smoke = readFrontendFile("e2e/daily-brief-runtime-smoke.spec.ts");
   const packageJson = readFrontendFile("package.json");
 
@@ -266,7 +267,7 @@ test("daily brief scheduling is local, bounded, audited, and explicit", () => {
   const form = readFrontendFile("components/daily-brief-schedule-form.tsx");
   const actions = readFrontendFile("app/actions/brief.ts");
   const serverApi = readFrontendFile("lib/server-api.ts");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
   const compose = readRepositoryFile("docker-compose.yml");
 
   assert.match(form, /Enable local schedule/);
@@ -295,7 +296,7 @@ test("CSV import controls have unique programmatic labels", () => {
 
 test("data management loads in parallel with valid responsive actions", () => {
   const dataPage = readFrontendFile("app/data/page.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(
     dataPage,
@@ -311,7 +312,7 @@ test("system routes use labelled controls and bounded parallel setup", () => {
   const admin = readFrontendFile("app/admin/damodaran/page.tsx");
   const settings = readFrontendFile("app/settings/page.tsx");
   const search = readFrontendFile("app/search/page.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(admin, /htmlFor="damodaran-dataset-code"/);
   assert.match(admin, /id="damodaran-workbook"/);
@@ -549,7 +550,7 @@ test("data health exposes the authenticated evidence integrity report", () => {
   const page = readDataHealth() + readFrontendFile("components/peer-receipt-health-panel.tsx");
   const runtimePanel = readFrontendFile("components/runtime-readiness-panel.tsx");
   const api = readFrontendFile("lib/api/health.ts");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
   assert.match(page, /\/data-health\/evidence-integrity\?deep=true/);
   assert.match(page, /Fast health check/);
   assert.match(page, /Run deep evidence audit/);
@@ -604,7 +605,7 @@ test("stale and unavailable notices describe distinct data states", () => {
 });
 
 test("navigation and AI provenance labels avoid sub-12px text", () => {
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
   const aiMetadata = readFrontendFile("components/ai-metadata.tsx");
 
   assert.match(
@@ -792,7 +793,7 @@ test("valuation drafts allow one explicit confirmation for valid current default
 test("advanced valuation workspace is responsive and blocks misleading outputs", () => {
   const workspace = readFrontendFile("components/advanced-workspace.tsx");
   const sensitivity = readFrontendFile("components/valuation/sensitivity-tables-panel.tsx");
-  const styles = readFrontendFile("app/globals.css");
+  const styles = readStyles();
 
   assert.match(workspace, /valuation-workspace-grid/);
   assert.match(workspace, /outputTrustBlocked/);

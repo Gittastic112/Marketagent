@@ -1,3 +1,4 @@
+import { readStyles } from "./test-support/read-styles.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -33,7 +34,7 @@ test("mobile navigation contains focus and makes the background inert", () => {
 });
 
 test("tables preserve whole words inside bounded scrolling panels", () => {
-  const styles = source("app/globals.css");
+  const styles = readStyles();
   assert.match(styles, /th,\s*td\s*\{[^}]*overflow-wrap: normal/);
   assert.match(styles, /th\s*\{[^}]*white-space: nowrap/);
   assert.match(styles, /\.sidebar a, \.sidebar button \{ transition-property: color, background-color, border-color/);

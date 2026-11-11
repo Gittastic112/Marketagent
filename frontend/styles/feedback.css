@@ -1,0 +1,222 @@
+.route-state {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 760px;
+  padding: var(--space-8) 0;
+}
+
+.relative-input-basis {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
+  overflow-wrap: anywhere;
+}
+
+.relative-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.relative-table-scroll table {
+  width: 100%;
+  min-width: 540px;
+}
+
+.relative-input-basis .relative-table-scroll table {
+  min-width: 680px;
+  overflow-wrap: normal;
+}
+
+.relative-input-basis th:nth-child(-n + 3),
+.relative-input-basis td:nth-child(-n + 3) {
+  white-space: nowrap;
+}
+
+.relative-input-basis td:last-child {
+  min-width: 260px;
+  overflow-wrap: anywhere;
+}
+
+.relative-input-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin: var(--space-4) 0;
+}
+
+.route-state h1 {
+  font-size: var(--font-size-xl);
+  line-height: 1.2;
+  margin: 0;
+}
+
+.route-state > button {
+  justify-self: start;
+}
+
+.skeleton-line,
+.skeleton-panel {
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border-default);
+  border-radius: var(--radius-large);
+}
+
+.route-state-heading {
+  height: 42px;
+  max-width: 360px;
+}
+
+.skeleton-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.skeleton-panel {
+  height: 180px;
+}
+
+.regime-layout {
+  display: grid;
+  gap: var(--space-6);
+  grid-template-columns: minmax(240px, 1fr) minmax(0, 2fr);
+  margin-top: var(--space-6);
+}
+
+.brief-comparison-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-bottom: var(--space-4);
+}
+
+.research-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.research-grid {
+  gap: var(--space-6);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr));
+}
+
+.data-management-grid {
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  margin-bottom: var(--space-8);
+}
+
+.search-form {
+  align-items: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.search-results {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.search-result {
+  padding: var(--space-4);
+}
+
+.search-result-header {
+  align-items: flex-start;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  justify-content: space-between;
+}
+
+.search-result-title {
+  color: var(--text-primary);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  line-height: 1.35;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.search-result-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.search-result-excerpt {
+  color: var(--text-secondary);
+  line-height: 1.55;
+  margin: var(--space-3) 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+
+.search-result-source {
+  color: var(--text-muted);
+  display: flex;
+  flex-wrap: wrap;
+  font-size: var(--font-size-sm);
+  gap: var(--space-2);
+}
+
+.search-result-source time::before {
+  content: "· ";
+}
+
+.anchored-record {
+  scroll-margin-top: 5rem;
+}
+
+@media (max-width: 640px) {
+  .search-form > .field,
+  .search-form > button {
+    flex-basis: 100% !important;
+    width: 100%;
+  }
+
+  .search-result-header {
+    display: grid;
+  }
+
+  .search-result-source {
+    display: grid;
+    gap: var(--space-1);
+  }
+
+  .search-result-source time::before {
+    content: "";
+  }
+}
+
+.narrative-extraction-layout {
+  align-items: center;
+  display: flex;
+  gap: var(--space-5);
+  justify-content: space-between;
+}
+
+.narrative-claim-form {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+@keyframes skeleton-pulse {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+  .skeleton-line,
+  .skeleton-panel {
+    animation: none;
+  }
+}

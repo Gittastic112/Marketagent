@@ -38,6 +38,14 @@ class DocumentationCheckTests(unittest.TestCase):
             (scripts / "README.md").write_text("[missing](missing.md)\n", encoding="utf-8")
             self.assertEqual(validate(root)[0], ["backend/scripts/README.md: broken link missing.md"])
 
+    def test_styles_guide_links_are_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            styles = root / "frontend" / "styles"
+            styles.mkdir(parents=True)
+            (styles / "README.md").write_text("[missing](missing.css)\n", encoding="utf-8")
+            self.assertEqual(validate(root)[0], ["frontend/styles/README.md: broken link missing.css"])
+
     def test_backend_api_map_detects_missing_module_and_stale_count(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

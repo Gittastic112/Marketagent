@@ -12,6 +12,7 @@ mkdir -p "$REPORT_DIR"
 REPORT_DIR="$(cd "$REPORT_DIR" && pwd)"
 SCRATCH_DIR="$(mktemp -d)"
 trap 'rm -rf "$SCRATCH_DIR"' EXIT
+mkdir -p "$SCRATCH_DIR/cache"
 index=0
 reports=()
 for image in "$@"; do
@@ -21,8 +22,8 @@ for image in "$@"; do
   # dropped cannot write a runner-owned directory (Docker Desktop masks this).
   "$DOCKER_BIN" run --rm --user "$(id -u):$(id -g)" --read-only --cap-drop ALL --security-opt no-new-privileges:true \
     --memory 1g --pids-limit 128 --tmpfs /tmp \
-    -v "$SCRATCH_DIR:/input:ro" -v "$REPORT_DIR:/reports" "$SCANNER" image \
-    --cache-dir /reports/cache --scanners vuln --pkg-types os --list-all-pkgs \
+    -v "$SCRATCH_DIR:/input:ro" -v "$REPORT_DIR:/reports" -v "$SCRATCH_DIR/cache:/cache" "$SCANNER" image \
+    --cache-dir /cache --scanners vuln --pkg-types os --list-all-pkgs \
     --format json --output "/reports/image-$index.json" --input /input/image.tar
   reports+=("$REPORT_DIR/image-$index.json")
 done

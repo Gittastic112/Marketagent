@@ -1,3 +1,4 @@
+import { readStyles } from "./test-support/read-styles.ts";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
@@ -86,7 +87,7 @@ test("input disclosure shows provenance, currency, unavailable values, and unsav
 });
 
 test("intermediate-width valuation navigation cannot overlap the output row", () => {
-  const styles = read("app/globals.css");
+  const styles = readStyles();
   assert.match(styles, /@media \(max-width: 1500px\)\s*\{[^{}]*\.valuation-workspace-nav\s*\{\s*position: static;/);
   assert.match(styles, /\.relative-table-scroll\s*\{[^}]*overflow-x: auto;/);
 });
