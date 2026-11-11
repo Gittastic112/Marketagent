@@ -57,9 +57,10 @@ and container audits, and the isolated recovery drill. Repository checks include
 24 documentation regressions and 13 scanner/scope tests; 92 current Markdown
 files and 1,059 local links passed. The merged 44be93b9 tree is identical.
 
-The documentation-only verification update exercises the lightweight path
-separately. Its result must show successful repository-checks and ci-result,
-with the five expensive jobs intentionally skipped. Software checks do not
+The documentation-only update at d69a2e36 passed
+[CI run 43102655721](https://github.com/Gittastic112/Marketagent/actions/runs/43102655721):
+repository-checks and ci-result succeeded; the five expensive jobs were
+intentionally skipped. This separately verifies the lightweight path. Software checks do not
 advance financial, provider, installed-runtime, or daily-use acceptance.
 Host-specific reconciliation records and preservation inventories remain local.
 
