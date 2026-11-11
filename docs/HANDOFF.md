@@ -4,7 +4,8 @@
 
 November 11, 2026: repository-maintenance follow-up. Historical plans and decision
 narratives are separated from current guidance. API/command inventories are
-checked, obsolete tools are retired, and pull requests receive formatting checks.
+checked, obsolete tools and unmounted UI paths are retired, and pull requests
+receive formatting checks.
 The [maintenance checkpoint](archive/checkpoints/2026/repository-maintenance-2026-11-11.md)
 owns this scope and evidence.
 

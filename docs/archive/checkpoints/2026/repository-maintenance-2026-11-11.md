@@ -6,8 +6,8 @@ This follow-up starts from PR10's merged commit 4020f6cf. The private repository
 contained 1,485 published files. Local HEAD remains fba390bf with existing edits;
 this pass preserves those edits and publishes only its reviewed paths.
 
-The change concerns repository navigation, obsolete developer tools, and review
-checks. Application APIs, calculations, financial records, migrations, runtime
+The change concerns repository navigation, obsolete developer tools, unused UI
+modules, and review checks. Application APIs, calculations, financial records, migrations, runtime
 configuration, dependencies, and immutable source originals are preserved.
 
 ## Cuts and consolidation
@@ -25,7 +25,34 @@ retained locally and in the baseline Git revision. The
 [retirement inventory](../../../../scripts/retired/inventory-2026-11-11.json)
 records original paths, hashes, byte counts, retained copies, and replacement
 behavior. Five helper tests for the retired verifier are replaced by three
-black-box cases for its unavailable behavior; application tests are retained.
+black-box cases for its unavailable behavior. The unused UI audit below explains
+the separate retirement of two helper-only frontend tests.
+
+## Unused frontend paths
+
+An import audit covered 334 frontend source/config/test modules and 61 framework
+entry points. The six components below had no import callers. The form adapter
+was reachable only from the retired form and its own two tests. Repository
+reference searches checked documentation and source-inspection tests as well.
+
+| Removed path | Original bytes | Reason / maintained owner |
+|---|---:|---|
+| frontend/components/dcf-form.tsx | 35,695 | No route callers; advanced-workspace owns saved valuations |
+| frontend/components/intelligence/AssumptionMethodSelector.tsx | 8,439 | No callers; backend method contracts remain, UI claim corrected |
+| frontend/components/page-header.tsx | 639 | No callers; components/page owns the shared PageHeader |
+| frontend/components/portfolio-analytics.tsx | 11,062 | No route callers; portfolio sections and performance panel own the workflow |
+| frontend/components/ui/methodology-fallback.tsx | 744 | No callers |
+| frontend/components/ui/scroll-area.tsx | 341 | No callers; no dependency removed |
+| frontend/lib/regression-priors.ts | 2,104 | Only production caller was the retired DCF form |
+| frontend/lib/regression-priors.test.ts | 1,145 | Two tests exercised only the retired form adapter; backend regression tests remain |
+
+The active source tree loses 60,169 bytes across eight files. Exact local
+before-images remain under the ignored audit output, so this is source reduction,
+not a claim of disk-space recovery. Git retains the original published blobs.
+The portfolio integrity assertion now checks the mounted performance panel and
+its unavailable states; its other assertions remain. The method guide and
+limitation ledger now state the actual UI boundary. No mounted route, API export,
+backend regression calculation, or dependency was removed.
 
 ## Mapping and review improvements
 
@@ -62,7 +89,8 @@ Local checks cover all changed-file formatting, documentation paths and anchors,
 source-to-inventory coverage, original/retained file hashes, and preservation
 outside the change set. Ownership regression cases and the 150 reservations are
 checked separately. The local Python toolchain is unavailable; this is not a
-claim that the Python suite ran on this Mac.
+claim that the Python suite ran on this Mac. The final local frontend suite passes
+363 tests, and TypeScript checking passes with incremental output disabled.
 
 Canonical documentation regressions, backend/frontend behavior, builds, browser
 workflows, security scans, and recovery run in

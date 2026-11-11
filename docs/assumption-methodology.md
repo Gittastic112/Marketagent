@@ -1,6 +1,6 @@
 # Assumption Methodology Engine
 
-**Source reviewed:** 2026-10-22. Runtime validation is recorded in Current State.
+**Source reviewed:** 2026-11-11. Runtime validation is recorded in [Current State](current-state.md).
 
 **Status:** source-backed benchmark methods are built; review required
 
@@ -20,7 +20,12 @@ value inspectable.
 | Models | `backend/app/models/assumption_methodology.py` | Method values and valuation-specific provenance |
 | Service | `backend/app/services/assumption_methodology.py` | Method lookup, defaults, and country packs |
 | API | `backend/app/api/routers/assumptions.py` | List methods and persist reviewed selections |
-| UI | `frontend/components/intelligence/AssumptionMethodSelector.tsx` | Method choice, source/confidence display, and user override |
+| Draft review UI | [Autofill review](../frontend/components/valuation/autofill-draft-review.tsx) | Inspect and review source-to-draft inputs |
+| Saved valuation UI | [Advanced workspace](../frontend/components/advanced-workspace.tsx) | Edit and save assumptions with their current basis |
+
+The standalone method selector had no route callers and was retired. The
+[limitation ledger](limitations.md#valuation-boundary) distinguishes the available
+backend contracts from the mounted review workflows.
 
 API routes are mounted under `/api/assumptions`:
 
@@ -71,8 +76,8 @@ segments mapped to one taxonomy retain that single industry's own prior/context.
 The aggregation version participates in the draft's source signature so old
 autofilled values refresh, while explicit manual edits remain protected.
 
-The October 22 review installs seven provisional mixes and four single-industry
-comparisons across the scoped securities. Reliance's net external-revenue split
+The October 22 review installed seven provisional mixes and four single-industry
+comparisons across its historical scope; this does not describe the current database. Reliance's net external-revenue split
 is withheld; bank comparisons do not claim that all group revenue is banking.
 The [decision log](roadmaps/review-decisions.md) owns exact source scopes and proxy
 choices. None approves a company forecast, current share count or valuation.
