@@ -22,7 +22,7 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
 ## Prerequisites
 
 - Use the handoff/code map already read, then the relevant sections of
-  `docs/04-data-sources-and-ingestion.md`. Consult Current State for evidence dates.
+  `docs/data-sources.md`. Consult Current State for evidence dates.
 - Inspect `backend/app/services/financial_extraction.py`,
   `backend/app/services/pdf_financial_extraction.py`, and
   `backend/app/services/sec_xbrl_extractor.py`.
@@ -131,8 +131,8 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
 ## References
 
 - `docs/HANDOFF.md`
-- `docs/00-current-state.md`
-- `docs/03-database-schema.md`
+- `docs/current-state.md`
+- `docs/database-schema.md`
 - `docs/roadmaps/product-roadmap.md`
 - `backend/app/services/pdf_financial_extraction.py`
 - `backend/app/api/routers/pdf_filings.py`

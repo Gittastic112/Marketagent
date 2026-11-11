@@ -18,6 +18,12 @@ Never run them against the normal database or copy their defaults into settings.
 The existing source safety archive and Git history retain the earlier baseline.
 No database, source corpus, upload, backup or active test was deleted by this move.
 
-Use [the execution runbook](../../docs/08-execution-runbook.md) for migrations,
+Use [the execution runbook](../../docs/execution-runbook.md) for migrations,
 readiness, tests, backups and recovery. Current operations belong in `scripts/`
 or `backend/scripts/` with a documented purpose and bounded inputs.
+
+The [November 10 inventory](inventory-2026-11-10.json) retires two more unreferenced
+scratch tools: a hardcoded PDF preview requiring an undeclared package, and a
+dated route generator that would overwrite reviewed documentation with inferred
+status. Their original bytes remain under local/2026-11-10; the total is 27
+retired scripts. The maintained documentation checker owns route coverage.

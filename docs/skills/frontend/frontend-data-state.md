@@ -93,8 +93,8 @@ Keep frontend pages honest about backend capability, source freshness, and missi
 
 ## References
 
-- `docs/00-current-state.md`
-- `docs/02-architecture.md`
+- `docs/current-state.md`
+- `docs/architecture.md`
 - [Domain clients](../../../frontend/lib/api/)
 - `frontend/lib/server-api.ts`
 - `frontend/lib/data-state-meta.ts`

@@ -1,16 +1,18 @@
-# Knull: five independent workstreams
+# Five-workstream design and ownership plan
 
-Prepared October 5, 2026. Status: **planned, not implemented**.
+Prepared October 5, 2026. Historical design reference; implementation and acceptance
+status live in the [completion tracker](../roadmaps/completion-tracker.md).
+The source observations below describe the planning date, not current defects.
 
 October 10 routing: user requests such as "finish 10%" use the
-[completion tracker](docs/roadmaps/completion-tracker.md). It maps W5/W2/W4/W3/W1
+[completion tracker](../roadmaps/completion-tracker.md). It maps W5/W2/W4/W3/W1
 to M03/M05/M06/M07/M08 and adds the other local-release gates. This document
 retains the detailed workstream designs and ownership rules; it launches no agents.
 
-This is the execution plan for the next development batch. The
-[product roadmap](docs/roadmaps/product-roadmap.md) owns long-term priorities;
+This is the detailed design for the October five-workstream batch. The
+[product roadmap](../roadmaps/product-roadmap.md) owns long-term priorities;
 this file owns assignment, sequencing and completion for this batch. The
-[limitation ledger](docs/agent_capabilities_and_limitations.md) remains the only
+[limitation ledger](../limitations.md) remains the only
 product-gap inventory. Finishing these five streams does not finish every
 roadmap item or authorize a public release.
 
@@ -53,8 +55,8 @@ Source inspection on October 5 found:
 
 These are code observations and planning decisions, not newly executed product
 tests. September 30 product evidence stays dated in
-[Current State](docs/00-current-state.md). The
-[documentation audit](docs/archive/checkpoints/2026/documentation-and-parallel-plan-2026-10-05.md)
+[Current State](../current-state.md). The
+[documentation audit](../archive/checkpoints/2026/documentation-and-parallel-plan-2026-10-05.md)
 records this session's validation and environment restrictions.
 
 ## 3. Before the five agents start
@@ -95,17 +97,17 @@ claim agents have been started.
 
 ## 4. Exclusive ownership and frozen contracts
 
-The [ownership manifest](docs/workstreams/ownership.tsv) is the write allowlist.
+The [ownership manifest](ownership.tsv) is the write allowlist.
 It contains exact files and reserved new directories, not broad backend/frontend
 ownership. A file has exactly one owner. Read access to another domain does not
 grant edit ownership. New paths in the manifest are reservations, not claims that
 the files already exist.
 
-The [ownership checker](scripts/check_workstream_ownership.sh) rejects duplicate
+The [ownership checker](../../scripts/check_workstream_ownership.sh) rejects duplicate
 or nested reservations, another owner's changed files, unsafe relative paths and
-unassigned files. Its [regression checks](scripts/test_workstream_ownership.sh)
+unassigned files. Its [regression checks](../../scripts/test_workstream_ownership.sh)
 exercise those failures. Run it before coding, on every proposed commit and at
-handoff. The [runbook](docs/08-execution-runbook.md#parallel-workstream-checks)
+handoff. The [runbook](../execution-runbook.md#parallel-workstream-checks)
 owns commands, including how to collect changed/untracked paths.
 
 **Frozen for all five:** ORM models, migrations, route registration/security
@@ -147,9 +149,9 @@ automatic merge resolution can establish financial or evidence compatibility.
 
 ## 5. W1: reviewed private evidence in Daily Brief
 
-**Read first:** briefing/comparison rows in the [code map](docs/code-map.md),
-[market-intelligence workflow](docs/skills/market-intelligence/market-intelligence-workflow.md),
-[security workflow](docs/skills/security/security-review.md), brief schemas,
+**Read first:** briefing/comparison rows in the [code map](../code-map.md),
+[market-intelligence workflow](../skills/market-intelligence/market-intelligence-workflow.md),
+[security workflow](../skills/security/security-review.md), brief schemas,
 `morning_briefing_engine.py`, `brief_source_triage.py`, `brief_comparison_reviews.py`,
 `daily_brief_schedule.py`, existing brief endpoints and their tests.
 
@@ -200,11 +202,11 @@ the shared-change protocol before introducing persistence.
 
 ## 6. W2: reviewed US/India financial-source coverage
 
-**Read first:** [ingestion reference](docs/04-data-sources-and-ingestion.md),
-[financial extraction workflow](docs/skills/data-ingestion/financial-statement-extraction.md),
+**Read first:** [ingestion reference](../data-sources.md),
+[financial extraction workflow](../skills/data-ingestion/financial-statement-extraction.md),
 `financial_history_certification.py`, `accounting_normalization.py`,
 `valuation_source_inputs.py`, candidate review UI and
-[existing reference manifest](data/certification/aapl-apsez-reference-manifest.json).
+[existing reference manifest](../../data/certification/aapl-apsez-reference-manifest.json).
 
 **Owns:** W2 entries. The existing AAPL/APSEZ manifest and shared originals are
 read-only. New source manifests/excerpts belong under the reserved W2 data tree;
@@ -260,7 +262,7 @@ coordinated design, not a hidden prerequisite for this stream.
 
 ## 7. W3: historical positions, cash and portfolio proof
 
-**Read first:** portfolio rows in the [code map](docs/code-map.md), transaction and
+**Read first:** portfolio rows in the [code map](../code-map.md), transaction and
 holding models, `portfolio_valuation.py`, `portfolio_holdings.py`,
 `portfolio_analytics.py`, `portfolio_cash_flows.py`,
 `portfolio_real_input_readiness.py`, snapshot/performance tests and the read-only
@@ -315,7 +317,7 @@ blocking W1/W2/W4/W5.
 
 ## 8. W4: trustworthy sensitivity calculations
 
-**Read first:** [valuation workflow](docs/skills/valuation/valuation-workflow.md),
+**Read first:** [valuation workflow](../skills/valuation/valuation-workflow.md),
 the sensitivity limitation in the ledger, forecast/terminal/bridge functions in
 `dcf.py`, `diagnostics_engine.py`, pure output contracts and
 `sensitivity-tables-panel.tsx`. Inspect all callers before changing helper behavior.
@@ -366,8 +368,8 @@ becomes necessary rather than changing models during parallel work.
 
 ## 9. W5: consistent backup and recoverable evidence
 
-**Read first:** [operations workflow](docs/skills/operations/local-operations.md),
-backup/restore sections of the [runbook](docs/08-execution-runbook.md),
+**Read first:** [operations workflow](../skills/operations/local-operations.md),
+backup/restore sections of the [runbook](../execution-runbook.md),
 `backup_local.sh`, `restore_local.sh`, `drill_backup_restore.sh`,
 `restore_drill_fixture.py` and `test_backup_workflow.py`.
 

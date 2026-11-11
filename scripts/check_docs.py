@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate links and retired-path references in active documentation."""
+"""Validate active documentation paths, heading links, and repository maps."""
 
 from __future__ import annotations
 
@@ -16,13 +16,35 @@ LINK_PATTERN = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 INLINE_MARKDOWN_PATH_PATTERN = re.compile(r"`([^`\n]*\.md)`")
 FENCE_PATTERN = re.compile(r"^[ \t]*(?P<fence>`{3,}|~{3,})[^\n]*\n.*?^[ \t]*(?P=fence)[ \t]*$", re.MULTILINE | re.DOTALL)
 CONTEXT_LINE_BUDGETS = {
+    "README.md": 100,
     "AGENTS.md": 160,
     "backend/AGENTS.md": 160,
     "frontend/AGENTS.md": 120,
+    "docs/README.md": 80,
     "docs/HANDOFF.md": 120,
-    "docs/00-current-state.md": 180,
+    "docs/current-state.md": 180,
+    "docs/architecture.md": 180,
+    "docs/local-development.md": 140,
+    "docs/limitations.md": 240,
 }
+LOCAL_ONLY_SKILL_DIRS = {"excel-live-control", "pdf", "playwright", "spreadsheets"}
 RETIRED_ACTIVE_PATHS = (
+    "Knull%28readme%29.md",
+    "Knull(readme).md",
+    "DELIVERY_VALIDATION.md",
+    "docs/00-current-state.md",
+    "docs/01-product-brief.md",
+    "docs/02-architecture.md",
+    "docs/03-database-schema.md",
+    "docs/04-data-sources-and-ingestion.md",
+    "docs/05-scoring-framework.md",
+    "docs/06-security-threat-model.md",
+    "docs/07-local-development.md",
+    "docs/08-execution-runbook.md",
+    "docs/09-beginner-glossary.md",
+    "docs/09-route-inventory.md",
+    "docs/12-assumption-methodology-engine.md",
+    "docs/agent_capabilities_and_limitations.md",
     "docs/roadmaps/market-intelligence-build-roadmap.md",
     "docs/roadmaps/provider-data-execution-plan-2026-08-01.md",
     "docs/roadmaps/valuation-auto-pipeline-master-plan.md",
@@ -36,7 +58,10 @@ RETIRED_ACTIVE_PATHS = (
 
 def active_markdown_files(root: Path = ROOT) -> list[Path]:
     root = root.resolve()
-    files = [*root.glob("*.md"), root / "frontend" / "README.md"]
+    files = [*root.glob("*.md"), *(root / ".github").glob("*.md")]
+    files.extend(root / directory / "README.md" for directory in (
+        "backend", "frontend", "scripts", "data", "docker",
+    ))
     files.extend(
         path
         for path in (root / "docs").rglob("*.md")
@@ -47,7 +72,10 @@ def active_markdown_files(root: Path = ROOT) -> list[Path]:
         for path in (root / "damodaran_knowledge_base_v1").rglob("*.md")
         if "raw" not in path.relative_to(root / "damodaran_knowledge_base_v1").parts
     )
-    files.extend((root / "skills").rglob("*.md"))
+    files.extend(
+        path for path in (root / "skills").rglob("*.md")
+        if path.relative_to(root / "skills").parts[0] not in LOCAL_ONLY_SKILL_DIRS
+    )
     # Nested instructions must not silently escape validation. Prune generated
     # dependencies rather than recursively scanning installed packages/builds.
     for directory in (root / "backend", root / "frontend"):
@@ -80,24 +108,41 @@ def _link_destination(raw: str) -> str:
     return raw.split(maxsplit=1)[0] if raw else ""
 
 
+def _markdown_anchors(text: str) -> set[str]:
+    """GitHub-style ATX heading anchors, including duplicate and explicit IDs."""
+    text = FENCE_PATTERN.sub("", text)
+    anchors = set(re.findall(r'<a\s+[^>]*(?:id|name)=["\']([^"\']+)["\']', text))
+    used: set[str] = set()
+    for heading in re.findall(r"^ {0,3}#{1,6}[ \t]+(.+?)\s*#*\s*$", text, re.MULTILINE):
+        heading = re.sub(r"\[([^\]]+)\]\([^)]+\)", r"\1", heading)
+        base = re.sub(r"[^\w\- ]", "", heading.lower()).replace(" ", "-")
+        anchor, suffix = base, 0
+        while anchor in used:
+            suffix += 1
+            anchor = f"{base}-{suffix}"
+        used.add(anchor)
+        anchors.add(anchor)
+    return anchors
+
+
 def _route_inventory_errors(root: Path) -> list[str]:
-    inventory = root / "docs" / "09-route-inventory.md"
+    inventory = root / "docs" / "route-inventory.md"
     if not inventory.exists():
         return []
     text = FENCE_PATTERN.sub("", inventory.read_text(encoding="utf-8"))
     pages = {path.resolve() for path in (root / "frontend" / "app").rglob("page.tsx")}
     listed = {_local_target(inventory, _link_destination(match.group(1)))
               for match in LINK_PATTERN.finditer(text)}
-    errors = [f"docs/09-route-inventory.md: missing page {path.relative_to(root)}"
+    errors = [f"docs/route-inventory.md: missing page {path.relative_to(root)}"
               for path in sorted(pages - listed)]
     count = re.search(r"(\d+) App Router pages", text)
     if not count or int(count.group(1)) != len(pages):
-        errors.append(f"docs/09-route-inventory.md: page count must match {len(pages)} source pages")
+        errors.append(f"docs/route-inventory.md: page count must match {len(pages)} source pages")
     return errors
 
 
 def _schema_head_errors(root: Path) -> list[str]:
-    schema = root / "docs" / "03-database-schema.md"
+    schema = root / "docs" / "database-schema.md"
     runtime = root / "backend" / "app" / "services" / "runtime_readiness.py"
     if not schema.exists() or not runtime.exists():
         return []
@@ -110,7 +155,7 @@ def _schema_head_errors(root: Path) -> list[str]:
                     expected = node.value.value
     documented = re.search(r"\*\*Current source head:\*\*\s*`([^`]+)`", schema.read_text(encoding="utf-8"))
     if not expected or not documented or documented.group(1) != expected:
-        return ["docs/03-database-schema.md: migration head must match runtime_readiness.EXPECTED_MIGRATION_HEAD"]
+        return ["docs/database-schema.md: migration head must match runtime_readiness.EXPECTED_MIGRATION_HEAD"]
     return []
 
 
@@ -118,6 +163,7 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
     root = root.resolve()
     errors: list[str] = []
     checked_links = 0
+    anchor_cache: dict[Path, set[str]] = {}
     for path in active_markdown_files(root):
         text = path.read_text(encoding="utf-8")
         searchable = FENCE_PATTERN.sub("", text)
@@ -132,10 +178,20 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
             destination = _link_destination(match.group(1))
             target = _local_target(path, destination)
             if target is None:
-                continue
-            checked_links += 1
+                if not destination.startswith("#"):
+                    continue
+                target = path
+            else:
+                checked_links += 1
             if not target.exists():
                 errors.append(f"{relative}: broken link {match.group(1)}")
+                continue
+            fragment = unquote(destination.rstrip(">").partition("#")[2])
+            if fragment and target.suffix.lower() == ".md":
+                if target not in anchor_cache:
+                    anchor_cache[target] = _markdown_anchors(target.read_text(encoding="utf-8"))
+                if fragment not in anchor_cache[target]:
+                    errors.append(f"{relative}: broken anchor {match.group(1)}")
         for destination in INLINE_MARKDOWN_PATH_PATTERN.findall(searchable):
             if any(marker in destination for marker in ("*", "<", ">")):
                 continue

@@ -41,7 +41,7 @@ Make backend API changes without route, schema, service, model, migration, or te
 
 1. Locate router in `backend/app/api/routers/`.
 2. Locate the domain contract in `backend/app/schemas/`; the legacy
-   `backend/app/api/schemas.py` is a compatibility facade/unextracted legacy owner.
+   `backend/app/api/schemas.py` is a compatibility facade over domain schemas.
    New valuation/portfolio fields belong in their narrow modules. Pure calculation
    contracts must not import HTTP, services or ORM.
 3. Locate service in `backend/app/services/`.
@@ -90,7 +90,7 @@ Make backend API changes without route, schema, service, model, migration, or te
 
 ## References
 
-- `docs/02-architecture.md`
-- `docs/03-database-schema.md`
-- `docs/08-execution-runbook.md`
+- `docs/architecture.md`
+- `docs/database-schema.md`
+- `docs/execution-runbook.md`
 - `backend/tests/helpers.py`

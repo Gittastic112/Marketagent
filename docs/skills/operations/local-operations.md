@@ -14,7 +14,7 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 
 ## Prerequisites
 
-- Read `docs/07-local-development.md`.
+- Read `docs/local-development.md`.
 - Check `git status --short`.
 
 ## Inputs
@@ -117,6 +117,6 @@ Run local services, migrations, tests, and troubleshooting without damaging user
 
 ## References
 
-- `docs/07-local-development.md`
+- `docs/local-development.md`
 - `docs/HANDOFF.md`
 - `AGENTS.md`

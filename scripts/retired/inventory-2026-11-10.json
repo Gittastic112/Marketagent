@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-10",
+  "scope": "Two unreferenced scratch scripts; original bytes retained locally, with prior versions in Git history.",
+  "entries": [
+    {
+      "original_path": "scripts/read_pdf.py",
+      "retained_path": "scripts/retired/local/2026-11-10/read_pdf.py.txt",
+      "bytes": 732,
+      "sha256": "ef126aef521e485d7c6eb15f081c492812f61608f030a01931f0ff20e5bbfcf3",
+      "reason": "Unreferenced scratch preview with a hardcoded path and undeclared PyPDF2 dependency."
+    },
+    {
+      "original_path": "scripts/audit_frontend_routes.py",
+      "retained_path": "scripts/retired/local/2026-11-10/audit_frontend_routes.py.txt",
+      "bytes": 2151,
+      "sha256": "992a00a88e1913ad76956a0f1115c8eb4c83a848addb9c7436c6a27debc8552e",
+      "reason": "Unreferenced dated generator would overwrite reviewed route documentation and infer Built from source strings."
+    }
+  ]
+}

@@ -6,6 +6,64 @@ from scripts.check_docs import _local_target, validate
 
 
 class DocumentationCheckTests(unittest.TestCase):
+    def test_directory_guides_and_github_policies_are_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for folder in ("backend", "scripts", "data", "docker", ".github"):
+                (root / folder).mkdir()
+                (root / folder / "README.md").write_text("[missing](missing.md)\n", encoding="utf-8")
+            (root / ".github" / "SECURITY.md").write_text("[missing](missing.md)\n", encoding="utf-8")
+            errors, count = validate(root)
+            self.assertEqual(count, 6)
+            self.assertEqual(len(errors), 6)
+
+    def test_local_helper_copies_do_not_enter_application_docs(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            copied = root / "skills" / "spreadsheets"
+            copied.mkdir(parents=True)
+            (copied / "SKILL.md").write_text("[local tool](missing.md)\n", encoding="utf-8")
+            maintained = root / "skills" / "security-review"
+            maintained.mkdir()
+            (maintained / "SKILL.md").write_text("[missing](missing.md)\n", encoding="utf-8")
+            errors, count = validate(root)
+            self.assertEqual(count, 1)
+            self.assertEqual(errors, ["skills/security-review/SKILL.md: broken link missing.md"])
+
+    def test_missing_local_heading_is_reported(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text("[guide](guide.md#removed-heading)\n", encoding="utf-8")
+            (root / "guide.md").write_text("# Actual heading\n", encoding="utf-8")
+            errors, count = validate(root)
+            self.assertEqual(count, 1)
+            self.assertEqual(errors, ["README.md: broken anchor guide.md#removed-heading"])
+
+    def test_same_page_duplicate_and_explicit_anchors(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text(
+                '# Setup & `review`\n# Setup & `review`\n<a id="stable"></a>\n'
+                '[first](#setup--review)\n[second](#setup--review-1)\n[explicit](#stable)\n',
+                encoding="utf-8",
+            )
+            self.assertEqual(validate(root), ([], 0))
+
+    def test_fenced_headings_do_not_supply_anchors(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "README.md").write_text("```md\n# Example\n```\n[bad](#example)\n", encoding="utf-8")
+            self.assertEqual(validate(root)[0], ["README.md: broken anchor #example"])
+
+    def test_external_and_code_line_fragments_are_not_markdown_headings(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "example.py").write_text("pass\n", encoding="utf-8")
+            (root / "README.md").write_text(
+                "[code](example.py#L1)\n[web](https://example.com/guide#heading)\n", encoding="utf-8"
+            )
+            self.assertEqual(validate(root), ([], 1))
+
     def test_schema_document_matches_runtime_expected_head(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
@@ -13,7 +71,7 @@ class DocumentationCheckTests(unittest.TestCase):
             runtime.parent.mkdir(parents=True)
             runtime.write_text('EXPECTED_MIGRATION_HEAD = "new_revision"\n', encoding="utf-8")
             (root / "docs").mkdir()
-            schema = root / "docs" / "03-database-schema.md"
+            schema = root / "docs" / "database-schema.md"
             schema.write_text('**Current source head:** `old_revision`.\n', encoding="utf-8")
             errors, _ = validate(root)
             self.assertTrue(any("migration head" in error for error in errors))
@@ -43,7 +101,7 @@ class DocumentationCheckTests(unittest.TestCase):
             page.parent.mkdir(parents=True)
             page.touch()
             (root / "docs").mkdir()
-            inventory = root / "docs" / "09-route-inventory.md"
+            inventory = root / "docs" / "route-inventory.md"
             inventory.write_text("0 App Router pages.\n", encoding="utf-8")
             errors, _ = validate(root)
             self.assertTrue(any("missing page" in error for error in errors))

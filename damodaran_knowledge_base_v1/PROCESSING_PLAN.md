@@ -8,7 +8,7 @@ and no pending inbox files. Existing source bytes remain unchanged. Six dated
 US mirrors are scoped separately from India; see
 [the intake reference](reference/us_benchmark_intake_2026.md). No company mapping
 or doctrine was auto-approved. Application counts and tests below are historical;
-use [application Current State](../docs/00-current-state.md) for newer evidence.
+use [application Current State](../docs/current-state.md) for newer evidence.
 
 ## Objective
 

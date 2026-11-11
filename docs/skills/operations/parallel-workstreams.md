@@ -3,7 +3,7 @@
 ## Purpose
 
 Let independent agents edit concurrently without shared-file races or hidden
-dependencies. The current batch is [Knull](../../../Knull%28readme%29.md).
+dependencies. The design reference is [workstream design](../../workstreams/plan.md).
 
 ## When to use
 
@@ -71,5 +71,5 @@ Architecture, documentation, local operations and the assigned domain workflow.
 ## References
 
 - [Workflow routing](../README.md)
-- [Execution runbook](../../08-execution-runbook.md)
+- [Execution runbook](../../execution-runbook.md)
 - [Current allocations](../../workstreams/ownership.tsv)

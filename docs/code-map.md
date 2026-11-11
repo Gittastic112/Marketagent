@@ -1,8 +1,8 @@
 # Code Map
 
 Use this to find the owner of a change. It is not a generated listing of every
-file. Runtime flows live in [architecture](02-architecture.md), commands in the
-[runbook](08-execution-runbook.md), status in [current state](00-current-state.md).
+file. Runtime flows live in [architecture](architecture.md), commands in the
+[runbook](execution-runbook.md), status in [current state](current-state.md).
 Start with the compact JSON map in [AGENTS.md](../AGENTS.md). For a narrow change:
 
 ~~~bash
@@ -11,9 +11,34 @@ rg -n '^\| Financial review ' docs/code-map.md
 
 Inspect only the returned owner and tests. Do not read every domain by default.
 
-For assigned parallel work, [Knull](../Knull%28readme%29.md) defines the batch and
+For assigned parallel work, [workstream design](workstreams/plan.md) defines the batch and
 [ownership.tsv](workstreams/ownership.tsv) defines exclusive writes. The entries
 below locate code; they do not grant another agent permission to edit it.
+
+## Repository layout
+
+| Path | Purpose |
+|---|---|
+| [backend](../backend/README.md) | FastAPI application, domain logic, migrations, and backend tests |
+| [frontend](../frontend/README.md) | Next.js pages, UI, clients, and browser tests |
+| [scripts](../scripts/README.md) | Maintained checks, operational commands, and explicit data tools |
+| [data](../data/README.md) | Runtime references, contract fixtures, certification inputs, review receipts |
+| [damodaran_knowledge_base_v1](../damodaran_knowledge_base_v1/INDEX.md) | Independent doctrine, immutable sources, catalog, and audit tools |
+| [docker/postgres](../docker/postgres/) | Narrow PostgreSQL image build context |
+| [docs](README.md) | Current guides, planning, workflow references, and historical archive |
+| [skills](../skills/README.md) | Maintained project security-review package; copied tool packages stay local |
+| [.github](../.github/) | CI and contribution/security policies |
+| .codex, .vscode | Agent/editor configuration, separate from application runtime; preserve local overrides |
+| [docker-compose.yml](../docker-compose.yml) | Normal local services and persistent volumes |
+| [dev](../docker-compose.dev.yml), [test](../docker-compose.test.yml), [tools](../docker-compose.tools.yml) overrides | Source reload, offline backend tests, isolated repository-tool checks |
+| [E2E](../docker-compose.e2e.yml), [recovery](../docker-compose.recovery.yml) | Separate disposable verification environments |
+| [alembic.ini](../alembic.ini), [pyproject.toml](../pyproject.toml) | Migration and Python test/type configuration |
+| [.gitignore](../.gitignore), [.rgignore](../.rgignore), [.dockerignore](../.dockerignore), [.gitattributes](../.gitattributes) | Publication, search, build-context, and file-type boundaries |
+| README.md, AGENTS.md | Product entry and development rules; detailed plans live under docs |
+
+Local output, backups, scratch, tmp, installed dependencies, and private settings
+are distinct from the published source tree. Git ignores control discovery, not
+permission to delete evidence.
 
 ## Runtime and dependencies
 
@@ -132,18 +157,18 @@ Tests are indexed by behavior/domain, not by historical task number.
 | [docs/skills](skills/) | Task-specific project workflow references, not installed application features |
 | [skills/security-review](../skills/security-review/) | Packaged repository skill; do not confuse with workflow-reference Markdown |
 | .codex | Host/agent configuration; not application runtime code or a source for secrets |
-| [retired tooling](../scripts/retired/README.md) | 25 old root/frontend/backend scripts preserved as inactive local records; excluded from Git and Docker builds; dated inventories record hashes, original paths and no current callers |
+| [retired tooling](../scripts/retired/README.md) | 27 old root/frontend/backend scripts preserved as inactive local records; excluded from Git and Docker builds; dated inventories record hashes, original paths and no current callers |
 | [local helper packages](../skills/README.md) | Consolidated reference packages, including the former root spreadsheet folders; not application runtime code or proof of installed plugins |
 | Backend build context | [.dockerignore](../.dockerignore) includes only maintained app, migration, operational-script and test trees plus build/dependency files; root scratch scripts and local databases stay on disk outside the context |
-| tmp | Retained source-review images and evidence; excluded from routine searches by .rgignore, not deleted or untracked |
+| tmp | Retained local source-review images and evidence; excluded from Git publication and routine searches |
 | output, scratch, .playwright-cli | Ignored local reports or historical/manual evidence; not a current task queue. The obsolete generated repo_map.txt is removed and ignored |
 | .pytest_cache, .pnpm-store, frontend/.next, frontend/tsconfig.tsbuildinfo | Reproducible generated caches; never confuse these with database volumes or source inputs |
-| frontend/node_modules | Reproducible installed dependencies, retained while local Node processes may use them. Six pip-only Python environments were removed; supported validation uses isolated Docker tooling |
+| frontend/node_modules | Reproducible installed dependencies, retained while local Node processes may use them. Supported locked validation uses isolated Docker tooling |
 | [archive](archive/) | Dated evidence and superseded instructions, excluded from routine onboarding |
 
 ## Safe verification entry points
 
-- [Runbook](08-execution-runbook.md): source-mounted backend tests, frontend tests,
+- [Runbook](execution-runbook.md): source-mounted backend tests, frontend tests,
   production builds, isolated browser checks, migration/readiness diagnostics.
 - [Test Compose](../docker-compose.test.yml): network-disabled backend tests,
   disposable SQLite default, read-only sources; no normal database or credentials.
@@ -159,7 +184,7 @@ Tests are indexed by behavior/domain, not by historical task number.
   contracts, including envelopes, aliases, nullable values and brief enums. New
   domains must extend this explicit coverage before a generated-client migration.
 - [Documentation checker](../scripts/check_docs.py): links, nested instructions,
-  retired plans, page-inventory completeness and context-size limits. No second
+  retired plans, heading anchors, directory guides, page-inventory completeness and context-size limits. No second
   generated full-tree listing to maintain. .rgignore keeps archived bodies, raw
   corpus, locks and large receipts out of broad searches; use exact paths when needed.
 - [Workstream guard](../scripts/check_workstream_ownership.sh): disjoint path

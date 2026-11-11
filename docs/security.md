@@ -6,7 +6,7 @@ Implemented controls were reviewed September 30, 2026, with October 11 source
 hardening recorded in the [M03 checkpoint](archive/checkpoints/2026/m03-security-2026-10-11.md). The dated
 [security checkpoint](archive/checkpoints/2026/security-and-comparison-reviews-2026-09-30.md)
 records evidence; prioritized residual work lives only in the
-[limitation ledger](agent_capabilities_and_limitations.md#security-boundary).
+[limitation ledger](limitations.md#security-boundary).
 Requirements below are not a claim of complete public-deployment readiness.
 
 This repository is a local-first market intelligence and portfolio tracker for

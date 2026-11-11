@@ -130,3 +130,5 @@ Useful entry points:
 
 Counts and next-task statements inside these files are point-in-time facts and
 are often superseded by later checkpoints.
+
+- [Repository presentation and documentation cleanup, November 10](repository-presentation-2026-11-10.md): descriptive paths, concise current guides, publication hygiene, and validation scope.

@@ -5,7 +5,7 @@ Source inventory reviewed: 2026-10-13. 50 App Router pages.
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's
 presence does not prove loading, error, ownership or genuine-input correctness.
-Use [Current State](00-current-state.md) for dated verification and the
+Use [Current State](current-state.md) for dated verification and the
 [code map](code-map.md) for owning services and tests.
 
 The [August state matrix](archive/assessments/route-state-inventory-2026-08-09.md)

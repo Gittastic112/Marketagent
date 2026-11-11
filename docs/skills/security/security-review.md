@@ -15,7 +15,7 @@ Review security risks for local-first investment research features.
 
 ## Prerequisites
 
-- Read `docs/06-security-threat-model.md`.
+- Read `docs/security.md`.
 - Inspect permitted config declarations, routes, input paths and sanitized logs.
   Respect denied secret-file paths, including examples if the session blocks them;
   verify configuration state without reading credential values.
@@ -103,5 +103,5 @@ Review security risks for local-first investment research features.
 
 ## References
 
-- `docs/06-security-threat-model.md`
+- `docs/security.md`
 - `skills/security-review/SKILL.md`

@@ -47,6 +47,17 @@ test-results/
 /repo_map.txt
 /Data for Model/
 
+# Local source-review renders and copied tool packages are not publication inputs.
+# Keep originals and review receipts; ignoring a path does not delete its files.
+/tmp/
+/skills/excel-live-control/
+/skills/pdf/
+/skills/playwright/
+/skills/spreadsheets/
+/.codex/ACCESS-AND-PRIVACY.md
+/docs/workstreams/evidence/**/before/
+/docs/workstreams/evidence/**/*.patch
+
 # Desktop metadata.
 .DS_Store
 Thumbs.db

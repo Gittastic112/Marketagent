@@ -18,7 +18,7 @@ Add or debug ingestion while preserving provenance, processing runs, freshness, 
 
 ## Prerequisites
 
-- Read `docs/04-data-sources-and-ingestion.md` and `docs/06-security-threat-model.md`.
+- Read `docs/data-sources.md` and `docs/security.md`.
 - Inspect provider/service, processing run model, relevant route, and tests.
 
 ## Inputs
@@ -89,6 +89,6 @@ Add or debug ingestion while preserving provenance, processing runs, freshness, 
 
 ## References
 
-- `docs/04-data-sources-and-ingestion.md`
-- `docs/06-security-threat-model.md`
-- `docs/00-current-state.md`
+- `docs/data-sources.md`
+- `docs/security.md`
+- `docs/current-state.md`

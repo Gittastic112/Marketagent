@@ -31,7 +31,7 @@ limitations have their own canonical owners in the [documentation map](../README
 | Change evidence, research or briefs | [Market intelligence](market-intelligence/market-intelligence-workflow.md) | Security for private sources, AI or owned evidence |
 | Review auth, uploads, URLs, private data or external calls | [Security](security/security-review.md) | The affected domain workflow |
 | Run services, tests, migration or recovery | [Operations](operations/local-operations.md) | Security if operational boundaries change |
-| Assign/integrate concurrent agents | [Parallel workstreams](operations/parallel-workstreams.md) | Assigned domain workflow; current allocations are in [Knull](../../Knull%28readme%29.md) |
+| Assign/integrate concurrent agents | [Parallel workstreams](operations/parallel-workstreams.md) | Assigned domain workflow; allocations are in [workstream design](../workstreams/plan.md) |
 | Restructure docs, handoffs or plans | [Documentation](documentation/documentation-workflow.md) | Skill maintenance only if workflow guidance changes |
 | Maintain this library/package | [Skill maintenance](documentation/skill-maintenance.md) | Documentation for links and ownership |
 

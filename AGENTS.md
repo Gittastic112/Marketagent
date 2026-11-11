@@ -12,7 +12,7 @@ Do not make the app look more capable or certain than it is.
   "backend/alembic": "ordered database migrations",
   "frontend": {"entry": "app/layout.tsx", "owners": ["app", "components", "lib/api", "e2e"]},
   "scripts": "repository checks and operations",
-  "docs": {"start": "HANDOFF.md", "lookup": "code-map.md", "commands": "08-execution-runbook.md"},
+  "docs": {"start": "HANDOFF.md", "lookup": "code-map.md", "commands": "execution-runbook.md"},
   "data": "runtime assets and versioned review receipts",
   "damodaran_knowledge_base_v1": "immutable source corpus; read its AGENTS.md"
 }
@@ -20,7 +20,7 @@ Do not make the app look more capable or certain than it is.
 
 Quick checks: `python3 scripts/check_docs.py`; `npm --prefix frontend test`;
 `npm --prefix frontend run typecheck`. Backend tests and production builds use the
-[runbook's environment table](docs/08-execution-runbook.md#choose-the-right-environment).
+[runbook's environment table](docs/execution-runbook.md#choose-the-right-environment).
 
 ## Start with the smallest relevant context
 
@@ -28,8 +28,8 @@ Quick checks: `python3 scripts/check_docs.py`; `npm --prefix frontend test`;
 2. Search [the code map](docs/code-map.md) for the affected domain, then read its
    matching row and owning files. Do not load the whole map for a narrow change.
 3. Read only the relevant current reference from [the docs index](docs/README.md).
-4. For major architectural work, also read [current state](docs/00-current-state.md),
-   [architecture](docs/02-architecture.md), and [the roadmap](docs/roadmaps/product-roadmap.md).
+4. For major architectural work, also read [current state](docs/current-state.md),
+   [architecture](docs/architecture.md), and [the roadmap](docs/roadmaps/product-roadmap.md).
 5. Use `rg --files <owning-directory>` before content searches, with bounded output.
    Inspect actual code before editing. Archive files are historical evidence,
    not current instructions or an execution queue.
@@ -45,7 +45,7 @@ conflicts; do not guess silently.
 
 ## Workflow
 
-- For an assigned parallel batch, use [Knull](Knull%28readme%29.md) and its
+- For an assigned parallel batch, use [workstream design](docs/workstreams/plan.md) and its
   [exclusive file ownership](docs/workstreams/ownership.tsv). Unlisted paths and
   shared contracts are frozen during parallel edits. Request boundary changes
   through the coordinator; never duplicate another agent's implementation.
@@ -63,7 +63,7 @@ conflicts; do not guess silently.
 - Run focused tests, then broader checks proportional to risk. A build is not a
   browser test; Mock Data proof is not genuine-input proof.
 - Update only affected current docs. Keep limitations in
-  [one ledger](docs/agent_capabilities_and_limitations.md), not duplicate chat lists.
+  [one ledger](docs/limitations.md), not duplicate chat lists.
 - Report changed files, tests, manual checks, unresolved risks, and next work.
   Do not claim completion without evidence.
 
@@ -140,9 +140,10 @@ authorization before destructive operations. Never chmod a Docker socket to 666.
 
 ## Commands and documentation ownership
 
-[Execution runbook](docs/08-execution-runbook.md) owns development and validation
-commands. [Local setup](docs/07-local-development.md) owns environment and Docker
-troubleshooting. [Architecture](docs/02-architecture.md) owns runtime boundaries.
+[Execution runbook](docs/execution-runbook.md) owns development and validation.
+[Operations](docs/operations.md) owns runtime, ingestion and recovery commands.
+[Local setup](docs/local-development.md) owns environment and Docker troubleshooting.
+[Architecture](docs/architecture.md) owns runtime boundaries.
 [Project workflows](docs/skills/README.md) are optional task-specific references,
 not a second universal instruction stack. The separate knowledge-base AGENTS.md
 governs its immutable source corpus.
