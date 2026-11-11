@@ -327,4 +327,3 @@ version. Generic parsing is inventory, not application support.
 
 The separate knowledge base preserves raw doctrine and source extraction under
 its own `AGENTS.md` and audit process.
-
