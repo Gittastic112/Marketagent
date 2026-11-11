@@ -2,9 +2,11 @@
 
 ## Baseline and scope
 
-This follow-up starts from PR10's merged commit 4020f6cf. The private repository
+This follow-up starts from PR10's merged commit 4020f6cf. The published repository
 contained 1,485 published files. Local HEAD remains fba390bf with existing edits;
-this pass preserves those edits and publishes only its reviewed paths.
+this pass preserves those edits and publishes only its reviewed paths. GitHub
+reports the repository as public at the final November 11 metadata check; this
+cleanup did not change its visibility.
 
 The change concerns repository navigation, obsolete developer tools, unused UI
 modules, and review checks. Application APIs, calculations, financial records, migrations, runtime

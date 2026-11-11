@@ -3,7 +3,7 @@
 ## Scope and baseline
 
 Prepared the repository for external review without changing application behavior,
-migrations, financial inputs, or the running stack. GitHub's private default branch
+migrations, financial inputs, or the running stack. GitHub's default branch
 was codex/worktree-recovery at 9f17dd6a; PR9 was already merged. The matching
 pre-edit document blobs were compared with the published tree.
 
