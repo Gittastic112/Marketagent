@@ -1,8 +1,7 @@
 # Current State
 
-Documentation reconciled November 11, 2026. Product validation below keeps its
-original dates. [PR9](https://github.com/Gittastic112/Marketagent/pull/9) merged on
-November 9 at `9f17dd6a`; the local checkout contains additional uncommitted history.
+Source validation updated November 11, 2026. Recorded results below identify
+their exact revisions and environments; they do not certify an existing installation.
 
 ## Product position
 
@@ -37,6 +36,7 @@ acceptance.
 | November 9, installed stack | Scoped rollout preserved database/asset fingerprints, mounts, settings, and localhost ports. One explicitly refreshed brief remained unreviewed. [Analyst evidence](archive/checkpoints/2026/analyst-workflows-2026-11-09.md) |
 | November 7, dependency/container/recovery | Recorded repository gates, dependency checks, OS-image scans, and isolated recovery passed. Unfixed scan findings remain disclosed; this is not a clean security certification. [Checkpoint](archive/checkpoints/2026/product-development-2026-11-07.md) |
 | October 17, recovery | Format-3 concurrent-write recovery checked both PDF stores and 109 tables. Later populated-backup rehearsal remains unrun; same-disk copies do not prove off-device recovery. [Checkpoint](archive/checkpoints/2026/release-readiness-2026-10-17.md) |
+| November 11, efficiency PR13 | All seven CI jobs passed at `27c0e007`; merged source tree is identical at `44be93b9`. 1,934 backend tests passed, six skipped; 363 frontend tests, six PostgreSQL integration tests, 71 browser tests, TypeScript/builds, security and recovery checks passed. [Run](https://github.com/Gittastic112/Marketagent/actions/runs/43100927562) · [Checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md) |
 | November 10, cleanup PR10 | All five CI jobs passed at `dab84f01`: repository checks, full backend/frontend baseline, browser workflows, dependency/container security, and isolated recovery. [Run](https://github.com/Gittastic112/Marketagent/actions/runs/42952104760) · [Cleanup checkpoint](archive/checkpoints/2026/repository-presentation-2026-11-10.md) |
 
 Earlier financial/provider reviews and normal-browser observations remain in
@@ -64,19 +64,13 @@ It changes no financial acceptance gates.
 
 ## Research and runtime evidence
 
-The latest authorized research scope, recorded November 9, is four technology
-companies with hypothetical holdings and Sample analyst research. The sourced
-Apple valuation is a separate Estimate. Three-year input checks do not establish
-every disclosure or real transactions. This page does not inspect today's database.
-
-The historical 12-company universe and eleven scenarios were removed November 5.
-Sixty named historical backup archives were deleted with explicit approval on
-November 9. Historical review counts remain evidence, not current data or setup
-instructions. Newer backups, sources, and receipts remain retained.
+Sample research and hypothetical holdings must stay labeled. Sourced valuations
+remain Estimates with explicit assumptions. Automated checks do not establish
+complete disclosures, genuine transactions, or current installation status.
 
 The source migration head is documented in the [schema map](database-schema.md).
-The last recorded installation uses the existing PostgreSQL volume and the
-November 9 application images; [Operations](operations.md) owns those details.
+[Operations](operations.md) owns installed-runtime and recovery procedures.
+Keep original sources, review receipts, backups, and historical evidence.
 The independent knowledge base retains its immutable originals and audit ledger.
 
 ## Acceptance and next priorities
@@ -89,5 +83,5 @@ by reorganizing documentation.
 Next work follows the [roadmap](roadmaps/product-roadmap.md): complete supported
 financial/model reviews within the selected scope, establish permitted provider
 inputs before expansion, and record actual research use and final acceptance.
-The user-reported zero actual-use days remain unresolved. Host/off-device
-protection and genuine portfolio proof retain their separate scope boundaries.
+Actual-use acceptance remains outstanding. Host/off-device protection and genuine
+portfolio proof retain their separate scope boundaries.

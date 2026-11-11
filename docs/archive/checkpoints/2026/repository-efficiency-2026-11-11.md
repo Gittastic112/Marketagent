@@ -49,11 +49,19 @@ scanner shell syntax passed. A normalized CSS syntax-tree comparison is
 identical before and after extraction (SHA-256
 8d8192eb0c72aef5e5efdd2353d10e3655b6fdabee416f75edb9692d6906f909).
 
-The full application, browser, security, recovery, and Python tooling checks run
-through GitHub CI. Exact code and documentation-only outcomes are recorded after
-verification. Software checks do not advance financial, provider, installed
-runtime, or daily-use acceptance. Host-specific reconciliation records and
-preservation inventories remain local.
+[PR13](https://github.com/Gittastic112/Marketagent/pull/13) passed all seven jobs
+at 27c0e007 in [CI run 43100927562](https://github.com/Gittastic112/Marketagent/actions/runs/43100927562):
+1,934 backend tests passed (six skipped), 363 frontend tests, six PostgreSQL
+integration tests, 71 browser tests, TypeScript, production builds, dependency
+and container audits, and the isolated recovery drill. Repository checks included
+24 documentation regressions and 13 scanner/scope tests; 92 current Markdown
+files and 1,059 local links passed. The merged 44be93b9 tree is identical.
+
+The documentation-only verification update exercises the lightweight path
+separately. Its result must show successful repository-checks and ci-result,
+with the five expensive jobs intentionally skipped. Software checks do not
+advance financial, provider, installed-runtime, or daily-use acceptance.
+Host-specific reconciliation records and preservation inventories remain local.
 
 The workflow follows GitHub's
 [workflow syntax](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
