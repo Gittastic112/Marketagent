@@ -86,7 +86,11 @@ dependencies were preserved. No Git history rewrite or dependency removal occurr
   configuration changes. Staging remains untouched.
 - Python and Docker are unavailable to this local session. Native Git and Node
   were located without installing system developer tools or changing permissions.
-  Canonical Python checks and clean-checkout CI remain pending publication.
+- [PR10](https://github.com/Gittastic112/Marketagent/pull/10) contains only this
+  reviewed cleanup. Its first clean checkout passed all 18 documentation-checker
+  regression tests and caught one stale inline archive-index path, corrected in
+  the follow-up. The PR checks record the canonical documentation, application,
+  browser, security, and recovery results for each commit.
 
 Local before-images, hash comparisons, changed-path allowlist, path moves,
 documentation audit, and cleanup inventory are retained under

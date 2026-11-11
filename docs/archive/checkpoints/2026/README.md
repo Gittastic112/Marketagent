@@ -105,7 +105,7 @@ Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/arc
   records the collection repair, assumption-ledger test isolation, Daily Brief
   status-contract correction, latest backend count, and final pending rerun.
 
-Historical delivery evidence only. Current status lives in `../../../00-current-state.md`.
+Historical delivery evidence only. Current status lives in `../../../current-state.md`.
 
 Useful entry points:
 
