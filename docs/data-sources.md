@@ -107,7 +107,7 @@ Weekday 07:00 America/New_York scheduling is opt-in and requires the local worke
 Interrupted jobs and their running child attempts are marked failed on the next
 cycle; already completed children remain intact. Retry is explicit, with
 no missed-date backfill. Setup and commands belong in the
-[execution runbook](08-execution-runbook.md#valuation-source-refresh).
+[operations guide](operations.md#valuation-source-refresh).
 
 ### Local extraction evaluation
 
@@ -184,7 +184,7 @@ source/metric registry with live source presence, dataset metadata, typed
 destination row counts, freshness, omissions, and required actions. A workbook
 is `ingested` only when source-specific typed rows exist. A successful generic
 admin parse is `metadata_only` and must not be presented as a usable benchmark.
-See [Current State](00-current-state.md) for the latest recorded counts and
+See [Current State](current-state.md) for the latest recorded counts and
 their evidence date. This document does not certify live database contents.
 
 Capex, ROE, Margin, Working Capital, Dividend, FCFE, Volatility, PE, PBV, PS,
@@ -210,7 +210,7 @@ Runs, and preserves India versions. US WACC creates no artificial INR methods.
 Industry selection still requires analyst confirmation; current Treasury proxies
 and dated workbook ERP may use different sovereign-risk conventions. See the
 [source intake record](../damodaran_knowledge_base_v1/reference/us_benchmark_intake_2026.md)
-and [import command](08-execution-runbook.md#us-benchmark-intake).
+and [import command](operations.md#us-benchmark-intake).
 
 Volatility requires exact `optvarIndia.xls` headers and both source assumption
 rows. It stores the source's relative bond/equity volatility ratio (`0.40`) and

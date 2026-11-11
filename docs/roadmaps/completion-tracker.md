@@ -4,14 +4,13 @@ Created October 10, 2026. **Accepted milestones: 4/10 (40%). Next: M05.**
 This is a new acceptance baseline, not a claim that the existing app is 0% built.
 Much of the implementation exists; historical tests do not close today's gates.
 
-**Current data boundary, November 7:** the user approved removal of all 12
-companies and linked research on November 5. The populated-company counts,
-scenarios and examples below describe historical evidence, not current records
-or instructions to reseed them. [PR6](https://github.com/Gittastic112/Marketagent/pull/6)
-is merged. The [November 7 implementation](../archive/checkpoints/2026/product-development-2026-11-07.md)
-adds financial review planning, correct macro computation and claim-review cues.
-It does not supply missing issuer disclosures, actual-use days or extra acceptance
-points. New company intake requires a selected research scope after the reset.
+**Current data boundary, November 9:** four selected technology companies,
+hypothetical holdings, and Sample Apple research are authorized. The sourced Apple
+valuation is a separate Estimate. The historical 12-company universe and eleven
+scenarios were removed November 5; counts and model receipts below describe that
+history, not current records or permission to restore them. PR9 is merged.
+The [current state](../current-state.md) owns dated product evidence. Missing
+disclosures, actual-use days, and final acceptance remain open.
 
 ## What 100% means
 
@@ -20,8 +19,9 @@ US/India universe, daily prices, reviewed financials, explainable valuation and 
 evidence-linked daily review. Existing portfolio examples retain their Mock Data or
 User Assumption labels and USD reporting; this release does not certify real trading
 records or genuine multi-currency portfolio performance. The exact company/security
-selection and user assumptions remain in the [single ledger](../agent_capabilities_and_limitations.md#confirmed-scope-and-input-checklist).
-The September selection is a fixed scope, not a live market-cap ranking.
+selection and user assumptions remain in the [single ledger](../limitations.md#confirmed-scope-and-input-checklist).
+Earlier company selections are historical, not a live market-cap ranking or the
+current four-company scope.
 
 The release is complete when all ten gates pass under the explicitly revised scope
 below, the research/demo workflow works, and remaining limitations are visible.
@@ -90,7 +90,7 @@ from personal user approval and independent reference certification.
 The [product roadmap](product-roadmap.md) owns product priorities; this document
 owns percentage requests, ordering and execution checklists. The
 [feature register](feature-register.md) owns capability status, and the ledger
-owns limitations. [Knull](../../Knull%28readme%29.md) remains the detailed design
+owns limitations. [Workstream design](../workstreams/plan.md) remains the detailed design
 and exclusive ownership reference for its five workstreams, mapped below.
 It is not a second progress counter or an instruction to dispatch agents.
 
@@ -102,8 +102,8 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | Accepted November 2 for research/demo scope | [Rotation and scoped acceptance](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Accepted November 2; prerequisite closed | [Acceptance basis](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Eleven historical research scenarios approved; complete issuer facts remain open | [Decision log](review-decisions.md), [applied scenarios](../../data/reviews/historical-scenario-application-20261103.json) |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | Eleven models saved and verified; complete company basis remains open | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Historical scenarios approved, then removed; complete issuer facts remain open | [Decision log](review-decisions.md), [applied scenarios](../../data/reviews/historical-scenario-application-20261103.json) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | Eleven historical models verified, then removed; complete company basis remains open | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Existing-data audit repairs observed defects; M08 prerequisite open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [prior remote matrix](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
@@ -116,11 +116,11 @@ official-source morning flow and separate due-cycle test preserve their distinct
 source/fixture boundaries. Final return labels, affected browser flows, measured
 process-cold/warm profiles and normal rollout are verified. Evidence review remains
 open; November 2 closes local credential work. The scope revision separates deferred host/
-off-device work and out-of-scope genuine activity in the [single ledger](../agent_capabilities_and_limitations.md).
+off-device work and out-of-scope genuine activity in the [single ledger](../limitations.md).
 M04's verified checks are accepted after the M03 prerequisite closes. PR4's five
 post-merge checks supersede the older 6e2a6f8b matrix as remote evidence. The [November completion pass](../archive/checkpoints/2026/independent-completion-2026-11-04.md) records new briefing/consent/runner source and its separately dated validation. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) retains earlier existing-data browser proof. Reviewed-input completeness and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
-The [ordered operator handoff](../agent_capabilities_and_limitations.md#ordered-operator-handoff)
+The [ordered operator handoff](../limitations.md#ordered-operator-handoff)
 maps every open M03-M09 check to the exact operator input and agent-owned work.
 October 13 follow-up prepares a read-only financial/AI review packet and disables
 the legacy self-scoring extraction command; neither preparation confers approval
@@ -204,8 +204,8 @@ all runtime images/volumes. That checkpoint maintained M01/M02 at 20 acceptance 
 
 ## M03: reliable recovery and local security
 
-Owners: backup/restore scripts; [Knull W5](../../Knull%28readme%29.md#9-w5-consistent-backup-and-recoverable-evidence);
-[security reference](../06-security-threat-model.md).
+Owners: backup/restore scripts; [Workstream W5](../workstreams/plan.md#9-w5-consistent-backup-and-recoverable-evidence);
+[security reference](../security.md).
 
 - [x] M03-01 Make the backup manifest and dump describe the same database snapshot
   during concurrent writes. Version the format and explicitly handle old backups.
@@ -264,7 +264,7 @@ scoped universe, without silent fabrication, source promotion or external AI rea
 
 ## M05: reviewed financial coverage
 
-Owners: extraction, normalization, source certification; [Knull W2](../../Knull%28readme%29.md#6-w2-reviewed-usindia-financial-source-coverage).
+Owners: extraction, normalization, source certification; [Workstream W2](../workstreams/plan.md#6-w2-reviewed-usindia-financial-source-coverage).
 
 October 17 [parser and review follow-up](../archive/checkpoints/2026/release-readiness-2026-10-17.md)
 recovers the eight selected Airtel/SBI entries previously skipped. All selected
@@ -367,7 +367,7 @@ delegation, preserving the distinction from independent human certification.
 ## M06: consistent valuation and sensitivity
 
 Owners: deterministic engines, saved-input contracts and valuation panels;
-[Knull W4](../../Knull%28readme%29.md#8-w4-trustworthy-sensitivity-calculations).
+[Workstream W4](../workstreams/plan.md#8-w4-trustworthy-sensitivity-calculations).
 
 November 3: the user approved eleven named historical research scenarios, now
 saved as models 2-12. Independent calculations and 82 normal desktop/mobile views
@@ -422,7 +422,7 @@ saved basis; unsupported inputs/methods withhold results with useful diagnostics
 ## M07: correct portfolio history and performance
 
 Owners: portfolio valuation, transaction replay, snapshots, readiness and risk;
-[Knull W3](../../Knull%28readme%29.md#7-w3-historical-positions-cash-and-portfolio-proof).
+[Workstream W3](../workstreams/plan.md#7-w3-historical-positions-cash-and-portfolio-proof).
 
 - [x] M07-01 Replay dated transactions/cash into historical positions instead of
   applying today's holdings to older dates. Cover purchases, sales, deposits,
@@ -459,7 +459,7 @@ depends on M06 and earns no cumulative acceptance points yet.
 ## M08: connected daily research and review
 
 Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
-[Knull W1](../../Knull%28readme%29.md#5-w1-reviewed-private-evidence-in-daily-brief).
+[Workstream W1](../workstreams/plan.md#5-w1-reviewed-private-evidence-in-daily-brief).
 
 - [x] M08-01 Distinguish same/unknown/incompatible period, currency and economic
   scope in comparisons. Copied content and opposing arrows cannot certify a
@@ -503,7 +503,7 @@ the cumulative acceptance points; broader evidence/interpretation gates remain.
 
 ## M09: complete browser workflows and responsiveness
 
-Owners: every active route in [route inventory](../09-route-inventory.md), domain UI,
+Owners: every active route in [route inventory](../route-inventory.md), domain UI,
 transport/state helpers and query-budget tests.
 
 - [x] M09-01 Audit every active route/control against actual endpoints and source

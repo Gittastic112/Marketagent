@@ -6,7 +6,7 @@ jobs:
 - Application behavior: `backend/app/services`, `backend/app/models/dcf.py`,
   valuation API routers, frontend valuation routes, and tests.
 - Valuation doctrine and source corpus: `damodaran_knowledge_base_v1/`.
-- Current product status: `../00-current-state.md` and
+- Current product status: `../current-state.md` and
   `../roadmaps/feature-register.md`.
 
 ## Current Engines

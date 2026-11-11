@@ -85,6 +85,6 @@ Help agents understand where a change belongs before editing code or docs.
 
 - `AGENTS.md`
 - `docs/HANDOFF.md`
-- `docs/00-current-state.md`
-- `docs/02-architecture.md`
-- `docs/agent_capabilities_and_limitations.md`
+- `docs/current-state.md`
+- `docs/architecture.md`
+- `docs/limitations.md`

@@ -4,18 +4,19 @@ Read the [root rules](../AGENTS.md). Current docs describe present behavior;
 archives preserve history, not instructions.
 
 - HANDOFF.md owns the latest boundary, immediate next work, and validation links.
-- 00-current-state.md owns product status and dated verification evidence.
+- current-state.md owns product status and dated verification evidence.
 - code-map.md owns code entry points and change routing.
-- 02-architecture.md owns runtime flows and dependency boundaries.
-- 08-execution-runbook.md owns commands and operational workflows.
+- architecture.md owns runtime flows and dependency boundaries.
+- execution-runbook.md owns development and validation commands.
+- operations.md owns runtime, provider, credential, backup and recovery commands.
 - roadmaps/product-roadmap.md owns priorities; feature-register.md owns capability
   status. Do not use old checkpoint numbering as a queue.
 - roadmaps/completion-tracker.md owns percentage requests and cumulative acceptance
   gates. "Finish 10%" means M01; "next 10%" means the earliest unfinished milestone.
-- [Knull](../Knull%28readme%29.md) owns the current batch's five assignments and
-  completion gates. [Workstream ownership](workstreams/ownership.tsv) owns edit
-  allocations. Neither is evidence that planned features have shipped.
-- agent_capabilities_and_limitations.md is the single limitation ledger.
+- The [workstream design](workstreams/plan.md) retains technical assignments for
+  an explicitly launched batch. [Ownership](workstreams/ownership.tsv) owns edit
+  allocations; the completion tracker owns current acceptance status.
+- limitations.md is the single limitation ledger.
 - docs/skills contains task-specific workflow references. Do not duplicate their
   complete instructions into AGENTS.md or the handoff.
 

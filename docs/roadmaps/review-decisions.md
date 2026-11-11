@@ -3,7 +3,7 @@
 Updated November 4, 2026. This is the readable index for the
 [versioned decision register](../../data/reviews/research-demo-decisions.json).
 It records decisions and their effects; the [completion tracker](completion-tracker.md)
-owns milestone acceptance and the [limitation ledger](../agent_capabilities_and_limitations.md)
+owns milestone acceptance and the [limitation ledger](../limitations.md)
 owns unresolved gaps.
 
 ## Review authority

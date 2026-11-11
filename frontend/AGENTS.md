@@ -34,7 +34,7 @@ responsibility, not arbitrary line count. Do not rename routes as a cleanup.
 Use fetchApi/postApi for data-only results with thrown errors. Use
 fetchApiResponse for metadata-aware GETs. The default compatibility api.get/post
 returns the envelope and throws on HTTP failure; do not mix these return shapes.
-Server equivalents live in server-api.ts. See [architecture](../docs/02-architecture.md).
+Server equivalents live in server-api.ts. See [architecture](../docs/architecture.md).
 
 Important data surfaces support Loading, Empty, Error, Stale, Partial,
 Not Configured, Mock Data, and Success as applicable. Reuse DataStateNotices and

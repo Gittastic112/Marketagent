@@ -20,7 +20,7 @@ Build source-backed intelligence workflows for events, evidence, scoring, alerts
 
 ## Prerequisites
 
-- Read `docs/01-product-brief.md`, `docs/05-scoring-framework.md`, and `docs/00-current-state.md`.
+- Read `docs/product-brief.md`, `docs/scoring.md`, and `docs/current-state.md`.
 - Inspect route/service/model/tests for the relevant object.
 
 ## Inputs
@@ -105,6 +105,6 @@ Build source-backed intelligence workflows for events, evidence, scoring, alerts
 
 ## References
 
-- `docs/01-product-brief.md`
-- `docs/05-scoring-framework.md`
+- `docs/product-brief.md`
+- `docs/scoring.md`
 - `docs/roadmaps/product-roadmap.md`

@@ -152,7 +152,7 @@ controls subsequent sends; absent or outdated permission denies. Concurrent stal
 decisions are rejected instead of overwriting history. New external AI outputs
 link to the precise grant; historical outputs retain a null link and do not create
 permission. Normal reads and migration never grant access. See the
-[security contract](06-security-threat-model.md#ai-outputs) for enforcement limits.
+[security contract](security.md#ai-outputs) for enforcement limits.
 
 Migration `q8q8q8q8q8q8` adds immutable owner-private brief sources, separate from
 the shared raw-document catalog. Text and original PDF bytes are deferred fields;
@@ -202,7 +202,7 @@ calculated read models rather than silently persisted estimates.
 
 ## Migration Procedure
 
-Use the [runbook](08-execution-runbook.md) for migration inspection, authorized
+Use the [runbook](execution-runbook.md) for migration inspection, authorized
 upgrades and source-mounted isolated tests. Existing production containers can
 contain older code; do not use their test results to certify edited source.
 

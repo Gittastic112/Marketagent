@@ -3,3 +3,7 @@
 *.xlsx binary
 *.csv text eol=lf
 docs/archive/** -whitespace
+
+# Reference corpora are retained inputs, separate from application source statistics.
+damodaran_knowledge_base_v1/** linguist-vendored
+data/damodaran/** linguist-vendored

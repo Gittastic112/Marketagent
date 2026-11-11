@@ -121,5 +121,5 @@ Build valuation features that keep deterministic formulas, source-labeled assump
 ## References
 
 - `docs/valuation-agent/README.md`
-- `docs/12-assumption-methodology-engine.md`
+- `docs/assumption-methodology.md`
 - `damodaran_knowledge_base_v1/AGENTS.md`

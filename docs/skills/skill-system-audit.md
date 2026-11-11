@@ -38,7 +38,7 @@ project-workflow validator.
 
 - Root/nested AGENTS files enforce repository rules; workflows do not repeat a
   second universal reading stack. Commands, limits and status retain canonical owners.
-- [Knull](../../Knull%28readme%29.md) owns this batch, while the roadmap owns product
+- [workstream design](../workstreams/plan.md) retains batch scopes, while the roadmap owns product
   priorities. The manifest and shell guard make file allocation checkable.
 - Shared workflow edits happen through the coordinator after integration. Agents
   keep proposed changes in their own evidence instead of racing to append here.

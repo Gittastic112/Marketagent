@@ -1,84 +1,76 @@
 # Market Intelligence Engine
 
-Local-first equity research, valuation and portfolio tracking. The app connects
-source documents, reviewed financials, events, thesis notes, assumptions and
-portfolio exposure. It is not a trading bot or a source of buy/sell advice.
+A local workspace for equity research, valuation, and portfolio tracking.
+Follow a claim from its source document to reviewed financial inputs, a valuation
+assumption, and the holdings it affects.
 
-## Start here
+The product is an implemented research/demo application. Source coverage and
+review quality vary by workflow. It is not ready for public hosting or automated
+trading. [Current status and dated validation](docs/current-state.md) ·
+[Known limitations](docs/limitations.md)
 
-- [Current status](docs/00-current-state.md): what is implemented and verified.
-- [Code map](docs/code-map.md): where changes belong.
-- [Agent rules](AGENTS.md) and [handoff](docs/HANDOFF.md): safe development entry.
-- [Documentation index](docs/README.md): task-specific references.
-- [Completion tracker](docs/roadmaps/completion-tracker.md): ten cumulative 10%
-  milestones, exact task IDs, dependencies and acceptance gates.
-- [Next five workstreams](Knull%28readme%29.md): independent assignments, file
-  ownership, acceptance gates and integration procedure.
-- [Limitations](docs/agent_capabilities_and_limitations.md): one current ledger.
+## What you can do
+
+| Workflow | What the application supports |
+|---|---|
+| Review the day | Inspect source-linked events, portfolio exposure, and a deterministic Daily Brief with visible coverage limits |
+| Research a company | Store filings and private research, review extracted financial candidates, and maintain thesis notes with evidence |
+| Build a valuation | Review inputs, save versioned DCF models, and inspect scenarios, sensitivities, reverse DCF, and reviewed peer comparisons |
+| Track a portfolio | Record activity and inspect dated snapshots, returns, attribution, and risk with missing-input warnings |
+| Inspect data quality | See provider configuration, processing failures, freshness, and review state in Data Health |
+
+Calculations run in the backend. Optional AI can propose interpretations through
+explicit consent and review gates. Facts, source summaries, calculations, user
+assumptions, estimates, AI interpretations, and **Mock Data** remain distinct.
 
 ## Run locally
 
-Configure the root environment using [.env.example](.env.example), including
-local credentials, a session secret and SEC contact identity. Never overwrite
-an existing .env or commit secrets. See [local setup](docs/07-local-development.md).
-
-For a new installation, run these commands from the repository root. Existing
-verified installations use [the installed-stack instructions](docs/08-execution-runbook.md#select-the-installed-local-stack)
-for their reviewed images and preserved volumes.
+Prerequisite: Docker with Compose. Follow the
+[setup guide](docs/local-development.md) to configure private local credentials,
+a session secret, and any providers you intend to use. There is no default login.
+For a **new installation**, from the repository root:
 
 ~~~bash
+cp -n .env.example .env
+# Fill in the required settings privately before starting.
 docker compose up --build -d
 docker compose ps
 curl --fail http://localhost:8000/api/readiness
 ~~~
 
-The frontend is at http://localhost:3000. Backend liveness is /api/health;
-readiness also checks the database and migrations. pgAdmin uses the opt-in admin
-profile; Daily Brief and valuation-source workers use the automation profile.
+Open [localhost:3000](http://localhost:3000). A fresh installation does not include
+the developer's research database. Provider features require their own
+configuration and source review. Existing installations should use their verified
+[runtime configuration](docs/operations.md#select-the-installed-local-stack).
 
-This is not public-deployment-ready. Checked-in Compose ports bind 127.0.0.1;
-inspect running container bindings because older containers can retain previous
-settings. Localhost bindings do not establish production security.
+## How it is built
 
-## Develop and verify
+Next.js 16 and React render the research workspace. FastAPI owns APIs and
+deterministic calculations. PostgreSQL 16 stores research and review history;
+SQLAlchemy and Alembic manage persistence and migrations. Docker Compose runs the
+local services. [Architecture](docs/architecture.md)
 
-The supported runtime uses production-built Next.js and FastAPI images.
-docker-compose.dev.yml enables source mounts and reloaders. Do not assume tests
-inside an old production container exercise edited source.
-
-[The runbook](docs/08-execution-runbook.md) owns source-mounted backend tests,
-frontend tests/type checking, production builds, browser checks, migrations,
-and safe operational commands. [CI](.github/workflows/ci.yml) runs documentation,
-secret, workflow, release and browser gates.
-
-No source datasets, user database, credentials, or investment assumptions should
-be changed merely to make a test pass. Synthetic fixtures must say Mock Data.
-
-## Repository boundaries
-
-| Area | Owns |
+| Directory | Purpose |
 |---|---|
-| [backend](backend/) | FastAPI routes, contracts, deterministic services, persistence, providers and tests |
-| [frontend](frontend/) | App Router pages, UI, server-only auth client and domain browser APIs |
-| [scripts](scripts/) | Maintained verification and operations; inspect side effects before running |
-| [skills](skills/) | Local helper packages and their references; separate from application code and session plugin installation |
-| [data](data/) | Runtime source assets and mirrored versioned datasets |
-| [knowledge base](damodaran_knowledge_base_v1/) | Separate audited valuation doctrine and immutable raw sources |
-| [docs](docs/) | Current architecture, setup, workflows and categorized historical evidence |
-| [workstream coordination](docs/workstreams/) | Exclusive edit ownership and per-agent evidence; shared docs have one coordinator |
-| output and backups | Local execution evidence and recovery copies; retained separately from maintained source |
+| [backend/](backend/README.md) | API, calculations, ingestion, persistence, migrations, and tests |
+| [frontend/](frontend/README.md) | Pages, components, authenticated API clients, and browser tests |
+| [scripts/](scripts/README.md) | Verification, data tooling, backup, and recovery commands |
+| [data/](data/README.md) | Versioned runtime references, contract fixtures, and review receipts |
+| [damodaran_knowledge_base_v1/](damodaran_knowledge_base_v1/INDEX.md) | Valuation doctrine and the immutable source corpus |
+| [docs/](docs/README.md) | Product, architecture, setup, operations, and development references |
 
-The dependency manifests and exact entry points are linked in the code map.
-Open this project folder on the Mac as the repository root. Work on application
-code inside backend/app or frontend, maintained tests inside backend/tests,
-frontend/lib or frontend/e2e, and current guides inside docs. Docker Compose and
-dependency configuration stay in their established locations.
+Use the [code map](docs/code-map.md) to locate a feature's owning files, or the
+[route inventory](docs/route-inventory.md) to find a screen.
 
-Old one-off scripts are preserved under [retired tooling](scripts/retired/README.md),
-with original paths and checksums in dated inventories. Spreadsheet helper sources
-are consolidated under skills. Generated files, review evidence, local source
-workbooks and backups have different purposes; an untracked file is not disposable.
+## Development and verification
 
-Company actuals, user assumptions, benchmark priors, calculations and AI
-interpretations must remain distinguishable. Stored sources and review gates
-come before generated conclusions.
+Read [contribution guidance](.github/CONTRIBUTING.md) and the
+[execution runbook](docs/execution-runbook.md). The
+[CI workflow](.github/workflows/ci.yml) checks repository integrity, locked
+dependencies, containers, backend/frontend behavior, browser workflows, and recovery.
+Passing tests does not establish financial accuracy or live-provider coverage.
+
+Local credentials, databases, backups, and generated reports belong outside Git.
+The repository currently has no project license; included third-party material
+retains its own source and rights. See the [security policy](.github/SECURITY.md)
+and [data boundary](data/README.md) before sharing or redistributing material.

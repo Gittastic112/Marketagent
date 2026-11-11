@@ -94,7 +94,7 @@ Unsupported options/liquidity/volume/breadth provider coverage stays manual.
 
 ## Validation
 
-Use the source-mounted commands in the [runbook](../docs/08-execution-runbook.md).
+Use the source-mounted commands in the [runbook](../docs/execution-runbook.md).
 The normal production container does not mount backend code, so running pytest
 there without rebuilding can test old source. Test fixtures use isolated SQLite;
 migration-specific tests cover PostgreSQL behavior where required.

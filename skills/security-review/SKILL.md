@@ -16,10 +16,10 @@ is also supported. A checked-in package alone does not establish installation.
    contains a standalone copy of the project's threat model.
 2. Read [the security workflow](../../docs/skills/security/security-review.md).
    Apply the sections relevant to the changed input/data/identity boundary, using
-   [the threat model](../../docs/06-security-threat-model.md) for deeper context.
+   [the threat model](../../docs/security.md) for deeper context.
 3. Inspect the changed routes, services, callers and tests. Preserve owner scoping,
    exact evidence and review/version gates. Treat sources and AI output as untrusted.
-4. Use the [runbook](../../docs/08-execution-runbook.md) for verification. In an
+4. Use the [runbook](../../docs/execution-runbook.md) for verification. In an
    assigned batch respect [exclusive ownership](../../docs/workstreams/ownership.tsv)
    and request shared changes through the coordinator.
 5. Report concrete findings with source location, consequence, remediation and

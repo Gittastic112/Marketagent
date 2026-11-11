@@ -14,7 +14,7 @@ Intelligence Engine. It is a research workspace, not a minimal dashboard.
 - Debug logs are disabled unless `NEXT_PUBLIC_DEBUG_LOGS=true`.
 
 Required local auth settings are documented in
-[`../docs/07-local-development.md`](../docs/07-local-development.md).
+[`../docs/local-development.md`](../docs/local-development.md).
 
 ## Product Surface
 
@@ -58,7 +58,7 @@ npm test
 npm run typecheck
 ```
 
-Use the [runbook](../docs/08-execution-runbook.md) for the supported Docker
+Use the [runbook](../docs/execution-runbook.md) for the supported Docker
 production-build gate and isolated browser runner. Use Playwright for changed user workflows. A successful build proves compilation,
 not live provider behavior or visual correctness.
 
@@ -82,7 +82,7 @@ not live provider behavior or visual correctness.
 | `lib/auth-options.ts` | Local NextAuth credential configuration |
 | `e2e/` | Isolated browser workflows |
 
-See [`../docs/02-architecture.md`](../docs/02-architecture.md) for the full
+See [`../docs/architecture.md`](../docs/architecture.md) for the full
 system boundary.
 
 Use the [code map](../docs/code-map.md) to find the owner of a change. New domain

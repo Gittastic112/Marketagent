@@ -5,7 +5,7 @@ These files are preserved because they may contain useful product or design cont
 Rules for future agents:
 
 - Do not treat these files as current state.
-- Check [../../00-current-state.md](../../00-current-state.md), [../../HANDOFF.md](../../HANDOFF.md), and [../../agent_capabilities_and_limitations.md](../../agent_capabilities_and_limitations.md) first.
+- Check [../../00-current-state.md](../../current-state.md), [../../HANDOFF.md](../../HANDOFF.md), and [../../agent_capabilities_and_limitations.md](../../limitations.md) first.
 - If a needs-review document becomes useful again, extract the relevant current parts into a canonical doc or roadmap instead of linking to the whole archived file.
 
 | File | Why Archived |

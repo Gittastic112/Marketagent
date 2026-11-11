@@ -18,7 +18,7 @@ Audit, clean, archive, and relink project documentation without losing useful co
 
 ## Prerequisites
 
-- Read `docs/README.md`, `docs/HANDOFF.md`, and `docs/00-current-state.md`.
+- Read `docs/README.md`, `docs/HANDOFF.md`, and `docs/current-state.md`.
 - Check `git status --short` to avoid overwriting unrelated work.
 
 ## Inputs
@@ -92,5 +92,5 @@ Audit, clean, archive, and relink project documentation without losing useful co
 
 - `docs/README.md`
 - `docs/HANDOFF.md`
-- `docs/agent_capabilities_and_limitations.md`
+- `docs/limitations.md`
 - `docs/archive/needs-review/README.md`

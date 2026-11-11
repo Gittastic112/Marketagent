@@ -51,8 +51,8 @@ existing parsers. Margin, reinvestment, ROE and working-capital datasets supplem
 the beta/WACC priors; they are not company facts or automatically approved industry
 mappings. The stored FRED DGS10 observation supplies a dated USD risk-free proxy
 through the separate source-to-draft workflow, not a universal currency fallback.
-See [source boundaries](04-data-sources-and-ingestion.md) and
-[intake commands](08-execution-runbook.md#us-benchmark-intake).
+See [source boundaries](data-sources.md) and
+[intake commands](operations.md#us-benchmark-intake).
 
 ## Revenue-weighted prior calculations
 

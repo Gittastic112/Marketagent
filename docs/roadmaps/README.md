@@ -1,21 +1,13 @@
-# Active Product Planning
+# Planning and decisions
 
-Product priorities, percentage execution and capability status have separate owners:
-
-| Document | Purpose |
+| Document | Owns |
 |---|---|
-| [`product-roadmap.md`](product-roadmap.md) | Ordered priorities, acceptance gates, and deferred work |
-| [`completion-tracker.md`](completion-tracker.md) | Ten cumulative 10% milestones, exact tasks, dependencies, status and evidence |
-| [`feature-register.md`](feature-register.md) | Current shipped/partial/proposed status by product area |
-| [Knull](../../Knull%28readme%29.md) | Next five independent agents, exact file ownership, phases and completion gates |
+| [Product roadmap](product-roadmap.md) | Priorities and prerequisites |
+| [Completion tracker](completion-tracker.md) | Stable task IDs, milestone order, acceptance evidence, and deferrals |
+| [Feature register](feature-register.md) | Implemented, partial, experimental, and unavailable capability status |
+| [Review decisions](review-decisions.md) | Recorded user approvals and delegated judgments |
+| [Workstream design](../workstreams/plan.md) | Detailed technical scopes for explicitly assigned parallel work |
 
-The [ownership manifest](../workstreams/ownership.tsv) supports that batch, not a
-second roadmap. Per-agent evidence is reconciled once by the coordinator.
-Percentage requests use the completion tracker. It maps Knull's existing technical
-workstreams into the full local-release sequence; no agents start automatically.
-
-Planning documents are not proof that a feature works. Verify code, tests, and
-`../00-current-state.md` before implementation.
-
-Dated checkpoints, previous assessments, provider research, and superseded
-multi-thousand-line plans are preserved under [`../archive/`](../archive/).
+Plans are not implementation evidence. Use [Current State](../current-state.md)
+for dated validation and the [limitation ledger](../limitations.md) for current
+trust boundaries. Superseded plans remain in the [archive](../archive/plans/README.md).

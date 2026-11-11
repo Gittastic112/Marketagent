@@ -1,208 +1,11 @@
-# Architecture
+# Workflow implementation reference
 
-**Updated:** 2026-11-04 (scoped AI permissions and public briefing coverage). Product validation scope is in [Current State](00-current-state.md).
+Detailed source behavior supporting the [architecture](../architecture.md).
+Use the [code map](../code-map.md) for owners and tests and the
+[limitation ledger](../limitations.md) for trust boundaries.
+Historical validation remains dated in [Current State](../current-state.md).
 
-**Deployment boundary:** local Docker Compose only
-
-Domain schemas now own every legacy HTTP contract; the facade only re-exports
-identical classes and aliases. Server actions similarly have eight domain owners
-behind the original frontend import path. Peer calculations/receipts, autofill
-provenance and workbook parsing are separate from persistence workflows. Data
-Health, peer review and draft review separate request handling from presentation;
-company/draft identity changes invalidate the old UI request scope. See the
-[code map](code-map.md) for owners and compatibility/drift guards. No service or
-database split is introduced.
-
-Basic server-action forms share a small client recovery component. Domain actions
-still validate and authorize; the component retains entries after failure, blocks
-duplicate pending submissions and displays completion only after confirmation.
-Research messages separately verify whether a failed AI request actually saved
-the user's text. An uncertain transport result cannot claim a successful save.
-
-Financial review and promotion carry the viewed candidate timestamps and lock
-the affected rows. Repeated identical occurrences share one period metric and retain
-separate source revisions; conflicting values/units block promotion. Pure reported-
-metric calculations require their actual inputs and compatible units; persistence
-stays in the normalization workflow. Missing inputs do not become zero or assumed tax.
-Conflicting edits require reload before promotion. Valuation AI
-requests carry the exact saved assumption ID/time; explanation provenance also
-records the calculation hash. A later version or changed output makes an earlier
-memo historical. Reviewing or copying an AI estimate never saves a valuation.
-Generic AI evaluation, citation validation and human review preserve that saved
-valuation provenance. Event interpretation separately requires disclosure and the
-current recorded event text; structured-response and recommendation-language
-checks reject invalid output while retaining a failed audit record. Successful
-interpretations remain pending review, disclose missing citation verification,
-and never update valuation assumptions.
-
-External AI generation now has two explicit gates: the feature's current
-disclosure acknowledgement and an append-only user/provider/action permission.
-The shared executor checks the latest decision and exact disclosed scope before
-each provider callback, recording the permitting decision on its output. Settings
-manages grants, refusals and revocations; reads and migrations grant nothing.
-Research chat checks before saving a message and again before sending, including
-retrieved document excerpts in its disclosed scope. Mock generation remains local.
-The operator-only fixed-text connectivity probe is separate and sends no app data.
-
-## System Shape
-
-```mermaid
-flowchart LR
-    U["Browser"] --> N["Next.js App Router"]
-    N --> A["NextAuth local credential session"]
-    N --> P["Same-origin /api/backend proxy"]
-    P --> F["FastAPI application"]
-    F --> S["Domain services"]
-    S --> R["Provider adapters"]
-    S --> D["SQLAlchemy"]
-    D --> PG["PostgreSQL 16"]
-    R --> X["SEC, RSS, FRED, market data, AI"]
-    S --> K["Damodaran runtime datasets"]
-    KB["Damodaran knowledge base"] -. doctrine and audited sources .-> S
-```
-
-Docker services are `frontend`, `backend`, `postgres`, optional `pgadmin`, and
-the opt-in Daily Brief `scheduler` and valuation `source_scheduler` workers.
-The default stack runs a standalone production-built Next.js server and a
-single-process FastAPI server. Hot reload and bind-mounted source trees are
-isolated in `docker-compose.dev.yml`; pgAdmin is behind the `admin` profile.
-Compose healthchecks gate dependent startup and local JSON logs are bounded.
-Only the backend's startup command runs migrations. Both workers wait for backend
-readiness and then start their Python worker directly; they cannot race its DDL.
-pgAdmin has a 512 MiB limit and no automatic restart, so opting into administration
-does not make it a permanent background service after a Docker restart.
-
-The backend Dockerfile has a shared application stage, an explicit test target
-with pytest/fixtures, and a default runtime target without them. Test and E2E
-Compose select the test target. Requirements are separated without changing the
-pinned runtime versions. The backend build context allowlists maintained backend
-code, scripts and build configuration, excluding data/corpus, local environments,
-secrets and generated caches. Development watches backend/app only and keeps
-runtime data read-only; its frontend receives 2 GiB for the configured 1.5 GiB heap.
-These source changes require recreation to affect existing normal containers.
-
-The PostgreSQL image has its own narrow build context under docker/postgres.
-It retains pinned PostgreSQL 16.15 binaries while applying the same signed Debian
-snapshot policy as the application images. The rolling PGDG repository is excluded
-from OS updates. Runtime, browser and recovery Compose files share this build.
-Backup verification selects the running database's immutable image ID unless an
-operator explicitly overrides it, and rejects ambiguous service selection.
-
-An independent tools target adds Git and shasum for repository/recovery checks.
-docker-compose.tools.yml runs it with no network, a read-only source tree and an
-executable temporary filesystem for the recovery tests' fake Docker CLI. It has
-no Docker socket, normal database, published port or loaded environment file.
-These administrative/test utilities are absent from the default runtime image.
-
-The frontend uses `API_BASE_URL` (with a fallback to `NEXT_PUBLIC_API_BASE_URL`) for server-rendered API requests. For browser-initiated API requests, the frontend uses the same-origin Next.js proxy route (`/api/backend`). The backend is still reachable on port 8000 for local
-operations and tests; signed internal identity protects owned routes. Compose
-publishes host ports on 127.0.0.1 in both normal and disposable-test definitions.
-Existing containers retain their prior bindings until recreated. Inspect actual
-runtime ports; this configuration is not public-deployment hardening.
-
-Use the [code map](code-map.md) for actual entry-point files and tests. Do not
-reconstruct a proposed folder tree from old agent instructions.
-
-## Ownership Boundaries
-
-| Layer | Owns | Must not own |
-|---|---|---|
-| `frontend/app` | Routes, composition, server/client boundaries | Finance formulas or provider secrets |
-| `frontend/components` | Reusable interaction and data-state UI | Direct database or external-provider access |
-| `frontend/lib/api/<domain>.ts` | Domain contracts and endpoint helpers; type-only cross-domain references | Fetch/environment handling or imports through the compatibility facade |
-| `frontend/lib/api/transport.ts` | Browser HTTP, multipart, binary, response parsing | Domain endpoints or server session handling |
-| `frontend/lib/api/contract.ts` | Shared envelope and error identity | Environment reads, framework dependencies, fetching |
-| `frontend/lib/server-api.ts` | Authenticated server requests and runtime session boundary | Browser transport imports |
-| `frontend/lib` | Request isolation, validation and formatting helpers | Hidden business decisions |
-| `backend/app/api/routers` | HTTP validation, auth dependencies, response envelopes | Multi-step domain logic |
-| `backend/app/services` | Business workflows, deterministic calculations, persistence orchestration | UI formatting |
-| `backend/app/providers` | External-source contracts and provider-specific behavior | Cross-domain application policy |
-| `backend/app/models` | Persistence structure and relationships | API response shape |
-| `backend/app/schemas` | Shared envelope plus extracted valuation, portfolio, research, evaluation and macro contracts; saved valuation response assembly | Database lifecycle logic or HTTP dependencies in pure contracts |
-| `backend/app/api/schemas.py` | Compatibility re-exports from pure domain contracts | New implementation or duplicate class names |
-| `backend/alembic/versions` | Ordered schema evolution | Runtime data repair without explicit migration logic |
-| `damodaran_knowledge_base_v1` | Valuation doctrine, source catalog, immutable raw corpus | Live application state |
-
-## Request and Identity Flow
-
-1. The user signs in through the local NextAuth credential page.
-2. Server-rendered frontend code uses the server API helper.
-3. Browser code calls `/api/backend/*` on the frontend origin.
-4. The proxy validates the session and forwards a signed internal identity.
-5. FastAPI dependencies resolve the user and enforce owned-resource access.
-6. Routers return the shared response envelope.
-
-Only explicit health/readiness routes are public. The canonical health route is `/api/health`. The route `/health` is maintained only for legacy compatibility. This boundary is designed for
-localhost, not internet exposure.
-
-## Response and Trust Contract
-
-New endpoints use:
-
-```json
-{
-  "data": {},
-  "meta": {
-    "status": "success",
-    "source": "internal",
-    "last_updated": "2026-08-08T00:00:00Z",
-    "is_stale": false,
-    "is_mock": false,
-    "warnings": [],
-    "confidence": "medium"
-  },
-  "errors": []
-}
-```
-
-Important facts and calculations should carry source, timestamp/as-of date,
-freshness, claim type, confidence, and limitations. The frontend must preserve
-those states rather than flattening the response into an unexplained number.
-
-Use DataStateNotices in frontend/components/ui/data-states.tsx to preserve
-response metadata. Metadata-aware helpers return error envelopes for unavailable
-requests. A failed request is not evidence of mock or cached data; never mark
-is_mock merely because transport failed. Data-only helpers throw and require
-an explicit error boundary or catch appropriate to the caller.
-
-## Contract and compatibility boundaries
-
-Frontend lib/api.ts contains exports only. New API work goes into the relevant
-lib/api domain module. Transport is shared by those browser helpers; server-api
-imports only the common contract, preserving its own request-scoped identity and
-runtime configuration. JSON mutations share one implementation. GET metadata,
-data-only reads, binary downloads, multipart writes, and the legacy default
-envelope client retain their distinct response/error contracts.
-
-Backend valuation_inputs and valuation_outputs are independently importable
-without HTTP, services, or ORM. Saved valuation response assembly lives in
-app/schemas/valuation.py and retains context-aware, detached pricing reads.
-Valuation services import narrow contracts directly; old HTTP imports still
-resolve to the same classes. StoredFinancialMetricRead and the legacy chart
-FinancialMetricRead are distinct names instead of overwritten definitions.
-Their response fields are unchanged; OpenAPI component names now distinguish
-the stored and chart schemas explicitly.
-
-`app/schemas/common.py` owns ApiResponse, ApiMeta and ApiErrorDetail without HTTP,
-services or ORM imports. Error handling and envelope-only routes depend on this
-small module, not the legacy schema collection and its saved-valuation service
-graph. The facade re-exports the same classes, including generic specializations;
-contract identity, isolated imports and OpenAPI comparisons guard compatibility.
-
-Portfolio request/response contracts now live in app/schemas/portfolio.py with no
-HTTP, service or ORM imports. The portfolio router imports them directly; legacy
-imports re-export the same classes. Whole-OpenAPI comparison protects the
-extraction independently of intentional validation changes in other domains.
-
-Portfolio valuation scopes private DCF/thesis/alert context to the persisted
-portfolio owner even when an internal caller omits user_id; a different explicit
-owner is rejected. Event-driven valuation alerts use the selected model's owner,
-validate company/change-log relationships and link only that owner's portfolios.
-These protections do not recalculate or relabel historical records.
-
-## Core Workflows
-
-### Public briefing selection
+## Public briefing selection
 
 Manual refresh, ordinary reads and scheduled briefs use deterministic evidence
 assembly. The dashboard explicitly loads linked document/source metadata without
@@ -213,7 +16,7 @@ different declared limits. Counts do not certify provider completeness, source
 accuracy or interpretation; historical JSON without counts remains unknown and
 unchanged. Private reviewed/pending snapshots retain their separate provenance.
 
-### Read-loading and page composition
+## Read-loading and page composition
 
 Company, portfolio, source and processing-run rows do not automatically load
 their entire related graph. High-cardinality collections and backreferences use
@@ -297,7 +100,7 @@ saved-output display helper gates currency, identity, diagnostics, stale state,
 and finite values for the headline, supplementary, multi-method and scenario
 cards. Historical scores are displayed as stored calculations, never synthesized.
 
-### Document to intelligence
+## Document to intelligence
 
 ```mermaid
 flowchart LR
@@ -314,7 +117,7 @@ Every external action should create a processing run. Imported text and HTML are
 untrusted. Exact locators are stored where available; unsupported historical
 records must retain explicit fallback states.
 
-### Financials to valuation
+## Financials to valuation
 
 The read-only financial review planner joins company-scoped periods, scalar
 metrics, reviewed candidates and active source revisions. It never loads binary
@@ -366,7 +169,7 @@ their optimistic-version check. An owned queued job can be cancelled under the
 same worker lock, retaining its audit record and unlocking draft editing; running
 or completed jobs cannot be cancelled. This does not add a general-purpose job platform.
 
-### AI claim to exact evidence
+## AI claim to exact evidence
 
 Evaluation v4 separates citation/policy pass status from bounded per-marker
 literal review cues. The claim-review service compares numeric tokens, flags
@@ -474,7 +277,7 @@ output, and cannot bypass validation or human review. Unsupported source types,
 missing stored text, undeclared markers, and low-overlap candidates remain
 explicit states.
 
-### Unified stored-research search
+## Unified stored-research search
 
 ```mermaid
 flowchart LR
@@ -497,7 +300,7 @@ their linked output becomes searchable only after the existing human-review and
 blocking gates pass. Company filters exclude private research sessions because
 those records have no company relationship rather than guessing one.
 
-### FRED observation to Market Regime input
+## FRED observation to Market Regime input
 
 ```mermaid
 flowchart LR
@@ -515,7 +318,7 @@ stored records only. The apply action never fetches FRED, and each automated
 input retains the exact `macro_observation` record ID. Manual provider
 declarations without a stored record remain Source Summaries.
 
-### Damodaran data lifecycle
+## Damodaran data lifecycle
 
 Runtime workbooks are mirrored under `data/damodaran/raw`. Implemented importers
 validate exact contracts, hash source bytes, preserve changed versions, reactivate
@@ -524,61 +327,3 @@ version. Generic parsing is inventory, not application support.
 
 The separate knowledge base preserves raw doctrine and source extraction under
 its own `AGENTS.md` and audit process.
-
-## Provider Architecture
-
-Provider interfaces isolate market data, fundamentals, company lookup, filings,
-macro data, and AI. Provider configuration and health must be explicit. Missing
-keys produce not-configured states, not fake fallback values. Unofficial Yahoo
-access is personal-use only and must remain labeled as such.
-
-Market quote-plus-history and quote-only routes share the audited workflow in
-app/services/market_data/ingestion.py. It records the attempt before provider
-configuration/fetch, flushes prices before same-date duplicate checks, and commits
-price/history writes with caller-owned price-divergence alerts. A downstream
-failure rolls data back and retains a failed Processing Run. The factory returns
-the explicitly selected adapter, never an implicit fallback provider.
-
-Gemini uses one transport for summaries, chat and structured generation. The key
-is sent in a header, never a URL; GEMINI_MODEL selects a validated model name.
-Incomplete responses are rejected, internal thought parts excluded, and failures
-sanitized. The explicit connectivity probe sends only a fixed non-private prompt
-and records its model/input hash in a Processing Run. Provider health matches
-the configured model to probe evidence; a key alone is not working-provider proof.
-This says nothing about research quality, citation correctness or future quotas.
-
-## Current Architectural Debt
-
-The [single limitation ledger](agent_capabilities_and_limitations.md) tracks
-remaining architecture and product gaps. Important follow-ups are the remaining
-unextracted HTTP schema collection, large server actions and UI/service owners,
-split market-provider placement, source-string-heavy frontend tests, manual
-frontend/backend type synchronization, and legacy route aliases. Do not hide
-these by moving everything into a new catch-all directory.
-
-See the code map for service owners and Current State for dated validation and
-separately verified runtime rollout. Historical saved outputs are not rewritten;
-adjacent methods remain separate audit boundaries.
-
-## Operational ownership
-
-The runbook owns commands and the setup guide owns configuration. Source code,
-database records, runtime workbook mirrors and the immutable knowledge corpus
-are distinct assets. A source refactor does not require reseeding any of them.
-The restore script stops backend/frontend and any running/restarting Daily Brief/source
-workers before replacement; only those previously active workers are resumed after
-verification and migration. Other database clients must be quiesced manually.
-Never test replacement against the normal database without explicit authority.
-
-## Architecture Change Rules
-
-- Prefer existing service and provider boundaries.
-- Keep routers thin and calculations deterministic.
-- Add migrations; never rewrite or drop local data casually.
-- Preserve tenant ownership on all user-created resources.
-- Keep external content untrusted and fetched through bounded provider code.
-- Do not add a model unless a real workflow consumes it.
-- Keep current architecture here; put implementation history in `archive/`.
-
-The previous cumulative architecture document is preserved at
-[`archive/assessments/02-architecture.md`](archive/assessments/02-architecture.md).
