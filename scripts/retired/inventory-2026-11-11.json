@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-11",
+  "scope": "Two obsolete tools retired; original tool and replaced test bytes retained locally and in Git history.",
+  "entries": [
+    {
+      "original_path": "backend/scripts/test_ledger.py",
+      "retained_path": "scripts/retired/local/2026-11-11/backend/scripts/test_ledger.py.txt",
+      "bytes": 2554,
+      "sha256": "513b835e8132e787f0b857e4514f3dc5d7d1d65fca7c1be8e752c1de649bc5e7",
+      "action": "removed",
+      "reason": "Uncalled manual smoke check duplicates maintained assumption-diff behavior tests."
+    },
+    {
+      "original_path": "scripts/verify_milestone_a.py",
+      "retained_path": "scripts/retired/local/2026-11-11/scripts/verify_milestone_a.py.txt",
+      "bytes": 8816,
+      "sha256": "b59014f2c9c944429a036a5e8752a6cdfcc750ad805a55e535bb34d6b7c550d1",
+      "action": "compatibility_notice",
+      "reason": "Legacy unauthenticated URL and response assumptions no longer match the API; replaced by an explicit unavailable compatibility notice."
+    },
+    {
+      "original_path": "backend/tests/test_milestone_a_verifier.py",
+      "retained_path": "scripts/retired/local/2026-11-11/backend/tests/test_milestone_a_verifier.py.txt",
+      "bytes": 2663,
+      "sha256": "2ff29720167ad88dc0f56cec98fb0cc1298bda1a3157bb266c1095646f948dc7",
+      "action": "test_replacement",
+      "reason": "Old helper-only tests replaced by black-box tests that the retired command remains unavailable, including legacy write flags."
+    }
+  ]
+}

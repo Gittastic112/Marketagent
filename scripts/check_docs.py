@@ -26,6 +26,10 @@ CONTEXT_LINE_BUDGETS = {
     "docs/architecture.md": 180,
     "docs/local-development.md": 140,
     "docs/limitations.md": 240,
+    "docs/workstreams/plan.md": 100,
+    "docs/roadmaps/review-decisions.md": 85,
+    "docs/reference/api-map.md": 100,
+    "backend/scripts/README.md": 80,
 }
 LOCAL_ONLY_SKILL_DIRS = {"excel-live-control", "pdf", "playwright", "spreadsheets"}
 RETIRED_ACTIVE_PATHS = (
@@ -60,12 +64,15 @@ def active_markdown_files(root: Path = ROOT) -> list[Path]:
     root = root.resolve()
     files = [*root.glob("*.md"), *(root / ".github").glob("*.md")]
     files.extend(root / directory / "README.md" for directory in (
-        "backend", "frontend", "scripts", "data", "docker",
+        "backend", "backend/scripts", "frontend", "scripts", "data", "docker",
     ))
     files.extend(
         path
         for path in (root / "docs").rglob("*.md")
-        if "archive" not in path.relative_to(root / "docs").parts or path.name == "README.md"
+        if path.name == "README.md" or (
+            "archive" not in path.relative_to(root / "docs").parts
+            and path.relative_to(root / "docs").parts[:2] != ("workstreams", "evidence")
+        )
     )
     files.extend(
         path
@@ -141,6 +148,46 @@ def _route_inventory_errors(root: Path) -> list[str]:
     return errors
 
 
+def _command_inventory_errors(root: Path) -> list[str]:
+    errors: list[str] = []
+    for directory in ("scripts", "backend/scripts"):
+        commands = {
+            path.resolve() for path in (root / directory).glob("*")
+            if path.suffix in {".py", ".sh", ".sql"}
+            and path.name != "__init__.py" and not path.name.startswith("test_")
+            and path.is_file()
+        }
+        if not commands:
+            continue
+        guide = root / directory / "README.md"
+        if not guide.exists():
+            errors.append(f"{directory}/README.md: missing command inventory")
+            continue
+        text = FENCE_PATTERN.sub("", guide.read_text(encoding="utf-8"))
+        listed = {_local_target(guide, _link_destination(match.group(1)))
+                  for match in LINK_PATTERN.finditer(text)}
+        errors.extend(f"{directory}/README.md: unmapped command {path.relative_to(root)}"
+                      for path in sorted(commands - listed))
+    return errors
+
+
+def _backend_api_map_errors(root: Path) -> list[str]:
+    inventory = root / "docs" / "reference" / "api-map.md"
+    if not inventory.exists():
+        return []
+    text = FENCE_PATTERN.sub("", inventory.read_text(encoding="utf-8"))
+    routers = {path.resolve() for path in (root / "backend" / "app" / "api" / "routers").glob("*.py")
+               if path.name != "__init__.py"}
+    listed = {_local_target(inventory, _link_destination(match.group(1)))
+              for match in LINK_PATTERN.finditer(text)}
+    errors = [f"docs/reference/api-map.md: unmapped HTTP router {path.relative_to(root)}"
+              for path in sorted(routers - listed)]
+    count = re.search(r"(\d+) HTTP router modules", text)
+    if not count or int(count.group(1)) != len(routers):
+        errors.append(f"docs/reference/api-map.md: router count must match {len(routers)} source modules")
+    return errors
+
+
 def _schema_head_errors(root: Path) -> list[str]:
     schema = root / "docs" / "database-schema.md"
     runtime = root / "backend" / "app" / "services" / "runtime_readiness.py"
@@ -210,6 +257,8 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
                 errors.append(f"{relative}: broken inline Markdown path {destination}")
     errors.extend(_route_inventory_errors(root))
     errors.extend(_schema_head_errors(root))
+    errors.extend(_command_inventory_errors(root))
+    errors.extend(_backend_api_map_errors(root))
     return errors, checked_links
 
 

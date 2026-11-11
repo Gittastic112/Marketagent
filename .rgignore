@@ -4,6 +4,8 @@
 *.env
 *.env.*
 /docs/archive/
+# Immutable review receipts retain their original paths; use their checked index.
+/docs/workstreams/evidence/
 # Temporary source-review images are evidence, not maintained application code.
 /tmp/
 /damodaran_knowledge_base_v1/raw/

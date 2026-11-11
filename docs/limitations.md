@@ -79,7 +79,7 @@ judgment; they must not issue buy/sell instructions.
 | Real Options | Experimental, non-persisted supplemental analysis for a reviewed owned FCFF basis. Seven eligibility confirmations and equity/currency/scale assertions are user judgments. Simplified Black-Scholes/exclusivity assumptions; no bank/distress integration |
 | Legacy option endpoints | Deprecated custom-base endpoints remain compatible but do not enforce the saved-basis panel contract. Their historical outputs are not certified |
 | Saved values and versions | Price/input values are User Assumptions; diagnostic scores are historical. Version/hash gates prevent stale saves but do not validate source facts. A new saved version is needed to apply corrected calculations |
-| Legacy UI callers | Mounted advanced-workspace behavior has focused evidence. Older unmounted form callers retain separate formatting/default and browser-verification limits |
+| Method selection and regression priors | Backend contracts and tests remain, but no dedicated method selector or debt-ratio regression panel is mounted. The obsolete standalone components were retired. Current input review uses the autofill draft and advanced workspace |
 | Macro sensitivity | Single-factor OLS is not causality, significance, or stable exposure. Constant/missing factors remain unavailable; partial segments are not renormalized into a company total. Units and shock directions require review |
 
 ## Relative valuation and peer review

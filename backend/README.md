@@ -15,8 +15,9 @@ registered in [app/api/routes.py](app/api/routes.py).
 | [app/workers](app/workers/) | Optional schedules and isolated parsing/provider jobs |
 | [alembic](alembic/) | Ordered database migrations |
 | [tests](tests/) | Behavior tests and isolated fixtures |
-| [scripts](scripts/) | Explicit operational and source-review commands |
+| [scripts](scripts/README.md) | Inventoried operational/source-review commands and their side effects |
 
+The [API map](../docs/reference/api-map.md) lists every HTTP router module.
 The [code map](../docs/code-map.md) links domain owners and tests.
 [Backend rules](AGENTS.md) explain import, ownership, and valuation invariants.
 

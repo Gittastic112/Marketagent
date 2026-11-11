@@ -323,7 +323,7 @@ test("system routes use labelled controls and bounded parallel setup", () => {
 
 test("portfolio attribution exposes partial calculations without fake FX or benchmarks", () => {
   const detail = readFrontendFile("components/portfolio/activity.tsx");
-  const dashboard = readFrontendFile("components/portfolio-analytics.tsx");
+  const performance = readFrontendFile("components/portfolio-performance-panel.tsx");
   const api = readFrontendFile("lib/api/portfolio.ts");
 
   assert.match(detail, /Recorded Activity & Unrealized Change/);
@@ -331,7 +331,9 @@ test("portfolio attribution exposes partial calculations without fake FX or benc
   assert.match(detail, /Requires a selected benchmark series/);
   assert.match(detail, /Requires historical FX rates/);
   assert.match(detail, /attribution\.activity_by_currency/);
-  assert.match(dashboard, /Not Configured/);
+  assert.match(performance, /if \(value == null\) return "Not available"/);
+  assert.match(performance, /label="FX Impact" value=\{money\(attribution\.fx_impact/);
+  assert.match(performance, /opportunityCost\?\.calculation_status \|\| "not available"/);
   assert.match(api, /calculation_status: "partial" \| "not_available"/);
   assert.match(api, /activity_by_currency: Record<string, PortfolioTransactionActivity>/);
   assert.doesNotMatch(detail, /Performance Attribution/);

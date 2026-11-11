@@ -1,6 +1,6 @@
 # Current State
 
-Documentation reconciled November 10, 2026. Product validation below keeps its
+Documentation reconciled November 11, 2026. Product validation below keeps its
 original dates. [PR9](https://github.com/Gittastic112/Marketagent/pull/9) merged on
 November 9 at `9f17dd6a`; the local checkout contains additional uncommitted history.
 
@@ -42,6 +42,10 @@ acceptance.
 Earlier financial/provider reviews and normal-browser observations remain in
 [dated checkpoints](archive/checkpoints/2026/README.md). Mock Data browser tests
 do not establish genuine portfolio accuracy, source completeness, or actual use.
+
+The [November 11 maintenance follow-up](archive/checkpoints/2026/repository-maintenance-2026-11-11.md)
+records subsequent documentation/tooling cuts, source inventories, and CI changes.
+It changes no financial acceptance gates.
 
 ## Latest product changes
 

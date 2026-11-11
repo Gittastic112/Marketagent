@@ -23,7 +23,8 @@ the task at hand. Each subject below has one current owner.
 | [Operations](operations.md) | Existing installations, provider runs, credentials, backups, and recovery |
 | [Architecture](architecture.md) | Runtime, ownership, authentication, and data flow |
 | [Code map](code-map.md) | Repository layout and feature-to-source navigation |
-| [Route inventory](route-inventory.md) | Every source page, without implying blanket browser certification |
+| [Route inventory](route-inventory.md) | Every frontend source page |
+| [API map](reference/api-map.md) | Every backend HTTP router module and its owner |
 | [Database schema](database-schema.md) | Persistence domains and migration policy |
 | [Data sources](data-sources.md) | Providers, ingestion, freshness, and provenance |
 | [Security threat model](security.md) | Threats, mitigations, and public-release blockers |
@@ -50,4 +51,4 @@ Keep current docs concise, replace stale status, and retain important evidence.
 Local reports and copied helper packages are not publication inputs. Run
 `python3 -m unittest scripts.test_check_docs` and `python3 scripts/check_docs.py`
 after edits. The checker covers current links, anchors, directory guides, route
-coverage, migration-head consistency, and onboarding size limits.
+coverage, command inventories, migration-head consistency, and onboarding size limits.

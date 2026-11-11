@@ -230,8 +230,9 @@ remain review-required and do not alter saved models.
   configured model. Success proves connectivity, not AI output quality or quota.
 - scripts/ingest_damodaran.py imports supported source contracts and writes data.
   Inspect its --only options; generic inventory is not typed application support.
-- scripts/verify_milestone_a.py defaults to connectivity checks; --write creates
-  records and can access providers. It is not a unit-test command.
+- scripts/verify_milestone_a.py is retired and exits unavailable, including with
+  legacy --write flags. Use authenticated Data Health for provider checks and the
+  release baseline runner for isolated software verification.
 - backend/scripts/check_portfolio_real_input_readiness.py is a read-only,
   owner-scoped preflight. It does not seed, refresh, capture snapshots or satisfy
   the manual browser gate.

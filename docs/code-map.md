@@ -28,7 +28,7 @@ below locate code; they do not grant another agent permission to edit it.
 | [docs](README.md) | Current guides, planning, workflow references, and historical archive |
 | [skills](../skills/README.md) | Maintained project security-review package; copied tool packages stay local |
 | [.github](../.github/) | CI and contribution/security policies |
-| .codex, .vscode | Agent/editor configuration, separate from application runtime; preserve local overrides |
+| [.codex](../.codex/), [.vscode](../.vscode/) | Agent/editor configuration, separate from application runtime; preserve local overrides |
 | [docker-compose.yml](../docker-compose.yml) | Normal local services and persistent volumes |
 | [dev](../docker-compose.dev.yml), [test](../docker-compose.test.yml), [tools](../docker-compose.tools.yml) overrides | Source reload, offline backend tests, isolated repository-tool checks |
 | [E2E](../docker-compose.e2e.yml), [recovery](../docker-compose.recovery.yml) | Separate disposable verification environments |
@@ -39,6 +39,10 @@ below locate code; they do not grant another agent permission to edit it.
 Local output, backups, scratch, tmp, installed dependencies, and private settings
 are distinct from the published source tree. Git ignores control discovery, not
 permission to delete evidence.
+
+The [backend API map](reference/api-map.md) inventories every HTTP router module.
+[Root commands](../scripts/README.md) and [backend commands](../backend/scripts/README.md)
+record the purpose and side effects of every maintained command.
 
 ## Runtime and dependencies
 
@@ -78,6 +82,7 @@ a text search finds no import; extras, tooling and dynamic imports need checking
 | Real Options | [owned route](../backend/app/api/routers/real_options.py), [saved-basis service](../backend/app/services/saved_real_options.py), [panel](../frontend/components/valuation/real-options-panel.tsx) | [pure contracts](../backend/app/schemas/real_options.py), [client](../frontend/lib/api/real-options.ts), test_saved_real_options and real-options-state tests; total common-equity units, saved shares/currency, no writes |
 | Saved output UI | [workspace](../frontend/components/advanced-workspace.tsx), [cards](../frontend/components/valuation/saved-output-cards.tsx) | [trust/display helper](../frontend/lib/valuation-output-state.ts), scenario-display and implied-pricing helpers/tests |
 | Saved projections and specialized forms | [projections](../frontend/components/valuation/saved-projections.tsx), [column mapping](../frontend/lib/valuation-projections.ts) | valuation-projections and scenario-display tests; bank equity labels, relative forecast years and model-specific validation |
+| Assumption methodology | [Method service](../backend/app/services/assumption_methodology.py), [method API](../backend/app/api/routers/assumptions.py), [methodology guide](assumption-methodology.md) | Backend selection and provenance; no mounted standalone method-selector component. Draft review and saved-input editing use the valuation setup/workspace owners |
 | Valuation setup | [draft service](../backend/app/services/valuation_setup_draft.py), [autofill](../backend/app/services/assumption_autofill_engine.py), [unit policy](../backend/app/services/valuation_input_units.py) | [draft API](../frontend/lib/api/valuation-drafts.ts), [review UI](../frontend/components/valuation/autofill-draft-review.tsx); model-specific review, source-signature promotion gates, full-unit conversions and valuation-draft browser workflow |
 | Industry allocation UI | [mapping card](../frontend/components/valuation/industry-mapping-card.tsx) | [Pending-request browser checks](../frontend/e2e/valuation-loading.spec.ts); desktop/mobile loading contrast and recovery after the request completes |
 | Source-to-valuation automation | [source adapters](../backend/app/services/valuation_source_inputs.py), [refresh queue](../backend/app/services/valuation_source_refresh.py), [worker](../backend/app/workers/valuation_source_scheduler.py) | [owned router](../backend/app/api/routers/valuation_refresh.py), [contracts](../backend/app/schemas/valuation_refresh.py), [browser client](../frontend/lib/api/valuation-refresh.ts), [panel](../frontend/components/valuation/source-refresh-panel.tsx); owner-scoped queued cancellation uses the worker lock; test_valuation_source_inputs, test_valuation_source_refresh, test_sec_xbrl_extractor and valuation-refresh.test.ts |
@@ -157,7 +162,7 @@ Tests are indexed by behavior/domain, not by historical task number.
 | [docs/skills](skills/) | Task-specific project workflow references, not installed application features |
 | [skills/security-review](../skills/security-review/) | Packaged repository skill; do not confuse with workflow-reference Markdown |
 | .codex | Host/agent configuration; not application runtime code or a source for secrets |
-| [retired tooling](../scripts/retired/README.md) | 27 old root/frontend/backend scripts preserved as inactive local records; excluded from Git and Docker builds; dated inventories record hashes, original paths and no current callers |
+| [retired tooling](../scripts/retired/README.md) | 29 old root/frontend/backend tools preserved as inactive local records; excluded from Git and Docker builds; dated inventories record hashes, original paths and no current callers |
 | [local helper packages](../skills/README.md) | Consolidated reference packages, including the former root spreadsheet folders; not application runtime code or proof of installed plugins |
 | Backend build context | [.dockerignore](../.dockerignore) includes only maintained app, migration, operational-script and test trees plus build/dependency files; root scratch scripts and local databases stay on disk outside the context |
 | tmp | Retained local source-review images and evidence; excluded from Git publication and routine searches |
@@ -165,6 +170,7 @@ Tests are indexed by behavior/domain, not by historical task number.
 | .pytest_cache, .pnpm-store, frontend/.next, frontend/tsconfig.tsbuildinfo | Reproducible generated caches; never confuse these with database volumes or source inputs |
 | frontend/node_modules | Reproducible installed dependencies, retained while local Node processes may use them. Supported locked validation uses isolated Docker tooling |
 | [archive](archive/) | Dated evidence and superseded instructions, excluded from routine onboarding |
+| [Workstream receipts](workstreams/evidence/README.md) | Indexed historical evidence retained at original paths; receipt bodies are outside current-document scans |
 
 ## Safe verification entry points
 
@@ -184,7 +190,7 @@ Tests are indexed by behavior/domain, not by historical task number.
   contracts, including envelopes, aliases, nullable values and brief enums. New
   domains must extend this explicit coverage before a generated-client migration.
 - [Documentation checker](../scripts/check_docs.py): links, nested instructions,
-  retired plans, heading anchors, directory guides, page-inventory completeness and context-size limits. No second
+  retired plans, heading anchors, directory guides, page/API/command completeness and context-size limits. No second
   generated full-tree listing to maintain. .rgignore keeps archived bodies, raw
   corpus, locks and large receipts out of broad searches; use exact paths when needed.
 - [Workstream guard](../scripts/check_workstream_ownership.sh): disjoint path

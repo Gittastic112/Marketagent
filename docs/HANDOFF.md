@@ -2,14 +2,15 @@
 
 ## Latest boundary
 
-November 10, 2026: repository presentation and documentation cleanup. This pass
-changes navigation, documentation ownership, and publication hygiene. It does not
-change application behavior, financial evidence, migrations, or the running stack.
-The [cleanup checkpoint](archive/checkpoints/2026/repository-presentation-2026-11-10.md)
-owns its exact changes and validation.
+November 11, 2026: repository-maintenance follow-up. Historical plans and decision
+narratives are separated from current guidance. API/command inventories are
+checked, obsolete tools and unmounted UI paths are retired, and pull requests
+receive formatting checks.
+The [maintenance checkpoint](archive/checkpoints/2026/repository-maintenance-2026-11-11.md)
+owns this scope and evidence.
 
-GitHub confirms [PR9](https://github.com/Gittastic112/Marketagent/pull/9) merged on
-November 9 at `9f17dd6a`. Earlier statements that it awaited approval are obsolete.
+[PR10](https://github.com/Gittastic112/Marketagent/pull/10) merged the first cleanup
+at `4020f6cf`; all five post-merge checks passed. It is the baseline for this pass.
 The default branch is `codex/worktree-recovery`; its name is retained. Local HEAD
 is `fba390bf`, with substantial pre-existing uncommitted work. Do not reset, clean,
 or broadly stage this checkout to make it match GitHub. Publish only reviewed

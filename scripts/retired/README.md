@@ -27,3 +27,10 @@ scratch tools: a hardcoded PDF preview requiring an undeclared package, and a
 dated route generator that would overwrite reviewed documentation with inferred
 status. Their original bytes remain under local/2026-11-10; the total is 27
 retired scripts. The maintained documentation checker owns route coverage.
+
+The [November 11 inventory](inventory-2026-11-11.json) retires the uncalled manual
+ledger smoke tool and the incompatible Milestone A implementation. The latter
+keeps a small unavailable command notice so old invocations fail clearly. Its
+helper-only tests are replaced by tests of that refusal. Original tool and test
+bytes remain under local/2026-11-11 and in Git history. There are 29 retired tools;
+the maintained ledger behavior tests remain active.

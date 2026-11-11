@@ -6,6 +6,63 @@ from scripts.check_docs import _local_target, validate
 
 
 class DocumentationCheckTests(unittest.TestCase):
+    def test_command_inventory_reports_missing_tools_and_ignores_test_helpers(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scripts = root / "scripts"
+            scripts.mkdir()
+            for name in ("check.py", "recover.sh", "inventory.sql", "test_check.py", "__init__.py"):
+                (scripts / name).touch()
+            guide = scripts / "README.md"
+            guide.write_text("[check](check.py)\n[inventory](inventory.sql)\n", encoding="utf-8")
+            errors, _ = validate(root)
+            self.assertEqual(errors, ["scripts/README.md: unmapped command scripts/recover.sh"])
+            guide.write_text("[check](check.py)\n[inventory](inventory.sql)\n[recover](recover.sh)\n", encoding="utf-8")
+            self.assertEqual(validate(root), ([], 3))
+
+    def test_backend_commands_require_an_inventory(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scripts = root / "backend" / "scripts"
+            scripts.mkdir(parents=True)
+            (scripts / "probe.py").touch()
+            self.assertEqual(validate(root)[0], ["backend/scripts/README.md: missing command inventory"])
+            (scripts / "README.md").write_text("[probe](probe.py)\n", encoding="utf-8")
+            self.assertEqual(validate(root), ([], 1))
+
+    def test_backend_command_guide_links_are_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            scripts = root / "backend" / "scripts"
+            scripts.mkdir(parents=True)
+            (scripts / "README.md").write_text("[missing](missing.md)\n", encoding="utf-8")
+            self.assertEqual(validate(root)[0], ["backend/scripts/README.md: broken link missing.md"])
+
+    def test_backend_api_map_detects_missing_module_and_stale_count(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            routers = root / "backend" / "app" / "api" / "routers"
+            routers.mkdir(parents=True)
+            (routers / "companies.py").touch()
+            (routers / "__init__.py").touch()
+            inventory = root / "docs" / "reference" / "api-map.md"
+            inventory.parent.mkdir(parents=True)
+            inventory.write_text("0 HTTP router modules.\n", encoding="utf-8")
+            errors, _ = validate(root)
+            self.assertTrue(any("unmapped HTTP router" in error for error in errors))
+            self.assertTrue(any("router count" in error for error in errors))
+            inventory.write_text("1 HTTP router modules.\n[Companies](../../backend/app/api/routers/companies.py)\n", encoding="utf-8")
+            self.assertEqual(validate(root), ([], 1))
+
+    def test_workstream_receipts_are_historical_but_their_index_is_checked(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            evidence = root / "docs" / "workstreams" / "evidence"
+            evidence.mkdir(parents=True)
+            (evidence / "old-review.md").write_text("[historical](missing.md)\n", encoding="utf-8")
+            (evidence / "README.md").write_text("[index](missing.md)\n", encoding="utf-8")
+            self.assertEqual(validate(root)[0], ["docs/workstreams/evidence/README.md: broken link missing.md"])
+
     def test_directory_guides_and_github_policies_are_checked(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
