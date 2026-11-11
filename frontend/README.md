@@ -73,7 +73,7 @@ not live provider behavior or visual correctness.
 | `components/data-health/health-ui.tsx` | Operational-health presentation helpers |
 | `components/brief-source-inbox.tsx`, `components/brief-source-findings.tsx` | Private intake, disclosed scan and source-linked valuation review |
 | `components/company-research-cards.tsx` | Bounded company identity/business context for company and portfolio views |
-| `app/globals.css`, `components/page.tsx`, `components/sidebar.tsx` | Shared visual tokens, page primitives, responsive navigation and keyboard focus containment |
+| [Style map](styles/README.md), `app/globals.css`, `components/page.tsx`, `components/sidebar.tsx` | Ordered style modules, page primitives, responsive navigation and keyboard focus containment |
 | `lib/api.ts` | Compatibility exports only |
 | `lib/api/<domain>.ts` | Domain contracts and browser endpoint helpers |
 | `lib/api/transport.ts` | HTTP, multipart, binary, and response parsing |

@@ -8,6 +8,7 @@ touch an installation or data. Read the arguments and target before execution.
 
 | Tool | Purpose and side effects |
 |---|---|
+| [ci_scope.py](ci_scope.py) | CI-only change classification, complete-patch formatting, and required-job result gate; missing comparisons run the full suite |
 | [check_docs.py](check_docs.py) | Read-only current links/anchors, context budgets, route coverage, and migration-head agreement |
 | [check_secrets.py](check_secrets.py) | Heuristic source credential scan; does not establish full-history safety |
 | [check_dependency_locks.py](check_dependency_locks.py) | Direct requirement and hash-lock consistency |
@@ -16,7 +17,7 @@ touch an installation or data. Read the arguments and target before execution.
 | [check_workstream_ownership.sh](check_workstream_ownership.sh) | Read-only disjoint ownership and optional changed-path checks |
 | [check_local_auth.py](check_local_auth.py) | Operator auth-configuration preflight; private configuration must be accessible to the operator |
 | [check_container_scan.py](check_container_scan.py) | Evaluate retained OS-scan JSON |
-| [scan_container_images.sh](scan_container_images.sh) | Inspect images, invoke vulnerability scanning, and write reports; network/tooling required |
+| [scan_container_images.sh](scan_container_images.sh) | Inspect images, invoke vulnerability scanning, and retain reports; per-run caches and image exports are temporary; network/tooling required |
 | [verify_release_baseline.sh](verify_release_baseline.sh) | Build and verify a clean source baseline using isolated containers and a disposable database |
 | [run_browser_workflows.sh](run_browser_workflows.sh) | Build/start a separate browser-test project and write traces/screenshots |
 | [verify_milestone_a.py](verify_milestone_a.py) | Retired command notice; always unavailable, including with legacy write flags. Use Data Health or the release baseline runner |

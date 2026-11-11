@@ -1,61 +1,43 @@
 # Agent Handoff
 
-## Latest boundary
+## Latest source boundary
 
-November 11, 2026: repository-maintenance follow-up. Historical plans and decision
-narratives are separated from current guidance. API/command inventories are
-checked, obsolete tools and unmounted UI paths are retired, and pull requests
-receive formatting checks.
-The [maintenance checkpoint](archive/checkpoints/2026/repository-maintenance-2026-11-11.md)
-owns this scope and evidence.
+November 11, 2026: repository efficiency pass. Scanner databases now use
+temporary per-run storage; reports remain retained. Global styles have an
+[ordered ownership map](../frontend/styles/README.md). CI always checks the
+repository and selects full application checks conservatively.
+The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
+owns this source scope and its validation.
 
-[PR10](https://github.com/Gittastic112/Marketagent/pull/10) merged the first cleanup
-at `4020f6cf`; all five post-merge checks passed. It is the baseline for this pass.
-The default branch is `codex/worktree-recovery`; its name is retained. Local HEAD
-is `fba390bf`, with substantial pre-existing uncommitted work. Do not reset, clean,
-or broadly stage this checkout to make it match GitHub. Publish only reviewed
-changes against the current remote base.
+## Start a change
 
-## Product and data scope
+Read the nearest AGENTS.md, then the matching domain in the
+[code map](code-map.md). The [documentation index](README.md) assigns one
+current owner per topic. [Execution runbook](execution-runbook.md) owns checks;
+[Operations](operations.md) owns changes to an existing installation.
+Inspect local status before editing and preserve uncommitted work.
 
-- Local research/demo for US and India equities, with USD portfolio reporting.
-- November 9 authorizes four technology companies, hypothetical holdings, and
-  Sample Apple research. The sourced Apple valuation is an Estimate with explicit
-  analyst assumptions. None of this proves genuine transactions or complete facts.
-- The November 5 removal of the historical companies/scenarios remains effective.
-  Do not restore that universe or expand it as a cleanup/setup side effect.
-- The 60 explicitly approved historical database archives were deleted November 9.
-  Retain newer backups, source originals, review receipts, and failed evidence.
-- No new external-AI permission, public deployment, broker activity, or local
-  disposable dataset is authorized by a documentation task.
+## Product boundary
 
-## Latest delivered behavior
+This is local equity-research, valuation, and portfolio software with source
+traceability. Research/demo validation does not establish genuine transaction
+accuracy, complete financial facts, daily-use acceptance, or readiness for
+public hosting. Keep sourced facts, estimates, assumptions, and Mock Data distinct.
 
-The dashboard selects a funded owned portfolio by default and supports explicit
-selection. Daily Brief leads with stored content; optional controls are collapsed.
-Sample provenance, missing inputs, and filing baselines remain separate.
-Thesis fields and paragraph formatting round-trip; financial review planning,
-macro calculations, and AI claim-review cues retain their stated boundaries.
+[Current State](current-state.md) owns dated validation and delivered behavior.
+The [limitation ledger](limitations.md) owns unresolved product and operating gaps.
+Historical checkpoints retain evidence; they are not a current execution queue.
 
-[Current State](current-state.md) owns validation dates and counts. The
-[portfolio/UI checkpoint](archive/checkpoints/2026/portfolio-ui-2026-11-09.md)
-and [analyst checkpoint](archive/checkpoints/2026/analyst-workflows-2026-11-09.md)
-retain implementation and runtime evidence.
+## Preserve while maintaining
 
-## Existing installation
-
-The last recorded installation uses project `market-intelligence-product-20261107`
-and its ignored runtime-image override. Source refresh and pgAdmin were stopped;
-Daily Brief scheduling was running. These are November 9 observations, not a
-fresh runtime inspection. Use [Operations](operations.md) and inspect actual
-service/volume identity before an operational change. Preserve the database,
-settings, original assets, backups, and rollback images.
+Keep original assets, reviewed evidence, backups, failed reports, and rollback
+material. Confirm the actual target before any operational change. Do not reset,
+clean, or broadly stage a checkout to conceal pre-existing work. Cleanup does not
+authorize data ingestion, new AI disclosure, broker activity, or public deployment.
 
 ## Next work
 
 Use the [roadmap](roadmaps/product-roadmap.md) for priority and the
-[single limitation ledger](limitations.md#ordered-operator-handoff)
-for missing prerequisites. M01-M04 retain 40 accepted gate points; cleanup does
-not advance product acceptance. Source completeness and actual-use days cannot
-be supplied by tests. Host/off-device protection and the additional populated
-recovery rehearsal remain deferred.
+[ordered handoff](limitations.md#ordered-operator-handoff) for prerequisites.
+Structural cleanup does not advance product acceptance gates. Source completeness
+and actual-use evidence cannot be supplied by automated tests.

@@ -1,0 +1,164 @@
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme inline {
+  --color-background: var(--color-canvas);
+  --color-foreground: var(--color-text);
+  --color-card: var(--color-surface);
+  --color-card-foreground: var(--color-text);
+  --color-muted: var(--color-surface-muted);
+  --color-muted-foreground: var(--color-text-muted);
+  --color-border: var(--color-border-default);
+  --color-primary: var(--color-accent);
+  --color-primary-foreground: #ffffff;
+  --font-sans: var(--font-family-sans);
+  --radius-sm: var(--radius-small);
+  --radius-md: var(--radius-medium);
+  --radius-lg: var(--radius-large);
+}
+
+:root {
+  --font-family-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-xs: 13px;
+  --font-size-sm: 15px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 30px;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --color-canvas: #f5f7fa;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f7f9fb;
+  --color-surface-muted: #f0f3f7;
+  --color-text: #172033;
+  --color-text-muted: #5d697a;
+  --color-border-default: #d8dee8;
+  --color-border-strong: #b8c2d0;
+  --color-accent: #0f766e;
+  --color-accent-strong: #115e59;
+  --color-accent-soft: #dff4f1;
+  --color-info: #2563eb;
+  --color-info-soft: #eaf1ff;
+  --background-start: var(--color-surface);
+  --background-end: var(--color-canvas);
+  --surface: var(--color-surface);
+  --surface-hover: var(--color-surface-hover);
+  --surface-muted: var(--color-surface-muted);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --line: var(--color-border-default);
+  --accent: var(--color-accent);
+  --accent-strong: var(--color-accent-strong);
+  --accent-glow: rgba(15, 118, 110, 0.2);
+  --accent-light: var(--color-accent-soft);
+  --warning: #8a5700;
+  --warning-bg: #fff7df;
+  --danger: #b42318;
+  --danger-bg: #fff0ee;
+  --success: #067647;
+  --success-bg: #e8f7ef;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 8px rgba(23, 32, 51, 0.08);
+  --shadow-lg: 0 8px 24px rgba(23, 32, 51, 0.12);
+  --shadow-glow: 0 0 20px var(--accent-glow);
+  --radius-small: 4px;
+  --radius-medium: 6px;
+  --radius-large: 8px;
+  --radius: var(--radius-large);
+  --transition: 160ms ease;
+
+  /* Compatibility aliases while older pages move to the canonical contract. */
+  --accent-color: var(--color-accent);
+  --background-alt: var(--color-surface-muted);
+  --bg: var(--color-canvas);
+  --bg-primary: var(--color-surface);
+  --bg-secondary: var(--color-surface-muted);
+  --border: var(--color-border-default);
+  --border-color: var(--color-border-default);
+  --border-light: var(--color-border-default);
+  --brand-primary: var(--color-accent);
+  --color-green-700: var(--success);
+  --color-neutral-500: var(--color-text-muted);
+  --color-neutral-600: #475467;
+  --color-red-700: var(--danger);
+  --error: var(--danger);
+  --error-bg: var(--danger-bg);
+  --error-color: var(--danger);
+  --panel-bg: var(--color-surface);
+  --panel-bg-alt: var(--color-surface-muted);
+  --radius-sm: var(--radius-small);
+  --success-color: var(--success);
+  --surface-color: var(--color-surface);
+  --text-muted: var(--color-text-muted);
+  --text-primary: var(--color-text);
+  --text-secondary: var(--color-text-muted);
+  --warn: var(--warning);
+  --warning-border: #f2c94c;
+  --warning-color: var(--warning);
+  --warning-text: #7a4d00;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--background-end);
+  color: var(--text);
+  font-family: var(--font-family-sans);
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  font-size: var(--font-size-md);
+  line-height: 1.5;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  overflow-wrap: anywhere;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1.25;
+}
+
+p {
+  line-height: 1.6;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+a:hover {
+  color: var(--accent-strong);
+}
+
+:where(p, li, .empty, .basis-note) a:not(.btn, .primary-button, .secondary-button) {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}

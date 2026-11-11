@@ -1,5 +1,6 @@
 # 2026 Checkpoints
 
+- [Repository efficiency, temporary caches, and CI scope, November 11](repository-efficiency-2026-11-11.md)
 - [Repository maintenance follow-up, November 11](repository-maintenance-2026-11-11.md)
 - [Portfolio visibility and research UI, November 9](portfolio-ui-2026-11-09.md)
 - [Analyst workflows and approved backup cleanup, November 9](analyst-workflows-2026-11-09.md)

@@ -67,7 +67,9 @@ bash scripts/scan_container_images.sh backend-image:tag frontend-image:tag postg
 
 The pinned scanner receives only exported images, not the source directory or
 Docker socket. Complete JSON package inventories stay in output/security/container-scan;
-CI uploads them. The gate rejects missing OS inventories and available HIGH/CRITICAL
+CI uploads them. Scanner databases and image exports share a temporary directory
+that is removed on success or failure; JSON reports remain outside it. The gate
+rejects missing OS inventories and available HIGH/CRITICAL
 fixes. Unfixed findings remain visible and require review, including vendor severity
 differences. The optional stopped admin image and host Docker are separate checks.
 
@@ -317,11 +319,28 @@ proof in archive/checkpoints/YYYY, and unresolved gaps in the
 Update the roadmap only when priorities change and the feature register only
 when capability status changes. Replace the short handoff; do not append history.
 
-CI runs all five gates on pull requests (including the proposed merge), pushes to
-the current default branch codex/worktree-recovery, and all tags. Feature branches
-run CI when a pull request opens; this avoids duplicate branch-push and PR builds.
-Keep this branch filter aligned if the repository default branch changes. Upstream
-package-download failures remain failures and may be retried without changing pins.
+CI starts on pull requests, pushes to the default branch codex/worktree-recovery,
+and all tags. Feature branches run when a pull request opens, avoiding duplicate
+branch-push builds. Keep the branch filter aligned if the default branch changes.
+
+The repository-checks job always runs documentation, credential-pattern,
+dependency-lock, ownership, and tooling checks. It compares the entire event
+range, including every commit in a push and both paths of a rename. Recognized
+Markdown-only changes skip the five expensive application, browser, dependency,
+container, and recovery jobs. Unknown paths, unavailable comparisons, empty
+comparisons, workflow/configuration changes, and tags require all five.
+
+The final ci-result job must pass. It rejects failed/cancelled/missing checks and
+unexpected skips. If configuring branch protection, require ci-result so an
+intentional documentation-only skip is not confused with an incomplete build.
+The selector and result gate are tested with:
+`python3 -m unittest scripts.test_ci_scope`.
+Scanner lifecycle fixtures use
+`python3 -m unittest scripts.test_scan_container_workflow`.
+These tests need Python and Git, but no Docker, credentials, or network.
+
+Upstream package-download failures remain failures and may be retried without
+changing pins.
 
 Image-build APT commands use 30-second HTTP/HTTPS connection/data timeouts.
 The frontend disables HTTP retries until APT 2.6.2 is installed; PostgreSQL checks

@@ -64,7 +64,7 @@ def active_markdown_files(root: Path = ROOT) -> list[Path]:
     root = root.resolve()
     files = [*root.glob("*.md"), *(root / ".github").glob("*.md")]
     files.extend(root / directory / "README.md" for directory in (
-        "backend", "backend/scripts", "frontend", "scripts", "data", "docker",
+        "backend", "backend/scripts", "frontend", "frontend/styles", "scripts", "data", "docker",
     ))
     files.extend(
         path
