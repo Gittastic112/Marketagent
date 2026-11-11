@@ -69,8 +69,12 @@ jobs:
         with:
           fetch-depth: 2
       - name: Check patch formatting
+        # PR checkouts use a merge commit; its first parent is the target branch.
         run: git diff --check HEAD^ HEAD
-        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        if: >-
+          github.event_name == 'pull_request' ||
+          (github.event_name == 'push' &&
+           github.event.before != '0000000000000000000000000000000000000000')
       - name: Run repository static quality gates
         run: |
           python3 -m unittest scripts.test_check_docs

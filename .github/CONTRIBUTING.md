@@ -25,7 +25,9 @@ Dependency changes need a concrete reason and matching lockfile review.
 Keep setup, validation, operations, product status, and limitations separate.
 Archive dated evidence; do not copy old task lists into current instructions.
 Run `python3 -m unittest scripts.test_check_docs` and
-`python3 scripts/check_docs.py` after edits.
+`python3 scripts/check_docs.py` after edits. Add new HTTP modules to the
+[API map](../docs/reference/api-map.md), and new commands to the owning
+[root](../scripts/README.md) or [backend](../backend/scripts/README.md) guide.
 
 ## Data and security
 

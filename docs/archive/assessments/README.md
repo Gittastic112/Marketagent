@@ -12,3 +12,5 @@ November 10 repository reconciliation preserves:
 - [Previous limitations ledger](limitations-before-2026-11-10.md), including exact historical exceptions.
 - [Previous current state](current-state-before-2026-11-10.md), with dated detailed validation.
 - [Supplied delivery validation, November 4](delivery-validation-2026-11-04.md), moved byte-for-byte from the root. Its separate package claims are not application validation.
+
+- [Research/demo decision summary through November 4](research-demo-decisions-2026-11-04.md): readable historical approvals and applications; the decision register and current index remain authoritative for their respective scopes.

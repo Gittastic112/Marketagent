@@ -34,4 +34,6 @@ browser fixtures, genuine-input proof, and previously recorded runtime evidence.
 
 Use relative Markdown links to real paths. Do not invent planned folder trees.
 Run python3 -m unittest scripts.test_check_docs and python3 scripts/check_docs.py.
-Nested backend/frontend agent files are checked too. Update only affected docs.
+Nested instructions, all frontend pages, backend HTTP modules, and maintained
+command inventories are checked. Historical workstream receipt bodies keep their
+original paths and content; their index stays current. Update only affected docs.

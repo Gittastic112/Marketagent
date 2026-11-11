@@ -60,7 +60,8 @@ local services. [Architecture](docs/architecture.md)
 | [docs/](docs/README.md) | Product, architecture, setup, operations, and development references |
 
 Use the [code map](docs/code-map.md) to locate a feature's owning files, or the
-[route inventory](docs/route-inventory.md) to find a screen.
+[route inventory](docs/route-inventory.md) to find a screen. The
+[API map](docs/reference/api-map.md) lists every backend router.
 
 ## Development and verification
 
@@ -68,7 +69,9 @@ Read [contribution guidance](.github/CONTRIBUTING.md) and the
 [execution runbook](docs/execution-runbook.md). The
 [CI workflow](.github/workflows/ci.yml) checks repository integrity, locked
 dependencies, containers, backend/frontend behavior, browser workflows, and recovery.
-Passing tests does not establish financial accuracy or live-provider coverage.
+[Latest check results](https://github.com/Gittastic112/Marketagent/actions/workflows/ci.yml)
+are available on GitHub. Passing tests does not establish financial accuracy or
+live-provider coverage.
 
 Local credentials, databases, backups, and generated reports belong outside Git.
 The repository currently has no project license; included third-party material

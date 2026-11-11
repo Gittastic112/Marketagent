@@ -19,7 +19,7 @@ touch an installation or data. Read the arguments and target before execution.
 | [scan_container_images.sh](scan_container_images.sh) | Inspect images, invoke vulnerability scanning, and write reports; network/tooling required |
 | [verify_release_baseline.sh](verify_release_baseline.sh) | Build and verify a clean source baseline using isolated containers and a disposable database |
 | [run_browser_workflows.sh](run_browser_workflows.sh) | Build/start a separate browser-test project and write traces/screenshots |
-| [verify_milestone_a.py](verify_milestone_a.py) | Legacy connectivity probe; --write additionally creates/ingests records. Not a release acceptance certificate |
+| [verify_milestone_a.py](verify_milestone_a.py) | Retired command notice; always unavailable, including with legacy write flags. Use Data Health or the release baseline runner |
 
 Regression checks are the adjacent `test_*.py` modules and
 [test_workstream_ownership.sh](test_workstream_ownership.sh).
@@ -51,9 +51,9 @@ A passed disposable drill is not encrypted off-device recovery.
 | [seed_sample_data.py](seed_sample_data.py) | Writes synthetic/sample records; never an automatic first-install step |
 | [seed_e2e_reference_data.py](seed_e2e_reference_data.py) | Isolated browser/reference fixture setup; never target the user's database |
 
-[Backend scripts](../backend/scripts/) contain provider probes, source-review
-staging/finalization, and portfolio-readiness reporting. Their names do not imply
-read-only behavior. Consult the runbook and Operations before invoking them.
+The [backend command inventory](../backend/scripts/README.md) maps every provider
+probe, source-review command, and readiness report with its data/network effects.
+The documentation checker requires every maintained command to appear in its guide.
 
 ## Retired tools
 
