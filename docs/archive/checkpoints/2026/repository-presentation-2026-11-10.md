@@ -92,6 +92,18 @@ dependencies were preserved. No Git history rewrite or dependency removal occurr
   the follow-up. The PR checks record the canonical documentation, application,
   browser, security, and recovery results for each commit.
 
+The clean-checkout [CI run](https://github.com/Gittastic112/Marketagent/actions/runs/42952104760)
+for `dab84f01` passed all five jobs. Results were reviewed November 11:
+
+- 18 documentation-checker tests; 89 active Markdown files and 964 local links.
+- 1,936 backend tests passed, six skipped; 365 frontend tests passed.
+- TypeScript checks, production builds, and six PostgreSQL integration tests passed.
+- All 71 browser workflows passed. Dependency/container security and isolated
+  recovery checks passed; these retain their existing security and data limits.
+
+The final follow-up only records validation; the PR checks identify results for
+each head.
+
 Local before-images, hash comparisons, changed-path allowlist, path moves,
 documentation audit, and cleanup inventory are retained under
 output/repository-cleanup-20261110. No private output directory is published.

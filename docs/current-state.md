@@ -26,8 +26,9 @@ boundaries. Experimental and unavailable methods remain labeled.
 
 ## Dated validation
 
-These are recorded results for the cited revisions and environments. Documentation
-cleanup does not rerun or extend product, provider, security, or financial validation.
+These are recorded results for the cited revisions and environments. Automated
+cleanup checks do not extend financial, provider, installed-runtime, or daily-use
+acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
@@ -36,7 +37,7 @@ cleanup does not rerun or extend product, provider, security, or financial valid
 | November 9, installed stack | Scoped rollout preserved database/asset fingerprints, mounts, settings, and localhost ports. One explicitly refreshed brief remained unreviewed. [Analyst evidence](archive/checkpoints/2026/analyst-workflows-2026-11-09.md) |
 | November 7, dependency/container/recovery | Recorded repository gates, dependency checks, OS-image scans, and isolated recovery passed. Unfixed scan findings remain disclosed; this is not a clean security certification. [Checkpoint](archive/checkpoints/2026/product-development-2026-11-07.md) |
 | October 17, recovery | Format-3 concurrent-write recovery checked both PDF stores and 109 tables. Later populated-backup rehearsal remains unrun; same-disk copies do not prove off-device recovery. [Checkpoint](archive/checkpoints/2026/release-readiness-2026-10-17.md) |
-| November 10, repository cleanup | Documentation and file-hygiene checks only. Exact results and unavailable checks are recorded in the [cleanup checkpoint](archive/checkpoints/2026/repository-presentation-2026-11-10.md) |
+| November 10, cleanup PR10 | All five CI jobs passed at `dab84f01`: repository checks, full backend/frontend baseline, browser workflows, dependency/container security, and isolated recovery. [Run](https://github.com/Gittastic112/Marketagent/actions/runs/42952104760) · [Cleanup checkpoint](archive/checkpoints/2026/repository-presentation-2026-11-10.md) |
 
 Earlier financial/provider reviews and normal-browser observations remain in
 [dated checkpoints](archive/checkpoints/2026/README.md). Mock Data browser tests
