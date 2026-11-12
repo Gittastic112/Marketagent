@@ -48,7 +48,8 @@ configuration and source review. Existing installations should use their verifie
 Next.js 16 and React render the research workspace. FastAPI owns APIs and
 deterministic calculations. PostgreSQL 16 stores research and review history;
 SQLAlchemy and Alembic manage persistence and migrations. Docker Compose runs the
-local services. [Architecture](docs/architecture.md)
+local services. [Architecture](docs/architecture.md) ·
+[Compose file guide](docker/README.md)
 
 | Directory | Purpose |
 |---|---|

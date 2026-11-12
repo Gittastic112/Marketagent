@@ -58,6 +58,9 @@ test-results/
 /docs/workstreams/evidence/**/before/
 /docs/workstreams/evidence/**/*.patch
 
+# Personal editor preferences; shared Python paths live in pyproject.toml.
+/.vscode/
+
 # Desktop metadata.
 .DS_Store
 Thumbs.db

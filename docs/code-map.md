@@ -24,15 +24,16 @@ below locate code; they do not grant another agent permission to edit it.
 | [scripts](../scripts/README.md) | Maintained checks, operational commands, and explicit data tools |
 | [data](../data/README.md) | Runtime references, contract fixtures, certification inputs, review receipts |
 | [damodaran_knowledge_base_v1](../damodaran_knowledge_base_v1/INDEX.md) | Independent doctrine, immutable sources, catalog, and audit tools |
-| [docker/postgres](../docker/postgres/) | Narrow PostgreSQL image build context |
+| [docker](../docker/README.md) | Compose file guide and the narrow PostgreSQL image build context |
 | [docs](README.md) | Current guides, planning, workflow references, and historical archive |
 | [skills](../skills/README.md) | Maintained project security-review package; copied tool packages stay local |
 | [.github](../.github/) | CI and contribution/security policies |
-| [.codex](../.codex/), [.vscode](../.vscode/) | Agent/editor configuration, separate from application runtime; preserve local overrides |
+| [.codex](../.codex/) | Portable agent defaults; machine-specific overrides stay local |
 | [docker-compose.yml](../docker-compose.yml) | Normal local services and persistent volumes |
-| [dev](../docker-compose.dev.yml), [test](../docker-compose.test.yml), [tools](../docker-compose.tools.yml) overrides | Source reload, offline backend tests, isolated repository-tool checks |
+| [dev](../docker-compose.dev.yml) | Hot-reload overlay for the normal local services |
+| [test](../docker-compose.test.yml), [tools](../docker-compose.tools.yml) | Standalone offline backend tests and repository-tool checks |
 | [E2E](../docker-compose.e2e.yml), [recovery](../docker-compose.recovery.yml) | Separate disposable verification environments |
-| [alembic.ini](../alembic.ini), [pyproject.toml](../pyproject.toml) | Migration and Python test/type configuration |
+| [alembic.ini](../alembic.ini), [pyproject.toml](../pyproject.toml) | Migration and shared Python test/editor configuration |
 | [.gitignore](../.gitignore), [.rgignore](../.rgignore), [.dockerignore](../.dockerignore), [.gitattributes](../.gitattributes) | Publication, search, build-context, and file-type boundaries |
 | README.md, AGENTS.md | Product entry and development rules; detailed plans live under docs |
 

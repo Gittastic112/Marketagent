@@ -15,6 +15,9 @@ and environment configuration. Never print secrets.
 
 ## Choose the right environment
 
+The [Compose file guide](../docker/README.md) maps all six definitions. Only the
+dev file extends the normal app; test, tools, E2E, and recovery run independently.
+
 | Purpose | Environment |
 |---|---|
 | Normal application | docker-compose.yml, production images, persistent user database |
@@ -22,6 +25,7 @@ and environment configuration. Never print secrets.
 | Repository/recovery script tests | docker-compose.tools.yml, Git/shasum, network disabled, read-only source, executable temporary fixture scripts; no Docker socket |
 | Hot-reload development | docker-compose.yml plus docker-compose.dev.yml |
 | Browser/release verification | Separate disposable project using docker-compose.e2e.yml |
+| Backup/restore rehearsal | Separate disposable database/backend using docker-compose.recovery.yml; follow [Operations](operations.md) |
 | Genuine-input portfolio proof | User's real, reviewed data; never replace with Mock Data |
 
 The normal backend image does not mount source. Running pytest in an existing
