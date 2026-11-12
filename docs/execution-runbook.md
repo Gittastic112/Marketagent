@@ -323,7 +323,7 @@ proof in archive/checkpoints/YYYY, and unresolved gaps in the
 Update the roadmap only when priorities change and the feature register only
 when capability status changes. Replace the short handoff; do not append history.
 
-CI starts on pull requests, pushes to the default branch codex/worktree-recovery,
+CI starts on pull requests, pushes to the default branch main,
 and all tags. Feature branches run when a pull request opens, avoiding duplicate
 branch-push builds. Keep the branch filter aligned if the default branch changes.
 
