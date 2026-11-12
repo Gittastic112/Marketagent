@@ -2,12 +2,14 @@
 
 ## Latest source boundary
 
-November 11, 2026: repository efficiency pass. Scanner databases now use
-temporary per-run storage; reports remain retained. Global styles have an
-[ordered ownership map](../frontend/styles/README.md). CI always checks the
-repository and selects full application checks conservatively.
-The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
-owns this source scope and its validation.
+November 11, 2026: main is the primary branch for new work and pull requests.
+CI runs on main pushes, pull requests, and tags. Older branch references in
+archived evidence describe their original verification and remain unchanged.
+
+Repository navigation and [Compose ownership](../docker/README.md) are documented.
+Python editor paths live in pyproject.toml; personal editor/agent overrides stay
+local. The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
+retains the scanner, style-ownership, and conservative CI-selection evidence.
 
 ## Start a change
 
