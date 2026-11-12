@@ -71,6 +71,18 @@ Only backend startup runs migrations. Workers wait for backend readiness.
 Published ports bind to 127.0.0.1; inspect actual running bindings after recreation.
 Local sign-in and resource ownership do not establish public-deployment security.
 
+## Editor and agent settings
+
+Open the repository root in your editor. [pyproject.toml](../pyproject.toml) owns
+the shared Python import path for Pyright/Pylance and pytest. Optional personal
+VS Code preferences belong in the ignored .vscode directory; do not repeat the
+project import-path settings there. No editor-specific folder is required.
+
+The committed [.codex/config.toml](../.codex/config.toml) contains portable
+project defaults and environment-file protections. Machine-specific paths,
+network choices, and local permission overrides stay local. Review that diff
+separately before committing; do not publish or silently discard local overrides.
+
 ## Host frontend development
 
 Use Node 24 and the checked-in npm lockfile. Host Next.js runs from frontend and
