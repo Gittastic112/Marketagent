@@ -11,10 +11,11 @@ Open four separate ChatGPT Pro chats with access to this repository. Give each
 chat this file and assign exactly one review number below. Use the same commit
 in all four chats. Ask each reviewer to record that commit before starting.
 
-The update is on `codex/research-workspace-20261114`; do not assume the repository's
-default branch contains it. After merging, use the merged commit instead. If
-ChatGPT cannot see the branch or read the files, it must say so and request the
-specific missing source files. A repository URL alone does not prove code access.
+PR #17 is merged into `main`, which is now the repository's default branch.
+Choose the current `main` commit when starting the review and use that same full
+commit SHA in all four chats. If ChatGPT cannot read the files at that commit,
+it must say so and request the specific missing source files. A repository URL
+alone does not prove code access.
 
 These are four substantial areas divided by responsibility, not exactly equal
 line counts. Each owns its domain's backend, screens and tests. Reviewer 4 owns
