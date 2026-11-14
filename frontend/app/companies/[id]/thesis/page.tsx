@@ -59,7 +59,7 @@ export default async function ThesisEnginePage({ params, searchParams }: { param
       </Panel>}
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "2rem" }}>
-        <div id="thesis-evidence"><Panel title="Core Assumptions">
+        <div id="thesis-evidence" className="min-w-0"><Panel title="Core Assumptions">
           {thesisRes.meta.status !== "success" ? <ErrorState message="Thesis notes are unavailable. Reload to retry." errors={thesisRes.errors} /> : !activeThesis ? (
             <EmptyState label="No thesis created for this company yet." />
           ) : activeThesis.assumptions.length === 0 ? (

@@ -117,7 +117,7 @@ test("late narrative suggestions cannot replace edits and copying estimates requ
   const heldSave = new Promise<void>(resolve => { releaseSave = resolve; });
   let saved!: () => void;
   const savedResponse = new Promise<void>(resolve => { saved = resolve; });
-  await page.route(`**${path}`, async route => {
+  await page.route(`**/api/backend/valuation-models/${model.id}/assumptions`, async route => {
     if (route.request().method() !== "POST") return route.continue();
     const response = await route.fetch();
     saved(); await heldSave;

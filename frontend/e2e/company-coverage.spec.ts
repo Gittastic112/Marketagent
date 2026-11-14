@@ -11,7 +11,7 @@ for (const width of [1440, 390]) {
     await page.setViewportSize({width, height:900});
     await page.goto(`/companies/${company.id}`);
     const main = page.getByRole("main");
-    await expect(main.getByText("Recorded alerts", {exact:true})).toBeVisible();
+    await expect(main.getByRole("heading", {name:"Alerts to review", exact:true})).toBeVisible();
     await expect(main.getByText("Risk Status", {exact:true})).toHaveCount(0);
     await expect(main.getByText("INR 1,250", {exact:true})).toBeVisible();
     await main.getByText("Quote source and timing", {exact:true}).click();

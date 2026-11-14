@@ -147,5 +147,85 @@
     "new_actual_use_days": 0,
     "new_financial_facts": 0,
     "new_acceptance_points": 0
+  },
+  "frontend_followup": {
+    "recorded_at": "2026-11-14T19:13:27Z",
+    "repairs": [
+      "Empty-draft return link now has a 40.5px-high click target",
+      "Thesis grid item can shrink, keeping populated tables within a bounded keyboard-scroll region"
+    ],
+    "test_alignment": "Nine browser workflow specs follow current navigation labels, collapsed settings, explicit draft creation and the reviewed-version API; existing substantive assertions remain.",
+    "frontend_tests": 393,
+    "typecheck": true,
+    "production_build": true,
+    "installed_browser": {
+      "read_only": true,
+      "viewport_width": 440,
+      "page_scroll_width": 430,
+      "thesis_region_width": 364,
+      "thesis_scroll_width": 842,
+      "keyboard_scroll_verified": true,
+      "return_link_height": 40.5,
+      "return_link_reached_saved_models": true,
+      "existing_saved_model_count": 1
+    },
+    "installation": {
+      "installed_at": "2026-11-14T19:11:11Z",
+      "previous_image": "sha256:ed0092f21eea280dad68af7e746c2cceee4e9ee54165277e5b9c7a1289f4a4fb",
+      "image": "sha256:77acb42526ae691c55432921111286ba89a8c882dfb96daa30f9a4ecb2d779c2",
+      "container": "2317fa613e33e80877456dacec0ede2952db13bad3b9ef77963b7acb8351e035",
+      "unchanged_tables": 110,
+      "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514",
+      "settings_unchanged": true,
+      "mounts_unchanged": true,
+      "protections_unchanged": true,
+      "other_services_unchanged": true,
+      "volumes_unchanged": true,
+      "new_backup": false,
+      "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a"
+    },
+    "cleanup": {
+      "completed_at": "2026-11-14T19:13:08Z",
+      "removed_images": [
+        {
+          "id": "sha256:ed0092f21eea280dad68af7e746c2cceee4e9ee54165277e5b9c7a1289f4a4fb",
+          "tags": [
+            "market-intelligence-review-frontend:20261114-ten-sets"
+          ],
+          "logical_bytes": 422939574
+        },
+        {
+          "id": "sha256:a99e8f3c34c2d0e14f394473ba332509f538ec28a62b2c1d261d430217c5d1dd",
+          "tags": [
+            "market-intelligence-browser-build:20261114"
+          ],
+          "logical_bytes": 1273877055
+        }
+      ],
+      "removed_context": {
+        "path": "/tmp/mi-browser-repair-20261114",
+        "bytes": 2087660
+      },
+      "cache_result": "ID\t\t\t\t\t\tRECLAIMABLE\tSIZE\t\tLAST ACCESSED\njwn8r1li8kj3ffpejuhwcosai*              \ttrue \t\t8.192kB   \t3 minutes ago\nvf30i9gcdytotky3vdbkm416y*              \ttrue \t8.192kB   \t3 minutes ago\nz60e7xxjgkxqtr9h1bi5e3juz               \ttrue \t246.4MB   \t3 minutes ago\nnwncc3jkauxhsr1ls4q296exf               \ttrue \t2.143MB   \t3 minutes ago\nvkecqh0nzvd2xbi81snovre8t*              \ttrue \t8.192kB   \t3 minutes ago\n1ofdm0lmylr0zmcw0fj97y6x1*              \ttrue \t3.228MB   \t3 minutes ago\n8rzmmg6c4x23h8ha3rainpx9m               \ttrue \t3.68MB    \t3 minutes ago\nj8sdysv3uk3i82bobnr6b9j79               \ttrue \t64.48MB   \t3 minutes ago\nsko4wpyj68alv1pi3osap8v4h               \ttrue \t600.8MB   \t3 minutes ago\nu4tzleg2l09wlrcgnutycr1fx               \ttrue \t8.285kB   \t3 minutes ago\nf0og3ay6z1knjp9ff5t9u9kfx               \ttrue \t356.3MB   \t3 minutes ago\ntasrdyc5tpltto3lrwwn0a5mv               \ttrue \t117.4kB   \t3 minutes ago\ntpx0ugi5dnwpvecki80qkjzoz               \ttrue \t8.287kB   \t3 minutes ago\nozq5jero916az5reb4yh4hwep               \ttrue \t2.142MB   \t3 minutes ago\ni2zf1sxc6cyiv31tadeo75izu               \ttrue \t64.48MB   \t4 minutes ago\n3sh6rw5o20c5zj8sq72pguz51               \ttrue \t8.285kB   \t4 minutes ago\ntjgnhx0ud2yjx403h08jrth2q               \ttrue \t356.3MB   \t4 minutes ago\nTotal:\t1.7GB\n",
+      "disk_after": "TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE\nImages          4         3         2.864GB   1.045GB (36%)\nContainers      4         4         77.82kB   0B (0%)\nLocal Volumes   2         1         210.7MB   167.9kB (0%)\nBuild Cache     0         0         0B        0B\n",
+      "retained_containers": [
+        "market_intel_backend",
+        "market_intel_frontend",
+        "market_intel_postgres",
+        "market_intel_scheduler"
+      ],
+      "retained_image_ids": [
+        "77acb42526ae",
+        "b816dc38f7ec",
+        "aeeadf0e15e3",
+        "ba023b77f84f"
+      ],
+      "retained_volumes": [
+        "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882",
+        "market-intelligence-md-filescopy_marketintel_postgres_data"
+      ],
+      "unchanged_tables": 110,
+      "new_backup": false
+    }
   }
 }

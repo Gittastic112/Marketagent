@@ -63,6 +63,7 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   });
 
   await page.goto(`/companies/${company.id}/valuation`);
+  await page.getByRole("main").getByText("Industry and benchmark settings", {exact: true}).click();
   const mix = page.locator("section.industry-mix-card");
   await expect(mix.getByRole("heading", { name: "Revenue-Weighted Industry Mix" })).toBeVisible();
   await mix.getByLabel("Segment name").fill("Software");
@@ -98,6 +99,7 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   ]);
 
   await page.reload();
+  await page.getByRole("main").getByText("Industry and benchmark settings", {exact: true}).click();
   await expect(mix.getByRole("list", { name: "Saved business mix" })).toBeVisible();
   await mix.getByRole("button", { name: "Edit business mix" }).click();
   await expect(mix.getByLabel("Revenue weight for Software")).toHaveValue("60");
@@ -131,9 +133,9 @@ test("company tabs and grouped navigation remain usable on mobile", async ({ pag
     "aria-current",
     "page",
   );
-  await companyNavigation.getByRole("link", { name: "Filings" }).click();
+  await companyNavigation.getByRole("link", { name: "Sources" }).click();
   await expect(page).toHaveURL(`/companies/${company.id}/filings`);
-  await expect(companyNavigation.getByRole("link", { name: "Filings" })).toHaveAttribute(
+  await expect(companyNavigation.getByRole("link", { name: "Sources" })).toHaveAttribute(
     "aria-current",
     "page",
   );

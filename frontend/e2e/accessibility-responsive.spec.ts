@@ -131,7 +131,9 @@ test("mobile intake forms keep readable controls inside their cards", async ({ p
   const intakePanels: Record<string, string> = {"/sources": "Add Source", "/alerts": "Add Alert", "/events": "Add Event"};
   for (const route of ["/portfolio/manage", "/sources", "/data", "/alerts", "/events", "/thesis-notes"]) {
     await page.goto(route);
-    if (intakePanels[route]) await page.locator("summary").filter({hasText: intakePanels[route]}).click();
+    if (intakePanels[route]) await page.getByRole("main").getByRole("heading", {
+      name: intakePanels[route], exact: true,
+    }).locator("..").click();
     const fields = page.getByRole("main").locator(".form-grid input:not([type=hidden]):not([type=checkbox]), .form-grid select, .form-grid textarea, .form-grid button[type=submit]");
     await expect(fields.first()).toBeVisible();
     let checked = 0;

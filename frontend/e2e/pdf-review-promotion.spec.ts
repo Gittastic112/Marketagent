@@ -40,7 +40,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
   await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
 
-  await page.getByRole("link", { name: "Financials" }).click();
+  await page.getByRole("navigation", {name: "Company workspace"}).getByRole("link", { name: "Financials" }).click();
   const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
   await expect(candidateHeading).toBeVisible();
   const candidateReview = candidateHeading.locator("xpath=../../..");

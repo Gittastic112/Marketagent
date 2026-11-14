@@ -56,7 +56,7 @@ export default async function DraftValuationPage({
         <RetainedActionForm label="Create valuation draft" action={createValuationSetupDraft.bind(null, id)}>
           <button type="submit" className="primary-button">Create draft</button>
         </RetainedActionForm>
-        <Link href={`/companies/${companyId}/valuation`}>Back to saved models</Link>
+        <Link className="secondary-button" href={`/companies/${companyId}/valuation`}>Back to saved models</Link>
       </section>
     </div>
   );
