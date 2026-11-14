@@ -133,6 +133,9 @@ def test_fred_refresh_preserves_user_edits_and_invalidates_rate_review(db_sessio
     rate.value = 5.0
     db_session.commit()
     draft = ValuationSetupDraftService.create_or_reopen(db_session, company.id, "owner")
+    assert draft.assumptions_json["risk_free_rate"] == 0.045
+    assert "risk_free_rate" in draft.reviewed_fields_json
+    draft = ValuationSetupDraftService.refresh(db_session, draft, draft.updated_at)
     assert draft.assumptions_json["starting_revenue"] == 1200
     assert draft.assumptions_json["risk_free_rate"] == 0.05
     assert "starting_revenue" in draft.reviewed_fields_json
@@ -171,10 +174,15 @@ def test_daily_age_increment_preserves_review_until_source_becomes_stale(db_sess
 
     monkeypatch.setattr(valuation_source_inputs, "date", TestDate)
     draft = ValuationSetupDraftService.create_or_reopen(db_session, company.id, "owner")
+    assert draft.provenance_json["risk_free_rate"]["age_days"] == 0
+    draft = ValuationSetupDraftService.refresh(db_session, draft, draft.updated_at)
     assert draft.provenance_json["risk_free_rate"]["age_days"] == 1
     assert "risk_free_rate" in draft.reviewed_fields_json
     TestDate.offset = 8
     draft = ValuationSetupDraftService.create_or_reopen(db_session, company.id, "owner")
+    assert draft.provenance_json["risk_free_rate"]["is_stale"] is False
+    assert "risk_free_rate" in draft.reviewed_fields_json
+    draft = ValuationSetupDraftService.refresh(db_session, draft, draft.updated_at)
     assert draft.provenance_json["risk_free_rate"]["is_stale"] is True
     assert "risk_free_rate" not in draft.reviewed_fields_json
 

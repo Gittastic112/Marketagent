@@ -51,6 +51,9 @@ filters, thesis selection, holdings research and library/secondary entry points.
 The [ten-set receipt](../data/reviews/research-workspace-ten-sets-20261114.json)
 owns installed image identity, checks, preservation and temporary-resource cleanup.
 Earlier explicit draft/discovery actions and financial promotion guards remain.
+The [dependency follow-up](../data/reviews/dependency-security-20261114.json) records
+patched OpenTelemetry/Soup Sieve, full backend verification and replacement image
+identity. The local data and recovery set remain unchanged; PR 17 owns hosted checks.
 
 Next: connect selected dated evidence to an explicit draft proposal, carry exact
 source revisions into its review/save receipt, and extend preview to initial model
