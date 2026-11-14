@@ -1,0 +1,1616 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-DATED-INPUTS-20261112",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "recorded_at": "2026-11-13T07:37:25.721189+00:00",
+  "valuation_date": "2026-11-12",
+  "information_cutoff": "End of November 12, 2026 America/New_York; all verified filings published on or before that date",
+  "user_date_reply": "November 12, 2026",
+  "boundary": "Dated source and input-method review, not a complete DCF or certification of current daily balances.",
+  "methodology_decisions": [
+    "Keep annual histories and saved valuation inputs unchanged. Current-dated estimates cannot fill historical annual source gaps.",
+    "Use explicitly scoped financing roll-forwards as research subtotals; withhold complete debt until repayment, cash and lease scopes reconcile.",
+    "Record narrow trade cash absorption without substituting it for full NWC. Default FCFF sales-to-capital reinvestment does not require this missing historical decomposition.",
+    "Use gross award marks for exposure review only. Do not install them as employee option values or combine them with award dilution.",
+    "Use Alphabet NCI book value and separately quoted preferred series as explicit modeling proxies; retain source-date and conversion limitations.",
+    "Hold Meta preferred valuation because the primary-source prices conflict. Do not choose the favorable quote or invent a resolution."
+  ],
+  "numeric_evidence": [
+    {
+      "id": "f-189",
+      "concept": "us-gaap:CommercialPaper",
+      "value": 1997000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "1,997",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "September 26, 2026 September 27, 2025 ASSETS: Current assets: Cash and cash equivalents $ 36,305 $ 35,934 Marketable securities 20,417 18,763 Accounts receivable, net 43,817 39,777 Vendor non-trade receivables 39,896 33,180 Inventories 14,541 5,718 Other current assets 18,881 14,585 Total current assets 173,857 147,957 Non-current assets: Marketable securities 80,213 77,723 Property, plant and equipment, net 52,084 49,834 Intangible assets, net 20,278 11,093 Other non-current assets 78,116 72,634 Total non-current assets 230,691 211,284 Total assets $ 404,548 $ 359,241 LIABILITIES AND SHAREHOLDERS’ EQUITY: Current liabilities: Accounts payable $ 82,252 $ 69,860 Other current liabilities 66,124 66,387 Deferred revenue 9,636 9,055 Commercial paper 1,997 7,979 Term debt 9,906 12,350 Total current liabilities 169,915 165,631 Non-current liabilities: Term debt 68,208 78,328 Other non-current liabilities 54,332 41,549 Total non-current liabilities 122,540 119,877 Total liabilities 292,455 285,508 Commitments and contingencies Shareholders’ equity: Common stock and additional paid-in capital, $ 0.00001 par value: 50,400,000 shares authorized; 14,532,259 and 14,773,260 shares issued and outstanding, respectively 104,815 93,568 Retained earnings/(Accumulated deficit) 13,700 ( 14,264 ) Accumulated other comprehensive loss ( 6,422 ) ( 5,571 ) Total shareholders’ equity 112,093 73,733 Total liabilities and shareholders’ equity $ 404,548 $ 359,241",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-191",
+      "concept": "us-gaap:LongTermDebtCurrent",
+      "value": 9906000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "9,906",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "September 26, 2026 September 27, 2025 ASSETS: Current assets: Cash and cash equivalents $ 36,305 $ 35,934 Marketable securities 20,417 18,763 Accounts receivable, net 43,817 39,777 Vendor non-trade receivables 39,896 33,180 Inventories 14,541 5,718 Other current assets 18,881 14,585 Total current assets 173,857 147,957 Non-current assets: Marketable securities 80,213 77,723 Property, plant and equipment, net 52,084 49,834 Intangible assets, net 20,278 11,093 Other non-current assets 78,116 72,634 Total non-current assets 230,691 211,284 Total assets $ 404,548 $ 359,241 LIABILITIES AND SHAREHOLDERS’ EQUITY: Current liabilities: Accounts payable $ 82,252 $ 69,860 Other current liabilities 66,124 66,387 Deferred revenue 9,636 9,055 Commercial paper 1,997 7,979 Term debt 9,906 12,350 Total current liabilities 169,915 165,631 Non-current liabilities: Term debt 68,208 78,328 Other non-current liabilities 54,332 41,549 Total non-current liabilities 122,540 119,877 Total liabilities 292,455 285,508 Commitments and contingencies Shareholders’ equity: Common stock and additional paid-in capital, $ 0.00001 par value: 50,400,000 shares authorized; 14,532,259 and 14,773,260 shares issued and outstanding, respectively 104,815 93,568 Retained earnings/(Accumulated deficit) 13,700 ( 14,264 ) Accumulated other comprehensive loss ( 6,422 ) ( 5,571 ) Total shareholders’ equity 112,093 73,733 Total liabilities and shareholders’ equity $ 404,548 $ 359,241",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-195",
+      "concept": "us-gaap:LongTermDebtNoncurrent",
+      "value": 68208000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "68,208",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "September 26, 2026 September 27, 2025 ASSETS: Current assets: Cash and cash equivalents $ 36,305 $ 35,934 Marketable securities 20,417 18,763 Accounts receivable, net 43,817 39,777 Vendor non-trade receivables 39,896 33,180 Inventories 14,541 5,718 Other current assets 18,881 14,585 Total current assets 173,857 147,957 Non-current assets: Marketable securities 80,213 77,723 Property, plant and equipment, net 52,084 49,834 Intangible assets, net 20,278 11,093 Other non-current assets 78,116 72,634 Total non-current assets 230,691 211,284 Total assets $ 404,548 $ 359,241 LIABILITIES AND SHAREHOLDERS’ EQUITY: Current liabilities: Accounts payable $ 82,252 $ 69,860 Other current liabilities 66,124 66,387 Deferred revenue 9,636 9,055 Commercial paper 1,997 7,979 Term debt 9,906 12,350 Total current liabilities 169,915 165,631 Non-current liabilities: Term debt 68,208 78,328 Other non-current liabilities 54,332 41,549 Total non-current liabilities 122,540 119,877 Total liabilities 292,455 285,508 Commitments and contingencies Shareholders’ equity: Common stock and additional paid-in capital, $ 0.00001 par value: 50,400,000 shares authorized; 14,532,259 and 14,773,260 shares issued and outstanding, respectively 104,815 93,568 Retained earnings/(Accumulated deficit) 13,700 ( 14,264 ) Accumulated other comprehensive loss ( 6,422 ) ( 5,571 ) Total shareholders’ equity 112,093 73,733 Total liabilities and shareholders’ equity $ 404,548 $ 359,241",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-958",
+      "concept": "us-gaap:FinanceLeaseLiability",
+      "value": 1456000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "1,456",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Operating Leases Finance Leases Total 2027 $ 1,980 $ 725 $ 2,705 2028 2,053 69 2,122 2029 1,921 125 2,046 2030 1,617 56 1,673 2031 1,410 47 1,457 Thereafter 6,362 764 7,126 Total undiscounted liabilities 15,343 1,786 17,129 Less: Imputed interest ( 2,431 ) ( 330 ) ( 2,761 ) Total lease liabilities $ 12,912 $ 1,456 $ 14,368",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-813",
+      "concept": "us-gaap:LongTermDebt",
+      "value": 33366000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "33,366",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Expected Remaining Term (years) Effective Interest Rate Jul 26, 2026 Jan 25, 2026 (In millions) 3.20 % Notes Due 2026 0.1 3.31 % $ 1,000 $ 1,000 4.25 % Notes Due 2028 1.9 4.39 % 3,500 — 1.55 % Notes Due 2028 1.9 1.64 % 1,250 1,250 4.35 % Notes Due 2029 2.9 4.45 % 3,500 — 2.85 % Notes Due 2030 3.7 2.93 % 1,500 1,500 4.50 % Notes Due 2031 4.9 4.60 % 4,000 — 2.00 % Notes Due 2031 4.9 2.09 % 1,250 1,250 4.75 % Notes Due 2033 6.9 4.82 % 3,500 — 4.95 % Notes Due 2036 9.9 5.01 % 4,000 — 3.50 % Notes Due 2040 13.7 3.54 % 1,000 1,000 5.55 % Notes Due 2046 19.9 5.61 % 3,000 — 3.50 % Notes Due 2050 23.7 3.54 % 2,000 2,000 5.625 % Notes Due 2056 29.9 5.66 % 3,500 — 3.70 % Notes Due 2060 33.7 3.73 % 500 500 Unamortized debt discount and issuance costs ( 134 ) ( 32 ) Net carrying amount $ 33,366 $ 8,468 Less short-term portion ( 1,000 ) ( 999 ) Total long-term portion $ 32,366 $ 7,469",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-656",
+      "concept": "nvda:BusinessCombinationConsiderationPayable",
+      "value": 986000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "986",
+      "scale": "6",
+      "sign": null,
+      "format": null,
+      "row": "Jul 26, 2026 Jan 25, 2026 Accrued and Other Current Liabilities: (In millions) Customer program accruals $ 7,391 $ 5,318 Taxes payable 5,206 2,669 Deferred revenue (1) 4,616 1,379 Product warranty 2,938 2,807 Excess inventory purchase obligations (2) 2,138 2,739 Accrued payroll and related expenses 1,206 1,146 Accrued purchase consideration (3) 986 3,921 Other 2,479 1,373 Total accrued and other current liabilities $ 26,960 $ 21,352",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-63",
+      "concept": "us-gaap:LongTermDebtNoncurrent",
+      "value": 80922000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001326801",
+        "dimensions": [
+
+        ]
+      },
+      "text": "80,922",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "September 30, 2026 December 31, 2025 Assets Current assets: Cash and cash equivalents $ 11,222 $ 35,873 Marketable securities 71,227 45,719 Accounts receivable, net 22,716 19,769 Prepaid expenses and other current assets 14,735 7,361 Total current assets 119,900 108,722 Non-marketable equity investments 32,624 27,524 Property and equipment, net 253,222 176,400 Operating lease right-of-use assets 26,576 20,404 Goodwill 23,421 24,534 Other assets 23,093 8,437 Total assets $ 478,836 $ 366,021 Liabilities and stockholders' equity Current liabilities: Accounts payable $ 19,097 $ 8,894 Operating lease liabilities, current 2,522 2,213 Accrued expenses and other current liabilities 41,392 30,729 Total current liabilities 63,011 41,836 Operating lease liabilities, non-current 28,651 22,940 Long-term debt 80,922 58,744 Long-term income taxes 20,521 21,005 Other liabilities 13,345 4,253 Total liabilities 206,450 148,778 Commitments and contingencies Stockholders' equity: Common stock and additional paid-in capital, $ 0.000006 par value; 5,000 million Class A shares authorized, 2,214 million and 2,187 million shares issued and outstanding, as of September 30, 2026 and December 31, 2025, respectively; 4,141 million Class B shares authorized, 342 million and 343 million shares issued and outstanding, as of September 30, 2026 and December 31, 2025, respectively 108,244 95,793 Accumulated other comprehensive income (loss) ( 1,200 ) 271 Retained earnings 165,342 121,179 Total stockholders' equity 272,386 217,243 Total liabilities and stockholders' equity $ 478,836 $ 366,021",
+      "document_id": 46,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "document_sha256": "9be61dbe6c06353f088da92b7c5a3f0b8b6e107d96130be4c8597c5f01c2e621",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-737",
+      "concept": "us-gaap:LongTermDebtCurrent",
+      "value": 2747000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001326801",
+        "dimensions": [
+
+        ]
+      },
+      "text": "2,747",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "September 30, 2026 December 31, 2025 Legal-related accruals, current (1) $ 11,577 $ 6,867 Accrued compensation and benefits 3,846 7,151 Accrued property and equipment 7,172 4,402 Accrued taxes 2,057 1,922 Long-term debt, current 2,747 — Other current liabilities 13,993 10,387 Total $ 41,392 $ 30,729",
+      "document_id": 46,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "document_sha256": "9be61dbe6c06353f088da92b7c5a3f0b8b6e107d96130be4c8597c5f01c2e621",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-150",
+      "concept": "us-gaap:LongTermDebtNoncurrent",
+      "value": 125102000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "125,102",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "As of December 31, 2025 As of September 30, 2026 (unaudited) Assets Current assets: Cash and cash equivalents $ 30,708 $ 56,334 Marketable securities 96,135 208,764 Total cash, cash equivalents, and marketable securities 126,843 265,098 Accounts receivable, net 62,886 72,784 Inventory 2,439 13,308 Other current assets 13,870 23,475 Total current assets 206,038 374,665 Non-marketable securities 68,687 135,230 Deferred income taxes 9,113 1,458 Property and equipment, net 246,597 372,827 Operating lease assets 15,221 20,273 Goodwill 33,380 58,117 Intangible assets, net 1,283 8,817 Other non-current assets 14,962 31,925 Total assets $ 595,281 $ 1,003,312 Liabilities and Stockholders’ Equity Current liabilities: Accounts payable $ 12,200 $ 21,975 Accrued compensation and benefits 17,546 17,729 Accrued expenses and other current liabilities 55,557 74,317 Accrued revenue share 10,864 11,051 Deferred revenue 6,578 9,429 Total current liabilities 102,745 134,501 Long-term debt 46,547 125,102 Income taxes payable, non-current 9,531 12,219 Deferred income taxes 919 27,833 Operating lease liabilities 12,744 16,815 Other long-term liabilities 7,530 9,293 Total liabilities 180,016 325,763 Commitments and Contingencies (Note 10) Stockholders’ equity: Series A and Series B preferred stock and additional paid-in capital, $ 0.001 par value per share, 100 shares authorized; 6.25 % mandatory convertible preferred stock, 0 and 19 shares issued and outstanding allocated equally between each series with a liquidation preference of $ 1,000 per share 0 18,023 Class A, Class B, and Class C stock and additional paid-in capital, $ 0.001 par value per share: 300,000 shares authorized (Class A 180,000 , Class B 60,000 , Class C 60,000 ); 12,088 (Class A 5,822 , Class B 837 , Class C 5,429 ) and 12,294 (Class A 5,888 , Class B 828 , Class C 5,578 ) shares issued and outstanding 93,126 147,068 Accumulated other comprehensive income (loss) ( 1,916 ) ( 4,326 ) Retained earnings 324,055 516,784 Total stockholders’ equity 415,265 677,549 Total liabilities and stockholders’ equity $ 595,281 $ 1,003,312",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1321",
+      "concept": "us-gaap:LongTermDebtCurrent",
+      "value": 1016000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "1,016",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Maturity Coupon Rate Effective Interest Rate As of December 31, 2025 As of September 30, 2026 Debt 2016 US dollar notes 2026 2.00 % 2.23 % $ 2,000 $ 0 2020 US dollar notes 2027 - 2060 0.80 % - 2.25 % 0.93 % - 2.33 % 9,000 9,000 2025 US dollar notes (1) 2028 - 2075 3.88 % - 5.70 % 4.00 % - 5.79 % 22,500 22,500 2025 Euro notes (2) 2028 - 2064 2.38 % - 4.38 % 2.57 % - 4.51 % 15,585 15,057 2026 US dollar notes (1) 2028 - 2066 3.70 % - 6.50 % 3.93 % - 6.57 % 0 45,000 2026 Sterling notes (2) 2029 - 2126 4.13 % - 6.13 % 4.23 % - 6.19 % 0 7,287 2026 Swiss franc notes (2) 2029 - 2051 0.43 % - 1.87 % 0.52 % - 1.90 % 0 3,671 2026 Euro notes (2) 2030 - 2063 3.20 % - 4.80 % 3.29 % - 4.88 % 0 10,228 2026 Canadian dollar notes (2) 2031 - 2056 3.65 % - 5.00 % 3.83 % - 5.10 % 0 6,001 2026 Japanese yen notes (2) 2029 - 2066 1.97 % - 4.60 % 2.04 % - 4.64 % 0 3,659 2026 Australian dollar notes (1)(2) 2029 - 2046 5.20 % - 6.90 % 5.32 % - 7.03 % 0 3,861 Other long-term debt 0 1,221 Total face value of long-term debt 49,085 127,485 Unamortized discount and debt issuance costs (2) ( 542 ) ( 1,110 ) Hedge accounting fair value adjustments (3) 0 ( 257 ) Less: current portion of long-term notes (4) ( 1,996 ) ( 1,016 ) Total long-term debt $ 46,547 $ 125,102",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1236",
+      "concept": "us-gaap:CommercialPaper",
+      "value": 0.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "no",
+      "scale": "9",
+      "sign": null,
+      "format": "ixt:fixed-zero",
+      "row": "We have a commercial paper program of up to $ 25.0 billion, which is used for general corporate purposes. We had no commercial paper outstanding as of December 31, 2025 and September 30, 2026.",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1178",
+      "concept": "us-gaap:FinanceLeaseLiability",
+      "value": 3705000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "3,705",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "As of December 31, 2025 As of September 30, 2026 Operating leases: Operating lease assets $ 15,221 $ 20,273 Accrued expenses and other liabilities $ 3,209 $ 3,693 Operating lease liabilities 12,744 16,815 Total operating lease liabilities $ 15,954 $ 20,508 Finance leases: Property and equipment, at cost $ 6,822 $ 10,619 Accumulated depreciation ( 2,025 ) ( 2,914 ) Property and equipment, net $ 4,797 $ 7,705 Accrued expenses and other liabilities $ 441 $ 1,053 Other long-term liabilities 2,059 2,652 Total finance lease liabilities $ 2,500 $ 3,705",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-289",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsReceivable",
+      "value": 3994000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2025-09-28",
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "3,994",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Years Ended September 26, 2026 September 27, 2025 September 28, 2024 Cash, cash equivalents, and restricted cash and cash equivalents, beginning balances $ 35,934 $ 29,943 $ 30,737 Operating activities: Net income 132,175 112,010 93,736 Adjustments to reconcile net income to cash generated by operating activities: Depreciation and amortization 13,423 11,698 11,445 Share-based compensation expense 13,789 12,863 11,688 Other 568 ( 89 ) ( 2,266 ) Changes in operating assets and liabilities: Accounts receivable, net ( 3,994 ) ( 6,682 ) ( 3,788 ) Vendor non-trade receivables ( 6,716 ) ( 347 ) ( 1,356 ) Inventories ( 8,905 ) 1,400 ( 1,046 ) Other current and non-current assets ( 21,117 ) ( 9,197 ) ( 11,731 ) Accounts payable 12,171 902 6,020 Other current and non-current liabilities 13,703 ( 11,076 ) 15,552 Cash generated by operating activities 145,097 111,482 118,254 Investing activities: Purchases of marketable securities ( 54,945 ) ( 24,407 ) ( 48,656 ) Proceeds from maturities of marketable securities 34,815 40,907 51,211 Proceeds from sales of marketable securities 14,280 12,890 11,135 Payments for acquisition of property, plant and equipment ( 9,041 ) ( 12,715 ) ( 9,447 ) Other ( 2,389 ) ( 1,480 ) ( 1,308 ) Cash generated by/(used in) investing activities ( 17,280 ) 15,195 2,935 Financing activities: Payments for taxes related to net share settlement of equity awards ( 6,793 ) ( 5,960 ) ( 5,441 ) Payments for dividends and dividend equivalents ( 15,721 ) ( 15,421 ) ( 15,234 ) Repurchases of common stock ( 86,390 ) ( 90,711 ) ( 94,949 ) Proceeds from issuance of term debt, net — 4,481 — Repayments of term debt ( 12,396 ) ( 10,932 ) ( 9,958 ) Proceeds from/(Repayments of) commercial paper, net ( 5,911 ) ( 2,032 ) 3,960 Other ( 235 ) ( 111 ) ( 361 ) Cash used in financing activities ( 127,446 ) ( 120,686 ) ( 121,983 ) Increase/(Decrease) in cash, cash equivalents, and restricted cash and cash equivalents 371 5,991 ( 794 ) Cash, cash equivalents, and restricted cash and cash equivalents, ending balances $ 36,305 $ 35,934 $ 29,943",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-292",
+      "concept": "us-gaap:IncreaseDecreaseInOtherReceivables",
+      "value": 6716000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2025-09-28",
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "6,716",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Years Ended September 26, 2026 September 27, 2025 September 28, 2024 Cash, cash equivalents, and restricted cash and cash equivalents, beginning balances $ 35,934 $ 29,943 $ 30,737 Operating activities: Net income 132,175 112,010 93,736 Adjustments to reconcile net income to cash generated by operating activities: Depreciation and amortization 13,423 11,698 11,445 Share-based compensation expense 13,789 12,863 11,688 Other 568 ( 89 ) ( 2,266 ) Changes in operating assets and liabilities: Accounts receivable, net ( 3,994 ) ( 6,682 ) ( 3,788 ) Vendor non-trade receivables ( 6,716 ) ( 347 ) ( 1,356 ) Inventories ( 8,905 ) 1,400 ( 1,046 ) Other current and non-current assets ( 21,117 ) ( 9,197 ) ( 11,731 ) Accounts payable 12,171 902 6,020 Other current and non-current liabilities 13,703 ( 11,076 ) 15,552 Cash generated by operating activities 145,097 111,482 118,254 Investing activities: Purchases of marketable securities ( 54,945 ) ( 24,407 ) ( 48,656 ) Proceeds from maturities of marketable securities 34,815 40,907 51,211 Proceeds from sales of marketable securities 14,280 12,890 11,135 Payments for acquisition of property, plant and equipment ( 9,041 ) ( 12,715 ) ( 9,447 ) Other ( 2,389 ) ( 1,480 ) ( 1,308 ) Cash generated by/(used in) investing activities ( 17,280 ) 15,195 2,935 Financing activities: Payments for taxes related to net share settlement of equity awards ( 6,793 ) ( 5,960 ) ( 5,441 ) Payments for dividends and dividend equivalents ( 15,721 ) ( 15,421 ) ( 15,234 ) Repurchases of common stock ( 86,390 ) ( 90,711 ) ( 94,949 ) Proceeds from issuance of term debt, net — 4,481 — Repayments of term debt ( 12,396 ) ( 10,932 ) ( 9,958 ) Proceeds from/(Repayments of) commercial paper, net ( 5,911 ) ( 2,032 ) 3,960 Other ( 235 ) ( 111 ) ( 361 ) Cash used in financing activities ( 127,446 ) ( 120,686 ) ( 121,983 ) Increase/(Decrease) in cash, cash equivalents, and restricted cash and cash equivalents 371 5,991 ( 794 ) Cash, cash equivalents, and restricted cash and cash equivalents, ending balances $ 36,305 $ 35,934 $ 29,943",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-295",
+      "concept": "us-gaap:IncreaseDecreaseInInventories",
+      "value": 8905000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2025-09-28",
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "8,905",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Years Ended September 26, 2026 September 27, 2025 September 28, 2024 Cash, cash equivalents, and restricted cash and cash equivalents, beginning balances $ 35,934 $ 29,943 $ 30,737 Operating activities: Net income 132,175 112,010 93,736 Adjustments to reconcile net income to cash generated by operating activities: Depreciation and amortization 13,423 11,698 11,445 Share-based compensation expense 13,789 12,863 11,688 Other 568 ( 89 ) ( 2,266 ) Changes in operating assets and liabilities: Accounts receivable, net ( 3,994 ) ( 6,682 ) ( 3,788 ) Vendor non-trade receivables ( 6,716 ) ( 347 ) ( 1,356 ) Inventories ( 8,905 ) 1,400 ( 1,046 ) Other current and non-current assets ( 21,117 ) ( 9,197 ) ( 11,731 ) Accounts payable 12,171 902 6,020 Other current and non-current liabilities 13,703 ( 11,076 ) 15,552 Cash generated by operating activities 145,097 111,482 118,254 Investing activities: Purchases of marketable securities ( 54,945 ) ( 24,407 ) ( 48,656 ) Proceeds from maturities of marketable securities 34,815 40,907 51,211 Proceeds from sales of marketable securities 14,280 12,890 11,135 Payments for acquisition of property, plant and equipment ( 9,041 ) ( 12,715 ) ( 9,447 ) Other ( 2,389 ) ( 1,480 ) ( 1,308 ) Cash generated by/(used in) investing activities ( 17,280 ) 15,195 2,935 Financing activities: Payments for taxes related to net share settlement of equity awards ( 6,793 ) ( 5,960 ) ( 5,441 ) Payments for dividends and dividend equivalents ( 15,721 ) ( 15,421 ) ( 15,234 ) Repurchases of common stock ( 86,390 ) ( 90,711 ) ( 94,949 ) Proceeds from issuance of term debt, net — 4,481 — Repayments of term debt ( 12,396 ) ( 10,932 ) ( 9,958 ) Proceeds from/(Repayments of) commercial paper, net ( 5,911 ) ( 2,032 ) 3,960 Other ( 235 ) ( 111 ) ( 361 ) Cash used in financing activities ( 127,446 ) ( 120,686 ) ( 121,983 ) Increase/(Decrease) in cash, cash equivalents, and restricted cash and cash equivalents 371 5,991 ( 794 ) Cash, cash equivalents, and restricted cash and cash equivalents, ending balances $ 36,305 $ 35,934 $ 29,943",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-301",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsPayable",
+      "value": 12171000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2025-09-28",
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+
+        ]
+      },
+      "text": "12,171",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Years Ended September 26, 2026 September 27, 2025 September 28, 2024 Cash, cash equivalents, and restricted cash and cash equivalents, beginning balances $ 35,934 $ 29,943 $ 30,737 Operating activities: Net income 132,175 112,010 93,736 Adjustments to reconcile net income to cash generated by operating activities: Depreciation and amortization 13,423 11,698 11,445 Share-based compensation expense 13,789 12,863 11,688 Other 568 ( 89 ) ( 2,266 ) Changes in operating assets and liabilities: Accounts receivable, net ( 3,994 ) ( 6,682 ) ( 3,788 ) Vendor non-trade receivables ( 6,716 ) ( 347 ) ( 1,356 ) Inventories ( 8,905 ) 1,400 ( 1,046 ) Other current and non-current assets ( 21,117 ) ( 9,197 ) ( 11,731 ) Accounts payable 12,171 902 6,020 Other current and non-current liabilities 13,703 ( 11,076 ) 15,552 Cash generated by operating activities 145,097 111,482 118,254 Investing activities: Purchases of marketable securities ( 54,945 ) ( 24,407 ) ( 48,656 ) Proceeds from maturities of marketable securities 34,815 40,907 51,211 Proceeds from sales of marketable securities 14,280 12,890 11,135 Payments for acquisition of property, plant and equipment ( 9,041 ) ( 12,715 ) ( 9,447 ) Other ( 2,389 ) ( 1,480 ) ( 1,308 ) Cash generated by/(used in) investing activities ( 17,280 ) 15,195 2,935 Financing activities: Payments for taxes related to net share settlement of equity awards ( 6,793 ) ( 5,960 ) ( 5,441 ) Payments for dividends and dividend equivalents ( 15,721 ) ( 15,421 ) ( 15,234 ) Repurchases of common stock ( 86,390 ) ( 90,711 ) ( 94,949 ) Proceeds from issuance of term debt, net — 4,481 — Repayments of term debt ( 12,396 ) ( 10,932 ) ( 9,958 ) Proceeds from/(Repayments of) commercial paper, net ( 5,911 ) ( 2,032 ) 3,960 Other ( 235 ) ( 111 ) ( 361 ) Cash used in financing activities ( 127,446 ) ( 120,686 ) ( 121,983 ) Increase/(Decrease) in cash, cash equivalents, and restricted cash and cash equivalents 371 5,991 ( 794 ) Cash, cash equivalents, and restricted cash and cash equivalents, ending balances $ 36,305 $ 35,934 $ 29,943",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-312",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsReceivable",
+      "value": 24590000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-26",
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "24,590",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Six Months Ended Jul 26, 2026 Jul 27, 2025 Cash flows from operating activities: Net income $ 118,010 $ 45,197 Adjustments to reconcile net income to net cash provided by operating activities: Stock-based compensation expense 3,954 3,099 Depreciation and amortization 2,124 1,280 Deferred income taxes 982 ( 2,160 ) Gains from equity securities, net ( 23,707 ) ( 2,073 ) Other 222 ( 196 ) Changes in operating assets and liabilities, net of acquisitions: Accounts receivable ( 24,590 ) ( 4,743 ) Inventories ( 10,204 ) ( 4,880 ) Prepaid expenses and other assets ( 6,480 ) 946 Accounts payable 4,125 2,255 Accrued and other current liabilities 8,015 3,075 Other long-term liabilities 1,970 979 Net cash provided by operating activities 74,421 42,779 Cash flows from investing activities: Proceeds from sales and maturities of debt securities 26,563 6,739 Proceeds from sales of equity securities 7,241 70 Purchases of equity securities ( 42,404 ) ( 1,245 ) Purchases of debt securities ( 21,777 ) ( 14,108 ) Purchases related to property and equipment and intangible assets ( 4,434 ) ( 3,122 ) Acquisitions, net of cash acquired ( 298 ) ( 677 ) Other ( 15 ) — Net cash used in investing activities ( 35,124 ) ( 12,343 ) Cash flows from financing activities: Proceeds related to issuance of debt, net of costs 24,896 — Proceeds related to employee stock plans 515 370 Payments related to repurchases of common stock ( 39,044 ) ( 23,815 ) Dividends paid ( 6,290 ) ( 488 ) Payments related to employee stock plan taxes ( 4,531 ) ( 3,380 ) Groq, Inc. ( 2,944 ) — Principal payments on property and equipment and intangible assets ( 92 ) ( 73 ) Other 31 — Net cash used in financing activities ( 27,459 ) ( 27,386 ) Change in cash and cash equivalents 11,838 3,050 Cash and cash equivalents at beginning of period 10,605 8,589 Cash and cash equivalents at end of period $ 22,443 $ 11,639",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-314",
+      "concept": "us-gaap:IncreaseDecreaseInInventories",
+      "value": 10204000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-26",
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "10,204",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Six Months Ended Jul 26, 2026 Jul 27, 2025 Cash flows from operating activities: Net income $ 118,010 $ 45,197 Adjustments to reconcile net income to net cash provided by operating activities: Stock-based compensation expense 3,954 3,099 Depreciation and amortization 2,124 1,280 Deferred income taxes 982 ( 2,160 ) Gains from equity securities, net ( 23,707 ) ( 2,073 ) Other 222 ( 196 ) Changes in operating assets and liabilities, net of acquisitions: Accounts receivable ( 24,590 ) ( 4,743 ) Inventories ( 10,204 ) ( 4,880 ) Prepaid expenses and other assets ( 6,480 ) 946 Accounts payable 4,125 2,255 Accrued and other current liabilities 8,015 3,075 Other long-term liabilities 1,970 979 Net cash provided by operating activities 74,421 42,779 Cash flows from investing activities: Proceeds from sales and maturities of debt securities 26,563 6,739 Proceeds from sales of equity securities 7,241 70 Purchases of equity securities ( 42,404 ) ( 1,245 ) Purchases of debt securities ( 21,777 ) ( 14,108 ) Purchases related to property and equipment and intangible assets ( 4,434 ) ( 3,122 ) Acquisitions, net of cash acquired ( 298 ) ( 677 ) Other ( 15 ) — Net cash used in investing activities ( 35,124 ) ( 12,343 ) Cash flows from financing activities: Proceeds related to issuance of debt, net of costs 24,896 — Proceeds related to employee stock plans 515 370 Payments related to repurchases of common stock ( 39,044 ) ( 23,815 ) Dividends paid ( 6,290 ) ( 488 ) Payments related to employee stock plan taxes ( 4,531 ) ( 3,380 ) Groq, Inc. ( 2,944 ) — Principal payments on property and equipment and intangible assets ( 92 ) ( 73 ) Other 31 — Net cash used in financing activities ( 27,459 ) ( 27,386 ) Change in cash and cash equivalents 11,838 3,050 Cash and cash equivalents at beginning of period 10,605 8,589 Cash and cash equivalents at end of period $ 22,443 $ 11,639",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-318",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsPayable",
+      "value": 4125000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-26",
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "4,125",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Six Months Ended Jul 26, 2026 Jul 27, 2025 Cash flows from operating activities: Net income $ 118,010 $ 45,197 Adjustments to reconcile net income to net cash provided by operating activities: Stock-based compensation expense 3,954 3,099 Depreciation and amortization 2,124 1,280 Deferred income taxes 982 ( 2,160 ) Gains from equity securities, net ( 23,707 ) ( 2,073 ) Other 222 ( 196 ) Changes in operating assets and liabilities, net of acquisitions: Accounts receivable ( 24,590 ) ( 4,743 ) Inventories ( 10,204 ) ( 4,880 ) Prepaid expenses and other assets ( 6,480 ) 946 Accounts payable 4,125 2,255 Accrued and other current liabilities 8,015 3,075 Other long-term liabilities 1,970 979 Net cash provided by operating activities 74,421 42,779 Cash flows from investing activities: Proceeds from sales and maturities of debt securities 26,563 6,739 Proceeds from sales of equity securities 7,241 70 Purchases of equity securities ( 42,404 ) ( 1,245 ) Purchases of debt securities ( 21,777 ) ( 14,108 ) Purchases related to property and equipment and intangible assets ( 4,434 ) ( 3,122 ) Acquisitions, net of cash acquired ( 298 ) ( 677 ) Other ( 15 ) — Net cash used in investing activities ( 35,124 ) ( 12,343 ) Cash flows from financing activities: Proceeds related to issuance of debt, net of costs 24,896 — Proceeds related to employee stock plans 515 370 Payments related to repurchases of common stock ( 39,044 ) ( 23,815 ) Dividends paid ( 6,290 ) ( 488 ) Payments related to employee stock plan taxes ( 4,531 ) ( 3,380 ) Groq, Inc. ( 2,944 ) — Principal payments on property and equipment and intangible assets ( 92 ) ( 73 ) Other 31 — Net cash used in financing activities ( 27,459 ) ( 27,386 ) Change in cash and cash equivalents 11,838 3,050 Cash and cash equivalents at beginning of period 10,605 8,589 Cash and cash equivalents at end of period $ 22,443 $ 11,639",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-296",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsReceivable",
+      "value": 3272000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001326801",
+        "dimensions": [
+
+        ]
+      },
+      "text": "3,272",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2026 2025 Cash flows from operating activities Net income $ 52,481 $ 37,690 Adjustments to reconcile net income to net cash provided by operating activities: Depreciation and amortization 19,509 13,205 Share-based compensation 21,053 14,537 Deferred income taxes 3,685 17,704 Unrealized (gain) and loss on equity investments 1,204 ( 642 ) Other ( 402 ) ( 359 ) Changes in assets and liabilities: Accounts receivable ( 3,272 ) 660 Prepaid expenses and other current assets ( 4,166 ) ( 348 ) Other assets ( 4,973 ) ( 209 ) Accounts payable 1,242 ( 637 ) Accrued expenses and other current liabilities 7,602 ( 2,883 ) Other liabilities 2,910 868 Net cash provided by operating activities 96,873 79,586 Cash flows from investing activities Purchases of property and equipment ( 83,055 ) ( 48,308 ) Purchases of marketable securities ( 117,467 ) ( 22,349 ) Sales and maturities of marketable securities 88,837 23,761 Payments for non-marketable equity investments ( 2,544 ) ( 18,260 ) Payments for held-for-sale assets ( 1,612 ) ( 1,797 ) Proceeds from data center venture distribution 1,037 — Acquisitions of businesses and intangible assets ( 584 ) ( 815 ) Other investing activities 1,079 ( 48 ) Net cash used in investing activities ( 114,309 ) ( 67,816 ) Cash flows from financing activities Taxes paid related to net share settlement of equity awards ( 12,768 ) ( 14,128 ) Repurchases of Class A common stock — ( 26,248 ) Payments for dividends and dividend equivalents ( 4,060 ) ( 3,986 ) Proceeds from issuance of long-term debt, net 24,910 — Principal payments on finance leases ( 2,769 ) ( 1,770 ) Other financing activities ( 2,631 ) 613 Net cash provided by (used in) financing activities 2,682 ( 45,519 ) Effect of exchange rate changes on cash, cash equivalents, restricted cash, and restricted cash equivalents 8 252 Net decrease in cash, cash equivalents, restricted cash, and restricted cash equivalents ( 14,746 ) ( 33,497 ) Cash, cash equivalents, restricted cash, and restricted cash equivalents at beginning of the period 39,100 45,438 Cash, cash equivalents, restricted cash, and restricted cash equivalents at end of the period $ 24,354 $ 11,941",
+      "document_id": 46,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "document_sha256": "9be61dbe6c06353f088da92b7c5a3f0b8b6e107d96130be4c8597c5f01c2e621",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-302",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsPayableTrade",
+      "value": 1242000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001326801",
+        "dimensions": [
+
+        ]
+      },
+      "text": "1,242",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2026 2025 Cash flows from operating activities Net income $ 52,481 $ 37,690 Adjustments to reconcile net income to net cash provided by operating activities: Depreciation and amortization 19,509 13,205 Share-based compensation 21,053 14,537 Deferred income taxes 3,685 17,704 Unrealized (gain) and loss on equity investments 1,204 ( 642 ) Other ( 402 ) ( 359 ) Changes in assets and liabilities: Accounts receivable ( 3,272 ) 660 Prepaid expenses and other current assets ( 4,166 ) ( 348 ) Other assets ( 4,973 ) ( 209 ) Accounts payable 1,242 ( 637 ) Accrued expenses and other current liabilities 7,602 ( 2,883 ) Other liabilities 2,910 868 Net cash provided by operating activities 96,873 79,586 Cash flows from investing activities Purchases of property and equipment ( 83,055 ) ( 48,308 ) Purchases of marketable securities ( 117,467 ) ( 22,349 ) Sales and maturities of marketable securities 88,837 23,761 Payments for non-marketable equity investments ( 2,544 ) ( 18,260 ) Payments for held-for-sale assets ( 1,612 ) ( 1,797 ) Proceeds from data center venture distribution 1,037 — Acquisitions of businesses and intangible assets ( 584 ) ( 815 ) Other investing activities 1,079 ( 48 ) Net cash used in investing activities ( 114,309 ) ( 67,816 ) Cash flows from financing activities Taxes paid related to net share settlement of equity awards ( 12,768 ) ( 14,128 ) Repurchases of Class A common stock — ( 26,248 ) Payments for dividends and dividend equivalents ( 4,060 ) ( 3,986 ) Proceeds from issuance of long-term debt, net 24,910 — Principal payments on finance leases ( 2,769 ) ( 1,770 ) Other financing activities ( 2,631 ) 613 Net cash provided by (used in) financing activities 2,682 ( 45,519 ) Effect of exchange rate changes on cash, cash equivalents, restricted cash, and restricted cash equivalents 8 252 Net decrease in cash, cash equivalents, restricted cash, and restricted cash equivalents ( 14,746 ) ( 33,497 ) Cash, cash equivalents, restricted cash, and restricted cash equivalents at beginning of the period 39,100 45,438 Cash, cash equivalents, restricted cash, and restricted cash equivalents at end of the period $ 24,354 $ 11,941",
+      "document_id": 46,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "document_sha256": "9be61dbe6c06353f088da92b7c5a3f0b8b6e107d96130be4c8597c5f01c2e621",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-474",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsReceivable",
+      "value": 10821000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "10,821",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2025 2026 Operating activities Net income $ 97,715 $ 201,239 Adjustments: Depreciation of property and equipment 15,096 21,955 Stock-based compensation expense 17,882 23,338 Deferred income taxes 7,130 33,077 Loss (gain) on debt and equity securities, net ( 22,266 ) ( 126,755 ) Other 843 4,825 Changes in assets and liabilities, net of effects of acquisitions: Accounts receivable, net ( 3,582 ) ( 10,821 ) Inventory ( 1,154 ) ( 10,959 ) Income taxes, net ( 3,292 ) 4,602 Other assets ( 2,906 ) ( 17,757 ) Accounts payable ( 771 ) 1,925 Accrued expenses and other liabilities 6,299 ( 860 ) Deferred revenue 1,317 3,340 Net cash provided by operating activities 112,311 127,149 Investing activities Purchases of property and equipment ( 63,596 ) ( 131,953 ) Purchases of marketable securities ( 60,834 ) ( 116,467 ) Maturities and sales of marketable securities 61,301 88,516 Purchases of non-marketable securities ( 3,312 ) ( 24,160 ) Maturities and sales of non-marketable securities 1,196 1,875 Acquisitions, net of cash acquired, and purchases of intangible assets ( 1,425 ) ( 34,103 ) Other investing activities ( 1,845 ) ( 879 ) Net cash used in investing activities ( 68,515 ) ( 217,171 ) Financing activities Net payments related to stock-based award activities ( 9,001 ) ( 17,424 ) Repurchases of stock ( 39,810 ) 0 Dividend payments on preferred and common stock ( 7,513 ) ( 8,167 ) Proceeds from issuance of common stock, net of costs 0 42,870 Proceeds from issuance of mandatory convertible preferred stock, net of costs 0 19,063 Proceeds from issuance of debt, net of costs 38,002 85,222 Repayments of debt ( 26,094 ) ( 8,879 ) Proceeds from sale of interest in consolidated entities, net 400 3,758 Other financing activities ( 400 ) ( 686 ) Net cash provided by (used in) financing activities ( 44,416 ) 115,757 Effect of exchange rate changes on cash and cash equivalents 244 ( 109 ) Net increase (decrease) in cash and cash equivalents ( 376 ) 25,626 Cash and cash equivalents at beginning of period 23,466 30,708 Cash and cash equivalents at end of period $ 23,090 $ 56,334 Supplemental disclosures of non-cash investing activities: Property and equipment included in accrued liabilities and accounts payable $ 14,574 $ 35,921",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-476",
+      "concept": "us-gaap:IncreaseDecreaseInInventories",
+      "value": 10959000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "10,959",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2025 2026 Operating activities Net income $ 97,715 $ 201,239 Adjustments: Depreciation of property and equipment 15,096 21,955 Stock-based compensation expense 17,882 23,338 Deferred income taxes 7,130 33,077 Loss (gain) on debt and equity securities, net ( 22,266 ) ( 126,755 ) Other 843 4,825 Changes in assets and liabilities, net of effects of acquisitions: Accounts receivable, net ( 3,582 ) ( 10,821 ) Inventory ( 1,154 ) ( 10,959 ) Income taxes, net ( 3,292 ) 4,602 Other assets ( 2,906 ) ( 17,757 ) Accounts payable ( 771 ) 1,925 Accrued expenses and other liabilities 6,299 ( 860 ) Deferred revenue 1,317 3,340 Net cash provided by operating activities 112,311 127,149 Investing activities Purchases of property and equipment ( 63,596 ) ( 131,953 ) Purchases of marketable securities ( 60,834 ) ( 116,467 ) Maturities and sales of marketable securities 61,301 88,516 Purchases of non-marketable securities ( 3,312 ) ( 24,160 ) Maturities and sales of non-marketable securities 1,196 1,875 Acquisitions, net of cash acquired, and purchases of intangible assets ( 1,425 ) ( 34,103 ) Other investing activities ( 1,845 ) ( 879 ) Net cash used in investing activities ( 68,515 ) ( 217,171 ) Financing activities Net payments related to stock-based award activities ( 9,001 ) ( 17,424 ) Repurchases of stock ( 39,810 ) 0 Dividend payments on preferred and common stock ( 7,513 ) ( 8,167 ) Proceeds from issuance of common stock, net of costs 0 42,870 Proceeds from issuance of mandatory convertible preferred stock, net of costs 0 19,063 Proceeds from issuance of debt, net of costs 38,002 85,222 Repayments of debt ( 26,094 ) ( 8,879 ) Proceeds from sale of interest in consolidated entities, net 400 3,758 Other financing activities ( 400 ) ( 686 ) Net cash provided by (used in) financing activities ( 44,416 ) 115,757 Effect of exchange rate changes on cash and cash equivalents 244 ( 109 ) Net increase (decrease) in cash and cash equivalents ( 376 ) 25,626 Cash and cash equivalents at beginning of period 23,466 30,708 Cash and cash equivalents at end of period $ 23,090 $ 56,334 Supplemental disclosures of non-cash investing activities: Property and equipment included in accrued liabilities and accounts payable $ 14,574 $ 35,921",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-482",
+      "concept": "us-gaap:IncreaseDecreaseInAccountsPayable",
+      "value": 1925000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "1,925",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2025 2026 Operating activities Net income $ 97,715 $ 201,239 Adjustments: Depreciation of property and equipment 15,096 21,955 Stock-based compensation expense 17,882 23,338 Deferred income taxes 7,130 33,077 Loss (gain) on debt and equity securities, net ( 22,266 ) ( 126,755 ) Other 843 4,825 Changes in assets and liabilities, net of effects of acquisitions: Accounts receivable, net ( 3,582 ) ( 10,821 ) Inventory ( 1,154 ) ( 10,959 ) Income taxes, net ( 3,292 ) 4,602 Other assets ( 2,906 ) ( 17,757 ) Accounts payable ( 771 ) 1,925 Accrued expenses and other liabilities 6,299 ( 860 ) Deferred revenue 1,317 3,340 Net cash provided by operating activities 112,311 127,149 Investing activities Purchases of property and equipment ( 63,596 ) ( 131,953 ) Purchases of marketable securities ( 60,834 ) ( 116,467 ) Maturities and sales of marketable securities 61,301 88,516 Purchases of non-marketable securities ( 3,312 ) ( 24,160 ) Maturities and sales of non-marketable securities 1,196 1,875 Acquisitions, net of cash acquired, and purchases of intangible assets ( 1,425 ) ( 34,103 ) Other investing activities ( 1,845 ) ( 879 ) Net cash used in investing activities ( 68,515 ) ( 217,171 ) Financing activities Net payments related to stock-based award activities ( 9,001 ) ( 17,424 ) Repurchases of stock ( 39,810 ) 0 Dividend payments on preferred and common stock ( 7,513 ) ( 8,167 ) Proceeds from issuance of common stock, net of costs 0 42,870 Proceeds from issuance of mandatory convertible preferred stock, net of costs 0 19,063 Proceeds from issuance of debt, net of costs 38,002 85,222 Repayments of debt ( 26,094 ) ( 8,879 ) Proceeds from sale of interest in consolidated entities, net 400 3,758 Other financing activities ( 400 ) ( 686 ) Net cash provided by (used in) financing activities ( 44,416 ) 115,757 Effect of exchange rate changes on cash and cash equivalents 244 ( 109 ) Net increase (decrease) in cash and cash equivalents ( 376 ) 25,626 Cash and cash equivalents at beginning of period 23,466 30,708 Cash and cash equivalents at end of period $ 23,090 $ 56,334 Supplemental disclosures of non-cash investing activities: Property and equipment included in accrued liabilities and accounts payable $ 14,574 $ 35,921",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1052",
+      "concept": "us-gaap:ShareBasedCompensationArrangementByShareBasedPaymentAwardEquityInstrumentsOtherThanOptionsNonvestedNumber",
+      "value": 142405000.0,
+      "unit": "xbrli:shares",
+      "context": {
+        "start": null,
+        "end": "2026-09-26",
+        "issuer": "0000320193",
+        "dimensions": [
+          {
+            "axis": "us-gaap:AwardTypeAxis",
+            "member": "us-gaap:RestrictedStockUnitsRSUMember"
+          }
+        ]
+      },
+      "text": "142,405",
+      "scale": "3",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Number of RSUs (in thousands) Weighted-Average Grant-Date Fair Value Balance as of September 27, 2025 151,574 $ 189.75 RSUs granted 75,538 $ 260.81 RSUs vested ( 73,529 ) $ 185.44 RSUs forfeited ( 11,178 ) $ 215.25 Balance as of September 26, 2026 142,405 $ 227.67",
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-400",
+      "concept": "us-gaap:ShareBasedCompensationArrangementByShareBasedPaymentAwardEquityInstrumentsOtherThanOptionsNonvestedNumber",
+      "value": 168000000.0,
+      "unit": "xbrli:shares",
+      "context": {
+        "start": null,
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+          {
+            "axis": "us-gaap:AwardTypeAxis",
+            "member": "nvda:RSUsPSUsandMarketbasedPSUsMember"
+          }
+        ]
+      },
+      "text": "168",
+      "scale": "6",
+      "sign": null,
+      "format": null,
+      "row": "RSUs, PSUs and Market-based PSUs Outstanding Number of Shares Weighted Average Grant-Date Fair Value Per Share (In millions, except per share data) Balance as of Jan 25, 2026 189 $ 81.51 Granted 49 $ 183.74 Vested ( 63 ) $ 54.60 Canceled and forfeited ( 7 ) $ 102.16 Balance as of Jul 26, 2026 168 $ 120.41",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-903",
+      "concept": "us-gaap:ShareBasedCompensationArrangementByShareBasedPaymentAwardEquityInstrumentsOtherThanOptionsNonvestedNumber",
+      "value": 134474000.0,
+      "unit": "xbrli:shares",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001326801",
+        "dimensions": [
+          {
+            "axis": "us-gaap:AwardTypeAxis",
+            "member": "us-gaap:RestrictedStockUnitsRSUMember"
+          }
+        ]
+      },
+      "text": "134,474",
+      "scale": "3",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Number of Shares Weighted-Average Grant Date Fair Value Per Share (in thousands) Unvested at December 31, 2025 115,552 $ 500.68 Granted 89,834 $ 608.46 Vested ( 47,428 ) $ 427.47 Forfeited ( 23,484 ) $ 551.33 Unvested at September 30, 2026 134,474 $ 589.66",
+      "document_id": 46,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "document_sha256": "9be61dbe6c06353f088da92b7c5a3f0b8b6e107d96130be4c8597c5f01c2e621",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1938",
+      "concept": "us-gaap:ShareBasedCompensationArrangementByShareBasedPaymentAwardEquityInstrumentsOtherThanOptionsNonvestedNumber",
+      "value": 284000000.0,
+      "unit": "xbrli:shares",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "284",
+      "scale": "6",
+      "sign": null,
+      "format": null,
+      "row": "Number of Shares Weighted- Average Grant-Date Fair Value Unvested as of December 31, 2025 282 $ 159.75 Granted 155 $ 300.12 Vested ( 128 ) $ 171.99 Forfeited/canceled ( 25 ) $ 198.43 Unvested as of September 30, 2026 284 $ 227.39",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-464",
+      "concept": "us-gaap:Depreciation",
+      "value": 21955000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "21,955",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Nine Months Ended September 30, 2025 2026 Operating activities Net income $ 97,715 $ 201,239 Adjustments: Depreciation of property and equipment 15,096 21,955 Stock-based compensation expense 17,882 23,338 Deferred income taxes 7,130 33,077 Loss (gain) on debt and equity securities, net ( 22,266 ) ( 126,755 ) Other 843 4,825 Changes in assets and liabilities, net of effects of acquisitions: Accounts receivable, net ( 3,582 ) ( 10,821 ) Inventory ( 1,154 ) ( 10,959 ) Income taxes, net ( 3,292 ) 4,602 Other assets ( 2,906 ) ( 17,757 ) Accounts payable ( 771 ) 1,925 Accrued expenses and other liabilities 6,299 ( 860 ) Deferred revenue 1,317 3,340 Net cash provided by operating activities 112,311 127,149 Investing activities Purchases of property and equipment ( 63,596 ) ( 131,953 ) Purchases of marketable securities ( 60,834 ) ( 116,467 ) Maturities and sales of marketable securities 61,301 88,516 Purchases of non-marketable securities ( 3,312 ) ( 24,160 ) Maturities and sales of non-marketable securities 1,196 1,875 Acquisitions, net of cash acquired, and purchases of intangible assets ( 1,425 ) ( 34,103 ) Other investing activities ( 1,845 ) ( 879 ) Net cash used in investing activities ( 68,515 ) ( 217,171 ) Financing activities Net payments related to stock-based award activities ( 9,001 ) ( 17,424 ) Repurchases of stock ( 39,810 ) 0 Dividend payments on preferred and common stock ( 7,513 ) ( 8,167 ) Proceeds from issuance of common stock, net of costs 0 42,870 Proceeds from issuance of mandatory convertible preferred stock, net of costs 0 19,063 Proceeds from issuance of debt, net of costs 38,002 85,222 Repayments of debt ( 26,094 ) ( 8,879 ) Proceeds from sale of interest in consolidated entities, net 400 3,758 Other financing activities ( 400 ) ( 686 ) Net cash provided by (used in) financing activities ( 44,416 ) 115,757 Effect of exchange rate changes on cash and cash equivalents 244 ( 109 ) Net increase (decrease) in cash and cash equivalents ( 376 ) 25,626 Cash and cash equivalents at beginning of period 23,466 30,708 Cash and cash equivalents at end of period $ 23,090 $ 56,334 Supplemental disclosures of non-cash investing activities: Property and equipment included in accrued liabilities and accounts payable $ 14,574 $ 35,921",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1581",
+      "concept": "us-gaap:AmortizationOfIntangibleAssets",
+      "value": 920000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "920",
+      "scale": "6",
+      "sign": null,
+      "format": null,
+      "row": "Amortization expense relating to intangible assets was $ 129 million and $ 375 million for the three months ended September 30, 2025 and 2026, respectively, and $ 375 million and $ 920 million for the nine months ended September 30, 2025 and 2026, respectively.",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1375",
+      "concept": "us-gaap:NoncontrollingInterestInVariableInterestEntity",
+      "value": 6900000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "6.9",
+      "scale": "9",
+      "sign": null,
+      "format": null,
+      "row": "Total noncontrolling interests (NCI) in our consolidated subsidiaries were $ 3.4 billion and $ 6.9 billion as of December 31, 2025 and September 30, 2026, respectively, of which $ 841 million and $ 825 million were redeemable noncontrolling interests (RNCI) as of December 31, 2025 and September 30, 2026, respectively. NCI and RNCI are included within common stock and additional paid-in capital (APIC). Net loss attributable to noncontrolling interests was not material for any period presented and is included within the \"other\" component of OI&E.",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-1377",
+      "concept": "goog:RedeemableNoncontrollingInterestInVariableInterestEntity",
+      "value": 825000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": null,
+        "end": "2026-09-30",
+        "issuer": "0001652044",
+        "dimensions": [
+
+        ]
+      },
+      "text": "825",
+      "scale": "6",
+      "sign": null,
+      "format": null,
+      "row": "Total noncontrolling interests (NCI) in our consolidated subsidiaries were $ 3.4 billion and $ 6.9 billion as of December 31, 2025 and September 30, 2026, respectively, of which $ 841 million and $ 825 million were redeemable noncontrolling interests (RNCI) as of December 31, 2025 and September 30, 2026, respectively. NCI and RNCI are included within common stock and additional paid-in capital (APIC). Net loss attributable to noncontrolling interests was not material for any period presented and is included within the \"other\" component of OI&E.",
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "claim_type": "Fact"
+    },
+    {
+      "id": "f-334",
+      "concept": "us-gaap:PaymentsToAcquireProductiveAssets",
+      "value": 4434000000.0,
+      "unit": "iso4217:USD",
+      "context": {
+        "start": "2026-01-26",
+        "end": "2026-07-26",
+        "issuer": "0001045810",
+        "dimensions": [
+
+        ]
+      },
+      "text": "4,434",
+      "scale": "6",
+      "sign": null,
+      "format": "ixt:num-dot-decimal",
+      "row": "Purchases related to property and equipment and intangible assets ( 4,434 ) ( 3,122 )",
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "claim_type": "Fact"
+    }
+  ],
+  "passage_evidence": [
+    {
+      "document_id": 43,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000114036126042798/ef20085077_8k.htm",
+      "document_sha256": "22b02cdc9761a6dfc570dd6a471a915c9f9f219acaa9a7c608882e6881d3f58f",
+      "exact_text_after_whitespace_normalization": "On November 9, 2026, Apple Inc. (“Apple”) consummated the issuance and sale of $500,000,000 aggregate principal amount of its Floating Rate Notes due 2028 (the “2028 Floating Rate Notes”), $750,000,000 aggregate principal amount of its Floating Rate Notes due 2029 (the “2029 Floating Rate Notes”), $1,000,000,000 aggregate principal amount of its 4.650% Notes due 2028 (the “2028 Fixed Rate Notes”), $1,000,000,000 aggregate principal amount of its 4.750% Notes due 2029 (the “2029 Fixed Rate Notes”), $1,000,000,000 aggregate principal amount of its 4.900% Notes due 2031 (the “2031 Fixed Rate Notes”), $1,250,000,000 aggregate principal amount of its 5.100% Notes due 2033 (the “2033 Fixed Rate Notes”) and $2,000,000,000 aggregate principal amount of its 5.350% Notes due 2036 (the “2036 Fixed Rate Notes” and, together with the 2028 Floating Rate Notes, the 2029 Floating Rate Notes, the 2028 Fixed Rate Notes, the 2029 Fixed Rate Notes, the 2031 Fixed Rate Notes and the 2033 Fixed Rate Notes, the “Notes”), pursuant to an underwriting agreement (the “Underwriting Agreement”) dated November 5, 2026 among Apple and Goldman Sachs & Co. LLC, BofA Securities, Inc., Deutsche Bank Securities Inc. and J.P. Morgan Securities LLC, as representatives of the several underwriters named therein. ",
+      "sha256": "f1960c71fbb2a2ca02f1e8d2226b37c8c3edf2400deaa58c1d70db664ed796ce",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 47,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450074/d166273d8k.htm",
+      "document_sha256": "d74649e457a000cc2bf36d46990ba65e8b11e42e8e4f8d323eabcc8f6eafb76c",
+      "exact_text_after_whitespace_normalization": "On November 5, 2026, Meta Platforms, Inc. (the “Company”) completed an offering of $3,250,000,000 aggregate principal amount of its 5.850% Senior Notes due 2031 (the “2031 Notes”), $3,250,000,000 aggregate principal amount of its 6.250% Senior Notes due 2033 (the “2033 Notes”), $4,000,000,000 aggregate principal amount of its 6.550% Senior Notes due 2036 (the “2036 Notes”), $1,750,000,000 aggregate principal amount of its 7.350% Senior Notes due 2046 (the “2046 Notes”), and $2,750,000,000 aggregate principal amount of its 7.500% Senior Notes due 2056 (the “2056 Notes” and, together with the 2031 Notes, the 2033 Notes, the 2036 Notes, and the 2046 Notes, the “USD Notes”). ",
+      "sha256": "0241540fae06b58f61d20c6ba6d92c33f6ba554f49154551be08920fb82e54e8",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 48,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526458525/d177728d8k.htm",
+      "document_sha256": "b2df0b05664c777df805a94973628fdec2d5cd904d822b61dec1b56ecd2a6d4e",
+      "exact_text_after_whitespace_normalization": "On November 12, 2026, Meta Platforms, Inc. (the “Company”) completed an offering of €1,750,000,000 aggregate principal amount of its 4.300% Senior Notes due 2031 (the “2031 Notes”), €1,250,000,000 aggregate principal amount of its 4.650% Senior Notes due 2033 (the “2033 Notes”), €1,000,000,000 aggregate principal amount of its 4.900% Senior Notes due 2035 (the “2035 Notes”), €1,750,000,000 aggregate principal amount of its 5.400% Senior Notes due 2038 (the “2038 Notes”), €1,750,000,000 aggregate principal amount of its 6.050% Senior Notes due 2044 (the “2044 Notes”), and €1,500,000,000 aggregate principal amount of its 6.400% Senior Notes due 2065 (the “2065 Notes” and, together with the 2031 Notes, the 2033 Notes, the 2035 Notes, the 2038 Notes, and the 2044 Notes, the “EUR Notes”). ",
+      "sha256": "856f14fc44b6b7311d480ecd00f5acf712f1f2db49af544fe4de8ef31f7778bf",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 50,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526449835/d174184d8k.htm",
+      "document_sha256": "a6f9eda1ba68411a4e543e57fca330748046fd155b8d9be7946292fb6cf70eb1",
+      "exact_text_after_whitespace_normalization": "On November 5, 2026, Alphabet Inc. (“Alphabet”) closed its underwritten public offering of €6 billion aggregate principal amount of euro-denominated senior notes (the “Notes”)",
+      "sha256": "3d6c1b87ad0275da8c3f9c3352524e84fc70bb76b020676454d8e927a11fe77e",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 44,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+      "document_sha256": "66cbd404bb7d5c6d67e57d5440029fd8dd6be64dfce5ad9ae04622d2e7d7fa24",
+      "exact_text_after_whitespace_normalization": "Our condensed consolidated financial statements include the accounts of NVIDIA Corporation and our wholly owned subsidiaries.",
+      "sha256": "e66e3fb84b9f9afa54064c80dc441b0dccf1f9645f20f23ac292fcdf832ef9b6",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 20,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm",
+      "document_sha256": "26f653329048525930ff2f4983ece2e2ec57a69b36b377dd1f0abcb61f331402",
+      "exact_text_after_whitespace_normalization": "The consolidated financial statements include the accounts of Apple Inc. and its wholly owned subsidiaries.",
+      "sha256": "a478587ca2266e84cc17b555c07f640d12ff571689731368efeb169f4373f907",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 37,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/320193/000119312520213158/d49399dex31.htm",
+      "document_sha256": "2957463edaf098e2296d3c44ecf91e69b7db90d41c4604c10ae04e29a3af34e1",
+      "exact_text_after_whitespace_normalization": "This corporation is authorized to issue one class of shares designated “Common Stock,” par value $0.00001 per share.",
+      "sha256": "84434ae50172aae2a209cf02c9442935fb6a2fbb3c16ae420fc07b200053212c",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 40,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+      "document_sha256": "0cd53a1d28adaabdd3439de1db8ec0dcce9802043885cb60f26672872bf90c61",
+      "exact_text_after_whitespace_normalization": "The Depositary Shares Offering closed on October 29, 2026.",
+      "sha256": "82113e748cc93adfb01f048614c8fad5f5fb4c73eff0e01a8d21e69e39919d97",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 40,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+      "document_sha256": "0cd53a1d28adaabdd3439de1db8ec0dcce9802043885cb60f26672872bf90c61",
+      "exact_text_after_whitespace_normalization": "agreed to issue and sell 250,000,000 Series A depositary shares (the “Depositary Shares”), each representing a 1/20th interest in a share of 6.50% Series A Mandatory Convertible Preferred Stock, liquidation preference $1,000.00 per share",
+      "sha256": "892a32062a65bbcec9439a474e4fb89041c5e92168676e3d5c2e9a179c6e60e5",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 41,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450754/d44678d424b5.htm",
+      "document_sha256": "d1e7e40695fa31207c50bcd13e475ac8296e50154aaf96e57ce5bfea91375a41",
+      "exact_text_after_whitespace_normalization": "On October 29, 2026, the underwriters of our previously completed offering of Series A depositary shares exercised in full their over-allotment option to purchase an additional 37,500,000 Series A depositary shares (the “Additional Depositary Shares”), each representing a 1/20th interest in a share of the Company’s 6.50% Series A Mandatory Convertible Preferred Stock, liquidation preference $1,000 per share, par value $0.000006 per share. The Company issued the Additional Depositary Shares on November 2, 2026",
+      "sha256": "c4ae4cc175f683825e68430c205e8291e3a8ab69260bf9a1713ca9377ce7a48a",
+      "claim_type": "Source Summary"
+    },
+    {
+      "document_id": 42,
+      "document_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+      "document_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635",
+      "exact_text_after_whitespace_normalization": "On June 5, 2026, the company issued an aggregate amount of 385 million Series A and Series B depositary shares, representing 19 million shares of 6.25 % Mandatory Convertible Preferred Stock, split evenly into Series A (indexed to Class A stock) and Series B (indexed to Class C stock).",
+      "sha256": "07aa911b468108b3410e94fb30888a529da3fb47180c1cff53137ebbef1bc336",
+      "claim_type": "Source Summary"
+    }
+  ],
+  "market_evidence": {
+    "captured_at": "2026-11-13T07:35:30.895Z",
+    "valuation_date": "2026-11-12",
+    "observations": [
+      {
+        "ticker": "AAPL",
+        "as_of": "2026-11-12",
+        "close_usd": 354.88,
+        "source": "Issuer-hosted Tickertech quote; third-party market data explicitly disclosed",
+        "url": "https://investor.apple.com/stock-price/default.aspx",
+        "evidence": "November 12, 2026 4:00 p.m. ET; historical table November 12, 2026 $354.88"
+      },
+      {
+        "ticker": "AAPL",
+        "as_of": "2026-11-12",
+        "price_usd": 354.88,
+        "source": "Nasdaq displayed last sale, market closed; November 12 NOCP row not yet present",
+        "url": "https://www.nasdaq.com/market-activity/stocks/aapl/historical-nocp?page=1&rows_per_page=10&timeline=d5"
+      },
+      {
+        "ticker": "NVDA",
+        "as_of": "2026-11-12",
+        "price_usd": 166.19,
+        "source": "Nasdaq historical Close/Last",
+        "url": "https://www.nasdaq.com/market-activity/stocks/nvda/historical",
+        "row": "11/12/2026 $166.19 747,707,600 $151.005 $167.14 $148.80"
+      },
+      {
+        "ticker": "META",
+        "as_of": "2026-11-12",
+        "price_usd": 623.61,
+        "source": "Nasdaq historical Close/Last",
+        "url": "https://www.nasdaq.com/market-activity/stocks/meta/historical",
+        "row": "11/12/2026 $623.61 10,341,840 $625.35 $630.32 $618.92"
+      },
+      {
+        "ticker": "GOOG",
+        "as_of": "2026-11-12",
+        "price_usd": 295.35,
+        "source": "Nasdaq historical Close/Last; Class C share class used for Alphabet employee awards",
+        "url": "https://www.nasdaq.com/market-activity/stocks/goog/historical",
+        "row": "11/12/2026 $295.35 22,186,290 $290.555 $299.25 $290.472"
+      },
+      {
+        "ticker": "AAPL",
+        "as_of": "2026-11-12",
+        "price_usd": 354.88,
+        "source": "Nasdaq historical Close/Last",
+        "url": "https://www.nasdaq.com/market-activity/stocks/aapl/historical",
+        "row": "11/12/2026 $354.88 31,874,980 $357.81 $359.3684 $354.41"
+      },
+      {
+        "ticker": "METAM",
+        "as_of": "2026-11-12",
+        "price_usd": 50.24,
+        "source": "Nasdaq historical Close/Last",
+        "url": "https://www.nasdaq.com/market-activity/stocks/metam/historical",
+        "row": "11/12/2026 $50.24 1,294,239 $50.00 $50.62 $49.99",
+        "conflicting_header_usd": 50.1,
+        "warning": "Header and historical row differ. Historical row retained for calculation; not a reconciled official closing price."
+      },
+      {
+        "ticker": "GOOGM",
+        "as_of": "2026-11-12",
+        "price_usd": 43.29,
+        "source": "Nasdaq historical Close/Last; Series A depositary share",
+        "url": "https://www.nasdaq.com/market-activity/stocks/googm/historical",
+        "row": "11/12/2026 $43.29 2,413,823 $42.83 $43.64 $42.73"
+      },
+      {
+        "ticker": "GOOGN",
+        "as_of": "2026-11-12",
+        "price_usd": 43.18,
+        "source": "Nasdaq historical Close/Last; Series B depositary share",
+        "url": "https://www.nasdaq.com/market-activity/stocks/googn/historical",
+        "row": "11/12/2026 $43.18 2,910,818 $42.57 $43.49 $42.57"
+      }
+    ],
+    "fx": {
+      "date": "2026-11-12",
+      "base": "EUR",
+      "quote": "USD",
+      "value": 1.1081,
+      "source": "ECB reference rate, informational not transaction rate",
+      "url": "https://www.ecb.europa.eu/stats/policy_and_exchange_rates/euro_reference_exchange_rates/html/index.en.html"
+    },
+    "unresolved_conflicts": [
+      {
+        "ticker": "METAM",
+        "historical_close_last": 50.24,
+        "headline": 50.1,
+        "nocp_series_latest_date": "2026-11-11",
+        "status": "unreconciled"
+      }
+    ]
+  },
+  "calculations": [
+    {
+      "key": "aapl_reported_debt",
+      "label": "Apple reported notes, commercial paper and finance leases",
+      "claim_type": "Calculation",
+      "value": 81567000000.0,
+      "unit": "USD",
+      "formula": "(1 * 1997000000.0) + (1 * 9906000000.0) + (1 * 68208000000.0) + (1 * 1456000000.0)",
+      "limitations": [
+
+      ]
+    },
+    {
+      "key": "meta_reported_borrowings",
+      "label": "Meta reported current and noncurrent notes",
+      "claim_type": "Calculation",
+      "value": 83669000000.0,
+      "unit": "USD",
+      "formula": "(1 * 80922000000.0) + (1 * 2747000000.0)",
+      "limitations": [
+
+      ]
+    },
+    {
+      "key": "goog_reported_debt",
+      "label": "Alphabet reported notes, commercial paper and finance leases",
+      "claim_type": "Calculation",
+      "value": 129823000000.0,
+      "unit": "USD",
+      "formula": "(1 * 125102000000.0) + (1 * 1016000000.0) + (1 * 0.0) + (1 * 3705000000.0)",
+      "limitations": [
+
+      ]
+    },
+    {
+      "key": "aapl_debt_rollforward",
+      "label": "Apple disclosed debt roll-forward subtotal",
+      "claim_type": "Estimate",
+      "value": 89067000000.0,
+      "unit": "USD",
+      "formula": "(1 * 1997000000.0) + (1 * 9906000000.0) + (1 * 68208000000.0) + (1 * 1456000000.0) + (1 * 7500000000)",
+      "limitations": [
+        "Latest reported carrying balances plus verified subsequent gross issuance principal, not an exact November 12 debt valuation.",
+        "Unreported repayments, fees, subsequent lease changes and remeasurement of existing foreign-currency debt are not inferred.",
+        "Operating leases remain separate; do not deduct them twice. New debt proceeds must be reconciled with cash before any equity bridge."
+      ]
+    },
+    {
+      "key": "nvda_disclosed_financing",
+      "label": "NVIDIA notes plus deferred purchase consideration",
+      "claim_type": "Calculation",
+      "value": 34352000000.0,
+      "unit": "USD",
+      "formula": "(1 * 33366000000.0) + (1 * 986000000.0)",
+      "limitations": [
+        "July 26 balance only. Includes USD 1 billion notes with a 2026 maturity; subsequent repayment is not verified.",
+        "Complete finance-lease and financed-asset balances are not established. Not a complete financing claim."
+      ]
+    },
+    {
+      "key": "meta_new_euro_principal_usd",
+      "label": "Meta new EUR 9 billion face translated at November 12 ECB reference rate",
+      "claim_type": "Calculation",
+      "value": 9972900000.0,
+      "unit": "USD",
+      "formula": "(1.1081 * 9000000000)",
+      "limitations": [
+
+      ]
+    },
+    {
+      "key": "meta_debt_rollforward",
+      "label": "Meta disclosed notes roll-forward subtotal",
+      "claim_type": "Estimate",
+      "value": 108641900000.0,
+      "unit": "USD",
+      "formula": "(1 * 80922000000.0) + (1 * 2747000000.0) + (1 * 15000000000) + (1 * 9972900000.0000)",
+      "limitations": [
+        "Latest reported carrying balances plus verified subsequent gross issuance principal, not an exact November 12 debt valuation.",
+        "Unreported repayments, fees, subsequent lease changes and remeasurement of existing foreign-currency debt are not inferred.",
+        "Operating leases remain separate; do not deduct them twice. New debt proceeds must be reconciled with cash before any equity bridge.",
+        "Current finance-lease liability is not separately established by the reviewed September filing; not zero."
+      ]
+    },
+    {
+      "key": "goog_new_euro_principal_usd",
+      "label": "Alphabet new EUR 6 billion face translated at November 12 ECB reference rate",
+      "claim_type": "Calculation",
+      "value": 6648600000.0,
+      "unit": "USD",
+      "formula": "(1.1081 * 6000000000)",
+      "limitations": [
+
+      ]
+    },
+    {
+      "key": "goog_debt_rollforward",
+      "label": "Alphabet disclosed debt roll-forward subtotal",
+      "claim_type": "Estimate",
+      "value": 136471600000.0,
+      "unit": "USD",
+      "formula": "(1 * 125102000000.0) + (1 * 1016000000.0) + (1 * 0.0) + (1 * 3705000000.0) + (1 * 6648600000.0000)",
+      "limitations": [
+        "Latest reported carrying balances plus verified subsequent gross issuance principal, not an exact November 12 debt valuation.",
+        "Unreported repayments, fees, subsequent lease changes and remeasurement of existing foreign-currency debt are not inferred.",
+        "Operating leases remain separate; do not deduct them twice. New debt proceeds must be reconciled with cash before any equity bridge."
+      ]
+    },
+    {
+      "key": "aapl_trade_cash_absorption",
+      "label": "AAPL disclosed trade cash absorption, positive cash use",
+      "claim_type": "Calculation",
+      "value": 7444000000.0,
+      "unit": "USD",
+      "formula": "(1 * 3994000000.0) + (1 * 6716000000.0) + (1 * 8905000000.0) + (-1 * 12171000000.0)",
+      "limitations": [
+        "Only the reported 2025-09-28 to 2026-09-26 period. No annualization.",
+        "Excludes undisclosed or mixed accrual, tax and other operating rows. Not complete change in operating working capital.",
+        "Do not combine with a sales-to-capital reinvestment estimate for the same forecast."
+      ]
+    },
+    {
+      "key": "nvda_trade_cash_absorption",
+      "label": "NVDA disclosed trade cash absorption, positive cash use",
+      "claim_type": "Calculation",
+      "value": 30669000000.0,
+      "unit": "USD",
+      "formula": "(1 * 24590000000.0) + (1 * 10204000000.0) + (-1 * 4125000000.0)",
+      "limitations": [
+        "Only the reported 2026-01-26 to 2026-07-26 period. No annualization.",
+        "Excludes undisclosed or mixed accrual, tax and other operating rows. Not complete change in operating working capital.",
+        "Do not combine with a sales-to-capital reinvestment estimate for the same forecast."
+      ]
+    },
+    {
+      "key": "meta_trade_cash_absorption",
+      "label": "META disclosed trade cash absorption, positive cash use",
+      "claim_type": "Calculation",
+      "value": 2030000000.0,
+      "unit": "USD",
+      "formula": "(1 * 3272000000.0) + (-1 * 1242000000.0)",
+      "limitations": [
+        "Only the reported 2026-01-01 to 2026-09-30 period. No annualization.",
+        "Excludes undisclosed or mixed accrual, tax and other operating rows. Not complete change in operating working capital.",
+        "Do not combine with a sales-to-capital reinvestment estimate for the same forecast."
+      ]
+    },
+    {
+      "key": "googl_trade_cash_absorption",
+      "label": "GOOGL disclosed trade cash absorption, positive cash use",
+      "claim_type": "Calculation",
+      "value": 19855000000.0,
+      "unit": "USD",
+      "formula": "(1 * 10821000000.0) + (1 * 10959000000.0) + (-1 * 1925000000.0)",
+      "limitations": [
+        "Only the reported 2026-01-01 to 2026-09-30 period. No annualization.",
+        "Excludes undisclosed or mixed accrual, tax and other operating rows. Not complete change in operating working capital.",
+        "Do not combine with a sales-to-capital reinvestment estimate for the same forecast."
+      ]
+    },
+    {
+      "key": "aapl_gross_award_mark",
+      "label": "AAPL gross reported unvested award mark at November 12 share price",
+      "claim_type": "Estimate",
+      "value": 50536686400.0,
+      "unit": "USD",
+      "formula": "(354.88 * 142405000.0)",
+      "limitations": [
+        "Uses latest disclosed 2026-09-26 quantity, not an asserted November 12 award count.",
+        "No invented vesting, performance, forfeiture, tax benefit, discounting, dividend or later-grant adjustments.",
+        "Gross exposure reference only; not an approved employee_options_value or fair value of the entire employee claim.",
+        "Do not deduct this amount and also include the same awards in diluted shares.",
+        "No assumption that all remaining employee rights are included."
+      ]
+    },
+    {
+      "key": "nvda_gross_award_mark",
+      "label": "NVDA gross reported unvested award mark at November 12 share price",
+      "claim_type": "Estimate",
+      "value": 27919920000.0,
+      "unit": "USD",
+      "formula": "(166.19 * 168000000.0)",
+      "limitations": [
+        "Uses latest disclosed 2026-07-26 quantity, not an asserted November 12 award count.",
+        "No invented vesting, performance, forfeiture, tax benefit, discounting, dividend or later-grant adjustments.",
+        "Gross exposure reference only; not an approved employee_options_value or fair value of the entire employee claim.",
+        "Do not deduct this amount and also include the same awards in diluted shares.",
+        "No assumption that all remaining employee rights are included."
+      ]
+    },
+    {
+      "key": "meta_gross_award_mark",
+      "label": "META gross reported unvested award mark at November 12 share price",
+      "claim_type": "Estimate",
+      "value": 83859331140.0,
+      "unit": "USD",
+      "formula": "(623.61 * 134474000.0)",
+      "limitations": [
+        "Uses latest disclosed 2026-09-30 quantity, not an asserted November 12 award count.",
+        "No invented vesting, performance, forfeiture, tax benefit, discounting, dividend or later-grant adjustments.",
+        "Gross exposure reference only; not an approved employee_options_value or fair value of the entire employee claim.",
+        "Do not deduct this amount and also include the same awards in diluted shares.",
+        "No assumption that all remaining employee rights are included."
+      ]
+    },
+    {
+      "key": "googl_gross_award_mark",
+      "label": "GOOGL gross reported unvested award mark at November 12 share price",
+      "claim_type": "Estimate",
+      "value": 83879400000.0,
+      "unit": "USD",
+      "formula": "(295.35 * 284000000.0)",
+      "limitations": [
+        "Uses latest disclosed 2026-09-30 quantity, not an asserted November 12 award count.",
+        "No invented vesting, performance, forfeiture, tax benefit, discounting, dividend or later-grant adjustments.",
+        "Gross exposure reference only; not an approved employee_options_value or fair value of the entire employee claim.",
+        "Do not deduct this amount and also include the same awards in diluted shares.",
+        "Alphabet Class C GOOG price is used for award exposure; other share classes are not priced by this row."
+      ]
+    },
+    {
+      "key": "goog_ytd_da",
+      "label": "Alphabet nine-month PP&E depreciation plus intangible amortization",
+      "claim_type": "Calculation",
+      "value": 22875000000.0,
+      "unit": "USD",
+      "formula": "(1 * 21955000000.0) + (1 * 920000000.0)",
+      "limitations": [
+        "January through September 2026 only, not annual or trailing-twelve-month D&A.",
+        "Finance-lease asset amortization is already included in PP&E depreciation; do not add it again."
+      ]
+    },
+    {
+      "key": "goog_nci_book_proxy",
+      "label": "Alphabet noncontrolling book-value proxy",
+      "claim_type": "Estimate",
+      "value": 6900000000.0,
+      "unit": "USD",
+      "formula": "(1 * 6900000000.0)",
+      "limitations": [
+        "Reviewed modeling proxy only, not market value. Includes the USD 825 million redeemable subset; do not add it again.",
+        "Latest reported September 30 balance; later subsidiary financing or conversions are not inferred."
+      ]
+    },
+    {
+      "key": "meta_preferred_indicated_value",
+      "label": "Meta preferred indicated value from disputed historical price",
+      "claim_type": "Estimate",
+      "value": 14444000000.0,
+      "unit": "USD",
+      "formula": "(50.24 * 287500000)",
+      "limitations": [
+        "Held from valuation use: Nasdaq historical Close/Last is USD 50.24, headline is USD 50.10; November 12 NOCP row was not available.",
+        "Uses verified depositary shares issued through November 2, not a daily outstanding-share certification.",
+        "If preferred value is deducted, do not also include its conversion shares in common dilution."
+      ]
+    },
+    {
+      "key": "meta_preferred_alternative_header",
+      "label": "Meta preferred exposure at conflicting headline quote",
+      "claim_type": "Estimate",
+      "value": 14403750000.0,
+      "unit": "USD",
+      "formula": "(50.10 * 287500000)",
+      "limitations": [
+        "Conflict sensitivity only, not a second approved valuation."
+      ]
+    },
+    {
+      "key": "goog_preferred_face",
+      "label": "Alphabet preferred face from depositary count, avoiding rounded preferred-share count",
+      "claim_type": "Calculation",
+      "value": 19250000000.0,
+      "unit": "USD",
+      "formula": "(50 * 385000000)",
+      "limitations": [
+        "385 million depositary interests / 20 = 19.25 million underlying preferred shares; do not use the rounded 19 million balance-sheet display."
+      ]
+    },
+    {
+      "key": "goog_preferred_market_proxy",
+      "label": "Alphabet two preferred series at November 12 market prices",
+      "claim_type": "Estimate",
+      "value": 16645475000.0,
+      "unit": "USD",
+      "formula": "(43.29 * 192500000) + (43.18 * 192500000)",
+      "limitations": [
+        "Uses the reported 385 million depositary issuance split evenly and latest disclosed outstanding-share basis; later conversions are not assumed to be zero.",
+        "Series A and B have separate prices. No separate preferred dividend or conversion-share deduction may duplicate the quoted claim."
+      ]
+    }
+  ],
+  "personal_input_needed": [
+
+  ],
+  "unresolved_source_requirements": {
+    "AAPL": [
+      "Complete post-September debt/cash roll-forward, including repayments and fees.",
+      "Operating accrual/tax breakdown for complete NWC.",
+      "Post-September award ledger and vesting/performance/tax treatment for a full employee claim."
+    ],
+    "NVDA": [
+      "Finance-lease/financed-asset balance and post-July debt roll-forward, including treatment of the USD 1 billion 2026 maturity.",
+      "Complete operating NWC breakdown.",
+      "Post-July employee-award and ESPP rights, vesting/performance/tax basis."
+    ],
+    "META": [
+      "Current finance-lease balance and reconciled cash/debt roll-forward through the November financings.",
+      "Explicit noncontrolling ownership/claim disclosure; absence of a separate line is not zero.",
+      "Complete NWC and post-September award/vesting/tax basis.",
+      "Reconciled November 12 METAM closing quote."
+    ],
+    "GOOGL": [
+      "Complete post-September cash/debt/FX roll-forward.",
+      "Full FY2023-2025 intangible amortization for annual D&A; nine-month disclosure cannot fill those years.",
+      "Complete NWC and post-September award/vesting/tax basis.",
+      "Market value of minority claims if a book-value proxy is insufficient."
+    ]
+  },
+  "source_gap_is_user_approval_request": false,
+  "existing_financials_and_saved_models_overwritten": false,
+  "application_result": {
+    "raw_document_ids": [
+      43,
+      44,
+      45,
+      46,
+      47,
+      48,
+      49,
+      50
+    ],
+    "processing_run_ids": [
+      262,
+      263,
+      264,
+      265,
+      266,
+      267,
+      268,
+      269,
+      270,
+      271,
+      272,
+      273
+    ],
+    "company_review_notes": [
+      {
+        "company_id": 13,
+        "note_id": 20,
+        "run_id": 270,
+        "status": "created_and_verified"
+      },
+      {
+        "company_id": 14,
+        "note_id": 21,
+        "run_id": 271,
+        "status": "created_and_verified"
+      },
+      {
+        "company_id": 15,
+        "note_id": 22,
+        "run_id": 272,
+        "status": "created_and_verified"
+      },
+      {
+        "company_id": 16,
+        "note_id": 23,
+        "run_id": 273,
+        "status": "created_and_verified"
+      }
+    ],
+    "notes_display_status": "active",
+    "note_formatting": "Existing full-width note detail preserves paragraphs; display values rounded to three decimal billion units, exact amounts retained in metadata.",
+    "source_numeric_records_and_saved_models_changed": false,
+    "personal_date_choice_only": true
+  },
+  "validation": {
+    "original_numeric_facts_reverified": 33,
+    "original_passages_reverified": 11,
+    "decimal_calculations": 23,
+    "nasdaq_historical_prices": 7,
+    "ecb_reference_rates": 1,
+    "price_conflicts_retained": [
+      "METAM"
+    ],
+    "browser": {
+      "checked_at": "2026-11-13T07:49:51.830Z",
+      "checks": [
+        {
+          "company_id": 13,
+          "title": "Apple: financial input review as of November 12, 2026",
+          "documentWidth": 309,
+          "width": 319,
+          "passed": true
+        },
+        {
+          "company_id": 14,
+          "title": "NVIDIA: financial input review as of November 12, 2026",
+          "documentWidth": 309,
+          "width": 319,
+          "passed": true
+        },
+        {
+          "company_id": 15,
+          "title": "Meta: financial input review as of November 12, 2026",
+          "quote_conflict_visible": true,
+          "documentWidth": 309,
+          "width": 319,
+          "passed": true
+        },
+        {
+          "company_id": 16,
+          "title": "Alphabet: financial input review as of November 12, 2026",
+          "preferred_series_separate": true,
+          "documentWidth": 309,
+          "width": 319,
+          "passed": true
+        },
+        {
+          "company_id": 16,
+          "view": "desktop",
+          "documentWidth": 1430,
+          "width": 1440,
+          "passed": true
+        },
+        {
+          "note_id": 23,
+          "view": "detail-desktop",
+          "documentWidth": 1430,
+          "width": 1440,
+          "paragraphs": 9,
+          "whiteSpace": "pre-wrap",
+          "passed": true
+        },
+        {
+          "note_id": 22,
+          "view": "detail-desktop",
+          "held_value_visible": true,
+          "documentWidth": 1430,
+          "width": 1440,
+          "passed": true
+        },
+        {
+          "note_id": 22,
+          "view": "detail-mobile",
+          "documentWidth": 380,
+          "width": 390,
+          "passed": true
+        }
+      ],
+      "all_checks_passed": true,
+      "initial_detail_error": {
+        "url": "/thesis-notes/23",
+        "message": "Could not load this thesis note.",
+        "backend_record_and_schema_valid": true,
+        "resolved_after_reload": true,
+        "root_cause": "Not established; not reproduced on the second note detail",
+        "code_changed": false
+      },
+      "final_heading": "Alphabet: financial input review as of November 12, 2026"
+    },
+    "preservation": {
+      "checked_at": "2026-11-13T07:49:25Z",
+      "backup_sha256": "1143623ae916514ef48f489a19ae182946b2349619416d9d2935288797cd0224",
+      "tables": {
+        "raw_documents": {
+          "old_records": 23,
+          "old_records_unchanged": 23,
+          "new_records": 8
+        },
+        "processing_runs": {
+          "old_records": 76,
+          "old_records_unchanged": 76,
+          "new_records": 12
+        },
+        "thesis_notes": {
+          "old_records": 5,
+          "old_records_unchanged": 5,
+          "new_records": 4
+        }
+      },
+      "unchanged_tables": [
+        "ai_consent_decisions",
+        "ai_outputs",
+        "alembic_version",
+        "alert_evals",
+        "alert_portfolio_impacts",
+        "alerts",
+        "assumption_method_values",
+        "brief_comparison_reviews",
+        "brief_sources",
+        "companies",
+        "company_exposure_tags",
+        "company_industry_allocations",
+        "company_industry_mixes",
+        "company_macro_inputs",
+        "company_macro_segment_exposures",
+        "company_macro_sensitivity_results",
+        "company_market_data",
+        "company_setup_workflows",
+        "country_market_context",
+        "country_market_stats",
+        "daily_brief_schedules",
+        "daily_briefs",
+        "damodaran_dataset_files",
+        "damodaran_industry_capex_benchmarks",
+        "damodaran_industry_dividend_benchmarks",
+        "damodaran_industry_fcfe_benchmarks",
+        "damodaran_industry_financing_flows",
+        "damodaran_industry_fundamental_growth",
+        "damodaran_industry_margin_benchmarks",
+        "damodaran_industry_pricing_benchmarks",
+        "damodaran_industry_roe_benchmarks",
+        "damodaran_industry_working_capital_benchmarks",
+        "dcf_assumption_sets",
+        "dcf_decision_logs",
+        "dcf_outputs",
+        "dcf_projection_years",
+        "dcf_sensitivity_tables",
+        "decision_logs",
+        "decision_readiness",
+        "document_assets",
+        "entity_scores",
+        "evaluation_runs",
+        "event_contradictions",
+        "event_corroborations",
+        "event_evidence_references",
+        "event_extraction_evals",
+        "event_thesis_impacts",
+        "events",
+        "evidence_ledger",
+        "exposure_tags",
+        "filing_section_diffs",
+        "filing_sections",
+        "financial_extraction_candidates",
+        "financial_extraction_evals",
+        "financial_metrics",
+        "financial_reconciliation_records",
+        "financial_statement_periods",
+        "forecast_calibrations",
+        "fx_rate_observations",
+        "industry_volatility_benchmarks",
+        "macro_observations",
+        "macro_series",
+        "market_prices",
+        "market_regime_inputs",
+        "market_regime_scores",
+        "market_source_capabilities",
+        "narrative_claims",
+        "narrative_clusters",
+        "narrative_mentions",
+        "normalized_financial_metrics",
+        "normalized_financial_snapshots",
+        "oauth_tokens",
+        "option_eligibility_tests",
+        "outcome_reviews",
+        "peer_valuation_members",
+        "peer_valuation_revision_members",
+        "peer_valuation_revision_target_profiles",
+        "peer_valuation_set_revisions",
+        "peer_valuation_sets",
+        "peer_valuation_target_profiles",
+        "portfolio_benchmark_configs",
+        "portfolio_cash_balances",
+        "portfolio_holdings",
+        "portfolio_snapshots",
+        "portfolio_transactions",
+        "portfolios",
+        "provider_quotas",
+        "real_option_assumptions",
+        "real_option_results",
+        "regression_model_coefficients",
+        "research_messages",
+        "research_sessions",
+        "scoring_configs",
+        "sector_macro_sensitivity_benchmarks",
+        "sentiment_scores",
+        "social_posts",
+        "source_fact_revisions",
+        "sources",
+        "thesis_assumptions",
+        "thesis_changes",
+        "users",
+        "valuation_assumption_change_logs",
+        "valuation_assumption_provenance",
+        "valuation_evals",
+        "valuation_models",
+        "valuation_setup_drafts",
+        "variant_perception"
+      ],
+      "all_prior_records_unchanged": true,
+      "saved_financial_and_valuation_tables_unchanged": true
+    },
+    "unchanged_tables_during_browser": 110,
+    "application_code_changed": false,
+    "tests": "Source/date/unit checks, independent original re-verification, row preservation and eight signed-in browser checks; no application code changed."
+  },
+  "recovery_archives": {
+    "before-dated-review.dump": {
+      "path": "output/milestones/valuation-inputs-asof-20261112/before-dated-review.dump",
+      "bytes": 5349485,
+      "sha256": "1143623ae916514ef48f489a19ae182946b2349619416d9d2935288797cd0224",
+      "fully_read_with_pg_restore": true,
+      "restored": false
+    },
+    "after-dated-review.dump": {
+      "path": "output/milestones/valuation-inputs-asof-20261112/after-dated-review.dump",
+      "bytes": 5754589,
+      "sha256": "705f8e4d410bc75b1d110e12cd702be577c2abb616eb0c047b84d5a1dce35351",
+      "fully_read_with_pg_restore": true,
+      "restored": false
+    },
+    "final-dated-review.dump": {
+      "path": "output/milestones/valuation-inputs-asof-20261112/final-dated-review.dump",
+      "bytes": 5754235,
+      "sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+      "fully_read_with_pg_restore": true,
+      "restored": false
+    }
+  },
+  "audit_directory": "output/milestones/valuation-inputs-asof-20261112",
+  "readable_report": "output/milestones/valuation-inputs-asof-20261112/review.md",
+  "artifact_sha256": {
+    "public-source-inventory.json": "7d5f6cc58b3cfb6aa158fad18294c1eff16c0d0fba79cbe58802cacdccc91168",
+    "market-prices.json": "c3c6c89ef62cbe4d06fc2cbad0e6cf8903c8cb28b99dcab64aac7301540a7a18",
+    "note-payloads-initial.json": "b2a9e45a9c18a42035d4a237c4b1507b7213a9703df667d82d9fa80d82506522",
+    "note-payloads.json": "623ad663f444d73641633175c5b2a96ae7c39d3c0f1ca38daa7ae066ef2ec2c4",
+    "calculation-checks.json": "a770f2b9a9c74b77abfe0494c314e4619f1caafb1a1ab665a7ae126719ff3379",
+    "browser-checks.json": "00fe1389bb70c0618e33c92f4f719ad31e8e70b06190e3ec6ec4cbc39d796d74",
+    "review.md": "e7046d06345da8ea7c31513551fdb08897f008ee983b695ea291bb4e6a30ac1c",
+    "alphabet-dated-review-final.png": "3241086ba59eb36e345f348934cec4ce27af205d10117625cff3e3d66da34e9b"
+  },
+  "docker_retention": {
+    "containers": 4,
+    "images": 4,
+    "volumes": 2,
+    "build_cache_bytes": 0,
+    "application_restarted": false
+  },
+  "completed_at": "2026-11-13T07:51:25Z"
+}

@@ -36,7 +36,11 @@ the task at hand. Each subject below has one current owner.
 ## Maintain the project
 
 The [roadmap](roadmaps/product-roadmap.md) owns priorities. The
-[completion tracker](roadmaps/completion-tracker.md) owns acceptance gates, not an
+[research workspace plan](roadmaps/research-workspace-plan.md) specifies the target
+navigation, screen layouts, connected workflows, backend changes, delivery packages
+and acceptance tests for the November 13 simplification work. [Operations retention
+policy](operations.md#essential-retention-policy) owns essential-only storage.
+The [completion tracker](roadmaps/completion-tracker.md) owns acceptance gates, not an
 estimate of engineering effort. [Review decisions](roadmaps/review-decisions.md)
 retain the basis of delegated choices.
 

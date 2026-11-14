@@ -1,5 +1,6 @@
 import logging
 from collections.abc import Callable
+from datetime import UTC, datetime
 
 from fastapi import HTTPException
 from sqlalchemy import select
@@ -15,6 +16,7 @@ from app.services.processing_runs import start_processing_run, complete_processi
 
 
 FILING_DOCUMENT_TYPES = {
+    "sec_filing_metadata",
     "10-K",
     "10-Q",
     "8-K",
@@ -55,21 +57,11 @@ def discover_company_filings(
     filing_year: int | None = None,
     limit: int = 20,
 ) -> FilingDiscoveryRead:
+    overview = filing_discovery_overview(db, company_id)
+    if overview.manual_required:
+        return overview
     company = _get_company(db, company_id)
-    market = (company.market or "US").upper()
     provider = get_filing_provider(company, source="auto")
-
-    if market == "IN":
-        return FilingDiscoveryRead(
-            company_id=company.id,
-            market=market,
-            provider_name=provider.provider_name,
-            mode="manual",
-            manual_required=True,
-            filings=[],
-            next_action="Add a reviewed annual report, quarterly result, or exchange announcement manually.",
-            official_manual_source=official_manual_source(company),
-        )
 
     try:
         filings = audited_filing_preview(db, company, provider.provider_name,
@@ -90,14 +82,30 @@ def discover_company_filings(
             provider=provider.provider_name,
         ) from exc
 
+    return FilingDiscoveryRead.model_validate({**overview.model_dump(),
+        "discovery_status": "complete",
+        "checked_at": datetime.now(UTC),
+        "filings": filings,
+        "next_action": "Review filing candidates before ingestion or add a manual filing if the source is not available.",
+    })
+
+
+def filing_discovery_overview(db: Session, company_id: int) -> FilingDiscoveryRead:
+    """Describe the source without contacting it or recording a processing run."""
+    company = _get_company(db, company_id)
+    market = (company.market or "US").upper()
+    provider = get_filing_provider(company, source="auto")
+    manual = market == "IN"
     return FilingDiscoveryRead(
         company_id=company.id,
         market=market,
         provider_name=provider.provider_name,
-        mode="automated",
-        manual_required=False,
-        filings=filings,
-        next_action="Review filing candidates before ingestion or add a manual filing if the source is not available.",
+        mode="manual" if manual else "automated",
+        manual_required=manual,
+        discovery_status="manual" if manual else "not_requested",
+        next_action=("Add a reviewed annual report, quarterly result, or exchange announcement manually."
+                     if manual else "Check for filings to contact the provider. Opening this page does not start a check."),
+        official_manual_source=official_manual_source(company) if manual else None,
     )
 
 

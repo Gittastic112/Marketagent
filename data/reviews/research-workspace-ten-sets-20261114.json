@@ -1,0 +1,208 @@
+{
+  "recorded_at": "2026-11-14T18:38:14Z",
+  "status": "verified_installed",
+  "sets": [
+    {
+      "id": "P2.3",
+      "scope": "New annual period and accounting-basis snapshots in existing metadata"
+    },
+    {
+      "id": "P2.4",
+      "scope": "Read-only selected-date financial evidence and conflicts"
+    },
+    {
+      "id": "P3.1",
+      "scope": "Required-input guidance and no missing-share fallback"
+    },
+    {
+      "id": "P3.2",
+      "scope": "Non-writing saved-model diff and deterministic preview"
+    },
+    {
+      "id": "P3.3",
+      "scope": "Atomic reviewed version save, retry receipt, history and selected-version export"
+    },
+    {
+      "id": "P4.1",
+      "scope": "Bounded owner-aware review projection"
+    },
+    {
+      "id": "P4.2",
+      "scope": "Today state filters and source return paths"
+    },
+    {
+      "id": "P4.3",
+      "scope": "Thesis chooser, linked evidence and recorded changes"
+    },
+    {
+      "id": "P5.1",
+      "scope": "Current-holdings-scoped research queue"
+    },
+    {
+      "id": "P5.2",
+      "scope": "Filtered source library, Advanced landing and Settings links"
+    }
+  ],
+  "verification": {
+    "backend_batch": 263,
+    "final_focused": 27,
+    "postgres": 7,
+    "frontend": 393,
+    "contracts": 36,
+    "builds": true,
+    "typecheck": true,
+    "backend_counts_overlap": true,
+    "full_playwright_suite_run": false,
+    "actual_use_days_added": 0,
+    "browser_fixture": [
+      "Today state filter 10 to 4 records",
+      "November 12 publication cutoff selected 100 rather than later 110; both source revisions retained",
+      "Conflicting values remained unselected",
+      "Saved-model cash 0 to 5 preview; per-share 222.57795818 to 223.07795818",
+      "Reviewed version saved with reason and November 12 research date",
+      "Previous version cash 0 unchanged; historical controls disabled",
+      "Selected historical JSON download completed; downloaded contents unavailable under macOS Downloads privacy",
+      "Thesis chooser switched assumption/event/change history from note 2 to note 1",
+      "Current holdings queue retained missing price and unknown valuation",
+      "Literal source title filter narrowed four sources to one",
+      "Source return links reached financial review and saved models",
+      "Required diluted-share link opened group and focused exact field",
+      "Advanced and Settings links loaded",
+      "Mobile 320 CSS pixel page remained bounded with financial tables scrolling internally",
+      "Final panel spacing and heading hierarchy visually verified"
+    ],
+    "browser_limits": [
+      "Fixture metadata was corrected to the existing draft contract after its initial empty metadata caused the route error boundary",
+      "Full Playwright E2E suite was not run",
+      "Export filename and selected UI identity verified; file contents not independently reread"
+    ]
+  },
+  "installed_browser": {
+    "passed": true,
+    "checked_at": "2026-11-14T18:33:35.625Z",
+    "basis": "Signed-in normal app; read-only checks",
+    "companies": [
+      {
+        "companyId": 13,
+        "heading": "Fundamentals: AAPL",
+        "date": "2026-11-12",
+        "rows": 42
+      },
+      {
+        "companyId": 14,
+        "heading": "Fundamentals: NVDA",
+        "date": "2026-11-12",
+        "rows": 43
+      },
+      {
+        "companyId": 15,
+        "heading": "Fundamentals: META",
+        "date": "2026-11-12",
+        "rows": 41
+      },
+      {
+        "companyId": 16,
+        "heading": "Fundamentals: GOOGL",
+        "date": "2026-11-12",
+        "rows": 49
+      }
+    ],
+    "checks": [
+      "Today 12 of 209 records; explicit bounded count and filters",
+      "Four company dated evidence pages at November 12",
+      "Unknown publication dates held; explicit latest-recorded mode shows existing amounts",
+      "Apple saved model retains one version #14 and $150.54 estimate",
+      "Apple thesis chooser retains six existing notes and dated source review",
+      "Portfolio 2 retains Sample label, quote timing and holdings-scoped research",
+      "Narrow-screen financial tables bounded; requested 320 CSS pixels, observed normal viewport 440 and page width 430"
+    ],
+    "normal_data_writes": false,
+    "new_user_use_days": 0,
+    "limitations": [
+      "Some existing annual revisions lack publication timestamps and therefore remain unselected in published-by-date mode",
+      "Normal app save was deliberately not exercised; isolated Mock Data save and PostgreSQL concurrency were verified",
+      "Downloaded Mock Data export could not be reread or removed because macOS denied Downloads/Finder access"
+    ]
+  },
+  "installation": {
+    "installed_at": "2026-11-14T17:57:20Z",
+    "project": "market-intelligence-review-20261112-financial-history",
+    "images": {
+      "backend": {
+        "previous": "sha256:19f12d5fbddfcc24baeddae52ccc93fbd7e22329ab8d4aa228a9d1e681f0b3b4",
+        "installed": "sha256:ae0e1782aa4b0b543ed86d50d85979763a25b488f7bade169f0aae9c6923a258",
+        "container": "fe63c81e933840bebc9e77a783cd2c996eac9799a16e6f07a6b58d56808f0f08"
+      },
+      "scheduler": {
+        "previous": "sha256:19f12d5fbddfcc24baeddae52ccc93fbd7e22329ab8d4aa228a9d1e681f0b3b4",
+        "installed": "sha256:ae0e1782aa4b0b543ed86d50d85979763a25b488f7bade169f0aae9c6923a258",
+        "container": "801fbe7e7ab33e7ba7fd06d4de31d89931c35b3fd305b32554642bea1e787e9c"
+      },
+      "frontend": {
+        "previous": "sha256:952dc721a3ea426c0dd25a615d64d8c910990f562dfc7ce5466042ece449c029",
+        "installed": "sha256:ed0092f21eea280dad68af7e746c2cceee4e9ee54165277e5b9c7a1289f4a4fb",
+        "container": "b214662f3bf26a46c2d929fdcd709e29f21ecf55937148bb5e0ceb9caaf4ee44"
+      }
+    },
+    "unchanged_tables": 110,
+    "settings_unchanged": true,
+    "mounts_unchanged": true,
+    "protections_unchanged": true,
+    "database_restarted": false,
+    "volumes_unchanged": true,
+    "new_backup": false,
+    "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514"
+  },
+  "preservation": {
+    "checked_at": "2026-11-14T18:34:00Z",
+    "unchanged_tables": 110,
+    "backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+    "backup_bytes": 5754235,
+    "new_backup": false,
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514"
+  },
+  "installed_sources": {
+    "backend_source_files": 340,
+    "matched": true
+  },
+  "retention": {
+    "containers": 4,
+    "images": 4,
+    "volumes": 2,
+    "build_cache_bytes": 0,
+    "new_backup": false,
+    "temporary_databases_removed": true,
+    "removed_build_context_bytes": 5024270,
+    "image_usage_before": "4.492GB",
+    "image_usage_after": "2.737GB",
+    "docker_reported_cache_reclamation": "Total:\t3.307GB",
+    "size_caveat": "Docker logical figures, not additive physical filesystem reclamation",
+    "tools_image_reason": "Required isolated checks and recovery tools; host Git/Python toolchain unavailable",
+    "cleanup_receipt": "output/milestones/research-workspace-ten-sets-20261114/cleanup.json",
+    "exception": "/Users/mananmaheshwari/Downloads/valuation-1-version-1.json"
+  },
+  "boundaries": [
+    "Quarterly/YTD/transition promotion remains blocked; no migration or historical rewrite",
+    "Selected date does not rebase a draft/model or reconstruct historical market data",
+    "Initial model creation does not yet use the new preview flow",
+    "Queue coverage is partial and older source failures may remain after later success",
+    "Existing publication-unknown sources stay unselected by date; latest recorded mode is explicit",
+    "No financial source gaps resolved, personal decisions inferred, or acceptance points added"
+  ],
+  "next": [
+    "Carry selected source revision/date/knowledge into a draft proposal and save receipt",
+    "Extend preview to initial model creation",
+    "Design full period identity before enabling interim promotion",
+    "Reconcile queue source outcomes and preserve originating review context",
+    "Continue worker reliability, measured performance and actual-use acceptance"
+  ],
+  "evidence_root": "output/milestones/research-workspace-ten-sets-20261114/",
+  "docs_validation": {
+    "status": "passed",
+    "unit_tests": 24,
+    "active_markdown_files": 96,
+    "local_links": 1238,
+    "diff_whitespace": "passed"
+  }
+}

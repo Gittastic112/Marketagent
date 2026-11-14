@@ -1,4 +1,20 @@
 /* Private source inbox and company research surfaces. Reuse the application tokens. */
+.review-queue { min-width: 0; margin-bottom: var(--space-5); }
+.review-queue > p, .dated-input-review > p { margin: var(--space-3) 0; color: var(--text-secondary); }
+.dated-input-review form { margin: var(--space-5) 0; }
+.review-queue-filters { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.review-queue-filters a { padding: var(--space-2); border-bottom: 2px solid transparent; }
+.review-queue-filters a[aria-current="page"] { border-color: var(--color-accent); font-weight: 600; }
+.review-queue-list { list-style: none; padding: 0; margin: var(--space-4) 0; }
+.review-queue-list li { display: flex; align-items: center; justify-content: space-between; gap: var(--space-4); padding: var(--space-4) 0; border-top: 1px solid var(--color-border-default); }
+.review-queue-list li > div { min-width: 0; overflow-wrap: anywhere; }
+.review-queue-list h3 { font-size: var(--font-size-md); font-weight: 600; margin: var(--space-2) 0; }
+.review-queue-list p { margin: var(--space-2) 0; font-size: var(--font-size-sm); line-height: 1.6; }
+.review-queue-list small { color: var(--text-secondary); }
+.review-queue-list .secondary-button { flex-shrink: 0; }
+.dated-source-detail { min-width: 18rem; max-width: 38rem; border-top: 1px solid var(--color-border-default); padding: var(--space-3) 0; }
+.dated-source-detail pre, .dated-source-detail blockquote, .dated-source-detail dd { white-space: pre-wrap; overflow-wrap: anywhere; margin-left: 0; }
+@media (max-width: 640px) { .review-queue-list li { align-items: flex-start; flex-direction: column; } }
 .brief-intake-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(240px, 1fr); gap: var(--space-6); margin: var(--space-5) 0; }
 .brief-intake-form fieldset { border: 0; padding: 0; min-width: 0; display: grid; gap: var(--space-4); }
 .brief-intake-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); }
@@ -29,6 +45,7 @@
 .brief-source-hash { overflow-wrap: anywhere; }
 .company-research-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 330px), 1fr)); gap: var(--space-4); }
 .company-research-card { min-width: 0; padding: var(--space-5); border: 1px solid var(--color-border-default); border-radius: var(--radius-medium); }
+.company-research-card.company-research-card-compact { padding: 0; border: 0; }
 .company-research-card h3 { font-size: var(--font-size-lg); margin: var(--space-3) 0; }
 .company-business-excerpt { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow-y: auto; font-size: var(--font-size-sm); line-height: 1.65; }
 .company-research-links { display: flex; flex-wrap: wrap; gap: var(--space-4); border-top: 1px solid var(--color-border-default); padding-top: var(--space-4); margin-top: var(--space-4); font-size: var(--font-size-sm); }
@@ -76,3 +93,19 @@
 .triage-analyst-review label:not(.triage-checkbox) { display: grid; gap: 0.4rem; font-weight: 600; }
 .triage-analyst-review textarea, .triage-analyst-review select { width: 100%; min-width: 0; }
 .preserve-whitespace { white-space: pre-wrap; overflow-wrap: anywhere; }
+.research-card-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.5rem 0.75rem;
+}
+.research-card-heading > strong, .research-card-copy { flex: 1 1 14rem; min-width: 0; }
+.research-card-heading > .badge { max-width: 100%; white-space: normal; }
+.research-record-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}

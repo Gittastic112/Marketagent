@@ -3,11 +3,16 @@ import { Suspense } from "react";
 import { CompanyResearchCards } from "@/components/company-research-cards";
 import { DataStateNotices, EmptyState, ErrorState, Panel } from "@/components/page";
 import type { Portfolio, PortfolioValuation } from "@/lib/api/portfolio";
-import { formatCurrency, formatNumber } from "@/lib/formatting";
+import { formatCurrency, formatDataLabel, formatNumber } from "@/lib/formatting";
 import { serverFetchApiResponse } from "@/lib/server-api";
+import type { ReviewQueue } from "@/lib/api/review-queue";
+import { ResearchReviewQueue } from "@/components/review-queue";
 
 export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio }) {
-  const response = await serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`);
+  const [response, researchResponse] = await Promise.all([
+    serverFetchApiResponse<PortfolioValuation>(`/portfolios/${portfolio.id}/valuation`),
+    serverFetchApiResponse<ReviewQueue>(`/review-queue?portfolio_id=${portfolio.id}&limit=12`),
+  ]);
   const value = response.data;
   if (!value) return <ErrorState message="Portfolio values could not be loaded." errors={response.errors} />;
   const money = (amount: number | null | undefined) => amount == null ? "Not available" : formatCurrency(amount, value.base_currency);
@@ -23,7 +28,7 @@ export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio })
     </section>
     {value.missing_fx_pairs.length > 0 && <p className="basis-note">Missing FX: {value.missing_fx_pairs.join(", ")}. Aggregate values remain unavailable.</p>}
     <Panel title="Holdings" actions={<Link prefetch={false} href={`/portfolio/${portfolio.id}?tab=performance`}>Performance & risk →</Link>}>
-      {value.holdings.length === 0 ? <EmptyState label="No active holdings. Add positions from Manage holdings." /> : <div className="table-wrap"><table>
+      {value.holdings.length === 0 ? <EmptyState label="No active holdings. Add positions from Manage holdings." /> : <div className="table-wrap" tabIndex={0} role="region" aria-label="Portfolio holdings"><table>
         <caption className="sr-only">Holdings valued in {value.base_currency}; each price retains its own date and source.</caption>
         <thead><tr><th>Company</th><th className="numeric">Shares</th><th className="numeric">Price</th><th className="numeric">Value ({value.base_currency})</th><th className="numeric">Weight</th><th className="numeric">Unrealized change</th><th>Price evidence</th></tr></thead>
         <tbody>{value.holdings.map(holding => <tr key={holding.holding_id ?? `${holding.company_id}:${holding.ticker}:${holding.currency}`}>
@@ -33,10 +38,11 @@ export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio })
           <td className="numeric">{money(holding.market_value_base)}</td>
           <td className="numeric">{holding.weight_percent == null ? "Not available" : `${formatNumber(holding.weight_percent, 1)}%`}</td>
           <td className="numeric">{money(holding.unrealized_pnl_base)}</td>
-          <td><span className="cell-primary">{holding.market_price_as_of || "No price"}{holding.market_price != null && holding.is_stale_price && <span className="badge badge-warn">Stale</span>}</span><span className="cell-secondary">{holding.market_price_provider || "No source"}{holding.market_price_id ? ` · #${holding.market_price_id}` : ""}</span></td>
+          <td><span className="cell-primary">{holding.market_price_as_of || "No price"}{holding.market_price != null && holding.is_stale_price && <span className="badge badge-warn">Stale</span>}</span><span className="cell-secondary">{holding.market_price_provider ? formatDataLabel(holding.market_price_provider) : "No source"}{holding.market_price_id ? ` · #${holding.market_price_id}` : ""}</span></td>
         </tr>)}</tbody>
       </table></div>}
     </Panel>
+    <ResearchReviewQueue report={researchResponse.data} error={researchResponse.errors[0]?.message} compact portfolioId={portfolio.id} />
     <Suspense fallback={<p role="status">Loading company research…</p>}><CompanyResearchCards companyIds={value.holdings.flatMap(holding => holding.company_id ? [holding.company_id] : [])} /></Suspense>
     <div className="next-actions">
       <Link prefetch={false} href={`/portfolio/${portfolio.id}?tab=performance`}><strong>Understand performance</strong><span>Dated returns, attribution and risk calculations</span></Link>

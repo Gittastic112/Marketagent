@@ -83,7 +83,9 @@ def test_review_plan_distinguishes_linked_fact_units_and_rejected_candidates(db_
     report = build_financial_review_plan(db_session, owner.id)
     assert field(report, "debt")["status"] == "recorded_with_source"
     assert field(report, "debt")["source_links"][0]["candidate_id"] == candidate.id
-    assert field(report, "debt")["source_links"][0]["href"].endswith("/sections")
+    assert field(report, "debt")["source_links"][0]["href"] == (
+        f"/documents/{document.id}/sections?candidate_id={candidate.id}"
+    )
     assert field(report, "revenue")["status"] == "unit_review"
     assert field(report, "cash")["status"] == "missing"
     candidate.review_status = "needs_review"; db_session.commit()
@@ -114,13 +116,17 @@ def test_actual_promotion_remains_source_linked_and_missing_metric_requires_reco
     db_session.add(document); db_session.flush()
     candidate = FinancialExtractionCandidate(company_id=owner.id, raw_document_id=document.id,
         metric_code="revenue", reported_label="Mock Data revenue", value=13000, unit="INR crore",
-        fiscal_year=2025, period_type="annual", source_text="Revenue 13000 INR crore", review_status="overridden")
+        fiscal_year=2025, period_type="annual", source_text="Revenue 13000 INR crore", review_status="overridden",
+        source_locator_json={"end": "2025-03-31"})
     db_session.add(candidate); db_session.commit()
     assert promote_reviewed_candidates(db_session, owner.id) == 1
     assert candidate.review_status == "promoted"
     report = build_financial_review_plan(db_session, owner.id)
     assert field(report, "revenue")["status"] == "recorded_with_source"
     assert field(report, "revenue")["source_links"][0]["candidate_id"] == candidate.id
+    assert field(report, "revenue")["source_links"][0]["href"] == (
+        f"/documents/{document.id}/sections?candidate_id={candidate.id}"
+    )
     metric = db_session.scalar(select(FinancialMetric).where(FinancialMetric.metric_name == "revenue"))
     db_session.delete(metric); db_session.commit()
     missing = field(build_financial_review_plan(db_session, owner.id), "revenue")

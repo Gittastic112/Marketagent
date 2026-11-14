@@ -178,7 +178,7 @@ def test_weighted_prior_does_not_renormalize_around_missing_component(client, db
     )
 
 
-def test_existing_draft_refreshes_when_mix_weights_change_but_primary_industry_does_not(client, db) -> None:
+def test_explicit_refresh_updates_mix_weights_without_changing_primary_industry(client, db) -> None:
     company = _company_and_benchmarks(db)
     assert client.put(f"/companies/{company.id}/industry-allocations", json=_payload()).status_code == 200
     first = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
@@ -189,11 +189,16 @@ def test_existing_draft_refreshes_when_mix_weights_change_but_primary_industry_d
     reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
 
     assert reopened["id"] == first["id"]
-    assert reopened["assumptions_json"]["target_operating_margin"] == pytest.approx(0.17)
-    assert reopened["source_metadata_json"]["industry_mix_signature"] != first_signature
+    assert reopened["assumptions_json"]["target_operating_margin"] == 0.16
+    assert reopened["source_metadata_json"]["industry_mix_signature"] == first_signature
+    refreshed = response_data(client.post(f"/valuation-drafts/{first['id']}/refresh", json={
+        "expected_updated_at": reopened["updated_at"],
+    }))
+    assert refreshed["assumptions_json"]["target_operating_margin"] == pytest.approx(0.17)
+    assert refreshed["source_metadata_json"]["industry_mix_signature"] != first_signature
 
 
-def test_old_blend_draft_reopens_with_correct_ratio_and_preserves_manual_inputs(client, db) -> None:
+def test_old_blend_draft_refreshes_explicitly_and_preserves_manual_inputs(client, db) -> None:
     import hashlib
     import json
     from app.models.dcf import ValuationSetupDraft
@@ -215,8 +220,14 @@ def test_old_blend_draft_reopens_with_correct_ratio_and_preserves_manual_inputs(
     reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
 
     assert reopened["id"] == first["id"]
-    assert reopened["assumptions_json"]["sales_to_capital_ratio"] == pytest.approx(1.25)
-    assert reopened["assumptions_json"]["target_operating_margin"] == 0.23
-    assert "sales_to_capital_ratio" not in reopened["reviewed_fields_json"]
-    assert "target_operating_margin" in reopened["reviewed_fields_json"]
-    assert reopened["source_metadata_json"]["industry_mix_signature"] != old_signature
+    assert reopened["assumptions_json"]["sales_to_capital_ratio"] == 1.4
+    assert reopened["source_metadata_json"]["industry_mix_signature"] == old_signature
+    assert "sales_to_capital_ratio" in reopened["reviewed_fields_json"]
+    refreshed = response_data(client.post(f"/valuation-drafts/{first['id']}/refresh", json={
+        "expected_updated_at": reopened["updated_at"],
+    }))
+    assert refreshed["assumptions_json"]["sales_to_capital_ratio"] == pytest.approx(1.25)
+    assert refreshed["assumptions_json"]["target_operating_margin"] == 0.23
+    assert "sales_to_capital_ratio" not in refreshed["reviewed_fields_json"]
+    assert "target_operating_margin" in refreshed["reviewed_fields_json"]
+    assert refreshed["source_metadata_json"]["industry_mix_signature"] != old_signature

@@ -279,7 +279,7 @@ def test_legacy_growth_review_is_invalidated_without_losing_user_edits(client, d
     stored.provenance_json = {**stored.provenance_json, "revenue_growth_years_json": old_growth}
     db.commit()
 
-    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    reopened = response_data(client.post(f"/valuation-drafts/{draft['id']}/refresh", json={}))
     assert reopened["id"] == draft["id"]
     assert reopened["assumptions_json"]["starting_revenue"] == 1250
     assert "starting_revenue" in reopened["reviewed_fields_json"]
@@ -298,7 +298,7 @@ def test_new_unit_policy_preserves_manual_values_but_requires_scale_review(clien
         if key != "input_unit_policy"}
     stored.source_metadata_json = {**stored.source_metadata_json, "source_input_signature": "legacy-unit-policy"}
     db.commit()
-    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    reopened = response_data(client.post(f"/valuation-drafts/{draft['id']}/refresh", json={}))
     assert reopened["assumptions_json"]["starting_revenue"] == 1250
     assert "starting_revenue" not in reopened["reviewed_fields_json"]
     assert "starting_revenue" in reopened["source_metadata_json"]["unresolved_fields"]
@@ -399,7 +399,7 @@ def test_create_and_reopen_owned_valuation_setup_draft(client, db) -> None:
     assert reopened["id"] == created["id"]
 
 
-def test_reopen_refreshes_changed_financial_history_without_losing_user_edits(client, db) -> None:
+def test_navigation_and_create_retry_preserve_saved_draft_until_explicit_refresh(client, db) -> None:
     company, snapshot = _company_with_actuals(db)
     draft = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
     saved = response_data(
@@ -416,13 +416,31 @@ def test_reopen_refreshes_changed_financial_history_without_losing_user_edits(cl
     ebit.value = 250
     db.commit()
 
-    reopened = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    current = response_data(client.get(f"/companies/{company.id}/valuation-drafts/current"))
+    assert current == saved
+    retried = response_data(client.post(f"/companies/{company.id}/valuation-drafts", json={}))
+    assert retried == saved
+    reopened = response_data(client.post(f"/valuation-drafts/{draft['id']}/refresh", json={
+        "expected_updated_at": saved["updated_at"],
+    }))
 
     assert reopened["id"] == draft["id"]
     assert reopened["assumptions_json"]["starting_revenue"] == 1250
     assert "starting_revenue" in reopened["reviewed_fields_json"]
     assert reopened["assumptions_json"]["current_operating_margin"] == 0.25
     assert reopened["source_metadata_json"]["financial_history_signature"] != old_signature
+
+
+def test_reading_current_draft_does_not_create_one(client, db, monkeypatch):
+    company, _ = _company_with_actuals(db)
+    def unexpected_generation(*args, **kwargs):
+        raise AssertionError("Reading a draft must not generate assumptions")
+    monkeypatch.setattr("app.services.assumption_autofill_engine.AssumptionAutofillEngine.draft_assumptions", unexpected_generation)
+    response = client.get(f"/companies/{company.id}/valuation-drafts/current")
+    assert response.status_code == 200
+    assert response_data(response) is None
+    assert db.query(ValuationSetupDraft).count() == 0
+    assert client.get("/companies/999999/valuation-drafts/current").status_code == 404
 
 
 def test_draft_refresh_preserves_user_edits_and_updates_unreviewed_priors(client, db) -> None:
@@ -527,6 +545,7 @@ def test_draft_is_not_visible_to_another_user(client, db) -> None:
         "email": other_user.email,
         "name": other_user.name,
     }
+    assert response_data(client.get(f"/companies/{company.id}/valuation-drafts/current")) is None
 
     response = client.get(f"/valuation-drafts/{draft['id']}")
 

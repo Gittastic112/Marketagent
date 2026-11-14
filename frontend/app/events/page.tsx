@@ -1,4 +1,6 @@
 import { RetainedActionForm } from "@/components/retained-action-form";
+import Link from "next/link";
+import { formatDataLabel } from "@/lib/formatting";
 import { hasUsableData } from "@/lib/data-state-meta";
 import { createEvent, deleteEventWithState, extractEvents, updateEvent, addEventCorroboration, removeEventCorroboration, addEventContradiction, removeEventContradiction } from "@/app/actions";
 import { DeleteRecordForm } from "@/components/delete-record-form";
@@ -11,7 +13,11 @@ import { DataStateNotices, ConfidenceIndicator, SourceBadge } from "@/components
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, EventRecord, RawDocument, ScoringConfig } from "@/lib/api";
 
-export default async function EventsPage() {
+export default async function EventsPage({ searchParams }: {
+  searchParams?: Promise<{ event_id?: string | string[] }>;
+} = {}) {
+  const query = await searchParams;
+  const requestedId = Array.isArray(query?.event_id) ? query.event_id[0] : query?.event_id;
   try {
     const [eventsRes, companiesRes, documentsRes, scoringConfigRes] = await Promise.all([
       serverFetchApiResponse<EventRecord[]>("/events"),
@@ -20,6 +26,7 @@ export default async function EventsPage() {
       serverFetchApiResponse<ScoringConfig>("/scoring-config")
     ]);
     const events = eventsRes.data || [];
+    const displayedEvents = requestedId === undefined ? events : events.filter(event => String(event.id) === requestedId);
     const companies = companiesRes.data || [];
     const documents = documentsRes.data || [];
 
@@ -30,7 +37,7 @@ export default async function EventsPage() {
           metas={[eventsRes.meta, companiesRes.meta, documentsRes.meta, scoringConfigRes.meta]}
           mockMessage="One or more event inputs are using mock data. Treat affected scores and signals as placeholders."
         />
-        <Panel title="Extract Events">
+        <Panel title="Extract Events" collapsible>
           <RetainedActionForm label="Extract events" action={extractEvents} className="brief-list">
             <div className="brief-item">
               <div className="button-row">
@@ -39,7 +46,7 @@ export default async function EventsPage() {
             </div>
           </RetainedActionForm>
         </Panel>
-        <Panel title="Add Event">
+        <Panel title="Add Event" collapsible>
           <RetainedActionForm label="Create event" resetOnSuccess action={createEvent} className="form-grid">
             <SelectField id="company_id" label="Company" name="company_id">
               <option value="">Unlinked</option>
@@ -70,11 +77,11 @@ export default async function EventsPage() {
             </div>
           </RetainedActionForm>
         </Panel>
-        <Panel title="Events">
-          {!hasUsableData(eventsRes) ? <ErrorState message="Events could not be loaded. Reload to retry." /> : events.length === 0 ? (
-            <EmptyState label="No events yet." />
+        <Panel title={requestedId === undefined ? "Events" : "Selected event"} actions={requestedId === undefined ? undefined : <Link href="/events">View all events</Link>}>
+          {!hasUsableData(eventsRes) ? <ErrorState message="Events could not be loaded. Reload to retry." /> : displayedEvents.length === 0 ? (
+            <EmptyState label={requestedId === undefined ? "No events yet." : "The requested event is not available. View all events to choose another record."} />
           ) : (
-            <div className="table-wrap">
+            <div className="table-wrap" tabIndex={0} role="region" aria-label="Events and evidence">
               <table>
                 <thead>
                   <tr>
@@ -90,14 +97,14 @@ export default async function EventsPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {events.map((event) => (
+                  {displayedEvents.map((event) => (
                     <tr key={event.id}>
-                      <td>{event.title}</td>
-                      <td>{event.event_type}</td>
+                      <td><Link href={`/events/${event.id}/evidence-resolution`}>{event.title}</Link></td>
+                      <td>{formatDataLabel(event.event_type)}</td>
                       <td>{event.information_speed}</td>
                       <td>
                         <SourceBadge source={
-                          documents.find(d => d.id === event.raw_document_id)?.document_type?.replace("_", " ") || "manual"
+                          formatDataLabel(documents.find(d => d.id === event.raw_document_id)?.document_type || "manual")
                         } />
                       </td>
                       <td>
@@ -117,7 +124,7 @@ export default async function EventsPage() {
                         <div className="action-stack">
                           <details className="edit-panel">
                             <summary>Score Breakdown</summary>
-                            <ScoreBreakdown score={event.priority_score ?? 0} explanation={event.score_explanation_json} />
+                            {event.priority_score == null ? <p>Priority not scored.</p> : <ScoreBreakdown score={event.priority_score} explanation={event.score_explanation_json} />}
                             <div style={{ marginTop: "0.75rem" }}>
                               <ScoreExplanationView explanation={event.score_explanation_json} />
                             </div>
@@ -181,7 +188,7 @@ export default async function EventsPage() {
                               )}
                               <RetainedActionForm label="Add event corroboration" action={addEventCorroboration} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />
-                                <SelectField id={`add-corr-${event.id}`} label="" name="target_event_id" required>
+                                <SelectField id={`add-corr-${event.id}`} label="Corroborating event" name="target_event_id" required>
                                   <option value="">Select event...</option>
                                   {events.filter((e) => e.id !== event.id).map((e) => (
                                     <option key={e.id} value={e.id}>{e.title}</option>
@@ -211,7 +218,7 @@ export default async function EventsPage() {
                               )}
                               <RetainedActionForm label="Add event contradiction" action={addEventContradiction} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />
-                                <SelectField id={`add-contra-${event.id}`} label="" name="target_event_id" required>
+                                <SelectField id={`add-contra-${event.id}`} label="Contradicting event" name="target_event_id" required>
                                   <option value="">Select event...</option>
                                   {events.filter((e) => e.id !== event.id).map((e) => (
                                     <option key={e.id} value={e.id}>{e.title}</option>

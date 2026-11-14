@@ -1,0 +1,375 @@
+{
+  "decision_id": "M05-ORIGINAL-FOLLOWUP-20261112",
+  "previous_decision_id": "M05-FOUR-COMPANY-20261112",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "reviewed_at": "2026-11-12T19:36:06.707375+00:00",
+  "status": "applied_and_verified",
+  "boundary": "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+  "original_source_document_ids": [
+    33,
+    34,
+    35
+  ],
+  "source_intake_run_ids": [
+    236,
+    237,
+    238,
+    239
+  ],
+  "companies": [
+    {
+      "company_id": 14,
+      "ticker": "NVDA",
+      "items": [
+        {
+          "id": 1638,
+          "metric": "interest_expense",
+          "year": 2024,
+          "value": 257000000.0,
+          "unit": "USD",
+          "candidate_updated_at": "2026-11-12T18:27:57.322719",
+          "source_snapshot_id": 26,
+          "source_snapshot_hash": "sec-companyfacts:14:c8d2deb79257bf637db44c1166c78aa5f344a138d9e9071ba49c532054ee6e6f",
+          "locator": {
+            "type": "xbrl_fact",
+            "namespace": "us-gaap",
+            "concept": "InterestExpense",
+            "unit": "USD",
+            "fiscal_year": 2024,
+            "reported_fy": 2024,
+            "form": "10-K",
+            "start": "2023-01-30",
+            "end": "2024-01-28",
+            "filed": "2024-02-21",
+            "accession": "0001045810-24-000029",
+            "frame": "CY2023",
+            "fact_value": 257000000,
+            "payload_sha256": "c8d2deb79257bf637db44c1166c78aa5f344a138d9e9071ba49c532054ee6e6f",
+            "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+            "selection_policy": "period_end_year_latest_filing_concept_priority"
+          },
+          "decision": "approved",
+          "reason": "Reviewed the original statement/note table, reporting year, USD-million display scale, exact inline cell and saved SEC fact snapshot; all agree.",
+          "comparison_values": [
+            257000000.0
+          ],
+          "filing_document_id": 33,
+          "filing_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000029/nvda-20240128.htm",
+          "filing_html_sha256": "26fa2dad8c04e8899fd5027943648cbca42af3a616d698f35eb043c39e5f0375",
+          "cells": [
+            {
+              "value": 257000000.0,
+              "element_id": "f-76",
+              "row_text": "Interest expense ( 257 ) ( 262 ) ( 236 )"
+            }
+          ],
+          "reviewed_limitations": [
+            "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+            "Reported historical interest expense uses the positive expense convention of the SEC fact. It is not a current borrowing balance, coupon rate or forecast financing cost."
+          ]
+        },
+        {
+          "id": 1645,
+          "metric": "operating_leases",
+          "year": 2024,
+          "value": 1347000000.0,
+          "unit": "USD",
+          "candidate_updated_at": "2026-11-12T18:27:57.322725",
+          "source_snapshot_id": 26,
+          "source_snapshot_hash": "sec-companyfacts:14:c8d2deb79257bf637db44c1166c78aa5f344a138d9e9071ba49c532054ee6e6f",
+          "locator": {
+            "type": "xbrl_fact",
+            "namespace": "us-gaap",
+            "concept": "OperatingLeaseLiability",
+            "unit": "USD",
+            "fiscal_year": 2024,
+            "reported_fy": 2024,
+            "form": "10-K",
+            "start": null,
+            "end": "2024-01-28",
+            "filed": "2024-02-21",
+            "accession": "0001045810-24-000029",
+            "frame": "CY2023Q4I",
+            "fact_value": 1347000000,
+            "payload_sha256": "c8d2deb79257bf637db44c1166c78aa5f344a138d9e9071ba49c532054ee6e6f",
+            "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+            "selection_policy": "period_end_year_latest_filing_concept_priority"
+          },
+          "decision": "approved",
+          "reason": "Reviewed the original statement/note table, reporting year, USD-million display scale, exact inline cell and saved SEC fact snapshot; all agree.",
+          "comparison_values": [
+            1347000000.0
+          ],
+          "filing_document_id": 33,
+          "filing_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000029/nvda-20240128.htm",
+          "filing_html_sha256": "26fa2dad8c04e8899fd5027943648cbca42af3a616d698f35eb043c39e5f0375",
+          "cells": [
+            {
+              "value": 1347000000.0,
+              "element_id": "f-459",
+              "row_text": "Present value of net future minimum lease payments 1,347"
+            }
+          ],
+          "reviewed_limitations": [
+            "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+            "Operating-lease present value only, excluding finance leases. Do not add to overlapping debt totals or treat it as a current valuation-date claim."
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": 15,
+      "ticker": "META",
+      "items": [
+        {
+          "id": 1747,
+          "metric": "interest_expense",
+          "year": 2023,
+          "value": 446000000.0,
+          "unit": "USD",
+          "candidate_updated_at": "2026-11-12T18:28:00.301652",
+          "source_snapshot_id": 29,
+          "source_snapshot_hash": "sec-companyfacts:15:bf3e14729040f61769bf8bd0961e990ee916030b8bae23265d5df37c2d87d808",
+          "locator": {
+            "type": "xbrl_fact",
+            "namespace": "us-gaap",
+            "concept": "InterestExpense",
+            "unit": "USD",
+            "fiscal_year": 2023,
+            "reported_fy": 2023,
+            "form": "10-K",
+            "start": "2023-01-01",
+            "end": "2023-12-31",
+            "filed": "2024-02-02",
+            "accession": "0001326801-24-000012",
+            "frame": "CY2023",
+            "fact_value": 446000000,
+            "payload_sha256": "bf3e14729040f61769bf8bd0961e990ee916030b8bae23265d5df37c2d87d808",
+            "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+            "selection_policy": "period_end_year_latest_filing_concept_priority"
+          },
+          "decision": "approved",
+          "reason": "Reviewed the original statement/note table, reporting year, USD-million display scale, exact inline cell and saved SEC fact snapshot; all agree.",
+          "comparison_values": [
+            446000000.0
+          ],
+          "filing_document_id": 35,
+          "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680124000012/meta-20231231.htm",
+          "filing_html_sha256": "952a02e1429b2485b61c962b95b1e2175edd07045e4cfc183bfa771753dd2663",
+          "cells": [
+            {
+              "value": 446000000.0,
+              "element_id": "f-1111",
+              "row_text": "Interest expense ( 446 ) ( 185 ) ( 23 )"
+            }
+          ],
+          "reviewed_limitations": [
+            "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+            "Reported historical interest expense uses the positive expense convention of the SEC fact. It is not a current borrowing balance, coupon rate or forecast financing cost."
+          ]
+        },
+        {
+          "id": 1754,
+          "metric": "operating_leases",
+          "year": 2023,
+          "value": 18849000000.0,
+          "unit": "USD",
+          "candidate_updated_at": "2026-11-12T18:28:00.301659",
+          "source_snapshot_id": 29,
+          "source_snapshot_hash": "sec-companyfacts:15:bf3e14729040f61769bf8bd0961e990ee916030b8bae23265d5df37c2d87d808",
+          "locator": {
+            "type": "xbrl_fact",
+            "namespace": "us-gaap",
+            "concept": "OperatingLeaseLiability",
+            "unit": "USD",
+            "fiscal_year": 2023,
+            "reported_fy": 2023,
+            "form": "10-K",
+            "start": null,
+            "end": "2023-12-31",
+            "filed": "2024-02-02",
+            "accession": "0001326801-24-000012",
+            "frame": "CY2023Q4I",
+            "fact_value": 18849000000,
+            "payload_sha256": "bf3e14729040f61769bf8bd0961e990ee916030b8bae23265d5df37c2d87d808",
+            "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+            "selection_policy": "period_end_year_latest_filing_concept_priority"
+          },
+          "decision": "approved",
+          "reason": "Reviewed the original statement/note table, reporting year, USD-million display scale, exact inline cell and saved SEC fact snapshot; all agree.",
+          "comparison_values": [
+            18849000000.0
+          ],
+          "filing_document_id": 35,
+          "filing_url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680124000012/meta-20231231.htm",
+          "filing_html_sha256": "952a02e1429b2485b61c962b95b1e2175edd07045e4cfc183bfa771753dd2663",
+          "cells": [
+            {
+              "value": 18849000000.0,
+              "element_id": "f-851",
+              "row_text": "Present value of lease liabilities (1) $ 18,849 $ 690"
+            },
+            {
+              "value": 18849000000.0,
+              "element_id": "f-859",
+              "row_text": "Present value of lease liabilities (1) $ 18,849 $ 690"
+            }
+          ],
+          "reviewed_limitations": [
+            "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+            "Operating-lease present value only, excluding finance leases. Do not add to overlapping debt totals or treat it as a current valuation-date claim."
+          ]
+        }
+      ]
+    },
+    {
+      "company_id": 16,
+      "ticker": "GOOGL",
+      "items": [
+        {
+          "id": 1850,
+          "metric": "interest_expense",
+          "year": 2023,
+          "value": 308000000.0,
+          "unit": "USD",
+          "candidate_updated_at": "2026-11-12T18:28:02.997137",
+          "source_snapshot_id": 32,
+          "source_snapshot_hash": "sec-companyfacts:16:a2a32b65d22f488794d01a886600f19a0eafa50bc17c82aaacd90d5549ed2cc6",
+          "locator": {
+            "type": "xbrl_fact",
+            "namespace": "us-gaap",
+            "concept": "InterestExpense",
+            "unit": "USD",
+            "fiscal_year": 2023,
+            "reported_fy": 2023,
+            "form": "10-K",
+            "start": "2023-01-01",
+            "end": "2023-12-31",
+            "filed": "2024-01-31",
+            "accession": "0001652044-24-000022",
+            "frame": "CY2023",
+            "fact_value": 308000000,
+            "payload_sha256": "a2a32b65d22f488794d01a886600f19a0eafa50bc17c82aaacd90d5549ed2cc6",
+            "source_url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+            "selection_policy": "period_end_year_latest_filing_concept_priority"
+          },
+          "decision": "approved",
+          "reason": "Reviewed the original statement/note table, reporting year, USD-million display scale, exact inline cell and saved SEC fact snapshot; all agree.",
+          "comparison_values": [
+            308000000.0
+          ],
+          "filing_document_id": 34,
+          "filing_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm",
+          "filing_html_sha256": "6ec3a4637478456ffc690c4770552689e92723d53bdaba926b89fe5363775f32",
+          "cells": [
+            {
+              "value": 308000000.0,
+              "element_id": "f-1116",
+              "row_text": "Interest expense (1) ( 346 ) ( 357 ) ( 308 )"
+            }
+          ],
+          "reviewed_limitations": [
+            "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+            "Reported historical interest expense uses the positive expense convention of the SEC fact. It is not a current borrowing balance, coupon rate or forecast financing cost."
+          ]
+        }
+      ]
+    }
+  ],
+  "checks": [
+    {
+      "ticker": "NVDA",
+      "year": 2024,
+      "equation": "operating lease current + noncurrent = operating lease total",
+      "values_usd_million": [
+        228,
+        1119,
+        1347
+      ],
+      "difference": 0
+    },
+    {
+      "ticker": "META",
+      "year": 2023,
+      "equation": "operating lease current + noncurrent = operating lease total",
+      "values_usd_million": [
+        1623,
+        17226,
+        18849
+      ],
+      "difference": 0
+    }
+  ],
+  "selected_candidates_promoted": 5,
+  "selected_candidates_still_held": 11,
+  "older_candidates_unreviewed": 129,
+  "milestone_acceptance_changed": false,
+  "actual_use_days_added": 0,
+  "verified_at": "2026-11-12T20:58:36.364438+00:00",
+  "application_runs": [
+    {
+      "ticker": "NVDA",
+      "run_id": 240,
+      "promoted": 2,
+      "reconciliation": {
+        "exact_count": 24,
+        "mismatch_count": 0,
+        "missing_normalized_count": 0
+      }
+    },
+    {
+      "ticker": "META",
+      "run_id": 241,
+      "promoted": 2,
+      "reconciliation": {
+        "exact_count": 27,
+        "mismatch_count": 0,
+        "missing_normalized_count": 0
+      }
+    },
+    {
+      "ticker": "GOOGL",
+      "run_id": 242,
+      "promoted": 1,
+      "reconciliation": {
+        "exact_count": 24,
+        "mismatch_count": 0,
+        "missing_normalized_count": 0
+      }
+    },
+    {
+      "document_id": 33,
+      "run_id": 243,
+      "section_count": 58
+    },
+    {
+      "document_id": 34,
+      "run_id": 244,
+      "section_count": 81
+    },
+    {
+      "document_id": 35,
+      "run_id": 245,
+      "section_count": 58
+    }
+  ],
+  "reported_normalized_exact_comparisons": 75,
+  "preservation": {
+    "unchanged_tables": 102,
+    "changed_tables": [
+      "filing_sections",
+      "financial_extraction_candidates",
+      "financial_metrics",
+      "normalized_financial_metrics",
+      "normalized_financial_snapshots",
+      "processing_runs",
+      "raw_documents",
+      "source_fact_revisions"
+    ],
+    "original_apple_records_preserved": true,
+    "saved_models_portfolios_and_research_preserved": true,
+    "prior_review_receipt_preserved": true
+  },
+  "user_reported_actual_use_days": 0,
+  "user_reported_actual_use_date": "2026-11-12"
+}

@@ -149,7 +149,7 @@ def build_financial_review_plan(db: Session, company_id: int, *, track: str = "o
                 "candidate_ids": candidate_ids[:20], "candidate_count": len(candidate_ids), "source_document_ids": source_ids[:20],
                 "source_links": [{"candidate_id": row.id, "document_id": row.raw_document_id,
                     "href": (f"/documents/{row.raw_document_id}/financial-evidence?candidate_id={row.id}" if row.asset_id
-                             else f"/documents/{row.raw_document_id}/sections")} for row in evidence[:5]]})
+                             else f"/documents/{row.raw_document_id}/sections?candidate_id={row.id}")} for row in evidence[:5]]})
         periods.append({"year": year, "period_id": period.id if period else None, "currency": currency,
             "report_date": period.report_date if period else None, "notes": notes, "fields": fields,
             "source_linked_count": sum(field["status"] == "recorded_with_source" for field in fields),

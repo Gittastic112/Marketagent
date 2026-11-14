@@ -8,11 +8,12 @@ import { ExternalLink } from "lucide-react";
 import {
   FinancialExtractionCandidate,
   reviewFinancialCandidate,
+  reviewFinancialCandidatePeriod,
   overrideFinancialCandidate,
   promoteFinancialCandidates,
   listExtractedFinancialCandidates,
 } from "@/lib/api/financials";
-import { financialEvidenceHref, financialEvidenceLocatorLabel } from "@/lib/financial-evidence";
+import { financialEvidenceClaimType, financialEvidenceHref, financialEvidenceLocatorLabel } from "@/lib/financial-evidence";
 
 export function FinancialCandidateReview({
   initialCandidates,
@@ -28,6 +29,9 @@ export function FinancialCandidateReview({
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editValue, setEditValue] = useState<number | "">("");
   const [editUnit, setEditUnit] = useState("");
+  const [periodId, setPeriodId] = useState<number | null>(null);
+  const [periodEnd, setPeriodEnd] = useState("");
+  const [periodNote, setPeriodNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const gate = useMemo(createRequestGate, [companyId]);
@@ -103,6 +107,21 @@ export function FinancialCandidateReview({
     }
   }
 
+  async function savePeriod(candidate: FinancialExtractionCandidate) {
+    if (busy.current || !periodEnd || periodNote.trim().length < 10) return;
+    busy.current = true; setIsSubmitting(true); setError(null);
+    const current = gate.begin();
+    try {
+      const updated = await reviewFinancialCandidatePeriod(candidate.id, periodEnd, periodNote, candidate.updated_at);
+      if (!current()) return;
+      setCandidates(rows => rows.map(row => row.id === updated.id ? updated : row));
+      setPeriodId(null); setPeriodEnd(""); setPeriodNote("");
+      setNotice("Period confirmation saved separately from the original extraction. Value review is unchanged.");
+      router.refresh();
+    } catch (err) {if (current()) setError(err instanceof Error ? err.message : "Period confirmation unavailable. Your entries are retained.");}
+    finally {busy.current = false; if (current()) setIsSubmitting(false);}
+  }
+
   async function reloadCandidates() {
     if (busy.current) return;
     busy.current = true; setIsSubmitting(true);
@@ -110,7 +129,7 @@ export function FinancialCandidateReview({
     try {
       const rows = await listExtractedFinancialCandidates(companyId);
       if (!current()) return;
-      setCandidates(rows); setEditingId(null); setEditValue(""); setEditUnit(""); setError(null);
+      setCandidates(rows); setEditingId(null); setEditValue(""); setEditUnit(""); setPeriodId(null); setPeriodEnd(""); setPeriodNote(""); setError(null);
       setNotice("Current candidates loaded. Review their source, value and unit before continuing.");
       router.refresh();
     } catch (err) {if (current()) setError(err instanceof Error ? err.message : "Candidates unavailable. Retry explicitly.");}
@@ -141,7 +160,7 @@ export function FinancialCandidateReview({
               <div className="mt-2 text-sm text-yellow-700">
                 <p>
                   There {unreviewedCount === 1 ? "is" : "are"} {unreviewedCount} extraction{" "}
-                  {unreviewedCount === 1 ? "candidate" : "candidates"} that need review before{" "}
+                  {unreviewedCount === 1 ? "candidate that needs" : "candidates that need"} review before{" "}
                   {unreviewedCount === 1 ? "it can" : "they can"} be promoted.
                 </p>
               </div>
@@ -152,6 +171,7 @@ export function FinancialCandidateReview({
 
       {error ? <div role="alert" className="text-sm text-red-700">{error} <button type="button" className="btn btn-secondary" onClick={() => void reloadCandidates()}>Reload candidates (discard unsaved correction)</button></div> : null}
       {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
+      <p className="text-sm text-gray-600">Promotion accepts annual evidence with an exact source period-end date. Interim, YTD, missing dates and conflicting stored periods are held without changing history. Reviewing a value does not resolve its period identity.</p>
 
       <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Extracted financial candidates" tabIndex={0}>
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -160,7 +180,7 @@ export function FinancialCandidateReview({
               <tr>
                 <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Metric</th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Value</th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Year</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Period</th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Review Status</th>
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Actions</th>
               </tr>
@@ -168,8 +188,10 @@ export function FinancialCandidateReview({
             <tbody className="divide-y divide-gray-200">
               {candidates.map((candidate) => (
                 <tr key={candidate.id}>
-                  <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900">
+                  <td className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900" style={{ minWidth: "18rem", maxWidth: "32rem", overflowWrap: "anywhere" }}>
                     {candidate.metric_code.replaceAll("_", " ")}
+                    <br />
+                    <span className="text-xs font-normal text-gray-500">{financialEvidenceClaimType(candidate)}</span>
                     <br />
                     <span className="text-xs font-normal text-gray-500">From: &quot;{candidate.source_text}&quot;</span>
                     <br />
@@ -234,7 +256,32 @@ export function FinancialCandidateReview({
                       </span>
                     )}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{candidate.fiscal_year ?? "-"}</td>
+                  <td className="px-3 py-4 text-sm text-gray-500">
+                    <div>FY {candidate.fiscal_year ?? "unknown"} · {candidate.period_type || "Unknown basis"}</div>
+                    <div>{typeof candidate.source_locator_json?.end === "string" ? `Ends ${candidate.source_locator_json.end}` : "Source extraction has no end date"}</div>
+                    {typeof candidate.source_locator_json?.start === "string" && <div>Starts {candidate.source_locator_json.start}</div>}
+                    {(() => {
+                      const review = candidate.source_locator_json?.period_review;
+                      return review && typeof review === "object" && "end" in review && typeof review.end === "string" ?
+                        <div>User Assumption · Confirmed end {review.end}{"source_note" in review && typeof review.source_note === "string" && <div>{review.source_note}</div>}</div> : null;
+                    })()}
+                    {candidate.period_type === "annual" && candidate.fiscal_year !== null && !candidate.source_locator_json?.end && (
+                      periodId === candidate.id ? <div style={{minWidth: "13rem"}}>
+                        <label htmlFor={`period-end-${candidate.id}`}>Exact period end</label>
+                        <input id={`period-end-${candidate.id}`} type="date" value={periodEnd} onChange={event => setPeriodEnd(event.target.value)} />
+                        <label htmlFor={`period-note-${candidate.id}`}>Source location and explanation</label>
+                        <textarea id={`period-note-${candidate.id}`} value={periodNote} onChange={event => setPeriodNote(event.target.value)} maxLength={1000} />
+                        <p>Use the exact date from the source. Do not infer December 31 from the fiscal year.</p>
+                        <button type="button" onClick={() => void savePeriod(candidate)} disabled={!periodEnd || periodNote.trim().length < 10}>Save period confirmation</button>
+                        <button type="button" onClick={() => setPeriodId(null)}>Cancel period confirmation</button>
+                      </div> : <button type="button" onClick={() => {
+                        const review = candidate.source_locator_json?.period_review;
+                        setPeriodId(candidate.id);
+                        setPeriodEnd(review && typeof review === "object" && "end" in review && typeof review.end === "string" ? review.end : "");
+                        setPeriodNote(review && typeof review === "object" && "source_note" in review && typeof review.source_note === "string" ? review.source_note : "");
+                      }}>{candidate.source_locator_json?.period_review ? "Edit period confirmation" : "Confirm period end"}</button>
+                    )}
+                  </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm">
                     <span
                       className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${

@@ -1,21 +1,17 @@
 # Capabilities and limitations
 
-Current trust boundary, reconciled November 10, 2026. [Current State](current-state.md)
-owns dated validation; the [feature register](roadmaps/feature-register.md) owns
-capability status. Historical operational narratives and exact earlier review
-exceptions are preserved in the [prior ledger](archive/assessments/limitations-before-2026-11-10.md).
+Reconciled November 14, 2026. [Current State](current-state.md) owns verification; the [feature register](roadmaps/feature-register.md) owns capability status.
+Historical operational narratives and review exceptions remain in the [prior ledger](archive/assessments/limitations-before-2026-11-10.md).
 
 ## Confirmed scope and input checklist
 
-The approved first release is local personal research/demo for US and India
-equities, with USD portfolio reporting. The November 9 scope covers four selected
-technology companies, hypothetical holdings, and Sample Apple research.
-The sourced Apple valuation is an Estimate with explicit analyst assumptions.
+The approved release is local personal US/India research/demo with USD portfolio reporting.
+November 9 scope: four technology companies, hypothetical holdings and Sample Apple research;
+the sourced Apple valuation is a separate Estimate with explicit analyst assumptions.
 
-The historical company universe and eleven scenarios were removed November 5.
-Their sources and review receipts remain historical evidence. Sixty named old
-database archives were deleted with explicit approval on November 9; newer
-backups, original sources, and failed evidence remain retained.
+The historical universe and eleven scenarios were removed November 5; their source/review evidence remains.
+Sixty named old database archives were deleted with approval November 9. Remaining recovery/evidence
+material now follows the [essential retention policy](operations.md#essential-retention-policy).
 
 Do not restore historical companies, expand the portfolio, fabricate activity,
 create local disposable datasets, or grant external-AI permissions as a setup or
@@ -31,7 +27,7 @@ v1. These requirements are deferred or outside scope, not passed.
 
 | Gate | Remaining prerequisite and next action |
 |---|---|
-| M05: financial review | Review complete source, unit, period, class-share, accounting, and disclosure coverage for the selected companies. A checklist or candidate count cannot certify completeness |
+| M05: financial review | Complete the [selected-company follow-up](#selected-company-review-follow-up). Reviewed three-year histories now exist for all four companies; source, unit, period, class-share, accounting and disclosure completeness remain open |
 | M06: valuation basis | Review forecasts, financing, diluted shares, employee claims, non-controlling interests, leases, and the equity bridge. Separate disclosed facts, carrying-value proxies, and discretionary assumptions |
 | M07: portfolio proof | Existing examples can prove arithmetic under their stated basis. Genuine activity and multi-currency proof require a separately scoped release and real records; never broker passwords |
 | M08: interpretation quality | Preserve the selected delegated review and blocked outputs. Broader evaluation needs independently reviewed examples; citation checks alone are insufficient |
@@ -41,6 +37,54 @@ v1. These requirements are deferred or outside scope, not passed.
 M01-M04 retain 40 accepted milestone points. No cleanup or general assurance
 closes the remaining gates. The [tracker](roadmaps/completion-tracker.md) owns
 the exact check IDs and [Operations](operations.md) owns operational procedures.
+
+## Selected-company review follow-up
+
+The [five-input review](../data/reviews/financial-five-input-review-20261112.json) adds 47 original-source facts/calculations.
+Twelve annual values resolve four of twenty slots. Prior records/models are preserved; no selected candidate is pending.
+
+| Company and years | Resolved historical inputs | Remaining annual inputs | Source checklist per year |
+|---|---|---|---|
+| Apple, FY2024-2026 | Noncontrolling and parent preferred claims: source-derived zero | Debt, operating working-capital change, employee-award value | 10/13 |
+| NVIDIA, FY2024-2026 | Combined equipment/intangible capex; noncontrolling claim: source-derived zero | Debt, operating working-capital change, employee-award value | 10/13 |
+| Meta, FY2023-2025 | Additional scoped evidence | Debt, working-capital change, noncontrolling claim, preferred claim, employee-award value | 8/13 |
+| Alphabet, FY2023-2025 | Additional scoped evidence | Debt, full D&A, working-capital change, noncontrolling claim, employee-award value | 8/13 |
+
+The user selected **November 12, 2026**. The [dated-input review](../data/reviews/valuation-inputs-asof-20261112.json)
+adds eight filings and four notes. Seven Nasdaq prices and the ECB USD/EUR rate of 1.1081 support dated calculations.
+No personal decision is pending. Delegation does not authorize invented issuer facts or complete valuation claims.
+
+**Financing.** Apple closed USD 7.5 billion of notes on November 9; Meta closed USD 15 billion
+on November 5 and EUR 9 billion on November 12; Alphabet closed EUR 6 billion on November 5.
+Reported balances plus these issuances give research subtotals of USD 89.067/108.6419/136.4716 billion
+for Apple/Meta/Alphabet. These are not reconciled current debt values: cash proceeds, repayments,
+fees, lease changes and prior foreign-debt remeasurement remain open. Meta's current finance-lease
+balance is unverified. NVIDIA's July notes plus deferred purchase consideration total USD 34.352 billion;
+complete financed-asset/finance-lease balances and the USD 1 billion 2026 maturity treatment remain open.
+Operating leases are separate; the engine does not automatically restate EBIT/reinvestment for capitalization.
+
+**Working capital and awards.** Narrow trade cash absorption is retained for the exact annual/six-month/
+nine-month periods, not full operating NWC. Mixed accrual/tax/noncurrent rows remain unresolved.
+Default FCFF sales-to-capital reinvestment does not require this historical decomposition; never add both.
+Latest reported unvested quantities times November 12 prices produce gross exposure estimates only.
+Post-report award changes, vesting/performance, tax and other employee rights remain unverified.
+Do not install these marks as complete employee claim values or count awards again in diluted shares.
+
+**Other claims.** Explicit wholly-owned scope and Apple's common-only charter support the reported zeros.
+Meta's consolidation policy does not establish a wholly-owned group or a zero minority claim.
+Its 287.5 million preferred depositary shares imply USD 14.444 billion at Nasdaq's historical USD 50.24,
+versus USD 14.40375 billion at the headline USD 50.10. The November 12 official closing row was unavailable;
+the price discrepancy is retained and the valuation input is held. Historical preferred balances remain open.
+Alphabet's two preferred series have a USD 16.645475 billion quoted-value proxy; 385 million depositary
+interests imply USD 19.25 billion face, not the rounded 19-million underlying-share display times USD 1,000.
+Its September NCI book proxy is USD 6.9 billion, including the USD 825 million redeemable subset.
+Do not count preferred conversion dilution again; later conversions remain unverified.
+Alphabet nine-month D&A of USD 22.875 billion does not establish full FY2023-2025 intangible amortization;
+finance-lease asset amortization is already included in PP&E depreciation. The prior FY2025 lease USD 1 million
+total/component difference remains visible. Business revenue alone does not approve benchmark weights.
+
+Remaining gaps need original disclosures or quote reconciliation. [Operations](operations.md) records data preservation.
+The user reconfirmed zero actual-use days on November 12; automated checks do not count.
 
 ## What is not product-ready
 
@@ -59,12 +103,23 @@ the exact check IDs and [Operations](operations.md) owns operational procedures.
 | Historical financial exceptions | HDFC comparability/EPS, Alphabet lease and overlap, Microsoft preferred balance, Reliance net external-revenue weights, Airtel put/NCI scope, current awards, and parent/child claim bridges remain source-specific open questions in retained receipts. Historical scenarios do not resolve them |
 | Data rights | Personal-use Yahoo access is explicitly selected; it is not a licensed professional or redistribution feed. No Google Sheets bridge or licensed comparable-company feed is implemented |
 
+## Workspace follow-up
+
+P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.json) closes WS04's page-load writes. The [November 14 slices](../data/reviews/research-workspace-ten-sets-20261114.json) close WS06's missing thesis chooser and add dated evidence, saved-model previews and a bounded queue. The [workspace plan](roadmaps/research-workspace-plan.md) owns packages; remaining gaps follow.
+
+| ID | Observed gap | Resolution boundary |
+|---|---|---|
+| WS03 | Dated financial rows expose original values, source timing and conflicts, but do not select or rebase draft/model inputs. Saved-model preview dates label research, not historical market/source reconstruction. Initial model creation still uses the existing direct gated path | P2/P3: carry explicit source revisions/date/knowledge into a draft proposal and initial-model preview, then preserve that evidence in an atomic save receipt. Never promote partial subtotals as complete facts |
+| WS05 | New annual promotions snapshot exact available period/basis fields in candidate metadata. Quarterly/YTD, transition durations outside 300-400 days, missing years and conflicting stored identities remain held; legacy unknown basis remains unknown | P2.3: design full period identity before expanding ingestion, with an additive migration only if needed. Existing annual end confirmations remain separate User Assumptions with retained source notes/history; no historical rows were rewritten |
+| WS07 | Today and holdings queues cover selected existing workflows, not every missing input or stale model. Old failed runs can remain after a later success; source links do not preserve every originating filter/date or provide a complete resumable task | P4-P6: reconcile source attempts, add explicit no-change/blocked outcomes and context-preserving returns, and measure query latency. Current owner scope, counts, limits and holdings basis remain enforced |
+| WS08 | Existing backup pruning is count-based, defaults off and cannot protect semantic recovery roles or active pre-change pins | Apply the [essential retention policy](operations.md#essential-retention-policy) through reviewed targets; automation remains off until role-safe behavior is implemented and tested |
+
+The user authorised implementation after planning. P1 and ten bounded P2-P5 slices are delivered; complete package acceptance and source-specific financial gaps remain open. Tests do not establish actual research-use days or final acceptance.
+
 ## Valuation boundary
 
-A valid formula can still produce an economically unsupported estimate. Review
-financial basis, currency/scale, growth, margins, reinvestment, discount rate,
-terminal assumptions, equity claims, and diluted shares. Outputs structure
-judgment; they must not issue buy/sell instructions.
+A valid formula can produce an unsupported estimate. Review financial basis, currency/scale, growth, margins,
+reinvestment, discounting, terminal assumptions, equity claims and diluted shares. No buy/sell instructions.
 
 | Method or consumer | Boundary |
 |---|---|
@@ -167,24 +222,15 @@ complete DCF/benchmark coverage, or independent financial-model review.
 | Secret scan | Heuristic working-tree checks are not full-history analysis or credential revocation. Protected settings are not read by a documentation cleanup |
 | Backup formats | Format 3 verifies completion marker, dump content, fingerprints, and both PDF stores; format 2 stays readable. Opt-in format 1 is weaker. Flushes are not a full power-loss guarantee; incomplete backups remain unavailable |
 
-The [threat model](security.md) owns security design.
-[Operations](operations.md) owns recovery, worker coordination, and credential
-procedures. Historical successful drills do not replace an explicitly scoped
-populated restore or prove off-device recovery.
+The [threat model](security.md) owns security design; [Operations](operations.md) owns recovery, workers and credentials.
+Historical drills do not replace an explicitly scoped populated restore or prove off-device recovery.
 
 ## Architecture follow-ups
 
-- Domain contracts and server actions are extracted, with compatibility facades.
-  Large remaining workflow modules need behavioral boundaries before further moves.
-- Market adapters still span providers and services/market_data. Keep the existing
-  factory authoritative until a tested migration removes that split.
-- Frontend types remain manually synchronized. Generated contracts need an
-  explicit plan for aliases, envelopes, and response-only reconciliation.
-- Source-integrity tests complement rendered and browser tests. They do not
-  certify every form state, legacy caller, screen reader, or concurrent-user load.
-- Four-concurrent-request portfolio loading and query budgets are local guards,
-  not global throttling or a capacity certification.
-- Unique test projects prevent accidental target reuse; default ports and shared
-  image tags still require coordinated test lanes.
-- Host tools and dependency trees can differ from the supported locked images.
-  Use the [runbook](execution-runbook.md); report unavailable checks accurately.
+- Domain contracts/actions have compatibility facades; large workflow modules need behavioral boundaries before further moves.
+- Market adapters span providers and services/market_data; keep the existing factory authoritative until a tested migration removes that split.
+- Frontend types are manually synchronized; generation needs an explicit alias, envelope and response-reconciliation plan.
+- Source-integrity/browser tests do not certify every form state, legacy caller, screen reader or concurrent-user load.
+- Four-request portfolio loading and query budgets are local guards, not global throttling or capacity certification.
+- Unique test projects prevent accidental target reuse; default ports/shared image tags still need coordinated test lanes.
+- Host tools/dependencies can differ from locked images; use the [runbook](execution-runbook.md) and report unavailable checks.

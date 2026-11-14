@@ -8,10 +8,13 @@ import { AdvancedWorkspace } from "@/components/advanced-workspace";
 import { ValuationModelMetadataForm } from "@/components/valuation/valuation-model-metadata-form";
 import { DataStateNotices, StaleDataBanner } from "@/components/ui/data-states";
 import { EvidenceTrailDrawerWrapper } from "@/components/intelligence/EvidenceTrailDrawerWrapper";
+import { ValuationVersionHistory } from "@/components/valuation/version-history";
+import type { ValuationVersionReceipt } from "@/lib/api/valuation-preview";
+import { ApiError } from "@/lib/api/contract";
 
 export const dynamic = "force-dynamic";
 
-export default async function ValuationModelDetailPage(props: { params: Promise<{ id: string; model_id: string }> }) {
+export default async function ValuationModelDetailPage(props: { params: Promise<{ id: string; model_id: string }>; searchParams?: Promise<{ version?: string }> }) {
   const params = await props.params;
   const companyId = parseInt(params.id, 10);
   const modelId = parseInt(params.model_id, 10);
@@ -25,7 +28,9 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
     serverFetchApi<ValuationModel>(`/valuation-models/${modelId}`),
   ]);
   if (companyResult.status === "rejected" || modelResult.status === "rejected") {
-    notFound();
+    const failures = [companyResult, modelResult].filter(result => result.status === "rejected");
+    if (failures.some(result => result.status === "rejected" && result.reason instanceof ApiError && result.reason.status === 404)) notFound();
+    return <ErrorState message="The saved model could not be loaded. Reload to retry; no cached result is shown." />;
   }
   const company = companyResult.value;
   const model = modelResult.value;
@@ -33,26 +38,30 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
     notFound();
   }
 
-  const [contextResult, assumptionsResult] = await Promise.allSettled([
+  const [contextResult, assumptionsResult, receiptsResult] = await Promise.allSettled([
     serverFetchApi<ValuationCompanyContext>(`/api/valuation/context/company/${companyId}`),
     serverFetchApiResponse<DcfAssumptionSet[]>(`/valuation-models/${modelId}/assumptions`),
+    serverFetchApi<ValuationVersionReceipt[]>(`/valuation-models/${modelId}/version-receipts`),
   ]);
   const context = contextResult.status === "fulfilled" ? contextResult.value : undefined;
   const assumptionsRes = assumptionsResult.status === "fulfilled" ? assumptionsResult.value : null;
   const assumptions = assumptionsRes?.data || [];
   // Get the most recent assumption set (since it's ordered by created_at desc)
-  const latestAssumptionSet = assumptions.length > 0 ? assumptions[0] : undefined;
+  const requested = (await props.searchParams)?.version;
+  const latestAssumptionSet = requested ? assumptions.find(row => String(row.id) === requested) : assumptions[0];
+  if (requested && assumptionsResult.status === "fulfilled" && !latestAssumptionSet) notFound();
+  const historical = !!latestAssumptionSet && latestAssumptionSet.id !== assumptions[0]?.id;
   const updateModelAction = updateValuationModelWithState.bind(null, modelId.toString(), companyId.toString());
 
   return (
     <>
-      <div style={{ marginBottom: "2rem", display: "flex", justifyContent: "space-between", alignItems: "flex-end", borderBottom: "1px solid var(--line)", paddingBottom: "1.5rem" }}>
+      <div className="saved-valuation-header">
         <div>
           <div style={{ fontSize: "1.1rem", fontWeight: 500, color: "var(--text-muted)", marginBottom: "0.25rem" }}>
             {company.name} ({company.ticker})
           </div>
           <h1 style={{ fontSize: "2rem", margin: 0, fontWeight: 700 }}>Intrinsic Valuation</h1>
-          <div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", fontSize: "0.9rem", color: "var(--text-muted)" }}>
+          <div className="saved-valuation-meta">
             <span><strong style={{ color: "var(--text)" }}>Scenario:</strong> {model.name}</span>
             {latestAssumptionSet && (
               <span><strong style={{ color: "var(--text)" }}>Last saved:</strong> {new Date(latestAssumptionSet.created_at).toLocaleDateString()}</span>
@@ -67,6 +76,9 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
       <Panel title="Model details">
         <ValuationModelMetadataForm action={updateModelAction} name={model.name} description={model.description} />
       </Panel>
+      <ValuationVersionHistory companyId={companyId} modelId={modelId} versions={assumptions}
+        selectedId={latestAssumptionSet?.id} receipts={receiptsResult.status === "fulfilled" ? receiptsResult.value : null} />
+      {historical && <p role="status">Viewing historical version #{latestAssumptionSet?.id}. <Link href={`/companies/${companyId}/valuation/${modelId}`}>Return to latest version</Link></p>}
 
       {assumptionsRes?.meta ? (
         <DataStateNotices
@@ -100,12 +112,13 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
 
       {assumptionsResult.status === "fulfilled" && assumptionsRes?.data ? (
         <AdvancedWorkspace
-          key={`${companyId}:${modelId}`}
+          key={`${companyId}:${modelId}:${requested || "latest"}`}
           model={model}
           modelId={modelId}
           companyId={companyId}
           latestAssumptionSet={latestAssumptionSet}
           valuationContext={context}
+          readOnly={historical}
         />
       ) : null}
     </>

@@ -11,6 +11,7 @@ import { ScoreExplanationView } from "@/components/score-explanation";
 import { DataStateNotices, SourceBadge } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type { AlertRecord, Company, EventRecord } from "@/lib/api";
+import { formatDataLabel } from "@/lib/formatting";
 
 const REVIEW_STATUSES = ["unreviewed", "useful", "not_useful", "false_positive", "needs_follow_up"] as const;
 const REVIEW_FILTERS = ["all", ...REVIEW_STATUSES] as const;
@@ -27,7 +28,7 @@ type AlertsPageProps = {
 function reviewStatusOptions() {
   return REVIEW_STATUSES.map((reviewStatus) => (
     <option key={reviewStatus} value={reviewStatus}>
-      {reviewStatus}
+      {formatDataLabel(reviewStatus)}
     </option>
   ));
 }
@@ -106,7 +107,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                   href={`/alerts${qs}`}
                   key={reviewStatus}
                 >
-                  {reviewStatus}
+                  {formatDataLabel(reviewStatus)}
                 </a>
               );
             })}
@@ -119,7 +120,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
             </a>
           </div>
         </Panel>
-        <Panel title="Add Alert">
+        <Panel title="Add Alert" collapsible>
           <RetainedActionForm label="Create alert" resetOnSuccess action={createAlert} className="form-grid">
             <SelectField id="company_id" label="Company" name="company_id">
               <option value="">Unlinked</option>
@@ -158,7 +159,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
         </Panel>
         <Panel title="Alerts">
           {!hasUsableData(alertsRes) ? <ErrorState message="Alerts could not be loaded. Reload to retry." /> : filteredAlerts.length === 0 ? (
-            <EmptyState label="No alerts yet." />
+            <EmptyState label={alerts.length === 0 ? "No alerts yet." : "No alerts match this filter. Choose All to view the loaded alerts."} />
           ) : (
             <div className="table-wrap">
               <table>
@@ -186,7 +187,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                       <td>
                         <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", alignItems: "flex-start" }}>
                           {alert.alert_type === "priority_event" ? <SourceBadge source="System" /> : <SourceBadge source="Manual" />}
-                          <span>{alert.alert_type}</span>
+                          <span>{formatDataLabel(alert.alert_type)}</span>
                         </div>
                       </td>
                       <td>{alert.severity}</td>

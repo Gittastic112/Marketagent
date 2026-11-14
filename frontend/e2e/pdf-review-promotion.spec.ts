@@ -40,7 +40,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
   await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
 
-  await page.getByRole("link", { name: "Financials" }).click();
+  await page.getByRole("navigation", {name: "Company workspace"}).getByRole("link", { name: "Financials" }).click();
   const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
   await expect(candidateHeading).toBeVisible();
   const candidateReview = candidateHeading.locator("xpath=../../..");
@@ -88,6 +88,16 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
     await expect(overriddenStatuses).toHaveCount(overriddenBefore + 1);
   }
 
+  const periodCandidates = await backendData<Array<{id: number; fiscal_year: number}>>(page,
+    `/api/companies/${company.id}/financial-statements/extracted`);
+  for (const candidate of periodCandidates) {
+    const row = candidateReview.getByRole("row").filter({has: page.locator(`a[href*="candidate_id=${candidate.id}"]`)});
+    await row.getByRole("button", {name: "Confirm period end", exact: true}).click();
+    await row.getByLabel("Exact period end").fill(`${candidate.fiscal_year}-03-31`);
+    await row.getByLabel("Source location and explanation").fill("Mock Data test assumption: this fixture uses a March 31 year end. Not a real company fact.");
+    await row.getByRole("button", {name: "Save period confirmation", exact: true}).click();
+    await expect(row).toContainText(`Confirmed end ${candidate.fiscal_year}-03-31`);
+  }
   await expect(page.getByRole("heading", { name: "Review Required" })).toHaveCount(0);
   await page.getByRole("button", { name: "Promote Reviewed Candidates" }).click();
   await expect(candidateReview.getByRole("status").filter({ hasText: "Successfully promoted 12 candidates" })).toBeVisible();
@@ -134,6 +144,7 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   const snapshots = await backendData<NormalizedSnapshotRead[]>(page,
     `/api/companies/${company.id}/financial-statements/normalized`);
   await page.goto(`/companies/${company.id}/valuation/draft`);
+  await page.getByRole("button", {name: "Create draft", exact: true}).click();
   await expandDraftSections(page);
   // The source retains INR millions; valuation inputs use full INR and shares.
   await expect(page.locator("#starting_revenue:visible")).toHaveValue("1250000000");

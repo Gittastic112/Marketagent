@@ -9,7 +9,7 @@ test("India manual source is review-only, retry-safe and usable on mobile", asyn
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto(`/companies/${company.id}/filings`);
   const content = page.getByRole("main");
-  await expect(content.getByText("India Manual Filings", { exact: true })).toBeVisible();
+  await expect(content.getByText("Automated filing discovery is not configured for this market.", { exact: true })).toBeVisible();
   const panel = content.getByRole("heading", { name: "Add Manual Filing" }).locator("../..");
   const title = "Mock Data FY2026 source";
   for (let attempt = 0; attempt < 2; attempt++) {
@@ -44,8 +44,8 @@ test("official India guidance is matched to security identity and stays review-o
   await expect(main.getByRole("link", { name: "Official issuer reports" })).toHaveAttribute(
     "href", "https://www.ril.com/investors/financial-reporting");
   await expect(main.getByText(/Matched NSE ISIN INE002A01018/)).toBeVisible();
-  await expect(main.getByText(/Source selection does not approve any financial value/)).toBeVisible();
-  await expect(main.getByText("India Manual Filings", {exact:true})).toBeVisible();
+  await expect(main.getByText(/Source selection does not approve a financial value/)).toBeVisible();
+  await expect(main.getByText("Automated filing discovery is not configured for this market.", {exact:true})).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1)).toBe(true);
   const stored = await backendData<Array<{id:number}>>(page, `/api/companies/${company.id}/filings`);
   expect(stored).toEqual([]);

@@ -291,6 +291,7 @@ from app.schemas.financials import (
     CandidateReviewStatus,
     FinancialCandidateReviewUpdate,
     FinancialCandidateOverride,
+    FinancialCandidatePeriodReview,
     FinancialCandidateVersion,
     FinancialCandidatePromotion,
     FinancialExtractionCandidateRead,

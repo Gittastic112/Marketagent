@@ -19,7 +19,7 @@ def candidate(db):
     db.add(document); db.flush()
     row = FinancialExtractionCandidate(company_id=company.id, raw_document_id=document.id, metric_code="revenue",
         reported_label="Revenue", value=100, unit="USD million", fiscal_year=2025, source_text="Revenue USD million 100",
-        source_locator_json={"period_end": "2025-12-31"}, review_status="needs_review")
+        source_locator_json={"end": "2025-12-31"}, review_status="needs_review")
     db.add(row); db.commit()
     return row
 

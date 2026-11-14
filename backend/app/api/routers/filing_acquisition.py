@@ -7,6 +7,7 @@ from app.providers.filings import ManualFilingCreate
 from app.services.filing_acquisition import (
     create_manual_company_filing_link,
     discover_company_filings,
+    filing_discovery_overview,
     get_filing_document,
     list_company_filings,
 )
@@ -16,6 +17,12 @@ router = APIRouter(prefix="/api", tags=["filing_acquisition"])
 
 
 @router.get("/companies/{company_id}/filings/discover", response_model=ApiResponse[FilingDiscoveryRead])
+def get_discovery_overview(company_id: int, db: Session = Depends(get_db)) -> ApiResponse[FilingDiscoveryRead]:
+    overview = filing_discovery_overview(db, company_id)
+    return ApiResponse(data=overview, meta={"source": overview.provider_name})
+
+
+@router.post("/companies/{company_id}/filings/discover", response_model=ApiResponse[FilingDiscoveryRead])
 def discover_filings(
     company_id: int,
     form_type: str | None = "10-K",

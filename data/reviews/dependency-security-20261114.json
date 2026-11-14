@@ -1,0 +1,231 @@
+{
+  "recorded_at": "2026-11-14T19:03:52Z",
+  "status": "verified_installed",
+  "reason": "User authorized updating, testing and installing the two packages flagged by the first PR 17 dependency audit.",
+  "dependencies": [
+    {
+      "name": "opentelemetry-api",
+      "before": "1.45.1",
+      "after": "1.45.2",
+      "advisories": [
+        "CVE-2026-126360"
+      ],
+      "original_source": "https://github.com/open-telemetry/opentelemetry-python/security/advisories/GHSA-mf5v-w3w3-f6cg"
+    },
+    {
+      "name": "soupsieve",
+      "before": "3.0.1",
+      "after": "4.1.1",
+      "advisories": [
+        "CVE-2026-126190",
+        "CVE-2026-126193",
+        "CVE-2026-126191"
+      ],
+      "original_source": "https://github.com/facelessuser/soupsieve/security/advisories/GHSA-mmhr-3c5m-f64f",
+      "release_notes": "https://facelessuser.github.io/soupsieve/about/changelog/"
+    }
+  ],
+  "scope": "Only these two package versions and their hashes changed in the runtime and test locks. Direct requirements and application source did not change in this dependency follow-up.",
+  "test_alignment": "Four existing rate/industry-mix cases now assert that reopening preserves a draft, then explicitly refresh before checking source changes and invalidated review. No production behavior was weakened to satisfy the tests.",
+  "verification": {
+    "full_backend": {
+      "passed": 1963,
+      "skipped": 7,
+      "exit_code": 0,
+      "skipped_basis": "PostgreSQL integration cases are separate from this network-disabled SQLite suite."
+    },
+    "focused_draft_tests": 59,
+    "counts_overlap": true,
+    "dependency_lock_tests": 2,
+    "dependency_locks": "66 runtime and 70 test packages, consistent",
+    "dependency_audit": {
+      "tool": "pip-audit 2.10.1",
+      "hash_verification": true,
+      "result": "No known vulnerabilities found"
+    },
+    "smoke_checks": [
+      "Normal CSS selection returns the expected text",
+      "Deeply nested nonmatching markup completes",
+      "Oversized trace context is rejected",
+      "Runtime package versions match the patched locks"
+    ],
+    "production_build": true,
+    "readiness": true,
+    "hosted_checks": "Follow the latest check run on PR 17; this receipt records the local dependency follow-up, not an assertion that the first hosted run passed."
+  },
+  "installation": {
+    "installed_at": "2026-11-14T19:00:08Z",
+    "project": "market-intelligence-review-20261112-financial-history",
+    "images": {
+      "backend": {
+        "previous": "sha256:ae0e1782aa4b0b543ed86d50d85979763a25b488f7bade169f0aae9c6923a258",
+        "installed": "sha256:b816dc38f7ecfea07c55640281629bfa5eb9d2a5fd459f152983aceebe7c2cce",
+        "container": "4b3ce8d422ccc4ba58bb545a1a928c1a70c920a218d8393bdf7ea0b1540eb1d8"
+      },
+      "scheduler": {
+        "previous": "sha256:ae0e1782aa4b0b543ed86d50d85979763a25b488f7bade169f0aae9c6923a258",
+        "installed": "sha256:b816dc38f7ecfea07c55640281629bfa5eb9d2a5fd459f152983aceebe7c2cce",
+        "container": "44445f9143f3bc2b43df72c7290401e0595f47051ace6d8dbfd9d75179d359d0"
+      }
+    },
+    "unchanged_tables": 110,
+    "settings_unchanged": true,
+    "mounts_unchanged": true,
+    "protections_unchanged": true,
+    "database_restarted": false,
+    "frontend_restarted": false,
+    "volumes_unchanged": true,
+    "new_backup": false,
+    "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+    "dependency_versions": {
+      "opentelemetry-api": "1.45.2",
+      "soupsieve": "4.1.1"
+    },
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514"
+  },
+  "cleanup": {
+    "completed_at": "2026-11-14T19:02:13Z",
+    "removed_images": [
+      {
+        "id": "sha256:ae0e1782aa4b0b543ed86d50d85979763a25b488f7bade169f0aae9c6923a258",
+        "tags": [
+          "market-intelligence-review-backend:20261114-ten-sets"
+        ],
+        "logical_bytes": 731367624
+      },
+      {
+        "id": "sha256:bf2c921483403d3213d45c2eb188e4dcb8c9818ac8c015fb82e93ea950c89654",
+        "tags": [
+          "market-intelligence-tools:local"
+        ],
+        "logical_bytes": 920017880
+      }
+    ],
+    "removed_build_context": {
+      "path": "/tmp/mi-dependency-patch-20261114",
+      "bytes": 319968
+    },
+    "removed_lock_echoes": [
+      {
+        "path": "output/milestones/research-workspace-ten-sets-20261114/runtime-lock-refresh.log",
+        "bytes": 159344,
+        "sha256": "3e1458cf82622b6b79ed52146b266864408b87bf489138485b90e9d4e59342ae"
+      },
+      {
+        "path": "output/milestones/research-workspace-ten-sets-20261114/test-lock-refresh.log",
+        "bytes": 160086,
+        "sha256": "74788891d0a8bcb85bde7f0129c65adb5c40811002d56f2e73178a2c9504937c"
+      }
+    ],
+    "cache_result": "ID\t\t\t\t\t\tRECLAIMABLE\tSIZE\t\tLAST ACCESSED\n5krruyijv5espt16u4cabrpf7               \ttrue \t\t1.614MB   \t5 minutes ago\nm9hygemp83ho53dodne5i0hc0*              \ttrue \t8.192kB   \t5 minutes ago\n0ovy83296zn333tce6wr0pkit*              \ttrue \t163.8kB   \t5 minutes ago\nxchvgxcp4r8usv5toz4ffbe6b               \ttrue \t124.4MB   \t6 minutes ago\nnxve2878a5fz78f3wmn16gkck*              \ttrue \t4.096kB   \t5 minutes ago\n4t92v6zaobtfvsvq2s56etxym               \ttrue \t243.6kB   \t5 minutes ago\nuagx9xqqbu4y45gou5hh5k89j               \ttrue \t248kB     \t6 minutes ago\nx3op5yp2sdohsedmjqtd6k1p8               \ttrue \t4.898MB   \t5 minutes ago\nvj8v5f6c0lkycfflxv6h7dvlf               \ttrue \t243.6kB   \t6 minutes ago\nt35i7iwgaoxu1dr2t8lzc3wx1               \ttrue \t8.291kB   \t5 minutes ago\npksd6f22xtmhte491l104hbrl               \ttrue \t155.9MB   \t6 minutes ago\nkn0d3vaum70uxs9u7u6d0qbth               \ttrue \t726.5MB   \t5 minutes ago\ntz06198d17dkx2ghn87dyoq9a               \ttrue \t1.669MB   \t6 minutes ago\n4pr3snrrlez4v7sr7cmgs0y6u               \ttrue \t18.57MB   \t6 minutes ago\nnqre8t6hcf39he8dmgh7agopi               \ttrue \t16.58kB   \t6 minutes ago\n8swcpraaj9x7e3o524mtiiuck               \ttrue \t194.6kB   \t6 minutes ago\nqcp0esi9f442f3cg3t212h9f5               \ttrue \t90.11kB   \t6 minutes ago\nilxek8n8m2dptsdgoshamaxlj               \ttrue \t483.5kB   \t6 minutes ago\nvd3dceninmnikgscksw8rl6fb               \ttrue \t3.061MB   \t6 minutes ago\nmqitky474ls03y7be88gldnnd               \ttrue \t12.52kB   \t6 minutes ago\nst1g7mcoc5k6dhlz6vm078ip7               \ttrue \t12.74kB   \t6 minutes ago\ni5ajc2ehrx3po59fgbq211dwg               \ttrue \t72.94kB   \t6 minutes ago\ny6qornlcp5vvbkdg8uqbsifag               \ttrue \t536.9MB   \t6 minutes ago\njxmheygdhiwrgmuhrrhpxf0mv               \ttrue \t16.8kB    \t6 minutes ago\ny0iztm7jo0t96yt1i6qbzv84h               \ttrue \t8.291kB   \t6 minutes ago\nuqspfji6qkofrzjo9qxwge6if               \ttrue \t16.63kB   \t6 minutes ago\nonwulu0i4wk2szcdivyhhkcji               \ttrue \t57.21MB   \t6 minutes ago\njvwpf24hjm30bya4cbui9jnad               \ttrue \t6.263MB   \t6 minutes ago\ntsszsfwflpcvrfi5t85ujy14j               \ttrue \t139.5MB   \t6 minutes ago\nTotal:\t1.778GB\n",
+    "disk_after": "TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE\nImages          4         3         2.864GB   1.045GB (36%)\nContainers      4         4         122.9kB   0B (0%)\nLocal Volumes   2         1         210.7MB   167.9kB (0%)\nBuild Cache     0         0         0B        0B\n",
+    "retained_containers": [
+      "market_intel_backend",
+      "market_intel_frontend",
+      "market_intel_postgres",
+      "market_intel_scheduler"
+    ],
+    "retained_image_ids": [
+      "b816dc38f7ec",
+      "aeeadf0e15e3",
+      "ed0092f21eea",
+      "ba023b77f84f"
+    ],
+    "retained_volumes": [
+      "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882",
+      "market-intelligence-md-filescopy_marketintel_postgres_data"
+    ],
+    "new_backup": false,
+    "size_note": "Image and build-cache figures share layers; they are not additive physical disk reclamation."
+  },
+  "source_locks": {
+    "backend/requirements.lock": "3e1458cf82622b6b79ed52146b266864408b87bf489138485b90e9d4e59342ae",
+    "backend/requirements-test.lock": "74788891d0a8bcb85bde7f0129c65adb5c40811002d56f2e73178a2c9504937c"
+  },
+  "pull_request": "https://github.com/Gittastic112/Marketagent/pull/17",
+  "acceptance": {
+    "new_actual_use_days": 0,
+    "new_financial_facts": 0,
+    "new_acceptance_points": 0
+  },
+  "frontend_followup": {
+    "recorded_at": "2026-11-14T19:13:27Z",
+    "repairs": [
+      "Empty-draft return link now has a 40.5px-high click target",
+      "Thesis grid item can shrink, keeping populated tables within a bounded keyboard-scroll region"
+    ],
+    "test_alignment": "Nine browser workflow specs follow current navigation labels, collapsed settings, explicit draft creation and the reviewed-version API; existing substantive assertions remain.",
+    "frontend_tests": 393,
+    "typecheck": true,
+    "production_build": true,
+    "installed_browser": {
+      "read_only": true,
+      "viewport_width": 440,
+      "page_scroll_width": 430,
+      "thesis_region_width": 364,
+      "thesis_scroll_width": 842,
+      "keyboard_scroll_verified": true,
+      "return_link_height": 40.5,
+      "return_link_reached_saved_models": true,
+      "existing_saved_model_count": 1
+    },
+    "installation": {
+      "installed_at": "2026-11-14T19:11:11Z",
+      "previous_image": "sha256:ed0092f21eea280dad68af7e746c2cceee4e9ee54165277e5b9c7a1289f4a4fb",
+      "image": "sha256:77acb42526ae691c55432921111286ba89a8c882dfb96daa30f9a4ecb2d779c2",
+      "container": "2317fa613e33e80877456dacec0ede2952db13bad3b9ef77963b7acb8351e035",
+      "unchanged_tables": 110,
+      "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514",
+      "settings_unchanged": true,
+      "mounts_unchanged": true,
+      "protections_unchanged": true,
+      "other_services_unchanged": true,
+      "volumes_unchanged": true,
+      "new_backup": false,
+      "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a"
+    },
+    "cleanup": {
+      "completed_at": "2026-11-14T19:13:08Z",
+      "removed_images": [
+        {
+          "id": "sha256:ed0092f21eea280dad68af7e746c2cceee4e9ee54165277e5b9c7a1289f4a4fb",
+          "tags": [
+            "market-intelligence-review-frontend:20261114-ten-sets"
+          ],
+          "logical_bytes": 422939574
+        },
+        {
+          "id": "sha256:a99e8f3c34c2d0e14f394473ba332509f538ec28a62b2c1d261d430217c5d1dd",
+          "tags": [
+            "market-intelligence-browser-build:20261114"
+          ],
+          "logical_bytes": 1273877055
+        }
+      ],
+      "removed_context": {
+        "path": "/tmp/mi-browser-repair-20261114",
+        "bytes": 2087660
+      },
+      "cache_result": "ID\t\t\t\t\t\tRECLAIMABLE\tSIZE\t\tLAST ACCESSED\njwn8r1li8kj3ffpejuhwcosai*              \ttrue \t\t8.192kB   \t3 minutes ago\nvf30i9gcdytotky3vdbkm416y*              \ttrue \t8.192kB   \t3 minutes ago\nz60e7xxjgkxqtr9h1bi5e3juz               \ttrue \t246.4MB   \t3 minutes ago\nnwncc3jkauxhsr1ls4q296exf               \ttrue \t2.143MB   \t3 minutes ago\nvkecqh0nzvd2xbi81snovre8t*              \ttrue \t8.192kB   \t3 minutes ago\n1ofdm0lmylr0zmcw0fj97y6x1*              \ttrue \t3.228MB   \t3 minutes ago\n8rzmmg6c4x23h8ha3rainpx9m               \ttrue \t3.68MB    \t3 minutes ago\nj8sdysv3uk3i82bobnr6b9j79               \ttrue \t64.48MB   \t3 minutes ago\nsko4wpyj68alv1pi3osap8v4h               \ttrue \t600.8MB   \t3 minutes ago\nu4tzleg2l09wlrcgnutycr1fx               \ttrue \t8.285kB   \t3 minutes ago\nf0og3ay6z1knjp9ff5t9u9kfx               \ttrue \t356.3MB   \t3 minutes ago\ntasrdyc5tpltto3lrwwn0a5mv               \ttrue \t117.4kB   \t3 minutes ago\ntpx0ugi5dnwpvecki80qkjzoz               \ttrue \t8.287kB   \t3 minutes ago\nozq5jero916az5reb4yh4hwep               \ttrue \t2.142MB   \t3 minutes ago\ni2zf1sxc6cyiv31tadeo75izu               \ttrue \t64.48MB   \t4 minutes ago\n3sh6rw5o20c5zj8sq72pguz51               \ttrue \t8.285kB   \t4 minutes ago\ntjgnhx0ud2yjx403h08jrth2q               \ttrue \t356.3MB   \t4 minutes ago\nTotal:\t1.7GB\n",
+      "disk_after": "TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE\nImages          4         3         2.864GB   1.045GB (36%)\nContainers      4         4         77.82kB   0B (0%)\nLocal Volumes   2         1         210.7MB   167.9kB (0%)\nBuild Cache     0         0         0B        0B\n",
+      "retained_containers": [
+        "market_intel_backend",
+        "market_intel_frontend",
+        "market_intel_postgres",
+        "market_intel_scheduler"
+      ],
+      "retained_image_ids": [
+        "77acb42526ae",
+        "b816dc38f7ec",
+        "aeeadf0e15e3",
+        "ba023b77f84f"
+      ],
+      "retained_volumes": [
+        "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882",
+        "market-intelligence-md-filescopy_marketintel_postgres_data"
+      ],
+      "unchanged_tables": 110,
+      "new_backup": false
+    }
+  }
+}

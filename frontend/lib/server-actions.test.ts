@@ -58,6 +58,19 @@ function form(values: Record<string, string | string[]>) {
   return data;
 }
 
+test("draft creation is explicit, retains errors and refreshes only its read page", async () => {
+  const h = actionHarness();
+  assert.deepEqual(await h.actions.createValuationSetupDraft("7", new FormData()), {error: null});
+  assert.deepEqual(h.calls, [{method: "POST", path: "/companies/7/valuation-drafts", payload: {}}]);
+  assert.deepEqual(h.pages, ["/companies/7/valuation/draft"]);
+  assert.deepEqual(h.redirects, []);
+  const failed = actionHarness(() => {throw new ApiError("Draft unavailable", 503);});
+  assert.ok((await failed.actions.createValuationSetupDraft("7", new FormData())).error);
+  assert.deepEqual(failed.pages, []);
+  assert.ok((await h.actions.createValuationSetupDraft("7x", new FormData())).error);
+  assert.equal(h.calls.length, 1);
+});
+
 test("compatibility exports retain every action identity and domains cannot bypass authenticated HTTP", () => {
   const h = actionHarness();
   const expected = JSON.parse(readFileSync(new URL("./fixtures/server-action-exports.json", import.meta.url), "utf8"));

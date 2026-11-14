@@ -2,16 +2,19 @@
 
 import React, { useState } from "react";
 import { Panel } from "@/components/page";
-import type { EventRecord } from "@/lib/api";
+import type { Company, EventRecord } from "@/lib/api";
+import { formatDataLabel } from "@/lib/formatting";
 import Link from "next/link";
 import { EvidenceTrailDrawer } from "./intelligence/EvidenceTrailDrawer";
 
 interface EventsTimelineProps {
   events: EventRecord[];
+  companies?: Pick<Company, "id" | "ticker">[];
 }
 
-export function EventsTimeline({ events }: EventsTimelineProps) {
+export function EventsTimeline({ events, companies = [] }: EventsTimelineProps) {
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  const companiesById = new Map(companies.map(company => [company.id, company]));
 
   if (!events || events.length === 0) {
     return (
@@ -45,19 +48,19 @@ export function EventsTimeline({ events }: EventsTimelineProps) {
               <div style={{ fontWeight: 600, color: "var(--text)" }}>
                 {event.company_id ? (
                   <Link href={`/companies/${event.company_id}`} style={{ color: "var(--accent)", marginRight: "0.5rem", textDecoration: "underline" }}>
-                    {event.company_id} {/* Ideally we'd map company_id to ticker here */}
+                    {companiesById.get(event.company_id)?.ticker || `Company #${event.company_id}`}
                   </Link>
                 ) : null}
                 {event.title}
               </div>
               <div style={{ display: "flex", gap: "0.25rem" }}>
-                <span className="badge badge-outline" title="Priority Score">{event.priority_score ?? 0}</span>
+                <span className="badge badge-outline" title="Priority score out of 100">{event.priority_score == null ? "Not scored" : `${event.priority_score}/100`}</span>
               </div>
             </div>
 
             <div style={{ fontSize: "0.85rem", color: "var(--text-muted)", display: "flex", gap: "0.5rem", alignItems: "center" }}>
               <span className="badge badge-outline" style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.3rem" }}>
-                {event.event_type}
+                {formatDataLabel(event.event_type)}
               </span>
               <span>Speed: {event.information_speed}</span>
             </div>

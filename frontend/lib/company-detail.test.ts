@@ -120,8 +120,8 @@ test("buildCompanyDetail returns only records linked to the selected company", (
     }
   ];
   const thesisNotes: ThesisNote[] = [
-    { id: 1, company_id: 1, title: "Apple thesis", thesis_text: "Services matter.", status: "active", thesis_drift_score: 0, assumptions: [], changes: [] },
-    { id: 2, company_id: 2, title: "Other thesis", thesis_text: "Other.", status: "active", thesis_drift_score: 0, assumptions: [], changes: [] }
+    { id: 1, company_id: 1, title: "Apple thesis", thesis_text: "Services matter.", status: "active", thesis_drift_score: 0, assumptions: [], changes: [], created_at: "2026-11-12T12:00:00Z", updated_at: "2026-11-12T12:00:00Z" },
+    { id: 2, company_id: 2, title: "Other thesis", thesis_text: "Other.", status: "active", thesis_drift_score: 0, assumptions: [], changes: [], created_at: "2026-11-12T12:00:00Z", updated_at: "2026-11-12T12:00:00Z" }
   ];
 
   const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);

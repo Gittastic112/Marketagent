@@ -66,7 +66,8 @@ def test_invalid_zero_is_not_hidden_by_defaults(field, module):
         assert all(year.reinvestment == 0 for year in years)
     else:
         assert output.diluted_shares == 0
-        assert output.intrinsic_value_per_share == 0
+        assert output.intrinsic_value_per_share is None
+        assert output.upside_downside_pct is None
 
 
 @pytest.mark.parametrize("field", ["tax_rate", "target_operating_margin", "wacc_start",

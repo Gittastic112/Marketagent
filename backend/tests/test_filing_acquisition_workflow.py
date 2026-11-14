@@ -6,6 +6,25 @@ from helpers import response_data
 import pytest
 
 
+def test_stored_filing_list_includes_imported_sec_filings_without_unrelated_documents(client, db):
+    from app.models import RawDocument, Source
+    company = Company(ticker="MOCKLIST", name="Mock Data filing list", market="US")
+    other = Company(ticker="OTHERLIST", name="Mock Data other issuer", market="US")
+    source = Source(name="Mock Data SEC filings", source_type="sec")
+    db.add_all([company, other, source]); db.flush()
+    documents = []
+    for owner, kind in [(company, "sec_filing_metadata"), (company, "annual_report"),
+                        (company, "news"), (company, "xbrl_facts"), (other, "sec_filing_metadata")]:
+        row = RawDocument(company_id=owner.id, source_id=source.id, document_type=kind,
+            title=f"Mock Data {owner.ticker} {kind}", raw_text="Mock Data", content_hash=f"mock-list-{owner.id}-{kind}")
+        db.add(row); documents.append(row)
+    db.commit()
+    rows = response_data(client.get(f"/api/companies/{company.id}/filings"))
+    assert {row["id"] for row in rows} == {documents[0].id, documents[1].id}
+    assert client.get(f"/api/filings/{documents[0].id}").status_code == 200
+    assert client.get(f"/api/filings/{documents[2].id}").status_code == 404
+
+
 def test_us_filing_discovery_returns_sec_candidates(client, db, monkeypatch) -> None:
     company = Company(
         ticker="AAPL",
@@ -38,7 +57,13 @@ def test_us_filing_discovery_returns_sec_candidates(client, db, monkeypatch) -> 
 
     monkeypatch.setattr("app.providers.filings.sec_edgar.fetch_recent_sec_filing_metadata", fake_preview)
 
-    response = client.get(f"/api/companies/{company.id}/filings/discover?form_type=10-K&filing_year=2026&limit=5")
+    from app.models import ProcessingRun
+    overview = client.get(f"/api/companies/{company.id}/filings/discover")
+    assert overview.status_code == 200
+    assert response_data(overview)["discovery_status"] == "not_requested"
+    assert response_data(overview)["filings"] == []
+    assert db.query(ProcessingRun).count() == 0
+    response = client.post(f"/api/companies/{company.id}/filings/discover?form_type=10-K&filing_year=2026&limit=5")
 
     assert response.status_code == 200
     data = response_data(response)
@@ -46,6 +71,10 @@ def test_us_filing_discovery_returns_sec_candidates(client, db, monkeypatch) -> 
     assert data["provider_name"] == "SEC EDGAR"
     assert data["mode"] == "automated"
     assert data["manual_required"] is False
+    assert data["discovery_status"] == "complete"
+    assert data["checked_at"]
+    run = db.query(ProcessingRun).one()
+    assert run.status == "success" and run.fetched_count == 1
     assert data["filings"][0]["accession_number"] == "0000320193-26-000001"
 
 

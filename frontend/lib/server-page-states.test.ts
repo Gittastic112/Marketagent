@@ -62,6 +62,136 @@ async function pageHtml(relative: string, responseFor: (url: string) => ApiRespo
 }
 
 const company = {id: 7, name: "Mock Data company", ticker: "MOCK", market: "US"};
+const emptyQueue = {captured_at: "2026-11-12T12:00:00Z", portfolio_id: null, items: [], counts: {}, total: 0, returned: 0,
+  limit: 50, truncated: false, basis: "Mock Data scoped research", limitations: []};
+
+test("company thesis selects the requested owned note and exposes supplemental notes", async () => {
+  const notes = [1, 2].map(id => ({id, company_id: 7, title: `Mock Data note ${id}`, thesis_text: `Only note ${id} body`,
+    status: "active", updated_at: `2026-11-${10 + id}T12:00:00Z`, assumptions: [], changes: []}));
+  const html = await pageHtml("app/companies/[id]/thesis/page", url => success(url.startsWith("/thesis-notes") ? notes : company), undefined, {note_id: "1"});
+  assert.match(html, /Only note 1 body/); assert.doesNotMatch(html, /Only note 2 body/);
+  assert.match(html, /Other notes for this company/); assert.match(html, /href="\/thesis-notes\/1"/);
+  const missing = await pageHtml("app/companies/[id]/thesis/page", url => success(url.startsWith("/thesis-notes") ? notes : company), undefined, {note_id: "999"});
+  assert.match(missing, /That note is unavailable/); assert.doesNotMatch(missing, /Only note [12] body/);
+});
+
+test("review queue distinguishes errors, empty coverage and bounded counts", async () => {
+  const empty = {captured_at: "2026-11-12T12:00:00Z", portfolio_id: null, items: [], counts: {}, total: 0, returned: 0,
+    limit: 50, truncated: false, basis: "Mock Data scoped research", limitations: ["Not complete financial coverage"]};
+  const html = await pageHtml("components/review-queue", () => success(null), {exportName: "ResearchReviewQueue", props: {report: empty}});
+  assert.match(html, /No matching items/); assert.match(html, /does not establish complete/);
+  const failure = await pageHtml("components/review-queue", () => success(null), {exportName: "ResearchReviewQueue", props: {report: null}});
+  assert.match(failure, /could not be loaded/); assert.doesNotMatch(failure, /No matching items/);
+});
+
+test("dated financial review shows source gaps without inventing amounts", async () => {
+  const html = await pageHtml("components/dated-financial-inputs", () => success(null), {
+    exportName: "DatedFinancialInputs", props: {valuationDate: "2026-11-12", knowledge: "available_by_date", track: "operating", report: {
+      company_id: 7, valuation_date: "2026-11-12", knowledge: "available_by_date", track: "operating", truncated: false, limitations: [],
+      rows: [{metric: "debt", label: "Debt", status: "conflict", selected_revision_id: null, original_value: null, original_unit: null,
+        normalized_value: null, normalized_unit: null, conversion: null, claim_type: null, effective_at: "2025-12-31", sources: [], limitations: ["Resolve competing source scope"]}]
+    }}
+  });
+  assert.match(html, /2026-11-12/); assert.match(html, /Resolve source conflict/); assert.match(html, /Not selected/);
+});
+
+test("opening an empty draft only reads and offers an explicit create action", async () => {
+  const reads: string[] = [];
+  const html = await pageHtml("app/companies/[id]/valuation/draft/page", url => {
+    reads.push(url);
+    return success(url.endsWith("/current") ? null : company);
+  });
+  assert.deepEqual(reads, ["/companies/7", "/companies/7/valuation-drafts/current"]);
+  assert.match(html, /No active draft/);
+  assert.match(html, />Create draft<\/button>/);
+  const unavailable = await pageHtml("app/companies/[id]/valuation/draft/page", url =>
+    url.endsWith("/current") ? errorResponse("OFFLINE", "Draft unavailable") : success(company));
+  assert.match(unavailable, /Saved drafts could not be loaded/);
+  assert.doesNotMatch(unavailable, /No active draft|>Create draft<\/button>/);
+});
+
+test("opening filings reads source settings without requesting provider work", async () => {
+  const reads: string[] = [];
+  const html = await pageHtml("app/companies/[id]/filings/page", url => {
+    reads.push(url);
+    return success(url.includes("/discover") ? {company_id: 7, provider_name: "Mock Data provider", mode: "automated",
+      manual_required: false, discovery_status: "not_requested", checked_at: null, filings: [], next_action: "Check explicitly."} :
+      url.endsWith("/filings") ? [] : company);
+  });
+  assert.equal(reads.length, 3);
+  assert.match(html, />Check for filings<\/button>/);
+  assert.match(html, /No provider check has been requested/);
+  assert.doesNotMatch(html, /No filing candidates returned/);
+});
+
+test("manual period confirmation stays separate from extracted evidence and value review", async () => {
+  const html = await pageHtml("components/financial-candidate-review", () => success(null), {
+    exportName: "FinancialCandidateReview", props: {companyId: 7, initialCandidates: [{id: 1, company_id: 7,
+      raw_document_id: 8, metric_code: "revenue", fiscal_year: 2025, period_type: "annual", value: 123,
+      unit: "USD million", review_status: "needs_review", source_text: "Mock Data source", source_locator_json: {
+        period_review: {end: "2025-09-30", source_note: "Mock Data source page 2"}}}]},
+  });
+  assert.match(html, /Source extraction has no end date/);
+  assert.match(html, /User Assumption · Confirmed end 2025-09-30/);
+  assert.match(html, /Mock Data source page 2/);
+  assert.match(html, /Edit period confirmation/);
+  assert.match(html, /needs review/);
+});
+
+test("research shows newest ingestion first, keeps source dates separate and links evidence", async () => {
+  const documents = [
+    {id: 1, title: "Older ingestion", document_type: "sec_filing_metadata", ingested_at: "2026-11-01T12:00:00Z", published_at: "2026-10-30"},
+    {id: 2, title: "Newly imported historical filing", document_type: "sec_filing_metadata", ingested_at: "2026-11-12T12:00:00Z", published_at: "2024-02-01"},
+  ];
+  const html = await pageHtml("app/research/page", url => success(url.includes("raw-documents") ? documents : []));
+  assert.ok(html.indexOf("Newly imported historical filing") < html.indexOf("Older ingestion"));
+  assert.match(html, /Latest additions to the local library/);
+  assert.match(html, /href="\/documents\/2\/sections"/);
+  assert.match(html, /SEC filing metadata/);
+  assert.doesNotMatch(html, /sec_filing_metadata/);
+  assert.equal(documents[0].id, 1, "sorting must not mutate the response");
+});
+
+test("narratives show impact on the 100-point scale and preserve an unknown score", async () => {
+  const html = await pageHtml("app/narratives/page", url => success(
+    url === "/narrative-clusters" ? [{id: 1, name: "Mock Data narrative", created_at: "2026-11-09"}] :
+    url === "/narrative-mentions" ? [{id: 1, cluster_id: 1, event_id: 1, created_at: "2026-11-09"}, {id: 2, cluster_id: 1, event_id: 2, created_at: "2026-11-09"}] :
+    url === "/events" ? [{id: 1, title: "Known impact", event_type: "earnings_review", impact_score: 75}, {id: 2, title: "Unknown impact", event_type: "earnings_review", impact_score: null}] : []));
+  assert.match(html, /Impact: 75\/100/);
+  assert.match(html, /Impact not scored/);
+  assert.match(html, /href="\/events\/1\/evidence-resolution"/);
+  assert.doesNotMatch(html, /75\/10(?:<|\s)|null\/|earnings_review/);
+});
+
+test("event timeline resolves company identity and never presents an absent score as zero", async () => {
+  const html = await pageHtml("components/events-timeline", () => success(null), {
+    exportName: "EventsTimeline", props: {events: [{id: 1, company_id: 7, title: "Mock Data event", event_type: "earnings_review", information_speed: "fast", priority_score: null}], companies: [company]},
+  });
+  assert.match(html, /href="\/companies\/7"[^>]*>MOCK<\/a>/);
+  assert.match(html, /Not scored/);
+  assert.doesNotMatch(html, /earnings_review/);
+});
+
+test("document library shows company and source names while retaining the complete hash", async () => {
+  const html = await pageHtml("app/documents/page", url => success(
+    url === "/companies" ? [company] : url === "/sources" ? [{id: 2, name: "Mock Data source"}] :
+    {items: [{id: 1, company_id: 7, source_id: 2, title: "Mock Data document", document_type: "xbrl_facts", content_hash: "complete-original-hash"}], total: 1, offset: 0, limit: 30}));
+  assert.match(html, /href="\/companies\/7"[^>]*>MOCK<\/a>/);
+  assert.match(html, /Mock Data source/);
+  assert.match(html, /View hash/);
+  assert.match(html, /complete-original-hash/);
+});
+
+test("an event search link selects that record and provides a route back to all events", async () => {
+  const html = await pageHtml("app/events/page", url => success(url === "/events" ? [
+    {id: 1, title: "Other event", event_type: "filing", credibility_score: null},
+    {id: 2, title: "Selected event title", event_type: "filing", credibility_score: null},
+  ] : []), undefined, {event_id: "2"});
+  assert.match(html, /Selected event/);
+  assert.match(html, /href="\/events\/2\/evidence-resolution"/);
+  assert.doesNotMatch(html, /href="\/events\/1\/evidence-resolution"/);
+  assert.match(html, /View all events/);
+});
 
 test("financial review plan renders source actions and keeps absent evidence distinct", async () => {
   const report = {basis: "Mock Data review", source_document_count: 1, generated_at: "2026-11-07T12:00:00Z", actions: [],
@@ -162,6 +292,7 @@ test("dashboard selector preserves explicit selection and never substitutes afte
   const data = dashboardData(null);
   data.portfolios.push({id: 1, name: "Old empty account", base_currency: "USD", description: null});
   const html = await pageHtml("app/page", url => {
+    if (url.startsWith("/review-queue")) { assert.match(url, /portfolio_id=41/); return success(emptyQueue); }
     assert.equal(url, "/dashboard/overview?portfolio_id=41");
     return success(data);
   }, undefined, {portfolio_id: "41"});
@@ -181,6 +312,7 @@ test("dashboard incomplete snapshot names exact price and FX gaps within the por
       missing_price_tickers_json: ["MISSING-US", "MISSING-IN"], missing_fx_pairs_json: ["INR/USD"],
       payload_json: null, created_at: "2026-11-04T12:00:00Z"};
     const html = await pageHtml("app/page", url => {
+      if (url.startsWith("/review-queue")) return success(emptyQueue);
       assert.equal(url, "/dashboard/overview");
       return success(dashboardData(snapshot));
     });
@@ -203,14 +335,14 @@ test("dashboard complete and valid zero snapshots never claim missing inputs", a
       base_currency: "USD", calculation_status: "complete", holdings_count: value === 0 ? 0 : 2,
       priced_holdings_count: value === 0 ? 0 : 2, missing_price_tickers_json: [], missing_fx_pairs_json: [],
       payload_json: null, created_at: "2026-11-04T12:00:00Z"};
-    const html = await pageHtml("app/page", () => success(dashboardData(snapshot)));
+    const html = await pageHtml("app/page", url => success(url.startsWith("/review-queue") ? emptyQueue : dashboardData(snapshot)));
     const card = html.match(/<a href="\/portfolio\/41">([\s\S]*?)<\/a>/)?.[1];
     assert.ok(card);
     assert.match(card, value === 0 ? /\$0\.00/ : /\$125\.00/);
     assert.match(card, /Stored snapshot · 2026-11-04/);
     assert.doesNotMatch(card, /holdings priced|Prices needed|FX rates needed|review missing inputs|Not available/);
   }
-  const absent = await pageHtml("app/page", () => success(dashboardData(null)));
+  const absent = await pageHtml("app/page", url => success(url.startsWith("/review-queue") ? emptyQueue : dashboardData(null)));
   const card = absent.match(/<a href="\/portfolio\/41">([\s\S]*?)<\/a>/)?.[1];
   assert.ok(card);
   assert.match(card, /Capture a priced snapshot/);
@@ -228,24 +360,35 @@ test("company overview keeps failed collections unavailable and preserves loaded
   assert.match(html, /Mock Data retained filing/);
   assert.match(html, /href="\/companies\/7"[^>]*>Try again/);
   assert.doesNotMatch(html, /No linked events|No active alerts|No linked thesis notes|Untrusted failed payload/);
-  for (const label of ["Recorded activity", "Recorded alerts", "Thesis"]) {
-    assert.match(html, new RegExp(`${label}<\\/div><div class="metric-value">Unavailable<`));
-  }
-  assert.match(html, /Documents<\/div><div class="metric-value">1</);
+  assert.match(html, /Saved models could not be loaded/);
+  assert.match(html, /Source documents \(1\)/);
+  assert.match(html, /href="\/documents\/21\/sections"/);
 });
 
 test("company overview successful empty collections stay empty and failed documents do not become zero", async () => {
   const loaded = await pageHtml("app/companies/[id]/page", url => success(url === "/companies" ? [{...company, exposure_tags: []}]
     : url.startsWith("/api/market/quote") ? null : []));
   for (const text of [/No linked documents/, /No linked events/, /No active alerts/, /No linked thesis notes/]) assert.match(loaded, text);
-  assert.match(loaded, /Recorded activity<\/div><div class="metric-value">0</);
-  assert.match(loaded, /Thesis<\/div><div class="metric-value">None</);
+  assert.match(loaded, /Source documents \(0\)/);
+  assert.match(loaded, /No saved valuation model/);
   const failed = await pageHtml("app/companies/[id]/page", url => url === "/raw-documents/summaries"
     ? errorResponse("NETWORK_ERROR", "Mock Data document outage")
     : success(url === "/companies" ? [{...company, exposure_tags: []}] : url.startsWith("/api/market/quote") ? null : []));
   assert.match(failed, /Documents could not be loaded/);
-  assert.match(failed, /Documents<\/div><div class="metric-value">Unavailable</);
+  assert.match(failed, /Source documents \(unavailable\)/);
   assert.doesNotMatch(failed, /No linked documents/);
+});
+
+test("company overview keeps full note links while bounding excerpts and surfacing recent additions", async () => {
+  const notes = Array.from({length: 5}, (_, index) => ({id: index + 1, company_id: 7,
+    title: `Mock Data note ${index + 1}`, status: "active", thesis_text: "Review context. ".repeat(100) + "UNABRIDGED_TAIL"}));
+  const html = await pageHtml("app/companies/[id]/page", url => success(url === "/companies" ? [{...company, exposure_tags: []}]
+    : url === "/thesis-notes" ? notes : url.startsWith("/api/market/quote") ? null : []));
+  assert.doesNotMatch(html, /UNABRIDGED_TAIL/);
+  assert.match(html, /All research notes \(5\)/);
+  for (const note of notes) assert.ok(html.includes(`href="/thesis-notes/${note.id}"`));
+  assert.ok(html.indexOf("Mock Data note 5") < html.indexOf("Mock Data note 3"));
+  assert.equal((html.match(/Read full note/g) || []).length, 3);
 });
 
 test("company overview distinguishes unavailable identity from a missing company", async () => {
@@ -298,6 +441,20 @@ test("valuation context failure preserves saved models and successful empty mode
   assert.match(empty, /0 models/);
   assert.match(empty, /No valuation models yet/);
   assert.doesNotMatch(empty, /Models unavailable|Could not load valuation models/);
+});
+
+test("saved model list uses the model currency and never fills it from company context", async () => {
+  const models = [
+    {id: 31, name: "Mock Data zero estimate", intrinsic_value_per_share: 0, cash_flow_currency: "INR"},
+    {id: 32, name: "Mock Data unknown currency", intrinsic_value_per_share: 123.45, cash_flow_currency: null},
+    {id: 33, name: "Mock Data nonfinite estimate", intrinsic_value_per_share: Infinity, cash_flow_currency: "USD"},
+  ].map(model => ({...model, model_type: "fcff", readiness: "calculated", readiness_detail: "Stored result", assumption_set_count: 1}));
+  const html = await pageHtml("app/companies/[id]/valuation/page", url => success(url === "/companies/7" ? company
+    : url.endsWith("valuation-model-summaries") ? models : {market: "US", country: "United States", default_currency: "USD", warnings: []}));
+  assert.match(html, /₹0\.00/);
+  assert.doesNotMatch(html, /\$123\.45|Infinity|NaN/);
+  assert.equal((html.match(/Not reliable/g) || []).length, 2);
+  assert.ok(html.indexOf("Saved models") < html.indexOf("Industry and benchmark settings"));
 });
 
 test("data health failures remain unavailable instead of empty results or healthy zero counts", async () => {
@@ -459,7 +616,7 @@ test("financial reconciliation needs actual comparable metrics before claiming a
     const html = await pageHtml("app/companies/[id]/fundamentals/page", url => success(url === "/companies/7" ? company
       : url.endsWith("/reconciliation") ? {periods:exactCount ? [{period_id:1, year:2025, period_type:"annual", items:[{status:"exact", metric_code:"revenue", source_value:100, normalized_value:100}]}] : [],
         exact_count:exactCount, mismatch_count:0, normalized_only_count:0, missing_normalized_count:0}
-      : url.endsWith("/coverage") || url.endsWith("/identities") || url.includes("/review-plan?") ? null : []));
+      : url.endsWith("/coverage") || url.endsWith("/identities") || url.includes("/review-plan?") || url.includes("/dated-inputs?") ? null : []));
     if (exactCount === 0) {
       assert.match(html, /No comparable reviewed metrics are available/);
       assert.doesNotMatch(html, /All comparable source metrics match/);

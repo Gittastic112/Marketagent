@@ -20,7 +20,10 @@ import { DataStateNotices } from "@/components/ui/data-states";
 import { backfillNormalizedFinancialsAction, deleteFinancialStatementPeriod, normalizeFinancialPeriodAction } from "@/app/actions";
 import { FinancialCandidateReview } from "@/components/financial-candidate-review";
 import { FinancialReviewPlanPanel } from "@/components/financial-review-plan";
-import type { FinancialReviewPlan } from "@/lib/api/financials";
+import { FinancialSourceHistory } from "@/components/financial-source-history";
+import { DatedFinancialInputs } from "@/components/dated-financial-inputs";
+import type { DatedInputs } from "@/lib/api/dated-inputs";
+import type { FinancialReviewPlan, SourceFactRevision } from "@/lib/api/financials";
 import { ScreenerUpload } from "@/components/screener-upload";
 import { formatNumber } from "@/lib/formatting";
 import { financialIdentityFormula, financialMetricLabel } from "@/lib/financial-evidence";
@@ -44,9 +47,12 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value)?.trim() ?? "";
   const reviewTrack = first(query.review_track) || "operating";
   const reviewYear = first(query.review_year);
+  const valuationDate = first(query.valuation_date) || new Date().toISOString().slice(0, 10);
+  const knowledge = first(query.knowledge) || "available_by_date";
+  const datedParams = new URLSearchParams({ valuation_date: valuationDate, knowledge, track: reviewTrack });
   const reviewParams = new URLSearchParams({track: reviewTrack});
   if (reviewYear) reviewParams.set("latest_year", reviewYear);
-  const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse, reviewPlanResponse] = await Promise.all([
+  const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse, reviewPlanResponse, sourceFactsResponse, datedResponse] = await Promise.all([
     serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`),
     serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`),
     serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`),
@@ -58,6 +64,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
       `/api/companies/${companyId}/financial-statements/identities`,
     ),
     serverFetchApiResponse<FinancialReviewPlan>("/api/companies/" + companyId + "/financial-statements/review-plan?" + reviewParams),
+    serverFetchApiResponse<SourceFactRevision[]>(`/companies/${companyId}/source-facts`),
+    serverFetchApiResponse<DatedInputs>(`/companies/${companyId}/dated-inputs?${datedParams}`),
   ]);
   const periods = periodsRes.data || [];
   const extractedCandidates = extractedCandidatesRes.data || [];
@@ -72,7 +80,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
     normalizedSnapshotsRes.meta,
     coverageResponse.meta,
     reconciliationResponse.meta,
-    identityResponse.meta
+    identityResponse.meta,
+    sourceFactsResponse.meta,
   ]);
   const reconciliationIssues = reconciliation?.periods.flatMap((period) =>
     period.items
@@ -90,6 +99,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         coverageResponse.meta,
         reconciliationResponse.meta,
         identityResponse.meta,
+        sourceFactsResponse.meta,
       ]} />
       <div className="flex justify-between items-center">
         <div>
@@ -104,8 +114,13 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         </Link>
       </div>
 
+      <DatedFinancialInputs report={hasUsableData(datedResponse) ? datedResponse.data : null}
+        valuationDate={valuationDate} knowledge={knowledge} track={reviewTrack} error={datedResponse.errors[0]?.message} />
       <FinancialReviewPlanPanel report={hasUsableData(reviewPlanResponse) ? reviewPlanResponse.data : null}
         error={reviewPlanResponse.errors[0]?.message} track={reviewTrack} year={reviewYear} />
+
+      <FinancialSourceHistory facts={hasUsableData(sourceFactsResponse) ? sourceFactsResponse.data : null}
+        error={sourceFactsResponse.errors[0]?.message} />
 
       <section className="border-y border-gray-200 bg-white px-4 py-5 sm:px-6" aria-labelledby="normalization-coverage-title">
         <div className="flex flex-wrap items-start justify-between gap-4">

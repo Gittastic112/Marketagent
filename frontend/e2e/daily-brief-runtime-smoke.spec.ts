@@ -217,6 +217,8 @@ test("daily brief links evidence and never infers a zero portfolio move", async 
   expect(savedThesis.assumptions).toContainEqual(expect.objectContaining({description: "Mock Data: review the margin evidence before changing forecasts", falsification_trigger: null}));
   await page.goto(`/events/${event.id}/evidence-resolution`);
   await steps.getByRole("link", {name: "Review valuation input sources"}).click();
+  expect(await backendData(page, `/companies/${company.id}/valuation-drafts/current`)).toBeNull();
+  await page.getByRole("button", {name: "Create draft", exact: true}).click();
   await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();
   expect(await backendData<unknown[]>(page, `/companies/${company.id}/valuation-models`)).toHaveLength(0);
   await page.goto(`/events/${event.id}/evidence-resolution`);

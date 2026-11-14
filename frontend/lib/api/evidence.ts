@@ -31,6 +31,7 @@ export type EvidenceSearchResult = {
 
 export type EventRecord = {
   id: number;
+  created_at?: string;
   company_id: number | null;
   raw_document_id: number | null;
   event_type: string;
@@ -312,6 +313,8 @@ export type ThesisNote = {
   thesis_drift_score: number;
   assumptions: ThesisAssumption[];
   changes: ThesisChange[];
+  created_at: string;
+  updated_at: string;
 };
 
 export interface SocialPost {
@@ -365,6 +368,7 @@ export type EventThesisImpact = {
   thesis_assumption_id: number;
   impact_classification: string;
   rationale: string;
+  review_status: string;
   created_at: string;
 };
 

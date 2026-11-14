@@ -306,6 +306,7 @@ def test_review_override_and_promote_candidates_use_reviewed_unit_currency_and_f
 
     candidates = [
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code="revenue",
@@ -320,6 +321,7 @@ def test_review_override_and_promote_candidates_use_reviewed_unit_currency_and_f
             review_status="needs_review",
         ),
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code="debt",
@@ -334,6 +336,7 @@ def test_review_override_and_promote_candidates_use_reviewed_unit_currency_and_f
             review_status="needs_review",
         ),
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code="cash",
@@ -415,6 +418,7 @@ def test_promote_candidates_rejects_conflicting_reviewed_currencies(client, db) 
     db.add_all(
         [
             FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
                 company_id=company.id,
                 raw_document_id=document.id,
                 metric_code="revenue",
@@ -427,6 +431,7 @@ def test_promote_candidates_rejects_conflicting_reviewed_currencies(client, db) 
                 review_status="reviewed",
             ),
             FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
                 company_id=company.id,
                 raw_document_id=document.id,
                 metric_code="debt",
@@ -549,6 +554,7 @@ def test_promote_candidates_records_filing_metadata_currency_confidence(client, 
     db.flush()
     db.add(
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code="revenue",
@@ -648,6 +654,7 @@ def test_promote_candidates_creates_normalized_snapshot_for_autofill(client, db)
 
     reviewed_candidates = [
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code=metric_code,
@@ -794,6 +801,7 @@ def test_promote_candidates_with_missing_fields_generates_warnings(client, db) -
     # Only provide revenue and ebit, missing others like capex, da, current assets
     reviewed_candidates = [
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code=metric_code,
@@ -863,6 +871,7 @@ def test_promote_candidates_preserves_source_provenance_for_reported_and_derived
 
     candidates = [
         FinancialExtractionCandidate(
+            source_locator_json={"end": "2026-03-31"},
             company_id=company.id,
             raw_document_id=document.id,
             metric_code=metric_code,
@@ -915,7 +924,7 @@ def test_promote_candidates_preserves_source_provenance_for_reported_and_derived
         unit="INR million", fiscal_year=2026, period_type="annual",
         source_text="Restated revenue 2,000", extraction_method="restatement_source",
         review_status="reviewed", confidence_label="high",
-        source_locator_json={"reviewed_basis": "Revised annual comparative.",
+        source_locator_json={"end": "2026-03-31", "reviewed_basis": "Revised annual comparative.",
                              "reviewed_limitations": ["Review comparability before growth calculations."]},
     )
     db.add(restatement)
@@ -1131,7 +1140,7 @@ def test_screener_upload_creates_traceable_document_and_currency_units(client, d
     assert run.created_count == 1
 
 
-def test_promote_candidates_skips_reviewed_items_without_fiscal_year(client, db) -> None:
+def test_promote_candidates_rejects_reviewed_items_without_fiscal_year(client, db) -> None:
     company = Company(
         ticker="NOFY",
         name="Missing Fiscal Year Co",
@@ -1173,7 +1182,7 @@ def test_promote_candidates_skips_reviewed_items_without_fiscal_year(client, db)
 
     response = client.post(f"/api/companies/{company.id}/financial-statements/mark-reviewed")
 
-    assert response_data(response)["promoted_count"] == 0
+    assert response.status_code == 422
     db.refresh(candidate)
     assert candidate.review_status == "reviewed"
     assert db.query(NormalizedFinancialSnapshot).filter_by(company_id=company.id).count() == 0

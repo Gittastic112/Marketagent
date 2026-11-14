@@ -20,7 +20,7 @@ test("financial review rejects stale evidence, preserves corrections and promote
   expect(candidate).toBeTruthy();
   await page.goto(`/companies/${company.id}/fundamentals`);
   const grid = page.getByRole("region", {name: "Extracted financial candidates", exact: true});
-  const row = grid.getByRole("row").filter({has: page.getByRole("cell", {name: String(candidate.fiscal_year), exact: true})})
+  const row = grid.getByRole("row").filter({has: page.getByRole("cell", {name: new RegExp(`FY ${candidate.fiscal_year} · annual`)})})
     .filter({hasText: "revenue"}).first();
   const changed = await backendData<FinancialExtractionCandidate>(page, `/api/financial-line-items/${candidate.id}/override`, {
     method: "PATCH", data: {value: 12500, unit: candidate.unit, expected_updated_at: candidate.updated_at}});
@@ -56,6 +56,11 @@ test("financial review rejects stale evidence, preserves corrections and promote
   expect(await backendData<unknown[]>(page, `/companies/${company.id}/financial-periods`)).toHaveLength(0);
   await page.getByRole("button", {name: "Reload candidates (discard unsaved correction)"}).click();
   await expect(row).toContainText("13,000");
+  await row.getByRole("button", {name: "Confirm period end", exact: true}).click();
+  await row.getByLabel("Exact period end").fill(`${candidate.fiscal_year}-03-31`);
+  await row.getByLabel("Source location and explanation").fill("Mock Data test assumption: March 31 year end for this synthetic fixture.");
+  await row.getByRole("button", {name: "Save period confirmation", exact: true}).click();
+  await expect(row).toContainText(`Confirmed end ${candidate.fiscal_year}-03-31`);
   await page.getByRole("button", {name: "Promote Reviewed Candidates"}).click();
   await expect(page.getByRole("status").filter({hasText: "Successfully promoted 1 candidates."})).toBeVisible();
   const periods = await backendData<Array<{metrics: Array<{metric_name: string; value: number}>}>>(

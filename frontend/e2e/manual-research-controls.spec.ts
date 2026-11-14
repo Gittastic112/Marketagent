@@ -4,6 +4,7 @@ import { backendData, signIn } from "./helpers";
 test("a failed source save keeps entries and can be explicitly retried", async ({page}) => {
   await signIn(page);
   await page.goto("/sources");
+  await page.locator("summary").filter({hasText: "Add Source"}).click();
   const label = `Mock Data interrupted source ${Date.now()}`;
   await page.locator("main #name").fill(label);
   await page.locator("main #source_type").fill("manual");
@@ -34,6 +35,7 @@ test("manual source controls create, edit, preserve zero reliability and delete 
   await signIn(page);
   const label = `Mock Data manual source ${Date.now()}`;
   await page.goto("/sources");
+  await page.locator("summary").filter({hasText: "Add Source"}).click();
   await page.locator("main #name").fill(label);
   await page.locator("main #source_type").fill("manual");
   await page.locator("main #reliability_score").fill("0");

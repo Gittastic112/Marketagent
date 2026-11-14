@@ -9,6 +9,19 @@ import { buildValuationModelPayload, buildDcfAssumptionSetPayload, getRequiredFo
 import { logAction, actionFormString, createRecord, formActionError } from "./shared";
 import type { FormActionState } from "./shared";
 
+export async function createValuationSetupDraft(companyId: string, _formData: FormData): Promise<FormActionState> {
+  if (!/^[1-9]\d*$/.test(companyId) || !Number.isSafeInteger(Number(companyId))) {
+    return { error: "A valid company is required." };
+  }
+  try {
+    await serverPostApi(`/companies/${companyId}/valuation-drafts`, {});
+    revalidatePath(`/companies/${companyId}/valuation/draft`);
+    return { error: null };
+  } catch (error) {
+    return formActionError(error);
+  }
+}
+
 export async function createValuationModel(formData: FormData, companyId: string) {
   await createRecord(`/companies/${companyId}/valuation-models`, buildValuationModelPayload(formData), [`/companies/${companyId}`]);
 }

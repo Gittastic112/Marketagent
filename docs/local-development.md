@@ -119,4 +119,6 @@ Historical reference certifications and database IDs are not portable live data.
 | Backup incomplete | Follow [Operations](operations.md); never forge a completion marker or restore over normal data to test |
 
 Never remove database volumes, stamp migrations, reset data, or prune unknown
-storage to hide a failure. Preserve backups and rollback images.
+storage to hide a failure. Preserve essential recovery material under the bounded
+[retention policy](operations.md#essential-retention-policy); do not accumulate
+backup copies or stopped rollback stacks for routine updates.

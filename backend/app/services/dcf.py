@@ -114,7 +114,7 @@ def calculate_terminal_value(assumption_set: DcfAssumptionSet, last_revenue: flo
     return terminal_value, pv_terminal_value, terminal_fcff
 
 
-def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: float) -> tuple[float, float, float | None]:
+def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: float) -> tuple[float, float | None, float | None]:
     cash = assumption_set.cash or 0.0
     debt = assumption_set.debt or 0.0
     minority_interests = assumption_set.minority_interests or 0.0
@@ -122,12 +122,12 @@ def calculate_equity_bridge(assumption_set: DcfAssumptionSet, enterprise_value: 
     employee_options_value = assumption_set.employee_options_value or 0.0
     cross_holdings = assumption_set.cross_holdings or 0.0
     operating_leases = assumption_set.operating_leases or 0.0
-    diluted_shares = _if_missing(assumption_set.diluted_shares, 1.0)
+    diluted_shares = assumption_set.diluted_shares
     current_market_price = assumption_set.current_market_price or 0.0
 
     equity_value = enterprise_value + cash + cross_holdings - debt - operating_leases - minority_interests - preferred_stock - employee_options_value
-    intrinsic_value_per_share = equity_value / diluted_shares if diluted_shares > 0 else 0.0
-    upside_downside_pct = (intrinsic_value_per_share / current_market_price - 1) if current_market_price > 0 else None
+    intrinsic_value_per_share = equity_value / diluted_shares if diluted_shares is not None and isfinite(diluted_shares) and diluted_shares > 0 else None
+    upside_downside_pct = (intrinsic_value_per_share / current_market_price - 1) if current_market_price > 0 and intrinsic_value_per_share is not None else None
     if not isfinite(current_market_price) or (upside_downside_pct is not None and not isfinite(upside_downside_pct)):
         upside_downside_pct = None
 
@@ -361,7 +361,7 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
         preferred_stock=assumption_set.preferred_stock or 0.0,
         employee_options_value=assumption_set.employee_options_value or 0.0,
         equity_value=equity_value,
-        diluted_shares=_if_missing(assumption_set.diluted_shares, 1.0),
+        diluted_shares=assumption_set.diluted_shares,
         intrinsic_value_per_share=intrinsic_value_per_share,
         current_market_price=assumption_set.current_market_price if (assumption_set.current_market_price or 0) > 0 and isfinite(assumption_set.current_market_price) else None,
         upside_downside_pct=upside_downside_pct,
@@ -370,10 +370,10 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
 
     # Run Phase 11 Engines
     fcfe = FCFEEngine.calculate_fcfe(assumption_set)
-    if fcfe is not None:
+    if fcfe is not None and intrinsic_value_per_share is not None:
         output.fcfe_intrinsic_value_per_share = FCFEEngine.calculate_fcfe_intrinsic_value(assumption_set, fcfe)
 
-    output.ddm_intrinsic_value_per_share = DividendDiscountEngine.calculate_ddm_intrinsic_value(assumption_set)
+    output.ddm_intrinsic_value_per_share = DividendDiscountEngine.calculate_ddm_intrinsic_value(assumption_set) if intrinsic_value_per_share is not None else None
 
     warnings = run_diagnostics(assumption_set, output, projection_years, terminal_fcff)
 

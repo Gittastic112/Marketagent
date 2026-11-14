@@ -4,6 +4,7 @@ import { DataStateNotices } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { hasUsableData } from "@/lib/data-state-meta";
 import type { RawDocument, EventRecord, ThesisNote } from "@/lib/api";
+import { formatDataLabel } from "@/lib/formatting";
 
 function formatDate(isoString: string) {
   return new Date(isoString).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
@@ -20,13 +21,16 @@ export default async function ResearchPage() {
     const events = eventsRes.data || [];
     const thesisNotes = thesisNotesRes.data || [];
 
-    const recentDocuments = documents.slice(0, 5);
-    const recentEvents = events.slice(0, 5);
+    const recentDocuments = [...documents].sort((a, b) =>
+      (Date.parse(b.ingested_at || b.created_at || "") || 0) - (Date.parse(a.ingested_at || a.created_at || "") || 0) || b.id - a.id).slice(0, 5);
+    const recentEvents = [...events].sort((a, b) =>
+      (Date.parse(b.created_at || "") || 0) - (Date.parse(a.created_at || "") || 0) || b.id - a.id).slice(0, 5);
     const recentThesisNotes = thesisNotes.slice(0, 5);
 
     return (
       <>
-        <PageHeader eyebrow="Source-backed evidence" title="Research Hub" />
+        <PageHeader eyebrow="Stored sources and your research" title="Research Hub" />
+        <p><Link href="/documents">Search and filter source documents</Link> · <Link href="/research/sessions">Your private research sessions</Link> · <Link href="/advanced">Advanced tools</Link></p>
         <DataStateNotices
           metas={[documentsRes.meta, eventsRes.meta, thesisNotesRes.meta]}
           mockMessage="One or more research panels are using mock data. Treat affected evidence as placeholder material."
@@ -43,20 +47,24 @@ export default async function ResearchPage() {
         <div className="metric-grid research-grid">
 
           <Panel title="Recent Source Documents">
+            <p className="muted">Latest additions to the local library. Publication dates may be older.</p>
             {!hasUsableData(documentsRes) ? <ErrorState message="Documents could not be loaded. Reload to retry." /> : recentDocuments.length === 0 ? (
               <EmptyState label="No documents ingested yet." />
             ) : (
               <div className="brief-list">
                 {recentDocuments.map((doc) => (
                   <div key={doc.id} className="brief-item" style={{ padding: "0.75rem", borderBottom: "1px solid var(--border-color)", marginBottom: 0 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                      <strong>{doc.url ? <a href={doc.url} target="_blank" rel="noopener noreferrer">{doc.title}</a> : doc.title}</strong>
-                      <span className="badge">{doc.document_type}</span>
+                    <div className="research-card-heading">
+                      <strong><Link prefetch={false} href={`/documents/${doc.id}/sections`}>{doc.title}</Link></strong>
+                      <span className="badge">{formatDataLabel(doc.document_type)}</span>
                     </div>
-
-                    <div style={{ marginTop: "0.5rem" }}>
-                      <Link prefetch={false} href={`/documents/${doc.id}/sections`} style={{ fontSize: "0.85rem", marginRight: "0.75rem" }}>View Sections</Link>
-                      <Link prefetch={false} href={`/documents/${doc.id}/ai`} style={{ fontSize: "0.85rem" }}>AI Summaries</Link>
+                    <p className="cell-secondary">
+                      Added {doc.ingested_at || doc.created_at ? formatDate((doc.ingested_at || doc.created_at)!) : "date unavailable"}
+                      {doc.published_at ? ` · Published ${formatDate(doc.published_at)}` : " · Publication date unavailable"}
+                    </p>
+                    <div className="button-row">
+                      {doc.url && <a href={doc.url} target="_blank" rel="noopener noreferrer">Original source</a>}
+                      <Link prefetch={false} href={`/documents/${doc.id}/ai`}>AI Summaries</Link>
                     </div>
                   </div>
                 ))}
@@ -71,10 +79,10 @@ export default async function ResearchPage() {
               <div className="brief-list">
                 {recentEvents.map((evt) => (
                   <div key={evt.id} className="brief-item" style={{ padding: "0.75rem", borderBottom: "1px solid var(--border-color)", marginBottom: 0 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                      <strong>{evt.title}</strong>
-                      <span className="badge" style={{ backgroundColor: evt.priority_score && evt.priority_score > 7 ? "var(--error-bg)" : "var(--bg-secondary)" }}>
-                        Score: {evt.priority_score ?? "-"}
+                    <div className="research-card-heading">
+                      <strong><Link href={`/events/${evt.id}/evidence-resolution`}>{evt.title}</Link></strong>
+                      <span className="badge">
+                        {evt.priority_score == null ? "Priority not scored" : `Priority: ${evt.priority_score}/100`}
                       </span>
                     </div>
                     {evt.description && <p style={{ fontSize: "0.9rem", margin: "0.5rem 0 0 0" }}>{evt.description}</p>}
@@ -85,16 +93,16 @@ export default async function ResearchPage() {
             )}
           </Panel>
 
-          <Panel title="Active Thesis Notes">
+          <Panel title="Thesis Notes">
             {!hasUsableData(thesisNotesRes) ? <ErrorState message="Thesis notes could not be loaded. Reload to retry." /> : recentThesisNotes.length === 0 ? (
               <EmptyState label="No thesis notes recorded." />
             ) : (
               <div className="brief-list">
                 {recentThesisNotes.map((note) => (
                   <div key={note.id} className="brief-item" style={{ padding: "0.75rem", borderBottom: "1px solid var(--border-color)", marginBottom: 0 }}>
-                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                      <strong>{note.title}</strong>
-                      <span className="badge">{note.status}</span>
+                    <div className="research-card-heading">
+                      <strong><Link href={`/thesis-notes/${note.id}`}>{note.title}</Link></strong>
+                      <span className="badge">{formatDataLabel(note.status)}</span>
                     </div>
                     {note.thesis_text && <p style={{ fontSize: "0.9rem", margin: "0.5rem 0 0 0" }}>{note.thesis_text.substring(0, 100)}{note.thesis_text.length > 100 ? "..." : ""}</p>}
                   </div>

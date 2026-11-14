@@ -4,18 +4,18 @@ import { serverFetchApiResponse } from "@/lib/server-api";
 import { loadPortfolioValuations } from "@/lib/server-portfolio";
 import { PartialDataNotice, DataFreshnessIndicator } from "@/components/ui/data-states";
 import type { Company, Portfolio, PortfolioHolding } from "@/lib/api";
-import { formatCurrency } from "@/lib/formatting";
+import { formatCurrency, formatNumber } from "@/lib/formatting";
 
 export default async function PortfolioPage() {
   function numberText(value: number): string {
-    return value.toLocaleString("en-US", { maximumFractionDigits: 6 });
+    return formatNumber(value, 2);
   }
 
   function companyLabel(companyId: number | null, companiesById: Map<number, Company>): string {
     if (companyId === null) {
       return "-";
     }
-    return companiesById.get(companyId)?.ticker ?? `#${companyId}`;
+    return companiesById.get(companyId)?.name ?? `Company #${companyId}`;
   }
 
   try {
@@ -197,10 +197,10 @@ export default async function PortfolioPage() {
                     const val = getHoldingValuation(holding.id, holding.portfolio_id);
                     return (
                     <tr key={holding.id}>
-                      <td>{portfoliosById.get(holding.portfolio_id)?.name ?? `#${holding.portfolio_id}`}</td>
-                      <td>{holding.ticker}</td>
+                      <td><Link href={`/portfolio/${holding.portfolio_id}`}>{portfoliosById.get(holding.portfolio_id)?.name ?? `Portfolio #${holding.portfolio_id}`}</Link></td>
+                      <td>{holding.company_id == null ? holding.ticker : <Link href={`/companies/${holding.company_id}`}>{holding.ticker}</Link>}</td>
                       <td>{companyLabel(holding.company_id, companiesById)}</td>
-                      <td>{numberText(holding.quantity)}</td>
+                      <td>{formatNumber(holding.quantity, 6)}</td>
                       <td>
                         {holding.currency} {numberText(holding.average_cost)}
                       </td>

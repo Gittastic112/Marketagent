@@ -27,6 +27,38 @@ continue to apply.
 
 ## Find a prior decision
 
+The November 12 decision M05-FOUR-COMPANY-20261112 is applied and verified in the
+[selected-company receipt](../../data/reviews/financial-review-20261112.json).
+It approves 181 historical source facts for NVIDIA, Meta and Alphabet, retains
+16 selected holds and preserves the existing Apple model. It does not approve
+new valuation assumptions, complete financial coverage or actual-use acceptance.
+The [original-report follow-up](../../data/reviews/financial-review-followup-20261112.json)
+records M05-ORIGINAL-FOLLOWUP-20261112: five named holds are now approved after
+original-source verification, leaving eleven selected holds at that checkpoint.
+The [completion receipt](../../data/reviews/financial-review-completion-20261112.json)
+records M05-HELD-ORIGINALS-20261112 and M05-FINANCIAL-COMPONENTS-20261112:
+eight explicit zeros are approved, three principal amounts are rejected under
+the ambiguous debt mapping and retained separately, and 143 precisely scoped
+historical facts/calculations are added. No selected candidate remains pending.
+The [five-input receipt](../../data/reviews/financial-five-input-review-20261112.json)
+records M05-FIVE-INPUTS-20261112: another 47 historical facts/calculations are
+approved, including twelve annual values resolving four company/input slots.
+Source-derived ownership/charter zeros are labeled Calculation. The remaining
+sixteen slots retain explicit source or valuation-basis requirements.
+The [later-source receipt](../../data/reviews/financial-source-followup-20261112.json)
+records M05-SOURCE-FOLLOWUP-20261112: four additional issuer filings are retained;
+2026 preferred issuances and partial-year amortization do not fill older annual gaps.
+These decisions preserve saved assumptions and do not approve complete valuation
+inputs, benchmark weights or current employee-claim values. Other prior decisions
+and their original receipts remain unchanged.
+The [dated-input receipt](../../data/reviews/valuation-inputs-asof-20261112.json) records
+M05-DATED-INPUTS-20261112 after the user selected November 12, 2026. Eight issuer
+filings, seven exchange prices and one ECB rate support four owned research notes.
+It documents financing subtotals, award exposure, minority/preferred proxies and
+partial-period calculations without replacing saved models or annual facts.
+Meta preferred pricing remains held because the source quotes conflict.
+No additional personal decision is pending; source gaps remain in the current ledger.
+
 | Subject | Retained readable record |
 |---|---|
 | Personally approved source definitions and historical scenarios | [Personal approvals](../archive/assessments/research-demo-decisions-2026-11-04.md#decisions-personally-approved-in-chat) |

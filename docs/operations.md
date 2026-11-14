@@ -8,10 +8,10 @@ running it. Dated machine-specific observations are not fresh runtime checks.
 
 ## Select the installed local stack
 
-The installation, updated November 9, uses Compose project market-intelligence-product-20261107
+The installation, updated November 12, uses Compose project market-intelligence-review-20261112-financial-history
 and the original database volume. Its ignored runtime-images.yml selects reviewed
 images, the existing network and preserved volumes. Normal-runtime commands in
-this runbook include that override so retained rollback containers are excluded.
+this runbook include that override to select the installed images and data.
 On another checkout, use that installation's verified override; first-time setup
 is covered in [local development](local-development.md#start-and-sign-in).
 
@@ -20,16 +20,34 @@ docker compose -f docker-compose.yml -f output/milestones/product-development-20
 docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-build postgres backend frontend scheduler
 ~~~
 
-The source-refresh worker and pgAdmin stay stopped unless deliberately enabled.
+The source-refresh worker and pgAdmin stay disabled unless deliberately enabled.
+Their unused containers need not be retained. The optional pgAdmin image has a
+registry-qualified digest so Docker can fetch that exact version when needed.
 Backend/frontend health checks use 30-second steady-state intervals and
 five-second startup intervals. An unhealthy transition can therefore take longer
 to report than the former ten-second polling; endpoints remain available for
 an immediate explicit check. Startup/schema validation is unchanged.
 Existing backup/restore helpers select a project separately: set
-COMPOSE_PROJECT_NAME=market-intelligence-product-20261107 for this installation.
+COMPOSE_PROJECT_NAME=market-intelligence-review-20261112-financial-history for this installation.
 Their ordinary operator environment behavior remains; agent verification uses
 /dev/null plus settings held only in memory. The full backup helper creates a
 disposable proof database, so it remains outside the current no-new-datasets scope.
+
+Ordinary updates should reuse this selected Compose project. Save a database
+backup, the prior override, image IDs, settings and mounts before replacement.
+Preserve source reports, review receipts and backup files from a container's
+writable layer before removing it. Keep the installed, verified images as the
+recovery baseline; retain a preceding version only while an update is being
+verified. A chain of stopped application stacks is not the backup strategy.
+Stop old writers and PostgreSQL before any replacement shares the same volume.
+Verify one selected container per service and backup-helper database selection.
+
+If an exceptional investigation must retain an old container, renaming it does
+not change its Compose labels. Isolate that retained project from the replacement
+until the investigation is complete. The November 12
+[checkpoint](archive/checkpoints/2026/handoff-review-2026-11-12.md) and
+output/milestones/financial-completion-20261112/deployment-history retain the
+earlier rollout evidence; they do not require indefinite container retention.
 
 ## Rotate the local database password
 
@@ -75,8 +93,9 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The last recorded override selects November 9 application images and November 7
-PostgreSQL R2. Inspect its current image selection before changing any service.
+The current override selects the financial-history backend and source-links frontend,
+with the existing November 7 PostgreSQL R2. Inspect image identities before
+changing any service. Source scheduling and pgAdmin remain stopped.
 
 ## Normal runtime operations
 
@@ -168,23 +187,114 @@ docker compose -f docker-compose.yml -f output/milestones/product-development-20
 docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml stop pgadmin
 ~~~
 
-Inspect disk usage before a requested cleanup. A bounded build-cache cleanup,
-which does not remove images, containers, volumes or database records, is:
+Apply the [essential retention policy](#essential-retention-policy) after measuring
+the selected Docker context and filesystem. Reproducible cache is temporary working
+material, not a recovery copy. Clear identified unused build/test material once its
+operation has finished; avoid broad system/volume pruning. Shared layers mean Docker
+categories are not an exact sum of extra host disk use. Record actual before/after
+measurements, not only the displayed reclaimable estimate.
 
-~~~bash
-docker builder prune --filter until=168h --keep-storage 5GB
-docker system df
-~~~
+An unattached volume or stopped container can still contain unique data. Inspect
+its mounts, role and content classification before removal. Existing authority to
+remove disposable material does not authorise destroying unknown unique records.
+No automatic pruning is configured by these instructions.
 
-The command asks for confirmation. It targets old unused build cache and can
-slow the next rebuild. It is not a persistent 5 GB quota: newer, shared or active
-records can remain above that amount. Shared layers also mean Docker's categories
-are not an exact sum of extra host disk use. See Docker's
-[cache accounting](https://docs.docker.com/reference/cli/docker/buildx/du/) and
-[garbage collection](https://docs.docker.com/build/cache/garbage-collection/) docs.
-Do not treat an unattached volume or stopped image/container as disposable; it
-can still hold data or a rollback image. Inventory those separately and obtain
-exact-target authorization before deleting user data. No automatic pruning is set up.
+The November 12 [authorized storage cleanup](../data/reviews/docker-storage-cleanup-20261112.json)
+removed 151 stopped containers, 256 obsolete image objects, 21 unused volumes,
+three unused networks and the unused build cache. Four running containers, four
+images and the active database/admin volumes remain. All 110 database table
+fingerprints match the pre-cleanup snapshot. Source files and old database copies
+found inside removed containers are retained outside Docker. Fourteen inactive
+data/settings volumes have compressed archives with every file byte and ownership
+mode checked before their removal. Exact targets, archive locations and hashes
+are recorded in the receipt. No running container was restarted. The optional
+admin image is fetched by its recorded registry digest when next enabled.
+
+November 13 after the [P1 installation](../data/reviews/research-workspace-p1-20261113.json): four running containers, four images
+(2.64 GB), two volumes (210.7 MB), and zero build cache. The tools image accounts
+for the 717 MB Docker labels reclaimable; it is actively needed for repository and
+recovery checks on this host. The whole local output directory occupies about
+2.9 GB, including source/recovery/evidence material, so it is not a disposable cache.
+The latest dated-input review directory is about 31 MB. The top-level backups
+directory is about 3.1 MB; that is not the total of recovery copies stored elsewhere.
+P1 replaced only the frontend, reused recovery material, and created no backup or
+dataset. Its temporary preview, dependency/old frontend images, build context and
+2.169 GB of reported build cache were removed. The output/backups sizes above are
+the earlier planning measurement, not a new claim about their exact current sizes.
+
+### Essential retention policy
+
+Effective November 13, 2026, following the user's request to retain only essentials.
+This replaces the earlier seven-local/four-weekly-copy target and blanket retention
+of stopped rollback stacks. It is an operating policy, not installed automated
+pruning. Retain the following roles, not a fresh copy per task or build.
+
+| Material | Retention rule | Release condition |
+|---|---|---|
+| Live database and original asset stores | Keep the active authoritative data and required assets | Never delete/reset as routine cleanup |
+| Original source reports, reviewed evidence, saved model versions and decision receipts | Keep canonical originals and the references needed to interpret decisions | Remove only proved redundant physical copies; unique evidence/history is not build waste |
+| Current recovery set | One latest verified complete set covering database and required assets, with manifest and checksums | Replace only after the successor passes the required verification; never remove the only good copy first |
+| Pre-change recovery set | At most one additional distinct set for an active schema/substantial data change, with a named task and release condition | Retire after the change is verified and the current recovery set covers the resulting state; one set can fulfil both roles before writes |
+| Current runtime images | Keep images used by the installed services | Retire a replaced image after the new service passes its scoped checks and no active rollback role needs it |
+| Application rollback image | At most one predecessor per changed service while validating that deployment | Release after readiness, affected browser behavior and compatibility checks pass; no permanent stopped rollback container |
+| Tools/test image | Keep only a currently required, non-redundant image | Retire when a verified replacement exists or the workflow no longer needs it |
+| Containers, networks and volumes from completed tests | Remove exact identified disposable resources after evidence is captured | Confirm they have no active task, live mount or unique data; do not infer this from their name alone |
+| Build cache and intermediate images | Temporary during active iteration; target zero unneeded cache at rest | Remove after the associated build/verification completes; do not interrupt another active job |
+| Screenshots, reports and logs | Keep a compact validation receipt, representative proof and the minimum evidence needed for unresolved failures | Remove repeated captures, bulk exports and reproducible logs once they add no unique diagnostic value |
+| Failed/incomplete backup or restore artifacts | Keep failure reason and the minimum necessary reproducer; retain any unique recoverable data | After diagnosis, remove disposable payloads by exact path; failure must never displace the verified recovery set |
+
+The ordinary local recovery budget is therefore one verified set, temporarily two
+distinct sets when an active data/schema change needs a separate rollback point.
+This favours current recovery over a long series of historical restore dates;
+source revisions and model/decision history remain in the application.
+Do not rotate an active pre-change set merely because a newer timestamp exists.
+
+An older archive containing unique historical records is not proved redundant by
+the existence of a current dump. Classify it explicitly: required recovery, unique
+retained evidence, or disposable duplicate. Record the reason and the next review
+condition for any exception. Do not create an archive of material already classified
+as disposable merely to feel safer deleting it; that does not reclaim space.
+
+#### When to make a backup
+
+| Change | Required treatment |
+|---|---|
+| Documentation, read-only investigation, screenshots, ordinary frontend/layout change | No new database dump. Reuse existing recovery material |
+| Application-only deployment with no schema/data mutation | Reuse a compatible verified recovery set; temporarily retain the changed service's current image |
+| Schema migration, database-engine change or substantial persisted-data rewrite/import | Verify a suitable pre-change recovery set and matching asset/compatibility basis before writes |
+| Meaningful research/data changes accumulated since the last verified recovery point | Refresh the current set at the end of that meaningful write session, then retire the superseded set under this policy |
+| Unchanged data or repeated testing of the same source revision | No duplicate backup or copied evidence bundle |
+
+A dump checksum or successful archive listing alone is not a full restore proof.
+Use the supported verification level and label exactly what ran. The existing
+restriction on new local disposable datasets and the deferred populated restore
+rehearsal remain in the [operator handoff](limitations.md#ordered-operator-handoff).
+If a required verification cannot run within scope, report that exact dependency;
+do not restore over the normal database or call an unverified dump fully verified.
+
+#### Cleanup procedure and receipt
+
+1. Inventory exact paths/resource IDs, sizes, live references and task ownership.
+   Do not read or export secret settings as part of inventory.
+2. Identify the active database/assets, current verified recovery set, any active
+   pre-change pin, current images and unique source/evidence dependencies.
+3. Compare proposed duplicates by bytes/hash and logical contents where needed.
+   A filename, age, stopped state, untracked status or Docker reclaimable label is
+   insufficient. Keep referenced evidence at its canonical location.
+4. Remove only the identified disposable targets within the user's cleanup scope.
+   Unknown unique-data deletion needs a specific disposition, not a broad prune.
+5. Confirm retained recovery checksums, runtime readiness and required mounts. For
+   persisted-data operations, compare the affected records and preservation basis;
+   do not create a full database dump just to prove a CSS or documentation edit.
+6. Record one compact receipt: task/date, exact removed IDs/paths, retained roles,
+   verification and measured byte savings. Reuse it in other docs by link.
+
+Do not add a scheduled job or notification to enforce this policy without a user
+request for automation. The current backup script defaults to pruning off and a
+count of seven when explicitly enabled. Its pruning logic validates script-owned
+folders but cannot protect a semantic pre-change pin. Merely setting the count to
+two is unsafe if the root contains a pinned older set. Leave automatic pruning off;
+select exact targets manually until role-aware retention is implemented and tested.
 
 ## Data and operational tools
 
@@ -259,19 +369,22 @@ remain review-required and do not alter saved models.
   Custom worker names use `DAILY_BRIEF_SERVICE` and `SOURCE_REFRESH_SERVICE`;
   set them to empty for a stack without those workers. Quiesce any other writers
   manually. Worker lifecycle regressions use fake Docker, not the normal database.
-  Verify a backup by restoring to a separate disposable database and comparing
-  every table plus original asset bytes before normal-runtime maintenance.
-  Run `bash scripts/drill_backup_restore.sh` for the isolated concurrent-write
+  When a new verified recovery point is required, use an authorised separate
+  environment and compare every table plus original asset bytes. A frontend-only
+  update does not trigger a new dump or restore rehearsal. Within an explicitly
+  authorised drill scope, run `bash scripts/drill_backup_restore.sh` for the concurrent-write
   and original-byte drill. It builds `docker-compose.recovery.yml`, publishes no
   ports, checks the actual tmpfs data directory and never adopts an existing project.
   Fake-Docker and metadata tests cover corruption, failures, interruptions and
   worker state. PostgreSQL 16 is the supported fingerprint basis.
   `BACKUP_ROOT` selects a local folder. Directories/files use 0700/0600. Failed
   backups retain a folder without a valid `COMPLETE` marker for inspection. Old
-  `.partial` backups remain incomplete. Retention
-  defaults off; `BACKUP_PRUNE=true BACKUP_RETENTION_COUNT=7` deletes only older
-  verified format-2/3 folders owned by this script. It preserves invalid, unrelated,
-  legacy and linked folders. Never remove the only verified recovery copy.
+  `.partial` backups remain incomplete. Script retention defaults off; its current
+  fallback count is seven if pruning is explicitly enabled. The count-only helper
+  deletes older verified format-2/3 folders owned by the script and preserves
+  invalid, unrelated, legacy and linked folders. It does not protect active pins.
+  Apply the [essential retention policy](#essential-retention-policy), keep automatic
+  pruning off until role-safe, and never remove the only verified recovery copy.
   The metadata helper uses host Python when available; set
   `RECOVERY_PYTHON_IMAGE=market-intelligence-tools:local` after building the tools
   target to use bounded, network-disabled Docker instead. `DOCKER_BIN` accepts
@@ -287,14 +400,17 @@ remain review-required and do not alter saved models.
 
 ### Backup maintenance cadence
 
-For the local release, make a verified backup after a day of meaningful edits
-and immediately before migrations, credential rotation or upgrades. Once an
-encrypted off-device destination exists, retain a weekly copy there and rehearse
-retrieval/restore monthly and after recovery-tool changes. Keep the latest seven
-verified local copies and four weekly off-device copies as the initial retention
-target, adjusting for measured storage and recovery needs. Until the off-device
-restore has passed and exact deletion targets have been approved, retain existing
-copies and leave automatic pruning off. Never delete the only verified copy.
+Use the change-triggered [essential retention policy](#essential-retention-policy).
+No backup is required for every working day, review, UI edit or application rebuild.
+A meaningful data-write session or a relevant migration creates a recovery need;
+an unchanged database does not. Avoid duplicate before/intermediate/after dumps
+when one existing verified set and one necessary successor cover the operation.
+
+Off-device protection remains deferred in the current release scope. If the user
+later supplies an encrypted destination, define its bounded retention and retrieval
+test at that time. Do not silently start weekly copying or preserve four weekly
+copies under the superseded guidance. Same-disk recovery does not protect against
+loss of the device.
 
 This is an operating procedure, not a configured schedule. No recurring task,
 transfer, secret export, encryption-key storage or deletion is authorized merely

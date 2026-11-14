@@ -98,9 +98,10 @@ conflicts; do not guess silently.
 - Prefer shallow domain ownership, not a flat folder or catch-all utilities module.
   Preserve framework routes, package boundaries, migrations and public imports.
 - Cleanup starts with measured sizes, callers and tracked status. Untracked is not
-  disposable. Delete only identified generated material; retain source reports,
-  review receipts, backups, failed evidence and rollback images. Ignore rules
-  control discovery, not retention. Record removed paths and actual byte savings.
+  disposable. Keep unique data/source evidence and essential recovery material under
+  [Operations retention policy](docs/operations.md#essential-retention-policy).
+  No routine DB dumps for docs/UI edits or permanent rollback stacks. Delete only
+  identified disposable targets; record exact paths/IDs and measured byte savings.
 
 ## Security and external input
 

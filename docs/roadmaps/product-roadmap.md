@@ -1,6 +1,6 @@
 # Product roadmap
 
-Priorities for the local research/demo release. Reconciled November 10, 2026.
+Priorities for the local research/demo release. Reconciled November 13, 2026.
 [Current State](../current-state.md) owns evidence, the
 [feature register](feature-register.md) owns capability status, and the
 [limitation ledger](../limitations.md) owns unresolved boundaries.
@@ -10,11 +10,24 @@ M01-M04 retain 40 accepted gate points. M05 is next in the
 engineering-effort percentage. Existing implementation does not supply missing
 financial facts, actual-use days, or final acceptance.
 
+The immediate development programme is the
+[research workspace plan](research-workspace-plan.md), requested November 13.
+It specifies screen layouts, navigation, connected workflows, backend changes,
+package boundaries and acceptance tests. P0 is verified and P1 is installed;
+[Current State](../current-state.md) links the evidence. P2 is next. This roadmap
+owns priority; package status does not replace the acceptance gates.
+
 ## Planning rule
 
 Finish the connected review workflow before adding isolated engines or schema.
 Completion requires backend behavior, frontend states, source/ownership metadata,
 tests, and documentation to agree.
+
+The user also requested essential-only storage. Apply the
+[retention policy](../operations.md#essential-retention-policy): no routine database
+dumps for documentation/UI work, no permanent rollback stacks, and explicit roles
+for the small amount of recovery material retained. Do not confuse deleting build
+waste with permission to destroy unique source evidence or live records.
 
 Preserve the November 9 four-company research scope. The removed historical
 universe must not be restored automatically. Further issuer intake needs an
@@ -25,7 +38,26 @@ The [workstream design](../workstreams/plan.md) retains detailed technical slice
 Its ownership rules apply to an explicitly assigned parallel batch; the plan
 does not dispatch agents or replace current status.
 
-## Priority 1: Frontend and Backend Truth Parity (FOUNDATION DELIVERED, FOLLOW-UPS OPEN)
+## Immediate delivery order
+
+| Order | Outcome | Detailed package |
+|---|---|---|
+| 1 | Confirm current source/runtime and essential retention; preserve existing edits | P0 |
+| 2 | Four main navigation areas, five company sections, useful company summaries, saved models before advanced setup | P1 |
+| 3 | Explicit draft creation and precise financial period guards; dated input presentation | P2 |
+| 4 | Reviewed financial inputs through assumptions, change preview and versioned valuation save | P3 |
+| 5 | Connected Today/source/thesis review, then portfolio research context and secondary tools | P4-P5 |
+| 6 | Bounded refresh reliability, targeted contract/performance work, installed checks and actual research use | P6-P7 |
+
+The [package specifications](research-workspace-plan.md#delivery-sequence) own
+task-level dependencies and proof. The [workspace gap ledger](../limitations.md#workspace-follow-up)
+owns current unresolved observations. Complete P2 period guards before expanding
+quarterly promotion. UI work can proceed while an original disclosure is unavailable;
+that does not waive financial acceptance or permit a guessed value.
+
+## Boundaries to preserve while delivering
+
+### Frontend and backend truth
 
 Preserve explicit missing/zero, loading, empty, unavailable, stale, partial,
 unconfigured, and Mock Data states. Verify representative desktop/mobile behavior,
@@ -34,7 +66,7 @@ retry, and stale-write workflows. A build or source-string test alone is not
 browser evidence. New methodology defaults must be reviewed/versioned or remain
 explicit user assumptions.
 
-## Priority 2: Broader Real-Issuer and India Provider Coverage (REFERENCE GATE PASSED, EXPANSION OPEN)
+### Financial and source coverage
 
 Review the selected companies' financials and complete supported valuation
 bridges before expanding coverage. Retained AAPL/APSEZ reference certification
@@ -47,7 +79,7 @@ India automation additionally requires a permitted official endpoint, documented
 response/freshness/rate limits, bounded transport, Processing Runs, fixtures,
 and non-writing preview. Unsupported exchange automation remains manual.
 
-## Priority 3: Daily Evidence-to-Decision Loop (WORKFLOW VERIFIED, REVIEW OPEN)
+### Daily evidence-to-decision loop
 
 Connect dashboard changes to exact sources, thesis review, valuation relevance,
 and portfolio exposure. Stored-public coverage counts, private research intake,
@@ -59,7 +91,7 @@ must disclose its window, caps, exclusions, failures, and review state. Exact
 quotes or differing directions do not prove economic contradiction. No claim of
 comprehensive overnight news coverage or automatic numerical forecast edits.
 
-## Priority 4: Portfolio Attribution and Opportunity Cost (DEMO IMPLEMENTED, GENUINE PROOF OUTSIDE V1)
+### Portfolio attribution and research context
 
 Preserve dated activity replay, FX, TWR/MWR, price/flow/position attribution,
 benchmark comparison, risk alignment, and residual diagnostics.
@@ -71,14 +103,14 @@ Genuine activity and multi-currency proof require a later scope with real
 records. CSV preview/apply must retain exact hashes, ownership, source metadata,
 duplicate handling, atomic writes, and Processing Runs.
 
-## Priority 5: Provider Health and Market Regime (FOUNDATION DELIVERED)
+### Provider health and market regime
 
 Keep configuration, attempts, failures, freshness, source coverage, formula,
 drivers, and confidence observable. Persisted FRED NFCI provides one
 exact-record-linked macro calculation; unsupported options/liquidity/volume/
 breadth feeds remain manual. A successful connection is not complete source coverage.
 
-## Priority 6: Source-Backed AI Research (REVIEW FOUNDATION DELIVERED, QUALITY OPEN)
+### Source-backed AI research
 
 Retain exact citations, provenance, bounded output contracts, explicit disclosure,
 and current owner/provider/action consent. Permission history and each output's
@@ -90,7 +122,7 @@ Numeric/period/instruction cues are review aids, not semantic truth.
 Interpretation approval must not silently change financial facts or assumptions.
 The [AI boundary](../limitations.md#ai-boundary) owns the exact limitations.
 
-## Next increments
+## Source and expansion prerequisites
 
 | Work | Entry requirement |
 |---|---|
@@ -102,7 +134,8 @@ The [AI boundary](../limitations.md#ai-boundary) owns the exact limitations.
 
 The delivered financial review planner, explicit-input macro calculations, and
 bounded AI claim-review cues support these steps. They do not close their evidence
-requirements. Choose the earliest unmet in-scope acceptance gate.
+requirements. Keep cumulative acceptance in the existing gate order while following
+the implementation packages above. Do not expand scope to fill an empty screen.
 
 ## Deferred
 

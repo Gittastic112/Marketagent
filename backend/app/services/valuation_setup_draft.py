@@ -118,20 +118,24 @@ class ValuationSetupDraftService:
         return draft
 
     @classmethod
-    def create_or_reopen(cls, db: Session, company_id: int, user_id: str) -> ValuationSetupDraft:
-        company = db.scalar(select(Company).where(Company.id == company_id).with_for_update())
-        if company is None:
+    def get_current(cls, db: Session, company_id: int, user_id: str) -> ValuationSetupDraft | None:
+        if db.get(Company, company_id) is None:
             raise HTTPException(status_code=404, detail="Company not found")
-        existing = db.scalar(
+        return db.scalar(
             select(ValuationSetupDraft)
             .where(ValuationSetupDraft.company_id == company_id)
             .where(ValuationSetupDraft.user_id == user_id)
             .where(ValuationSetupDraft.status.in_(["draft", "ready_to_value"]))
             .order_by(ValuationSetupDraft.updated_at.desc(), ValuationSetupDraft.id.desc())
         )
+
+    @classmethod
+    def create_or_reopen(cls, db: Session, company_id: int, user_id: str) -> ValuationSetupDraft:
+        company = db.scalar(select(Company).where(Company.id == company_id).with_for_update())
+        if company is None:
+            raise HTTPException(status_code=404, detail="Company not found")
+        existing = cls.get_current(db, company_id, user_id)
         if existing is not None:
-            if cls._source_basis_changed(db, existing, company):
-                return cls.refresh(db, existing)
             return existing
 
         generated = AssumptionAutofillEngine.draft_assumptions(db, company_id, {})

@@ -63,6 +63,7 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   });
 
   await page.goto(`/companies/${company.id}/valuation`);
+  await page.getByRole("main").getByText("Industry and benchmark settings", {exact: true}).click();
   const mix = page.locator("section.industry-mix-card");
   await expect(mix.getByRole("heading", { name: "Revenue-Weighted Industry Mix" })).toBeVisible();
   await mix.getByLabel("Segment name").fill("Software");
@@ -98,6 +99,7 @@ test("revenue-weighted industry mix persists weights and source provenance", asy
   ]);
 
   await page.reload();
+  await page.getByRole("main").getByText("Industry and benchmark settings", {exact: true}).click();
   await expect(mix.getByRole("list", { name: "Saved business mix" })).toBeVisible();
   await mix.getByRole("button", { name: "Edit business mix" }).click();
   await expect(mix.getByLabel("Revenue weight for Software")).toHaveValue("60");
@@ -131,9 +133,9 @@ test("company tabs and grouped navigation remain usable on mobile", async ({ pag
     "aria-current",
     "page",
   );
-  await companyNavigation.getByRole("link", { name: "Filings" }).click();
+  await companyNavigation.getByRole("link", { name: "Sources" }).click();
   await expect(page).toHaveURL(`/companies/${company.id}/filings`);
-  await expect(companyNavigation.getByRole("link", { name: "Filings" })).toHaveAttribute(
+  await expect(companyNavigation.getByRole("link", { name: "Sources" })).toHaveAttribute(
     "aria-current",
     "page",
   );
@@ -141,9 +143,15 @@ test("company tabs and grouped navigation remain usable on mobile", async ({ pag
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open navigation" }).click();
   const primaryNavigation = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primaryNavigation.getByText("Today", { exact: true })).toBeVisible();
-  await expect(primaryNavigation.getByRole("link", { name: "Research", exact: true })).toBeVisible();
+  for (const name of ["Today", "Companies", "Valuations", "Portfolio"]) {
+    await expect(primaryNavigation.getByRole("link", { name, exact: true })).toBeVisible();
+  }
+  await primaryNavigation.locator("summary").filter({ hasText: /^Library$/ }).click();
+  const researchLibrary = primaryNavigation.getByRole("link", { name: "Research library", exact: true });
+  await expect(researchLibrary).toBeVisible();
+  await expect(researchLibrary).toHaveAttribute("href", "/research");
   await page.getByRole("button", { name: "Close navigation panel" }).click();
+  await expect(page.getByRole("dialog", { name: "Navigation", exact: true })).toHaveCount(0);
 });
 
 
