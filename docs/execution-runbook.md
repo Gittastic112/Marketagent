@@ -77,16 +77,20 @@ rejects missing OS inventories and available HIGH/CRITICAL
 fixes. Unfixed findings remain visible and require review, including vendor severity
 differences. The optional stopped admin image and host Docker are separate checks.
 
-Before normal rollout, keep the current application/PostgreSQL image IDs as rollback
-tags and obtain a verified database backup. Rehearse migration/restore on a disposable
-database with the selected PostgreSQL major version. Recreate only intended services,
+Before normal rollout, record current image IDs and retain one temporary predecessor
+for each changed service under the [retention policy](operations.md#essential-retention-policy).
+Application-only changes reuse a compatible verified recovery set; docs/UI edits
+do not create a new database dump. Schema/engine/substantial data changes need a
+verified pre-change recovery basis and the applicable migration/restore checks in
+an authorised isolated environment. Do not create a new dataset to bypass a scope
+restriction. Recreate only intended services,
 preserving the stopped source worker and persistent volumes; verify readiness, browser
 behavior and idle use. Also verify `docker compose ps --all` and ordinary backup
 commands select the actual current containers. Compose discovery requires its
 configuration label; a healthy manually created container alone is insufficient.
-Keep rollback containers outside active Compose registration to avoid ambiguous
-service selection. Preserve rollback images and persistent volumes.
-Application rollback selects the retained image. Database
+Keep the image needed for active rollback, not a permanently stopped container or
+duplicate Compose stack. Release that predecessor after scoped verification; preserve
+persistent user volumes. Application rollback selects the retained image. Database
 rollback must respect migration and PostgreSQL compatibility; never attach a data
 directory to an older incompatible major or overwrite normal data for a test.
 
@@ -139,7 +143,7 @@ npm run typecheck
 ~~~
 
 Production builds, from root. Replace the example tag with an unused release tag;
-keep currently installed and rollback tags intact:
+keep currently installed tags and tags assigned to an active rollback role intact:
 
 ~~~bash
 release_tag=review-YYYYMMDD-N

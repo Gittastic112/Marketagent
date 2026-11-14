@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "decision_id": "WORKSPACE-P1-20261113",
+  "recorded_at": "2026-11-13T21:03:38Z",
+  "status": "verified_and_installed",
+  "scope": "P0 baseline and P1 navigation, company overview and saved-model landing pages. Existing dirty checkout preserved; backend and database schema unchanged.",
+  "plan": "docs/roadmaps/research-workspace-plan.md",
+  "source_files": [
+    {
+      "path": "frontend/components/sidebar.tsx",
+      "sha256": "d4f5fdd59844ee1e9c9924e7b390ea8e0cf5a51c68dd07f2408f28407a989482"
+    },
+    {
+      "path": "frontend/components/company-tabs.tsx",
+      "sha256": "4b5eb0b94d68f1ad58cca6c3420b4284ed0d49c914a78e29650a7958bde642f5"
+    },
+    {
+      "path": "frontend/components/company-research-cards.tsx",
+      "sha256": "b7c2dc17a6ed7d653bf96c17a0d1d6d3ee8988aa1d6fd802d24771cc5fd19fff"
+    },
+    {
+      "path": "frontend/components/company-valuation-summary.tsx",
+      "sha256": "d9f0879c55c5fc62a4f6eefa4e4e9e99cf82ffe9792a62ac472ddd4a2305ae7f"
+    },
+    {
+      "path": "frontend/components/company-market-header.tsx",
+      "sha256": "0cb86e7e801a191814a01febe0319d7bfbfc85d77fba4128e640550a88364fac"
+    },
+    {
+      "path": "frontend/components/financial-trends.tsx",
+      "sha256": "7bf9e6fefcfd2eac06ab04ca5783dd4dc167da6045111a2902f2e9a6dc4a598a"
+    },
+    {
+      "path": "frontend/app/page.tsx",
+      "sha256": "74655d7babdd356f38cc0e3eadda33f58ae1c6c2b74135f54ff85baba98aed5c"
+    },
+    {
+      "path": "frontend/app/companies/[id]/page.tsx",
+      "sha256": "fe1b9c89aa52cc58425cb08f9e5ba0e04f9e1713c0ca518a574326b37910ef35"
+    },
+    {
+      "path": "frontend/app/companies/[id]/valuation/page.tsx",
+      "sha256": "be30a2e2f61d53d3cf77747451171ebf39254570125b5863275d9b70949c46b9"
+    },
+    {
+      "path": "frontend/styles/company.css",
+      "sha256": "4c3054078366c74ea399b14510e7cf875782e1eb79c74b76311b6da1e07f9b5d"
+    },
+    {
+      "path": "frontend/styles/research.css",
+      "sha256": "3cefdcc7a21feadf42183f114d5736195bda2d17a48bbe6526271a6fa44b8fd1"
+    },
+    {
+      "path": "frontend/lib/data-panels.test.ts",
+      "sha256": "5ca57c35894503ba130058d56b7b6248dc6f18130590207b318d1138abf91584"
+    },
+    {
+      "path": "frontend/lib/frontend-integrity.test.ts",
+      "sha256": "97bf06713aaf504c870552ff3b41c92c8bc0f55f04179568cba73470c3c5b305"
+    },
+    {
+      "path": "frontend/lib/server-page-states.test.ts",
+      "sha256": "55bf4bb11e3b50a82c0ce23357bbcfab87d70dfdb56597b3eac19bb52566e38d"
+    },
+    {
+      "path": "frontend/e2e/company-coverage.spec.ts",
+      "sha256": "fffb9b566dd4cdaef9f9db7f2c08d5ae01bf37d22ae73becac029b0d30155a39"
+    }
+  ],
+  "delivered": [
+    "Four primary destinations: Today, Companies, Valuations, Portfolio; secondary Library, Advanced and Settings.",
+    "Five company sections, contextual decision/peer/evidence links and company details.",
+    "Bounded business and research-note excerpts with full source/note links; technical fields and filing tools in disclosures.",
+    "Canonical operating income and full-scope depreciation display, conflict withholding, exact-value disclosures and preserved units; narrower depreciation remains separate.",
+    "Saved-model readiness and calculation date; estimates require a finite value and explicit model currency. Existing saved versions remain unchanged.",
+    "Saved models before advanced industry settings; optional forms remain reachable without opening new drafts during checks."
+  ],
+  "validation": {
+    "frontend_tests": {
+      "passed": 378,
+      "failed": 0,
+      "log": "output/milestones/research-workspace-p1-20261113/frontend-checks-release.log"
+    },
+    "typecheck": "passed",
+    "production_build": {
+      "status": "passed",
+      "log": "output/milestones/research-workspace-p1-20261113/frontend-build-release.log",
+      "basis": "Existing patched installed runtime, unchanged lockfile, fresh dependency install, protected settings excluded from context"
+    },
+    "browser": {
+      "status": "passed",
+      "companies": [
+        "AAPL",
+        "NVDA",
+        "META",
+        "GOOGL"
+      ],
+      "widths": [
+        1440,
+        390,
+        320
+      ],
+      "preview_receipt": "output/milestones/research-workspace-p1-20261113/preview-verification.json",
+      "installed_receipt": "output/milestones/research-workspace-p1-20261113/ui-verification.json",
+      "screenshots": [
+        "output/milestones/research-workspace-p1-20261113/installed-company-desktop.png",
+        "output/milestones/research-workspace-p1-20261113/installed-models-desktop.png",
+        "output/milestones/research-workspace-p1-20261113/installed-navigation-mobile.png"
+      ],
+      "isolated_fixture_suite_run": false
+    },
+    "documentation_checks": {
+      "status": "passed",
+      "unit_tests": 24,
+      "active_markdown_files": 95,
+      "local_links": 1206,
+      "log": "output/milestones/research-workspace-p1-20261113/documentation-checks.log",
+      "scoped_git_diff_check": "passed"
+    }
+  },
+  "installation": {
+    "installed_at": "2026-11-13T20:57:54Z",
+    "project": "market-intelligence-review-20261112-financial-history",
+    "previous_image": "sha256:d769e52542eee9ebd33024515d77e75b02dd8365e8b0f3a5fb950102af24349a",
+    "image": "sha256:44a3c7fb32eee9bbda6571b193771d0cfe5a9ab0624ca727f4ffa882a27a3466",
+    "image_tag": "market-intelligence-review-frontend:20261113-workspace",
+    "container_id": "dc6ba245a443aab41095a583ff71a47d46a4dc7bc5802c31d6b8b3434b5d77d7",
+    "settings_unchanged": true,
+    "ports_and_protections_unchanged": true,
+    "unchanged_tables": 110,
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514",
+    "other_services_restarted": false,
+    "volumes_unchanged": true,
+    "backup_created": false,
+    "recovery_receipt": "output/milestones/valuation-inputs-asof-20261112/backup-verification.json",
+    "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+    "browser_verification": "passed"
+  },
+  "preservation": {
+    "existing_data_preserved": true,
+    "unchanged_tables_during_installation": 110,
+    "unchanged_tables_after_installed_browser_checks": 110,
+    "preview": {
+      "unchanged_tables": 109,
+      "previous_processing_runs_unchanged": 88,
+      "added_audit_run": 274,
+      "run_type": "filing_discovery",
+      "fetched_candidates": 10,
+      "imported_records": 0,
+      "reason": "The pre-existing Filings page starts discovery on opening; P2.1 now includes making this explicit.",
+      "evidence": "output/milestones/research-workspace-p1-20261113/preview-audit-only-delta.json"
+    },
+    "database_dumps_created": 0,
+    "new_datasets": 0,
+    "existing_recovery_dump_reused": true,
+    "evidence": "output/milestones/research-workspace-p1-20261113/final-preservation.json"
+  },
+  "retention": {
+    "running_containers": 4,
+    "essential_images": 4,
+    "volumes_preserved": 2,
+    "build_cache_bytes": 0,
+    "docker_reported_image_size": "2.64GB",
+    "docker_reported_volume_size": "210.7MB",
+    "docker_reported_cache_reclaimed": "2.169GB",
+    "temporary_context_allocated_bytes_removed": 2867200,
+    "cleanup_receipt": "output/milestones/research-workspace-p1-20261113/build-cleanup.json",
+    "temporary_preview_removed": true
+  },
+  "next": [
+    "P2.1: Explicit draft and source-discovery actions with read-only navigation regressions.",
+    "P2.2: Exact annual/quarter/YTD identity guard before broader financial automation.",
+    "P2.4/P3: Dated input review and proposed changes to a new saved model version.",
+    "P4-P7 remain planned; Today still uses the existing dashboard. No new acceptance points or actual-use days claimed."
+  ]
+}

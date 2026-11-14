@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "created_at": "2026-10-18T02:03:03.996577+00:00",
-  "updated_at": "2026-11-04T06:10:50.116471+00:00",
+  "updated_at": "2026-11-13T07:51:25Z",
   "scope": "Local research/demo release using existing data",
   "authorization": {
     "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
@@ -563,6 +563,18 @@
         "approval_scope": "Apply the eleven named historical research scenarios, discretionary reserves and dilution stresses with the approved limits; no company-fact completeness or actual-use certification.",
         "reviewer": "user_approved_scenarios_with_agent_source_and_calculation_review",
         "models_created": 11,
+        "company_fact_certification": false
+      }
+    },
+    {
+      "receipt_path": "data/reviews/valuation-inputs-asof-20261112.json",
+      "sha256": "87fe58392468a9d83ee6d82724993598997846dc1a05756514787bc5e626297e",
+      "receipt": {
+        "decision_id": "USER-VALUATION-DATE-20261112",
+        "recorded_at": "2026-11-13T07:51:25Z",
+        "user_reply": "November 12, 2026",
+        "approval_scope": "Valuation date selection for the four-company financial input review. Not personal verification of sources, estimates or financial completeness.",
+        "reviewer": "user",
         "company_fact_certification": false
       }
     }
@@ -5654,6 +5666,555 @@
         "No independent human certification or actual-use days"
       ],
       "supersedes_decision_id": null
+    },
+    {
+      "decision_id": "M05-FOUR-COMPANY-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-12T18:32:54.690668+00:00",
+      "status": "applied_and_verified",
+      "decision": "Apply 181 selected historical source facts for NVIDIA, Meta and Alphabet; retain 16 selected holds and all older unreviewed candidates.",
+      "reason": "Original consolidated statement and note cells match selected SEC facts by value, unit, period and source hash. Review metadata retains share-class, carrying-value, tax and lease limitations.",
+      "consolidated_review": "data/reviews/financial-review-20261112.json",
+      "consolidated_review_sha256": "4a1cdbbba4ae186ee009b0326c7d2c2c9ed7311db653a48f7f68270a04bb6402",
+      "affected_records": {
+        "company_ids": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "processing_run_ids": [
+          219,
+          220,
+          221,
+          222,
+          223,
+          224,
+          225,
+          226,
+          227,
+          228,
+          229,
+          230,
+          231,
+          232,
+          233,
+          234,
+          235
+        ],
+        "new_annual_periods": 9,
+        "promoted_facts": 181,
+        "saved_valuations_changed": false,
+        "previous_rows_preserved": true
+      },
+      "remaining_uncertainty": [
+        "Complete working-capital, financing and equity-claim bridges",
+        "Current employee awards, noncontrolling interests and share-class valuation scope",
+        "NVIDIA capex including intangible assets and Alphabet depreciation scope",
+        "Industry allocation and forecast assumptions remain separate reviews",
+        "Published Alphabet FY2025 operating-lease total exceeds component sum by USD 1 million",
+        "No independent human certification, new model approval, or actual-use days"
+      ],
+      "supersedes_decision_id": null
+    },
+    {
+      "decision_id": "M05-ORIGINAL-FOLLOWUP-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-12T20:58:36.364438+00:00",
+      "status": "applied_and_verified",
+      "decision": "Approve five previously held historical interest-expense/operating-lease facts after obtaining their original annual reports; retain the eleven remaining selected holds.",
+      "reason": "Five historical reported expenses/operating-lease balances. No forecast, valuation-date claim value, complete financing approval, or independent human certification.",
+      "consolidated_review": "data/reviews/financial-review-followup-20261112.json",
+      "consolidated_review_sha256": "543aed81389ecd210a16cd58c51ebbfbfe899c7f49dffe365b9f141ce572f4df",
+      "affected_records": {
+        "company_ids": [
+          14,
+          15,
+          16
+        ],
+        "candidate_ids": [
+          1638,
+          1645,
+          1747,
+          1754,
+          1850
+        ],
+        "processing_run_ids": [
+          236,
+          237,
+          238,
+          239,
+          240,
+          241,
+          242,
+          243,
+          244,
+          245
+        ],
+        "saved_valuations_changed": false
+      },
+      "remaining_uncertainty": [
+        "Eleven selected historical candidates remain held",
+        "Complete accounting, current equity-claim and valuation-input scope remains open",
+        "No independent human certification or actual-use days"
+      ],
+      "supersedes_decision_id": "M05-FOUR-COMPANY-20261112",
+      "supersession_scope": "Only the five named candidate holds; all other prior decisions remain effective."
+    },
+    {
+      "decision_id": "M05-HELD-ORIGINALS-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-13T01:24:23Z",
+      "status": "applied_and_verified",
+      "decision": "Approve eight explicitly disclosed zeros; reject three ambiguous debt-total mappings while preserving their original principal values.",
+      "reason": "Exact original-source contexts, units, dates, calculation components and limitations retained. No missing amount is inferred as zero and no saved valuation assumptions change.",
+      "consolidated_review": "data/reviews/financial-review-completion-20261112.json",
+      "consolidated_review_sha256": "31db484e83f7c9b7b1f7a1c1757ac0d437c8f9586d89621a0cb3274528e1cf60",
+      "affected_records": {
+        "company_ids": [
+          14,
+          15,
+          16
+        ],
+        "candidate_ids": [
+          1629,
+          1653,
+          1655,
+          1662,
+          1679,
+          1745,
+          1844,
+          1853,
+          1874,
+          1887,
+          1895
+        ],
+        "processing_run_ids": [
+          246,
+          247,
+          248
+        ],
+        "saved_valuations_changed": false
+      },
+      "remaining_uncertainty": [
+        "No selected candidate remains pending; each operating checklist is still 8/13 source-linked.",
+        "Complete financing, working capital, economic claims, current dilution and benchmark mappings remain in the limitation ledger.",
+        "No independent human certification or actual-use days."
+      ],
+      "supersedes_decision_id": "M05-ORIGINAL-FOLLOWUP-20261112",
+      "supersession_scope": "Only the eleven named holds; prior source values, receipts and other judgments remain retained."
+    },
+    {
+      "decision_id": "M05-FINANCIAL-COMPONENTS-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-13T01:24:23Z",
+      "status": "applied_and_verified",
+      "decision": "Approve 143 precisely scoped historical facts and calculations from original annual filings, including separate debt principal, leases, cash-flow changes, stock classes, awards and business revenues.",
+      "reason": "Exact original-source contexts, units, dates, calculation components and limitations retained. No missing amount is inferred as zero and no saved valuation assumptions change.",
+      "consolidated_review": "data/reviews/financial-review-completion-20261112.json",
+      "consolidated_review_sha256": "31db484e83f7c9b7b1f7a1c1757ac0d437c8f9586d89621a0cb3274528e1cf60",
+      "affected_records": {
+        "company_ids": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "candidate_ids": [
+          1903,
+          1904,
+          1905,
+          1906,
+          1907,
+          1908,
+          1909,
+          1910,
+          1911,
+          1912,
+          1913,
+          1914,
+          1915,
+          1916,
+          1917,
+          1918,
+          1919,
+          1920,
+          1921,
+          1922,
+          1923,
+          1924,
+          1925,
+          1926,
+          1927,
+          1928,
+          1929,
+          1930,
+          1931,
+          1932,
+          1933,
+          1934,
+          1935,
+          1936,
+          1937,
+          1938,
+          1939,
+          1940,
+          1941,
+          1942,
+          1943,
+          1944,
+          1945,
+          1946,
+          1947,
+          1948,
+          1949,
+          1950,
+          1951,
+          1952,
+          1953,
+          1954,
+          1955,
+          1956,
+          1957,
+          1958,
+          1959,
+          1960,
+          1961,
+          1962,
+          1963,
+          1964,
+          1965,
+          1966,
+          1967,
+          1968,
+          1969,
+          1970,
+          1971,
+          1972,
+          1973,
+          1974,
+          1975,
+          1976,
+          1977,
+          1978,
+          1979,
+          1980,
+          1981,
+          1982,
+          1983,
+          1984,
+          1985,
+          1986,
+          1987,
+          1988,
+          1989,
+          1990,
+          1991,
+          1992,
+          1993,
+          1994,
+          1995,
+          1996,
+          1997,
+          1998,
+          1999,
+          2000,
+          2001,
+          2002,
+          2003,
+          2004,
+          2005,
+          2006,
+          2007,
+          2008,
+          2009,
+          2010,
+          2011,
+          2012,
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018,
+          2019,
+          2020,
+          2021,
+          2022,
+          2023,
+          2024,
+          2025,
+          2026,
+          2027,
+          2028,
+          2029,
+          2030,
+          2031,
+          2032,
+          2033,
+          2034,
+          2035,
+          2036,
+          2037,
+          2038,
+          2039,
+          2040,
+          2041,
+          2042,
+          2043,
+          2044,
+          2045
+        ],
+        "processing_run_ids": [
+          249,
+          250,
+          251,
+          252
+        ],
+        "saved_valuations_changed": false
+      },
+      "remaining_uncertainty": [
+        "No selected candidate remains pending; each operating checklist is still 8/13 source-linked.",
+        "Complete financing, working capital, economic claims, current dilution and benchmark mappings remain in the limitation ledger.",
+        "No independent human certification or actual-use days."
+      ],
+      "supersedes_decision_id": null,
+      "supersession_scope": "Additive historical evidence only."
+    },
+    {
+      "decision_id": "M05-FIVE-INPUTS-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-13T03:05:21Z",
+      "status": "applied_and_verified",
+      "decision": "Approve 47 additive historical facts/calculations from original filings and incorporated charter. Resolve 12 annual input values across four company/input slots; retain the other 16 slots as explicit source or model-basis gaps.",
+      "reason": "Exact source cells, ownership/charter passages, dates, scope and calculations verified. Missing disclosures are not zero. No saved valuation assumptions change.",
+      "consolidated_review": "data/reviews/financial-five-input-review-20261112.json",
+      "consolidated_review_sha256": "1d2a4fb5d6d01910b919534f2917841c7ba07c392615a7d56ac820469e950bbe",
+      "affected_records": {
+        "company_ids": [
+          13,
+          14,
+          15,
+          16
+        ],
+        "candidate_ids": [
+          2046,
+          2047,
+          2048,
+          2049,
+          2050,
+          2051,
+          2052,
+          2053,
+          2054,
+          2055,
+          2056,
+          2057,
+          2058,
+          2059,
+          2060,
+          2061,
+          2062,
+          2063,
+          2064,
+          2065,
+          2066,
+          2067,
+          2068,
+          2069,
+          2070,
+          2071,
+          2072,
+          2073,
+          2074,
+          2075,
+          2076,
+          2077,
+          2078,
+          2079,
+          2080,
+          2081,
+          2082,
+          2083,
+          2084,
+          2085,
+          2086,
+          2087,
+          2088,
+          2089,
+          2090,
+          2091,
+          2092
+        ],
+        "processing_run_ids": [
+          256,
+          257,
+          258,
+          259
+        ],
+        "saved_valuations_changed": false
+      },
+      "remaining_uncertainty": [
+        "Apple/NVIDIA source checklists are 10/13 per year; Meta/Alphabet remain 8/13.",
+        "Historical debt/cash-flow components do not silently define valuation debt or complete operating working capital.",
+        "Original disclosure gaps and dated employee/minority claims remain explicit; no independent human certification or actual-use days."
+      ],
+      "supersedes_decision_id": null,
+      "supersession_scope": "Additive source evidence only; original decisions and amounts remain intact."
+    },
+    {
+      "decision_id": "M05-SOURCE-FOLLOWUP-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-13T06:16:56Z",
+      "status": "applied_and_verified",
+      "decision": "Preserve four dated original disclosures. Do not backdate Meta 2026 preferred issuances or annualize Alphabet partial-year amortization. Keep sixteen annual input gaps explicit.",
+      "reason": "Exact original passages and XBRL periods verified; later evidence does not establish the selected historical annual values.",
+      "consolidated_review": "data/reviews/financial-source-followup-20261112.json",
+      "consolidated_review_sha256": "a0d271f7908d7620075a534246f656581a75737008c5a17138bd0ef7e3f589ea",
+      "affected_records": {
+        "raw_document_ids": [
+          39,
+          40,
+          41,
+          42
+        ],
+        "processing_run_ids": [
+          260,
+          261
+        ],
+        "financial_records_changed": false,
+        "saved_valuations_changed": false
+      },
+      "remaining_uncertainty": [
+        "Meta fiscal-year 2023-2025 preferred/noncontrolling claims remain unverified; a later explicitly zero preferred balance cannot be backdated.",
+        "Alphabet full annual intangible amortization remains unverified. Quarterly and nine-month values are not annual totals.",
+        "NVIDIA complete finance-lease/financed-asset balances remain unverified. Cash principal payments are not outstanding balances.",
+        "Mixed operating current/noncurrent and tax cash-flow categories still do not establish complete operating working-capital changes."
+      ],
+      "personal_input_needed": {
+        "question": "Which date and scope should the valuation-specific inputs use?",
+        "options": [
+          "Each selected company fiscal year-end",
+          "November 12, 2026",
+          "Historical source facts only"
+        ],
+        "status": "awaiting_user_scope",
+        "reason": "Employee-award and economic debt/preferred/noncontrolling claim values need a dated valuation basis. Methodology decisions are delegated, but guesses cannot become issuer facts.",
+        "required_for_verified_source_ingestion": false
+      },
+      "supersedes_decision_id": null,
+      "supersession_scope": "Additive sources only; all prior decisions and review receipts remain unchanged."
+    },
+    {
+      "decision_id": "M05-DATED-INPUTS-20261112",
+      "reviewer": "Codex",
+      "reviewer_type": "agent_review_under_user_delegation",
+      "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+      "recorded_at": "2026-11-13T07:51:25Z",
+      "status": "applied_and_verified_with_source_gaps",
+      "decision": "Use the user-selected November 12, 2026 cutoff. Preserve eight additional issuer filings and four owned dated input reviews with facts, calculations and estimates separated.",
+      "reason": "Current financing and preferred claims differ from historical annual balances. Original reports and dated exchange evidence support scoped calculations, not invented daily balances.",
+      "consolidated_review": "data/reviews/valuation-inputs-asof-20261112.json",
+      "consolidated_review_sha256": "87fe58392468a9d83ee6d82724993598997846dc1a05756514787bc5e626297e",
+      "affected_records": {
+        "raw_document_ids": [
+          43,
+          44,
+          45,
+          46,
+          47,
+          48,
+          49,
+          50
+        ],
+        "processing_run_ids": [
+          262,
+          263,
+          264,
+          265,
+          266,
+          267,
+          268,
+          269,
+          270,
+          271,
+          272,
+          273
+        ],
+        "company_review_notes": [
+          {
+            "company_id": 13,
+            "note_id": 20,
+            "run_id": 270,
+            "status": "created_and_verified"
+          },
+          {
+            "company_id": 14,
+            "note_id": 21,
+            "run_id": 271,
+            "status": "created_and_verified"
+          },
+          {
+            "company_id": 15,
+            "note_id": 22,
+            "run_id": 272,
+            "status": "created_and_verified"
+          },
+          {
+            "company_id": 16,
+            "note_id": 23,
+            "run_id": 273,
+            "status": "created_and_verified"
+          }
+        ],
+        "notes_display_status": "active",
+        "note_formatting": "Existing full-width note detail preserves paragraphs; display values rounded to three decimal billion units, exact amounts retained in metadata.",
+        "source_numeric_records_and_saved_models_changed": false,
+        "personal_date_choice_only": true
+      },
+      "remaining_uncertainty": {
+        "AAPL": [
+          "Complete post-September debt/cash roll-forward, including repayments and fees.",
+          "Operating accrual/tax breakdown for complete NWC.",
+          "Post-September award ledger and vesting/performance/tax treatment for a full employee claim."
+        ],
+        "NVDA": [
+          "Finance-lease/financed-asset balance and post-July debt roll-forward, including treatment of the USD 1 billion 2026 maturity.",
+          "Complete operating NWC breakdown.",
+          "Post-July employee-award and ESPP rights, vesting/performance/tax basis."
+        ],
+        "META": [
+          "Current finance-lease balance and reconciled cash/debt roll-forward through the November financings.",
+          "Explicit noncontrolling ownership/claim disclosure; absence of a separate line is not zero.",
+          "Complete NWC and post-September award/vesting/tax basis.",
+          "Reconciled November 12 METAM closing quote."
+        ],
+        "GOOGL": [
+          "Complete post-September cash/debt/FX roll-forward.",
+          "Full FY2023-2025 intangible amortization for annual D&A; nine-month disclosure cannot fill those years.",
+          "Complete NWC and post-September award/vesting/tax basis.",
+          "Market value of minority claims if a book-value proxy is insufficient."
+        ]
+      },
+      "personal_input_needed": {
+        "status": "date_supplied_no_further_personal_decision_pending",
+        "valuation_date": "2026-11-12",
+        "source_gaps_remain": true
+      },
+      "supersedes_decision_id": "M05-SOURCE-FOLLOWUP-20261112",
+      "supersession_scope": "Supersedes only the pending valuation-date question. All original facts, annual gaps, receipts and saved valuations remain preserved."
     }
   ],
   "evidence": {

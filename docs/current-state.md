@@ -1,6 +1,6 @@
 # Current State
 
-Source validation updated November 11, 2026. Recorded results below identify
+Source and selected financial review updated November 14, 2026. Recorded results below identify
 their exact revisions and environments; they do not certify an existing installation.
 
 ## Product position
@@ -31,6 +31,15 @@ acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
+| November 14, ten workspace slices | Dated evidence, annual period/basis snapshots, draft readiness, saved-model preview/version history, bounded Today/holdings queues, thesis selection and library/secondary navigation. 263 backend checks, 27 final focused checks and seven PostgreSQL checks pass, including concurrent duplicate saves; 393 frontend tests, type checking and production builds pass. The [receipt](../data/reviews/research-workspace-ten-sets-20261114.json) records browser verification, installation and preservation. These are bounded slices, not completion of every P2-P5 acceptance case. |
+| November 13, research workspace P2.1/P2.2 | Explicit draft/discovery commands, atomic annual-period guards, separate missing-date confirmation, visible revisions, and corrected SEC filing listing are installed. 145 backend checks plus 25 focused filing checks pass; 383 frontend tests, type checking and production builds pass. Isolated Mock Data browser creation/retry/promotion and signed-in normal-app desktop/mobile checks pass. All 110 normal database tables are unchanged; no new backup or permanent stack. [Receipt](../data/reviews/research-workspace-p2-20261113.json) |
+| November 13, research workspace P0/P1 | Four primary destinations, five company sections, bounded company summaries, compact financial amounts with exact disclosures, visible quote timing, and saved-model-first valuation pages are installed. 378 frontend tests, type check, production build and authenticated desktop/phone checks pass. All existing records are preserved; one existing Filings discovery audit was added with zero imports. All 110 tables are unchanged through installation. Four containers/four essential images/two volumes remain; build cache is zero and no new backup was made. [Receipt](../data/reviews/research-workspace-p1-20261113.json) |
+| November 13, November 12 valuation basis | User date recorded; eight issuer filings and four dated company research notes added. 33 numeric facts, eleven exact passages, seven Nasdaq historical prices and one ECB rate support 23 calculations. Facts, estimates and held values remain separate. All prior records and 107 unrelated tables are unchanged; annual facts and saved valuations are preserved. Display status and paragraph formatting use existing note controls. [Receipt](../data/reviews/valuation-inputs-asof-20261112.json) |
+| November 13, dated source follow-up | Four original filings added through two successful Processing Runs. Five exact passages and four period-specific XBRL facts verified; no annual values promoted. All prior source/run rows and 108 unrelated tables unchanged. The original-source link now works on unparsed document pages and existing candidate evidence. 372 frontend tests, type checking, production builds and five signed-in browser checks pass; all 110 tables unchanged through the frontend-only installation and browser checks. [Receipt](../data/reviews/financial-source-followup-20261112.json) |
+| November 12, remaining five inputs | All twenty company/input slots examined. 47 original-source facts/calculations added; twelve annual values close four slots. Apple/NVIDIA reach 10/13 source-linked fields per year; Meta/Alphabet remain 8/13. 85 numeric-cell checks, twelve source-passage checks, twelve cross-checks and 120 normalization comparisons agree. Eight signed-in UI checks pass. All 591 prior candidates, 409 metrics, 409 revisions and sixteen original documents remain unchanged; 103 unrelated tables match, and all 110 tables remain unchanged through browser verification. [Receipt](../data/reviews/financial-five-input-review-20261112.json) |
+| November 12, authorized Docker cleanup | 151 stopped containers and obsolete images/cache removed; four running containers and four images remain. Data from inactive volumes and container evidence retained in verified archives. All 110 database tables unchanged; retained images execute and the runtime remains healthy without restart. Host free space increased by about 50.9 GB during cleanup. [Receipt](../data/reviews/docker-storage-cleanup-20261112.json) |
+| November 12, financial completion review | All eleven selected holds resolved: eight original-filing zeros promoted and three ambiguous debt mappings rejected while retaining their principal values separately. Another 143 source-linked historical facts/calculations are added. Thirty-six source cross-checks and 108 normalization comparisons agree. 372 frontend tests, 56 focused backend tests, 29 contract checks, type checking and production builds pass. All 448 prior candidates, 258 prior metrics and 258 prior source revisions are retained; only the intended eleven candidate review fields change. Saved models and 104 unrelated table fingerprints remain unchanged. [Receipt](../data/reviews/financial-review-completion-20261112.json) |
+| November 12, source review and installed repairs | 181 initial promotions plus five original-report follow-ups; 75 comparable normalized checks agree for NVIDIA, Meta and Alphabet. 56 focused backend tests, 370 frontend tests, type checking and production builds pass. Signed-in checks cover 19 main pages at desktop and mobile sizes plus selected evidence, financial and valuation workflows. Unique Compose registration and unchanged fingerprints for all 110 tables verify deployment preservation. [Checkpoint](archive/checkpoints/2026/handoff-review-2026-11-12.md) |
 | November 9, PR9 clean checkout | 1,936 backend tests passed, six skipped; 365 frontend tests, TypeScript, production builds, six PostgreSQL integration tests, and 71 browser workflows passed. Five GitHub jobs passed on the reviewed head. [Run](https://github.com/Gittastic112/Marketagent/actions/runs/42667448574) |
 | November 9, local product follow-up | 87 focused backend tests plus a 15-test preview follow-up; fifteen desktop/mobile observations with targeted preview/thesis checks. Initial failed attempts remain in the [checkpoint](archive/checkpoints/2026/portfolio-ui-2026-11-09.md) |
 | November 9, installed stack | Scoped rollout preserved database/asset fingerprints, mounts, settings, and localhost ports. One explicitly refreshed brief remained unreviewed. [Analyst evidence](archive/checkpoints/2026/analyst-workflows-2026-11-09.md) |
@@ -49,6 +58,21 @@ It changes no financial acceptance gates.
 
 ## Latest product changes
 
+- All four companies have three selected reviewed annual histories. No selected
+  candidate remains pending; Apple/NVIDIA operating checklists are 10/13 source-linked
+  per year and Meta/Alphabet remain 8/13. The [current ledger](limitations.md#selected-company-review-follow-up)
+  separates every remaining source gap from date/methodology choices.
+  Original borrowing, lease, cash-flow, share/award and business-revenue components
+  retain precise accounting scope. The evidence UI distinguishes Fact, Calculation
+  and overridden User Assumption, shows the period and review limits, and links the
+  original source. A dated reviewed-history table makes promoted evidence accessible
+  from each company page; the source-history API accepts Calculation as well as Fact.
+  Unparsed document detail pages also expose the original-source link. Later filings
+  retain their own dates and periods; existing saved valuations remain unchanged.
+- Research lists sort newly ingested documents separately from publication dates.
+  Event search links select their record, narrative impact uses the 100-point
+  scale, and missing scores stay unavailable. Company/source names, compact
+  numbers, collapsible intake forms and mobile wrapping improve the installed UI.
 - The dashboard defaults to a funded owned portfolio, supports a URL selection,
   and distinguishes uncalculated impact from zero. Values retain snapshot dates.
 - Daily Brief separates Sample provenance from missing inputs. Unmatched filing
@@ -80,8 +104,13 @@ effort. M05 remains next. The [completion tracker](roadmaps/completion-tracker.m
 preserves exact gates and explicit deferrals. No new acceptance points are earned
 by reorganizing documentation.
 
-Next work follows the [roadmap](roadmaps/product-roadmap.md): complete supported
-financial/model reviews within the selected scope, establish permitted provider
-inputs before expansion, and record actual research use and final acceptance.
+Next work follows the [roadmap](roadmaps/product-roadmap.md) and the
+[research workspace plan](roadmaps/research-workspace-plan.md). P0/P1 and bounded
+P2-P5 slices are delivered. Connecting dated source selections to an initial-model
+proposal remains open, alongside wider period support and worker reliability.
+The [workspace ledger](limitations.md#workspace-follow-up) owns exact limits.
+No acceptance gates advance from these interface changes.
+Continue supported financial/model reviews within the selected scope. New provider
+coverage requires permitted inputs before expansion.
 Actual-use acceptance remains outstanding. Host/off-device protection and genuine
 portfolio proof retain their separate scope boundaries.

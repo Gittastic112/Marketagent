@@ -1,6 +1,6 @@
 # Frontend Route Inventory
 
-Source inventory reviewed: 2026-10-13. 50 App Router pages.
+Source inventory reviewed: 2026-11-14. 51 App Router pages.
 
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's
@@ -11,7 +11,7 @@ Use [Current State](current-state.md) for dated verification and the
 The [August state matrix](archive/assessments/route-state-inventory-2026-08-09.md)
 is historical and is not a current all-route acceptance gate.
 The [M09 matrix](archive/checkpoints/2026/m09-browser-validation-2026-10-11.md)
-enumerates these 50 pages at desktop/mobile sizes using isolated Mock Data;
+enumerates the then-existing 50 pages at desktop/mobile sizes using isolated Mock Data;
 The [October 13 follow-up](archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
 reconciles controls/endpoints, adverse states, manual screenshot findings and
 measured responsiveness. It separates full fixture coverage from normal-app reads
@@ -24,6 +24,7 @@ page source and the count. Auth/API routes are outside this page list.
 | Route | Entry point |
 |---|---|
 | `/admin/damodaran` | [Page source](../frontend/app/admin/damodaran/page.tsx) |
+| `/advanced` | [Page source](../frontend/app/advanced/page.tsx) |
 | `/alerts/[id]` | [Page source](../frontend/app/alerts/[id]/page.tsx) |
 | `/alerts` | [Page source](../frontend/app/alerts/page.tsx) |
 | `/auth/signin` | [Page source](../frontend/app/auth/signin/page.tsx) |

@@ -1,0 +1,101 @@
+{
+  "recorded_at": "2026-11-14T01:37:32Z",
+  "status": "verified_installed",
+  "packages": [
+    "P2.1",
+    "P2.2"
+  ],
+  "delivered": [
+    "Read-only owned current draft lookup; explicit create, resume and refresh without implicit source reconciliation",
+    "Read-only filing source configuration; explicit audited discovery with idle, loading, failure and success states",
+    "Imported SEC filings retained in the stored filing list alongside manual filings",
+    "Atomic annual-period identity preflight; missing/quarterly/YTD/conflicting/duplicate identities cannot overwrite history",
+    "Separate annual end-date confirmation with required viewed version, source note, reviewer/time and retained confirmation history",
+    "Candidate period/date display and source-history revision/recorded-time display"
+  ],
+  "verification": {
+    "backend_primary_passed": 145,
+    "filing_followup_passed": 25,
+    "backend_unique_tests": 146,
+    "frontend_passed": 383,
+    "frontend_typecheck": "passed",
+    "production_builds": [
+      "backend",
+      "frontend"
+    ],
+    "api_contracts": 30,
+    "isolated_browser": "Explicit creation, read-only resume after changed financials, filing failure/retry, date confirmation, keyboard review and promotion",
+    "installed_browser": "Signed-in saved-model, empty-draft, SEC filing list and source-history checks; desktop and phone layouts",
+    "full_playwright_suite_run": false,
+    "actual_use_days_added": 0
+  },
+  "preservation": {
+    "checked_at": "2026-11-14T01:34:02Z",
+    "unchanged_tables": 110,
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514",
+    "scope": "Installation and signed-in read-only browser checks",
+    "new_backup": false
+  },
+  "installation": {
+    "installed_at": "2026-11-14T01:31:18Z",
+    "project": "market-intelligence-review-20261112-financial-history",
+    "images": {
+      "backend": {
+        "previous": "sha256:67ec5620afcad4b82905e4b691a9ea1c399bb14246a6ae412ee7aaa7dd4944ad",
+        "installed": "sha256:19f12d5fbddfcc24baeddae52ccc93fbd7e22329ab8d4aa228a9d1e681f0b3b4",
+        "container": "5a4e48708941825e4d6734c0580cb6e1387821c3303ff698c79ba2513ca58f36"
+      },
+      "scheduler": {
+        "previous": "sha256:67ec5620afcad4b82905e4b691a9ea1c399bb14246a6ae412ee7aaa7dd4944ad",
+        "installed": "sha256:19f12d5fbddfcc24baeddae52ccc93fbd7e22329ab8d4aa228a9d1e681f0b3b4",
+        "container": "f442055cca26fb341bfb006af9a0c9227edca697c07247c47003594c27ccad87"
+      },
+      "frontend": {
+        "previous": "sha256:952dc721a3ea426c0dd25a615d64d8c910990f562dfc7ce5466042ece449c029",
+        "installed": "sha256:952dc721a3ea426c0dd25a615d64d8c910990f562dfc7ce5466042ece449c029",
+        "container": "4437b29bb9e3cb8ca08a0dd52253055c076cc0daaf729be93ac761863de81ef0"
+      }
+    },
+    "unchanged_tables": 110,
+    "settings_unchanged": true,
+    "mounts_unchanged": true,
+    "protections_unchanged": true,
+    "database_restarted": false,
+    "volumes_unchanged": true,
+    "new_backup": false,
+    "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+    "database_fingerprint": "f8fb6b9039cc22940e3545135132327b4c98f2bcb6395f647e6c08fde6655514"
+  },
+  "retention": {
+    "containers": 4,
+    "images": 4,
+    "volumes": 2,
+    "build_cache_bytes": 0,
+    "new_backup": false,
+    "temporary_mock_sqlite_removed": true,
+    "cleanup_receipt": "output/milestones/research-workspace-p2-20261113/cleanup.json",
+    "tools_image_reason": "Required isolated checks and recovery tools; host Git/Python toolchain is unavailable",
+    "measured_removed_build_context_bytes": 4956355,
+    "docker_reported_cache_reclamation": "Total:\t3.421GB"
+  },
+  "next": [
+    "P2.3 broader quarter/YTD/transition-period and accounting-basis design",
+    "P2.4 unified dated input review with valuation date, complete source detail and conflict states",
+    "P3 proposed input changes, deterministic preview and saved-version workflow"
+  ],
+  "boundaries": [
+    "No existing financial facts, source assets, drafts, saved models or user settings changed",
+    "Manual period confirmation is labeled User Assumption and does not approve the candidate value",
+    "No database migration; existing locator metadata retains the annual date review",
+    "No original-source financial research or valuation input completion is claimed by this software slice"
+  ],
+  "evidence_root": "output/milestones/research-workspace-p2-20261113/",
+  "docs_validation": {
+    "status": "passed",
+    "unit_tests": 24,
+    "active_markdown_files": 95,
+    "local_links": 1206,
+    "diff_whitespace": "passed"
+  },
+  "installed_backend_sources_match": true
+}

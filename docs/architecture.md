@@ -144,8 +144,10 @@ Ordinary reads and deterministic briefs do not call AI.
 [runbook](execution-runbook.md) owns validation, and
 [Operations](operations.md) owns runtime changes and recovery.
 
-Preserve existing databases, both document stores, reference assets, and rollback
-images. Restore quiesces application writers and resumes only previously active
+Preserve existing databases, both document stores and reference assets. Keep
+recovery sets and temporary rollback images under the bounded
+[retention policy](operations.md#essential-retention-policy); do not accumulate
+stopped stacks. Restore quiesces application writers and resumes only previously active
 workers after verification; other clients require operator coordination.
 A refactor does not authorize reseeding or restoring the normal database.
 
@@ -153,3 +155,22 @@ The [limitation ledger](limitations.md#architecture-follow-ups)
 owns remaining large workflow modules, split provider placement, manual type
 synchronization, legacy aliases, and test-depth gaps. Domain boundaries and
 behavioral evidence should justify a move; file size alone should not.
+
+Draft and Filings page reads are non-writing. Creation, stored-input refresh and
+provider discovery use explicit commands. Annual financial promotion preflights
+exact period identity before mutation; manual date confirmations retain separate
+review metadata in the candidate locator. New promotions also snapshot available
+period dates, duration, scope and accounting basis there; no migration or historical
+rewrite is needed. Dated evidence selects from bounded source revisions using
+publication timing, keeping retrieval/recorded time distinct. It never rebases a model.
+
+Saved-model proposals share backend validation/calculation with saving. A preview
+hash covers inputs, selected base, research date, proposed outputs and diagnostics.
+The existing model-row lock and decision-log table provide atomic version saves,
+optimistic conflicts and UUID retry receipts. Preview/history reads do not write.
+The date is a research label, not a historical market-data reconstruction.
+The review queue projects bounded scalar queries over existing sources and owned
+research; optional portfolio filtering uses current declared holdings. It creates
+no parallel task store and performs no provider/AI calls. Wider period identities,
+dated draft proposals and remaining queue scope stay in the
+[workspace plan](roadmaps/research-workspace-plan.md#data-and-backend-design).

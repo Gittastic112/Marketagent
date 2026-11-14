@@ -1,0 +1,914 @@
+{
+  "schema_version": 1,
+  "decision_id": "M05-SOURCE-FOLLOWUP-20261112",
+  "recorded_at": "2026-11-13T06:16:56Z",
+  "status": "source_followup_applied_and_verified",
+  "reviewer_type": "agent_review_under_user_delegation",
+  "authorization_id": "AUTH-20261017-DELEGATED-REVIEW",
+  "scope": "Further original-source research, additive source preservation and direct-source UI repair. No annual candidate promotion or saved valuation change.",
+  "earlier_review": {
+    "path": "data/reviews/financial-five-input-review-20261112.json",
+    "sha256": "1d2a4fb5d6d01910b919534f2917841c7ba07c392615a7d56ac820469e950bbe"
+  },
+  "summary": {
+    "new_source_documents": 4,
+    "successful_processing_runs": 2,
+    "exact_passages_verified": 5,
+    "period_specific_numeric_facts_verified": 4,
+    "new_annual_input_values": 0,
+    "remaining_company_input_slots": 16,
+    "financial_candidate_count": 638,
+    "financial_metric_count": 456,
+    "source_revision_count": 456
+  },
+  "processing_runs": [
+    {
+      "id": 260,
+      "status": "success",
+      "created": 3
+    },
+    {
+      "id": 261,
+      "status": "success",
+      "created": 1
+    }
+  ],
+  "original_source_evidence": {
+    "verified_at": "2026-11-13T03:23:59.234480+00:00",
+    "source_documents": [
+      {
+        "document_id": 39,
+        "company_id": 15,
+        "title": "META 424B5 filed 2026-10-28",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526436405/d133631d424b5.htm",
+        "filing_date": "2026-10-28",
+        "content_hash": "ea831a4db2ea9376c131ebbcdf601ea83db36da4342aeef35d9d2504d66376f0",
+        "original_html_sha256": "4c53a6733f7d8c2384922f522aa539feb354fe544644eebb795e7190bf9eda2c"
+      },
+      {
+        "document_id": 40,
+        "company_id": 15,
+        "title": "META 8-K filed 2026-10-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+        "filing_date": "2026-10-29",
+        "content_hash": "cb16f709aed21cd66efbd1b0c86ef0f91a4647e8cb92999638467ad0b3dcc5b4",
+        "original_html_sha256": "0cd53a1d28adaabdd3439de1db8ec0dcce9802043885cb60f26672872bf90c61"
+      },
+      {
+        "document_id": 41,
+        "company_id": 15,
+        "title": "META 424B5 filed 2026-11-06",
+        "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450754/d44678d424b5.htm",
+        "filing_date": "2026-11-06",
+        "content_hash": "d9b562b2a0f0cf0e1a41fc1c14888628d8524f472743f7dc45f1b8dd04b66c72",
+        "original_html_sha256": "d1e7e40695fa31207c50bcd13e475ac8296e50154aaf96e57ce5bfea91375a41"
+      },
+      {
+        "document_id": 42,
+        "company_id": 16,
+        "title": "GOOGL 10-Q filed 2026-10-29",
+        "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "filing_date": "2026-10-29",
+        "content_hash": "8c8990edcf8d8d0f18b3b73aab4eb08c6f3554a5b3f580ffa6596201dae1d6d7",
+        "original_html_sha256": "15de47eda056490d6b5c8ba7718c70d228125bdebece92de572acc8e7e30e635"
+      }
+    ],
+    "passages": [
+      {
+        "raw_document_id": 39,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526436405/d133631d424b5.htm",
+        "exact_text_after_whitespace_normalization": "The date of this prospectus supplement is October 26, 2026.",
+        "passage_sha256": "56db04b5c61125f9103cf11bd475b21835f950a954ef585ffe0152bcdbe7a850",
+        "verified_values": [
+          "October 26, 2026"
+        ]
+      },
+      {
+        "raw_document_id": 39,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526436405/d133631d424b5.htm",
+        "exact_text_after_whitespace_normalization": "We currently do not have any shares of preferred stock outstanding.",
+        "passage_sha256": "8090768016224e183664092af58c4655db1c49d0122b16d071562d78f9063fdd",
+        "verified_values": [
+
+        ]
+      },
+      {
+        "raw_document_id": 40,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+        "exact_text_after_whitespace_normalization": "agreed to issue and sell 250,000,000 Series A depositary shares (the “Depositary Shares”), each representing a 1/20th interest in a share of 6.50% Series A Mandatory Convertible Preferred Stock, liquidation preference $1,000.00 per share",
+        "passage_sha256": "892a32062a65bbcec9439a474e4fb89041c5e92168676e3d5c2e9a179c6e60e5",
+        "verified_values": [
+          "250,000,000",
+          "1/20",
+          "6.50",
+          "1,000.00"
+        ]
+      },
+      {
+        "raw_document_id": 40,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+        "exact_text_after_whitespace_normalization": "The Depositary Shares Offering closed on October 29, 2026.",
+        "passage_sha256": "82113e748cc93adfb01f048614c8fad5f5fb4c73eff0e01a8d21e69e39919d97",
+        "verified_values": [
+          "October 29, 2026"
+        ]
+      },
+      {
+        "raw_document_id": 41,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450754/d44678d424b5.htm",
+        "exact_text_after_whitespace_normalization": "On October 29, 2026, the underwriters of our previously completed offering of Series A depositary shares exercised in full their over-allotment option to purchase an additional 37,500,000 Series A depositary shares (the “Additional Depositary Shares”), each representing a 1/20th interest in a share of the Company’s 6.50% Series A Mandatory Convertible Preferred Stock, liquidation preference $1,000 per share, par value $0.000006 per share. The Company issued the Additional Depositary Shares on November 2, 2026",
+        "passage_sha256": "c4ae4cc175f683825e68430c205e8291e3a8ab69260bf9a1713ca9377ce7a48a",
+        "verified_values": [
+          "October 29, 2026",
+          "37,500,000",
+          "1/20",
+          "1,000",
+          "November 2, 2026"
+        ]
+      }
+    ],
+    "meta_preferred_issuance": {
+      "claim_type": "Calculation",
+      "latest_verified_issuance_date": "2026-11-02",
+      "initial_depositary_shares": 250000000,
+      "additional_depositary_shares": 37500000,
+      "total_depositary_shares_issued": 287500000,
+      "underlying_preferred_shares_issued": 14375000,
+      "stated_liquidation_preference_per_preferred_share_usd": 1000,
+      "aggregate_stated_liquidation_preference_usd": 14375000000,
+      "formula": "(250000000 + 37500000) / 20 * 1000",
+      "scope": "Stated liquidation preference from disclosed issuances, before dividend and conversion effects; not market value, net proceeds or a current outstanding balance certification.",
+      "historical_zero_boundary": "The prospectus dated October 26, 2026 expressly reports no then-outstanding preferred stock. This does not establish the December 31, 2023, 2024 or 2025 balances."
+    },
+    "alphabet_intangible_amortization": [
+      {
+        "claim_type": "Fact",
+        "raw_document_id": 42,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "source_element_id": "f-1578",
+        "concept": "us-gaap:AmortizationOfIntangibleAssets",
+        "start": "2025-07-01",
+        "end": "2025-09-30",
+        "value": 129000000,
+        "unit": "USD"
+      },
+      {
+        "claim_type": "Fact",
+        "raw_document_id": 42,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "source_element_id": "f-1579",
+        "concept": "us-gaap:AmortizationOfIntangibleAssets",
+        "start": "2026-07-01",
+        "end": "2026-09-30",
+        "value": 375000000,
+        "unit": "USD"
+      },
+      {
+        "claim_type": "Fact",
+        "raw_document_id": 42,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "source_element_id": "f-1580",
+        "concept": "us-gaap:AmortizationOfIntangibleAssets",
+        "start": "2025-01-01",
+        "end": "2025-09-30",
+        "value": 375000000,
+        "unit": "USD"
+      },
+      {
+        "claim_type": "Fact",
+        "raw_document_id": 42,
+        "source_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm",
+        "source_element_id": "f-1581",
+        "concept": "us-gaap:AmortizationOfIntangibleAssets",
+        "start": "2026-01-01",
+        "end": "2026-09-30",
+        "value": 920000000,
+        "unit": "USD"
+      }
+    ],
+    "alphabet_boundary": "Three- and nine-month amounts do not establish complete 2023, 2024 or 2025 annual amortization. No annualization or balance-difference inference; no extra finance-lease amortization added to PP&E depreciation.",
+    "annual_inputs_promoted": 0,
+    "annual_review_plans": [
+      {
+        "company_id": 13,
+        "periods": [
+          {
+            "year": 2026,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2025,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2024,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          }
+        ]
+      },
+      {
+        "company_id": 14,
+        "periods": [
+          {
+            "year": 2026,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2025,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2024,
+            "source_linked": 10,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "employee_options_value"
+            ]
+          }
+        ]
+      },
+      {
+        "company_id": 15,
+        "periods": [
+          {
+            "year": 2025,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "minority_interests",
+              "preferred_stock",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2024,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "minority_interests",
+              "preferred_stock",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2023,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "change_in_nwc",
+              "minority_interests",
+              "preferred_stock",
+              "employee_options_value"
+            ]
+          }
+        ]
+      },
+      {
+        "company_id": 16,
+        "periods": [
+          {
+            "year": 2025,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "depreciation",
+              "change_in_nwc",
+              "minority_interests",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2024,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "depreciation",
+              "change_in_nwc",
+              "minority_interests",
+              "employee_options_value"
+            ]
+          },
+          {
+            "year": 2023,
+            "source_linked": 8,
+            "total": 13,
+            "remaining": [
+              "debt",
+              "depreciation",
+              "change_in_nwc",
+              "minority_interests",
+              "employee_options_value"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "remaining_input_matrix": [
+    {
+      "ticker": "AAPL",
+      "input": "debt",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The disclosed carrying balances and issuer fair-value estimates have different scope. A generic complete valuation debt deduction needs a declared date and financing/lease basis.",
+      "needed_to_complete": "For the intended valuation date, select carrying value or a market-value bridge and identify which financing obligations are included. The engine deducts operating leases separately; never include the same lease in both fields. Current-year historical components do not establish a current market value.",
+      "options": [
+        "Use the precisely disclosed historical carrying components under an explicitly documented book-value convention.",
+        "Build a dated market-value bridge; issuer note fair values are only one component."
+      ],
+      "missing_source_if_selected": "Any financing category included in the chosen scope still needs an original-source balance. NVIDIA finance-lease/financed-asset outstanding balances are not established by principal cash payments."
+    },
+    {
+      "ticker": "AAPL",
+      "input": "change_in_nwc",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The trade subtotal is partial; the broader cash-flow subtotal mixes operating, tax and current/noncurrent movements. Neither is a verified complete noncash operating working-capital change.",
+      "needed_to_complete": "Define included current operating assets/liabilities and treatment of taxes, accrued/prepaid items and noncurrent movements. Supply original breakdowns for mixed categories, or consciously adopt a labeled proxy under that scope.",
+      "options": [
+        "Keep complete operating working capital unavailable until the required breakdown is verified.",
+        "Use an explicitly labeled cash-flow proxy; do not relabel it as a complete disclosed operating balance."
+      ],
+      "sign_rule": "Positive stored cash-flow effect is cash provided. An increase in valuation working capital uses the opposite sign."
+    },
+    {
+      "ticker": "AAPL",
+      "input": "minority_interests",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "resolved_historical_source_scope",
+      "basis": "Explicit wholly-owned consolidated subsidiaries support a zero outside subsidiary equity claim for the stated group. Recorded as Calculation, not a reported numeric zero or a missing-line inference.",
+      "user_input_required_for_this_historical_record": false
+    },
+    {
+      "ticker": "AAPL",
+      "input": "preferred_stock",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "resolved_historical_source_scope",
+      "basis": "Each Apple annual report incorporates the common-only charter. Parent preferred claim is therefore zero under that historical charter. Recorded as Calculation.",
+      "user_input_required_for_this_historical_record": false
+    },
+    {
+      "ticker": "AAPL",
+      "input": "employee_options_value",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "Unvested award quantities and historical grant-date measures do not establish a dated fair value of all outstanding employee claims.",
+      "needed_to_complete": "Provide the intended valuation date. Choose a consistent separate claim deduction or share-dilution method and support the required price, vesting/performance, tax and any option exercise/life assumptions. Do not deduct the same awards and dilute for them twice.",
+      "options": [
+        "Separate dated employee-claim valuation with explicit assumptions.",
+        "Consistent dilution treatment with no second deduction for the same awards."
+      ]
+    },
+    {
+      "ticker": "NVDA",
+      "input": "debt",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The disclosed carrying balances and issuer fair-value estimates have different scope. A generic complete valuation debt deduction needs a declared date and financing/lease basis.",
+      "needed_to_complete": "For the intended valuation date, select carrying value or a market-value bridge and identify which financing obligations are included. The engine deducts operating leases separately; never include the same lease in both fields. Current-year historical components do not establish a current market value.",
+      "options": [
+        "Use the precisely disclosed historical carrying components under an explicitly documented book-value convention.",
+        "Build a dated market-value bridge; issuer note fair values are only one component."
+      ],
+      "missing_source_if_selected": "Any financing category included in the chosen scope still needs an original-source balance. NVIDIA finance-lease/financed-asset outstanding balances are not established by principal cash payments.",
+      "company_specific_issue": "FY2026 accrued purchase consideration is USD 3.921 billion, distinct from the rounded USD 4 billion future Groq payment including imputed interest. Its financing/reinvestment treatment needs an explicit, nonduplicated basis."
+    },
+    {
+      "ticker": "NVDA",
+      "input": "capex",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "resolved_historical_source_scope",
+      "basis": "Exact reported purchases of property/equipment and intangible assets, including the disclosed intangible component. Separate acquisitions, Groq payment and financed-asset principal cash flows remain separate.",
+      "user_input_required_for_this_historical_record": false
+    },
+    {
+      "ticker": "NVDA",
+      "input": "change_in_nwc",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The trade subtotal is partial; the broader cash-flow subtotal mixes operating, tax and current/noncurrent movements. Neither is a verified complete noncash operating working-capital change.",
+      "needed_to_complete": "Define included current operating assets/liabilities and treatment of taxes, accrued/prepaid items and noncurrent movements. Supply original breakdowns for mixed categories, or consciously adopt a labeled proxy under that scope.",
+      "options": [
+        "Keep complete operating working capital unavailable until the required breakdown is verified.",
+        "Use an explicitly labeled cash-flow proxy; do not relabel it as a complete disclosed operating balance."
+      ],
+      "sign_rule": "Positive stored cash-flow effect is cash provided. An increase in valuation working capital uses the opposite sign."
+    },
+    {
+      "ticker": "NVDA",
+      "input": "minority_interests",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "resolved_historical_source_scope",
+      "basis": "Explicit wholly-owned consolidated subsidiaries support a zero outside subsidiary equity claim for the stated group. Recorded as Calculation, not a reported numeric zero or a missing-line inference.",
+      "user_input_required_for_this_historical_record": false
+    },
+    {
+      "ticker": "NVDA",
+      "input": "employee_options_value",
+      "fiscal_years": [
+        2024,
+        2025,
+        2026
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "Unvested award quantities and historical grant-date measures do not establish a dated fair value of all outstanding employee claims.",
+      "needed_to_complete": "Provide the intended valuation date. Choose a consistent separate claim deduction or share-dilution method and support the required price, vesting/performance, tax and any option exercise/life assumptions. Do not deduct the same awards and dilute for them twice.",
+      "options": [
+        "Separate dated employee-claim valuation with explicit assumptions.",
+        "Consistent dilution treatment with no second deduction for the same awards."
+      ]
+    },
+    {
+      "ticker": "META",
+      "input": "debt",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The disclosed carrying balances and issuer fair-value estimates have different scope. A generic complete valuation debt deduction needs a declared date and financing/lease basis.",
+      "needed_to_complete": "For the intended valuation date, select carrying value or a market-value bridge and identify which financing obligations are included. The engine deducts operating leases separately; never include the same lease in both fields. Current-year historical components do not establish a current market value.",
+      "options": [
+        "Use the precisely disclosed historical carrying components under an explicitly documented book-value convention.",
+        "Build a dated market-value bridge; issuer note fair values are only one component."
+      ],
+      "missing_source_if_selected": "Any financing category included in the chosen scope still needs an original-source balance. NVIDIA finance-lease/financed-asset outstanding balances are not established by principal cash payments."
+    },
+    {
+      "ticker": "META",
+      "input": "change_in_nwc",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The trade subtotal is partial; the broader cash-flow subtotal mixes operating, tax and current/noncurrent movements. Neither is a verified complete noncash operating working-capital change.",
+      "needed_to_complete": "Define included current operating assets/liabilities and treatment of taxes, accrued/prepaid items and noncurrent movements. Supply original breakdowns for mixed categories, or consciously adopt a labeled proxy under that scope.",
+      "options": [
+        "Keep complete operating working capital unavailable until the required breakdown is verified.",
+        "Use an explicitly labeled cash-flow proxy; do not relabel it as a complete disclosed operating balance."
+      ],
+      "sign_rule": "Positive stored cash-flow effect is cash provided. An increase in valuation working capital uses the opposite sign."
+    },
+    {
+      "ticker": "META",
+      "input": "minority_interests",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "source_documents_examined": [
+        27,
+        28,
+        35
+      ],
+      "why_not_complete": "The consolidation policy covers controlled entities and variable-interest entities; it does not explicitly certify a wholly-owned group or a zero outside claim.",
+      "needed_to_complete": "An issuer disclosure confirming the dated outstanding claim or an explicit zero, or a separately labeled valuation assumption with rationale. Absence of a separate balance-sheet line is not sufficient source proof."
+    },
+    {
+      "ticker": "META",
+      "input": "preferred_stock",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "source_documents_examined": [
+        27,
+        28,
+        35,
+        38
+      ],
+      "why_not_complete": "The capital-stock exhibit authorizes 100 million preferred shares; authorization does not establish shares outstanding or an economic claim at each fiscal date.",
+      "needed_to_complete": "An issuer disclosure confirming the dated outstanding claim or an explicit zero, or a separately labeled valuation assumption with rationale. Absence of a separate balance-sheet line is not sufficient source proof."
+    },
+    {
+      "ticker": "META",
+      "input": "employee_options_value",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "Unvested award quantities and historical grant-date measures do not establish a dated fair value of all outstanding employee claims.",
+      "needed_to_complete": "Provide the intended valuation date. Choose a consistent separate claim deduction or share-dilution method and support the required price, vesting/performance, tax and any option exercise/life assumptions. Do not deduct the same awards and dilute for them twice.",
+      "options": [
+        "Separate dated employee-claim valuation with explicit assumptions.",
+        "Consistent dilution treatment with no second deduction for the same awards."
+      ]
+    },
+    {
+      "ticker": "GOOGL",
+      "input": "debt",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The disclosed carrying balances and issuer fair-value estimates have different scope. A generic complete valuation debt deduction needs a declared date and financing/lease basis.",
+      "needed_to_complete": "For the intended valuation date, select carrying value or a market-value bridge and identify which financing obligations are included. The engine deducts operating leases separately; never include the same lease in both fields. Current-year historical components do not establish a current market value.",
+      "options": [
+        "Use the precisely disclosed historical carrying components under an explicitly documented book-value convention.",
+        "Build a dated market-value bridge; issuer note fair values are only one component."
+      ],
+      "missing_source_if_selected": "Any financing category included in the chosen scope still needs an original-source balance. NVIDIA finance-lease/financed-asset outstanding balances are not established by principal cash payments."
+    },
+    {
+      "ticker": "GOOGL",
+      "input": "depreciation",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "source_documents_examined": [
+        30,
+        31,
+        34
+      ],
+      "why_not_complete": "The reviewed filings establish PP&E depreciation, but a separate complete intangible-amortization total was not verified. Finance-lease asset amortization is already included in PP&E depreciation.",
+      "needed_to_complete": "An original full D&A/amortization breakdown, or a model explicitly limited to the verified PP&E-only add-back. Do not assume missing amortization is zero or add finance-lease amortization twice."
+    },
+    {
+      "ticker": "GOOGL",
+      "input": "change_in_nwc",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The trade subtotal is partial; the broader cash-flow subtotal mixes operating, tax and current/noncurrent movements. Neither is a verified complete noncash operating working-capital change.",
+      "needed_to_complete": "Define included current operating assets/liabilities and treatment of taxes, accrued/prepaid items and noncurrent movements. Supply original breakdowns for mixed categories, or consciously adopt a labeled proxy under that scope.",
+      "options": [
+        "Keep complete operating working capital unavailable until the required breakdown is verified.",
+        "Use an explicitly labeled cash-flow proxy; do not relabel it as a complete disclosed operating balance."
+      ],
+      "sign_rule": "Positive stored cash-flow effect is cash provided. An increase in valuation working capital uses the opposite sign."
+    },
+    {
+      "ticker": "GOOGL",
+      "input": "minority_interests",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "The reported noncontrolling amounts are book balances. The redeemable amount is a subset, not an additional claim. Book value does not establish the economic claim value.",
+      "needed_to_complete": "Choose a dated economic-claim valuation supported by issuer evidence, or an explicitly labeled carrying-value proxy. Include the redeemable subset only once."
+    },
+    {
+      "ticker": "GOOGL",
+      "input": "employee_options_value",
+      "fiscal_years": [
+        2023,
+        2024,
+        2025
+      ],
+      "status": "open_source_or_model_basis",
+      "why_not_complete": "Unvested award quantities and historical grant-date measures do not establish a dated fair value of all outstanding employee claims.",
+      "needed_to_complete": "Provide the intended valuation date. Choose a consistent separate claim deduction or share-dilution method and support the required price, vesting/performance, tax and any option exercise/life assumptions. Do not deduct the same awards and dilute for them twice.",
+      "options": [
+        "Separate dated employee-claim valuation with explicit assumptions.",
+        "Consistent dilution treatment with no second deduction for the same awards."
+      ]
+    }
+  ],
+  "source_gaps": [
+    "Meta fiscal-year 2023-2025 preferred/noncontrolling claims remain unverified; a later explicitly zero preferred balance cannot be backdated.",
+    "Alphabet full annual intangible amortization remains unverified. Quarterly and nine-month values are not annual totals.",
+    "NVIDIA complete finance-lease/financed-asset balances remain unverified. Cash principal payments are not outstanding balances.",
+    "Mixed operating current/noncurrent and tax cash-flow categories still do not establish complete operating working-capital changes."
+  ],
+  "personal_input_needed": {
+    "question": "Which date and scope should the valuation-specific inputs use?",
+    "options": [
+      "Each selected company fiscal year-end",
+      "November 12, 2026",
+      "Historical source facts only"
+    ],
+    "status": "awaiting_user_scope",
+    "reason": "Employee-award and economic debt/preferred/noncontrolling claim values need a dated valuation basis. Methodology decisions are delegated, but guesses cannot become issuer facts.",
+    "required_for_verified_source_ingestion": false
+  },
+  "preservation": {
+    "checked_at": "2026-11-13T03:29:10Z",
+    "source_archive_sha256": "4bf59a8f70cb9647191384bc2d801113007eafe9e46c2fc9151363f0846595ed",
+    "tables": {
+      "raw_documents": {
+        "old_records": 19,
+        "old_records_retained": 19,
+        "new_records": 4,
+        "allowed_review_changes": {
+        },
+        "unexpected_changes": 0
+      },
+      "processing_runs": {
+        "old_records": 74,
+        "old_records_retained": 74,
+        "new_records": 2,
+        "allowed_review_changes": {
+        },
+        "unexpected_changes": 0
+      }
+    },
+    "unchanged_tables": [
+      "ai_consent_decisions",
+      "ai_outputs",
+      "alembic_version",
+      "alert_evals",
+      "alert_portfolio_impacts",
+      "alerts",
+      "assumption_method_values",
+      "brief_comparison_reviews",
+      "brief_sources",
+      "companies",
+      "company_exposure_tags",
+      "company_industry_allocations",
+      "company_industry_mixes",
+      "company_macro_inputs",
+      "company_macro_segment_exposures",
+      "company_macro_sensitivity_results",
+      "company_market_data",
+      "company_setup_workflows",
+      "country_market_context",
+      "country_market_stats",
+      "daily_brief_schedules",
+      "daily_briefs",
+      "damodaran_dataset_files",
+      "damodaran_industry_capex_benchmarks",
+      "damodaran_industry_dividend_benchmarks",
+      "damodaran_industry_fcfe_benchmarks",
+      "damodaran_industry_financing_flows",
+      "damodaran_industry_fundamental_growth",
+      "damodaran_industry_margin_benchmarks",
+      "damodaran_industry_pricing_benchmarks",
+      "damodaran_industry_roe_benchmarks",
+      "damodaran_industry_working_capital_benchmarks",
+      "dcf_assumption_sets",
+      "dcf_decision_logs",
+      "dcf_outputs",
+      "dcf_projection_years",
+      "dcf_sensitivity_tables",
+      "decision_logs",
+      "decision_readiness",
+      "document_assets",
+      "entity_scores",
+      "evaluation_runs",
+      "event_contradictions",
+      "event_corroborations",
+      "event_evidence_references",
+      "event_extraction_evals",
+      "event_thesis_impacts",
+      "events",
+      "evidence_ledger",
+      "exposure_tags",
+      "filing_section_diffs",
+      "filing_sections",
+      "financial_extraction_candidates",
+      "financial_extraction_evals",
+      "financial_metrics",
+      "financial_reconciliation_records",
+      "financial_statement_periods",
+      "forecast_calibrations",
+      "fx_rate_observations",
+      "industry_volatility_benchmarks",
+      "macro_observations",
+      "macro_series",
+      "market_prices",
+      "market_regime_inputs",
+      "market_regime_scores",
+      "market_source_capabilities",
+      "narrative_claims",
+      "narrative_clusters",
+      "narrative_mentions",
+      "normalized_financial_metrics",
+      "normalized_financial_snapshots",
+      "oauth_tokens",
+      "option_eligibility_tests",
+      "outcome_reviews",
+      "peer_valuation_members",
+      "peer_valuation_revision_members",
+      "peer_valuation_revision_target_profiles",
+      "peer_valuation_set_revisions",
+      "peer_valuation_sets",
+      "peer_valuation_target_profiles",
+      "portfolio_benchmark_configs",
+      "portfolio_cash_balances",
+      "portfolio_holdings",
+      "portfolio_snapshots",
+      "portfolio_transactions",
+      "portfolios",
+      "provider_quotas",
+      "real_option_assumptions",
+      "real_option_results",
+      "regression_model_coefficients",
+      "research_messages",
+      "research_sessions",
+      "scoring_configs",
+      "sector_macro_sensitivity_benchmarks",
+      "sentiment_scores",
+      "social_posts",
+      "source_fact_revisions",
+      "sources",
+      "thesis_assumptions",
+      "thesis_changes",
+      "thesis_notes",
+      "users",
+      "valuation_assumption_change_logs",
+      "valuation_assumption_provenance",
+      "valuation_evals",
+      "valuation_models",
+      "valuation_setup_drafts",
+      "variant_perception"
+    ],
+    "expected_changed_tables": [
+      "processing_runs",
+      "raw_documents"
+    ],
+    "prior_derived_snapshots_preserved_in_verified_archive": true,
+    "all_tables_unchanged_through_frontend_installation_and_browser": 110,
+    "all_prior_financial_records_and_saved_models_unchanged": true,
+    "verified_backup": {
+      "path": "output/milestones/financial-source-followup-20261112/before-ui-update.dump",
+      "sha256": "7efde017e425473276822f65af7d522cfe5edf3e595c3e129e2a305fa5463aef",
+      "bytes": 5349485,
+      "fully_read": true,
+      "restored": false
+    }
+  },
+  "frontend_change": {
+    "path": "frontend/app/documents/[id]/sections/page.tsx",
+    "sha256": "24e35756e528ef613094bba04598b968ead5665ea0e3e0597d830c92a94a99bd",
+    "behavior": "Original-source link appears in the document header even without parsed sections or a selected candidate; existing evidence remains accessible.",
+    "frontend_tests": {
+      "passed": 372,
+      "failed": 0
+    },
+    "typecheck": "passed",
+    "production_build": "passed",
+    "package_lock_sha256": "53e5bbbef97f82d3ae53dd13093eb0d72ba394603e44c883063183927177bf60",
+    "build_basis": "Verified existing patched frontend runtime reused locally after registry authentication was unavailable; lockfile and system packages unchanged.",
+    "prior_attempts_retained": [
+      "frontend-build.log",
+      "frontend-build-r2.log",
+      "frontend-tests.log",
+      "installation.log"
+    ],
+    "resolved_attempt_issues": [
+      "Protected settings excluded before build-context traversal",
+      "Registry access unavailable; reused installed runtime",
+      "Read-only repository support files mounted for tests",
+      "Generated route-cache directory included in writable-file preflight"
+    ],
+    "installation": {
+      "installed_at": "2026-11-13T06:10:15Z",
+      "project": "market-intelligence-review-20261112-financial-history",
+      "previous_image": "sha256:c67b2a070368cf6f278bdf96c97fe052d768311146d5c84ff92445c0073ff447",
+      "image": "sha256:d769e52542eee9ebd33024515d77e75b02dd8365e8b0f3a5fb950102af24349a",
+      "container_id": "fe7651a6088ac7131e093b8f2d95d07f8ce6d04feb60b6de9ddc83583e49f4a6",
+      "settings_unchanged": true,
+      "ports_and_protections_unchanged": true,
+      "unchanged_tables": 110,
+      "other_services_restarted": false,
+      "volumes_unchanged": true,
+      "browser_verification": "passed"
+    },
+    "browser": {
+      "verified_at": "2026-11-13T06:12:16.349Z",
+      "checks": [
+        {
+          "check": "Meta unparsed filing",
+          "passed": true,
+          "href": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450754/d44678d424b5.htm",
+          "viewport": "390x844",
+          "layout": {
+            "scrollWidth": 380,
+            "width": 390
+          }
+        },
+        {
+          "check": "Alphabet unparsed filing",
+          "passed": true,
+          "href": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"
+        },
+        {
+          "check": "Existing NVIDIA candidate evidence",
+          "passed": true,
+          "href": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+        },
+        {
+          "check": "Desktop source header",
+          "passed": true,
+          "viewport": "1280x900",
+          "layout": {
+            "scrollWidth": 1280,
+            "width": 1280
+          }
+        },
+        {
+          "check": "Signed-in session preserved",
+          "passed": true
+        }
+      ],
+      "screenshot": "output/milestones/financial-source-followup-20261112/source-link-desktop.png",
+      "viewport_reset": true
+    }
+  },
+  "docker_after_build": {
+    "containers": 4,
+    "images": 4,
+    "volumes": 2,
+    "build_cache_bytes": 0,
+    "reported_images_bytes": 2736000000,
+    "reported_volume_bytes": 209700000,
+    "cleanup_receipt": "output/milestones/financial-source-followup-20261112/build-cleanup.json",
+    "previous_cleanup_receipt": "data/reviews/docker-storage-cleanup-20261112.json"
+  },
+  "audit_directory": "output/milestones/financial-source-followup-20261112",
+  "milestone_acceptance_changed": false
+}

@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "authorization": "User explicitly requested removal of nonessential Docker material, prioritizing this cleanup, after previously requiring data and backup preservation.",
+  "result": {
+    "finished_at": "2026-11-13T02:09:51Z",
+    "removed_containers": 151,
+    "removed_image_objects": 256,
+    "removed_volumes": 21,
+    "removed_networks": 3,
+    "remaining_containers": 4,
+    "remaining_images": 4,
+    "remaining_volumes": 2,
+    "container_evidence_preserved": true,
+    "volume_backups_preserved": true,
+    "database_volume_removed": false,
+    "running_containers_restarted": false
+  },
+  "verification": {
+    "verified_at": "2026-11-13T02:11:33Z",
+    "all_database_tables_unchanged": 110,
+    "prior_review_hashes_unchanged": 4,
+    "running_containers": [
+      {
+        "name": "/market_intel_scheduler",
+        "image_id": "sha256:82958ec299df74a00b237d5514b2e3418aef5a53e54084c5c7062251642be4df",
+        "health": null
+      },
+      {
+        "name": "/market_intel_frontend",
+        "image_id": "sha256:c67b2a070368cf6f278bdf96c97fe052d768311146d5c84ff92445c0073ff447",
+        "health": "healthy"
+      },
+      {
+        "name": "/market_intel_backend",
+        "image_id": "sha256:82958ec299df74a00b237d5514b2e3418aef5a53e54084c5c7062251642be4df",
+        "health": "healthy"
+      },
+      {
+        "name": "/market_intel_postgres",
+        "image_id": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e",
+        "health": "healthy"
+      }
+    ],
+    "localhost_bindings_only": true,
+    "retained_image_execution_checks": 4,
+    "remaining_volumes": [
+      "market-intelligence-md-filescopy_marketintel_postgres_data",
+      "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882"
+    ],
+    "all_data_and_source_archives_preserved": true
+  },
+  "host_disk": {
+    "free_bytes_before_deletion": 15684022272,
+    "free_bytes_after_verification": 66580217856,
+    "observed_free_space_increase_bytes": 50896195584,
+    "measurement_note": "Host-wide free-space readings can also reflect unrelated background activity; Docker categories share layers and must not be added."
+  },
+  "docker_storage_after": "TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE\nImages          4         3         2.67GB    717MB (26%)\nContainers      4         4         176.1kB   0B (0%)\nLocal Volumes   2         1         208.8MB   167.9kB (0%)\nBuild Cache     0         0         0B        0B\n",
+  "preservation": {
+    "source_files_verified": 151,
+    "existing_identical_copies": 139,
+    "newly_retained_source_bytes": 898812436,
+    "inactive_volume_archives": 14,
+    "inactive_volume_archive_bytes": 33362036,
+    "current_database_backup": {
+      "backup_path": "/Users/mananmaheshwari/Documents/Codex/Market Intelligence App/market-intelligence-md-files copy/output/milestones/docker-cleanup-20261112/before-docker-cleanup.dump",
+      "archive_sha256": "8e01d95cdf10c58c33b33f20d75dd1214bd64492dba657d42e3549335f77fbca",
+      "bytes": 4961273,
+      "fully_read": true,
+      "restored": false
+    },
+    "kept_database_and_admin_volumes": [
+      "market-intelligence-md-filescopy_marketintel_postgres_data",
+      "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882"
+    ]
+  },
+  "audit_directory": "output/milestones/docker-cleanup-20261112",
+  "exact_deletion_manifest": "output/milestones/docker-cleanup-20261112/cleanup-plan.json",
+  "preserved_source_manifest": "output/milestones/docker-cleanup-20261112/preserved-container-files.json",
+  "preserved_volume_manifest": "output/milestones/docker-cleanup-20261112/inactive-volume-backup-receipt.json",
+  "retention_policy": "Reuse the installed Compose project. Keep the installed verified recovery images and maintenance image. Preserve evidence and backups outside container writable layers. Older stopped stacks and generated build material are not retained indefinitely."
+}

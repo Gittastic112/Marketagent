@@ -89,6 +89,11 @@ from personal user approval and independent reference certification.
 
 The [product roadmap](product-roadmap.md) owns product priorities; this document
 owns percentage requests, ordering and execution checklists. The
+[research workspace plan](research-workspace-plan.md) owns the November 13
+simplification design and implementation packages P0-P7. Those packages map to
+these gates; they do not create a second percentage or change accepted points.
+Independent UI/correctness work may proceed while a source disclosure is blocked,
+without claiming an earlier financial gate has passed. The
 [feature register](feature-register.md) owns capability status, and the ledger
 owns limitations. [Workstream design](../workstreams/plan.md) remains the detailed design
 and exclusive ownership reference for its five workstreams, mapped below.
@@ -263,6 +268,19 @@ Gate: daily source inputs and their gaps are reproducible and visible across the
 scoped universe, without silent fabrication, source promotion or external AI reads.
 
 ## M05: reviewed financial coverage
+
+November 12: [selected-company review](../archive/checkpoints/2026/handoff-review-2026-11-12.md)
+applies 181 checked historical candidates for NVIDIA, Meta and Alphabet, adding
+nine annual periods alongside the existing Apple history. An original-report
+follow-up approves five holds. The [completion review](../../data/reviews/financial-review-completion-20261112.json)
+resolves the final eleven holds and adds 143 facts/calculations with precise
+accounting scope. The existing Apple Estimate remains unchanged. No selected
+candidate remains pending. The [five-input review](../../data/reviews/financial-five-input-review-20261112.json)
+adds 47 source-backed records and resolves twelve annual values across four
+company/input slots. Apple/NVIDIA reach 10/13 source-linked fields per year;
+Meta/Alphabet remain 8/13. Missing accounting/equity-claim inputs and industry allocation
+remain in the [current ledger](../limitations.md#selected-company-review-follow-up).
+M05-03/05 remain open; no cumulative acceptance points are added.
 
 Owners: extraction, normalization, source certification; [Workstream W2](../workstreams/plan.md#6-w2-reviewed-usindia-financial-source-coverage).
 
