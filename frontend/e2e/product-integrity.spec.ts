@@ -143,9 +143,15 @@ test("company tabs and grouped navigation remain usable on mobile", async ({ pag
   await page.setViewportSize({ width: 390, height: 844 });
   await page.getByRole("button", { name: "Open navigation" }).click();
   const primaryNavigation = page.getByRole("navigation", { name: "Primary navigation" });
-  await expect(primaryNavigation.getByText("Today", { exact: true })).toBeVisible();
-  await expect(primaryNavigation.getByRole("link", { name: "Research", exact: true })).toBeVisible();
+  for (const name of ["Today", "Companies", "Valuations", "Portfolio"]) {
+    await expect(primaryNavigation.getByRole("link", { name, exact: true })).toBeVisible();
+  }
+  await primaryNavigation.locator("summary").filter({ hasText: /^Library$/ }).click();
+  const researchLibrary = primaryNavigation.getByRole("link", { name: "Research library", exact: true });
+  await expect(researchLibrary).toBeVisible();
+  await expect(researchLibrary).toHaveAttribute("href", "/research");
   await page.getByRole("button", { name: "Close navigation panel" }).click();
+  await expect(page.getByRole("dialog", { name: "Navigation", exact: true })).toHaveCount(0);
 });
 
 
