@@ -84,6 +84,7 @@ class EventThesisImpactRead(EventThesisImpactCreate):
     model_config = ConfigDict(from_attributes=True)
     id: int
     created_at: datetime
+    review_status: str = "unreviewed"
 
 
 class ThesisAssumptionRead(ThesisAssumptionCreate):

@@ -2,6 +2,7 @@
 
 from datetime import (
     date,
+    datetime,
 )
 
 from pydantic import (
@@ -66,6 +67,8 @@ class FilingDiscoveryRead(BaseModel):
     provider_name: str
     mode: Literal["automated", "manual"]
     manual_required: bool
+    discovery_status: Literal["not_requested", "complete", "manual"]
+    checked_at: datetime | None = None
     filings: list[SecFilingMetadataCreate] = Field(default_factory=list)
     next_action: str
     official_manual_source: ManualFilingSourceRead | None = None

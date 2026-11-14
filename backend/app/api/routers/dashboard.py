@@ -25,12 +25,26 @@ from app.models import (
 )
 from app.services.morning_briefing_engine import MorningBriefingEngine
 from app.services.brief_public_coverage import count_public_inputs, is_failed_run, public_coverage_context
+from app.services.review_queue import build_review_queue
+from app.schemas.review_queue import ReviewQueueRead, ReviewQueueState
 
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
 DASHBOARD_QUERY_BUDGET = 20
 DASHBOARD_RESPONSE_BUDGET_MS = 1_000
+
+
+@router.get("/review-queue", response_model=ApiResponse[ReviewQueueRead])
+def get_review_queue(state: ReviewQueueState | None = None,
+    company_id: int | None = Query(default=None, gt=0), portfolio_id: int | None = Query(default=None, gt=0),
+    limit: int = Query(default=50, ge=1, le=100), db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)):
+    try:
+        return ApiResponse(data=build_review_queue(db, current_user["id"], state=state,
+            company_id=company_id, portfolio_id=portfolio_id, limit=limit))
+    except LookupError:
+        raise HTTPException(status_code=404, detail="Portfolio not found") from None
 
 
 @router.get("/dashboard/overview", response_model=ApiResponse[DashboardOverviewRead])

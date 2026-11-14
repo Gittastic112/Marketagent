@@ -5,6 +5,7 @@ import type { EventEvidenceReference, FilingSection, FinancialExtractionCandidat
 import {
   eventEvidenceGeometry,
   eventEvidenceHref,
+  financialEvidenceClaimType,
   financialEvidenceLocatorLabel,
 } from "@/lib/financial-evidence";
 import { parseFilingDiff } from "@/lib/filing-diff";
@@ -55,6 +56,15 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
       }
     }
     const selectedCandidate = candidate?.raw_document_id === documentId ? candidate : null;
+    const evidenceClaim = selectedCandidate ? financialEvidenceClaimType(selectedCandidate) : null;
+    const scopeNotes = selectedCandidate?.source_locator_json?.reviewed_limitations;
+    const reviewNotes = Array.isArray(scopeNotes) ? scopeNotes.filter((note): note is string => typeof note === "string") : [];
+    const sourceDate = selectedCandidate?.source_locator_json?.end;
+    const originalText = selectedCandidate?.source_text ?? "";
+    const repeatedScope = ` Review scope: ${reviewNotes.join(" ")}`;
+    const sourceText = reviewNotes.length && originalText.endsWith(repeatedScope)
+      ? originalText.slice(0, -repeatedScope.length) : originalText;
+    const originalUrl = document?.url && /^https?:\/\//i.test(document.url) ? document.url : null;
 
     if (referenceId && Number.isFinite(referenceId)) {
       const referenceRes = await serverFetchApiResponse<EventEvidenceReference>(`/evidence-references/${referenceId}`).catch(() => null);
@@ -75,7 +85,17 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
             &larr; Back to Documents
           </Link>
         </div>
-        <PageHeader eyebrow={`Document ${document?.id}`} title={document?.title || "Unknown"} status={`${sections.length} sections`} />
+        <p><Link href="/">Return to Today</Link>{document?.company_id && <> · <Link href={`/companies/${document.company_id}/fundamentals#dated-inputs`}>Review this company’s dated financial inputs</Link> · <Link href={`/companies/${document.company_id}/valuation`}>Saved models remain unchanged</Link></>}</p>
+        <PageHeader
+          eyebrow={`Document ${document?.id}`}
+          title={document?.title || "Unknown"}
+          status={`${sections.length} sections`}
+          actions={originalUrl ? (
+            <a className="secondary-button" href={originalUrl} target="_blank" rel="noopener noreferrer">
+              Open original source
+            </a>
+          ) : undefined}
+        />
 
         <DataStateNotices
           metas={metas}
@@ -85,11 +105,13 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
         {selectedCandidate ? (
           <Panel title={`Evidence: ${selectedCandidate.reported_label}`}>
             <div style={{ display: "grid", gap: "0.5rem" }}>
-              <p><strong>Claim type:</strong> Source Summary</p>
-              <p><strong>Reported value:</strong> {selectedCandidate.value.toLocaleString()} {selectedCandidate.unit || "unit missing"}</p>
+              <p><strong>Claim type:</strong> {evidenceClaim}</p>
+              <p><strong>{evidenceClaim === "Calculation" ? "Calculated value" : "Reported value"}:</strong> {selectedCandidate.value.toLocaleString()} {selectedCandidate.unit || "unit missing"}</p>
+              {typeof sourceDate === "string" ? <p><strong>Period end:</strong> {sourceDate}</p> : null}
               <p><strong>Location:</strong> {financialEvidenceLocatorLabel(selectedCandidate)}</p>
-              <p><strong>Source text:</strong> {selectedCandidate.source_text}</p>
+              <p style={{ overflowWrap: "anywhere" }}><strong>Source text and basis:</strong> {sourceText}</p>
               <p><strong>Review status:</strong> {selectedCandidate.review_status.replaceAll("_", " ")}</p>
+              {reviewNotes.length ? <div><strong>Review scope</strong><ul>{reviewNotes.map((note, index) => <li key={index}>{note}</li>)}</ul></div> : null}
             </div>
           </Panel>
         ) : candidateId ? (

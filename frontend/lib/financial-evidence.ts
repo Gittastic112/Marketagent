@@ -7,11 +7,27 @@ const financialMetricLabels: Record<string, string> = {
   equity_method_income_after_tax: "After-tax income from equity-method investments",
   net_income_parent: "Profit attributable to parent shareholders",
   net_income_nci: "Profit attributable to minority shareholders",
+  borrowings_carrying_value: "Notes and commercial-paper borrowings, excluding leases",
+  long_term_debt_principal: "Long-term notes principal (face amount)",
+  noncontrolling_interests_book: "Noncontrolling interests, book amount",
+  redeemable_noncontrolling_interests_book: "Redeemable noncontrolling interests, included in total book amount",
+  operating_assets_liabilities_cash_flow: "Reported asset/liability changes, cash-flow effect (broader than operating working capital)",
+  depreciation_property_equipment: "Property/equipment depreciation only",
+  purchases_ppe_and_intangibles: "Combined property/equipment and intangible cash purchases",
+  unvested_equity_awards_shares: "Fiscal year-end unvested equity award quantity",
 };
 
 export function financialMetricLabel(metric: string): string {
   const fallback = metric.replaceAll("_", " ");
   return financialMetricLabels[metric] ?? fallback.charAt(0).toUpperCase() + fallback.slice(1);
+}
+
+export function financialEvidenceClaimType(candidate: FinancialExtractionCandidate): string {
+  if (candidate.review_status === "overridden") return "User Assumption";
+  const claim = candidate.source_locator_json?.claim_type;
+  if (claim === "Calculation") return "Calculation";
+  if (claim === "Fact" && ["reviewed", "promoted"].includes(candidate.review_status)) return "Fact";
+  return "Source Summary";
 }
 
 export function financialIdentityFormula(formula: string): string {
@@ -143,7 +159,8 @@ export function financialEvidenceLocatorLabel(candidate: FinancialExtractionCand
   const locatorType = candidate.source_locator_json?.type;
   if (locatorType === "xbrl_fact") {
     const concept = candidate.source_locator_json?.concept;
-    return typeof concept === "string" ? `XBRL us-gaap:${concept}` : "XBRL fact";
+    const namespace = candidate.source_locator_json?.namespace;
+    return typeof concept === "string" ? `XBRL ${typeof namespace === "string" ? namespace : "us-gaap"}:${concept}` : "XBRL fact";
   }
 
   return candidate.source_section || "Source location unavailable";

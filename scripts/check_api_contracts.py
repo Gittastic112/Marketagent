@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.schemas import ai_consent, brief, companies, evidence, financials, market, operations, research
+from app.schemas import ai_consent, brief, companies, evidence, financials, ingestion, market, operations, research, dated_inputs, review_queue, valuation_preview
 from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 CONTRACTS = {
@@ -20,13 +20,19 @@ CONTRACTS = {
         "DailyBriefScheduleRunResult": brief.DailyBriefScheduleRunResult,
     },
     "operations": {"ProcessingRun": operations.ProcessingRunRead, "RuntimeReadiness": operations.RuntimeReadinessRead},
+    "documents": {"FilingDiscovery": ingestion.FilingDiscoveryRead},
+    "dated-inputs": {"DatedInputs": dated_inputs.DatedInputsRead, "DatedInputRow": dated_inputs.DatedInputRow, "DatedInputSource": dated_inputs.DatedInputSource},
+    "review-queue": {"ReviewQueue": review_queue.ReviewQueueRead},
+    "valuation-preview": {"ValuationPreview": valuation_preview.ValuationPreviewRead,
+                          "ValuationVersionReceipt": valuation_preview.ValuationVersionReceiptRead},
     "market": {"MarketPrice": market.MarketPriceRead, "CompanyMarketData": market.CompanyMarketDataRead},
     "research": {"ResearchSession": research.ResearchSessionDetail, "ResearchMessage": research.ResearchMessageRead,
                  "DecisionLog": research.DecisionLogRead, "OutcomeReview": research.OutcomeReviewRead,
                  "EvidenceLedgerItem": research.EvidenceLedgerItemRead, "VariantPerception": research.VariantPerceptionRead},
     "financials": {"FinancialExtractionCandidate": financials.FinancialExtractionCandidateRead,
                    "FinancialReviewPlan": financials.FinancialReviewPlanRead,
-                   "FinancialReviewField": financials.FinancialReviewFieldRead},
+                   "FinancialReviewField": financials.FinancialReviewFieldRead,
+                   "SourceFactRevision": evidence.SourceFactRevisionRead},
     "ai-consent": {
         "AIConsentDecision": ai_consent.AIConsentDecisionRead,
         "AIConsentAction": ai_consent.AIConsentActionRead,

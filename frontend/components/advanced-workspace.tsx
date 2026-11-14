@@ -6,6 +6,10 @@ import { useRouter } from "next/navigation";
 import type { DcfAssumptionSet, ValuationCompanyContext, ValuationModel } from "@/lib/api/valuation";
 import { ReverseDcfPanel } from "@/components/valuation/reverse-dcf-panel";
 import { SelectField, TextField, TextAreaField } from "@/components/form-fields";
+import { buildDcfAssumptionSetPayload } from "@/lib/form-payloads";
+import { previewValuationVersion, saveReviewedValuationVersion } from "@/lib/api/valuation-preview";
+import type { ValuationPreview } from "@/lib/api/valuation-preview";
+import { ProposedValuationChanges } from "@/components/valuation/proposed-changes";
 import { buildCurrencyConsistencyCheck } from "@/lib/valuation-context";
 import { CurrencyConsistencyWarning } from "@/components/valuation/currency-consistency-warning";
 import { MacroSensitivityPanel } from "@/components/valuation/macro-sensitivity-panel";
@@ -94,13 +98,15 @@ export function AdvancedWorkspace({
   modelId,
   companyId,
   latestAssumptionSet,
-  valuationContext
+  valuationContext,
+  readOnly = false
 }: {
   model?: ValuationModel;
   modelId: number;
   companyId: number;
   latestAssumptionSet?: DcfAssumptionSet;
   valuationContext?: ValuationCompanyContext;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const [activeSection, setActiveSection] = useState<Section>("setup");
@@ -110,6 +116,8 @@ export function AdvancedWorkspace({
   const [assumptionNotice, setAssumptionNotice] = useState<string | null>(null);
   const saves = useMemo(createRequestGate, [modelId]);
   const saving = useRef(false);
+  const [preview, setPreview] = useState<ValuationPreview | null>(null);
+  const reviewedSave = useRef<Record<string, unknown> | null>(null);
   useEffect(() => () => saves.invalidate(), [saves]);
 
   const [cashFlowCurrency, setCashFlowCurrency] = useState(latestAssumptionSet ? latestAssumptionSet.cash_flow_currency ?? "" : valuationContext?.cash_flow_currency || valuationContext?.default_currency || "USD");
@@ -121,6 +129,7 @@ export function AdvancedWorkspace({
     setDiscountRateCurrency(latestAssumptionSet ? latestAssumptionSet.discount_rate_currency ?? "" : valuationContext?.discount_rate_currency || valuationContext?.default_currency || "USD");
     setOverrideNote(latestAssumptionSet?.currency_override_note || "");
     setAssumptionNotice(null);
+    setPreview(null); reviewedSave.current = null;
   }, [latestAssumptionSet, valuationContext]);
 
   const currencyCheck = buildCurrencyConsistencyCheck({
@@ -133,7 +142,7 @@ export function AdvancedWorkspace({
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (saving.current) return;
+    if (saving.current || readOnly) return;
     if (!valuationContext || !currencyCheck.canSave) {
       return;
     }
@@ -160,15 +169,13 @@ export function AdvancedWorkspace({
         formData.set("base_assumption_set_id", String(latestAssumptionSet.id));
         formData.set("base_assumption_set_updated_at", latestAssumptionSet.updated_at);
       }
-      const { createDcfAssumptionSetWithState } = await import("@/app/actions");
-      const result = await createDcfAssumptionSetWithState(formData, modelId.toString(), companyId.toString());
+      const payload = { ...buildDcfAssumptionSetPayload(formData),
+        valuation_date: String(formData.get("valuation_date") || ""),
+        change_reason: String(formData.get("change_reason") || "") };
+      const result = await previewValuationVersion(modelId, payload);
       if (!current()) return;
-      if (result.error) {
-        setSaveError(result.error);
-        return;
-      }
-      setSaveSuccess("Assumptions saved and valuation recalculated.");
-      router.refresh();
+      setPreview(result);
+      reviewedSave.current = { ...payload, preview_hash: result.preview_hash, submission_id: crypto.randomUUID() };
     } catch (error) {
       if (current()) setSaveError(error instanceof Error ? error.message : "Could not save and calculate the valuation.");
     } finally {
@@ -176,6 +183,19 @@ export function AdvancedWorkspace({
       if (current()) setIsPending(false);
     }
   };
+
+  async function savePreview() {
+    if (!preview?.ready || !reviewedSave.current || saving.current || readOnly) return;
+    const current = saves.begin(); saving.current = true; setIsPending(true); setSaveError(null);
+    try {
+      await saveReviewedValuationVersion(modelId, reviewedSave.current);
+      if (!current()) return;
+      setSaveSuccess("Reviewed version saved. Previous versions are unchanged.");
+      setPreview(null); reviewedSave.current = null; router.refresh();
+    } catch (error) {
+      if (current()) setSaveError(error instanceof Error ? error.message : "Save failed. Your proposed inputs remain here for retry.");
+    } finally { saving.current = false; if (current()) setIsPending(false); }
+  }
 
 
   const out = latestAssumptionSet?.outputs;
@@ -191,6 +211,7 @@ export function AdvancedWorkspace({
   };
 
   function applyNarrativeAssumptions(updates: Partial<DcfAssumptionSet>) {
+    if (readOnly) return;
     const form = document.getElementById("advanced-dcf-form") as HTMLFormElement | null;
     if (!form) return;
     for (const [name, rawValue] of Object.entries(updates)) {
@@ -200,7 +221,8 @@ export function AdvancedWorkspace({
       field.dispatchEvent(new Event("input", { bubbles: true }));
     }
     setSaveSuccess(null);
-    setAssumptionNotice("Reviewed AI estimates were copied to unsaved fields. Inspect them and use Save & Run Valuation to create a new version. The saved model is unchanged.");
+    setPreview(null); reviewedSave.current = null;
+    setAssumptionNotice("Reviewed AI estimates were copied to unsaved fields. Inspect them and preview the changes before saving a new version. The saved model is unchanged.");
   }
 
   return (
@@ -239,9 +261,9 @@ export function AdvancedWorkspace({
 
       {/* MAIN CONTENT AREA */}
       <form key={latestAssumptionSet?.id ?? "new"} id="advanced-dcf-form" className="valuation-workspace-main" onSubmit={handleSubmit} noValidate
-        onChange={() => setSaveSuccess(null)}
+        onChange={() => { setSaveSuccess(null); setPreview(null); reviewedSave.current = null; }}
         style={{ display: activeSection === "real_options" || activeSection === "reverse_dcf" ? "none" : undefined }}>
-        <fieldset disabled={isPending} style={{display: "contents"}}>
+        <fieldset disabled={isPending || readOnly} style={{display: "contents"}}>
         <legend className="sr-only">Saved valuation inputs and analysis</legend>
         <input type="hidden" name="valuation_model_id" value={modelId} />
         <input type="hidden" name="reinvestment_method" value={latestAssumptionSet?.reinvestment_method || "sales_to_capital"} />
@@ -249,9 +271,15 @@ export function AdvancedWorkspace({
         <div className="valuation-workspace-main-header">
           <h2>{SECTIONS.find(s => s.id === activeSection)?.label}</h2>
           <button type="submit" disabled={isPending || !valuationContext || !currencyCheck.canSave} style={{ padding: "0.5rem 1.5rem" }}>
-            {isPending ? "Saving..." : "Save & Run Valuation"}
+            {isPending ? "Checking..." : "Preview changes"}
           </button>
         </div>
+
+        {readOnly ? <p role="status">Historical version. Inputs and outputs are read-only. Return to the latest version to make a new proposal.</p> : <div className="form-grid">
+          <label>Valuation date<input type="date" name="valuation_date" defaultValue={new Date().toISOString().slice(0, 10)} required /></label>
+          <label>Reason for this version<input name="change_reason" minLength={5} maxLength={2000} required placeholder="What changed and why?" /></label>
+        </div>}
+        {preview && <ProposedValuationChanges preview={preview} pending={isPending} onSave={() => void savePreview()} />}
 
         {saveError ? <div className="inline-error" role="alert">{saveError}</div> : null}
         {saveSuccess ? <p role="status" style={{ color: "var(--success)", fontWeight: 600 }}>{saveSuccess}</p> : null}

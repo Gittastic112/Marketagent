@@ -26,7 +26,7 @@ export default async function SourcesPage() {
             <button disabled={activeRssCount === 0} type="submit">Fetch active RSS feeds</button>
           </RetainedActionForm>
         </Panel>
-        <Panel title="Add Source">
+        <Panel title="Add Source" collapsible>
           <RetainedActionForm label="Create source" resetOnSuccess action={createSource} className="form-grid">
             <TextField className="field field-wide" id="name" label="Name" name="name" required />
             <TextField id="source_type" label="Type" name="source_type" placeholder="manual" required />

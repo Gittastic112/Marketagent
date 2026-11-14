@@ -1,5 +1,6 @@
 import { EmptyState, ErrorState, Panel } from "@/components/page";
 import { snapshotReplayLabel } from "@/lib/portfolio-replay";
+import { formatDataLabel, formatNumber } from "@/lib/formatting";
 import type {
   PortfolioOpportunityCost,
   PortfolioPerformance,
@@ -10,7 +11,7 @@ import type {
 
 function money(value: number | null, currency: string | null) {
   if (value == null) return "Not available";
-  return `${currency || ""} ${value.toLocaleString("en-US", { maximumFractionDigits: 2 })}`.trim();
+  return `${currency || ""} ${formatNumber(Math.abs(value) < 0.005 ? 0 : value, 2)}`.trim();
 }
 
 function percent(value: number | null) {
@@ -78,7 +79,7 @@ export function PortfolioPerformancePanel({
                 <Metric label="Internal Cash Change" value={money(attribution.internal_cash_change, attribution.base_currency)} />
                 <Metric label="Reconciliation Residual" value={money(attribution.unexplained_change, attribution.base_currency)} />
                 <Metric
-                  label={`Opportunity Cost (${opportunityCost?.calculation_status || "not available"})`}
+                  label={`Opportunity Cost (${formatDataLabel(opportunityCost?.calculation_status)})`}
                   value={money(opportunityCost?.opportunity_cost ?? null, attribution.base_currency)}
                 />
               </div>

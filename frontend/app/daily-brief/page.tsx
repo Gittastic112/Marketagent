@@ -11,6 +11,7 @@ import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices, MockDataBadge } from "@/components/ui/data-states";
 import type { DailyBrief, DailyBriefSchedule, SavedDailyBrief } from "@/lib/api";
 import { serverFetchApiResponse } from "@/lib/server-api";
+import { formatDataLabel } from "@/lib/formatting";
 
 
 function statusLabel(value: string) {
@@ -213,7 +214,7 @@ export default async function DailyBriefPage() {
                           {move.price_start_date && move.price_end_date && (
                             <span>{move.price_start_date} to {move.price_end_date}</span>
                           )}
-                          {move.price_provider && <span>Price source: {move.price_provider}</span>}
+                          {move.price_provider && <span>Price source: {formatDataLabel(move.price_provider)}</span>}
                         </div>
                         <div className="briefing-portfolio-links">
                           {move.affected_portfolios.map((portfolio) => (

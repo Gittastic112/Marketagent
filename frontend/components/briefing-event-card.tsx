@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { formatDataLabel } from "@/lib/formatting";
 
 
 interface BriefingEventCardProps {
@@ -47,7 +48,7 @@ export function BriefingEventCard({
 
       <div className="briefing-meta-row">
         {priority && <span>Priority: {priority}</span>}
-        {form_type && <span>Type: {form_type}</span>}
+        {form_type && <span>Type: {formatDataLabel(form_type)}</span>}
         <span>Evidence: {evidence_status === "source_linked" ? "Source linked" : "Manual record"}</span>
         {source_name && <span>Source: {source_name}</span>}
         {dateLabel(source_published_at) && <span>Published: {dateLabel(source_published_at)}</span>}

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import type { DcfAssumptionSet, DcfScenarioOutput } from "./api.ts";
 import { scenarioDisplay } from "./scenario-display.ts";
-const inputs = { id: 1, cash_flow_currency: "USD", is_stale: false } as DcfAssumptionSet;
+const inputs = { id: 1, cash_flow_currency: "USD", is_stale: false, diluted_shares: 10 } as DcfAssumptionSet;
 const scenario = (value: number | null, warnings: unknown[] = []): DcfScenarioOutput => ({
   scenario_name: String(value), description: "Test scenario",
   output: { assumption_set_id: 1, intrinsic_value_per_share: value, current_market_price: 100,

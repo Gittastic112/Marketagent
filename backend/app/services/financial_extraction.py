@@ -125,16 +125,22 @@ def _reviewed_reporting_currency(candidates: list[FinancialExtractionCandidate])
 def _reviewed_period_end(candidates: list[FinancialExtractionCandidate]) -> date | None:
     period_ends: set[date] = set()
     for candidate in candidates:
-        raw_end = (candidate.source_locator_json or {}).get("end")
+        locator = candidate.source_locator_json or {}
+        period_review = locator.get("period_review")
+        raw_end = locator.get("end") or (period_review.get("end") if isinstance(period_review, dict) else None)
         if not isinstance(raw_end, str):
-            continue
+            raise HTTPException(status_code=422, detail=f"Candidate {candidate.id} needs an exact source period-end date before promotion. No financial values were written.")
         try:
-            period_ends.add(date.fromisoformat(raw_end))
-        except ValueError as exc:
+            end = date.fromisoformat(raw_end)
+            start = date.fromisoformat(locator["start"]) if locator.get("start") is not None else None
+        except (TypeError, ValueError) as exc:
             raise HTTPException(
                 status_code=422,
-                detail=f"Reviewed financial candidate {candidate.id} has an invalid period-end date",
+                detail=f"Reviewed financial candidate {candidate.id} has an invalid period date",
             ) from exc
+        if locator.get("quarter") is not None or locator.get("fp") not in (None, "FY") or (start and not 300 <= (end - start).days <= 400):
+            raise HTTPException(status_code=422, detail="Interim, YTD and nonstandard duration candidates need an explicit period review workflow before promotion. No financial values were written.")
+        period_ends.add(end)
     if len(period_ends) > 1:
         raise HTTPException(
             status_code=422,
@@ -221,6 +227,31 @@ def _utc(value: datetime) -> datetime:
     return value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC)
 
 
+def review_candidate_period(db: Session, candidate_id: int, period_end: date, source_note: str,
+                            expected_updated_at: datetime, user_id: str) -> FinancialExtractionCandidate:
+    candidate = _review_candidate(db, candidate_id, expected_updated_at)
+    if candidate.period_type != "annual" or candidate.fiscal_year is None:
+        raise HTTPException(status_code=422, detail="This confirmation supports annual candidates with a known fiscal year only.")
+    if not source_note.strip() or len(source_note.strip()) < 10:
+        raise HTTPException(status_code=422, detail="Explain the exact source location supporting this period-end date.")
+    locator = dict(candidate.source_locator_json or {})
+    if locator.get("end") is not None:
+        raise HTTPException(status_code=409, detail="The extraction already contains a source end date. Use source reconciliation to resolve a conflict; this confirmation cannot overwrite it.")
+    if abs(period_end.year - candidate.fiscal_year) > 1:
+        raise HTTPException(status_code=422, detail="The period end is inconsistent with the fiscal year. Reconcile the source identity first.")
+    review = {"end": period_end.isoformat(), "source_note": source_note.strip(), "claim_type": "User Assumption",
+              "reviewed_at": datetime.now(UTC).isoformat(), "reviewed_by": user_id}
+    previous = locator.get("period_review")
+    history = locator.get("period_review_history", [])
+    if previous is not None:
+        locator["period_review_history"] = [*(history if isinstance(history, list) else []), previous]
+    locator["period_review"] = review
+    # Source extraction fields stay intact. Value approval remains a separate action.
+    candidate.source_locator_json = locator
+    db.commit(); db.refresh(candidate)
+    return candidate
+
+
 def update_candidate_review_status(db: Session, candidate_id: int, status: str,
                                   expected_updated_at: datetime | None = None) -> FinancialExtractionCandidate:
     candidate = _review_candidate(db, candidate_id, expected_updated_at)
@@ -253,7 +284,7 @@ def override_candidate_value(db: Session, candidate_id: int, value: float, unit:
 
 
 def promote_reviewed_candidates(db: Session, company_id: int, expected_candidates: list | None = None) -> int:
-    company = db.get(Company, company_id)
+    company = db.scalar(select(Company).where(Company.id == company_id).with_for_update())
     if company is None:
         raise HTTPException(status_code=404, detail="Company not found")
 
@@ -275,11 +306,14 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
         return 0
 
     promoted_count = 0
-    # Group by fiscal_year and period_type
+    # Interim promotion stays closed until quarter, duration and YTD scope can
+    # round-trip through extraction and review. Never infer those from a year.
     groups = {}
     for c in candidates:
         if c.fiscal_year is None:
-            continue
+            raise HTTPException(status_code=422, detail="Every reviewed candidate needs a fiscal year before promotion. No financial values were written.")
+        if c.period_type != "annual":
+            raise HTTPException(status_code=422, detail="Only annual candidates can be promoted in this workflow. Quarterly, YTD and unknown periods are retained for explicit period review. No financial values were written.")
         key = (c.fiscal_year, c.period_type)
         if key not in groups:
             groups[key] = []
@@ -293,12 +327,31 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
         key: _reviewed_period_end(group_candidates)
         for key, group_candidates in groups.items()
     }
+    # Resolve every destination before making any mutation. Existing dates are
+    # identity, not metadata that a new source is allowed to silently replace.
+    destinations = {}
+    for (year, period_type), group_candidates in groups.items():
+        periods = db.scalars(select(FinancialStatementPeriod).where(
+            FinancialStatementPeriod.company_id == company_id,
+            FinancialStatementPeriod.year == year,
+            FinancialStatementPeriod.period_type == period_type,
+        ).with_for_update()).all()
+        if len(periods) > 1 or any(period.quarter is not None for period in periods):
+            raise HTTPException(status_code=409, detail="Stored financial period identity is ambiguous. Reconcile the periods before promotion. No financial values were written.")
+        period = periods[0] if periods else None
+        if period is not None and period.report_date != report_dates[(year, period_type)]:
+            raise HTTPException(status_code=409, detail="The reviewed source period-end date differs from stored history. Resolve the period identity before promotion. No financial values were written.")
+        metrics = db.scalars(select(FinancialMetric).where(FinancialMetric.period_id == period.id)).all() if period else []
+        if len({metric.metric_name for metric in metrics}) != len(metrics):
+            raise HTTPException(status_code=409, detail="The financial period contains duplicate stored metrics. Reconcile those records before promotion. No financial values were written.")
+        destinations[(year, period_type)] = (period, metrics)
     # A statement and its notes can repeat the same fact. Preserve both source
     # revisions, but never silently choose between conflicting reviewed values.
+    from app.services.financial_period_basis import financial_period_basis, period_scope_key
     for group_candidates in groups.values():
         values_by_code = {}
         for candidate in group_candidates:
-            value = (candidate.value, candidate.unit)
+            value = (candidate.value, candidate.unit, period_scope_key(financial_period_basis(candidate)))
             previous = values_by_code.setdefault(candidate.metric_code, value)
             if previous != value:
                 raise HTTPException(status_code=409, detail="Reviewed candidates contain conflicting values or units for the same period and metric. Resolve the source selection before promotion. No financial values were written.")
@@ -309,19 +362,13 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
         reporting_currency = currency_resolution.currency or company.currency or "USD"
         currency_source = currency_resolution.source or ("company_fallback" if company.currency else "system_default")
         currency_confidence = currency_resolution.confidence if currency_resolution.currency else "low"
-        # Find or create period
-        period = db.scalar(
-            select(FinancialStatementPeriod)
-            .where(FinancialStatementPeriod.company_id == company_id)
-            .where(FinancialStatementPeriod.year == year)
-            .where(FinancialStatementPeriod.period_type == period_type)
-        )
+        period, period_metrics = destinations[(year, period_type)]
         if not period:
             period = FinancialStatementPeriod(
                 company_id=company_id,
                 period_type=period_type,
                 year=year,
-                report_date=exact_report_date or date(year, 12, 31),
+                report_date=exact_report_date,
                 currency=reporting_currency,
                 currency_source=currency_source,
                 currency_confidence=currency_confidence,
@@ -332,15 +379,9 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
             period.currency = reporting_currency
             period.currency_source = currency_source
             period.currency_confidence = currency_confidence
-        if exact_report_date is not None:
-            period.report_date = exact_report_date
-
         # Reuse pending inserts as well as stored rows. Sessions disable
         # autoflush, so a database query alone cannot see the first occurrence.
-        period_metrics = db.scalars(select(FinancialMetric).where(FinancialMetric.period_id == period.id)).all()
         metrics_by_code = {metric.metric_name: metric for metric in period_metrics}
-        if len(metrics_by_code) != len(period_metrics):
-            raise HTTPException(status_code=409, detail="The financial period contains duplicate stored metrics. Reconcile those records before promotion.")
         for candidate in group_candidates:
             metric = metrics_by_code.get(candidate.metric_code)
             if metric:
@@ -356,6 +397,8 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
                 db.add(metric)
                 metrics_by_code[candidate.metric_code] = metric
 
+            candidate.source_locator_json = {**(candidate.source_locator_json or {}),
+                "promoted_period_basis": financial_period_basis(candidate, effective_at=period.report_date)}
             record_financial_fact_revision(
                 db,
                 candidate,

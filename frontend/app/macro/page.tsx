@@ -202,7 +202,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
           {topDownResult ? <TopDownResult result={topDownResult} /> : !workbenchError ? <EmptyState label="Enter at least three periods to estimate company-specific macro sensitivity." /> : null}
         </Panel>}
 
-        {activeTab === "series" && <><Panel title="Import from FRED">
+        {activeTab === "series" && <><Panel title="Import from FRED" collapsible>
           {!hasUsableData(providerHealthRes) ? <ErrorState message="FRED configuration could not be checked. Reload to retry." /> : fredConfigured ? (
             <RetainedActionForm label="Import fred series" resetOnSuccess action={importFredSeries} className="form-grid">
               <TextField id="fred-import-series-id" label="FRED Series ID" name="series_id" placeholder="e.g. CPIAUCSL or FEDFUNDS" required />
@@ -221,7 +221,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
           )}
         </Panel>
 
-        <Panel title="Add Macro Series Manually">
+        <Panel title="Add Macro Series Manually" collapsible>
           <RetainedActionForm label="Create macro series" resetOnSuccess action={createMacroSeries} className="form-grid">
             <TextField id="name" label="Series Name" name="name" placeholder="India 10Y Yield" required />
             <TextField id="units" label="Units" name="units" placeholder="%" />
@@ -233,7 +233,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
           </RetainedActionForm>
         </Panel>
 
-        <Panel title="Add Observation">
+        <Panel title="Add Observation" collapsible>
           <RetainedActionForm label="Create macro observation" resetOnSuccess action={createMacroObservation} className="form-grid">
             <SelectField id="observation-series-id" label="Series" name="series_id" required>
               <option value="">Select series...</option>

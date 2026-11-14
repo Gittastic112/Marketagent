@@ -65,7 +65,7 @@ def test_discovery_failure_is_audited_without_provider_detail(client, db, monkey
     def fail(*args, **kwargs):
         raise RuntimeError("provider-secret-must-not-escape")
     monkeypatch.setattr("app.providers.filings.sec_edgar.fetch_recent_sec_filing_metadata", fail)
-    response = client.get(f"/api/companies/{company.id}/filings/discover")
+    response = client.post(f"/api/companies/{company.id}/filings/discover")
     assert response.status_code == 502
     run = db.scalar(select(ProcessingRun).where(ProcessingRun.run_type == "filing_discovery"))
     assert run.status == "failed" and run.finished_at and run.company_id == company.id
@@ -84,7 +84,8 @@ def test_shared_issuer_preview_is_audited_for_each_compatibility_route(client, d
         return []
     monkeypatch.setattr("app.providers.filings.sec_edgar.fetch_recent_sec_filing_metadata", preview)
     monkeypatch.setattr("app.api.routers.companies.fetch_recent_sec_filing_metadata", preview)
-    response = client.get(route.format(id=company.id))
+    method = client.post if route.endswith("/discover") else client.get
+    response = method(route.format(id=company.id))
     assert response.status_code == 200
     run = db.scalar(select(ProcessingRun).where(ProcessingRun.run_type == "filing_discovery"))
     assert run.status == "success" and run.finished_at

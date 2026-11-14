@@ -49,6 +49,8 @@ export type FilingDiscovery = {
   provider_name: string;
   mode: "automated" | "manual";
   manual_required: boolean;
+  discovery_status: "not_requested" | "complete" | "manual";
+  checked_at: string | null;
   filings: SecFilingMetadata[];
   next_action: string;
   official_manual_source?: {
@@ -59,6 +61,10 @@ export type FilingDiscovery = {
     required_documents: string[];
   } | null;
 };
+
+export function discoverCompanyFilings(companyId: number): Promise<FilingDiscovery> {
+  return postApi<FilingDiscovery>(`/api/companies/${companyId}/filings/discover?limit=10`, {});
+}
 
 export type FilingSectionDiff = {
   id: number;

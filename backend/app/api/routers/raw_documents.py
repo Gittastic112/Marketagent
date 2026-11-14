@@ -1,5 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from datetime import UTC, date, datetime, time
+from typing import Literal
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.api.helpers import create_record, delete_record, get_or_404, has_matching_record, update_record, validate_raw_document_refs
@@ -11,7 +13,8 @@ from app.api.schemas import (
     RawDocumentUpdate,
 )
 from app.db.session import get_db
-from app.models import Event, RawDocument
+from app.models import Event, RawDocument, FinancialExtractionCandidate
+from app.schemas.document_library import DocumentLibraryRead
 
 
 router = APIRouter()
@@ -42,6 +45,37 @@ def raw_document_summary_query():
         RawDocument.created_at,
         RawDocument.raw_text.is_not(None).label("has_raw_text"),
     )
+
+
+@router.get("/raw-documents/library", response_model=ApiResponse[DocumentLibraryRead])
+def document_library(q: str = Query(default="", max_length=200), company_id: int | None = Query(default=None, gt=0),
+    document_type: str = Query(default="", max_length=80),
+    review: Literal["all", "needs_review", "promoted"] = "all",
+    published_from: date | None = None, published_to: date | None = None,
+    offset: int = Query(default=0, ge=0, le=100000), limit: int = Query(default=30, ge=1, le=100),
+    db: Session = Depends(get_db)):
+    query = raw_document_summary_query()
+    if q.strip():
+        query = query.where(RawDocument.title.icontains(q.strip(), autoescape=True))
+    if company_id is not None:
+        query = query.where(RawDocument.company_id == company_id)
+    if document_type:
+        query = query.where(RawDocument.document_type == document_type)
+    if published_from and published_to and published_from > published_to:
+        raise HTTPException(status_code=422, detail="Publication range must start before it ends")
+    if published_from:
+        query = query.where(RawDocument.published_at >= datetime.combine(published_from, time.min, UTC))
+    if published_to:
+        query = query.where(RawDocument.published_at <= datetime.combine(published_to, time.max, UTC))
+    if review != "all":
+        statuses = ["promoted"] if review == "promoted" else ["needs_review", "reviewed", "overridden"]
+        query = query.where(select(FinancialExtractionCandidate.id).where(
+            FinancialExtractionCandidate.raw_document_id == RawDocument.id,
+            FinancialExtractionCandidate.review_status.in_(statuses)).exists())
+    total = db.scalar(select(func.count()).select_from(query.subquery())) or 0
+    items = db.execute(query.order_by(RawDocument.ingested_at.desc(), RawDocument.id.desc()).offset(offset).limit(limit)).mappings()
+    return ApiResponse(data=DocumentLibraryRead(items=[RawDocumentSummaryRead.model_validate(dict(row)) for row in items],
+        total=total, offset=offset, limit=limit))
 
 
 @router.get(

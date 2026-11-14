@@ -9,6 +9,7 @@ import { createNarrativeCluster, createNarrativeClaim, deleteNarrativeClusterWit
 import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextField, TextAreaField } from "@/components/form-fields";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
+import { formatDataLabel } from "@/lib/formatting";
 
 export const dynamic = "force-dynamic";
 
@@ -89,15 +90,15 @@ export default async function NarrativesPage() {
             {clusterDetails.map(({ cluster, claims, mentions }) => (
               <div key={cluster.id} id={`narrative-${cluster.id}`} className="anchored-record">
               <Panel title={cluster.name}>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem" }}>
-                  <div>
+                <div className="research-card-heading" style={{ marginBottom: "1rem" }}>
+                  <div className="research-card-copy">
                     {cluster.description && (
                       <p style={{ color: "var(--text-secondary)", fontSize: "0.9rem", marginBottom: "0.5rem" }}>{cluster.description}</p>
                     )}
-                    <div style={{ display: "flex", gap: "1rem", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                    <div className="research-record-meta">
                       <span>Created {formatDate(cluster.created_at)}</span>
-                      <span>{hasUsableData(claimsRes) ? `${claims.length} claims` : "Claims unavailable"}</span>
-                      <span>{hasUsableData(mentionsRes) ? `${mentions.length} mentions` : "Mentions unavailable"}</span>
+                      <span>{hasUsableData(claimsRes) ? `${claims.length} claim${claims.length === 1 ? "" : "s"}` : "Claims unavailable"}</span>
+                      <span>{hasUsableData(mentionsRes) ? `${mentions.length} mention${mentions.length === 1 ? "" : "s"}` : "Mentions unavailable"}</span>
                     </div>
                   </div>
                   <DeleteRecordForm action={deleteNarrativeClusterWithState} recordId={cluster.id} />
@@ -158,10 +159,11 @@ export default async function NarrativesPage() {
                           <div key={mention.id} className="brief-item" style={{ padding: "0.5rem 0", borderBottom: "1px solid var(--border-color)" }}>
                             {event ? (
                               <>
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
-                                  <strong style={{ fontSize: "0.85rem" }}>{event.event_type} - {event.title}</strong>
-                                  <span className="badge">{event.impact_score}/10</span>
+                                <div className="research-card-heading">
+                                  <strong style={{ fontSize: "0.85rem" }}><Link href={`/events/${event.id}/evidence-resolution`}>{event.title}</Link></strong>
+                                  <span className="badge">{event.impact_score == null ? "Impact not scored" : `Impact: ${event.impact_score}/100`}</span>
                                 </div>
+                                <p className="cell-secondary">{formatDataLabel(event.event_type)}</p>
                                 {mention.context_text && <p style={{ fontSize: "0.85rem", margin: "0.25rem 0 0 0" }}>{mention.context_text}</p>}
                               </>
                             ) : (

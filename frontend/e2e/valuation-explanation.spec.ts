@@ -15,6 +15,7 @@ async function createSavedModel(page: Page) {
       revenue_growth_years_json: {1: 0.05, 2: 0.05, 3: 0.05, 4: 0.05, 5: 0.05},
       sales_to_capital_ratio: 2.5, starting_invested_capital: 600, wacc_start: 0.1, wacc_terminal: 0.09,
       terminal_growth_rate: 0.02, terminal_roic: 0.12, cash: 0, debt: 0, diluted_shares: 10,
+      minority_interests: 0, preferred_stock: 0, employee_options_value: 0,
       net_income: 100, book_value_of_equity: 500, cash_flow_currency: "USD", discount_rate_currency: "USD"} });
   return {company, model, row, path: `/companies/${company.id}/valuation/${model.id}`};
 }
@@ -122,11 +123,14 @@ test("late narrative suggestions cannot replace edits and copying estimates requ
     saved(); await heldSave;
     await route.fulfill({response});
   });
-  await page.getByRole("button", {name: "Save & Run Valuation"}).click();
+  await page.getByLabel("Valuation date", {exact: true}).fill("2026-11-12");
+  await page.getByLabel("Reason for this version").fill("Mock Data reviewed changed narrative");
+  await page.getByRole("button", {name: "Preview changes"}).click();
+  await page.getByRole("button", {name: "Save this reviewed version"}).click();
   await savedResponse;
   await expect(page.locator("#target_operating_margin:visible")).toBeDisabled();
   releaseSave();
-  await expect(page.getByRole("main").getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
+  await expect(page.getByRole("main").getByText("Reviewed version saved. Previous versions are unchanged.")).toBeVisible();
   await expect(page.locator("#target_operating_margin:visible")).toHaveValue("0.24");
   const versions = await backendData<DcfAssumptionSet[]>(
     page, `/valuation-models/${model.id}/assumptions`);

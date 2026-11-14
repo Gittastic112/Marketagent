@@ -42,6 +42,7 @@
   "createThesisNote",
   "createValuationModel",
   "createValuationModelWithAssumptions",
+  "createValuationSetupDraft",
   "createVariantPerception",
   "deleteAlert",
   "deleteAlertWithState",

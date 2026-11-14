@@ -6,6 +6,7 @@ import {
   eventEvidenceGeometry,
   eventEvidenceHref,
   financialEvidenceGeometry,
+  financialEvidenceClaimType,
   financialEvidenceHref,
   financialEvidenceLocatorLabel,
   financialIdentityFormula,
@@ -19,6 +20,9 @@ test("accounting labels retain the after-tax and parent/minority distinctions", 
   assert.equal(financialMetricLabel("net_income_parent"), "Profit attributable to parent shareholders");
   assert.equal(financialMetricLabel("net_income_nci"), "Profit attributable to minority shareholders");
   assert.equal(financialMetricLabel("unmapped_metric"), "Unmapped metric");
+  assert.equal(financialMetricLabel("borrowings_carrying_value"), "Notes and commercial-paper borrowings, excluding leases");
+  assert.equal(financialMetricLabel("long_term_debt_principal"), "Long-term notes principal (face amount)");
+  assert.equal(financialMetricLabel("noncontrolling_interests_book"), "Noncontrolling interests, book amount");
 });
 
 const candidate = {
@@ -29,6 +33,14 @@ const candidate = {
   source_section: null,
   source_locator_json: null,
 } as FinancialExtractionCandidate;
+
+test("financial evidence separates reviewed facts, calculations, and overrides", () => {
+  assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "needs_review", source_locator_json: { claim_type: "Fact" } }), "Source Summary");
+  assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "promoted", source_locator_json: { claim_type: "Fact" } }), "Fact");
+  assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "promoted", source_locator_json: { claim_type: "Calculation" } }), "Calculation");
+  assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "overridden", source_locator_json: { claim_type: "Fact" } }), "User Assumption");
+  assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "promoted", source_locator_json: { claim_type: "untrusted" } }), "Source Summary");
+});
 
 test("financialEvidenceLocatorLabel formats spreadsheet coordinates", () => {
   assert.equal(
@@ -50,6 +62,7 @@ test("financialEvidenceLocatorLabel falls back to an XBRL concept", () => {
     }),
     "XBRL us-gaap:Revenues",
   );
+  assert.equal(financialEvidenceLocatorLabel({ ...candidate, source_locator_json: { type: "xbrl_fact", namespace: "goog", concept: "AccruedRevenueShare" } }), "XBRL goog:AccruedRevenueShare");
 });
 
 test("financialEvidenceHref links a PDF candidate to its authenticated source page", () => {

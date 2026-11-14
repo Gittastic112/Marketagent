@@ -17,7 +17,8 @@ from app.services.industry_mapping import IndustryMappingService
 from app.services.industry_assumption import IndustryAssumptionService
 from app.services.valuation_context import build_company_valuation_context
 from app.services.valuation_setup_draft import ValuationSetupDraftService
-from app.services.assumption_versions import AssumptionVersionConflict, create_assumption_version
+from app.services.assumption_versions import AssumptionVersionConflict, create_assumption_version, preview_assumption_version, version_receipts
+from app.schemas.valuation_preview import ValuationPreviewRead, ValuationVersionReceiptRead
 from app.services.quick_valuation import (
     calculate_quick_valuation,
     generate_quick_valuation_assumptions,
@@ -249,6 +250,24 @@ def update_valuation_model(
     return ApiResponse(data=model)
 
 
+@router.post("/valuation-models/{model_id}/assumptions/preview", response_model=ApiResponse[ValuationPreviewRead])
+def preview_dcf_assumptions(model_id: int, payload: DcfAssumptionVersionWrite,
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    model = get_owned_valuation_model(db, model_id, current_user["id"])
+    try:
+        return ApiResponse(data=preview_assumption_version(db, model, payload))
+    except AssumptionVersionConflict as exc:
+        raise PublicApiError(status_code=409, code="VALUATION_VERSION_CONFLICT", message=str(exc)) from exc
+    except (ValidationError, ValueError):
+        raise PublicApiError(status_code=422, code="VALUATION_PREVIEW_INVALID",
+            message="Review the proposed inputs, units and currencies. No model values were saved.") from None
+
+
+@router.get("/valuation-models/{model_id}/version-receipts", response_model=ApiResponse[list[ValuationVersionReceiptRead]])
+def list_version_receipts(model_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=version_receipts(db, get_owned_valuation_model(db, model_id, current_user["id"])))
+
+
 @router.post("/valuation-models/{model_id}/assumptions", response_model=ApiResponse[schemas.DcfAssumptionSetRead], status_code=status.HTTP_201_CREATED)
 def create_dcf_assumption_set(model_id: int, assumption_in: DcfAssumptionVersionWrite, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Any:
     vmodel = get_owned_valuation_model(db, model_id, current_user["id"])
@@ -433,6 +452,18 @@ def autofill_assumptions(company_id: int, payload: dict, db: Session = Depends(g
             code="VALUATION_AUTOFILL_INPUT_NOT_FOUND",
             message="Company or valuation autofill inputs were not found.",
         ) from exc
+
+
+@router.get(
+    "/companies/{company_id}/valuation-drafts/current",
+    response_model=ApiResponse[schemas.ValuationSetupDraftRead | None],
+)
+def get_current_valuation_draft(
+    company_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    return ApiResponse(data=ValuationSetupDraftService.get_current(db, company_id, current_user["id"]))
 
 
 @router.post(

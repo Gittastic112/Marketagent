@@ -70,6 +70,12 @@
   overscroll-behavior-inline: contain;
 }
 
+.financial-trends-table { min-width: 780px; }
+.financial-trends-table td:first-child { min-width: 250px; max-width: 300px; }
+.financial-trends-table .muted { font-size: 0.8rem; white-space: normal; }
+.source-hash { min-width: 7rem; max-width: 18rem; }
+.source-hash code { display: block; overflow-wrap: anywhere; margin-top: 0.5rem; }
+
 .financial-evidence-layout {
   align-items: start;
   display: grid;

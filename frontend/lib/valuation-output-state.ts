@@ -10,6 +10,7 @@ export const finiteOutput = (value: unknown): value is number => typeof value ==
 export function invalidDcfAssumptions(assumptions?: SavedAssumptions, modelType = "fcff_dcf"): string[] {
   if (!assumptions) return [];
   const invalid: string[] = [];
+  if (!finiteOutput(assumptions.diluted_shares) || assumptions.diluted_shares <= 0) invalid.push("diluted_shares");
   if (modelType === "financial_services") {
     for (const [field, low, high] of [
       ["book_value_of_equity", 0, Infinity], ["diluted_shares", 0, Infinity],

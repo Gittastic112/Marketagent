@@ -18,6 +18,7 @@ test("valuation edits invalidate review and stale writes surface a reload action
   }>(page, `/companies/${company.id}/valuation-drafts`, { method: "POST", data: {} });
 
   await page.goto(`/companies/${company.id}/valuation/draft`);
+  await page.getByRole("button", {name: "Create draft", exact: true}).click();
   await expandDraftSections(page);
   const startingRevenue = page.locator("#starting_revenue:visible");
   const startingRevenueField = startingRevenue.locator("xpath=..");

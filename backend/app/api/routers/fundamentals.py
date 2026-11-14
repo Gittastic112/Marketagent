@@ -24,13 +24,14 @@ from app.models.raw_document import RawDocument
 from app.models.source import Source
 from app.api.schemas import ApiResponse, FinancialExtractionCandidateRead, FinancialExtractionResultRead, FinancialPeriodRead
 from app.api.errors import PublicApiError
-from app.schemas.financials import FinancialCandidatePromotion, FinancialReviewPlanRead
+from app.schemas.financials import FinancialCandidatePromotion, FinancialReviewPlanRead, FinancialCandidatePeriodReview
 from app.api.dependencies import get_current_user
 from app.services.financial_review_plan import build_financial_review_plan
 from app.services.financial_extraction import (
     extract_financial_candidates_from_filing,
     list_extracted_financial_candidates,
     update_candidate_review_status,
+    review_candidate_period,
     override_candidate_value,
     promote_reviewed_candidates,
 )
@@ -311,6 +312,16 @@ def get_financial_candidate(
 )
 def review_financial_candidate(candidate_id: int, update: schemas.FinancialCandidateReviewUpdate, db: Session = Depends(get_db)):
     return ApiResponse(data=update_candidate_review_status(db, candidate_id, update.review_status, update.expected_updated_at))
+
+
+@router.patch(
+    "/api/financial-line-items/{candidate_id}/period",
+    response_model=ApiResponse[FinancialExtractionCandidateRead],
+)
+def confirm_financial_candidate_period(candidate_id: int, review: FinancialCandidatePeriodReview,
+                                      db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=review_candidate_period(db, candidate_id, review.period_end, review.source_note,
+                                                   review.expected_updated_at, current_user["id"]))
 
 
 @router.patch(

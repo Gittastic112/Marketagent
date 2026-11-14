@@ -93,7 +93,7 @@ test("navigation and company route infrastructure are centralized", () => {
   const companyLayout = readFrontendFile("app/companies/[id]/layout.tsx");
   const styles = readStyles();
 
-  for (const group of ["Today", "Portfolio", "Research", "Data", "System"]) {
+  for (const group of ["Today", "Companies", "Valuations", "Portfolio", "Library", "Advanced", "Settings"]) {
     assert.match(sidebar, new RegExp(`label: "${group}"`));
   }
   assert.match(sidebar, /prefetch=\{false\}/);
@@ -334,7 +334,7 @@ test("portfolio attribution exposes partial calculations without fake FX or benc
   assert.match(detail, /attribution\.activity_by_currency/);
   assert.match(performance, /if \(value == null\) return "Not available"/);
   assert.match(performance, /label="FX Impact" value=\{money\(attribution\.fx_impact/);
-  assert.match(performance, /opportunityCost\?\.calculation_status \|\| "not available"/);
+  assert.match(performance, /formatDataLabel\(opportunityCost\?\.calculation_status\)/);
   assert.match(api, /calculation_status: "partial" \| "not_available"/);
   assert.match(api, /activity_by_currency: Record<string, PortfolioTransactionActivity>/);
   assert.doesNotMatch(detail, /Performance Attribution/);

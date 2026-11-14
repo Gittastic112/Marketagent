@@ -39,8 +39,10 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   });
 
   await page.goto(`/companies/${company.id}/valuation/draft`);
+  expect(await backendData(page, `/companies/${company.id}/valuation-drafts/current`)).toBeNull();
+  await page.getByRole("button", {name: "Create draft", exact: true}).click();
   await expect(
-    page.getByRole("heading", { name: "Draft New Valuation Model: Valuation E2E Fixture" }),
+    page.getByRole("heading", { name: "Review valuation draft: Valuation E2E Fixture" }),
   ).toBeVisible();
   await expandDraftSections(page);
 
@@ -58,6 +60,7 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(page).toHaveURL(`/companies/${company.id}/valuation`);
 
   await page.goto(`/companies/${company.id}/valuation/draft`);
+  await page.getByRole("button", {name: "Create draft", exact: true}).click();
   await expandDraftSections(page);
   await expect(page.locator("#starting_revenue:visible")).toHaveCount(1);
   for (const [field, value] of Object.entries(ASSUMPTIONS)) {
@@ -93,8 +96,11 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await page.locator("#change_in_nwc:visible").fill("25");
   await page.locator("#buybacks:visible").fill("15");
   await page.locator("#new_debt_issued:visible").fill("40");
-  await page.getByRole("button", { name: "Save & Run Valuation" }).click();
-  await expect(page.getByRole("main").getByText("Assumptions saved and valuation recalculated.")).toBeVisible();
+  await page.getByLabel("Valuation date", {exact: true}).fill("2026-11-12");
+  await page.getByLabel("Reason for this version").fill("Mock Data updated cash-flow assumptions");
+  await page.getByRole("button", { name: "Preview changes" }).click();
+  await page.getByRole("button", { name: "Save this reviewed version" }).click();
+  await expect(page.getByRole("main").getByText("Reviewed version saved. Previous versions are unchanged.")).toBeVisible();
 
   const detailUrl = new URL(page.url());
   const modelId = Number(detailUrl.pathname.split("/").at(-1));

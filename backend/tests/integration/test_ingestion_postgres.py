@@ -222,3 +222,38 @@ def test_competing_saved_valuation_versions_keep_one_winner_and_immutable_histor
         assert rows[1].cash == rows[0].cash == 0
         outputs = list(db.scalars(select(DcfOutput).order_by(DcfOutput.id)))
         assert len(outputs) == 2 and outputs[0].equity_value == original_equity
+
+
+def test_identical_reviewed_save_retries_share_one_receipt_and_version(pg_engine):
+    from app.models import User
+    from app.models.dcf import DcfAssumptionSet, DcfDecisionLog, ValuationModel
+    from app.schemas.valuation_inputs import DcfAssumptionVersionWrite
+    from app.services.assumption_versions import create_assumption_version, preview_assumption_version
+    from test_implied_pricing_integrity import valid_inputs
+
+    identity = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-retry-owner", email="mock-retry@example.invalid")); db.flush()
+        model = ValuationModel(company_id=identity, user_id="mock-retry-owner", name="Mock Data reviewed retry")
+        db.add(model); db.flush()
+        old = create_assumption_version(db, model, DcfAssumptionVersionWrite(**valid_inputs()))
+        db.commit()
+        payload = dict(base_assumption_set_id=old.id, base_assumption_set_updated_at=old.updated_at,
+            cash=10, minority_interests=0, preferred_stock=0, employee_options_value=0, valuation_date="2026-11-12")
+        preview = preview_assumption_version(db, model, DcfAssumptionVersionWrite(**payload))
+        assert preview["ready"]
+        command = DcfAssumptionVersionWrite(**payload, preview_hash=preview["preview_hash"],
+            submission_id=uuid4(), change_reason="Mock Data concurrent duplicate")
+        model_id = model.id
+    start = Barrier(2)
+    def save(_):
+        with Session(pg_engine, autoflush=False) as db:
+            model = db.get(ValuationModel, model_id); start.wait(timeout=10)
+            row = create_assumption_version(db, model, command); db.commit()
+            return row.id
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        ids = list(pool.map(save, range(2)))
+    assert ids[0] == ids[1]
+    with Session(pg_engine) as db:
+        assert db.query(DcfAssumptionSet).count() == 2
+        assert db.query(DcfDecisionLog).count() == 1

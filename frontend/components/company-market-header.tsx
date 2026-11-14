@@ -36,6 +36,7 @@ export function CompanyMarketHeader({ response }: { response: ApiResponse<Compan
         <div className="company-market-stat"><strong>P/E</strong>{formatNumber(data.pe_ratio)}</div>
       )}
       </div>
+      <p className="muted">Stored quote · {data.provider_name || "Source unknown"} · Source time: {data.source_timestamp || "Unknown"}</p>
       <details><summary>Quote source and timing</summary>
       <p className="muted">Stored quote · Source: {data.provider_name || "Unknown"}
         {data.provider_symbol ? ` (${data.provider_symbol})` : ""} · {data.price_type || "Price type unknown"}.</p>

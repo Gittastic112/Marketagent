@@ -7,6 +7,7 @@ import { DataStateNotices } from "@/components/ui/data-states";
 import type { ScoringConfig, TokenStatusResponse } from "@/lib/api";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { AIConsentSettings } from "@/components/ai-consent-settings";
+import Link from "next/link";
 
 export default async function SettingsPage() {
   const [configRes, oauthStatusResult] = await Promise.all([
@@ -20,6 +21,12 @@ export default async function SettingsPage() {
   return (
     <>
       <PageHeader eyebrow="System configuration" title="Settings" />
+      <Panel title="Sources and local services"><ul>
+        <li><Link href="/sources">Source configuration</Link>: which feeds and sources are enabled.</li>
+        <li><Link href="/data-health">Service and provider health</Link>: availability, coverage and recent failures.</li>
+        <li><Link href="/data">Processing history</Link>: what ran, what changed and what failed.</li>
+        <li><Link href="/admin/damodaran">Benchmark data</Link>: reviewed reference versions and coverage.</li>
+      </ul><p>Configured, reachable and complete are separate states. Opening these pages does not refresh sources.</p></Panel>
       <DataStateNotices
         metas={[configRes.meta]}
         mockMessage="Scoring configuration is mocked. Do not rely on it for production scoring behavior."

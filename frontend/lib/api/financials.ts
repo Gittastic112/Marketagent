@@ -11,6 +11,23 @@ export type FinancialMetric = {
   updated_at: string;
 };
 
+export type SourceFactRevision = {
+  id: number;
+  company_id: number;
+  raw_document_id: number;
+  financial_candidate_id: number;
+  fact_key: string;
+  value: number;
+  unit: string | null;
+  period_type: string;
+  effective_at: string;
+  observed_at: string;
+  superseded_at: string | null;
+  revision_number: number;
+  claim_type: "Fact" | "Calculation";
+  created_at: string;
+};
+
 export type FinancialStatementPeriod = {
   id: number;
   company_id: number;
@@ -101,6 +118,11 @@ export async function reviewFinancialCandidate(candidateId: number, reviewStatus
 
 export async function overrideFinancialCandidate(candidateId: number, value: number, unit: string | null = null, expectedUpdatedAt?: string): Promise<FinancialExtractionCandidate> {
   return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/override`, { value, unit, expected_updated_at: expectedUpdatedAt });
+}
+
+export async function reviewFinancialCandidatePeriod(candidateId: number, periodEnd: string, sourceNote: string, expectedUpdatedAt: string): Promise<FinancialExtractionCandidate> {
+  return patchApi<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}/period`,
+    {period_end: periodEnd, source_note: sourceNote, expected_updated_at: expectedUpdatedAt});
 }
 
 export async function promoteFinancialCandidates(companyId: number, candidates?: Array<Pick<FinancialExtractionCandidate, "id" | "updated_at">>): Promise<{ status: string; promoted_count: number }> {

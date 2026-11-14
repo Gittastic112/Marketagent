@@ -19,7 +19,7 @@ test("portfolio route loads only the selected server-owned view and preserves 40
 
 test("valuation refresh resets inputs without remounting the success notice", () => {
   const page = source("app/companies/[id]/valuation/[model_id]/page.tsx");
-  assert.match(page, /key=\{`\$\{companyId\}:\$\{modelId\}`\}/);
+  assert.ok(page.includes('key={`${companyId}:${modelId}:${requested || "latest"}`}'));
   assert.match(source("components/advanced-workspace.tsx"), /<form key=\{latestAssumptionSet\?\.id/);
   assert.match(page, /assumptionsResult.status === "fulfilled" && assumptionsRes\?\.data/);
 });

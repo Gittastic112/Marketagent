@@ -600,3 +600,22 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+.saved-valuation-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--line);
+}
+.saved-valuation-header > div:first-child { flex: 1 1 26rem; min-width: 0; }
+.saved-valuation-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}

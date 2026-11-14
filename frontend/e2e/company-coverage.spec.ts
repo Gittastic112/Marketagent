@@ -20,7 +20,8 @@ for (const width of [1440, 390]) {
     await expect(main.getByText(/Delay unknown/)).toBeVisible();
     const financial = main.getByRole("heading", {name:"Financial Trends", exact:true}).locator("../..");
     await expect(financial.getByText("INR million", {exact:true})).toHaveCount(2);
-    await expect(financial.getByText("Unit unknown", {exact:true})).toBeVisible();
+    await expect(financial.getByRole("columnheader", {name:"Total Assets", exact:true})).toHaveCount(0);
+    await expect(financial.getByText(/Summary gaps: Operating income/)).toBeVisible();
     await expect(financial.getByText(/Report date: 2026-05-31/)).toBeVisible();
     await expect(financial.getByText(/Recorded metrics may be unreviewed/)).toBeVisible();
     expect(await financial.innerText()).not.toContain("$");

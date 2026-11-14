@@ -2,6 +2,7 @@ import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { CompanyResearchCards } from "@/components/company-research-cards";
+import { CompanyValuationSummary } from "@/components/company-valuation-summary";
 import { importSecFilings, lookupCompanyCik, addCompanyExposureTag, removeCompanyExposureTag, createExposureTag } from "@/app/actions";
 import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { ScoreExplanationView } from "@/components/score-explanation";
@@ -13,6 +14,7 @@ import { CheckboxField } from "@/components/form-fields";
 import { ManualDataBadge } from "@/components/ui/data-states";
 import { hasUsableData, summarizeApiMetas } from "@/lib/data-state-meta";
 import type { AlertRecord, Company, EventRecord, RawDocument, SecFilingMetadata, Source, ThesisNote, ExposureTag, CompanyMarketData, FinancialStatementPeriod } from "@/lib/api";
+import type { ValuationModelSummary } from "@/lib/api/valuation";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { buildCompanyDetail } from "@/lib/company-detail";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
@@ -39,12 +41,12 @@ function metadataValue(value: string | null | undefined) {
   return value && value.trim() ? value : "-";
 }
 
-function boundedSummary(value: string | null | undefined) {
+function boundedSummary(value: string | null | undefined, limit = 500) {
   if (!value) {
     return null;
   }
   const normalized = value.replace(/\s+/g, " ").trim();
-  return normalized.length > 500 ? `${normalized.slice(0, 500).trimEnd()}...` : normalized;
+  return normalized.length > limit ? `${normalized.slice(0, limit).trimEnd()}...` : normalized;
 }
 
 function firstParam(value: string | string[] | undefined) {
@@ -148,9 +150,10 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (company.market) quoteParams.set("market", company.market);
     if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
     if (company.currency) quoteParams.set("currency", company.currency);
-    const [marketQuote, financialTrends] = await Promise.all([
+    const [marketQuote, financialTrends, modelSummaries] = await Promise.all([
       serverFetchApiResponse<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`),
-      serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`)
+      serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`),
+      serverFetchApiResponse<ValuationModelSummary[]>(`/companies/${company.id}/valuation-model-summaries`)
     ]);
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
@@ -195,7 +198,6 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               <div className="company-meta-line">
                 <span>{company.market ?? "Unknown Market"} / {company.primary_exchange ?? company.exchange ?? "Unknown Exchange"}</span>
                 {company.local_symbol && <span>• Local: {company.local_symbol}</span>}
-                {company.regulatory_id && <span>• {company.regulatory_id_type || "Reg ID"}: {company.regulatory_id}</span>}
                 {company.market && company.market !== "US" && <ManualDataBadge />}
               </div>
               <h1 className="company-title">
@@ -209,7 +211,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               </div>
               <div className="company-badge-row">
                 <span className="badge">{metadataValue(company.sector)}</span>
-                <span className="badge">{metadataValue(company.market_cap_category)}</span>
+                {company.market_cap_category && <span className="badge">{company.market_cap_category}</span>}
                 <span className="badge">{company.active ? "Active Tracking" : "Inactive"}</span>
                 {company.exposure_tags?.map(tag => (
                   <span key={tag.id} className="badge">{tag.name}</span>
@@ -219,50 +221,40 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           <a className="secondary-button company-memo-link" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download memo</a>
         </header>
 
-        <Suspense fallback={<p role="status">Loading business context…</p>}><CompanyResearchCards companyIds={[company.id]} /></Suspense>
+        <div className="company-summary-grid">
+          <Suspense fallback={<p role="status">Loading business context…</p>}><CompanyResearchCards companyIds={[company.id]} compact /></Suspense>
+          <CompanyValuationSummary companyId={company.id} response={modelSummaries} />
+        </div>
 
-        {/* Metric Cards */}
-        <section className="metric-grid company-metric-grid">
-          <div className="metric">
-            <div className="metric-label">Recorded activity</div>
-            <div className="metric-value">{eventsAvailable && alertsAvailable ? detail.counts.events + detail.counts.alerts : "Unavailable"}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Recorded alerts</div>
-            <div className="metric-value">{alertsAvailable ? detail.counts.alerts : "Unavailable"}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Documents</div>
-            <div className="metric-value">{documentsAvailable ? detail.counts.documents : "Unavailable"}</div>
-          </div>
-          <div className="metric">
-            <div className="metric-label">Thesis</div>
-            <div className="metric-value">{thesisNotesAvailable ? detail.counts.thesisNotes > 0 ? "Active" : "None" : "Unavailable"}</div>
-          </div>
-        </section>
+        <div className="company-overview-history"><FinancialTrends response={financialTrends} companyId={company.id} compact /></div>
 
         <div className="company-overview-grid">
           {/* Left Column */}
           <div className="company-overview-column">
-            <Panel title="Thesis Notes">
+            <Panel title="Research notes" actions={<Link prefetch={false} href={`/companies/${company.id}/thesis`}>Open thesis</Link>}>
               {!thesisNotesAvailable ? <ErrorState message="Thesis notes could not be loaded." errors={thesisNotesRes.errors} /> : detail.thesisNotes.length === 0 ? (
                 <EmptyState label="No linked thesis notes." />
               ) : (
                 <div className="brief-list">
-                  {detail.thesisNotes.map((note) => (
+                  {[...detail.thesisNotes].sort((a, b) => b.id - a.id).slice(0, 3).map((note) => (
                     <div className="brief-item" key={note.id}>
                       <div className="brief-heading">
-                        <strong>{note.title}</strong>
+                        <Link prefetch={false} href={`/thesis-notes/${note.id}`}><strong>{note.title}</strong></Link>
                         <span className="badge">{note.status}</span>
                       </div>
-                      <p>{note.thesis_text}</p>
+                      <p className="company-note-excerpt">{boundedSummary(note.thesis_text, 300)}</p>
+                      <Link prefetch={false} href={`/thesis-notes/${note.id}`}>Read full note</Link>
                     </div>
                   ))}
+                  {detail.thesisNotes.length > 3 && <details>
+                    <summary>All research notes ({detail.thesisNotes.length})</summary>
+                    <div className="company-note-links">{detail.thesisNotes.map(note => <Link prefetch={false} key={note.id} href={`/thesis-notes/${note.id}`}>{note.title}</Link>)}</div>
+                  </details>}
                 </div>
               )}
             </Panel>
 
-            <Panel title="Exposure &amp; Factors">
+            <div id="company-tools" className="company-overview-tools"><Panel title="Exposure tags" collapsible>
               <div style={{ marginBottom: "1rem" }}>
                 {company.exposure_tags?.length > 0 ? (
                   <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "1rem" }}>
@@ -291,11 +283,9 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                   <button type="submit" style={{ fontSize: "0.85rem" }}>Add</button>
                 </RetainedActionForm>}
               </div>
-            </Panel>
+            </Panel></div>
 
-            <FinancialTrends response={financialTrends} companyId={company.id} />
-
-            <Panel title={company.market === "IN" ? "Filing Source" : "SEC Filing Picker"}>
+            <Panel title={company.market === "IN" ? "Filing source" : "SEC filing intake"} collapsible={!shouldPreviewSecFilings}>
               <div className="brief-list">
                 {!sourcesAvailable && <ErrorState message="Filing sources could not be loaded." errors={sourcesRes.errors} />}
                 {company.market === "IN" ? (
@@ -379,7 +369,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
               </div>
             </Panel>
 
-            <Panel title="Raw Documents">
+            <Panel title={`Source documents (${documentsAvailable ? detail.counts.documents : "unavailable"})`} collapsible>
               {!documentsAvailable ? <ErrorState message="Documents could not be loaded." errors={documentsRes.errors} /> : detail.documents.length === 0 ? (
                 <EmptyState label="No linked documents." />
               ) : (
@@ -389,17 +379,15 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                       <tr>
                         <th>Title</th>
                         <th>Type</th>
-                        <th>Source ID</th>
-                        <th>Hash</th>
+                        <th>Technical details</th>
                       </tr>
                     </thead>
                     <tbody>
                       {detail.documents.map((document) => (
                         <tr key={document.id}>
-                          <td>{document.url ? <a href={document.url}>{document.title}</a> : document.title}</td>
+                          <td><Link prefetch={false} href={`/documents/${document.id}/sections`}>{document.title}</Link>{document.url && <div><a href={document.url} target="_blank" rel="noopener noreferrer">Original source</a></div>}</td>
                           <td>{document.document_type}</td>
-                          <td>{document.source_id}</td>
-                          <td>{document.content_hash}</td>
+                          <td><details><summary>Source details</summary><p>Source ID: {document.source_id}</p><p className="company-note-excerpt">Hash: {document.content_hash}</p></details></td>
                         </tr>
                       ))}
                     </tbody>
@@ -411,7 +399,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
 
           {/* Right Column */}
           <div className="company-overview-column">
-            <Panel title="News Flow (Events)">
+            <Panel title="Recent source activity" actions={<Link prefetch={false} href={`/companies/${company.id}/filings`}>Open sources</Link>}>
               {!eventsAvailable ? <ErrorState message="Events could not be loaded." errors={eventsRes.errors} /> : detail.events.length === 0 ? (
                 <EmptyState label="No linked events." />
               ) : (
@@ -419,7 +407,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                   {detail.events.map((event) => (
                     <article className="company-event-card" key={event.id}>
                       <div className="company-event-copy">
-                        <strong>{event.title}</strong>
+                        <Link prefetch={false} href={`/events/${event.id}/evidence-resolution`}><strong>{event.title}</strong></Link>
                         {boundedSummary(event.description) ? (
                           <p className="muted">{boundedSummary(event.description)}</p>
                         ) : null}
@@ -432,7 +420,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                         <summary>Score details</summary>
                         <ScoreExplanationView explanation={event.score_explanation_json} />
                       </details>
-                      <RetainedActionForm label="Trigger event classification" action={triggerEventClassification} className="company-event-action">
+                      <details className="company-event-details"><summary>Propose thesis impact</summary><RetainedActionForm label="Trigger event classification" action={triggerEventClassification} className="company-event-action">
                         <input type="hidden" name="event_id" value={event.id} />
                         <input type="hidden" name="company_id" value={company.id} />
                         <label className="privacy-consent">
@@ -445,14 +433,14 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                           <span>{AI_DISCLOSURES.thesisImpact}</span>
                         </label>
                         <button type="submit" className="secondary-button">Propose impact</button>
-                      </RetainedActionForm>
+                      </RetainedActionForm></details>
                     </article>
                   ))}
                 </div>
               )}
             </Panel>
 
-            <Panel title="Risks (Alerts)">
+            <Panel title="Alerts to review">
               {!alertsAvailable ? <ErrorState message="Alerts could not be loaded." errors={alertsRes.errors} /> : detail.alerts.length === 0 ? (
                 <EmptyState label="No active alerts." />
               ) : (
@@ -469,7 +457,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
                       {detail.alerts.map((alert) => (
                         <tr key={alert.id}>
                           <td>
-                            <strong>{alert.title}</strong>
+                            <Link prefetch={false} href={`/alerts/${alert.id}`}><strong>{alert.title}</strong></Link>
                             {boundedSummary(alert.summary) ? (
                               <p className="muted">{boundedSummary(alert.summary)}</p>
                             ) : null}

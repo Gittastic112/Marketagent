@@ -58,53 +58,26 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
         <Link href={`/companies/${company.id}`} className="secondary-button">&larr; Back to Company</Link>
       </div>
 
-      <IndustryMappingSection company={company} />
-      <Link prefetch={false} href={`/companies/${companyId}/valuation/peers`} className="secondary-button">Manage sourced peer sets</Link>
-
-      {context ? (
-        <MarketContextPanel context={context} />
-      ) : (
-        <Panel title="Market Context">
-          <ErrorState message="Market context could not be loaded." />
-          <p>Model creation remains available. Review market, country and currency before using discount-rate assumptions.</p>
-          <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a>
-            <Link href={`/companies/${companyId}/setup`}>Review company setup</Link></div>
-        </Panel>
-      )}
-
-      <Panel title="Create New Model">
-        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          <p style={{ color: "var(--text-secondary)", margin: 0 }}>
-            Start with source-backed defaults, confirm them once, and edit only the assumptions you want to change.
-          </p>
-          <div>
-            <Link href={`/companies/${companyId}/valuation/draft`} className="primary-button" style={{ display: "inline-block", textDecoration: "none", padding: "0.75rem 1.5rem", background: "var(--accent)", color: "white", borderRadius: "4px", fontWeight: 600 }}>
-              Create Valuation Model
-            </Link>
-          </div>
-        </div>
-      </Panel>
-
-      <Panel title="Valuation Models">
+      <Panel title="Saved models">
         {!modelsAvailable ? (
           <><ErrorState message="Could not load valuation models." />
             <a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a></>
         ) : models.length === 0 ? (
           <div className="empty">
             <strong>No valuation models yet.</strong>
-            <p>Create a reviewed draft above to establish assumptions, provenance, diagnostics, and the first calculated output.</p>
+            <p>Start with the financial basis and assumptions below. Missing inputs stay explicit until they can be reviewed.</p>
           </div>
         ) : (
-          <div className="table-wrap">
+          <div className="table-wrap" tabIndex={0} role="region" aria-label="Saved valuation models">
             <table>
               <thead>
                 <tr>
                   <th>Name</th>
-                  <th>Description</th>
                   <th>Type</th>
+                  <th>Last calculation</th>
                   <th>Model readiness</th>
                   <th>Latest estimate</th>
-                  <th>Runs</th>
+                  <th>Saved input sets</th>
                   <th>Actions</th>
                 </tr>
               </thead>
@@ -115,9 +88,10 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
                       <Link href={`/companies/${companyId}/valuation/${model.id}`} style={{ color: "var(--accent)", fontWeight: 600 }}>
                         {model.name}
                       </Link>
+                      {model.description && <details className="valuation-model-description"><summary>Model description</summary><p>{model.description}</p></details>}
                     </td>
-                    <td>{model.description ?? "—"}</td>
                     <td>{model.model_type.replaceAll("_", " ")}</td>
+                    <td>{model.latest_run_at ? model.latest_run_at.slice(0, 10) : "Not calculated"}</td>
                     <td>
                       <strong>{modelReadiness(model).label}</strong>
                       <div style={{ color: "var(--text-muted)", fontSize: "0.8rem", marginTop: "0.2rem" }}>
@@ -126,11 +100,12 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
                     </td>
                     <td>
                       {model.readiness === "calculated" && model.intrinsic_value_per_share != null
-                        ? formatCurrency(model.intrinsic_value_per_share, model.cash_flow_currency || context?.default_currency || "USD")
+                        && Number.isFinite(model.intrinsic_value_per_share) && /^[A-Z]{3}$/.test(model.cash_flow_currency || "")
+                        ? formatCurrency(model.intrinsic_value_per_share, model.cash_flow_currency!)
                         : model.intrinsic_value_per_share != null ? "Not reliable" : "Not available"}
                       <div style={{ color: "var(--text-muted)", fontSize: "0.75rem" }}>Estimate</div>
                     </td>
-                    <td>{model.assumption_set_count} sets</td>
+                    <td>{model.assumption_set_count}</td>
                     <td>
                       <DeleteRecordForm action={deleteModelAction} label="Delete model" recordId={model.id} />
                     </td>
@@ -141,6 +116,28 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
           </div>
         )}
       </Panel>
+
+      <Panel title="Review inputs for a new model">
+        <p>Review sourced financial inputs and explicit assumptions in a draft before saving a model. Existing saved versions retain their original basis.</p>
+        <div className="button-row">
+          <Link prefetch={false} href={`/companies/${companyId}/valuation/draft`} className="primary-button">Create Valuation Model</Link>
+          <Link prefetch={false} href={`/companies/${companyId}/fundamentals`} className="secondary-button">Review financial inputs</Link>
+        </div>
+      </Panel>
+
+      {context ? <Panel title="Market context" collapsible><MarketContextPanel context={context} /></Panel> : (
+        <Panel title="Market context unavailable">
+          <ErrorState message="Market context could not be loaded." />
+          <p>Review market, country and currency before using discount-rate assumptions.</p>
+          <div className="button-row"><a className="secondary-button" href={`/companies/${companyId}/valuation`}>Try again</a>
+            <Link href={`/companies/${companyId}/setup`}>Review company setup</Link></div>
+        </Panel>
+      )}
+      <Panel title="Industry and benchmark settings" collapsible>
+        <p>Optional comparison inputs. Industry benchmarks are priors, not company facts.</p>
+        <IndustryMappingSection company={company} />
+      </Panel>
+      <p><Link prefetch={false} href={`/companies/${companyId}/valuation/peers`}>Manage sourced peer sets</Link></p>
     </>
   );
 }

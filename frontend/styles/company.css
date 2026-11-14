@@ -3,6 +3,42 @@
   min-width: 0;
 }
 
+.company-navigation { margin-bottom: var(--space-6); }
+.company-navigation-row { display: flex; align-items: flex-start; gap: var(--space-3); flex-wrap: wrap; }
+.company-navigation .company-tabs { flex: 1 1 auto; margin: 0; }
+.company-tools-menu { flex: 0 1 auto; min-width: 0; padding: 12px 0; }
+.company-tools-menu summary { cursor: pointer; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.company-tools-menu summary.active { color: var(--color-accent-strong); }
+.company-tools-links { display: grid; gap: var(--space-3); padding-top: var(--space-3); max-width: 220px; }
+.company-subviews { display: flex; flex-wrap: wrap; gap: var(--space-4); padding-top: var(--space-3); font-size: var(--font-size-sm); }
+.company-subviews a[aria-current="page"] { font-weight: var(--font-weight-semibold); text-decoration: underline; text-underline-offset: 4px; }
+.company-summary-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: var(--space-6); margin-bottom: var(--space-6); }
+.company-summary-grid > * { min-width: 0; }
+.company-valuation-summary { display: grid; gap: var(--space-3); }
+.company-valuation-summary p { margin: 0; }
+.company-valuation-estimate { font-size: var(--font-size-xl); font-weight: var(--font-weight-semibold); }
+.company-note-excerpt { line-height: 1.6; overflow-wrap: anywhere; }
+.company-note-links { display: grid; gap: var(--space-3); padding-top: var(--space-3); }
+.company-overview-history { margin: var(--space-6) 0; }
+.company-overview-history .panel { margin: 0; }
+.company-overview-tools { scroll-margin-top: 24px; }
+.company-overview-grid .brief-heading { align-items: flex-start; }
+.financial-exact-value summary { cursor: pointer; white-space: nowrap; }
+.financial-exact-value > span { display: block; padding-top: var(--space-2); white-space: nowrap; font-size: var(--font-size-sm); }
+.valuation-model-description { padding-top: var(--space-2); font-size: var(--font-size-sm); }
+.valuation-model-description summary { cursor: pointer; color: var(--color-text-muted); }
+.valuation-model-description p { min-width: 180px; max-width: 40ch; white-space: normal; }
+
+@media (max-width: 760px) {
+  .company-summary-grid { grid-template-columns: minmax(0, 1fr); }
+  .company-tools-menu { flex-basis: 100%; padding: 0; }
+  .company-tools-links { max-width: none; }
+}
+
+@media (max-width: 960px) {
+  .company-workspace .company-overview-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
 .company-tabs {
   border-bottom: 1px solid var(--color-border-default);
   display: flex;
@@ -142,7 +178,7 @@
   align-items: start;
   display: grid;
   gap: var(--space-6);
-  grid-template-columns: minmax(320px, 0.85fr) minmax(0, 1.35fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   min-width: 0;
 }
 
@@ -161,7 +197,7 @@
   border-bottom: 1px solid var(--color-border-default);
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: minmax(0, 1.4fr) minmax(150px, 0.55fr) minmax(210px, 0.75fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   padding: var(--space-5) var(--space-6);
 }
 
@@ -171,6 +207,7 @@
 
 .company-event-copy {
   min-width: 0;
+  grid-column: 1 / -1;
 }
 
 .company-event-copy > strong {

@@ -1,14 +1,15 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
-import { promoteValuationSetupDraft } from "@/app/actions";
+import { createValuationSetupDraft, promoteValuationSetupDraft } from "@/app/actions";
+import { RetainedActionForm } from "@/components/retained-action-form";
 import { AutofillDraftReview } from "@/components/valuation/autofill-draft-review";
 import {
   type AutofillAssumptionDraft,
   type Company,
   type ValuationSetupDraft,
 } from "@/lib/api";
-import { serverFetchApi, serverPostApi } from "@/lib/server-api";
+import { serverFetchApi } from "@/lib/server-api";
 
 export default async function DraftValuationPage({
   params,
@@ -20,18 +21,16 @@ export default async function DraftValuationPage({
   const { id } = await params;
   const requestedModelType = (await searchParams).model_type;
   const modelType = ["fcff_dcf", "financial_services", "distressed"].includes(requestedModelType || "") ? requestedModelType! : "fcff_dcf";
-  const companyId = Number.parseInt(id, 10);
+  const companyId = Number(id);
+  if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(companyId)) notFound();
   const company = await serverFetchApi<Company>(`/companies/${companyId}`);
 
-  let persistedDraft: ValuationSetupDraft;
+  let persistedDraft: ValuationSetupDraft | null;
   try {
-    const response = await serverPostApi<ValuationSetupDraft>(
-      `/companies/${companyId}/valuation-drafts`,
-      {},
+    persistedDraft = await serverFetchApi<ValuationSetupDraft | null>(
+      `/companies/${companyId}/valuation-drafts/current`,
     );
-    persistedDraft = ((response as { data?: ValuationSetupDraft }).data || response) as ValuationSetupDraft;
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to generate draft assumptions.";
+  } catch {
     return (
       <div className="page-container">
         <header className="page-header">
@@ -39,7 +38,7 @@ export default async function DraftValuationPage({
         </header>
         <section className="panel" style={{ padding: "20px" }}>
           <h2>Draft unavailable</h2>
-          <p style={{ color: "var(--danger)" }}>{message}</p>
+          <p role="alert">Saved drafts could not be loaded. Try again before creating a new draft.</p>
           <Link href={`/companies/${companyId}/valuation`} className="secondary-button">
             Back to Valuation Models
           </Link>
@@ -48,11 +47,25 @@ export default async function DraftValuationPage({
     );
   }
 
+  if (!persistedDraft) return (
+    <div className="page-container">
+      <header className="page-header"><h1>Start a valuation: {company.name}</h1></header>
+      <section className="panel" style={{ padding: "20px" }}>
+        <h2>No active draft</h2>
+        <p>Create a draft from the available financial history and benchmark inputs. You will review the sources, missing inputs and assumptions before saving a model.</p>
+        <RetainedActionForm label="Create valuation draft" action={createValuationSetupDraft.bind(null, id)}>
+          <button type="submit" className="primary-button">Create draft</button>
+        </RetainedActionForm>
+        <Link href={`/companies/${companyId}/valuation`}>Back to saved models</Link>
+      </section>
+    </div>
+  );
+  const draftId = persistedDraft.id;
   async function createModelAction(formData: FormData) {
     "use server";
     const modelId = await promoteValuationSetupDraft(
       formData,
-      persistedDraft.id,
+      draftId,
       companyId.toString(),
     );
     redirect(`/companies/${companyId}/valuation/${modelId}`);
@@ -69,8 +82,8 @@ export default async function DraftValuationPage({
     <div className="page-container">
       <header className="page-header">
         <div>
-          <h1>Draft New Valuation Model: {company.name}</h1>
-          <p className="subtitle">Review source-backed assumptions and resolve placeholders before creating the model.</p>
+          <h1>Review valuation draft: {company.name}</h1>
+          <p className="subtitle">Your saved inputs are unchanged. Use Refresh when you want to check for newer source inputs, then review the assumptions before creating a model.</p>
         </div>
         <Link href={`/companies/${companyId}/valuation`} className="secondary-button">
           Cancel

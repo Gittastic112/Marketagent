@@ -5,8 +5,10 @@ import { notFound } from "next/navigation";
 import { createManualCompanyFilingLink, extractFinancialCandidatesFromFiling, extractXbrlFromCompany } from "@/app/actions";
 import { SelectField, TextAreaField, TextField } from "@/components/form-fields";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
+import { FilingDiscoveryPanel } from "@/components/filing-discovery";
 import { PdfFilingUpload } from "@/components/pdf-filing-upload";
 import type { Company, FilingDiscovery, RawDocument } from "@/lib/api";
+import { ApiError } from "@/lib/api/contract";
 import { serverFetchApi, serverFetchApiResponse } from "@/lib/server-api";
 import { sourceLink } from "@/lib/source-link";
 
@@ -40,15 +42,16 @@ async function loadDiscovery(companyId: number) {
 export default async function CompanyFilingsPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const companyId = Number(params.id);
-  if (!Number.isFinite(companyId)) {
+  if (!/^[1-9]\d*$/.test(params.id) || !Number.isSafeInteger(companyId)) {
     notFound();
   }
 
   let company: Company;
   try {
     company = await serverFetchApi<Company>(`/companies/${companyId}`);
-  } catch {
-    notFound();
+  } catch (error) {
+    if (error instanceof ApiError && error.status === 404) notFound();
+    return <ErrorState message="Company filings are unavailable. Reload to retry." />;
   }
 
   const [discoveryRes, filingsRes] = await Promise.all([
@@ -81,74 +84,8 @@ export default async function CompanyFilingsPage(props: { params: Promise<{ id: 
 
       <div className="dashboard-content-grid">
         <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          <Panel title="Discovery Status">
-            {discovery ? (
-              <>
-                <div className="metric-grid" style={{ marginBottom: "1rem" }}>
-                  <div className="metric">
-                    <div className="metric-label">Provider</div>
-                    <div className="metric-value" style={{ fontSize: "1rem" }}>{discovery.provider_name}</div>
-                  </div>
-                  <div className="metric">
-                    <div className="metric-label">Mode</div>
-                    <div className="metric-value" style={{ fontSize: "1rem" }}>{discovery.mode.replaceAll("_", " ")}</div>
-                  </div>
-                  <div className="metric">
-                    <div className="metric-label">Candidates</div>
-                    <div className="metric-value">{discovery.filings.length}</div>
-                  </div>
-                </div>
-                <p className="muted" style={{ margin: 0 }}>{discovery.next_action}</p>
-                {discovery.official_manual_source && sourceLink(discovery.official_manual_source.url) && (
-                  <div style={{ marginTop: "1rem" }}>
-                    <a href={sourceLink(discovery.official_manual_source.url)!} target="_blank" rel="noopener noreferrer">Official issuer reports</a>
-                    <p className="muted">Source selection checked {discovery.official_manual_source.checked_on}. Matched NSE ISIN {discovery.official_manual_source.security_isin}. Target annual years: {discovery.official_manual_source.target_years.join(", ")}.</p>
-                    <ul>{discovery.official_manual_source.required_documents.map((requirement) => <li key={requirement}>{requirement}</li>)}</ul>
-                    <p className="muted">Manual step: download the issuer report, then upload the original PDF or add a source excerpt with its exact page link below. Keep reporting period, currency, scale and standalone/consolidated basis explicit. Source selection does not approve any financial value.</p>
-                  </div>
-                )}
-              </>
-            ) : (
-              <ErrorState message="Could not discover filing candidates." errors={discoveryRes.errors} />
-            )}
-          </Panel>
-
-          <Panel title="Discovered Candidates">
-            {discovery?.filings.length ? (
-              <div className="table-wrap">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Form</th>
-                      <th>Filing date</th>
-                      <th>Report date</th>
-                      <th>Accession</th>
-                      <th>Source</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {discovery.filings.map((filing) => (
-                      <tr key={filing.accession_number}>
-                        <td>{filing.form_type}</td>
-                        <td>{formatDate(filing.filing_date)}</td>
-                        <td>{formatDate(filing.report_date)}</td>
-                        <td><code>{filing.accession_number}</code></td>
-                        <td>
-                          {sourceLink(filing.filing_url) ? (
-                            <a href={sourceLink(filing.filing_url)!} target="_blank" rel="noopener noreferrer">Open filing</a>
-                          ) : (
-                            <span className="muted">No URL</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            ) : (
-              <EmptyState label={discovery?.manual_required ? "Automated filing discovery is not configured for this market." : "No filing candidates returned."} />
-            )}
-          </Panel>
+          {discovery ? <FilingDiscoveryPanel key={companyId} overview={discovery} /> :
+            <Panel title="Find filings"><ErrorState message="Filing source settings are unavailable." errors={discoveryRes.errors} /></Panel>}
 
           <Panel title="Stored Filings">
             {filingsRes.errors.length > 0 ? (

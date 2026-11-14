@@ -102,6 +102,16 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
 
   return (
     <form action={action} style={{ display: "grid", gap: "20px" }}>
+      <section className="panel" aria-label="Valuation review steps">
+        <h2>Review this model in order</h2>
+        <ol><li><a href={`/companies/${company.id}/fundamentals#dated-inputs`}>Choose a research date and inspect financial evidence</a></li>
+          <li>Review the facts and assumptions below. A date selected in Financials does not refresh this draft.</li>
+          <li>Save an incomplete draft, or create a model after all required reviews pass.</li></ol>
+        {unresolvedFields.length > 0 && <div role="status"><strong>Needs attention for this model</strong>
+          <ul>{unresolvedFields.map(field => <li key={field}><a href={`#${field === "revenue_growth_years_json" ? "revenue-growth" : field}`}>{field.replaceAll("_", " ")}</a>
+            {requiredMissingFields.includes(field) ? " · required value missing" : " · review or correct value"}</li>)}</ul>
+        </div>}
+      </section>
       <ValuationSourceRefreshPanel companyId={company.id} beforeQueue={persistDraft}
         onFinished={loadRefreshedDraft} onBusyChange={setPipelineBusy} />
       <fieldset disabled={pipelineBusy} className="valuation-draft-fields">
@@ -197,9 +207,13 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
             </p>
           ) : (
             <p className="valuation-default-note">
-              One check confirms {reviewFields.size} default assumption{reviewFields.size === 1 ? "" : "s"}.
+              One check confirms {reviewFields.size} default assumption{reviewFields.size === 1 ? "" : "s"}. These remain assumptions, not approved financial facts.
             </p>
           )}
+          <details><summary>Exactly which values will be accepted</summary><ul>
+            {[...reviewFields].map(field => <li key={field}>{field.replaceAll("_", " ")}: {JSON.stringify(values[field]) ?? "Unavailable"}
+              {!reviewFieldValueIsValid(field, values[field], values, modelType) ? " · excluded until corrected" : ""}</li>)}
+          </ul></details>
         </section>
 
         <section className="panel" style={{ padding: "20px" }}>
@@ -290,12 +304,12 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
           <details className="panel valuation-draft-group" key={group.title} hidden={!group.fields.some(field => fieldApplies(field.key))} style={{ display: group.fields.some(field => fieldApplies(field.key)) ? undefined : "none" }}>
             <summary>
               <span>{group.title}</span>
-              <small>{group.fields.filter(field => fieldApplies(field.key)).length} assumptions</small>
+              <small>{group.fields.filter(field => fieldApplies(field.key)).length} inputs · {group.fields.filter(field => unresolvedFields.includes(field.key)).length} need attention</small>
             </summary>
             <div className="form-grid valuation-draft-group-content">
               {group.fields.map((field) => (
                 <div className="field" key={field.key} style={{ alignContent: "start", display: fieldApplies(field.key) ? undefined : "none" }} hidden={!fieldApplies(field.key)}>
-                  <label htmlFor={field.key}>{field.label}</label>
+                  <label htmlFor={field.key}>{field.label} {requiredFields.has(field.key) ? "(required)" : "(optional for this method)"}</label>
                   <input
                     id={field.key}
                     name={field.formName || field.key}

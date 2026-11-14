@@ -137,6 +137,12 @@ class FinancialCandidateOverride(BaseModel):
     expected_updated_at: datetime | None = None
 
 
+class FinancialCandidatePeriodReview(BaseModel):
+    period_end: date
+    source_note: str = Field(min_length=10, max_length=1000)
+    expected_updated_at: datetime
+
+
 class FinancialCandidateVersion(BaseModel):
     id: int = Field(gt=0)
     updated_at: datetime

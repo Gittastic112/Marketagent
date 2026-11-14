@@ -1,5 +1,6 @@
 """Valuation input contracts and validation. No HTTP, ORM, or service dependencies."""
-from datetime import datetime
+from datetime import date, datetime
+from uuid import UUID
 from math import isfinite
 from typing import Any, Literal
 from pydantic import BaseModel, Field, model_validator
@@ -167,11 +168,17 @@ class DcfAssumptionVersionWrite(DcfAssumptionSetWrite):
     # Version commands are not persisted financial inputs or draft-promotion data.
     base_assumption_set_id: int | None = Field(default=None, gt=0)
     base_assumption_set_updated_at: datetime | None = None
+    submission_id: UUID | None = None
+    preview_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+    change_reason: str | None = Field(default=None, min_length=5, max_length=2000)
+    valuation_date: date | None = None
 
     @model_validator(mode="after")
     def validate_version_basis(self):
         if (self.base_assumption_set_id is None) != (self.base_assumption_set_updated_at is None):
             raise ValueError("A versioned save requires both the base assumption ID and timestamp")
+        if self.preview_hash and (not self.submission_id or not (self.change_reason or "").strip() or not self.valuation_date):
+            raise ValueError("A reviewed preview save requires a submission ID, valuation date and reason")
         return self
 
 

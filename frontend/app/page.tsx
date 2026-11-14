@@ -7,18 +7,25 @@ import { AlertsPanel } from "@/components/alerts-panel";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import { formatCurrency } from "@/lib/formatting";
 import type { DashboardOverview } from "@/lib/api";
+import type { ReviewQueue } from "@/lib/api/review-queue";
+import { ResearchReviewQueue } from "@/components/review-queue";
 
 export const dynamic = "force-dynamic";
 
-export default async function HomePage({ searchParams }: { searchParams: Promise<{ portfolio_id?: string }> }) {
-  const { portfolio_id: selectedId } = await searchParams;
+export default async function HomePage({ searchParams }: { searchParams: Promise<{ portfolio_id?: string; review_state?: string }> }) {
+  const { portfolio_id: selectedId, review_state: reviewState } = await searchParams;
   const query = selectedId === undefined ? "" : `?portfolio_id=${encodeURIComponent(selectedId)}`;
-  const overviewRes = await serverFetchApiResponse<DashboardOverview>(`/dashboard/overview${query}`, { timeoutMs: 30_000 });
+  const reviewQuery = new URLSearchParams({ limit: "12", ...(selectedId ? { portfolio_id: selectedId } : {}), ...(reviewState ? { state: reviewState } : {}) });
+  const [overviewRes, reviewRes] = await Promise.all([
+    serverFetchApiResponse<DashboardOverview>(`/dashboard/overview${query}`, { timeoutMs: 30_000 }),
+    serverFetchApiResponse<ReviewQueue>(`/review-queue?${reviewQuery}`),
+  ]);
+  const queue = <ResearchReviewQueue report={reviewRes.data} error={reviewRes.errors[0]?.message} selectedState={reviewState} portfolioId={selectedId ? Number(selectedId) : undefined} />;
   const overview = overviewRes.data;
-  const heading = <PageHeader eyebrow="Research workspace" title="Overview"
+  const heading = <PageHeader eyebrow="Research workspace" title="Today"
     description="What changed, what needs attention, and where to look next."
-    actions={<Link prefetch={false} className="primary-button" href="/daily-brief">Open daily brief <ArrowUpRight size={16} aria-hidden="true" /></Link>} />;
-  if (!overview) return <>{heading}<ErrorState message="The dashboard could not be loaded." errors={overviewRes.errors} /></>;
+    actions={<><Link prefetch={false} className="secondary-button" href="/alerts">Review alerts</Link><Link prefetch={false} className="primary-button" href="/daily-brief">Open daily brief <ArrowUpRight size={16} aria-hidden="true" /></Link></>} />;
+  if (!overview) return <>{heading}{queue}<ErrorState message="The dashboard could not be loaded." errors={overviewRes.errors} /></>;
 
   const { companies, events, alerts, thesis_notes: thesisNotes, daily_brief: dailyBrief,
     default_portfolio: portfolio, default_portfolio_snapshot: snapshot, processing_runs: runs } = overview;
@@ -30,6 +37,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
 
   return <>
     {heading}
+    {queue}
     <DataStateNotices metas={[overviewRes.meta]}
       mockMessage="One or more dashboard panels use Mock Data, not source-backed research." />
     {overview.portfolios.length > 1 && <form action="/" className="dashboard-portfolio-picker">
@@ -70,14 +78,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         <Panel title="Recent source activity" actions={<Link prefetch={false} href="/data-health">Data health →</Link>}>
           {failedRuns.length > 0 && <p className="basis-note">{failedRuns.length} of the last {recentRuns.length} processing runs failed. Open data health for details.</p>}
           {recentRuns.length === 0 ? <EmptyState label="No processing runs yet. Configure sources and run ingestion to collect evidence." /> : <div className="run-list">{recentRuns.map(run => <div className="run-row" key={run.id}>
-            <div><strong>{run.run_type.replaceAll("_", " ")}</strong><span className="cell-secondary">{new Date(run.started_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {run.created_count} records created</span></div>
+            <div><strong>{run.run_type.replaceAll("_", " ")}</strong><span className="cell-secondary">{new Date(run.started_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })} · {run.created_count} record{run.created_count === 1 ? "" : "s"} created</span></div>
             <span className={`badge ${["failed", "error"].includes(run.status) ? "badge-error" : ""}`}>{run.status.replaceAll("_", " ")}</span>
           </div>)}</div>}
         </Panel>
       </div>
       <div className="content-stack">
         <AlertsPanel alerts={alerts} companiesById={companiesById} />
-        <EventsTimeline events={events} />
+        <EventsTimeline events={events} companies={companies} />
         <Panel title="Continue research">
           <div className="research-links">
             <Link prefetch={false} href="/companies">Add Company <ArrowUpRight size={16} aria-hidden="true" /></Link>

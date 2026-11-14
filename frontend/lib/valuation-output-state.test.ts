@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { buildValuationOutputState, invalidDcfAssumptions, outputMoney, outputGap } from "./valuation-output-state.ts";
 
-const saved = () => ({ id: 1, cash_flow_currency: "USD", is_stale: false,
+const saved = () => ({ id: 1, cash_flow_currency: "USD", is_stale: false, diluted_shares: 10,
   outputs: { assumption_set_id: 1, warnings_json: [] as unknown, intrinsic_value_per_share: 120,
     fcfe_intrinsic_value_per_share: 110, ddm_intrinsic_value_per_share: 0,
     current_market_price: 100, upside_downside_pct: 0.2, model_quality_score: 95 } });
@@ -29,6 +29,11 @@ test("invalid saved units gate values", () => {
   const s = { ...saved(), current_operating_margin: 20 };
   assert.deepEqual(invalidDcfAssumptions(s), ["current_operating_margin"]);
   assert.equal(buildValuationOutputState(s).blocked, true);
+});
+test("missing shares block saved results and scenarios rather than assuming one share", () => {
+  const state = buildValuationOutputState({ ...saved(), diluted_shares: null });
+  assert.equal(state.blocked, true);
+  assert.equal(outputMoney(120, state), "Not shown");
 });
 test("nonfinite and nonnumeric supplied assumptions are invalid", () => {
   for (const value of [NaN, Infinity, "0.2", true]) {

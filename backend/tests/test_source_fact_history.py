@@ -66,7 +66,7 @@ def test_source_fact_history_returns_revision_visible_at_cutoff(db):
     assert second.claim_type == "Fact"
 
 
-def test_source_fact_history_preserves_calculation_claim_type(db):
+def test_source_fact_history_preserves_calculation_claim_type(db, client):
     company = Company(ticker="CALC", name="Calculated Fact", market="IN")
     source = Source(name="Audited filing", source_type="filing")
     db.add_all([company, source])
@@ -97,6 +97,13 @@ def test_source_fact_history_preserves_calculation_claim_type(db):
     db.commit()
 
     assert revision.claim_type == "Calculation"
+    response = client.get(f"/companies/{company.id}/source-facts")
+    assert response.status_code == 200
+    returned = response.json()["data"]
+    assert len(returned) == 1
+    assert returned[0]["claim_type"] == "Calculation"
+    assert returned[0]["financial_candidate_id"] == revision.financial_candidate_id
+    assert returned[0]["value"] == 140
 
 
 def test_restatement_supersedes_all_legacy_active_occurrences_without_deleting_history(db):

@@ -37,47 +37,46 @@ type NavGroup = {
 
 const navGroups: NavGroup[] = [
   {
-    label: "Today",
+    label: "Workspace",
     items: [
-      { href: "/", label: "Dashboard", icon: LayoutDashboard },
-      { href: "/daily-brief", label: "Daily Brief", icon: Newspaper },
-      { href: "/alerts", label: "Alerts", icon: Bell },
-    ],
-  },
-  {
-    label: "Portfolio",
-    items: [
-      { href: "/portfolio", label: "Portfolio", icon: BriefcaseBusiness },
-      { href: "/portfolio/regime", label: "Market Regime", icon: Gauge },
-    ],
-  },
-  {
-    label: "Research",
-    items: [
+      { href: "/", label: "Today", icon: LayoutDashboard },
       { href: "/companies", label: "Companies", icon: Building2 },
-      { href: "/research", label: "Research", icon: BookOpen },
-      { href: "/narratives", label: "Narratives", icon: Activity },
+      { href: "/valuation", label: "Valuations", icon: ChartNoAxesCombined },
+      { href: "/portfolio", label: "Portfolio", icon: BriefcaseBusiness },
+    ],
+  },
+  {
+    label: "Library",
+    items: [
+      { href: "/research", label: "Research library", icon: BookOpen },
+      { href: "/research/sessions", label: "Research sessions", icon: BookOpen },
+      { href: "/thesis-notes", label: "Research notes", icon: BookOpen },
+      { href: "/documents", label: "Source documents", icon: FileSearch },
+      { href: "/daily-brief", label: "Saved briefs", icon: Newspaper },
+      { href: "/alerts", label: "Alerts", icon: Bell },
       { href: "/events", label: "Events", icon: TrendingUp },
-      { href: "/intelligence/review", label: "Contradictions", icon: FileWarning },
+      { href: "/narratives", label: "Narratives", icon: Activity },
+      { href: "/intelligence/review", label: "Contradiction review", icon: FileWarning },
+    ],
+  },
+  {
+    label: "Advanced",
+    items: [
+      { href: "/advanced", label: "Advanced tools", icon: Gauge },
+      { href: "/portfolio/regime", label: "Market regime", icon: Gauge },
       { href: "/macro", label: "Macro", icon: ChartNoAxesCombined },
-      { href: "/valuation", label: "Valuation", icon: ChartNoAxesCombined },
+      { href: "/valuation/quick", label: "Quick valuation", icon: ChartNoAxesCombined },
+      { href: "/evaluations", label: "Extraction evaluations", icon: ShieldCheck },
     ],
   },
   {
-    label: "Data",
+    label: "Settings",
     items: [
-      { href: "/documents", label: "Documents", icon: FileSearch },
-      { href: "/data", label: "Ingestion", icon: Database },
-      { href: "/data-health", label: "Data Health", icon: ShieldCheck },
-      { href: "/evaluations", label: "Evaluations", icon: ShieldCheck },
+      { href: "/settings", label: "App settings", icon: Settings },
+      { href: "/data-health", label: "Data health", icon: ShieldCheck },
+      { href: "/data", label: "Source activity", icon: Database },
       { href: "/sources", label: "Sources", icon: Database },
-    ],
-  },
-  {
-    label: "System",
-    items: [
-      { href: "/admin/damodaran", label: "Admin", icon: ShieldCheck },
-      { href: "/settings", label: "Settings", icon: Settings },
+      { href: "/admin/damodaran", label: "Benchmark data", icon: ShieldCheck },
     ],
   },
 ];
@@ -195,7 +194,7 @@ export function Sidebar() {
                   </Link>
                 );
               });
-            return ["Data", "System"].includes(group.label)
+            return group.label !== "Workspace"
               ? <details className="nav-group nav-disclosure" key={group.label} open={group.items.some(item => item.href === activeHref)}><summary className="nav-group-label">{group.label}</summary>{links}</details>
               : <div className="nav-group" key={group.label}><p className="nav-group-label">{group.label}</p>{links}</div>;
           })}
