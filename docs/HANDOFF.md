@@ -2,9 +2,10 @@
 
 ## Latest source boundary
 
-November 11, 2026: main is the primary branch for new work and pull requests.
-CI runs on main pushes, pull requests, and tags. Older branch references in
-archived evidence describe their original verification and remain unchanged.
+November 15, 2026: the returned four-part review covers main at
+`6505082e4e5df600f8f922c6d39256065c58d154`, after PR 17 and the default-branch switch.
+CI runs on main pushes, pull requests, and tags. Archived branch references retain
+their original verification context.
 
 Repository navigation and [Compose ownership](../docker/README.md) are documented.
 Python editor paths live in pyproject.toml; personal editor/agent overrides stay
@@ -56,16 +57,23 @@ patched OpenTelemetry/Soup Sieve, full backend verification and replacement imag
 identity, plus the draft-link and thesis-table accessibility repairs. The local
 data and recovery set remain unchanged; PR 17 owns hosted checks.
 
-Next: connect selected dated evidence to an explicit draft proposal, carry exact
-source revisions into its review/save receipt, and extend preview to initial model
-creation. Design quarterly/YTD/transition identities before enabling their
-promotion. P6 worker reliability and P7 actual-use acceptance remain open.
-The [workspace gaps](limitations.md#workspace-follow-up) own unresolved scope.
-The date on a saved-model preview is a research label, not a reconstruction of
-historical market inputs. Queue coverage is bounded; older source failures can
-remain visible after a later success. Do not count these changes as financial
-completeness, use days or acceptance points. Reuse the active Compose project and
-existing recovery material; do not create routine backups or rollback stacks.
+November 15: ten bounded review repairs are implemented on the local
+codex/review-repairs-20261115 branch. The [repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
+records recovery/migration guards, evidence preservation, ownership filters,
+override origin, PDF duration context, workbook retention and SEC filing dates.
+They are not installed or published. Finish that release boundary, then address
+R2's A1-F6/A1-F7 unit/percentage handling and R3's valuation validation.
+Populated legacy conversion/restore support remains held; the guard rejects it.
+The [review ledger](limitations.md#returned-code-review) owns open status. The
+[intake receipt](../data/reviews/code-review-intake-20261115.json) records all 39
+finding IDs, source references, evidence limits and local probes. Raw reports stay
+unchanged in the ignored Marketagent-code-review-6505082 folder; private chat links
+are excluded from the receipt. The temporary review brief is retired into Git history.
+The intake remains a frozen baseline; the separate repair receipt records changed
+source and isolated checks. Normal data/backups and acceptance points are unchanged.
+After the repair gates, resume explicit dated-source proposals and initial-model
+preview, then wider period support and P6/P7. Reuse the active Compose project and
+essential recovery set; no routine dumps, copied report bundles or rollback stacks.
 
 November 12: [selected financial review](archive/checkpoints/2026/handoff-review-2026-11-12.md)
 adds reviewed three-year histories for NVIDIA, Meta and Alphabet while preserving

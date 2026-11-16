@@ -1,6 +1,6 @@
 # Current State
 
-Source and selected financial review updated November 14, 2026. Recorded results below identify
+Source and review integration updated November 15, 2026. Recorded results below identify
 their exact revisions and environments; they do not certify an existing installation.
 
 ## Product position
@@ -31,6 +31,8 @@ acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
+| November 15, ten review repairs, local source | Recovery target/migration guards; protected shared evidence; owned holdings/private run visibility; retained override history, PDF period context, workbook bytes and SEC fact filing dates. 214 broader backend checks, 40 owner/scheduler/migration checks, 28 final period checks, 15 PostgreSQL checks, 25 recovery-helper tests, 394 frontend tests, 95 final frontend checks, type checking and a locked Next.js 16.4.1 production build pass. Fresh PostgreSQL migration reaches head. In-app browser confirms override/Undo/Accept/promotion and responsive source/workbook screens; its download event timed out, so browser download completion is unverified. Not installed or published; [receipt](../data/reviews/review-repairs-ten-sets-20261115.json). |
+| November 15, returned code-review intake | All 39 primary findings checked against main at `6505082`; review severities retained as 1 critical, 13 high and 25 medium. Five finding IDs locally reproduced with isolated Mock Data or shell argument inspection: A3-1, A1-F9, A2-1, A2-8 and A4-2. The migration metadata forms one connected 73-revision chain; this does not prove populated upgrade safety. No HTTP authentication, PostgreSQL restore, browser or deployed-data incident proof was added at intake. All repairs were open at that checkpoint; the [ledger](limitations.md#returned-code-review) owns current status. [Sanitized evidence receipt](../data/reviews/code-review-intake-20261115.json) |
 | November 14, dependency and full-suite follow-up | OpenTelemetry API 1.45.2 and Soup Sieve 4.1.1 are installed. Hash-verified dependency audit reports no known vulnerabilities; 1,963 backend tests pass, seven PostgreSQL-only cases skipped in this isolated SQLite run. Four rate/industry-mix tests now exercise explicit refresh and verify that reopening preserves existing inputs. Draft return-link sizing and bounded thesis-table scrolling are repaired and checked in the installed browser; 393 frontend tests, type checking and production build pass. Nine browser specs follow current navigation and explicit actions without weakening their assertions. All 110 tables, settings and recovery material remain unchanged; four containers/four essential images remain, with zero build cache. [Receipt](../data/reviews/dependency-security-20261114.json) · [Hosted checks on PR 17](https://github.com/Gittastic112/Marketagent/pull/17) |
 | November 14, ten workspace slices | Dated evidence, annual period/basis snapshots, draft readiness, saved-model preview/version history, bounded Today/holdings queues, thesis selection and library/secondary navigation. 263 backend checks, 27 final focused checks and seven PostgreSQL checks pass, including concurrent duplicate saves; 393 frontend tests, type checking and production builds pass. The [receipt](../data/reviews/research-workspace-ten-sets-20261114.json) records browser verification, installation and preservation. These are bounded slices, not completion of every P2-P5 acceptance case. |
 | November 13, research workspace P2.1/P2.2 | Explicit draft/discovery commands, atomic annual-period guards, separate missing-date confirmation, visible revisions, and corrected SEC filing listing are installed. 145 backend checks plus 25 focused filing checks pass; 383 frontend tests, type checking and production builds pass. Isolated Mock Data browser creation/retry/promotion and signed-in normal-app desktop/mobile checks pass. All 110 normal database tables are unchanged; no new backup or permanent stack. [Receipt](../data/reviews/research-workspace-p2-20261113.json) |
@@ -64,10 +66,10 @@ It changes no financial acceptance gates.
   per year and Meta/Alphabet remain 8/13. The [current ledger](limitations.md#selected-company-review-follow-up)
   separates every remaining source gap from date/methodology choices.
   Original borrowing, lease, cash-flow, share/award and business-revenue components
-  retain precise accounting scope. The evidence UI distinguishes Fact, Calculation
-  and overridden User Assumption, shows the period and review limits, and links the
-  original source. A dated reviewed-history table makes promoted evidence accessible
-  from each company page; the source-history API accepts Calculation as well as Fact.
+  retain precise accounting scope. The evidence UI exposes claim types, periods,
+  review limits and source links. Local repairs preserve new override history and
+  User Assumption labels after promotion; lost historical origin is not fabricated.
+  Source-history contracts now also accept User Assumption; installation is pending.
   Unparsed document detail pages also expose the original-source link. Later filings
   retain their own dates and periods; existing saved valuations remain unchanged.
 - Research lists sort newly ingested documents separately from publication dates.
@@ -105,12 +107,15 @@ effort. M05 remains next. The [completion tracker](roadmaps/completion-tracker.m
 preserves exact gates and explicit deferrals. No new acceptance points are earned
 by reorganizing documentation.
 
-Next work follows the [roadmap](roadmaps/product-roadmap.md) and the
-[research workspace plan](roadmaps/research-workspace-plan.md). P0/P1 and bounded
-P2-P5 slices are delivered. Connecting dated source selections to an initial-model
-proposal remains open, alongside wider period support and worker reliability.
-The [workspace ledger](limitations.md#workspace-follow-up) owns exact limits.
-No acceptance gates advance from these interface changes.
+Next: finish the ten repairs' release boundary, then R2 unit/percentage fixes and
+R3 valuation guards in the [review sequence](roadmaps/product-roadmap.md#review-repair-sequence).
+Preservation, financial validation, ownership and recovery defects precede new features.
+P0/P1 and bounded P2-P5 slices remain delivered, with the newly recorded limitations;
+passing earlier suites did not cover these cases. Saved-version export currently
+uses reconciled responses, so its exact-history wording is not established (A2-7).
+The [workspace plan](roadmaps/research-workspace-plan.md) resumes after the repair gates;
+dated source proposals, initial-model preview and wider period support remain open.
+No acceptance gates advance from this review or its documentation integration.
 Continue supported financial/model reviews within the selected scope. New provider
 coverage requires permitted inputs before expansion.
 Actual-use acceptance remains outstanding. Host/off-device protection and genuine

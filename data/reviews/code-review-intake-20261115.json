@@ -1,0 +1,1474 @@
+{
+  "schema_version": 1,
+  "kind": "returned_code_review_intake",
+  "date": "2026-11-15",
+  "source_commit": "6505082e4e5df600f8f922c6d39256065c58d154",
+  "purpose": "Frozen sanitized assessment baseline, not an implementation-completion or deployed-incident receipt",
+  "current_status_owner": "docs/limitations.md#returned-code-review",
+  "priority_owner": "docs/roadmaps/product-roadmap.md#review-repair-sequence",
+  "policy_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+  "incoming_reports": {
+    "local_only": true,
+    "unchanged": true,
+    "total_bytes": 225116,
+    "files": [
+      {
+        "path": "Marketagent-code-review-6505082/00-consolidated-review.md",
+        "bytes": 75156,
+        "sha256": "32d9af6d953d69c89049b9f78002b6ed547b32a8539708bfc872ef0862a1d83f"
+      },
+      {
+        "path": "Marketagent-code-review-6505082/01-area-1-full-report.md",
+        "bytes": 39169,
+        "sha256": "f228cda8f983a38f42881cc67074e323d25d05c01d463abb8e29549d467bbf2a"
+      },
+      {
+        "path": "Marketagent-code-review-6505082/02-area-2-full-report.md",
+        "bytes": 37448,
+        "sha256": "9bf6eae553e5ea48ea22f5c4c8ce78da9225003cc8117a07010b6d0bc32e19e8"
+      },
+      {
+        "path": "Marketagent-code-review-6505082/03-area-3-full-report.md",
+        "bytes": 37200,
+        "sha256": "8c4b9473f56b494a14795d7b154627d199330cc4be774547c00a3e25914a6456"
+      },
+      {
+        "path": "Marketagent-code-review-6505082/04-area-4-full-report.md",
+        "bytes": 36143,
+        "sha256": "e97d0b606f96d42fc8d9d5b3939e76a6c0fa60a72ecac3049fcfa32960240fdb"
+      }
+    ]
+  },
+  "privacy": {
+    "omitted": [
+      "Private review-chat URLs",
+      "Personal commit email values",
+      "Runtime configuration and secrets",
+      "Private research and portfolio data"
+    ],
+    "originals_excluded_by": "/Marketagent-code-review-6505082/",
+    "public_history_or_account_changes": false,
+    "published_during_intake": false
+  },
+  "counts": {
+    "primary": 39,
+    "reported_severity": {
+      "Critical": 1,
+      "High": 13,
+      "Medium": 25
+    },
+    "primary_owner": {
+      "3": 10,
+      "1": 12,
+      "4": 9,
+      "2": 8
+    },
+    "locally_reproduced_finding_ids": [
+      "A3-1",
+      "A1-F9",
+      "A2-1",
+      "A2-8",
+      "A4-2"
+    ]
+  },
+  "interpretation": [
+    "All primary findings were compared with owning code; this is not a complete independent code audit.",
+    "Incoming executed claims remain attributed to reports. Helper, ORM and hook probes are not full HTTP, PostgreSQL or browser proof.",
+    "A3-7 belongs once to area 4. D1 is intentional existing click-time behavior; D2 and A4-7 overlap known WS07/P6 scope.",
+    "No application repair, live data write, restore, deployment or acceptance-gate advancement occurred.",
+    "The temporary dispatch guide is retired into Git history. Original reports are retained once locally without a duplicate archive."
+  ],
+  "local_verification": {
+    "runtime_image": "market-intelligence-review-backend:20261114-security",
+    "isolation": "Removed one-shot container, network disabled, read-only backend source, no environment files mounted, no application startup command, separate memory SQLite; shell probe only constructs arguments",
+    "setup_failure": "Initial dummy SQLite configuration failed constructing the application pooled engine. Rerun used a dummy PostgreSQL URL for import only, never connected; probes used their separate memory SQLite engine.",
+    "checks": [
+      {
+        "id": "A3-1",
+        "method": "Original delete_event route function; two owners, one shared event, two impacts, no alerts",
+        "observed": {
+          "impacts_before": 2,
+          "impacts_after": 0,
+          "retained_thesis_notes": 2
+        },
+        "limit": "No HTTP authentication or PostgreSQL"
+      },
+      {
+        "id": "A1-F9",
+        "method": "Original ingest_sec_filing_metadata; autoflush=False, distinct accessions with one Mock Data URL, download_text=False",
+        "observed": {
+          "created": 2,
+          "skipped": 0,
+          "rows_with_same_url": 2
+        },
+        "limit": "Single memory SQLite session, no SEC request or concurrency"
+      },
+      {
+        "id": "A2-1",
+        "method": "Original input contract and preview service; complete five-year Mock Data inputs, compare debt=0 with debt=-100",
+        "observed": {
+          "both_previews_ready": true,
+          "equity_value_increase": 100
+        },
+        "limit": "No saved version or HTTP"
+      },
+      {
+        "id": "A2-1-overflow",
+        "method": "Same complete baseline, growth 1e308 in every year",
+        "observed": {
+          "contract_accepted": true,
+          "preview_ready": true,
+          "enterprise_value": null,
+          "equity_value": null,
+          "intrinsic_value_per_share": null,
+          "terminal_value_pct_of_ev": null
+        },
+        "limit": "Finite input magnitudes overflow calculation; no JSON NaN transport exercised"
+      },
+      {
+        "id": "A2-8",
+        "method": "Original WaccCalculationRequest and helpers; tax=25, equity=-100, debt=200, years_to_fade=-1, total_years=-1",
+        "observed": {
+          "accepted": true,
+          "weights": [
+            -1,
+            2
+          ],
+          "fade_path": [
+
+          ]
+        },
+        "limit": "No mounted API or persisted model"
+      },
+      {
+        "id": "A4-2",
+        "method": "Source recovery_common.sh in Bash with dummy project and two colon-separated COMPOSE_FILE paths; inspect array without executing Docker",
+        "observed": {
+          "file_flags": 1,
+          "file_argument": "/mock/project/docker-compose.yml:/mock/project/runtime-images.yml"
+        },
+        "limit": "No backup, restore, file loading or restart"
+      },
+      {
+        "id": "migration-chain",
+        "method": "Parse literal revision/down_revision with Python AST and walk all parents from only head",
+        "observed": {
+          "revisions": 73,
+          "heads": [
+            "u3u3u3u3u3u3"
+          ],
+          "single_connected_chain": true
+        },
+        "limit": "Structure only, not populated migration safety"
+      }
+    ],
+    "not_performed": [
+      "Live database inspection or repair",
+      "PostgreSQL migration/restore rehearsal",
+      "HTTP authentication regression suite",
+      "Browser verification",
+      "External ingestion or AI calls",
+      "New image build or permanent stack",
+      "Full backend or frontend suites"
+    ],
+    "runtime_image_id": "sha256:b816dc38f7ecfea07c55640281629bfa5eb9d2a5fd459f152983aceebe7c2cce"
+  },
+  "additional_items": [
+    {
+      "id": "D1",
+      "classification": "intentional_behavior_change",
+      "repair_package": "R7",
+      "decision": "Acknowledge displayed coverage, preserve old snapshots, test events/failures between capture and click",
+      "source_references": [
+        {
+          "path": "backend/app/services/morning_briefing_engine.py",
+          "line_start": 574,
+          "line_end": 598
+        },
+        {
+          "path": "backend/app/api/routers/daily_brief.py",
+          "line_start": 53,
+          "line_end": 64
+        }
+      ]
+    },
+    {
+      "id": "D2",
+      "classification": "known_WS07_gap",
+      "repair_package": "R7",
+      "decision": "Owned review decision/rationale, retained evidence/history, foreign-owner rejection",
+      "source_references": [
+        {
+          "path": "backend/app/services/review_queue.py",
+          "line_start": 36,
+          "line_end": 40
+        },
+        {
+          "path": "backend/app/api/routers/thesis_notes.py",
+          "line_start": 112,
+          "line_end": 131
+        }
+      ]
+    },
+    {
+      "id": "PRIVACY-1",
+      "classification": "separate_low_privacy_observation",
+      "evidence": "Report observes non-noreply author/committer metadata in pinned commit; values omitted",
+      "decision": "Verify private identity before future publication; account or public-history changes require separate scope",
+      "not_claimed": "No current visibility recheck, credential-exposure finding or full-history secret audit"
+    }
+  ],
+  "policy_questions": [
+    {
+      "id": 1,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 2,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 3,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 4,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 5,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 6,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": "Original file only for optional reattachment"
+    },
+    {
+      "id": 7,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": "Read-only legacy inventory then explicit sharing/ownership choice before reassignment"
+    },
+    {
+      "id": 8,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 9,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": "Explicit safe scope for conversion and populated rehearsal"
+    },
+    {
+      "id": 10,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 11,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": "Separate choice for account or public-history changes"
+    },
+    {
+      "id": 12,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 13,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 14,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    },
+    {
+      "id": 15,
+      "decision_owner": "docs/roadmaps/review-decisions.md#returned-review-design-decisions",
+      "needs_user_input_now": false,
+      "conditional_boundary": null
+    }
+  ],
+  "findings": [
+    {
+      "id": "A3-1",
+      "title": "Shared-event deletion removes another owner’s private thesis evidence",
+      "reported_severity": "Critical",
+      "primary_review_area": 3,
+      "repair_package": "R1",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection_and_bounded_reproduction",
+      "reported_evidence_not_rerun_in_full": "Reported executed original route body and ORM reproduction, using two-owner public fixtures. Full HTTP authentication stack and PostgreSQL were not exercised.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/events.py",
+          "line_start": 90,
+          "line_end": 98
+        },
+        {
+          "path": "backend/app/models/event.py",
+          "line_start": 55,
+          "line_end": 56
+        }
+      ],
+      "proposed_regression_boundary": "Reject event deletion while any thesis impact depends on it, without disclosing private owners or contents. Test the authenticated two-owner route and preserve deletion of unreferenced events.",
+      "report_qualification": "Critical follows the review brief’s unauthorized-data-loss definition. Requires multiple owners for cross-owner impact; no deployed incident was observed."
+    },
+    {
+      "id": "A1-F1",
+      "title": "Mutable or deleted source documents break reviewed-evidence preservation",
+      "reported_severity": "High",
+      "primary_review_area": 1,
+      "repair_package": "R1",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed generic update helper and dated-input projection with doubles. Deletion consequences are source reasoning only.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/raw_documents.py",
+          "line_start": 120,
+          "line_end": 138
+        },
+        {
+          "path": "backend/app/api/helpers.py",
+          "line_start": 70,
+          "line_end": 98
+        },
+        {
+          "path": "backend/app/models/source_fact_revision.py",
+          "line_start": 16,
+          "line_end": 20
+        }
+      ],
+      "proposed_regression_boundary": "Protect source-defining fields and dependent deletes; use version-preserving corrections. Test date/body/company/hash edits and deletion after promotion.",
+      "report_qualification": "Coordinate CRUD policy with area 4. Do not conflate this with A3-1: the dependent records and preservation boundary differ."
+    },
+    {
+      "id": "A1-F2",
+      "title": "Overrides are relabeled as reported facts after promotion",
+      "reported_severity": "High",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed revision writer and frontend classification helper.",
+      "source_references": [
+        {
+          "path": "backend/app/services/financial_extraction.py",
+          "line_start": 269,
+          "line_end": 280
+        },
+        {
+          "path": "backend/app/services/source_fact_history.py",
+          "line_start": 47,
+          "line_end": 63
+        },
+        {
+          "path": "frontend/lib/financial-evidence.ts",
+          "line_start": 25,
+          "line_end": 30
+        }
+      ],
+      "proposed_regression_boundary": "Persist original value/unit and correction origin independently of workflow status. Carry it through revisions, dated reads and downstream inputs; test both promotion paths.",
+      "report_qualification": "A source-backed correction may warrant Fact only with explicit reconciliation evidence. Historical overrides cannot safely be relabeled automatically when their prior state is lost."
+    },
+    {
+      "id": "A1-F3",
+      "title": "Quarterly PDF columns acquire an annual identity before promotion checks",
+      "reported_severity": "High",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed parser and period guard. Complete promotion was traced in source, not executed.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/pdf_filings.py",
+          "line_start": 87,
+          "line_end": 95
+        },
+        {
+          "path": "backend/app/services/pdf_financial_extraction.py",
+          "line_start": 765,
+          "line_end": 811
+        },
+        {
+          "path": "backend/app/services/financial_extraction.py",
+          "line_start": 125,
+          "line_end": 149
+        }
+      ],
+      "proposed_regression_boundary": "Retain source headings and cell-level duration; withhold interim or unresolved periods. Test annual, three-month and nine-month columns through promotion.",
+      "report_qualification": "Explicit candidate review and promotion are still required. A compatible/new annual destination avoids the independent period-end mismatch guard. This does not mean quarterly promotion is intended to be supported."
+    },
+    {
+      "id": "A1-F4",
+      "title": "Screener imports retain cell coordinates but discard their workbook",
+      "reported_severity": "High",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning; upload route was not executed.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/fundamentals.py",
+          "line_start": 206,
+          "line_end": 239
+        },
+        {
+          "path": "backend/app/api/routers/fundamentals.py",
+          "line_start": 279,
+          "line_end": 281
+        },
+        {
+          "path": "backend/app/providers/fundamentals/screener.py",
+          "line_start": 137,
+          "line_end": 152
+        }
+      ],
+      "proposed_regression_boundary": "Retain immutable workbook bytes and authenticated retrieval; test byte/hash equality and referenced cells. Mark missing legacy assets and optionally permit hash-verified reattachment.",
+      "report_qualification": "High is specific to the supported source-review workflow; this is missing core provenance capability, partially described in implementation documentation."
+    },
+    {
+      "id": "A3-2",
+      "title": "Historical transaction edits reverse against current holdings instead of replaying",
+      "reported_severity": "High",
+      "primary_review_area": 3,
+      "repair_package": "R4",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed service reproductions using public portfolio fixtures.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/portfolios.py",
+          "line_start": 389,
+          "line_end": 395
+        },
+        {
+          "path": "backend/app/services/portfolio_holdings.py",
+          "line_start": 99,
+          "line_end": 140
+        }
+      ],
+      "proposed_regression_boundary": "Skip accounting for metadata-only edits. Recalculate financially affected positions and cash chronologically in one transaction; reject insufficient opening history. Test earlier edits and deletions after dependent activity.",
+      "report_qualification": "Simple edits can work, and replay can detect some mismatches after the fact. All reproduced positions were Mock Data."
+    },
+    {
+      "id": "A3-3",
+      "title": "Reporting-currency changes produce complete returns from incompatible units",
+      "reported_severity": "High",
+      "primary_review_area": 3,
+      "repair_package": "R4",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed service reproduction.",
+      "source_references": [
+        {
+          "path": "backend/app/services/portfolio_performance.py",
+          "line_start": 147,
+          "line_end": 209
+        },
+        {
+          "path": "backend/app/services/portfolio_cash_flows.py",
+          "line_start": 66,
+          "line_end": 77
+        }
+      ],
+      "proposed_regression_boundary": "Require a single explicit currency in snapshot arithmetic; pass a target currency into cash-flow normalization. Preserve stored snapshots. Test historical results before/after a preference change.",
+      "report_qualification": "Attribution and benchmark already check boundary currencies, but their common flow normalization still needs attention. No area-2 valuation-engine change is established."
+    },
+    {
+      "id": "A3-4",
+      "title": "Stale benchmark prices are presented as complete, high-confidence comparisons",
+      "reported_severity": "High",
+      "primary_review_area": 3,
+      "repair_package": "R4",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed stale-price reproduction. Stale-FX propagation is source reasoning.",
+      "source_references": [
+        {
+          "path": "backend/app/services/portfolio_benchmark.py",
+          "line_start": 29,
+          "line_end": 53
+        },
+        {
+          "path": "backend/app/api/routers/portfolios.py",
+          "line_start": 721,
+          "line_end": 725
+        }
+      ],
+      "proposed_regression_boundary": "Carry observation dates, price age and FX freshness through result contracts; apply an explicit policy at boundaries and flow dates. Test aged quotes, weekends and stale FX.",
+      "report_qualification": "Price IDs remain available, but do not disclose freshness in the displayed answer. The consumer acceptance rule is area 3; source acquisition remains area 1."
+    },
+    {
+      "id": "A3-5",
+      "title": "Unknown holding weights become zero concentration and zero exposure",
+      "reported_severity": "High",
+      "primary_review_area": 3,
+      "repair_package": "R4",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed service reproduction; displayed consequences were derived from frontend source.",
+      "source_references": [
+        {
+          "path": "backend/app/services/portfolio_analytics.py",
+          "line_start": 174,
+          "line_end": 218
+        },
+        {
+          "path": "frontend/components/portfolio/performance-view.tsx",
+          "line_start": 36,
+          "line_end": 42
+        }
+      ],
+      "proposed_regression_boundary": "Withhold weighted exposure/HHI when any required weight is unavailable and identify missing prices/FX. Test wholly and partly unpriced portfolios; do not renormalize a partial portfolio as complete.",
+      "report_qualification": "Existing missing-data and single-holding warnings do not make the computed zeros correct."
+    },
+    {
+      "id": "A4-1",
+      "title": "Historical upgrades can delete populated research tables",
+      "reported_severity": "High",
+      "primary_review_area": 4,
+      "repair_package": "R0",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Migration bodies and normal single-chain membership were verified by source/AST analysis. No populated database migration was executed.",
+      "source_references": [
+        {
+          "path": "backend/alembic/versions/2167b87f7054_add_real_options_and_event_models.py",
+          "line_start": 116,
+          "line_end": 128
+        },
+        {
+          "path": "backend/alembic/versions/8550649236ca_add_assumption_methodology_engine_models.py",
+          "line_start": 80,
+          "line_end": 120
+        },
+        {
+          "path": "backend/Dockerfile",
+          "line_start": 33,
+          "line_end": 33
+        },
+        {
+          "path": "scripts/restore_local.sh",
+          "line_start": 76,
+          "line_end": 76
+        }
+      ],
+      "proposed_regression_boundary": "Block this pending destructive transition before mutation when affected tables contain data, and provide a separately reviewed preserving conversion. Test a populated predecessor through upgrade and restore. A later head-only migration cannot protect already deleted rows.",
+      "report_qualification": "Conditional on a populated legacy database at the affected predecessor or earlier. Current-head databases do not rerun it, and empty installations have no rows to lose. Whether supported recovery copies meet this condition is unknown. Area 4 owns safety; areas 2/3 supply preservation assertions."
+    },
+    {
+      "id": "A4-2",
+      "title": "Restore omits the installed runtime configuration and can fail after replacement",
+      "reported_severity": "High",
+      "primary_review_area": 4,
+      "repair_package": "R0",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection_and_bounded_reproduction",
+      "reported_evidence_not_rerun_in_full": "Reported executed argument-helper reproduction only; no Docker or restore command ran.",
+      "source_references": [
+        {
+          "path": "scripts/recovery_common.sh",
+          "line_start": 10,
+          "line_end": 13
+        },
+        {
+          "path": "docs/operations.md",
+          "line_start": 11,
+          "line_end": 31
+        },
+        {
+          "path": "scripts/restore_local.sh",
+          "line_start": 64,
+          "line_end": 84
+        }
+      ],
+      "proposed_regression_boundary": "Accept an ordered file list consistently across all commands, retain single-file support, and validate configuration/image selection before stopping writers or replacing data. Extend fake-Docker tests to assert ordered arguments and pre-mutation rejection.",
+      "report_qualification": "Single-file or fully merged-file installations avoid the mismatch. Runtime overrides were not inspected; no particular live volume replacement, failed restoration or data loss is established."
+    },
+    {
+      "id": "A2-1",
+      "title": "Saved-model validation accepts invalid growth paths and negative gross claims",
+      "reported_severity": "High",
+      "primary_review_area": 2,
+      "repair_package": "R3",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection_and_bounded_reproduction",
+      "reported_evidence_not_rerun_in_full": "Reported executed original DCF/schema/preview functions using fixture inputs and ORM/preparation stand-ins. No database save was executed; the shared save validation path was traced.",
+      "source_references": [
+        {
+          "path": "backend/app/schemas/valuation_inputs.py",
+          "line_start": 48,
+          "line_end": 164
+        },
+        {
+          "path": "backend/app/services/dcf.py",
+          "line_start": 37,
+          "line_end": 41
+        },
+        {
+          "path": "backend/app/services/dcf.py",
+          "line_start": 117,
+          "line_end": 129
+        },
+        {
+          "path": "backend/app/services/assumption_versions.py",
+          "line_start": 55,
+          "line_end": 123
+        },
+        {
+          "path": "frontend/components/valuation/proposed-changes.tsx",
+          "line_start": 21,
+          "line_end": 30
+        }
+      ],
+      "proposed_regression_boundary": "Share a strict finite growth/year-key and nonnegative gross-claim contract across preview/save. Require finite appropriate principal outputs for readiness. Test baseline, negative claims, invalid growth and NaN through both routes, with zero controls and no persisted invalid version.",
+      "report_qualification": "Initial draft review and reverse DCF already enforce stronger constraints. Missing growth years defaulting to zero is disclosed and is not this defect. Preserve old versions readably with blockers; corrections should create new versions."
+    },
+    {
+      "id": "A2-2",
+      "title": "The financial-services FCFF blocker never receives company classification",
+      "reported_severity": "High",
+      "primary_review_area": 2,
+      "repair_package": "R3",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed wrapper-versus-direct-diagnostics comparison using valid FCFF fixture inputs and Banking/Financial Services metadata.",
+      "source_references": [
+        {
+          "path": "backend/app/services/dcf.py",
+          "line_start": 142,
+          "line_end": 143
+        },
+        {
+          "path": "backend/app/services/diagnostics_engine.py",
+          "line_start": 40,
+          "line_end": 68
+        },
+        {
+          "path": "backend/app/services/diagnostics_engine.py",
+          "line_start": 273,
+          "line_end": 298
+        },
+        {
+          "path": "backend/app/services/valuation_setup_draft.py",
+          "line_start": 367,
+          "line_end": 423
+        }
+      ],
+      "proposed_regression_boundary": "Pass explicit company classification context consistently through preview, save and creation without hidden arithmetic-engine DB reads. Test a bank blocked in FCFF, its dedicated model, and an ordinary operating-company control.",
+      "report_qualification": "The dedicated financial-services engine works when selected. Classification source accuracy is separate from this wiring defect. Do not automatically recalculate existing models; define their compatibility/review policy."
+    },
+    {
+      "id": "A2-3",
+      "title": "Macro scenarios reverse the interest-rate contribution",
+      "reported_severity": "High",
+      "primary_review_area": 2,
+      "repair_package": "R3",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed scenario arithmetic and inspected bundled original workbook formulas defining duration.",
+      "source_references": [
+        {
+          "path": "backend/app/services/macro_scenario_translation.py",
+          "line_start": 32,
+          "line_end": 74
+        },
+        {
+          "path": "backend/app/services/top_down_macro_sensitivity.py",
+          "line_start": 111,
+          "line_end": 114
+        },
+        {
+          "path": "frontend/components/macro/macro-scenario-form.tsx",
+          "line_start": 28,
+          "line_end": 38
+        },
+        {
+          "path": "backend/tests/test_macro_input_integrity.py",
+          "line_start": 82,
+          "line_end": 88
+        }
+      ],
+      "proposed_regression_boundary": "Represent the coefficient convention explicitly and apply −duration × rate_shock; update formulas and both calculations. Cross-check positive/negative/zero durations and shocks against slopes and retain partial-coverage tests.",
+      "report_qualification": "This is an internal sign inconsistency, not a universal economic claim. The existing test expects the wrong sign. Macro scenarios are supplemental and do not automatically mutate saved DCF inputs."
+    },
+    {
+      "id": "A1-F5",
+      "title": "Dated evidence ignores SEC fact filing dates",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed dated projection with an existing SEC fixture.",
+      "source_references": [
+        {
+          "path": "backend/app/services/sec_xbrl_extractor.py",
+          "line_start": 249,
+          "line_end": 292
+        },
+        {
+          "path": "backend/app/services/dated_financial_inputs.py",
+          "line_start": 37,
+          "line_end": 52
+        }
+      ],
+      "proposed_regression_boundary": "Resolve availability from validated fact-level filing metadata and map supported accounting namespace explicitly. Test cutoffs and restatements without assigning one filing date to the whole snapshot.",
+      "report_qualification": "This withholds usable evidence; it does not establish future-information leakage or complete historical reconstruction."
+    },
+    {
+      "id": "A1-F6",
+      "title": "Accounting identities compare raw values without validating units",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed identity function with fixture variation.",
+      "source_references": [
+        {
+          "path": "backend/app/services/financial_statement_identity.py",
+          "line_start": 109,
+          "line_end": 126
+        },
+        {
+          "path": "frontend/app/companies/[id]/fundamentals/page.tsx",
+          "line_start": 239,
+          "line_end": 301
+        }
+      ],
+      "proposed_regression_boundary": "Require compatible units or convert supported scales before identity evaluation; display the common unit. Test scales, currencies and missing units.",
+      "report_qualification": "Neighboring derivations already check matching units. This does not prove mixed-unit valuation math; area 2 should verify the downstream trust interface."
+    },
+    {
+      "id": "A1-F7",
+      "title": "Screener percentage parsing changes representation at small or negative values",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R2",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed exact workbook parser against fixture variations.",
+      "source_references": [
+        {
+          "path": "backend/app/providers/fundamentals/screener.py",
+          "line_start": 115,
+          "line_end": 130
+        }
+      ],
+      "proposed_regression_boundary": "Convert all finite percentage-point values consistently, or use explicit cell format/import metadata for alternate representations. Test boundaries and preserve raw transformation evidence.",
+      "report_qualification": "Candidate review remains required. Downstream valuation use of these metric codes was not established."
+    },
+    {
+      "id": "A1-F8",
+      "title": "SEC retry treats missing-text documents as completed duplicates",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R5",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed ingestion function with session/fetch doubles.",
+      "source_references": [
+        {
+          "path": "backend/app/services/sec_ingestion.py",
+          "line_start": 130,
+          "line_end": 178
+        },
+        {
+          "path": "backend/app/services/processing_runs.py",
+          "line_start": 165,
+          "line_end": 173
+        }
+      ],
+      "proposed_regression_boundary": "Differentiate complete duplicates from incomplete acquisitions. Add an audited missing-content completion path; test failed-then-successful and metadata-only retries without changing populated sources.",
+      "report_qualification": "This is a broken explicit recovery action, separate from documented missing scheduled retry/backfill."
+    },
+    {
+      "id": "A1-F9",
+      "title": "In-batch SEC duplicates conflict with production autoflush settings",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R5",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection_and_bounded_reproduction",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only; actual ORM/database reproduction was not run.",
+      "source_references": [
+        {
+          "path": "backend/app/db/session.py",
+          "line_start": 17,
+          "line_end": 17
+        },
+        {
+          "path": "backend/app/services/sec_ingestion.py",
+          "line_start": 130,
+          "line_end": 178
+        },
+        {
+          "path": "backend/tests/test_sec_ingestion.py",
+          "line_start": 120,
+          "line_end": 142
+        }
+      ],
+      "proposed_regression_boundary": "Track accepted identities or flush accepted inserts; handle uniqueness races without losing audit context. Run the test with autoflush=False and concurrency under PostgreSQL.",
+      "report_qualification": "Do not report the batch failure as reproduced. Preserve current hashes and existing records."
+    },
+    {
+      "id": "A1-F10",
+      "title": "Targeted PDF extraction cannot continue with additional pages",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R5",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/pdf_filings.py",
+          "line_start": 69,
+          "line_end": 85
+        },
+        {
+          "path": "backend/app/services/pdf_financial_extraction.py",
+          "line_start": 250,
+          "line_end": 264
+        }
+      ],
+      "proposed_regression_boundary": "Provide bounded extraction on an existing immutable asset; deduplicate by parser/page/locator and preserve prior decisions. Test page 1, page 2, repeat page 1 and interrupted retries.",
+      "report_qualification": "This is missing continuation capability, not lost source bytes."
+    },
+    {
+      "id": "A1-F11",
+      "title": "Advertised parser retry cannot repair stale or partial comparisons",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R5",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/raw_documents.py",
+          "line_start": 155,
+          "line_end": 164
+        },
+        {
+          "path": "backend/app/api/routers/raw_documents.py",
+          "line_start": 186,
+          "line_end": 203
+        }
+      ],
+      "proposed_regression_boundary": "Treat valid sections separately from comparison completeness/currentness; rebuild missing/current comparisons idempotently. Test a newly acquired intermediate predecessor and a post-section failure.",
+      "report_qualification": "The normal first pass can work, and stale comparisons are disclosed. Area 3 consumes the comparison but does not own this repair."
+    },
+    {
+      "id": "A1-F12",
+      "title": "Promoted PDF history loses the direct path to the retained original region",
+      "reported_severity": "Medium",
+      "primary_review_area": 1,
+      "repair_package": "R5",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning; no browser execution.",
+      "source_references": [
+        {
+          "path": "frontend/components/financial-source-history.tsx",
+          "line_start": 42,
+          "line_end": 42
+        },
+        {
+          "path": "frontend/lib/financial-evidence.ts",
+          "line_start": 169,
+          "line_end": 178
+        }
+      ],
+      "proposed_regression_boundary": "Reuse the evidence resolver or a canonical revision evidence URL. Test upload without source_url → promote → history → original PDF and exact region.",
+      "report_qualification": "The original remains accessible through the stored-filings list. This is navigation breakage, not evidence deletion."
+    },
+    {
+      "id": "A3-6",
+      "title": "Owned-company alerts depend on foreign holdings and can duplicate",
+      "reported_severity": "Medium",
+      "primary_review_area": 3,
+      "repair_package": "R1",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed original route body using two-owner public fixtures.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/alerts.py",
+          "line_start": 27,
+          "line_end": 33
+        },
+        {
+          "path": "frontend/app/alerts/page.tsx",
+          "line_start": 115,
+          "line_end": 119
+        }
+      ],
+      "proposed_regression_boundary": "Use an EXISTS predicate through caller-owned portfolios with nonzero quantity; test two owners, multiple owned portfolios and unique alert IDs.",
+      "report_qualification": "The initial alert owner filter is correct. No other user’s alert body was returned. Coordinate the foreign-holding inference with area 4."
+    },
+    {
+      "id": "A3-7",
+      "title": "Public failure coverage includes unrelated private-upload activity",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R1",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning; not reproduced through HTTP.",
+      "source_references": [
+        {
+          "path": "backend/app/services/morning_briefing_engine.py",
+          "line_start": 620,
+          "line_end": 629
+        },
+        {
+          "path": "backend/app/services/brief_public_coverage.py",
+          "line_start": 24,
+          "line_end": 37
+        },
+        {
+          "path": "backend/app/api/routers/dashboard.py",
+          "line_start": 110,
+          "line_end": 118
+        }
+      ],
+      "proposed_regression_boundary": "Define one processing-run visibility predicate for counts and rows, then apply it to consumers. Test public plus two-owner private failures.",
+      "report_qualification": "Private document text disclosure was not established here. Intended operator/public metadata visibility needs confirmation. Assigned once to area 4 pending its report."
+    },
+    {
+      "id": "A3-8",
+      "title": "Private-source UI cannot complete the required AI review step",
+      "reported_severity": "Medium",
+      "primary_review_area": 3,
+      "repair_package": "R7",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed backend sequence; missing frontend control established by source inspection.",
+      "source_references": [
+        {
+          "path": "frontend/app/daily-brief/sources/[id]/page.tsx",
+          "line_start": 25,
+          "line_end": 31
+        },
+        {
+          "path": "backend/app/services/brief_private_context.py",
+          "line_start": 64,
+          "line_end": 79
+        }
+      ],
+      "proposed_regression_boundary": "Expose owned AI-output controls on the source page; refresh evidence and require a new receipt if its hash changes. Test the complete pending → approval → receipt → reviewed journey.",
+      "report_qualification": "The backend review gate is working. Saving an analyst comparison is not equivalent to approving the interpretation."
+    },
+    {
+      "id": "A3-9",
+      "title": "Benchmark spread compares incompatible return methods with external flows",
+      "reported_severity": "Medium",
+      "primary_review_area": 3,
+      "repair_package": "R4",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed service reproduction.",
+      "source_references": [
+        {
+          "path": "backend/app/services/portfolio_benchmark.py",
+          "line_start": 189,
+          "line_end": 208
+        }
+      ],
+      "proposed_regression_boundary": "Withhold return/spread with external flows until both use the same method; preserve the valid wealth comparison. Test matching investments, withdrawals and no-flow cases.",
+      "report_qualification": "The current screen displays opportunity cost, not the wrong spread, which limits current UI impact. Keep separate from stale-price acceptance."
+    },
+    {
+      "id": "A3-10",
+      "title": "Thesis source-event link targets a nonexistent route",
+      "reported_severity": "Medium",
+      "primary_review_area": 3,
+      "repair_package": "R7",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source/route-tree reasoning; no browser execution.",
+      "source_references": [
+        {
+          "path": "frontend/app/companies/[id]/thesis/page.tsx",
+          "line_start": 104,
+          "line_end": 104
+        },
+        {
+          "path": "frontend/app/events/page.tsx",
+          "line_start": 16,
+          "line_end": 29
+        }
+      ],
+      "proposed_regression_boundary": "Use the supported exact-event destination and test the selected impact’s navigation.",
+      "report_qualification": "This is separate from general incomplete return-filter preservation."
+    },
+    {
+      "id": "A3-11",
+      "title": "Narrative claims lose their exact AI origin and review association",
+      "reported_severity": "Medium",
+      "primary_review_area": 3,
+      "repair_package": "R7",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only.",
+      "source_references": [
+        {
+          "path": "backend/app/services/narrative_extraction.py",
+          "line_start": 66,
+          "line_end": 121
+        },
+        {
+          "path": "backend/app/models/narrative.py",
+          "line_start": 36,
+          "line_end": 54
+        },
+        {
+          "path": "frontend/app/narratives/page.tsx",
+          "line_start": 116,
+          "line_end": 120
+        }
+      ],
+      "proposed_regression_boundary": "Persist the exact output association and expose authorized origin/review metadata; label legacy origin unknown. Test manual/generated claims and pending/rejected states.",
+      "report_qualification": "The prototype/action labels disclose AI generally, not per-claim approval. Preserve private AI-output access boundaries; approval is not financial-fact approval."
+    },
+    {
+      "id": "A4-3",
+      "title": "Company Overview memo download references missing and obsolete implementation",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R7",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Missing module verified against the pinned tree and model fields inspected. Endpoint/browser action not executed.",
+      "source_references": [
+        {
+          "path": "frontend/app/companies/[id]/page.tsx",
+          "line_start": 221,
+          "line_end": 221
+        },
+        {
+          "path": "backend/app/api/routers/companies.py",
+          "line_start": 462,
+          "line_end": 508
+        },
+        {
+          "path": "backend/app/models/thesis_note.py",
+          "line_start": 10,
+          "line_end": 17
+        },
+        {
+          "path": "backend/app/models/event.py",
+          "line_start": 18,
+          "line_end": 20
+        }
+      ],
+      "proposed_regression_boundary": "Use current models/fields and the authenticated owner’s notes; preserve the download contract. Test populated/empty exports and exclusion of a second owner’s thesis.",
+      "report_qualification": "The endpoint fails before returning notes, so current cross-owner disclosure is not demonstrated. This is the company memo endpoint, not area 2’s saved-valuation memo workflow."
+    },
+    {
+      "id": "A4-4",
+      "title": "Research AI can time out before its valid backend operation completes",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R8",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Complete proxy/service/UI trace; delayed-provider timing scenario was not executed.",
+      "source_references": [
+        {
+          "path": "frontend/app/api/backend/[...path]/route.ts",
+          "line_start": 10,
+          "line_end": 10
+        },
+        {
+          "path": "frontend/app/api/backend/[...path]/route.ts",
+          "line_start": 62,
+          "line_end": 65
+        },
+        {
+          "path": "backend/app/providers/ai_provider.py",
+          "line_start": 49,
+          "line_end": 53
+        },
+        {
+          "path": "backend/app/api/routers/research.py",
+          "line_start": 131,
+          "line_end": 223
+        },
+        {
+          "path": "frontend/app/research/sessions/[id]/page.tsx",
+          "line_start": 77,
+          "line_end": 89
+        }
+      ],
+      "proposed_regression_boundary": "Apply a consistent explicit AI deadline covering generation and persistence while retaining short ordinary-read timeouts. Offer bounded reconciliation or Check result without automatic resend. Test a delayed successful provider and a genuinely uncertain timeout.",
+      "report_qualification": "The UI already detects persisted user messages and warns about uncertain saves; automatic duplication is not established. Area 4 owns transport; area 3 owns the consumer."
+    },
+    {
+      "id": "A4-5",
+      "title": "Sign-in can remain disabled after configuration or transport recovery",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R8",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed stale-configuration Boolean expression. Transport failures and browser behavior were source reasoning.",
+      "source_references": [
+        {
+          "path": "frontend/proxy.ts",
+          "line_start": 5,
+          "line_end": 18
+        },
+        {
+          "path": "frontend/app/auth/signin/page.tsx",
+          "line_start": 26,
+          "line_end": 106
+        }
+      ],
+      "proposed_regression_boundary": "Make successful current readiness authoritative, add readiness retry and distinct failed state, and restore controls after rejected submissions while retaining fields. Test these cases plus ordinary invalid credentials and truly unconfigured readiness.",
+      "report_qualification": "No configuration, account or session format was changed; actual browser failures were not induced."
+    },
+    {
+      "id": "A4-6",
+      "title": "Interrupted authorized AI dispatch can leave no durable execution receipt",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R8",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only; no crash or external transmission was executed.",
+      "source_references": [
+        {
+          "path": "backend/app/services/ai_contract.py",
+          "line_start": 192,
+          "line_end": 238
+        },
+        {
+          "path": "docs/security.md",
+          "line_start": 346,
+          "line_end": 362
+        }
+      ],
+      "proposed_regression_boundary": "Commit a pending execution record before dispatch, retain immediate consent checking and finalize the same record. Preserve unknown/interrupted outcomes and require explicit action before resend. Test that the committed record exists at callback entry and survives failure.",
+      "report_qualification": "Normal success and caught provider errors are audited. Consent remains centrally enforced; this is not an established unauthorized-transmission or consent-bypass defect. A pending receipt must not assert remote delivery."
+    },
+    {
+      "id": "A4-7",
+      "title": "Daily Brief restart leaves abandoned attempts permanently running",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R8",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only; worker/database crash or restart was not executed.",
+      "source_references": [
+        {
+          "path": "backend/app/services/daily_brief_schedule.py",
+          "line_start": 123,
+          "line_end": 163
+        },
+        {
+          "path": "backend/app/services/processing_runs.py",
+          "line_start": 21,
+          "line_end": 43
+        },
+        {
+          "path": "backend/app/services/daily_brief_schedule.py",
+          "line_start": 184,
+          "line_end": 223
+        },
+        {
+          "path": "frontend/components/data-health/processing-health.tsx",
+          "line_start": 136,
+          "line_end": 157
+        }
+      ],
+      "proposed_regression_boundary": "Associate the attempt when claiming the schedule and reconcile owned abandoned expired-lease attempts before replacement. Test one replacement claim, preserved completed briefs and unchanged unrelated runs.",
+      "report_qualification": "Concrete defect within acknowledged worker-reliability work, not wholly new scope. Leases and existing-brief lookup provide protection; duplicate generation and data loss were not established."
+    },
+    {
+      "id": "A4-8",
+      "title": "Sign-in accepts a callback that resolves outside the application",
+      "reported_severity": "Medium",
+      "primary_review_area": 4,
+      "repair_package": "R8",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed exact startsWith predicate and Node URL resolution with a synthetic protocol-relative value. Browser login/navigation not executed.",
+      "source_references": [
+        {
+          "path": "frontend/app/auth/signin/page.tsx",
+          "line_start": 73,
+          "line_end": 75
+        }
+      ],
+      "proposed_regression_boundary": "Resolve against the application origin, require equal origin, and navigate only with local pathname/query/fragment; otherwise fall back to /. Test protocol-relative, external, malformed and backslash-normalized inputs, plus browser containment.",
+      "report_qualification": "Bounded redirect risk. Authentication bypass, credential disclosure and session-cookie transfer were not demonstrated."
+    },
+    {
+      "id": "A2-4",
+      "title": "Edits made during draft or peer saves can be lost or falsely marked saved",
+      "reported_severity": "Medium",
+      "primary_review_area": 2,
+      "repair_package": "R6",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed original draft hook with mocked state/deferred network responses. Peer-flow extension is source reasoning, not a separate browser reproduction.",
+      "source_references": [
+        {
+          "path": "frontend/components/valuation/use-autofill-draft.ts",
+          "line_start": 119,
+          "line_end": 242
+        },
+        {
+          "path": "frontend/components/valuation/autofill-draft-view.tsx",
+          "line_start": 374,
+          "line_end": 380
+        },
+        {
+          "path": "frontend/components/valuation/use-peer-set.ts",
+          "line_start": 93,
+          "line_end": 118
+        },
+        {
+          "path": "frontend/components/valuation/peer-set-view.tsx",
+          "line_start": 194,
+          "line_end": 209
+        }
+      ],
+      "proposed_regression_boundary": "Disable affected edits/actions during mutations or reconcile against a local edit revision. Only mark saved/reset/reload the submitted revision when still current. Delay save, refresh, reset and peer responses and verify retained dirty work on success/failure.",
+      "report_qualification": "Server write versions cannot protect unsent edits. The saved-version workspace already disables its pending fieldset; this defect is in draft/peer flows."
+    },
+    {
+      "id": "A2-5",
+      "title": "Source refresh displays old growth text while reviewing a new path",
+      "reported_severity": "Medium",
+      "primary_review_area": 2,
+      "repair_package": "R6",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed original hook with mocked state/network using existing draft fixtures.",
+      "source_references": [
+        {
+          "path": "frontend/components/valuation/use-autofill-draft.ts",
+          "line_start": 199,
+          "line_end": 213
+        },
+        {
+          "path": "frontend/components/valuation/autofill-draft-view.tsx",
+          "line_start": 281,
+          "line_end": 299
+        },
+        {
+          "path": "frontend/components/valuation/source-refresh-panel.tsx",
+          "line_start": 43,
+          "line_end": 48
+        },
+        {
+          "path": "frontend/app/actions/valuation.ts",
+          "line_start": 129,
+          "line_end": 148
+        }
+      ],
+      "proposed_regression_boundary": "Adopt refreshed values, editor text, provenance and review flags in one state transition or one authoritative editor state. Test displayed/reviewed/promoted agreement and preservation of a genuine manual override.",
+      "report_qualification": "Requires a changed unedited growth path adopted through the refresh callback. Full reload initializes both states together. No historical model rewrite is needed."
+    },
+    {
+      "id": "A2-6",
+      "title": "Valuation acknowledgement can clear a newer unseen stale event",
+      "reported_severity": "Medium",
+      "primary_review_area": 2,
+      "repair_package": "R6",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Source reasoning only; no HTTP/database race was executed.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/valuations.py",
+          "line_start": 394,
+          "line_end": 427
+        },
+        {
+          "path": "frontend/components/valuation/valuation-change-log-panel.tsx",
+          "line_start": 25,
+          "line_end": 60
+        },
+        {
+          "path": "frontend/lib/valuation-output-state.ts",
+          "line_start": 62,
+          "line_end": 79
+        }
+      ],
+      "proposed_regression_boundary": "Atomically compare expected assumption timestamp and stale-event/review token, then retain a receipt of the reviewed basis/outcome. Interleave a newer event and require conflict without clearing it; test legitimate no-change and repeated acknowledgements.",
+      "report_qualification": "Ownership is checked and numerical assumptions are unchanged. An explicitly recorded no-change review can be valid; the missing bound-to-viewed-state guard is the defect. Area 3 supplies event identity, not primary ownership."
+    },
+    {
+      "id": "A2-7",
+      "title": "Exact saved-version export serializes reconciled fields and replacement warnings",
+      "reported_severity": "Medium",
+      "primary_review_area": 2,
+      "repair_package": "R6",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection",
+      "reported_evidence_not_rerun_in_full": "Reported executed historical-output reconciliation; browser download serialization traced from source.",
+      "source_references": [
+        {
+          "path": "frontend/components/valuation/version-history.tsx",
+          "line_start": 12,
+          "line_end": 36
+        },
+        {
+          "path": "backend/app/schemas/valuation.py",
+          "line_start": 45,
+          "line_end": 54
+        },
+        {
+          "path": "backend/app/services/relative_valuation_service.py",
+          "line_start": 85,
+          "line_end": 104
+        },
+        {
+          "path": "backend/app/schemas/valuation_outputs.py",
+          "line_start": 137,
+          "line_end": 142
+        },
+        {
+          "path": "backend/tests/test_implied_pricing_integrity.py",
+          "line_start": 87,
+          "line_end": 109
+        }
+      ],
+      "proposed_regression_boundary": "Export owner-scoped raw historical values/warnings separately from any named current interpretation, or remove the exact-history claim and disclose every transformation. Test persisted payload fidelity, selected version identity and exclusion of unsaved edits.",
+      "report_qualification": "Read-time repair is intentional and useful; no database history loss was demonstrated. This is an audit/export contract defect, separate from the broken company memo."
+    },
+    {
+      "id": "A2-8",
+      "title": "WACC API accepts invalid units, capital amounts and horizons",
+      "reported_severity": "Medium",
+      "primary_review_area": 2,
+      "repair_package": "R3",
+      "intake_disposition": "accepted_for_repair_planning",
+      "local_evidence_level": "source_inspection_and_bounded_reproduction",
+      "reported_evidence_not_rerun_in_full": "Reported executed actual request model/handler with a response-envelope stand-in; not an HTTP test.",
+      "source_references": [
+        {
+          "path": "backend/app/api/routers/wacc.py",
+          "line_start": 22,
+          "line_end": 56
+        },
+        {
+          "path": "backend/app/services/wacc_engine.py",
+          "line_start": 109,
+          "line_end": 159
+        }
+      ],
+      "proposed_regression_boundary": "Validate finite inputs, tax fraction units, nonnegative market capital with positive total, and supported horizon/fade relationships. Return field-specific 422 errors for invalid requests; retain valid signed metrics such as interest coverage and explicit zero debt.",
+      "report_qualification": "No mounted standalone WACC UI automatically applying this response to a saved model was found. Demonstrated exposure is API/integration callers, supporting Medium severity. This contract is separate from the saved-model validation root."
+    }
+  ],
+  "documentation_validation": {
+    "status": "passed",
+    "environment": "Existing market-intelligence-tools:local image, network disabled, read-only source, no environment files loaded",
+    "commands": [
+      {
+        "command": "python3 -m unittest scripts.test_check_docs",
+        "result": "24 passed"
+      },
+      {
+        "command": "python3 scripts/check_docs.py",
+        "result": "95 active Markdown files and 1246 local links passed"
+      },
+      {
+        "command": "git diff --check -- <explicit changed documentation paths and .gitignore>",
+        "result": "passed"
+      }
+    ],
+    "structured_checks": {
+      "primary_findings": 39,
+      "each_assigned_once": true,
+      "source_references_with_existing_paths_and_valid_lines": 107,
+      "reported_severity_counts_match": true,
+      "source_commit_matches_local_head": true,
+      "raw_report_hashes_match": true,
+      "raw_report_folder_ignored": true,
+      "private_chat_links_and_personal_addresses_excluded_from_receipt": true
+    },
+    "scope": "Documentation consistency and frozen review intake only; no software repair certification"
+  },
+  "documentation_integration": {
+    "changed_paths": [
+      ".gitignore",
+      "docs/HANDOFF.md",
+      "docs/README.md",
+      "docs/current-state.md",
+      "docs/limitations.md",
+      "docs/operations.md",
+      "docs/roadmaps/product-roadmap.md",
+      "docs/roadmaps/review-decisions.md",
+      "docs/roadmaps/research-workspace-plan.md",
+      "docs/temporary-chatgpt-review.md",
+      "data/reviews/code-review-intake-20261115.json"
+    ],
+    "cross_cutting_reason": "Eleven paths align the shared handoff, status, single issue ledger, priorities, policy defaults, operational constraints, detailed next-session plan, navigation and sanitized evidence while retiring the temporary dispatch guide and keeping raw reports local.",
+    "retired_guide": {
+      "path": "docs/temporary-chatgpt-review.md",
+      "previous_bytes": 15953,
+      "preserved_in_git_at": "6505082e4e5df600f8f922c6d39256065c58d154"
+    },
+    "corrected_doc_claims": [
+      "Removed the inaccurate internal missing-share fallback claim; per-share output is withheld for invalid shares",
+      "Aligned blanket backup wording with the essential change-triggered retention policy",
+      "Qualified promoted override classification and exact saved-history exports",
+      "Replaced obsolete next-feature instructions with the repair sequence"
+    ],
+    "optional_suggestions_owner": "docs/roadmaps/research-workspace-plan.md#optional-review-suggestions",
+    "optional_suggestions_counted_as_defects": false,
+    "pre_existing_local_edits_preserved": true,
+    "application_files_changed": false,
+    "new_backups": 0,
+    "new_images": 0,
+    "retained_test_containers": 0,
+    "normal_containers_remaining": 4
+  },
+  "temporary_cleanup": {
+    "targets": [
+      {
+        "path": "/tmp/marketagent-review-code.rb",
+        "bytes": 1181
+      },
+      {
+        "path": "/tmp/marketagent-review-probes.py",
+        "bytes": 7012
+      }
+    ],
+    "reclaimed_bytes": 8193,
+    "retained": "Only the sanitized probe outcomes and qualifications; original review files remain unchanged"
+  }
+}

@@ -1,6 +1,6 @@
 # Product roadmap
 
-Priorities for the local research/demo release. Reconciled November 13, 2026.
+Priorities for the local research/demo release. Reconciled November 15, 2026.
 [Current State](../current-state.md) owns evidence, the
 [feature register](feature-register.md) owns capability status, and the
 [limitation ledger](../limitations.md) owns unresolved boundaries.
@@ -10,12 +10,12 @@ M01-M04 retain 40 accepted gate points. M05 is next in the
 engineering-effort percentage. Existing implementation does not supply missing
 financial facts, actual-use days, or final acceptance.
 
-The immediate development programme is the
-[research workspace plan](research-workspace-plan.md), requested November 13.
-It specifies screen layouts, navigation, connected workflows, backend changes,
-package boundaries and acceptance tests. P0 is verified and P1 is installed;
-[Current State](../current-state.md) links the evidence. P2 is next. This roadmap
-owns priority; package status does not replace the acceptance gates.
+The immediate programme is the returned code-review repair sequence below.
+The [research workspace plan](research-workspace-plan.md) still owns target layouts,
+navigation and P0-P7 specifications. P0/P1 and bounded P2-P5 slices are delivered;
+the returned review identifies gaps in those implemented workflows. Repair their
+trust boundaries before expanding features. This changes priority, not architecture
+or historical acceptance. [Current State](../current-state.md) links dated evidence.
 
 ## Planning rule
 
@@ -40,20 +40,58 @@ does not dispatch agents or replace current status.
 
 ## Immediate delivery order
 
-| Order | Outcome | Detailed package |
-|---|---|---|
-| 1 | Confirm current source/runtime and essential retention; preserve existing edits | P0 |
-| 2 | Four main navigation areas, five company sections, useful company summaries, saved models before advanced setup | P1 |
-| 3 | Explicit draft creation and precise financial period guards; dated input presentation | P2 |
-| 4 | Reviewed financial inputs through assumptions, change preview and versioned valuation save | P3 |
-| 5 | Connected Today/source/thesis review, then portfolio research context and secondary tools | P4-P5 |
-| 6 | Bounded refresh reliability, targeted contract/performance work, installed checks and actual research use | P6-P7 |
+### Review repair sequence
 
-The [package specifications](research-workspace-plan.md#delivery-sequence) own
-task-level dependencies and proof. The [workspace gap ledger](../limitations.md#workspace-follow-up)
-owns current unresolved observations. Complete P2 period guards before expanding
-quarterly promotion. UI work can proceed while an original disclosure is unavailable;
-that does not waive financial acceptance or permit a guessed value.
+The [single limitation ledger](../limitations.md#returned-code-review) owns current
+status. The [intake receipt](../../data/reviews/code-review-intake-20261115.json)
+maps all 39 findings to exact source references, evidence qualifications and
+regression requirements. D1 is a deliberate behavior change; D2 and A4-7 overlap
+known WS07/P6 scope. Do not count them as additional undisclosed failures.
+
+Use the existing domain modules and compatibility boundaries. No new architecture,
+provider, agent framework or parallel edit batch is needed. Each row is a repair
+package, split into small commits: regression, narrow repair, relevant UI/contract
+integration, then evidence. A package is not authorization to rewrite historical data.
+
+| Package and owner | Outcome and finding IDs | Exit evidence |
+|---|---|---|
+| R0 · Operations | A4-1/A4-2: preflight the complete ordered Compose target and stop unsafe populated legacy migration paths before any destructive step | Fake-command tests prove file order, spaces and target selection; legacy-revision fixtures prove rejection before migration. A separately authorized PostgreSQL preservation drill is required before claiming upgrade/restore support |
+| R1 · Research and security | A3-1/A1-F1: protect dependent event/source evidence and version source corrections. A3-6/A3-7: scope holdings filters and private run metadata to the owner | Authenticated two-owner tests cover direct/indirect deletes, metadata visibility, unique nonzero owned holdings and safe unreferenced deletion; unrelated records and source history remain unchanged |
+| R2 · Financial evidence | A1-F2 through A1-F7: retain override origin and original values, exact periods, workbook bytes, filed dates, units and percentage-point semantics | Override/undo/accept/promotion round trips retain provenance; quarter/YTD columns remain held; hash-verified workbook reattachment and unit/percent boundary fixtures pass; existing facts are not silently reclassified |
+| R3 · Valuation engines | A2-1/A2-2/A2-3/A2-8: validate complete growth paths, finite outputs and nonnegative claims; wire financial-sector guards; reconcile duration signs and WACC units/horizons | Malformed/overflow inputs cannot be preview-ready or saved; all model entry points enforce classification; macro sign tests follow one declared coefficient convention; valid explicit zeros survive |
+| R4 · Portfolio calculations | A3-2/A3-3/A3-4/A3-5/A3-9: replay corrections chronologically, preserve snapshot currency, enforce quote/FX freshness, withhold unknown weights, align return methods | Buy/split/bonus correction and metadata-only edit cases pass; mixed-currency and stale/unknown-price cases cannot look complete; equal economic wealth reconciles under external cash flows without rewriting old snapshots |
+| R5 · Source acquisition | A1-F8 through A1-F12: retry missing filing text, deduplicate within batches, continue stored PDF pages, backfill section comparisons, route history to the correct asset | Repeated attempts are idempotent under autoflush=False and PostgreSQL concurrency; partial failures retain progress; new PDF ranges preserve bytes and candidates; browser links reach the exact source/page |
+| R6 · Valuation workflow | A2-4 through A2-7: preserve edits during saves, synchronize visible growth with reviewed values, acknowledge exact stale versions, export raw saved history separately from current interpretation | Delayed-response browser tests preserve unsent edits; refreshed growth matches submitted values; concurrent newer events cannot be cleared; exports match stored values/warnings while read reconciliation remains available |
+| R7 · Research workflow | A3-8/A3-10/A3-11/A4-3 plus D1/D2: complete private-source approval, fix thesis links and memo contracts, retain AI origin, record exact brief/thesis review decisions | End-to-end owner-scoped approval/receipt flow, real event links and memo generation; new events between capture/click remain pending; no-change/blocked thesis decisions retain evidence and reject foreign owners |
+| R8 · Auth and workers | A4-4 through A4-8: align research timeouts, recover sign-in states, record AI attempts before calls, reconcile expired leases and constrain callbacks to the same origin | Browser recovery and callback tests; delayed/interrupted provider doubles plus worker restart tests show pending/unknown/failed outcomes, no silent duplicate sends, and one terminal run outcome |
+
+Ten local sets implement R0's guards, R1's boundaries and R2's A1-F2 through A1-F5;
+see the [repair receipt](../../data/reviews/review-repairs-ten-sets-20261115.json).
+Finish release validation/publication/installation, then implement A1-F6/A1-F7
+and R3. R0 still blocks populated legacy conversion or restore. R2 relies on R1's
+immutable evidence boundary; R3 establishes validation used by R6; R4 follows the
+currency/freshness decisions; R5 follows R2's asset/period identity. R7 depends on R1
+ownership and durable evidence. R8 must respect the same private-run policy.
+Work sequentially unless an explicit parallel batch assigns exclusive files.
+
+Before each package, recheck its pinned claim against the current code, inspect
+callers/contracts and preserve local edits. Write behavior regressions first where
+practical. Use the [runbook](../execution-runbook.md) for the selected environment.
+SQLite/helper checks do not prove HTTP authorization, PostgreSQL locking/migrations
+or browser behavior; run those layers when the package changes them. Do not deploy
+a schema change until its data-preservation and recovery prerequisites pass.
+
+Closure requires an exact repair commit, failed-before/passed-after evidence,
+representative UI states where affected, and a ledger update with remaining limits.
+Keep the intake receipt immutable as the review baseline; store only essential new
+proof. No routine backup, second full report copy, persistent test stack or automatic
+pruning is part of these repairs. Policy defaults and conditional owner decisions
+are in [review decisions](review-decisions.md#returned-review-design-decisions).
+
+After these gates, resume the [workspace specifications](research-workspace-plan.md#delivery-sequence):
+selected dated evidence into an explicit draft proposal and initial-model preview,
+then wider period support, P6 reliability and P7 actual use. Source gaps can remain
+honestly unavailable; they do not justify guessed inputs or financial acceptance.
 
 ## Boundaries to preserve while delivering
 

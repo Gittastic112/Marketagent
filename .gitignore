@@ -49,6 +49,7 @@ test-results/
 
 # Local source-review renders and copied tool packages are not publication inputs.
 # Keep originals and review receipts; ignoring a path does not delete its files.
+/Marketagent-code-review-6505082/
 /tmp/
 /skills/excel-live-control/
 /skills/pdf/
