@@ -23,13 +23,14 @@ from app.models import (
     Source,
 )
 from app.services.pdf_jobs import PdfJobError, run_pdf_job
+from app.services.financial_period_context import pdf_period_context
 
 
 MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v6"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v7"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -673,6 +674,8 @@ def _statement_line_candidates(
     years = _statement_years(page_text)
     if not years:
         return []
+    header_text = _period_header_text(page_text, section, len(years))
+    period_context = pdf_period_context(header_text, header_text, period_type)
     lines = _stitch_statement_lines(page_text.splitlines(), len(years))
     candidates: list[PdfTableCandidate] = []
     attribution = "profit"
@@ -782,16 +785,17 @@ def _statement_line_candidates(
                     value=value,
                     unit=unit,
                     fiscal_year=fiscal_year,
-                    period_type=period_type,
+                    period_type=period_context["period_type"],
                     source_text=original_line.strip(),
                     source_page=page_number,
                     source_section=section,
                     source_table_name=section or "PDF statement rows",
                     source_row_label=source_row_label,
-                    source_column_label=f"FY{fiscal_year}",
+                    source_column_label=header_text[-255:],
                     source_cell_reference=cell_reference,
                     source_locator_json={
                         "type": "pdf_text_row",
+                        "period_context": period_context,
                         "page": page_number,
                         "line": line_number,
                         "value_index": value_index,
@@ -814,6 +818,16 @@ def _statement_line_candidates(
                 )
             )
     return candidates
+
+
+def _period_header_text(page_text: str, section: str | None, year_count: int) -> str:
+    header_lines = []
+    for line in page_text.splitlines()[:80]:
+        values = _statement_row_values(line, year_count, page_text) if year_count else None
+        if values and _metric_for_statement_line(values[0], section):
+            break
+        header_lines.append(line)
+    return "\n".join(header_lines).strip()
 
 
 def _statement_row_values(line: str, count: int, page_text: str) -> tuple[str, list[str]] | None:
@@ -1168,6 +1182,9 @@ def _table_candidates(
     if header_index is None:
         return []
     headers = matrix[header_index]
+    header_text = "\n".join(filter(None, [
+        _period_header_text(page_text, section, len(_statement_years(page_text))),
+        "\n".join(" | ".join(cell or "" for cell in row) for row in matrix[:header_index + 1])]))
     table_name = section or f"PDF table {table_number}"
     candidates: list[PdfTableCandidate] = []
 
@@ -1192,6 +1209,9 @@ def _table_candidates(
             value = _number(value_text)
             if fiscal_year is None or value is None:
                 continue
+            column_header = "\n".join(str(header[column_index] or "") for header in matrix[:header_index + 1]
+                                      if column_index < len(header))
+            period_context = pdf_period_context(column_header, header_text, period_type, explicit_column=True)
 
             unit = _candidate_unit(metric_code, currency, scale, source_label=source_label, page_text=page_text)
             item_warnings = _candidate_warnings(metric_code, unit)
@@ -1210,7 +1230,7 @@ def _table_candidates(
                     value=value,
                     unit=unit,
                     fiscal_year=fiscal_year,
-                    period_type=period_type,
+                    period_type=period_context["period_type"],
                     source_text=f"{source_label} | {column_label} | {value_text}",
                     source_page=page_number,
                     source_section=section,
@@ -1220,6 +1240,7 @@ def _table_candidates(
                     source_cell_reference=cell_reference,
                     source_locator_json={
                         "type": "pdf_table_cell",
+                        "period_context": period_context,
                         "page": page_number,
                         "table": table_number,
                         "row": row_index + 1,

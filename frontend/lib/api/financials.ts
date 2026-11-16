@@ -24,7 +24,7 @@ export type SourceFactRevision = {
   observed_at: string;
   superseded_at: string | null;
   revision_number: number;
-  claim_type: "Fact" | "Calculation";
+  claim_type: "Fact" | "Calculation" | "User Assumption";
   created_at: string;
 };
 

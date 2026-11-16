@@ -8245,7 +8245,8 @@
           "claim_type": {
             "enum": [
               "Fact",
-              "Calculation"
+              "Calculation",
+              "User Assumption"
             ],
             "title": "Claim Type",
             "type": "string"

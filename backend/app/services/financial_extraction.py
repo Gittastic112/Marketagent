@@ -5,6 +5,7 @@ from datetime import UTC, date, datetime
 from fastapi import HTTPException
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+from app.services.financial_period_context import pdf_annual_scope_supported
 
 from app.api.schemas import FinancialExtractionResultRead
 from app.models import FinancialExtractionCandidate, RawDocument, FinancialMetric, FinancialStatementPeriod, Company
@@ -125,6 +126,8 @@ def _reviewed_reporting_currency(candidates: list[FinancialExtractionCandidate])
 def _reviewed_period_end(candidates: list[FinancialExtractionCandidate]) -> date | None:
     period_ends: set[date] = set()
     for candidate in candidates:
+        if not pdf_annual_scope_supported(candidate):
+            raise HTTPException(status_code=422, detail="The PDF column does not establish an annual period. Re-extract or reconcile its original duration evidence; an end-date confirmation alone is insufficient. No financial values were written.")
         locator = candidate.source_locator_json or {}
         period_review = locator.get("period_review")
         raw_end = locator.get("end") or (period_review.get("end") if isinstance(period_review, dict) else None)
@@ -232,6 +235,8 @@ def review_candidate_period(db: Session, candidate_id: int, period_end: date, so
     candidate = _review_candidate(db, candidate_id, expected_updated_at)
     if candidate.period_type != "annual" or candidate.fiscal_year is None:
         raise HTTPException(status_code=422, detail="This confirmation supports annual candidates with a known fiscal year only.")
+    if not pdf_annual_scope_supported(candidate):
+        raise HTTPException(status_code=422, detail="The PDF column does not establish an annual period. Confirming an end date cannot change quarterly, YTD or unknown duration into annual evidence.")
     if not source_note.strip() or len(source_note.strip()) < 10:
         raise HTTPException(status_code=422, detail="Explain the exact source location supporting this period-end date.")
     locator = dict(candidate.source_locator_json or {})
@@ -252,6 +257,20 @@ def review_candidate_period(db: Session, candidate_id: int, period_end: date, so
     return candidate
 
 
+def _override_origin(candidate: FinancialExtractionCandidate) -> dict:
+    locator = dict(candidate.source_locator_json or {})
+    prior = locator.get("value_override")
+    if not isinstance(prior, dict):
+        legacy = candidate.review_status == "overridden"
+        prior = {"original_value": None if legacy else candidate.value,
+                 "original_unit": None if legacy else candidate.unit,
+                 "original_claim_type": None if legacy else locator.get("claim_type", "Source Summary"),
+                 "original_recorded": not legacy, "history": []}
+    locator["value_override"] = dict(prior)
+    locator["claim_type"] = "User Assumption"
+    return locator
+
+
 def update_candidate_review_status(db: Session, candidate_id: int, status: str,
                                   expected_updated_at: datetime | None = None) -> FinancialExtractionCandidate:
     candidate = _review_candidate(db, candidate_id, expected_updated_at)
@@ -260,6 +279,8 @@ def update_candidate_review_status(db: Session, candidate_id: int, status: str,
             status_code=422,
             detail="A reporting unit is required before a financial candidate can be reviewed",
         )
+    if candidate.review_status == "overridden":
+        candidate.source_locator_json = _override_origin(candidate)
     candidate.review_status = status
     db.commit()
     db.refresh(candidate)
@@ -267,7 +288,7 @@ def update_candidate_review_status(db: Session, candidate_id: int, status: str,
 
 
 def override_candidate_value(db: Session, candidate_id: int, value: float, unit: str | None,
-                             expected_updated_at: datetime | None = None) -> FinancialExtractionCandidate:
+                             expected_updated_at: datetime | None = None, *, user_id: str | None = None) -> FinancialExtractionCandidate:
     candidate = _review_candidate(db, candidate_id, expected_updated_at)
     effective_unit = unit.strip() if unit and unit.strip() else candidate.unit
     if not effective_unit:
@@ -275,6 +296,15 @@ def override_candidate_value(db: Session, candidate_id: int, value: float, unit:
             status_code=422,
             detail="A reporting unit is required before a financial candidate can be overridden",
         )
+    locator = _override_origin(candidate)
+    provenance = locator["value_override"]
+    history = provenance.get("history")
+    provenance["history"] = [*(history if isinstance(history, list) else []), {
+        "before_value": candidate.value, "before_unit": candidate.unit,
+        "after_value": value, "after_unit": effective_unit,
+        "at": datetime.now(UTC).isoformat(), "user_id": user_id,
+    }]
+    candidate.source_locator_json = locator
     candidate.value = value
     candidate.unit = effective_unit
     candidate.review_status = "overridden"
@@ -397,6 +427,8 @@ def promote_reviewed_candidates(db: Session, company_id: int, expected_candidate
                 db.add(metric)
                 metrics_by_code[candidate.metric_code] = metric
 
+            if candidate.review_status == "overridden":
+                candidate.source_locator_json = _override_origin(candidate)
             candidate.source_locator_json = {**(candidate.source_locator_json or {}),
                 "promoted_period_basis": financial_period_basis(candidate, effective_at=period.report_date)}
             record_financial_fact_revision(

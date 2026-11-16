@@ -1,6 +1,6 @@
 """Bounded projection of preserved revisions, with publication and recording kept separate."""
 from collections import defaultdict
-from datetime import date
+from datetime import UTC, date, datetime, time
 from types import SimpleNamespace
 
 from sqlalchemy import select
@@ -13,12 +13,35 @@ from app.services.financial_review_plan import LABELS, TRACKS, _scaled
 MAX_REVISIONS = 2000
 
 
+def _source_publication(record):
+    locator = record.source_locator_json or {}
+    if record.document_type != "xbrl_facts":
+        return record.published_at
+    # A companyfacts snapshot contains different filings. Its retrieval or
+    # document timestamp cannot stand in for a particular fact's availability.
+    if (locator.get("type") != "xbrl_fact" or record.source_provider != "SEC EDGAR"
+            or not record.extraction_method.startswith("sec_xbrl_")
+            or not record.payload_sha256 or locator.get("payload_sha256") != record.payload_sha256):
+        return None
+    filed = locator.get("filed")
+    try:
+        parsed = date.fromisoformat(filed) if isinstance(filed, str) and len(filed) == 10 else None
+    except ValueError:
+        return None
+    if parsed is None or parsed.isoformat() != filed or parsed < record.effective_at:
+        return None
+    return datetime.combine(parsed, time.min, tzinfo=UTC)
+
+
 def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date,
                            knowledge="available_by_date", track="operating"):
     records = db.execute(select(Revision.id, Revision.fact_key, Revision.value, Revision.unit,
         Revision.effective_at, Revision.observed_at, Revision.revision_number, Revision.claim_type,
         Candidate.id.label("candidate_id"), Candidate.fiscal_year, Candidate.period_type,
-        Candidate.source_locator_json, Candidate.source_text, RawDocument.id.label("document_id"),
+        Candidate.source_locator_json, Candidate.source_text, Candidate.extraction_method,
+        RawDocument.id.label("document_id"), RawDocument.document_type,
+        RawDocument.raw_payload_json["provider"].as_string().label("source_provider"),
+        RawDocument.raw_payload_json["payload_sha256"].as_string().label("payload_sha256"),
         RawDocument.published_at, RawDocument.ingested_at)
         .join(Candidate, Candidate.id == Revision.financial_candidate_id)
         .join(RawDocument, RawDocument.id == Revision.raw_document_id)
@@ -28,7 +51,9 @@ def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date
         .limit(MAX_REVISIONS + 1)).all()
     truncated = len(records) > MAX_REVISIONS
     grouped = defaultdict(list)
-    for record in records[:MAX_REVISIONS]:
+    for source_record in records[:MAX_REVISIONS]:
+        record = SimpleNamespace(**source_record._mapping)
+        record.published_at = _source_publication(record)
         grouped[record.fact_key].append(record)
     rows = []
     for metric in dict.fromkeys([*TRACKS[track], *sorted(grouped)]):
@@ -42,7 +67,7 @@ def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date
         for r in current:
             availability = "publication_unknown" if r.published_at is None else (
                 "available_by_date" if r.published_at.date() <= valuation_date else "published_later")
-            basis = financial_period_basis(SimpleNamespace(**r._mapping), effective_at=r.effective_at)
+            basis = financial_period_basis(r, effective_at=r.effective_at)
             sources.append(dict(revision_id=r.id, revision_number=r.revision_number, candidate_id=r.candidate_id,
                 document_id=r.document_id, href=f"/documents/{r.document_id}/sections?candidate_id={r.candidate_id}",
                 value=r.value, unit=r.unit, claim_type=r.claim_type, published_at=r.published_at,
@@ -89,6 +114,7 @@ def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date
         rows=rows, truncated=truncated, limitations=[
             "Read-only evidence checklist, not complete model inputs or approval. No saved model is changed.",
             "Publication dates are recorded source metadata, not certified historical source vintages. Later retrieval is shown separately.",
+            "SEC companyfacts evidence uses each original fact's filed date, not the snapshot retrieval date. Missing or unverified filing dates stay unknown.",
             "Each input retains its own reporting period. Annual, interim and point-in-time scopes are not combined.",
             *( ["Revision scan limit reached; coverage and selection may be partial."] if truncated else []),
         ])

@@ -72,3 +72,44 @@ def test_later_knowledge_is_explicit_and_date_validation_is_strict(client, db):
     assert client.get(route).json()["data"]["rows"][0]["status"] == "unavailable_by_date"
     assert client.get(route + "&knowledge=latest_recorded").json()["data"]["rows"][0]["original_value"] == 110
     assert client.get(route + "&knowledge=guess").status_code == 422
+
+
+def test_sec_fact_filing_dates_are_independent_of_snapshot_publication(client, db):
+    company, source = setup(db)
+    revisions = []
+    for suffix, filed, value in [("original", "2026-02-01", 100), ("cutoff", "2026-11-12", 105),
+                                  ("later", "2026-11-13", 110), ("unknown", "invalid", 120)]:
+        revisions.append(fact(db, company, source, value, None, suffix,
+            type="xbrl_fact", filed=filed, accession=f"mock-{suffix}", payload_sha256="a" * 64))
+    document = db.get(RawDocument, revisions[0].raw_document_id)
+    document.document_type = "xbrl_facts"
+    document.raw_payload_json = {"provider": "SEC EDGAR", "payload_sha256": "a" * 64}
+    document.published_at = datetime(2026, 11, 15, tzinfo=UTC)  # Snapshot metadata is not the fact filing date.
+    for revision in revisions:
+        revision.raw_document_id = document.id
+        candidate = db.get(FinancialExtractionCandidate, revision.financial_candidate_id)
+        candidate.raw_document_id = document.id
+        candidate.extraction_method = "sec_xbrl_v3"
+    db.commit()
+    before = [(r.id, r.observed_at, r.value) for r in revisions]
+    response = client.get(f"/companies/{company.id}/dated-inputs?valuation_date=2026-11-12")
+    assert response.status_code == 200
+    row = response.json()["data"]["rows"][0]
+    assert row["selected_revision_id"] == revisions[1].id and row["original_value"] == 105
+    sources = {s["revision_id"]: s for s in row["sources"]}
+    assert [sources[r.id]["availability"] for r in revisions] == [
+        "available_by_date", "available_by_date", "published_later", "publication_unknown"]
+    assert sources[revisions[1].id]["published_at"].startswith("2026-11-12")
+    assert sources[revisions[1].id]["locator"]["accession"] == "mock-cutoff"
+    db.expire_all()
+    assert [(r.id, r.observed_at, r.value) for r in revisions] == before
+    assert document.published_at.date() == date(2026, 11, 15)
+
+
+def test_unverified_sec_locator_does_not_create_a_publication_date(client, db):
+    company, source = setup(db)
+    revision = fact(db, company, source, 100, None, "unverified", type="xbrl_fact", filed="2026-01-01")
+    db.commit()
+    row = client.get(f"/companies/{company.id}/dated-inputs?valuation_date=2026-11-12").json()["data"]["rows"][0]
+    assert row["status"] == "unavailable_by_date"
+    assert row["sources"][0]["published_at"] is None

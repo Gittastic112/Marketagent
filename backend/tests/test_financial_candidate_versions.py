@@ -24,6 +24,37 @@ def candidate(db):
     return row
 
 
+def test_override_origin_survives_undo_accept_and_promotion(client, db, candidate):
+    for value in (125, 150):
+        response = client.patch(f"/api/financial-line-items/{candidate.id}/override",
+            json={"value": value, "unit": "USD million"})
+        assert response.status_code == 200
+    for status in ("needs_review", "reviewed"):
+        assert client.patch(f"/api/financial-line-items/{candidate.id}/review",
+            json={"review_status": status}).status_code == 200
+    result = client.post(f"/api/companies/{candidate.company_id}/financial-statements/mark-reviewed")
+    assert result.status_code == 200, result.text
+    db.refresh(candidate)
+    provenance = candidate.source_locator_json["value_override"]
+    assert provenance["original_value"] == 100 and provenance["original_unit"] == "USD million"
+    assert [(edit["before_value"], edit["after_value"]) for edit in provenance["history"]] == [(100, 125), (125, 150)]
+    assert all(edit["user_id"] == "admin_user_id_fallback" and edit["at"] for edit in provenance["history"])
+    assert candidate.source_locator_json["claim_type"] == "User Assumption"
+    revision = db.scalar(select(SourceFactRevision).where(SourceFactRevision.financial_candidate_id == candidate.id))
+    assert revision.claim_type == "User Assumption" and revision.value == 150
+
+
+def test_legacy_override_marks_original_unknown_when_accepted(client, db, candidate):
+    candidate.review_status = "overridden"
+    candidate.value = 999
+    db.commit()
+    result = client.patch(f"/api/financial-line-items/{candidate.id}/review", json={"review_status": "reviewed"})
+    assert result.status_code == 200
+    provenance = result.json()["data"]["source_locator_json"]
+    assert provenance["claim_type"] == "User Assumption"
+    assert provenance["value_override"]["original_value"] is None
+
+
 @pytest.mark.parametrize("operation", ["review", "override"])
 def test_stale_review_and_override_cannot_replace_changed_evidence(client, db, candidate, operation):
     previous = candidate.updated_at.isoformat()

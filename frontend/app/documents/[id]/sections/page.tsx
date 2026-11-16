@@ -1,12 +1,14 @@
 import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerParseFilingSections } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
-import type { EventEvidenceReference, FilingSection, FinancialExtractionCandidate, RawDocument } from "@/lib/api";
+import type { DocumentAsset, EventEvidenceReference, FilingSection, FinancialExtractionCandidate, RawDocument } from "@/lib/api";
+import { ApiError } from "@/lib/api/contract";
 import {
   eventEvidenceGeometry,
   eventEvidenceHref,
   financialEvidenceClaimType,
   financialEvidenceLocatorLabel,
+  financialOverrideNotice,
 } from "@/lib/financial-evidence";
 import { parseFilingDiff } from "@/lib/filing-diff";
 import { serverFetchApiResponse } from "@/lib/server-api";
@@ -65,6 +67,17 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
     const sourceText = reviewNotes.length && originalText.endsWith(repeatedScope)
       ? originalText.slice(0, -repeatedScope.length) : originalText;
     const originalUrl = document?.url && /^https?:\/\//i.test(document.url) ? document.url : null;
+    let workbookAsset: DocumentAsset | null = null;
+    let workbookNotice: string | null = null;
+    if (document?.document_type === "screener_export") {
+      try {
+        workbookAsset = (await serverFetchApiResponse<DocumentAsset>(`/api/raw-documents/${documentId}/asset`)).data;
+      } catch (error) {
+        workbookNotice = error instanceof ApiError && error.status === 404
+          ? "The original workbook was not retained by the older importer. Upload the identical original file for this company to restore it without changing reviewed values."
+          : "Original workbook availability could not be checked. Reload to retry.";
+      }
+    }
 
     if (referenceId && Number.isFinite(referenceId)) {
       const referenceRes = await serverFetchApiResponse<EventEvidenceReference>(`/evidence-references/${referenceId}`).catch(() => null);
@@ -101,12 +114,15 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           metas={metas}
           mockMessage="One or more sections are using mock data. Treat affected source trails as placeholders."
         />
+        {workbookAsset ? <p><a className="secondary-button" href={`/api/backend/api/raw-documents/${documentId}/asset/content`}>Download original workbook</a></p> : null}
+        {workbookNotice ? <p className="notice notice-warning">{workbookNotice}</p> : null}
 
         {selectedCandidate ? (
           <Panel title={`Evidence: ${selectedCandidate.reported_label}`}>
             <div style={{ display: "grid", gap: "0.5rem" }}>
               <p><strong>Claim type:</strong> {evidenceClaim}</p>
-              <p><strong>{evidenceClaim === "Calculation" ? "Calculated value" : "Reported value"}:</strong> {selectedCandidate.value.toLocaleString()} {selectedCandidate.unit || "unit missing"}</p>
+              {financialOverrideNotice(selectedCandidate) ? <p className="notice notice-warning">{financialOverrideNotice(selectedCandidate)}</p> : null}
+              <p><strong>{evidenceClaim === "Calculation" ? "Calculated value" : evidenceClaim === "User Assumption" ? "Assumed value" : "Reported value"}:</strong> {selectedCandidate.value.toLocaleString()} {selectedCandidate.unit || "unit missing"}</p>
               {typeof sourceDate === "string" ? <p><strong>Period end:</strong> {sourceDate}</p> : null}
               <p><strong>Location:</strong> {financialEvidenceLocatorLabel(selectedCandidate)}</p>
               <p style={{ overflowWrap: "anywhere" }}><strong>Source text and basis:</strong> {sourceText}</p>
@@ -154,17 +170,17 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           </Panel>
         ) : null}
 
-        <Panel title="Parse Document">
+        {document?.document_type !== "screener_export" ? <Panel title="Parse Document">
           <RetainedActionForm label="Trigger parse" action={triggerParse}>
             <p style={{ marginBottom: "1rem", color: "var(--text-secondary)" }}>
               Extracts standard sections (e.g., &quot;Item 1A&quot;) and computes text diffs against the previous comparable filing.
             </p>
             <button type="submit">Run Parser &amp; Diff Engine</button>
           </RetainedActionForm>
-        </Panel>
+        </Panel> : <p>Workbook evidence uses the original file and its sheet and cell references. Text-section parsing is not available for workbooks.</p>}
 
         {sections.length === 0 ? (
-          <EmptyState label="No sections parsed yet. Click 'Run Parser' above." />
+          document?.document_type !== "screener_export" ? <EmptyState label="No sections parsed yet. Click 'Run Parser' above." /> : null
         ) : (
           sections.map((section) => (
             <div

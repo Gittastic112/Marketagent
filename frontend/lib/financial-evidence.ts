@@ -23,11 +23,21 @@ export function financialMetricLabel(metric: string): string {
 }
 
 export function financialEvidenceClaimType(candidate: FinancialExtractionCandidate): string {
-  if (candidate.review_status === "overridden") return "User Assumption";
+  if (candidate.review_status === "overridden" || candidate.source_locator_json?.claim_type === "User Assumption"
+    || record(candidate.source_locator_json?.value_override)) return "User Assumption";
   const claim = candidate.source_locator_json?.claim_type;
   if (claim === "Calculation") return "Calculation";
   if (claim === "Fact" && ["reviewed", "promoted"].includes(candidate.review_status)) return "Fact";
   return "Source Summary";
+}
+
+export function financialOverrideNotice(candidate: FinancialExtractionCandidate): string | null {
+  const origin = record(candidate.source_locator_json?.value_override);
+  if (!origin) return candidate.review_status === "overridden" ? "Manual override. Original extracted value was not recorded." : null;
+  const value = finiteNumber(origin.original_value);
+  const unit = typeof origin.original_unit === "string" ? origin.original_unit : "";
+  return value === null ? "Manual override. Original extracted value was not recorded." :
+    `Manual override. Original extraction: ${value} ${unit}. Approval preserves its User Assumption classification.`;
 }
 
 export function financialIdentityFormula(formula: string): string {

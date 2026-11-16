@@ -162,7 +162,7 @@ def get_document_asset(
 @router.get(
     "/api/raw-documents/{raw_document_id}/asset/content",
     response_class=Response,
-    responses={200: {"content": {"application/pdf": {}}}},
+    responses={200: {"content": {"application/pdf": {}, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {}}}},
 )
 def stream_document_asset(
     raw_document_id: int,
@@ -174,13 +174,18 @@ def stream_document_asset(
     )
     if asset is None:
         raise HTTPException(status_code=404, detail="Document asset not found")
+    formats = {"application/pdf": ("inline", "filing.pdf"),
+               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": ("attachment", "workbook.xlsx")}
+    if asset.mime_type not in formats:
+        raise HTTPException(status_code=415, detail="This original asset format is not supported for download.")
+    disposition, fallback_filename = formats[asset.mime_type]
     encoded_filename = quote(asset.original_filename, safe="")
     return Response(
         content=asset.content,
-        media_type="application/pdf",
+        media_type=asset.mime_type,
         headers={
             "Cache-Control": "private, no-store",
-            "Content-Disposition": f"inline; filename=\"filing.pdf\"; filename*=UTF-8''{encoded_filename}",
+            "Content-Disposition": f"{disposition}; filename=\"{fallback_filename}\"; filename*=UTF-8''{encoded_filename}",
             "Content-Length": str(asset.size_bytes),
             "X-Content-Type-Options": "nosniff",
         },
@@ -204,6 +209,8 @@ def render_document_asset_page(
     )
     if asset is None:
         raise HTTPException(status_code=404, detail="Document asset not found")
+    if asset.mime_type != "application/pdf":
+        raise HTTPException(status_code=415, detail="Only PDF assets support page previews. Download the original workbook instead.")
     if page_number < 1 or page_number > asset.page_count:
         raise HTTPException(status_code=404, detail="Document page not found")
     try:
