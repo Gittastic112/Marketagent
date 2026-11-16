@@ -199,13 +199,15 @@ def extract_financial_candidates_from_filing(db: Session, filing_id: int) -> Fin
     )
 
 
-def list_extracted_financial_candidates(db: Session, company_id: int) -> list[FinancialExtractionCandidate]:
+def list_extracted_financial_candidates(
+    db: Session, company_id: int, *, include_promoted: bool = False,
+) -> list[FinancialExtractionCandidate]:
+    query = select(FinancialExtractionCandidate).where(FinancialExtractionCandidate.company_id == company_id)
+    if not include_promoted:
+        query = query.where(FinancialExtractionCandidate.review_status != "promoted")
     return list(
         db.scalars(
-            select(FinancialExtractionCandidate)
-            .where(FinancialExtractionCandidate.company_id == company_id)
-            .where(FinancialExtractionCandidate.review_status != "promoted")
-            .order_by(
+            query.order_by(
                 FinancialExtractionCandidate.fiscal_year.desc().nullslast(),
                 FinancialExtractionCandidate.raw_document_id.desc(),
                 FinancialExtractionCandidate.id,

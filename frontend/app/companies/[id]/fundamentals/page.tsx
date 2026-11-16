@@ -54,7 +54,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
   if (reviewYear) reviewParams.set("latest_year", reviewYear);
   const [periodsRes, extractedCandidatesRes, normalizedSnapshotsRes, coverageResponse, reconciliationResponse, identityResponse, reviewPlanResponse, sourceFactsResponse, datedResponse] = await Promise.all([
     serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${companyId}/financial-periods`),
-    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted`),
+    serverFetchApiResponse<FinancialExtractionCandidate[]>(`/api/companies/${companyId}/financial-statements/extracted?include_promoted=true`),
     serverFetchApiResponse<NormalizedSnapshotRead[]>(`/api/companies/${companyId}/financial-statements/normalized`),
     serverFetchApiResponse<NormalizedCoverage>(`/api/companies/${companyId}/financial-statements/normalized/coverage`),
     serverFetchApiResponse<FinancialReconciliation>(
@@ -68,7 +68,8 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
     serverFetchApiResponse<DatedInputs>(`/companies/${companyId}/dated-inputs?${datedParams}`),
   ]);
   const periods = periodsRes.data || [];
-  const extractedCandidates = extractedCandidatesRes.data || [];
+  const evidenceCandidates = extractedCandidatesRes.data || [];
+  const extractedCandidates = evidenceCandidates.filter(candidate => candidate.review_status !== "promoted");
   const normalizedSnapshots = normalizedSnapshotsRes.data || [];
   const coverage = coverageResponse.data;
   const reconciliation = reconciliationResponse.data;
@@ -120,7 +121,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         error={reviewPlanResponse.errors[0]?.message} track={reviewTrack} year={reviewYear} />
 
       <FinancialSourceHistory facts={hasUsableData(sourceFactsResponse) ? sourceFactsResponse.data : null}
-        candidates={hasUsableData(extractedCandidatesRes) ? extractedCandidates : []}
+        candidates={hasUsableData(extractedCandidatesRes) ? evidenceCandidates : []}
         error={sourceFactsResponse.errors[0]?.message} />
 
       <section className="border-y border-gray-200 bg-white px-4 py-5 sm:px-6" aria-labelledby="normalization-coverage-title">
