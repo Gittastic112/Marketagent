@@ -59,4 +59,3 @@ class WaccCalculationRequest(BaseModel):
         if self.is_large_mfg is False:
             return SyntheticRatingFirmType.SMALL_OR_RISKY
         return SyntheticRatingFirmType.LARGE_NON_FINANCIAL
-

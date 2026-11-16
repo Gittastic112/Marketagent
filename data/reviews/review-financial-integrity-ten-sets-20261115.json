@@ -195,7 +195,13 @@
       },
       "limit": "This is not a clean full-suite pass; hosted release validation is pending."
     },
-    "frontend": "pending",
+    "frontend": {
+      "tests_passed": 395,
+      "typecheck": "passed",
+      "dependency_environment": "Locked dependencies from the production builder; current allowlisted source copied over the image source.",
+      "wire_contracts": 36,
+      "documentation_checks": "95 active files and 1259 links; 24 checker tests passed."
+    },
     "browser": "pending"
   },
   "installation": {
@@ -234,6 +240,10 @@
       "Notebook shows four most recently updated notes with a link to all notes.",
       "Source provenance, stale/Mock Data labels, incomplete snapshots and coverage limits remain visible or explicitly expandable."
     ],
-    "validation": "Frontend and responsive browser checks pending"
+    "validation": "395 frontend tests and typecheck passed; responsive browser checks pending."
+  },
+  "publication": {
+    "pull_request": "https://github.com/Gittastic112/Marketagent/pull/19",
+    "status": "draft_hosted_checks_pending"
   }
 }
