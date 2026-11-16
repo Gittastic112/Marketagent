@@ -8,6 +8,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
   return (
     <details ref={managerRef} open={defaultOpen || undefined} style={{ marginBottom: "1rem", border: "1px solid var(--line)", borderRadius: "8px", padding: "0.75rem" }}>
       <summary style={{ cursor: "pointer", fontWeight: 650 }}>Manage reviewed peer sets</summary>
+      <fieldset disabled={busy} style={{ border: 0, padding: 0, minWidth: 0 }}>
       <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
         Enter sourced peer multiples only. Every mutation is version-checked and retained in history.
         Restored or edited sets return to Draft. Diagnostics flag stale, unaligned, sparse, or dispersed evidence without silently removing it.
@@ -302,6 +303,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
           {editing && <button type="button" className="secondary-button" onClick={resetForm} disabled={busy}>Cancel edit</button>}
         </div>
       </div>
+      </fieldset>
     </details>
   );
 }

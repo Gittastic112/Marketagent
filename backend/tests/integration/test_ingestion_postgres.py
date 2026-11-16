@@ -290,3 +290,36 @@ def test_identical_reviewed_save_retries_share_one_receipt_and_version(pg_engine
     with Session(pg_engine) as db:
         assert db.query(DcfAssumptionSet).count() == 2
         assert db.query(DcfDecisionLog).count() == 1
+
+
+def test_competing_stale_acknowledgements_record_one_review(pg_engine):
+    from app.models import User
+    from app.models.dcf import DcfAssumptionSet, ValuationModel, DcfDecisionLog
+    from app.schemas.valuation import StaleValuationReviewCreate
+    from app.services.valuation_review import acknowledge_stale_review, stale_review_token
+    identity = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-reviewer", email="mock-reviewer@example.invalid", name="Mock Data reviewer"))
+        db.flush()
+        model = ValuationModel(company_id=identity, name="Mock Data review race", user_id="mock-reviewer")
+        db.add(model); db.flush()
+        row = DcfAssumptionSet(valuation_model_id=model.id, is_stale=True, stale_reason="Mock Data new filing")
+        db.add(row); db.commit()
+        row_id = row.id
+        request = StaleValuationReviewCreate(expected_updated_at=row.updated_at, review_token=stale_review_token(row),
+            reason="Mock Data reviewed; retain the assumptions.")
+    started = Barrier(2)
+    def review(_):
+        with Session(pg_engine) as db:
+            started.wait(timeout=10)
+            try:
+                acknowledge_stale_review(db, row_id, request, "mock-reviewer")
+                db.commit()
+                return 200
+            except ValueError:
+                db.rollback()
+                return 409
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert sorted(pool.map(review, range(2))) == [200, 409]
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DcfDecisionLog)) == 1

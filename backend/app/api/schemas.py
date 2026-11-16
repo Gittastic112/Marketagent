@@ -32,6 +32,8 @@ from app.schemas.valuation_outputs import (
 )
 
 from app.schemas.valuation import (
+    StaleValuationReviewCreate,
+    SavedValuationExportRead,
     DcfOutputRead,
     QuickValuationAssumptionsRead,
     DcfAssumptionSetRead,
@@ -277,6 +279,7 @@ from app.schemas.health import (
 )
 
 from app.schemas.financials import (
+    PdfPageExtractionCreate,
     FinancialReviewSourceLink,
     FinancialReviewFieldRead,
     FinancialReviewPeriodRead,

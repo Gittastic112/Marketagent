@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
+import { exportSavedValuation } from "@/lib/api/valuation";
 import type { DcfAssumptionSet } from "@/lib/api/valuation";
 import type { ValuationVersionReceipt } from "@/lib/api/valuation-preview";
 
@@ -9,16 +11,18 @@ export function ValuationVersionHistory({ companyId, modelId, versions, selected
   receipts: ValuationVersionReceipt[] | null;
 }) {
   const selected = versions.find(v => v.id === selectedId);
-  function download() {
-    if (!selected) return;
-    const receipt = receipts?.find(r => r.assumption_set_id === selected.id) ?? null;
-    const artifact = { title: "Saved valuation research basis", classification: "User Assumptions and Calculations; per-share outputs are Estimates",
-      model_id: modelId, assumption_set_id: selected.id, receipt,
-      limitations: ["This export contains the exact saved inputs and outputs, including historical warnings. It is not a current quote, source approval or investment recommendation.",
-        "Versions without a receipt have no recorded research-date or change-reason confirmation."], saved_version: selected };
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  async function download() {
+    if (!selected || busy) return;
+    setBusy(true); setError(null);
+    try {
+    const artifact = await exportSavedValuation(modelId, selected.id);
     const url = URL.createObjectURL(new Blob([JSON.stringify(artifact, null, 2)], { type: "application/json" }));
     const link = document.createElement("a"); link.href = url; link.download = `valuation-${modelId}-version-${selected.id}.json`;
     link.click(); URL.revokeObjectURL(url);
+    } catch (caught) { setError(caught instanceof Error ? caught.message : "Saved version export unavailable. Retry."); }
+    finally { setBusy(false); }
   }
   return <section className="panel panel-content" aria-label="Saved valuation versions">
     <details><summary>Saved versions and reasons ({versions.length})</summary>
@@ -33,7 +37,8 @@ export function ValuationVersionHistory({ companyId, modelId, versions, selected
         </tbody></table>
       </div>
     </details>
-    <button className="secondary-button" type="button" onClick={download} disabled={!selected}>Export exact saved version #{selectedId}</button>
-    <p>Exports and memo evidence use the selected saved version. Unsaved form edits are excluded.</p>
+    <button className="secondary-button" type="button" onClick={download} disabled={!selected || busy}>{busy ? "Preparing saved archive…" : `Export exact saved version #${selectedId}`}</button>
+    {error && <p role="alert">{error}</p>}
+    <p>The export preserves the original stored calculations and warnings. Current interpretations on this page may differ. Unsaved edits are excluded.</p>
   </section>;
 }

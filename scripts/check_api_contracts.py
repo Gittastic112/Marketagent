@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.schemas import ai_consent, brief, companies, evidence, financials, ingestion, market, operations, research, dated_inputs, review_queue, valuation_preview
+from app.schemas import ai_consent, brief, companies, evidence, financials, ingestion, market, operations, research, dated_inputs, review_queue, valuation_preview, valuation
 from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 CONTRACTS = {
@@ -19,8 +19,11 @@ CONTRACTS = {
         "SavedDailyBrief": brief.DailyBriefRead, "DailyBriefSchedule": brief.DailyBriefScheduleRead,
         "DailyBriefScheduleRunResult": brief.DailyBriefScheduleRunResult,
     },
-    "operations": {"ProcessingRun": operations.ProcessingRunRead, "RuntimeReadiness": operations.RuntimeReadinessRead},
-    "documents": {"FilingDiscovery": ingestion.FilingDiscoveryRead},
+    "operations": {"ProcessingRun": operations.ProcessingRunRead, "RuntimeReadiness": operations.RuntimeReadinessRead,
+                   "SecFilingIngestionResult": ingestion.SecFilingIngestionRead},
+    "valuation": {"SavedValuationExport": valuation.SavedValuationExportRead},
+    "documents": {"FilingDiscovery": ingestion.FilingDiscoveryRead,
+                  "PdfFinancialExtractionResult": financials.PdfFinancialExtractionResultRead},
     "dated-inputs": {"DatedInputs": dated_inputs.DatedInputsRead, "DatedInputRow": dated_inputs.DatedInputRow, "DatedInputSource": dated_inputs.DatedInputSource},
     "review-queue": {"ReviewQueue": review_queue.ReviewQueueRead},
     "valuation-preview": {"ValuationPreview": valuation_preview.ValuationPreviewRead,

@@ -1,9 +1,29 @@
 """Saved valuation response assembly, including non-writing implied-pricing reconciliation."""
 from datetime import datetime
 from typing import Any, Literal
-from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, model_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 from app.schemas.valuation_inputs import ValuationModelCreate, DcfAssumptionSetCreate
 from app.schemas.valuation_outputs import DcfOutputCreate, DcfProjectionYearRead, DcfSensitivityTableRead, DcfDecisionLogRead, ValuationAssumptionChangeLogRead
+
+
+class StaleValuationReviewCreate(BaseModel):
+    expected_updated_at: datetime
+    review_token: str = Field(pattern=r"^[0-9a-f]{64}$")
+    reason: str = Field(min_length=10, max_length=1000)
+
+    @field_validator("reason", mode="before")
+    @classmethod
+    def trim_reason(cls, value):
+        return value.strip() if isinstance(value, str) else value
+
+
+class SavedValuationExportRead(BaseModel):
+    model_id: int
+    assumption_set_id: int
+    export_kind: Literal["raw_saved_valuation_v1"]
+    saved_version: dict[str, Any]
+    decision_receipts: list[dict[str, Any]]
+    limitations: list[str]
 
 
 class DcfOutputRead(DcfOutputCreate):
@@ -37,6 +57,7 @@ class DcfAssumptionSetRead(DcfAssumptionSetCreate):
     id: int
     created_at: datetime
     updated_at: datetime
+    stale_review_token: str | None = None
     outputs: DcfOutputRead | None = None
     projection_years: list[DcfProjectionYearRead] = Field(default_factory=list)
     sensitivity_tables: list[DcfSensitivityTableRead] = Field(default_factory=list)
@@ -50,6 +71,8 @@ class DcfAssumptionSetRead(DcfAssumptionSetCreate):
         data = dict(value) if isinstance(value, dict) else {
             key: getattr(value, key) for key in cls.model_fields if hasattr(value, key)
         }
+        from app.services.valuation_review import stale_review_token
+        data["stale_review_token"] = stale_review_token(value)
         if data.get("outputs") is not None:
             data["outputs"] = DcfOutputRead.model_validate(data["outputs"], context={"assumption_set": value})
         return data

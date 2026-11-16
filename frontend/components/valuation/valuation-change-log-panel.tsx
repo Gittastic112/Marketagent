@@ -1,35 +1,44 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ValuationAssumptionChangeLog, getValuationChangeLogs, resolveStaleValuation } from "@/lib/api";
+import { DcfAssumptionSet, ValuationAssumptionChangeLog, getValuationChangeLogs, resolveStaleValuation } from "@/lib/api";
 
-export function ValuationChangeLogPanel({ modelId, assumptionSetId }: { modelId: number; assumptionSetId: number }) {
+export function ValuationChangeLogPanel({ modelId, assumptionSet }: { modelId: number; assumptionSet: DcfAssumptionSet }) {
+  const assumptionSetId = assumptionSet.id;
   const [logs, setLogs] = useState<ValuationAssumptionChangeLog[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reason, setReason] = useState("");
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    let active = true;
+    setIsLoading(true); setError(null); setLogs([]); setReason("");
     async function load() {
       try {
         const data = await getValuationChangeLogs(modelId, assumptionSetId);
-        setLogs(data);
+        if (active) setLogs(data);
       } catch (err: any) {
-        setError(err.message || "Failed to load change logs");
+        if (active) setError(err.message || "Failed to load change logs");
       } finally {
-        setIsLoading(false);
+        if (active) setIsLoading(false);
       }
     }
     load();
+    return () => { active = false; };
   }, [modelId, assumptionSetId]);
 
   const handleResolve = async () => {
+    if (saving || !assumptionSet.stale_review_token) return;
+    setSaving(true);
     try {
       setError(null);
-      await resolveStaleValuation(modelId, assumptionSetId);
+      await resolveStaleValuation(modelId, assumptionSetId, { expected_updated_at: assumptionSet.updated_at,
+        review_token: assumptionSet.stale_review_token, reason: reason.trim() });
       window.location.reload(); // Quick refresh to clear banners
     } catch (err: any) {
       setError(`Failed to resolve staleness: ${err.message}`);
-    }
+    } finally { setSaving(false); }
   };
 
   if (isLoading) return <div>Loading change logs...</div>;
@@ -44,8 +53,13 @@ export function ValuationChangeLogPanel({ modelId, assumptionSetId }: { modelId:
         </p>
       </div>
 
+      {assumptionSet.is_stale ? <>
+      <p>Review trigger: {assumptionSet.stale_reason || "Review required"}. Acknowledgement records your decision to keep this version’s assumptions unchanged.</p>
+      <label>Reason for keeping these assumptions<textarea value={reason} maxLength={1000} disabled={saving}
+        onChange={event => setReason(event.target.value)} /></label>
       <button
         type="button"
+        disabled={saving || !assumptionSet.stale_review_token || reason.trim().length < 10}
         onClick={handleResolve}
         style={{
           alignSelf: "flex-start",
@@ -56,8 +70,9 @@ export function ValuationChangeLogPanel({ modelId, assumptionSetId }: { modelId:
           borderRadius: "4px"
         }}
       >
-        Mark as Reviewed (Clear Stale Warning)
+        {saving ? "Recording review…" : "Record review with assumptions unchanged"}
       </button>
+      </> : <p>This version has no outstanding stale-review trigger.</p>}
       {error ? <p role="alert" style={{ color: "var(--danger)" }}>{error}</p> : null}
 
       {logs.length === 0 ? (

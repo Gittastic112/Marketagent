@@ -47,8 +47,20 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expandDraftSections(page);
 
   await page.locator("#starting_revenue:visible").fill("1200");
+  let releaseSave!: () => void;
+  const pendingSave = new Promise<void>(resolve => { releaseSave = resolve; });
+  await page.route("**/api/backend/valuation-drafts/*", async route => {
+    if (route.request().method() === "PATCH") await pendingSave;
+    await route.continue();
+  });
   await page.getByRole("button", { name: "Save Draft" }).click();
+  await expect(page.locator("#starting_revenue:visible")).toBeDisabled();
+  await expect(page.getByRole("button", {name: "Fetch latest source inputs"})).toBeDisabled();
+  await expect(page.getByRole("button", {name: "Confirm and Create Model"})).toBeDisabled();
+  releaseSave();
   await expect(page.getByRole("main").getByText("Draft saved")).toBeVisible();
+  await expect(page.locator("#starting_revenue:visible")).toBeEnabled();
+  await page.unrouteAll({behavior: "wait"});
   await page.getByRole("button", { name: "Reset starting_revenue to source" }).click();
   await expect(page.getByRole("button", { name: "Reset starting_revenue to source" })).toHaveCount(0);
 
@@ -104,6 +116,14 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
 
   const detailUrl = new URL(page.url());
   const modelId = Number(detailUrl.pathname.split("/").at(-1));
+  const currentVersions = await backendData<Array<{id: number}>>(page, `/valuation-models/${modelId}/assumptions`);
+  const archiveResponse = await backendData<Record<string, unknown>>(page, `/valuation-models/${modelId}/assumptions/${currentVersions[0].id}/export`);
+  const downloaded = page.waitForEvent("download");
+  await page.getByRole("button", {name: `Export exact saved version #${currentVersions[0].id}`, exact: true}).click();
+  const download = await downloaded;
+  const file = await download.path();
+  const {readFile} = await import("node:fs/promises");
+  expect(JSON.parse(await readFile(file!, "utf8"))).toEqual(archiveResponse);
   const assumptionSets = await backendData<Array<{ capex: number; depreciation: number; buybacks: number }>>(
     page,
     `/valuation-models/${modelId}/assumptions`,

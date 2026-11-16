@@ -39,8 +39,13 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByLabel("Published date").fill("2026-05-31");
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
   await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
+  await uploadPanel.getByRole("link", {name: "Review this document or extract additional pages"}).click();
+  await page.getByText("Extract additional PDF pages", {exact: true}).click();
+  await page.getByLabel("Additional pages", {exact: true}).fill("1");
+  await page.getByRole("button", {name: "Extract selected pages"}).click();
+  await expect(page.getByRole("status")).toContainText("All selected pages were already extracted");
+  await page.goto(`/companies/${company.id}/fundamentals`);
 
-  await page.getByRole("navigation", {name: "Company workspace"}).getByRole("link", { name: "Financials" }).click();
   const candidateHeading = page.getByRole("heading", { name: "Extracted Financial Candidates", exact: true });
   await expect(candidateHeading).toBeVisible();
   const candidateReview = candidateHeading.locator("xpath=../../..");
@@ -104,6 +109,14 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await expect(candidateReview.getByText("No candidates awaiting review", { exact: false })).toBeVisible();
   await expect(page.getByRole("region", { name: "Normalization Coverage" })).toContainText("2 of 2 periods normalized");
   await expect(page.getByRole("region", { name: "Source Reconciliation" })).toContainText(/exact matches, 0 mismatches/);
+  await page.reload();
+  const history = page.getByRole("region", {name: "Reviewed financial history", exact: true});
+  await history.locator("summary").first().click();
+  const historyEvidence = history.getByRole("link", {name: "Open evidence"}).first();
+  await expect(historyEvidence).toHaveAttribute("href", /\/financial-evidence\?candidate_id=/);
+  await historyEvidence.click();
+  await expect(page.getByRole("region", {name: "Rendered source evidence"}).getByRole("img")).toBeVisible();
+  await page.getByRole("link", {name: "Back to fundamentals", exact: true}).click();
 
   await page.setViewportSize({width:390,height:844});
   const normalizedRegion = page.getByRole("region", {name:"Normalized financial metrics",exact:true});

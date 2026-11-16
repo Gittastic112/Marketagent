@@ -36,7 +36,7 @@ test("draft refresh keeps source failure, dates, review and pending-edit boundar
   assert.match(panel, /const existing = resource.data\?\.latest_run/);
   assert.match(panel, /resumedRunId.current === existing.id/);
   assert.match(panel, /setRun\(existing\)/);
-  assert.match(draft, /fieldset disabled=\{pipelineBusy\}/);
+  assert.match(draft, /fieldset disabled=\{pipelineBusy \|\| saveState === "saving"\}/);
   assert.match(draft, /Open source evidence/);
   assert.match(draft, /stale, review required/);
 });
