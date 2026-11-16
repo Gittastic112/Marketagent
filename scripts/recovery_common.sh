@@ -10,7 +10,42 @@ fi
 if [[ -n "${COMPOSE_PROJECT_NAME:-}" ]]; then
   compose+=( -p "$COMPOSE_PROJECT_NAME" )
 fi
-compose+=( -f "${COMPOSE_FILE:-$ROOT_DIR/docker-compose.yml}" )
+recovery_separator="${COMPOSE_PATH_SEPARATOR:-:}"
+recovery_file_list="${COMPOSE_FILE:-$ROOT_DIR/docker-compose.yml}"
+if [[ ${#recovery_separator} -ne 1 || "$recovery_file_list" == *$'\n'* ||
+      "$recovery_file_list" == "$recovery_separator"* ||
+      "$recovery_file_list" == *"$recovery_separator" ||
+      "$recovery_file_list" == *"$recovery_separator$recovery_separator"* ]]; then
+  printf 'Compose file list has an invalid separator or empty entry.\n' >&2
+  exit 2
+fi
+IFS="$recovery_separator" read -r -a recovery_files <<< "$recovery_file_list"
+recovery_config_label=""
+for recovery_file in "${recovery_files[@]}"; do
+  if [[ ! -f "$recovery_file" || ! -r "$recovery_file" || "$recovery_file" == *,* ]]; then
+    printf 'Compose file is missing, unreadable or has an ambiguous comma in its path.\n' >&2
+    exit 2
+  fi
+  recovery_file="$(cd "$(dirname "$recovery_file")" && pwd -P)/$(basename "$recovery_file")"
+  compose+=(-f "$recovery_file")
+  recovery_config_label+="${recovery_config_label:+,}$recovery_file"
+done
+
+verify_recovery_target() {
+  # Never print resolved configuration: it may contain credentials.
+  "${compose[@]}" config --quiet
+  local container installed_files
+  container="$("${compose[@]}" ps -q "$POSTGRES_SERVICE")"
+  if [[ ! "$container" =~ ^[a-f0-9]{64}$ ]]; then
+    printf 'Select exactly one running database service before recovery.\n' >&2
+    return 1
+  fi
+  installed_files="$("$DOCKER_BIN" inspect --format '{{ index .Config.Labels "com.docker.compose.project.config_files" }}' "$container")"
+  if [[ "$installed_files" != "$recovery_config_label" ]]; then
+    printf 'Recovery requires the same ordered Compose files as the installed database.\n' >&2
+    return 1
+  fi
+}
 
 recovery_python() {
   local directory="$1"
