@@ -1133,6 +1133,9 @@ def test_screener_upload_creates_traceable_document_and_currency_units(client, d
         "column": 2,
         "cell": "B3",
         "header_row": 2,
+        "raw_value": 1250,
+        "number_format": "General",
+        "unit_transformation": "reported_value",
     }
     run = db.query(ProcessingRun).filter_by(company_id=company.id, run_type="screener_upload").one()
     assert run.status == "success"

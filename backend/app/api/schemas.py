@@ -71,7 +71,7 @@ from app.schemas.portfolio import (
     PortfolioPerformanceRead,
     PortfolioPeriodHoldingAttributionRead,
     PortfolioPeriodAttributionRead,
-    PortfolioOpportunityCostRead,
+    PortfolioOpportunityCostRead, PortfolioBenchmarkPriceEvidenceRead, PortfolioFlowFxEvidenceRead,
     PortfolioRiskReturnHoldingRead,
     PortfolioRiskReturnRead,
     PortfolioRealInputReadinessCheck,

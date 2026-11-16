@@ -28,6 +28,7 @@ class ExternalCashFlowReport:
     flows: list[ExternalCashFlow] = field(default_factory=list)
     missing_fx_pairs: list[str] = field(default_factory=list)
     missing_transaction_ids: list[int] = field(default_factory=list)
+    stale_transaction_ids: list[int] = field(default_factory=list)
 
     @property
     def complete(self) -> bool:
@@ -46,6 +47,8 @@ def normalize_external_cash_flows(
     *,
     start_date: date | None = None,
     end_date: date | None = None,
+    target_currency: str | None = None,
+    max_fx_age_days: int | None = None,
 ) -> ExternalCashFlowReport:
     portfolio = db.get(Portfolio, portfolio_id)
     if portfolio is None:
@@ -63,7 +66,10 @@ def normalize_external_cash_flows(
         db.scalars(query.order_by(PortfolioTransaction.transaction_date, PortfolioTransaction.id))
     )
 
-    report = ExternalCashFlowReport(base_currency=portfolio.base_currency.upper())
+    currency = (target_currency if target_currency is not None else portfolio.base_currency).strip().upper()
+    if len(currency) != 3 or not currency.isalpha():
+        raise ValueError("An explicit three-letter cash-flow target currency is required")
+    report = ExternalCashFlowReport(base_currency=currency)
     missing_pairs: set[str] = set()
     for transaction in transactions:
         direction = Decimal("1") if transaction.transaction_type == "deposit" else Decimal("-1")
@@ -73,13 +79,17 @@ def normalize_external_cash_flows(
                 db,
                 local_amount,
                 transaction.currency,
-                portfolio.base_currency,
+                currency,
                 transaction.transaction_date,
+                stale_after_days=max_fx_age_days if max_fx_age_days is not None else 7,
             )
         except FxRateUnavailable:
-            missing_pairs.add(f"{transaction.currency.upper()}/{portfolio.base_currency.upper()}")
+            missing_pairs.add(f"{transaction.currency.upper()}/{currency}")
             report.missing_transaction_ids.append(transaction.id)
             continue
+        if max_fx_age_days is not None and conversion.is_stale:
+            report.missing_transaction_ids.append(transaction.id)
+            report.stale_transaction_ids.append(transaction.id)
         report.flows.append(
             ExternalCashFlow(
                 transaction_id=transaction.id,

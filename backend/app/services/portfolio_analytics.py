@@ -1,4 +1,5 @@
 from datetime import date
+from math import isfinite
 from typing import Any
 
 from sqlalchemy import select
@@ -171,9 +172,11 @@ def calculate_portfolio_analytics(
     currency_exposure: dict[str, float] = {}
     asset_type_exposure: dict[str, float] = {}
 
-    for holding in holdings:
+    missing_weights = sorted(h["ticker"] for h in holdings if h["weight_percent"] is None or not isfinite(h["weight_percent"]))
+    weights_available = bool(holdings) and not missing_weights
+    for holding in holdings if weights_available else []:
         company = companies.get(holding["company_id"])
-        weight = holding["weight_percent"] or 0.0
+        weight = holding["weight_percent"]
 
         sector = company.sector if company and company.sector else "Unknown"
         industry = company.industry if company and company.industry else "Unknown"
@@ -188,7 +191,7 @@ def calculate_portfolio_analytics(
         currency_exposure[currency] = currency_exposure.get(currency, 0.0) + weight
 
     # 6. Top Positions & Movers
-    top_positions = sorted(holdings, key=lambda x: x["weight_percent"] or 0.0, reverse=True)[:5]
+    top_positions = sorted(holdings, key=lambda x: x["weight_percent"], reverse=True)[:5] if weights_available else []
 
     # Filter out None pnl for gainers/losers
     top_gainers = sorted(
@@ -203,13 +206,15 @@ def calculate_portfolio_analytics(
 
     # 7. Concentration & Warnings
     # HHI (Herfindahl-Hirschman Index): Sum of squares of weights (in decimals)
-    concentration_score = sum(((h["weight_percent"] or 0.0) / 100.0) ** 2 for h in holdings) if holdings else None
+    concentration_score = sum((h["weight_percent"] / 100.0) ** 2 for h in holdings) if weights_available else None
 
     diversification_warnings = []
-    if holdings:
-        top_weight = holdings[0]["weight_percent"] or 0.0
+    if missing_weights:
+        diversification_warnings.append("Concentration and weighted exposures are unavailable because required holding weights are missing: " + ", ".join(missing_weights) + ". Missing weights are not zero and covered positions are not renormalized.")
+    if weights_available:
+        top_weight = top_positions[0]["weight_percent"]
         if top_weight > 25.0:
-            diversification_warnings.append(f"High concentration: Top position ({holdings[0]['ticker']}) is {top_weight:.1f}% of invested value.")
+            diversification_warnings.append(f"High concentration: Top position ({top_positions[0]['ticker']}) is {top_weight:.1f}% of invested value.")
 
         if len(holdings) < 5:
             diversification_warnings.append(f"Low diversification: Only {len(holdings)} holdings.")
@@ -236,6 +241,8 @@ def calculate_portfolio_analytics(
         "currency_exposure": currency_exposure,
         "asset_type_exposure": asset_type_exposure,
         "concentration_score": concentration_score,
+        "exposure_status": "complete" if weights_available else "not_available",
+        "missing_weight_tickers": missing_weights,
         "diversification_warnings": diversification_warnings,
         "fx_impact": None,
         "opportunity_cost": None,

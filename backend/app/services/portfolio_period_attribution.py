@@ -232,6 +232,7 @@ def calculate_period_attribution(
         portfolio_id,
         start_date=start_date,
         end_date=end_date,
+        target_currency=start.base_currency,
     )
     external_cash_flow = (
         float(flow_report.net_external_cash_flow)

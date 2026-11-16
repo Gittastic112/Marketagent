@@ -171,6 +171,8 @@ export interface PortfolioAnalytics {
   currency_exposure: Record<string, number>;
   asset_type_exposure: Record<string, number>;
   concentration_score: number | null;
+  exposure_status?: "complete" | "not_available";
+  missing_weight_tickers?: string[];
   diversification_warnings: string[];
   fx_impact: number | null;
   opportunity_cost: number | null;
@@ -179,6 +181,7 @@ export interface PortfolioAnalytics {
 }
 
 export type PortfolioReturnMetric = {
+  base_currency?: string | null;
   calculation_status: "complete" | "partial" | "not_available";
   return_decimal: number | null;
   start_date: string | null;
@@ -235,6 +238,9 @@ export type PortfolioPeriodAttribution = {
 };
 
 export type PortfolioOpportunityCost = {
+  base_currency?: string | null;
+  price_evidence?: Array<{ market_price_id: number; target_date: string; price_date: string; price_age_days: number; fx_date: string; fx_age_days: number; is_stale: boolean }>;
+  flow_fx_evidence?: Array<{ transaction_id: number; target_date: string; fx_date: string; fx_age_days: number; is_stale: boolean }>;
   calculation_status: "complete" | "partial" | "not_available" | "not_configured";
   portfolio_id: number;
   start_date: string;

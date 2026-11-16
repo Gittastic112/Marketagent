@@ -213,6 +213,9 @@ def test_create_list_update_and_delete_holding(client: TestClient) -> None:
 
 def test_create_list_update_and_delete_transaction(client: TestClient) -> None:
     portfolio = create_portfolio(client)
+    funding = client.post("/portfolio-transactions", json={"portfolio_id": portfolio["id"], "ticker": "CASH",
+        "transaction_type": "deposit", "quantity": 10000, "currency": "USD", "transaction_date": "2026-05-25"})
+    assert funding.status_code == 201
     company = create_company(client)
 
     response = client.post(
@@ -240,7 +243,7 @@ def test_create_list_update_and_delete_transaction(client: TestClient) -> None:
     assert created["transaction_type"] == "buy"
     assert created["price"] == 180.5
     assert list_response.status_code == 200
-    assert response_data(list_response)[0]["ticker"] == "AAPL"
+    assert next(row for row in response_data(list_response) if row["id"] == created["id"])["ticker"] == "AAPL"
     assert update_response.status_code == 200
     assert response_data(update_response)["notes"] == "Updated entry"
     assert delete_response.status_code == 204
@@ -343,6 +346,9 @@ def test_sell_transaction_reduces_holding_and_rejects_oversell(client: TestClien
 
 def test_transaction_update_and_delete_resync_holding(client: TestClient) -> None:
     portfolio = create_portfolio(client)
+    funding = client.post("/portfolio-transactions", json={"portfolio_id": portfolio["id"], "ticker": "CASH",
+        "transaction_type": "deposit", "quantity": 10000, "currency": "USD", "transaction_date": "2026-05-25"})
+    assert funding.status_code == 201
     company = create_company(client)
     created = client.post(
         "/portfolio-transactions",
@@ -374,6 +380,9 @@ def test_transaction_update_and_delete_resync_holding(client: TestClient) -> Non
 
 def test_deleting_later_buy_restores_weighted_average_cost(client: TestClient) -> None:
     portfolio = create_portfolio(client)
+    funding = client.post("/portfolio-transactions", json={"portfolio_id": portfolio["id"], "ticker": "CASH",
+        "transaction_type": "deposit", "quantity": 10000, "currency": "USD", "transaction_date": "2026-05-25"})
+    assert funding.status_code == 201
     company = create_company(client)
     client.post(
         "/portfolio-transactions",
