@@ -6,7 +6,7 @@ from datetime import UTC, datetime
 
 class ScenarioEngine:
     @staticmethod
-    def run_scenarios(base_set: DcfAssumptionSet, model_type: str = "fcff_dcf") -> list[DcfScenarioOutput]:
+    def run_scenarios(base_set: DcfAssumptionSet, model_type: str = "fcff_dcf", *, company_sector=None, company_industry=None) -> list[DcfScenarioOutput]:
         scenarios = []
 
         def clone_assumption_set() -> DcfAssumptionSet:
@@ -19,7 +19,8 @@ class ScenarioEngine:
             return new_set
 
         def add_scenario(name: str, desc: str, modified_set: DcfAssumptionSet):
-            output, _, _ = calculate_dcf(modified_set, model_type=model_type, include_sensitivity=False)
+            output, _, _ = calculate_dcf(modified_set, model_type=model_type, include_sensitivity=False,
+                company_sector=company_sector, company_industry=company_industry)
 
             # Since these are transient and not committed to DB, provide dummy values for schema validation
             output.id = -1
@@ -54,7 +55,7 @@ class ScenarioEngine:
         bull = clone_assumption_set()
         if bull.revenue_growth_years_json:
             for k in bull.revenue_growth_years_json:
-                bull.revenue_growth_years_json[k] = str(float(bull.revenue_growth_years_json[k]) + 0.02)
+                bull.revenue_growth_years_json[k] = float(bull.revenue_growth_years_json[k]) + 0.02
         bull.target_operating_margin = (bull.target_operating_margin if bull.target_operating_margin is not None else 0.1) + 0.02
         add_scenario("Bull Case", "Higher growth (+2%) and improved margins (+200 bps).", bull)
 
@@ -62,7 +63,7 @@ class ScenarioEngine:
         bear = clone_assumption_set()
         if bear.revenue_growth_years_json:
             for k in bear.revenue_growth_years_json:
-                bear.revenue_growth_years_json[k] = str(float(bear.revenue_growth_years_json[k]) - 0.02)
+                bear.revenue_growth_years_json[k] = float(bear.revenue_growth_years_json[k]) - 0.02
         bear.target_operating_margin = (bear.target_operating_margin if bear.target_operating_margin is not None else 0.1) - 0.02
         add_scenario("Bear Case", "Lower growth (-2%) and compressed margins (-200 bps).", bear)
 
@@ -70,9 +71,9 @@ class ScenarioEngine:
         recession = clone_assumption_set()
         if recession.revenue_growth_years_json:
             if "1" in recession.revenue_growth_years_json:
-                recession.revenue_growth_years_json["1"] = "0.0"
+                recession.revenue_growth_years_json["1"] = 0.0
             if "2" in recession.revenue_growth_years_json:
-                recession.revenue_growth_years_json["2"] = "0.0"
+                recession.revenue_growth_years_json["2"] = 0.0
         add_scenario("Recession Shock", "Zero growth for the first 2 projection years.", recession)
 
         # 5. Rate Shock

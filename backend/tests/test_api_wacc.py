@@ -1,4 +1,5 @@
 from helpers import response_data, response_errors
+import pytest
 
 
 def _payload(**overrides) -> dict:
@@ -80,3 +81,23 @@ def test_wacc_api_rejects_conflicting_firm_type_inputs(client) -> None:
     assert response.status_code == 422
     assert response_errors(response)[0]["code"] == "VALIDATION_ERROR"
     assert "conflict" in response.text.lower()
+
+
+@pytest.mark.parametrize("overrides", [
+    {"risk_free_rate": 4}, {"mature_erp": 5}, {"country_risk_premium": -1},
+    {"marginal_tax_rate": 25}, {"terminal_wacc": 8}, {"beta": -1}, {"lambda_crp": -1},
+    {"market_equity": -1}, {"total_debt": -1}, {"market_equity": 0, "total_debt": 0},
+    {"market_equity": 1e308, "total_debt": 1e308},
+    {"total_years": 0}, {"total_years": 31}, {"years_to_fade": -1}, {"years_to_fade": 11},
+])
+def test_wacc_rejects_invalid_units_capital_and_horizons(client, overrides):
+    response = client.post("/api/valuation/wacc/calculate", json=_payload(**overrides))
+    assert response.status_code == 422, response.text
+
+
+def test_negative_coverage_and_zero_debt_remain_valid(client):
+    response = client.post("/api/valuation/wacc/calculate", json=_payload(
+        interest_coverage_ratio=-2, total_debt=0, years_to_fade=0))
+    assert response.status_code == 200, response.text
+    assert response.json()["data"]["equity_weight"] == 1
+    assert len(set(response.json()["data"]["wacc_array"])) == 1

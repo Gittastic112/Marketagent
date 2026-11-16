@@ -55,7 +55,7 @@ class MacroScenarioTranslationService:
             "missing_operating_income_factors": missing_income, "shocks": shocks,
             "affected_assumptions": cls._affected_assumptions(rate_shock, gdp_shock, inflation_shock, currency_shock),
             "warnings": warnings, "claim_type": "Calculation",
-            "formula": "estimated_impact = duration * rate_shock + cyclicality * gdp_shock + inflation_sensitivity * inflation_shock + currency_sensitivity * currency_shock; source_file=" + benchmark.source_file,
+            "formula": "estimated_impact = -duration * rate_shock + cyclicality * gdp_shock + inflation_sensitivity * inflation_shock + currency_sensitivity * currency_shock; source_file=" + benchmark.source_file,
             "confidence": "low" if missing_value or missing_income else "medium",
         }
 
@@ -68,7 +68,7 @@ class MacroScenarioTranslationService:
             if coefficient is None or not math.isfinite(coefficient) or (factor == "currency_shock" and not direction):
                 missing.append(factor)
                 continue
-            covered += coefficient * shock
+            covered += (-coefficient if factor == "rate_shock" else coefficient) * shock
         if not math.isfinite(covered):
             raise ValueError("Scenario impact exceeds the supported finite range.")
         return (None if missing else round(covered, 10), round(covered, 10), missing)

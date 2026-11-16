@@ -1,12 +1,6 @@
 from dataclasses import asdict, dataclass
-from enum import Enum
+from app.schemas.wacc import SyntheticRatingFirmType
 from typing import Any
-
-
-class SyntheticRatingFirmType(str, Enum):
-    LARGE_NON_FINANCIAL = "large_non_financial"
-    SMALL_OR_RISKY = "small_or_risky"
-    FINANCIAL_SERVICE = "financial_service"
 
 
 @dataclass(frozen=True, slots=True)

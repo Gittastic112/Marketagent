@@ -3,7 +3,7 @@ from datetime import date, datetime
 from uuid import UUID
 from math import isfinite
 from typing import Any, Literal
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class ValuationModelCreate(BaseModel):
@@ -108,8 +108,21 @@ class DcfAssumptionSetCreate(BaseModel):
 
 
 class DcfAssumptionSetWrite(DcfAssumptionSetCreate):
+    model_config = ConfigDict(allow_inf_nan=False)
+
     @model_validator(mode="after")
     def validate_dcf_input_units(self):
+        if not 1 <= self.projection_years_count <= 30:
+            raise ValueError("projection_years_count must be between 1 and 30")
+        for key, value in (self.revenue_growth_years_json or {}).items():
+            if key not in {str(year) for year in range(1, self.projection_years_count + 1)}:
+                raise ValueError("Revenue growth years must be canonical year numbers within the projection horizon")
+            if isinstance(value, bool) or not isinstance(value, (int, float)) or not isfinite(value) or not -1 < value <= 5:
+                raise ValueError("Revenue growth must be finite decimal numbers greater than -1 and no more than 5")
+        for field in ("cash", "cross_holdings", "debt", "operating_leases", "minority_interests", "preferred_stock", "employee_options_value"):
+            value = getattr(self, field)
+            if value is not None and value < 0:
+                raise ValueError(f"{field} must be a nonnegative gross amount")
         bounded = {
             "current_operating_margin": (-1.0, 1.0),
             "target_operating_margin": (-1.0, 1.0),

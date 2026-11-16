@@ -29,6 +29,7 @@ export function MacroScenarioForm({
       <input name="tab" type="hidden" value="scenario" />
       <input name="run" type="hidden" value="scenario" />
       <MarketControls country={country} market={market} sic={sic} />
+      <p className="muted">Shocks use decimal changes: 0.01 means one percentage point. Rate impact = minus duration × rate shock; a positive-duration value falls when rates rise.</p>
       <TextField defaultValue={values.rate_shock || "0.01"} id="rate_shock" label="Rate Shock" name="rate_shock" step="0.0001" type="number" />
       <TextField defaultValue={values.gdp_shock || "0"} id="gdp_shock" label="GDP Shock" name="gdp_shock" step="0.0001" type="number" />
       <TextField defaultValue={values.inflation_shock || "0"} id="inflation_shock" label="Inflation Shock" name="inflation_shock" step="0.0001" type="number" />

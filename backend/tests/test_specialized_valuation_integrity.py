@@ -210,16 +210,14 @@ def test_specialized_save_persists_diagnostics_and_preserves_prior_version(clien
         assert saved_output["enterprise_value"] is None
 
 
-def test_missing_bank_equity_rate_is_saved_as_unavailable_not_synthetic(client, db_session):
+def test_missing_bank_equity_rate_cannot_save_a_calculated_version(client, db_session):
     _, model, _ = seed(db_session)
     model.model_type = "financial_services"
     db_session.commit()
+    count = db_session.query(DcfAssumptionSet).count()
     response = client.post(f"/valuation-models/{model.id}/assumptions", json=valid_inputs())
-    assert response.status_code == 201, response.text
-    output = response.json()["data"]["outputs"]
-    assert output["intrinsic_value_per_share"] is None
-    assert output["model_quality_score"] == 0
-    assert any(w["severity"] == "blocking" for w in output["warnings_json"])
+    assert response.status_code == 422, response.text
+    assert db_session.query(DcfAssumptionSet).count() == count
 
 
 def test_specialized_invalid_write_is_atomic(client, db_session):
