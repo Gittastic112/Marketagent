@@ -120,6 +120,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
         error={reviewPlanResponse.errors[0]?.message} track={reviewTrack} year={reviewYear} />
 
       <FinancialSourceHistory facts={hasUsableData(sourceFactsResponse) ? sourceFactsResponse.data : null}
+        candidates={hasUsableData(extractedCandidatesRes) ? extractedCandidates : []}
         error={sourceFactsResponse.errors[0]?.message} />
 
       <section className="border-y border-gray-200 bg-white px-4 py-5 sm:px-6" aria-labelledby="normalization-coverage-title">

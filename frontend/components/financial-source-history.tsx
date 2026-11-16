@@ -1,9 +1,10 @@
 import Link from "next/link";
-import type { SourceFactRevision } from "@/lib/api/financials";
+import type { FinancialExtractionCandidate, SourceFactRevision } from "@/lib/api/financials";
 import { ErrorState } from "@/components/page";
-import { financialMetricLabel } from "@/lib/financial-evidence";
+import { financialEvidenceHref, financialMetricLabel } from "@/lib/financial-evidence";
 
-export function FinancialSourceHistory({ facts, error }: { facts: SourceFactRevision[] | null; error?: string }) {
+export function FinancialSourceHistory({ facts, candidates = [], error }: { facts: SourceFactRevision[] | null; candidates?: FinancialExtractionCandidate[]; error?: string }) {
+  const evidence = new Map(candidates.map(candidate => [candidate.id, candidate]));
   const groups = new Map<string, SourceFactRevision[]>();
   for (const fact of facts ?? []) {
     const key = `${fact.effective_at} · ${fact.period_type}`;
@@ -32,16 +33,20 @@ export function FinancialSourceHistory({ facts, error }: { facts: SourceFactRevi
                   <th scope="col" className="px-3 py-2 text-left">Evidence</th>
                 </tr></thead>
                 <tbody className="divide-y divide-gray-200">
-                  {[...rows].sort((a, b) => a.fact_key.localeCompare(b.fact_key)).map((fact) => (
+                  {[...rows].sort((a, b) => a.fact_key.localeCompare(b.fact_key)).map((fact) => {
+                    const candidate = evidence.get(fact.financial_candidate_id);
+                    const href = candidate?.raw_document_id === fact.raw_document_id && candidate.company_id === fact.company_id
+                      ? financialEvidenceHref(candidate) : `/documents/${fact.raw_document_id}/sections?candidate_id=${fact.financial_candidate_id}`;
+                    return (
                     <tr key={fact.id}>
                       <th scope="row" className="py-3 pr-4 text-left font-medium" style={{ minWidth: "15rem", maxWidth: "24rem", overflowWrap: "anywhere" }}>{financialMetricLabel(fact.fact_key)}</th>
                       <td className="whitespace-nowrap px-3 py-3 text-right tabular-nums">{Number.isFinite(fact.value) ? fact.value.toLocaleString(undefined, { maximumFractionDigits: 12 }) : "Not available"}</td>
                       <td className="whitespace-nowrap px-3 py-3">{fact.unit || "Unit missing"}</td>
                       <td className="px-3 py-3">{fact.claim_type}</td>
                       <td className="px-3 py-3">Revision {fact.revision_number}<br />Recorded {new Date(fact.observed_at).toLocaleString("en-US")}<br /><span className="text-gray-500">Recorded time is separate from the reporting date.</span></td>
-                      <td className="whitespace-nowrap px-3 py-3"><Link href={`/documents/${fact.raw_document_id}/sections?candidate_id=${fact.financial_candidate_id}`} className="text-blue-700 hover:underline">Open evidence</Link></td>
+                      <td className="whitespace-nowrap px-3 py-3"><Link href={href} className="text-blue-700 hover:underline">Open evidence</Link></td>
                     </tr>
-                  ))}
+                  ); })}
                 </tbody>
               </table>
             </div>

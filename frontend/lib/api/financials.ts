@@ -1,6 +1,10 @@
 /** Contracts and endpoint helpers for financials. Import transport directly, never the compatibility facade. */
 import { fetchApi, fetchApiOrNotFound, patchApi, postApi, postFormApi } from "./transport.ts";
 
+export async function extractRetainedPdfPages(documentId: number, pageRanges: string): Promise<PdfFinancialExtractionResult> {
+  return postApi<PdfFinancialExtractionResult>(`/api/raw-documents/${documentId}/extract-pdf-pages`, { page_ranges: pageRanges });
+}
+
 export type FinancialMetric = {
   id: number;
   period_id: number;

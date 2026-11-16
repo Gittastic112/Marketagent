@@ -142,3 +142,37 @@ def test_parse_sec_filing_and_diff():
     item_1a_diff = next(d for d in diffs if d.current_section.item_name == "Item 1A")
     assert "<ins class=\"diff-add\">very </ins>" in item_1a_diff.diff_html
     assert "We might crash." in item_1a_diff.diff_html
+
+
+def test_parser_retry_repairs_partial_and_new_predecessor_without_replacing_sections(db, client):
+    from sqlalchemy import select
+    from app.models import Source, FilingSectionDiff
+    company = Company(ticker="MOCKDIFF", name="Mock Data comparison retry")
+    source = Source(name="Mock Data filing comparison", source_type="sec")
+    db.add_all([company, source]); db.flush()
+    def document(day):
+        row = RawDocument(company_id=company.id, source_id=source.id, document_type="sec_filing_metadata",
+            title=f"Mock Data filing {day}", raw_text=f"Item 1. Mock Data day {day} " + "business evidence " * 10,
+            raw_payload_json={"form_type": "10-K"}, published_at=datetime(2026, 1, day, tzinfo=timezone.utc),
+            content_hash=f"mock-comparison-{day}")
+        db.add(row); db.commit()
+        return row
+    first, current = document(1), document(3)
+    # Simulate the old post-section/pre-comparison failure boundary.
+    sections = parse_sec_filing(db, current); db.commit()
+    ids = [section.id for section in sections]
+    assert client.get(f"/raw-documents/{current.id}/sections").json()["meta"]["is_stale"] is True
+    assert client.post(f"/raw-documents/{current.id}/parse").status_code == 200
+    diff = db.scalar(select(FilingSectionDiff))
+    assert db.get(FilingSection, diff.prior_section_id).raw_document_id == first.id
+    original_diff_id = diff.id
+    intermediate = document(2)
+    assert client.get(f"/raw-documents/{current.id}/sections").json()["meta"]["is_stale"] is True
+    for _ in range(2):
+        assert client.post(f"/raw-documents/{current.id}/parse").status_code == 200
+    db.expire_all()
+    diffs = list(db.scalars(select(FilingSectionDiff)))
+    assert len(diffs) == 1 and diffs[0].id == original_diff_id
+    assert db.get(FilingSection, diffs[0].prior_section_id).raw_document_id == intermediate.id
+    assert [s.id for s in db.scalars(select(FilingSection).where(FilingSection.raw_document_id == current.id))] == ids
+    assert client.get(f"/raw-documents/{current.id}/sections").json()["meta"]["is_stale"] is False

@@ -188,6 +188,10 @@ class FinancialExtractionResultRead(BaseModel):
     candidates: list[FinancialExtractionCandidateRead] = Field(default_factory=list)
 
 
+class PdfPageExtractionCreate(BaseModel):
+    page_ranges: str = Field(min_length=1, max_length=500)
+
+
 class PdfFinancialExtractionResultRead(FinancialExtractionResultRead):
     asset: DocumentAssetRead
     page_count: int
