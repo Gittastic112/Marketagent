@@ -42,10 +42,17 @@ test("exact event evidence rejects an outdated source, recovers, and reaches sav
   await expect(secondMatch).toContainText(quote);
   expect(await backendData<unknown[]>(page, `/events/${event.id}/evidence-references`)).toHaveLength(0);
 
-  // A real source update between search and save must fail on the persisted hash.
+  // Retained source evidence cannot be overwritten, even by an authenticated caller.
   const changedText = `Mock Data revised preamble.\n${firstText}`;
-  await backendData(page, `/raw-documents/${document.id}`, {method:"PATCH", data:{
-    raw_text:changedText, content_hash:hash(changedText)}});
+  const overwrite = await page.request.patch(`/api/backend/raw-documents/${document.id}`, {
+    headers:{origin:new URL(page.url()).origin},
+    data:{raw_text:changedText, content_hash:hash(changedText)}});
+  expect(overwrite.status()).toBe(409);
+  expect(await backendData(page, `/raw-documents/${document.id}`)).toMatchObject({
+    raw_text:firstText, content_hash:hash(firstText)});
+  // Simulate an outdated search receipt without rewriting the original document.
+  await secondMatch.locator('input[name="document_content_hash"]').evaluate(
+    (input, staleHash) => { (input as HTMLInputElement).value = staleHash; }, hash(changedText));
   await secondMatch.getByRole("button", {name:"Use exact span", exact:true}).click();
   await expect(secondMatch.getByRole("alert")).toContainText("source document changed after the search");
   await expect(page.getByLabel("Exact source phrase", {exact:true})).toHaveValue(quote);
@@ -53,7 +60,7 @@ test("exact event evidence rejects an outdated source, recovers, and reaches sav
   await page.screenshot({path:test.info().outputPath("exact-evidence-stale-mobile.png"), fullPage:true});
 
   await page.getByRole("button", {name:"Search exact text", exact:true}).click();
-  await expect(secondMatch.locator('input[name="document_content_hash"]')).toHaveValue(hash(changedText));
+  await expect(secondMatch.locator('input[name="document_content_hash"]')).toHaveValue(hash(firstText));
   await secondMatch.getByRole("button", {name:"Use exact span", exact:true}).click();
   await expect(page.getByRole("main").getByText("Exact source evidence linked to the event.", {exact:true})).toBeVisible();
   type Reference = {id:number; origin:string; quote:string; start_char:number; end_char:number;
@@ -61,9 +68,9 @@ test("exact event evidence rejects an outdated source, recovers, and reaches sav
   const references = await backendData<Reference[]>(page, `/events/${event.id}/evidence-references`);
   expect(references).toHaveLength(1);
   expect(references[0]).toMatchObject({origin:"manual_exact_resolution", raw_document_id:document.id, quote,
-    source_metadata_json:{occurrence_index:2, validated_content_hash:hash(changedText)}});
-  expect(references[0].start_char).toBe(changedText.lastIndexOf(quote));
-  expect(changedText.slice(references[0].start_char,references[0].end_char)).toBe(quote);
+    source_metadata_json:{occurrence_index:2, validated_content_hash:hash(firstText)}});
+  expect(references[0].start_char).toBe(firstText.lastIndexOf(quote));
+  expect(firstText.slice(references[0].start_char,references[0].end_char)).toBe(quote);
 
   // Repeating the selected span cannot create another reference.
   await page.getByRole("button", {name:"Search exact text", exact:true}).click();

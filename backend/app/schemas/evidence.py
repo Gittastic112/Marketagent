@@ -324,7 +324,7 @@ class SourceFactRevisionRead(BaseModel):
     observed_at: datetime
     superseded_at: datetime | None = None
     revision_number: int
-    claim_type: Literal["Fact", "Calculation"]
+    claim_type: Literal["Fact", "Calculation", "User Assumption"]
     created_at: datetime
 
 

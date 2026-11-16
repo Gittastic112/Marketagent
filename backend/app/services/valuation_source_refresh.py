@@ -110,7 +110,8 @@ def cancel_queued_refresh(db: Session, run_id: int, user_id: str) -> ProcessingR
 
 def _source_step(db, parent, name, callback, *, run_type, company_id=None, metadata=None):
     child = start_processing_run(db, run_type=run_type, source_type="macro" if name.startswith("FRED") else "sec",
-        company_id=company_id, metadata={"parent_run_id": parent.id, **(metadata or {})})
+        company_id=company_id, metadata={**(metadata or {}), "parent_run_id": parent.id,
+            "user_id": (parent.metadata_json or {}).get("user_id")})
     try:
         result = callback()
         if not isinstance(result, dict):

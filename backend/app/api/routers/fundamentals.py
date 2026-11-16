@@ -19,6 +19,7 @@ from app.models.financial import (
     NormalizedFinancialSnapshot,
 )
 from app.models.company import Company
+from app.models.document_asset import DocumentAsset
 from app.models.processing_run import ProcessingRun
 from app.models.raw_document import RawDocument
 from app.models.source import Source
@@ -47,6 +48,13 @@ from app.providers.fundamentals.screener import ScreenerExcelParser
 from app.services.workbook_safety import validate_workbook_bytes
 
 router = APIRouter(tags=["fundamentals"])
+WORKBOOK_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+
+
+def _retain_workbook(db: Session, document_id: int, filename: str, content: bytes, digest: str) -> None:
+    db.add(DocumentAsset(raw_document_id=document_id, original_filename=filename,
+        mime_type=WORKBOOK_MIME, size_bytes=len(content), sha256=digest,
+        page_count=0, content=content))
 
 
 @router.get("/api/companies/{company_id}/financial-statements/review-plan",
@@ -151,6 +159,8 @@ def ingest_screener_excel(
         "application/octet-stream",
     }
     filename = Path(file.filename or "screener-upload.xlsx").name
+    if len(filename) > 255:
+        raise HTTPException(status_code=400, detail="Workbook filename must be at most 255 characters.")
     if file.content_type not in allowed_mime_types or not filename.lower().endswith(".xlsx"):
         raise HTTPException(status_code=400, detail="Invalid file type. Only Excel .xlsx files are allowed.")
 
@@ -194,7 +204,18 @@ def ingest_screener_excel(
         )
         processing_run_id = processing_run.id
 
-        if db.scalar(select(RawDocument).where(RawDocument.content_hash == content_hash)):
+        existing = db.scalar(select(RawDocument).where(RawDocument.content_hash == content_hash).with_for_update())
+        if existing is not None:
+            existing_asset = db.scalar(select(DocumentAsset.id).where(DocumentAsset.raw_document_id == existing.id))
+            if (existing.company_id == company_id and existing.document_type == "screener_export"
+                    and (existing.raw_payload_json or {}).get("sha256") == digest and existing_asset is None):
+                # Exact hash match only. Restore missing bytes, never reparse or
+                # overwrite retained candidates, approvals or source metadata.
+                _retain_workbook(db, existing.id, filename, content, digest)
+                db.commit()
+                complete_processing_run(db, processing_run, fetched_count=1, created_count=1,
+                    metadata_patch={"raw_document_id": existing.id, "action": "original_asset_restored", "candidate_count": 0})
+                return ApiResponse(data={"status": "original_restored", "raw_document_id": existing.id, "extracted_count": 0})
             complete_processing_run(
                 db,
                 processing_run,
@@ -227,6 +248,7 @@ def ingest_screener_excel(
         )
         db.add(raw_doc)
         db.flush()
+        _retain_workbook(db, raw_doc.id, filename, content, digest)
 
         candidates = ScreenerExcelParser.parse_screener_excel(
             db=db,
@@ -243,7 +265,7 @@ def ingest_screener_excel(
             fetched_count=1,
             created_count=len(candidates),
         )
-        return ApiResponse(data={"status": "success", "extracted_count": len(candidates)})
+        return ApiResponse(data={"status": "success", "raw_document_id": raw_doc.id, "extracted_count": len(candidates)})
     except HTTPException as exc:
         db.rollback()
         if processing_run_id is not None:
@@ -328,8 +350,9 @@ def confirm_financial_candidate_period(candidate_id: int, review: FinancialCandi
     "/api/financial-line-items/{candidate_id}/override",
     response_model=ApiResponse[FinancialExtractionCandidateRead],
 )
-def override_financial_candidate(candidate_id: int, override: schemas.FinancialCandidateOverride, db: Session = Depends(get_db)):
-    return ApiResponse(data=override_candidate_value(db, candidate_id, override.value, override.unit, override.expected_updated_at))
+def override_financial_candidate(candidate_id: int, override: schemas.FinancialCandidateOverride, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=override_candidate_value(db, candidate_id, override.value, override.unit,
+        override.expected_updated_at, user_id=current_user["id"]))
 
 
 @router.post(

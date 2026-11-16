@@ -11,6 +11,7 @@ import {
   financialEvidenceLocatorLabel,
   financialIdentityFormula,
   financialMetricLabel,
+  financialOverrideNotice,
 } from "./financial-evidence.ts";
 import type { EventEvidenceReference } from "@/lib/api";
 
@@ -40,6 +41,10 @@ test("financial evidence separates reviewed facts, calculations, and overrides",
   assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "promoted", source_locator_json: { claim_type: "Calculation" } }), "Calculation");
   assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "overridden", source_locator_json: { claim_type: "Fact" } }), "User Assumption");
   assert.equal(financialEvidenceClaimType({ ...candidate, review_status: "promoted", source_locator_json: { claim_type: "untrusted" } }), "Source Summary");
+  for (const review_status of ["needs_review", "reviewed", "promoted"]) {
+    assert.equal(financialEvidenceClaimType({ ...candidate, review_status,
+      source_locator_json: { claim_type: "User Assumption", value_override: { original_value: 100 } } }), "User Assumption");
+  }
 });
 
 test("financialEvidenceLocatorLabel formats spreadsheet coordinates", () => {
@@ -52,6 +57,13 @@ test("financialEvidenceLocatorLabel formats spreadsheet coordinates", () => {
     }),
     "Data Sheet / cell B3 / line 3",
   );
+});
+
+test("override notices retain explicit zero and admit unknown legacy originals", () => {
+  assert.match(financialOverrideNotice({ ...candidate, review_status: "promoted",
+    source_locator_json: { value_override: { original_value: 0, original_unit: "USD million" } } })!, /Original extraction: 0 USD million/);
+  assert.match(financialOverrideNotice({ ...candidate, review_status: "overridden" })!, /not recorded/);
+  assert.equal(financialOverrideNotice(candidate), null);
 });
 
 test("financialEvidenceLocatorLabel falls back to an XBRL concept", () => {

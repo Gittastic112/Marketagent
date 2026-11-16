@@ -7,6 +7,9 @@ the user authorised implementation, P0 was verified and P1 was installed with
 November 14 adds [ten bounded P2-P5 slices](../../data/reviews/research-workspace-ten-sets-20261114.json).
 Remaining package acceptance and P6/P7 work are open. This does not establish complete
 financial inputs, personal acceptance or research-use days. Essential-only storage applies.
+November 15: the [returned-review repair sequence](product-roadmap.md#review-repair-sequence)
+takes priority over new P2-P7 features. This plan remains the target specification;
+its earlier verification does not close the newly identified preservation and correctness gaps.
 
 ## Read this plan
 
@@ -614,6 +617,9 @@ Statuses below describe this programme, not earlier app implementation.
 The November 14 receipt records ten further bounded P2-P5 slices. Package completion
 is not inferred from those slices; the [limitation ledger](../limitations.md#workspace-follow-up)
 owns remaining scope, and P6/P7 remain open.
+The [returned-review ledger](../limitations.md#returned-code-review) qualifies these
+delivered slices. Repair R0-R8 before expanding them; do not treat the table below
+as the next execution queue or evidence that every interaction is correct.
 
 | November 14 set | Delivered boundary |
 |---|---|
@@ -817,21 +823,33 @@ a question for the user. Identify the exact missing source or decision first.
 
 ## Next implementation session
 
-1. Read the [ten-set receipt](../../data/reviews/research-workspace-ten-sets-20261114.json),
-   handoff and affected owners. Recheck the dirty checkout and running project; preserve earlier edits.
+1. Read the [review intake](../../data/reviews/code-review-intake-20261115.json),
+   handoff and [repair sequence](product-roadmap.md#review-repair-sequence).
+   Recheck current code and the dirty checkout; preserve earlier edits and original reports.
 2. Reuse the existing recovery basis. No new dump is needed for inspection or UI-only work.
-3. Preserve the installed P2.1/P2.2 safeguards. Annual date confirmations use existing
-   locator metadata with source notes, reviewer/time and history; no migration was needed.
-4. Design complete quarterly/YTD/transition-period and basis persistence before
-   enabling interim promotion. Any necessary migration must be additive.
-5. Connect selected dated evidence to a reviewable draft proposal and initial-model
-   preview. Retain exact source revision/date/knowledge in the save receipt; never
+3. Read the [ten-set repair receipt](../../data/reviews/review-repairs-ten-sets-20261115.json)
+   and finish its release boundary. Next source work is R2's A1-F6/A1-F7, then R3.
+4. Complete the subsequent financial, portfolio and workflow repairs against their
+   own gates. Use exact IDs and distinguish source, helper, HTTP, PostgreSQL and browser proof.
+5. Resume dated-source proposals, initial-model preview and wider period identity
+   after those gates. Keep explicit commands and supported annual guards; never
    equate a research-date label with historical market-data reconstruction.
-6. Install verified slices into the existing project, remove their generated material,
-   and replace the handoff status with evidence and the next bounded task.
+6. Install only verified compatible changes into the existing project after operational
+   prerequisites pass. Update the single ledger and handoff, retain essential proof,
+   and remove only the disposable material created by the scoped work.
 
-The installed safeguards retain explicit commands, annual period review and previous
-versions. The November 14 tests and isolated Mock Data flows verify the bounded
-behaviors above. They do not prove complete financial inputs, all package acceptance
-cases or actual use. Continue worker reliability and measured read performance after
-the dated proposal contract is settled; keep normal data and recovery material intact.
+### Optional review suggestions
+
+These are refinements to existing packages, outside the 39-defect count and without
+new completion claims. They do not precede preservation and correctness repairs.
+
+| Existing package | Adopted placement |
+|---|---|
+| P2/P3 | Preserve unrelated Financials filters and show promotion blockers before submission. Prefer editable growth-year rows with advanced JSON; explain direct versus derived WACC without changing saved rates |
+| P4 | Carry selected thesis/evidence/model context into decisions and review status into research prompts. Support a truthful no-relevant-findings result for private sources |
+| P6 / R8 proof | Add a two-worker/two-schedule PostgreSQL claim case; no duplicate-work incident is asserted. Worker verification remains distinct from actual-use acceptance |
+| R6 UI repair | Distinguish deterministic invalid input from an uncertain write result; preserve edits and show an appropriate retry/recovery action |
+
+The narrow missing-share and blanket-backup documentation inconsistencies were
+corrected during intake. Software findings remain open. Tests and Mock Data flows
+do not supply complete financial inputs, genuine portfolio proof or actual use days.

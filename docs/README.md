@@ -44,6 +44,16 @@ The [completion tracker](roadmaps/completion-tracker.md) owns acceptance gates, 
 estimate of engineering effort. [Review decisions](roadmaps/review-decisions.md)
 retain the basis of delegated choices.
 
+The November 15 four-part review is integrated into the
+[limitation ledger](limitations.md#returned-code-review),
+[repair sequence](roadmaps/product-roadmap.md#review-repair-sequence) and
+[policy defaults](roadmaps/review-decisions.md#returned-review-design-decisions).
+The [sanitized intake receipt](../data/reviews/code-review-intake-20261115.json)
+retains finding IDs, code references and verification scope. Original reports stay
+local; the temporary dispatch brief is retired. This intake does not close repairs.
+The [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
+records local implementation, checks, cleanup and the pending release boundary.
+
 Agents start with [AGENTS.md](../AGENTS.md), [the handoff](HANDOFF.md), the nearest
 nested instructions, and the relevant code-map row. Optional
 [workflow references](skills/README.md) support specific tasks.

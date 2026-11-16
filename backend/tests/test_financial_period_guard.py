@@ -132,3 +132,19 @@ def test_period_confirmation_cannot_overwrite_extracted_end_or_accept_blank_evid
     blank = candidate(db, company, document, source_locator_json={})
     payload.update(expected_updated_at=blank.updated_at.isoformat(), source_note=" " * 20)
     assert client.patch(f"/api/financial-line-items/{blank.id}/period", json=payload).status_code == 422
+
+
+@pytest.mark.parametrize("header", ["Three months ended December 31, 2025", "Nine months ended September 30, 2025", "Quarter ended December 31, 2025"])
+def test_pdf_partial_year_header_cannot_be_approved_as_annual(client, db, header):
+    company, document, _ = setup_review(db)
+    item = candidate(db, company, document, source_column_label=header,
+        extraction_method="pdf_targeted_v6", source_locator_json={"type": "pdf_table_cell"})
+    response = client.patch(f"/api/financial-line-items/{item.id}/period", json={
+        "period_end": "2025-12-31", "source_note": "Mock Data: same date does not establish annual duration",
+        "expected_updated_at": item.updated_at.isoformat()})
+    assert response.status_code == 422
+    item.source_locator_json = {"type": "pdf_table_cell", "period_review": {"end": "2025-12-31"}}
+    db.commit()
+    assert client.post(f"/api/companies/{company.id}/financial-statements/mark-reviewed").status_code == 422
+    assert db.query(SourceFactRevision).count() == 0
+    assert [m.value for m in db.query(FinancialMetric).order_by(FinancialMetric.id)] == [100, 101, 102]

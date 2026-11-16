@@ -8,7 +8,7 @@ running it. Dated machine-specific observations are not fresh runtime checks.
 
 ## Select the installed local stack
 
-The installation, updated November 12, uses Compose project market-intelligence-review-20261112-financial-history
+The installation uses Compose project market-intelligence-review-20261112-financial-history
 and the original database volume. Its ignored runtime-images.yml selects reviewed
 images, the existing network and preserved volumes. Normal-runtime commands in
 this runbook include that override to select the installed images and data.
@@ -27,14 +27,23 @@ Backend/frontend health checks use 30-second steady-state intervals and
 five-second startup intervals. An unhealthy transition can therefore take longer
 to report than the former ten-second polling; endpoints remain available for
 an immediate explicit check. Startup/schema validation is unchanged.
-Existing backup/restore helpers select a project separately: set
-COMPOSE_PROJECT_NAME=market-intelligence-review-20261112-financial-history for this installation.
+Backup/restore helpers select a project through COMPOSE_PROJECT_NAME and accept
+an ordered COMPOSE_FILE list, separated by COMPOSE_PATH_SEPARATOR (default `:`).
+Each path becomes a separate `-f` argument, including paths with spaces. The local
+November 15 repair validates every file and resolved configuration, then compares
+the ordered absolute paths with the running database's Compose configuration label
+before a dump or restore. Missing/mismatched configuration fails closed.
+For this installation the list must include the base file followed by the runtime
+override above. Verify images, volumes and writers without printing resolved secrets.
+Source tests do not establish a completed normal-installation recovery drill.
 Their ordinary operator environment behavior remains; agent verification uses
 /dev/null plus settings held only in memory. The full backup helper creates a
 disposable proof database, so it remains outside the current no-new-datasets scope.
 
-Ordinary updates should reuse this selected Compose project. Save a database
-backup, the prior override, image IDs, settings and mounts before replacement.
+Ordinary updates should reuse this selected Compose project. Apply the
+[change-triggered backup policy](#when-to-make-a-backup), reusing a compatible
+verified recovery set for application-only changes. Record the prior override,
+image IDs and mounts; preserve private settings without printing their values.
 Preserve source reports, review receipts and backup files from a container's
 writable layer before removing it. Keep the installed, verified images as the
 recovery baseline; retain a preceding version only while an update is being
@@ -93,9 +102,11 @@ password into chat or commands. Never use `docker compose down -v`.
 
 The November 2 rotation is already verified. These steps are for a future rotation,
 which is complete only after private input and authentication/data checks pass.
-The current override selects the financial-history backend and source-links frontend,
-with the existing November 7 PostgreSQL R2. Inspect image identities before
-changing any service. Source scheduling and pgAdmin remain stopped.
+Image identities change with reviewed installations. Inspect the active override
+and actual service identities before changing any service; use the latest
+[dated installation receipt](../data/reviews/dependency-security-20261114.json)
+as historical evidence, not a substitute for inspection. Source scheduling and
+pgAdmin remain stopped.
 
 ## Normal runtime operations
 
@@ -348,6 +359,18 @@ remain review-required and do not alter saved models.
   the manual browser gate.
 - scripts/backup_local.sh and restore_local.sh own backup/restore. Inspect exact
   targets and get data-loss authorization before restore/reset/volume deletion.
+  **November 15 safeguard, local source:** target preflight addresses A4-2.
+  Alembic preflight addresses A4-1 by rejecting populated predecessor tables
+  before crossing migration 2167b87f7054, which drops seven
+  tables; later recreation of three tables does not preserve populated old rows.
+  Backend startup and restore invoke `alembic upgrade head`. A current-head database
+  does not rerun the old revision, but an older restored database could cross it.
+  No affected live database or recovery copy has been established. Inspect revision
+  and affected-table inventory read-only. PostgreSQL holds affected-table locks
+  through the migration transaction; offline SQL crossing that revision is refused.
+  A preserving legacy conversion and populated restore remain unproved. A new
+  head-only migration cannot recover earlier dropped rows. Do not rewrite
+  historical migrations, stamp revisions or test by restoring over normal data.
   Format 3 verifies the completed dump in a network-disabled, bounded scratch
   PostgreSQL 16 container; normal writes can continue. Its manifest contains all
   public table counts/content fingerprints and both PDF stores' byte hashes.

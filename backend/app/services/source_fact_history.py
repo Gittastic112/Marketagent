@@ -46,7 +46,9 @@ def record_financial_fact_revision(
     ) or 0
     locator = candidate.source_locator_json or {}
     claim_type = locator.get("claim_type", "Fact")
-    if claim_type not in {"Fact", "Calculation"}:
+    if candidate.review_status == "overridden" or isinstance(locator.get("value_override"), dict):
+        claim_type = "User Assumption"
+    if claim_type not in {"Fact", "Calculation", "User Assumption"}:
         claim_type = "Fact"
     revision = SourceFactRevision(
         company_id=candidate.company_id,

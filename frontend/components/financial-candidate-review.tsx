@@ -13,7 +13,7 @@ import {
   promoteFinancialCandidates,
   listExtractedFinancialCandidates,
 } from "@/lib/api/financials";
-import { financialEvidenceClaimType, financialEvidenceHref, financialEvidenceLocatorLabel } from "@/lib/financial-evidence";
+import { financialEvidenceClaimType, financialEvidenceHref, financialEvidenceLocatorLabel, financialOverrideNotice } from "@/lib/financial-evidence";
 
 export function FinancialCandidateReview({
   initialCandidates,
@@ -192,6 +192,7 @@ export function FinancialCandidateReview({
                     {candidate.metric_code.replaceAll("_", " ")}
                     <br />
                     <span className="text-xs font-normal text-gray-500">{financialEvidenceClaimType(candidate)}</span>
+                    {financialOverrideNotice(candidate) && <p className="text-xs font-normal text-amber-700 dark:text-amber-300">{financialOverrideNotice(candidate)}</p>}
                     <br />
                     <span className="text-xs font-normal text-gray-500">From: &quot;{candidate.source_text}&quot;</span>
                     <br />
@@ -357,7 +358,7 @@ export function FinancialCandidateReview({
             (!canPromote || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          {isSubmitting ? "Promoting..." : "Promote Reviewed Candidates"}
+          {isSubmitting ? "Saving review..." : "Promote Reviewed Candidates"}
         </button>
       </div>
       </fieldset>

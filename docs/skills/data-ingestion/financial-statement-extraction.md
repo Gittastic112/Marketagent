@@ -60,7 +60,7 @@ Handle filing text/PDF/workbook/XBRL extraction, candidate review, promotion, an
    explicit candidate/source/period/unit/review labels. A suggestion is not a
    normalized fact, approval or permission to overwrite saved assumptions.
 9. Block autofill from silently using placeholder actuals.
-10. For workbook uploads, enforce type/size limits, hash content, reject duplicates, delete temporary files, and persist a processing run.
+10. For workbook uploads, enforce type/size limits, retain original bytes once, hash content, reject duplicates, delete parser temporary files, and persist a processing run. Exact-hash legacy reattachment preserves all candidates and reviewed values.
 11. Read normalized coverage before backfill; distinguish normalized coverage from trust readiness and stop on currency conflicts.
 12. Run reconciliation after normalization; mismatches block valuation use, and missing/normalized-only values remain explicit gaps.
 13. Record filing, XBRL, workbook, and backfill attempts through the shared processing-run lifecycle.

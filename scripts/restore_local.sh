@@ -36,6 +36,7 @@ fi
 if [[ "$format_version" == 1 ]]; then
   printf 'Legacy restore: only table counts can be verified, not content or both PDF stores.\n' >&2
 fi
+verify_recovery_target
 "${compose[@]}" exec -T "$POSTGRES_SERVICE" pg_restore --list < "$backup_dir/database.dump" >/dev/null
 
 verification_dir="$(mktemp -d)"

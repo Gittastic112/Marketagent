@@ -1,6 +1,6 @@
 # Capabilities and limitations
 
-Reconciled November 14, 2026. [Current State](current-state.md) owns verification; the [feature register](roadmaps/feature-register.md) owns capability status.
+Reconciled November 15, 2026. [Current State](current-state.md) owns verification; the [feature register](roadmaps/feature-register.md) owns capability status.
 Historical operational narratives and review exceptions remain in the [prior ledger](archive/assessments/limitations-before-2026-11-10.md).
 
 ## Confirmed scope and input checklist
@@ -50,40 +50,18 @@ Twelve annual values resolve four of twenty slots. Prior records/models are pres
 | Meta, FY2023-2025 | Additional scoped evidence | Debt, working-capital change, noncontrolling claim, preferred claim, employee-award value | 8/13 |
 | Alphabet, FY2023-2025 | Additional scoped evidence | Debt, full D&A, working-capital change, noncontrolling claim, employee-award value | 8/13 |
 
-The user selected **November 12, 2026**. The [dated-input review](../data/reviews/valuation-inputs-asof-20261112.json)
-adds eight filings and four notes. Seven Nasdaq prices and the ECB USD/EUR rate of 1.1081 support dated calculations.
-No personal decision is pending. Delegation does not authorize invented issuer facts or complete valuation claims.
+The user selected **November 12, 2026**. The [dated-input receipt](../data/reviews/valuation-inputs-asof-20261112.json)
+retains the exact filings, quotes, FX, calculations and unresolved differences. No financial policy answer is pending.
 
-**Financing.** Apple closed USD 7.5 billion of notes on November 9; Meta closed USD 15 billion
-on November 5 and EUR 9 billion on November 12; Alphabet closed EUR 6 billion on November 5.
-Reported balances plus these issuances give research subtotals of USD 89.067/108.6419/136.4716 billion
-for Apple/Meta/Alphabet. These are not reconciled current debt values: cash proceeds, repayments,
-fees, lease changes and prior foreign-debt remeasurement remain open. Meta's current finance-lease
-balance is unverified. NVIDIA's July notes plus deferred purchase consideration total USD 34.352 billion;
-complete financed-asset/finance-lease balances and the USD 1 billion 2026 maturity treatment remain open.
-Operating leases are separate; the engine does not automatically restate EBIT/reinvestment for capitalization.
+| Remaining boundary | Why the dated research does not complete the input |
+|---|---|
+| Financing | Apple/Meta/Alphabet issuance-adjusted subtotals and NVIDIA notes/deferred consideration are not reconciled current debt. Repayments, fees, FX, financed assets, lease balances and maturity treatment remain incomplete. Operating leases are separate; EBIT/reinvestment are not automatically restated |
+| Working capital | Narrow trade cash absorption covers exact annual/six/nine-month periods. Mixed accrual, tax and noncurrent items remain unresolved. Do not add this decomposition to sales-to-capital reinvestment |
+| Employee claims | Reported unvested quantities times dated prices are gross exposure estimates. Later changes, vesting, performance, tax and other rights remain unverified; do not double count awards in diluted shares |
+| Minority/preferred claims | Wholly-owned scope and Apple's charter support selected zeros. Meta's consolidation policy does not establish zero NCI; historical preferred balances and its conflicting dated quotes remain held. Alphabet NCI/book and quoted preferred values are proxies; preserve depositary/underlying share scope and avoid conversion double counting |
+| Alphabet D&A and weights | Nine-month D&A does not establish missing full-year intangible amortization. Finance-lease amortization is already in PP&E depreciation; the prior USD 1 million lease component difference stays visible. Business revenue alone does not approve benchmark weights |
 
-**Working capital and awards.** Narrow trade cash absorption is retained for the exact annual/six-month/
-nine-month periods, not full operating NWC. Mixed accrual/tax/noncurrent rows remain unresolved.
-Default FCFF sales-to-capital reinvestment does not require this historical decomposition; never add both.
-Latest reported unvested quantities times November 12 prices produce gross exposure estimates only.
-Post-report award changes, vesting/performance, tax and other employee rights remain unverified.
-Do not install these marks as complete employee claim values or count awards again in diluted shares.
-
-**Other claims.** Explicit wholly-owned scope and Apple's common-only charter support the reported zeros.
-Meta's consolidation policy does not establish a wholly-owned group or a zero minority claim.
-Its 287.5 million preferred depositary shares imply USD 14.444 billion at Nasdaq's historical USD 50.24,
-versus USD 14.40375 billion at the headline USD 50.10. The November 12 official closing row was unavailable;
-the price discrepancy is retained and the valuation input is held. Historical preferred balances remain open.
-Alphabet's two preferred series have a USD 16.645475 billion quoted-value proxy; 385 million depositary
-interests imply USD 19.25 billion face, not the rounded 19-million underlying-share display times USD 1,000.
-Its September NCI book proxy is USD 6.9 billion, including the USD 825 million redeemable subset.
-Do not count preferred conversion dilution again; later conversions remain unverified.
-Alphabet nine-month D&A of USD 22.875 billion does not establish full FY2023-2025 intangible amortization;
-finance-lease asset amortization is already included in PP&E depreciation. The prior FY2025 lease USD 1 million
-total/component difference remains visible. Business revenue alone does not approve benchmark weights.
-
-Remaining gaps need original disclosures or quote reconciliation. [Operations](operations.md) records data preservation.
+Remaining gaps require original disclosures or quote reconciliation, not guessed values or historical backfills.
 The user reconfirmed zero actual-use days on November 12; automated checks do not count.
 
 ## What is not product-ready
@@ -116,6 +94,25 @@ P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.
 
 The user authorised implementation after planning. P1 and ten bounded P2-P5 slices are delivered; complete package acceptance and source-specific financial gaps remain open. Tests do not establish actual research-use days or final acceptance.
 
+## Returned code review
+
+November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Ten bounded repairs are now implemented/tested locally; 29 remain unimplemented. Formal release closure is pending, not implied by source tests.
+The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves reviewer claims; the [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json) records new evidence. This ledger owns status; the [roadmap](roadmaps/product-roadmap.md#review-repair-sequence) owns order and [decisions](roadmaps/review-decisions.md#returned-review-design-decisions) own policy. No normal deployment or GitHub publication occurred in this batch.
+
+| Repair group and IDs | Open boundary |
+|---|---|
+| R0: A4-1, A4-2 | Local guards verify ordered Compose files against the installed database and reject populated legacy tables before migration. PostgreSQL locking/rejection and fresh migration pass. A preserving legacy conversion and populated restore remain unproved; no affected normal backup is established |
+| R1: A3-1, A1-F1, A3-6, A3-7 | Local source protects dependent event/document evidence, blocks source-defining API edits, scopes nonzero holdings and private runs. Corrected evidence is imported separately. Legacy private runs without recorded owners remain hidden, not reassigned. Installation remains pending |
+| R2: A1-F2 through A1-F7 | F2-F5 implemented locally: new overrides retain origin; ambiguous PDF duration is held; workbooks retain bytes and allow exact-hash reattachment; SEC dates use fact-level filed metadata. Lost old override values/original files are not reconstructed. Browser download completion remains unverified. F6/F7 mixed units and small/negative percentage points remain unimplemented |
+| R3: A2-1, A2-2, A2-3, A2-8 | Invalid valuation inputs/outputs may appear ready, company classification does not reach every financial-sector guard, duration conventions disagree, and WACC requests lack unit/capital/horizon bounds |
+| R4: A3-2, A3-3, A3-4, A3-5, A3-9 | Transaction corrections use current holdings, mixed snapshot currencies may be combined, old benchmark quotes can appear complete, unknown weights become zero, and external-flow comparisons mix return methods |
+| R5: A1-F8 through A1-F12 | Metadata-only SEC sources cannot acquire text on retry; same-batch duplicates bypass pending rows; PDF page continuation and filing-diff backfill are blocked; financial history can route to the wrong evidence view |
+| R6: A2-4 through A2-7 | In-flight saves can lose or mislabel edits; refreshed growth text can diverge from reviewed values; stale acknowledgement can clear unseen events; exact-version exports use reconciled values/warnings |
+| R7: A3-8, A3-10, A3-11, A4-3; D1/D2 | Private-source approval is not reachable, thesis event links/memo contracts are broken, and derived AI claims lose origin. Brief review uses click-time dismissal; thesis impacts lack a preserving completion action. D1 is intentional existing behavior; D2 is part of WS07, not a new primary finding |
+| R8: A4-4 through A4-8 | Research response deadlines can precede persisted replies; sign-in cannot recover from some readiness/errors; interrupted AI calls lack a pre-send receipt; expired leases can orphan run status; callback validation accepts network-path URLs. Redirect risk is source-based, not a demonstrated login bypass |
+
+The separate commit-identity observation is a privacy follow-up, not a fortieth primary finding. Raw reports remain local and unchanged; no public-history rewrite, account change, new data backup or application repair was performed by this intake.
+
 ## Valuation boundary
 
 A valid formula can produce an unsupported estimate. Review financial basis, currency/scale, growth, margins,
@@ -123,7 +120,7 @@ reinvestment, discounting, terminal assumptions, equity claims and diluted share
 
 | Method or consumer | Boundary |
 |---|---|
-| Core FCFF | Explicit zeros survive; missing-value presets still exist, including an internal missing-share fallback that diagnostics/display must block. Historical saved outputs are not recalculated on read |
+| Core FCFF | Explicit zeros survive and missing/nonpositive/nonfinite shares withhold per-share value; other missing-value presets remain. A2-1 records broader validation/finite-output gaps. Saved rows are not recalculated on read; response reconciliation is distinct from raw history (A2-7) |
 | Calendar basis | Projections use relative periods. Calendar years remain null without a fiscal anchor; legacy unanchored years are withheld. Old integer-only images cannot safely consume new nullable rows |
 | Sensitivities and scenarios | Canonical FCFF sensitivities retain saved funding/terminal assumptions and per-cell validity. Legacy grids remain unverified. Shocks are deterministic scenarios, not probabilities; unsupported specialized tables stay unavailable |
 | Reverse DCF | Requires valid owned saved inputs and actual convergence. Financial-services reverse analysis is unsupported. Bisection does not prove a unique root or find every possible root |

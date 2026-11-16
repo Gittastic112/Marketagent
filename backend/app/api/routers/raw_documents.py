@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
-from app.api.helpers import create_record, delete_record, get_or_404, has_matching_record, update_record, validate_raw_document_refs
+from app.api.helpers import create_record, delete_record, get_or_404, update_record, validate_raw_document_refs
 from app.api.schemas import (
     ApiResponse,
     RawDocumentCreate,
@@ -13,8 +13,9 @@ from app.api.schemas import (
     RawDocumentUpdate,
 )
 from app.db.session import get_db
-from app.models import Event, RawDocument, FinancialExtractionCandidate
+from app.models import RawDocument, FinancialExtractionCandidate
 from app.schemas.document_library import DocumentLibraryRead
+from app.services.source_preservation import changes_source_evidence, has_document_dependents
 
 
 router = APIRouter()
@@ -123,17 +124,22 @@ def update_raw_document(
     payload: RawDocumentUpdate,
     db: Session = Depends(get_db),
 ) -> RawDocument:
+    document = get_or_404(db, RawDocument, raw_document_id)
+    db.refresh(document, with_for_update=True)
+    if changes_source_evidence(document, payload.model_dump(exclude_unset=True)):
+        raise HTTPException(status_code=409, detail="Source evidence cannot be overwritten. Preserve this document and import corrected evidence separately.")
     validate_raw_document_refs(db, payload)
-    return ApiResponse(data=update_record(db, get_or_404(db, RawDocument, raw_document_id), payload))
+    return ApiResponse(data=update_record(db, document, payload))
 
 
 @router.delete("/raw-documents/{raw_document_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_raw_document(raw_document_id: int, db: Session = Depends(get_db)) -> None:
     raw_document = get_or_404(db, RawDocument, raw_document_id)
-    if has_matching_record(db, select(Event.id).where(Event.raw_document_id == raw_document_id)):
+    db.refresh(raw_document, with_for_update=True)
+    if has_document_dependents(db, raw_document_id):
         raise HTTPException(
             status_code=409,
-            detail="Raw document cannot be deleted while it has linked events. Delete linked events first.",
+            detail="Raw document cannot be deleted while retained evidence depends on it.",
         )
     delete_record(db, raw_document)
 

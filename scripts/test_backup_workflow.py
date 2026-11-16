@@ -68,7 +68,13 @@ elif "ps" in args:
     else:
         print(os.environ.get("FAKE_RUNNING_SERVICES", "backend\\nfrontend\\npostgres"))
 elif "inspect" in args:
-    print("sha256:" + "c" * 64)
+    if "com.docker.compose.project.config_files" in " ".join(args):
+        paths = os.environ["COMPOSE_FILE"].split(os.environ.get("COMPOSE_PATH_SEPARATOR", ":"))
+        print(os.environ.get("FAKE_CONFIG_FILES", ",".join(str(Path(p).resolve()) for p in paths)))
+    else:
+        print("sha256:" + "c" * 64)
+elif "config" in args and "--quiet" in args:
+    pass
 elif any(command in args for command in ("stop", "dropdb", "createdb", "up")):
     pass
 else:
@@ -95,6 +101,7 @@ class BackupWorkflowTests(unittest.TestCase):
             for name, count in (("alpha", 2), ("beta", 0), ("gamma", 3)))
         self.rows = rows
         self.env["FAKE_INVENTORY"] = json.dumps(rows)
+        Path(self.env["COMPOSE_FILE"]).write_text("# Mock Data Compose configuration\n")
         self.counts = "".join(f'{row["name"]}\t{row["rows"]}\n'
             for row in sorted(rows, key=lambda row: row.get("name", "")) if row["kind"] == "table")
 
@@ -107,6 +114,42 @@ class BackupWorkflowTests(unittest.TestCase):
             with self.subTest(name=name):
                 result = subprocess.run(["bash", "-n", str(ROOT / "scripts" / name)], capture_output=True, text=True)
                 self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_ordered_compose_files_preserve_spaces_for_every_operation(self):
+        override = self.directory / "runtime images.yml"
+        override.write_text("# Mock Data override\n")
+        self.env["COMPOSE_FILE"] += ":" + str(override)
+        result = self.run_script("backup_local.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        for call in self.calls():
+            if "compose" in call:
+                self.assertEqual([call[i + 1] for i, arg in enumerate(call) if arg == "-f"],
+                    self.env["COMPOSE_FILE"].split(":"))
+
+    def test_missing_override_fails_before_dump_or_restore(self):
+        self.env["COMPOSE_FILE"] += ":" + str(self.directory / "missing.yml")
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertFalse(Path(self.env["FAKE_DOCKER_LOG"]).exists())
+
+    def test_restore_rejects_incomplete_installed_configuration_before_writes(self):
+        self.env["FAKE_CONFIG_FILES"] = self.env["COMPOSE_FILE"] + ",/mock/omitted-override.yml"
+        result = self.run_script("restore_local.sh", self.restore_fixture(), "--yes-replace-database")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("ordered Compose files", result.stderr)
+        self.assertFalse(any("stop" in call or "dropdb" in call or "pg_restore" in call for call in self.calls()))
+
+    def test_custom_compose_separator_and_empty_entry(self):
+        override = self.directory / "runtime.yml"
+        override.write_text("# Mock Data override\n")
+        self.env["COMPOSE_PATH_SEPARATOR"] = ";"
+        self.env["COMPOSE_FILE"] += ";" + str(override)
+        result = self.run_script("backup_local.sh")
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.env["COMPOSE_FILE"] += ";"
+        result = self.run_script("backup_local.sh")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("empty", result.stderr)
 
     def restore_fixture(self, counts=None):
         directory = self.directory / "restore-fixture"
@@ -268,7 +311,7 @@ class BackupWorkflowTests(unittest.TestCase):
         calls = [json.loads(line) for line in (self.directory / "calls.jsonl").read_text().splitlines()]
         stopped = next(call for call in calls if "stop" in call)
         started = next(call for call in calls if "up" in call)
-        inventory = next(call for call in calls if "ps" in call)
+        inventory = next(call for call in calls if "ps" in call and "--services" in call)
         self.assertIn("running", inventory)
         self.assertIn("restarting", inventory)
         self.assertIn("scheduler", stopped)

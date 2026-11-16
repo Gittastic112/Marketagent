@@ -106,7 +106,8 @@ def create_source(db: Session, user_id: str, payload: BriefSourceCreate, *, pdf:
     if not db.get(Company, payload.company_id):
         raise HTTPException(404, "Company not found")
     url = validate_pdf_source_url(payload.source_url) if payload.source_url else None
-    run = start_processing_run(db, run_type="brief_source_import", source_type="private_upload", fetched_count=1)
+    run = start_processing_run(db, run_type="brief_source_import", source_type="private_upload", fetched_count=1,
+        metadata={"user_id": user_id})
     try:
         text = payload.text
         extraction = {"method": "pasted_text_v1", "character_count": len(text), "page_spans": [], "warnings": []}
@@ -202,7 +203,7 @@ def analyze_source(db: Session, user_id: str, source_id: int, disclosure_version
                       "valuation_field_catalog": FIELD_LABELS, "source_text": source.content_text}, ensure_ascii=False)
     )
     run = start_processing_run(db, run_type="brief_source_ai_scan", source_type="private_upload",
-        fetched_count=1, metadata={"brief_source_id": source.id, "prompt_version": PROMPT_VERSION})
+        fetched_count=1, metadata={"user_id": user_id, "brief_source_id": source.id, "prompt_version": PROMPT_VERSION})
     output = None
     # The timestamp is the attempt token; lifecycle version also prevents an
     # archive/restore cycle from reviving the original request's authority.

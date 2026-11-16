@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "kind": "bounded_review_repairs",
+  "date": "2026-11-15",
+  "baseline_commit": "6505082e4e5df600f8f922c6d39256065c58d154",
+  "branch": "codex/review-repairs-20261115",
+  "status": "implemented_and_tested_locally_release_pending",
+  "scope": "Ten bounded repairs from R0, R1 and the first four R2 findings. This is not closure of all 39 findings or product acceptance.",
+  "cross_cutting_reason": "Recovery, private ownership and financial provenance require coordinated route, service, contract, UI, test and documentation changes; the batch necessarily exceeds ten files.",
+  "implementation_commits": [
+    "121fde56172b2dbfe0c25cc732b1e70623764f2b",
+    "1d5054334c5f8ec4d0225ad2b622f0ee67223cba",
+    "fc594a59bc653da75164aff5e1e558c73e5345a7",
+    "c6ef5d28053ead6ddc1473d1e38c31b27e5c81de"
+  ],
+  "sets": [
+    {
+      "number": 1, "finding": "A4-2", "outcome": "Ordered Compose recovery target preflight",
+      "behavior": "Split the configured file list into ordered arguments, preserve spaces, reject missing/empty paths, validate configuration and require the installed database's exact ordered configuration label before backup/restore work.",
+      "evidence": ["scripts/test_backup_workflow.py"],
+      "limit": "Fake-command tests do not certify a normal-installation backup or restore. No backup helper was run against normal data."
+    },
+    {
+      "number": 2, "finding": "A4-1", "outcome": "Reject unsafe populated legacy migrations",
+      "behavior": "Before crossing 2167b87f7054, inspect the seven affected tables and reject populated predecessors. PostgreSQL table locks remain held through the migration transaction. Offline crossing is refused. Historical migrations are unchanged.",
+      "evidence": ["backend/tests/test_legacy_migration_safety.py", "backend/tests/integration/test_legacy_preservation_postgres.py"],
+      "limit": "No preserving conversion of populated legacy rows or populated restore was implemented or attempted. No affected normal database or backup was established."
+    },
+    {
+      "number": 3, "finding": "A3-1", "outcome": "Protect private thesis evidence from shared-event deletion",
+      "behavior": "Lock the event and reject deletion when any retained thesis impact depends on it, without revealing private owners or reasoning. Safe unreferenced deletion remains supported.",
+      "evidence": ["backend/tests/test_review_preservation.py"]
+    },
+    {
+      "number": 4, "finding": "A1-F1", "outcome": "Preserve source-defining fields and dependent documents",
+      "behavior": "Block source-body, identity, payload, date, URL and hash changes through the raw-document update API; allow display-title changes and unchanged fields. Reject deletion when any persisted foreign-key consumer retains evidence.",
+      "evidence": ["backend/tests/test_review_preservation.py"],
+      "limit": "Corrected evidence must be imported separately. This is an application API boundary, not a database-wide immutability guarantee or historical repair."
+    },
+    {
+      "number": 5, "finding": "A3-6", "outcome": "Scope owned-alert holdings filters",
+      "behavior": "Use a correlated existence check for the caller's nonzero holdings. Foreign holdings, zero positions and duplicate holdings cannot alter or duplicate the filtered alert list.",
+      "evidence": ["backend/tests/test_review_preservation.py"]
+    },
+    {
+      "number": 6, "finding": "A3-7", "outcome": "Separate public processing coverage from private attempts",
+      "behavior": "One visibility policy excludes private attempts from public brief/dashboard counts and selections. Processing history includes public runs and the caller's recorded private runs. New private producers and refresh children retain owner context.",
+      "evidence": ["backend/tests/test_processing_run_visibility.py", "backend/tests/test_brief_sources.py", "backend/tests/test_daily_brief_schedule.py"],
+      "limit": "Legacy private attempts without recorded owners remain hidden. No owner was guessed or historic brief regenerated."
+    },
+    {
+      "number": 7, "finding": "A1-F2", "outcome": "Retain manual override origin through review and promotion",
+      "behavior": "Keep the first extracted value/unit and a dated user edit history. Undo, Accept and promotion retain User Assumption classification in the candidate, revision contract and UI. Evidence pages call the result an assumed value.",
+      "evidence": ["backend/tests/test_financial_candidate_versions.py", "frontend/lib/financial-evidence.test.ts", "isolated in-app browser override, Undo, Accept, period confirmation and promotion"],
+      "limit": "An original already lost in legacy data is marked unknown when detectable; already-promoted lost history is not reconstructed."
+    },
+    {
+      "number": 8, "finding": "A1-F3", "outcome": "Retain PDF column period context and hold ambiguous duration",
+      "behavior": "Parser v7 retains header text and column context. Quarterly/YTD and unresolved month durations cannot inherit annual scope from the document category. Mixed unmapped headers remain unknown. End-date confirmation cannot override missing or contradictory annual duration evidence.",
+      "evidence": ["backend/tests/test_pdf_period_context.py", "backend/tests/test_financial_period_guard.py", "backend/tests/test_pdf_financial_extraction.py"],
+      "limit": "This remains a bounded parser, not arbitrary merged-header reconstruction. Legacy synthetic FY labels may require re-extraction. No stored candidates were rewritten."
+    },
+    {
+      "number": 9, "finding": "A1-F4", "outcome": "Retain original workbook bytes once",
+      "behavior": "Store validated workbook bytes in DocumentAsset, serve the correct attachment MIME type and reject PDF rendering. Exact-company, exact-hash re-upload can restore a missing old asset without re-extraction or candidate changes. Source pages expose the original or an explicit missing-original notice, and exclude incompatible parsing controls.",
+      "evidence": ["backend/tests/test_workbook_retention.py", "backend/tests/test_financial_extraction_workflow.py", "isolated in-app browser workbook source page"],
+      "limit": "An absent original requires the identical source file. Browser download-event completion timed out; backend byte/hash/MIME preservation is verified, browser download completion is not."
+    },
+    {
+      "number": 10, "finding": "A1-F5", "outcome": "Use original SEC fact filing dates in dated evidence",
+      "behavior": "Project fact-level filed dates only for matching SEC extraction/snapshot identities. Different facts in one snapshot retain different dates. Invalid, missing or inconsistent filing dates remain unknown; retrieval and recording remain separate.",
+      "evidence": ["backend/tests/test_dated_financial_inputs.py"],
+      "limit": "No document publication date was overwritten. This is not full historical source-vintage reconstruction."
+    }
+  ],
+  "validation": {
+    "failed_before": {
+      "recovery": "Three new ordered-file/preflight regressions failed before the fix.",
+      "preservation": "Shared-event deletion, source mutation and ownership checks exposed the reported behavior. Initial fixture mistakes were corrected separately.",
+      "processing_visibility": "Both new visibility tests failed before the policy was applied.",
+      "overrides": "Two provenance regressions failed before retention/classification changes.",
+      "pdf_periods": "Seven new partial/mixed/missing-duration regressions failed before the fix.",
+      "workbook_and_sec": "Two workbook-retention checks and the fact-level SEC filing-date check failed before the fixes."
+    },
+    "passed_batches_not_additive": [
+      {"scope": "Broader affected backend, security inventory, response contracts and financial regressions", "passed": 214},
+      {"scope": "Private sources, scheduler, legacy guard and run visibility", "passed": 40},
+      {"scope": "Final PDF period context and annual promotion guard", "passed": 28},
+      {"scope": "PostgreSQL legacy preservation/locking plus existing ingestion/concurrency checks", "passed": 15},
+      {"scope": "Recovery helper fake-Docker suite", "passed": 25},
+      {"scope": "Full frontend suite with locked dependencies", "passed": 394},
+      {"scope": "Final evidence, frontend-integrity and contract checks", "passed": 95}
+    ],
+    "contracts": "36 frontend/backend wire contracts regenerated and checked; User Assumption is an intentional additive SourceFactRevision claim type.",
+    "migration": "A fresh disposable PostgreSQL database migrated through the 73-revision chain to u3u3u3u3u3u3. Populated legacy fixtures were rejected without running their destructive revision.",
+    "frontend": "Type check and final production compile pass with npm ci --include=dev and locked Next.js 16.4.1 under installed Node 24.21.0. The older host dependency tree was not used for final proof.",
+    "backend_environment_limit": "Unit/PostgreSQL test runners used the existing tools image, whose dependencies predate the latest runtime security follow-up. Isolated HTTP/browser checks used the current installed backend runtime dependencies with edited source mounted read-only. No new dependency security audit is claimed.",
+    "browser": {
+      "browser": "In-app browser, isolated localhost test app, Mock Data only",
+      "verified": ["Signed-in review flow", "Original override value visible", "Undo/Accept preserve User Assumption", "Promotion retains User Assumption and original source text", "Assumed value label", "Workbook download control and absence of text-parser controls", "Narrow-screen document/financial view has no page overflow", "Sign-out completed"],
+      "not_verified": ["Workbook download event completion", "Complete automated PDF browser spec", "Every UI state or genuine research use"],
+      "local_screenshot": "output/review-repairs-20261115/override-mobile.jpg",
+      "screenshot_bytes": 40481
+    },
+    "attempt_limits": [
+      "Direct Docker build context enumeration encountered a protected environment file; a source-only temporary staging tree was used instead.",
+      "Pinned-base Docker build could not reach auth.docker.io, including the escalated attempt. Final frontend compilation used the already-installed runtime plus locked staged dependencies.",
+      "An initial frontend run/build using older local dependencies was stopped and superseded by locked-dependency validation.",
+      "The in-app browser download wait timed out; it is not recorded as a passed download."
+    ],
+    "documentation_checks": "Passed: 95 active Markdown files and 1256 local links; all 24 documentation-checker unit tests pass. Intended documentation/receipt diff has no whitespace errors.",
+    "selected_file_privacy_check": "57 changed source, documentation and receipt files passed the repository credential-pattern scanner and a private review-chat URL check. Protected settings and ignored raw reports were excluded. This is a scoped check, not a full-repository security audit."
+  },
+  "preservation": {
+    "normal_database_actions": "None. All write tests used isolated Mock Data databases.",
+    "normal_runtime": "Four original application containers and their image references remain unchanged.",
+    "backups": "No new backup, restore, volume deletion or normal data migration.",
+    "original_review_reports": "All five files match the frozen intake SHA-256 values; 225116 bytes retained once, locally ignored.",
+    "preexisting_local_changes": [".codex/config.toml", ".env.example"],
+    "protected_settings": "Not read, staged or committed.",
+    "new_external_ai_disclosure": false
+  },
+  "storage": {
+    "temporary_staging_path": "/tmp/mi-repair-20261115-20261115-82052-10wknip",
+    "temporary_staging_measured_kib": 643044,
+    "temporary_staging_removed": true,
+    "temporary_staging_removed_allocated_bytes": 658477056,
+    "other_removed_temporary_files": [
+      {"path": "/tmp/mi-repair-seed-mock.py", "bytes": 2253},
+      {"path": "/tmp/mi-repair-staging-path", "bytes": 46}
+    ],
+    "removed_build_cache_id": "edmqc6la40g614uxtc0b8sedk",
+    "removed_build_cache_bytes": 8192,
+    "removed_test_containers": ["mi-repair-frontend-check-20261115", "mi-repair-backend-check-20261115", "mi-repair-postgres-check-20261115"],
+    "removed_test_networks": ["mi-repair-e2e-20261115", "mi-repair-browser-20261115"],
+    "remaining_normal_containers": 4,
+    "remaining_images": 4,
+    "remaining_volumes": 2,
+    "remaining_build_cache_bytes": 0
+  },
+  "release": {
+    "installed": false,
+    "github_changes": "None. Authenticated metadata reads only. The attempted Git push failed because CLI credentials were unavailable.",
+    "commit_privacy": "Local repair commits use the verified account's GitHub noreply identity. Connector commit creation was not used because it cannot select author/committer identity.",
+    "next": ["Publish the existing commits using authenticated Git without exposing a personal email", "Build/install compatible verified images into the existing selected project and recheck the normal runtime", "Keep populated legacy conversion/restore held until a preserving path is explicitly reviewed", "Implement A1-F6/A1-F7, then R3 valuation validation", "Complete the remaining 29 unimplemented review findings in roadmap order"]
+  }
+}

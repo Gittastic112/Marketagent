@@ -16,6 +16,7 @@ if [[ ! "$BACKUP_RETENTION_COUNT" =~ ^[1-9][0-9]*$ ]]; then
   exit 2
 fi
 
+verify_recovery_target
 timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
 mkdir -p "$BACKUP_ROOT"
 BACKUP_ROOT="$(cd "$BACKUP_ROOT" && pwd)"
