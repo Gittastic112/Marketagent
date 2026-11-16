@@ -61,10 +61,12 @@ November 15: the first ten review repairs are installed and merged in
 [PR 18](https://github.com/Gittastic112/Marketagent/pull/18); all seven hosted checks
 pass. The original [repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
 retains its initial local checkpoint. The [financial integrity follow-up](../data/reviews/review-financial-integrity-ten-sets-20261115.json)
-records release evidence and the next ten fixes: unit/percentage semantics,
+records the next ten fixes: unit/percentage semantics,
 valuation validation and financial-sector context, duration/WACC bounds, and
 portfolio corrections, snapshot currency, benchmark freshness and unknown weights.
-Those ten are implemented; final release validation and installation are pending.
+Those ten are installed and merged in [PR 19](https://github.com/Gittastic112/Marketagent/pull/19).
+The [release checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md)
+supersedes the JSON checkpoint's pending release status with final verification and cleanup evidence.
 The requested Today redesign brings the overview before a six-item review queue,
 places the brief and active alerts before it, and folds secondary activity into disclosures.
 The [review ledger](limitations.md#returned-code-review) owns the remaining 19
@@ -73,8 +75,8 @@ R6 saved-editor/export integrity. Populated legacy conversion remains held.
 The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
 raw reports remain unchanged and ignored, with private chat links excluded.
 Normal data and the essential recovery set are preserved; no new backup or
-acceptance points are created. Reuse the active Compose project and remove only
-identified temporary containers, obsolete application images and build cache.
+acceptance points are created. Reuse the active Compose project; obsolete images,
+build cache and generated dependency files have been removed under the retention policy.
 After the repair gates, resume dated-source proposals, initial-model preview,
 wider period support and P6/P7 in the research workspace plan.
 
