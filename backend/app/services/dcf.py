@@ -139,8 +139,20 @@ from app.services.diagnostics_engine import DiagnosticsEngine
 from app.services.relative_valuation_service import RelativeValuationService
 from app.services.fcfe_ddm_engine import FCFEEngine, DividendDiscountEngine, PayoutPolicyDiagnosticService
 
-def run_diagnostics(assumption_set: DcfAssumptionSet, output: DcfOutput, projection_years: list[DcfProjectionYear], terminal_fcff: float) -> list[dict[str, Any]]:
-    return DiagnosticsEngine.run_all_diagnostics(assumption_set, output, projection_years, terminal_fcff)
+def run_diagnostics(assumption_set: DcfAssumptionSet, output: DcfOutput, projection_years: list[DcfProjectionYear], terminal_fcff: float, *, company_sector=None, company_industry=None) -> list[dict[str, Any]]:
+    return DiagnosticsEngine.run_all_diagnostics(assumption_set, output, projection_years, terminal_fcff,
+        company_sector=company_sector, company_industry=company_industry)
+
+
+def require_finite_dcf_result(output, projections, model_type):
+    required = ["equity_value", "intrinsic_value_per_share"]
+    if model_type != "financial_services":
+        required += ["enterprise_value", "terminal_value", "pv_terminal_value", "sum_pv_fcff"]
+    if any(not isinstance(getattr(output, field), (int, float)) or not isfinite(getattr(output, field)) for field in required):
+        raise ValueError("The calculation did not produce finite principal values. Review the inputs before saving.")
+    for row in [output, *projections]:
+        if any(isinstance(value := getattr(row, column.key), float) and not isfinite(value) for column in row.__table__.columns):
+            raise ValueError("The calculation exceeds supported numeric limits. Review the inputs before saving.")
 
 
 class _SensitivityUnavailable(ValueError):
@@ -334,7 +346,7 @@ def generate_sensitivity_tables(assumption_set: DcfAssumptionSet) -> list[DcfSen
     return tables
 
 
-def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf", *, include_sensitivity: bool = True) -> tuple[DcfOutput, list[DcfProjectionYear], list[DcfSensitivityTable]]:
+def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf", *, include_sensitivity: bool = True, company_sector: str | None = None, company_industry: str | None = None) -> tuple[DcfOutput, list[DcfProjectionYear], list[DcfSensitivityTable]]:
     if model_type == "financial_services":
         return FinancialServicesEngine.calculate_excess_return_value(assumption_set)
 
@@ -375,7 +387,13 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
 
     output.ddm_intrinsic_value_per_share = DividendDiscountEngine.calculate_ddm_intrinsic_value(assumption_set) if intrinsic_value_per_share is not None else None
 
-    warnings = run_diagnostics(assumption_set, output, projection_years, terminal_fcff)
+    warnings = run_diagnostics(assumption_set, output, projection_years, terminal_fcff,
+        company_sector=company_sector, company_industry=company_industry)
+    if len(assumption_set.revenue_growth_years_json or {}) < _projection_count(assumption_set):
+        warnings.append({"severity": "warning", "module": "revenue_growth",
+            "message": "Missing projection-year growth rates defaulted to 0%.",
+            "affectedAssumptions": ["revenue_growth_years_json"],
+            "suggestedFix": "Enter an explicit growth rate for every projection year."})
 
     # Apply Distressed Company logic if selected
     if model_type == "distressed":
@@ -396,6 +414,6 @@ def calculate_dcf(assumption_set: DcfAssumptionSet, model_type: str = "fcff_dcf"
     output.model_quality_score = DiagnosticsEngine.quality_score(warnings)
 
     # FCFF sensitivities do not include probability-weighted equity recovery.
-    sensitivity_tables = generate_sensitivity_tables(assumption_set) if include_sensitivity and model_type != "distressed" else []
+    sensitivity_tables = generate_sensitivity_tables(assumption_set) if include_sensitivity and model_type != "distressed" and not any(w.get("module") == "model_selection" and w.get("severity") == "blocking" for w in warnings) else []
 
     return output, projection_years, sensitivity_tables

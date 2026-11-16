@@ -115,9 +115,17 @@ export function PortfolioPerformancePanel({
 
               <details style={{ marginTop: "1rem" }}>
                 <summary>Calculation sources</summary>
+                <p>Return currency: {performance.time_weighted_return.base_currency || performance.money_weighted_return.base_currency || "Not available"}. Historical snapshots retain their recorded currency.</p>
                 <p>Snapshots: {attribution.source_snapshot_ids.join(", ") || "None"}</p>
                 <p>Transactions: {attribution.source_transaction_ids.join(", ") || "None"}</p>
                 <p>Benchmark prices: {opportunityCost?.source_market_price_ids.join(", ") || "None"}</p>
+                {(opportunityCost?.price_evidence || []).slice(0, 20).map((point, index) => <p key={`price-${index}`}>
+                  Benchmark date {point.target_date}: quote {point.price_date} ({point.price_age_days} days old), FX {point.fx_date} ({point.fx_age_days} days old). {point.is_stale ? "Outside freshness limit" : "Within freshness limit"}.
+                </p>)}
+                {(opportunityCost?.flow_fx_evidence || []).slice(0, 20).map(flow => <p key={`flow-${flow.transaction_id}`}>
+                  Cash flow {flow.transaction_id} on {flow.target_date}: FX {flow.fx_date} ({flow.fx_age_days} days old). {flow.is_stale ? "Outside freshness limit" : "Within freshness limit"}.
+                </p>)}
+                {((opportunityCost?.price_evidence?.length || 0) > 20 || (opportunityCost?.flow_fx_evidence?.length || 0) > 20) && <p>Showing the first 20 observations in each category.</p>}
               </details>
             </>
           )}

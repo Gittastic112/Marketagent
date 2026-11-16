@@ -103,7 +103,8 @@ test("correcting recorded activity makes selected historical returns provisional
   }
   let purchaseId = 0;
   for (const activity of [
-    {company_id:null,ticker:"CASH",transaction_type:"deposit",quantity:200,price:0},
+    // Retain enough recorded cash to fund the later fee correction.
+    {company_id:null,ticker:"CASH",transaction_type:"deposit",quantity:300,price:0},
     {company_id:company.id,ticker,transaction_type:"buy",quantity:2,price:100},
   ]) {
     const saved = await backendData<{id:number}>(page, "/portfolio-transactions", {method:"POST",

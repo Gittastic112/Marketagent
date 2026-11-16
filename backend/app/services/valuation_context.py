@@ -1,6 +1,22 @@
 from app.models import Company
 
 
+def company_calculation_context(company: Company | None) -> dict:
+    """Explicit classification passed to calculations, including reviewed industry mapping."""
+    return {"company_sector": getattr(company, "sector", None),
+        "company_industry": "; ".join(filter(None, (getattr(company, "industry", None),
+            getattr(company, "damodaran_industry", None)))) or None}
+
+
+def saved_model_selection_warnings(assumptions) -> list[dict]:
+    from app.services.diagnostics_engine import DiagnosticsEngine
+    model = getattr(assumptions, "valuation_model", None)
+    if model is None or model.model_type == "financial_services":
+        return []
+    return [warning.model_dump() for warning in DiagnosticsEngine.check_financial_services_model(
+        assumptions, **company_calculation_context(model.company))]
+
+
 def build_company_valuation_context(company: Company) -> dict:
     market = (company.market or "US").upper()
     if market == "IN":

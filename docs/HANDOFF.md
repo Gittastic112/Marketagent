@@ -57,23 +57,26 @@ patched OpenTelemetry/Soup Sieve, full backend verification and replacement imag
 identity, plus the draft-link and thesis-table accessibility repairs. The local
 data and recovery set remain unchanged; PR 17 owns hosted checks.
 
-November 15: ten bounded review repairs are implemented on the local
-codex/review-repairs-20261115 branch. The [repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
-records recovery/migration guards, evidence preservation, ownership filters,
-override origin, PDF duration context, workbook retention and SEC filing dates.
-They are not installed or published. Finish that release boundary, then address
-R2's A1-F6/A1-F7 unit/percentage handling and R3's valuation validation.
-Populated legacy conversion/restore support remains held; the guard rejects it.
-The [review ledger](limitations.md#returned-code-review) owns open status. The
-[intake receipt](../data/reviews/code-review-intake-20261115.json) records all 39
-finding IDs, source references, evidence limits and local probes. Raw reports stay
-unchanged in the ignored Marketagent-code-review-6505082 folder; private chat links
-are excluded from the receipt. The temporary review brief is retired into Git history.
-The intake remains a frozen baseline; the separate repair receipt records changed
-source and isolated checks. Normal data/backups and acceptance points are unchanged.
-After the repair gates, resume explicit dated-source proposals and initial-model
-preview, then wider period support and P6/P7. Reuse the active Compose project and
-essential recovery set; no routine dumps, copied report bundles or rollback stacks.
+November 15: the first ten review repairs are installed and merged in
+[PR 18](https://github.com/Gittastic112/Marketagent/pull/18); all seven hosted checks
+pass. The original [repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
+retains its initial local checkpoint. The [financial integrity follow-up](../data/reviews/review-financial-integrity-ten-sets-20261115.json)
+records release evidence and the next ten fixes: unit/percentage semantics,
+valuation validation and financial-sector context, duration/WACC bounds, and
+portfolio corrections, snapshot currency, benchmark freshness and unknown weights.
+Those ten are implemented; final release validation and installation are pending.
+The requested Today redesign brings the overview before a six-item review queue,
+places the brief and active alerts before it, and folds secondary activity into disclosures.
+The [review ledger](limitations.md#returned-code-review) owns the remaining 19
+primary findings. Next: A3-9 return-method alignment, then R5 evidence intake and
+R6 saved-editor/export integrity. Populated legacy conversion remains held.
+The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
+raw reports remain unchanged and ignored, with private chat links excluded.
+Normal data and the essential recovery set are preserved; no new backup or
+acceptance points are created. Reuse the active Compose project and remove only
+identified temporary containers, obsolete application images and build cache.
+After the repair gates, resume dated-source proposals, initial-model preview,
+wider period support and P6/P7 in the research workspace plan.
 
 November 12: [selected financial review](archive/checkpoints/2026/handoff-review-2026-11-12.md)
 adds reviewed three-year histories for NVIDIA, Meta and Alphabet while preserving

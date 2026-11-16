@@ -22,6 +22,7 @@ class ReturnMetric:
     warnings: list[str] = field(default_factory=list)
     source_snapshot_ids: list[int] = field(default_factory=list)
     source_transaction_ids: list[int] = field(default_factory=list)
+    base_currency: str | None = None
 
 
 def _xnpv(rate: float, cash_flows: list[tuple[date, float]]) -> float:
@@ -80,7 +81,11 @@ def calculate_money_weighted_return(
             warnings=["A complete point-in-time snapshot is required on the performance end date."],
         )
 
-    report = normalize_external_cash_flows(db, portfolio_id, end_date=as_of_date)
+    currency = (snapshot.base_currency or "").strip().upper()
+    if len(currency) != 3 or not currency.isalpha():
+        return ReturnMetric("not_available", None, None, as_of_date,
+            warnings=["The terminal snapshot requires an explicit currency."], source_snapshot_ids=[snapshot.id])
+    report = normalize_external_cash_flows(db, portfolio_id, end_date=as_of_date, target_currency=currency)
     if not report.complete:
         return ReturnMetric(
             calculation_status="not_available",
@@ -127,6 +132,7 @@ def calculate_money_weighted_return(
         warnings=warnings,
         source_snapshot_ids=[snapshot.id],
         source_transaction_ids=[flow.transaction_id for flow in report.flows],
+        base_currency=currency,
     )
 
 
@@ -167,6 +173,12 @@ def calculate_time_weighted_return(
             source_snapshot_ids=[snapshot.id for snapshot in snapshots],
         )
 
+    currencies = {(snapshot.base_currency or "").strip().upper() for snapshot in snapshots}
+    if len(currencies) != 1 or any(len(currency) != 3 or not currency.isalpha() for currency in currencies):
+        return ReturnMetric("not_available", None, start_date, end_date,
+            warnings=["All snapshots must use one explicit currency; mixed-currency history cannot be compounded."],
+            source_snapshot_ids=[snapshot.id for snapshot in snapshots])
+    currency = next(iter(currencies))
     compounded = 1.0
     source_transactions: list[int] = []
     warnings: list[str] = []
@@ -190,6 +202,7 @@ def calculate_time_weighted_return(
             portfolio_id,
             start_date=previous.snapshot_date,
             end_date=current.snapshot_date,
+            target_currency=currency,
         )
         if not report.complete:
             return ReturnMetric(
@@ -235,4 +248,5 @@ def calculate_time_weighted_return(
         warnings=warnings,
         source_snapshot_ids=[snapshot.id for snapshot in snapshots],
         source_transaction_ids=source_transactions,
+        base_currency=currency,
     )

@@ -96,16 +96,16 @@ The user authorised implementation after planning. P1 and ten bounded P2-P5 slic
 
 ## Returned code review
 
-November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Ten bounded repairs are now implemented/tested locally; 29 remain unimplemented. Formal release closure is pending, not implied by source tests.
-The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves reviewer claims; the [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json) records new evidence. This ledger owns status; the [roadmap](roadmaps/product-roadmap.md#review-repair-sequence) owns order and [decisions](roadmaps/review-decisions.md#returned-review-design-decisions) own policy. No normal deployment or GitHub publication occurred in this batch.
+November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Twenty bounded repairs are implemented; 19 remain unimplemented. The first ten are installed and merged; the second batch is undergoing final release checks.
+The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves reviewer claims; the [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json) records new evidence. This ledger owns status; the [roadmap](roadmaps/product-roadmap.md#review-repair-sequence) owns order and [decisions](roadmaps/review-decisions.md#returned-review-design-decisions) own policy. The [financial integrity receipt](../data/reviews/review-financial-integrity-ten-sets-20261115.json) records PR 18, installation preservation and the next ten fixes.
 
 | Repair group and IDs | Open boundary |
 |---|---|
 | R0: A4-1, A4-2 | Local guards verify ordered Compose files against the installed database and reject populated legacy tables before migration. PostgreSQL locking/rejection and fresh migration pass. A preserving legacy conversion and populated restore remain unproved; no affected normal backup is established |
-| R1: A3-1, A1-F1, A3-6, A3-7 | Local source protects dependent event/document evidence, blocks source-defining API edits, scopes nonzero holdings and private runs. Corrected evidence is imported separately. Legacy private runs without recorded owners remain hidden, not reassigned. Installation remains pending |
-| R2: A1-F2 through A1-F7 | F2-F5 implemented locally: new overrides retain origin; ambiguous PDF duration is held; workbooks retain bytes and allow exact-hash reattachment; SEC dates use fact-level filed metadata. Lost old override values/original files are not reconstructed. Browser download completion remains unverified. F6/F7 mixed units and small/negative percentage points remain unimplemented |
-| R3: A2-1, A2-2, A2-3, A2-8 | Invalid valuation inputs/outputs may appear ready, company classification does not reach every financial-sector guard, duration conventions disagree, and WACC requests lack unit/capital/horizon bounds |
-| R4: A3-2, A3-3, A3-4, A3-5, A3-9 | Transaction corrections use current holdings, mixed snapshot currencies may be combined, old benchmark quotes can appear complete, unknown weights become zero, and external-flow comparisons mix return methods |
+| R1: A3-1, A1-F1, A3-6, A3-7 | Local source protects dependent event/document evidence, blocks source-defining API edits, scopes nonzero holdings and private runs. Corrected evidence is imported separately. Legacy private runs without recorded owners remain hidden, not reassigned. The first release is installed and merged |
+| R2: A1-F2 through A1-F7 | F2-F5 installed: new overrides retain origin; ambiguous PDF duration is held; workbooks retain bytes and allow exact-hash reattachment; SEC dates use fact-level filed metadata. Lost old override values/original files are not reconstructed. Browser download completion remains unverified. F6/F7 now block incompatible units and preserve raw percent-format transformation evidence; existing extractions are not rewritten |
+| R3: A2-1, A2-2, A2-3, A2-8 | Implemented finite growth/claim/output checks, company-context propagation, negative-duration slope convention and WACC rate/capital/horizon bounds. Legacy invalid responses are blocked without rewriting stored values. Final release checks pending |
+| R4: A3-2, A3-3, A3-4, A3-5, A3-9 | A3-2 through A3-5 implemented: reconciled chronological corrections, snapshot-currency returns, five-calendar-day quote/FX gates and unavailable unknown-weight summaries. A3-9 return-method alignment remains open; incomplete opening history blocks correction |
 | R5: A1-F8 through A1-F12 | Metadata-only SEC sources cannot acquire text on retry; same-batch duplicates bypass pending rows; PDF page continuation and filing-diff backfill are blocked; financial history can route to the wrong evidence view |
 | R6: A2-4 through A2-7 | In-flight saves can lose or mislabel edits; refreshed growth text can diverge from reviewed values; stale acknowledgement can clear unseen events; exact-version exports use reconciled values/warnings |
 | R7: A3-8, A3-10, A3-11, A4-3; D1/D2 | Private-source approval is not reachable, thesis event links/memo contracts are broken, and derived AI claims lose origin. Brief review uses click-time dismissal; thesis impacts lack a preserving completion action. D1 is intentional existing behavior; D2 is part of WS07, not a new primary finding |
@@ -120,7 +120,7 @@ reinvestment, discounting, terminal assumptions, equity claims and diluted share
 
 | Method or consumer | Boundary |
 |---|---|
-| Core FCFF | Explicit zeros survive and missing/nonpositive/nonfinite shares withhold per-share value; other missing-value presets remain. A2-1 records broader validation/finite-output gaps. Saved rows are not recalculated on read; response reconciliation is distinct from raw history (A2-7) |
+| Core FCFF | Explicit zeros survive and missing/nonpositive/nonfinite shares withhold per-share value; other missing-value presets remain. New saved inputs and calculated outputs enforce finite ranges; legacy invalid responses carry blocking diagnostics. Saved rows are not recalculated on read; response reconciliation is distinct from raw history (A2-7) |
 | Calendar basis | Projections use relative periods. Calendar years remain null without a fiscal anchor; legacy unanchored years are withheld. Old integer-only images cannot safely consume new nullable rows |
 | Sensitivities and scenarios | Canonical FCFF sensitivities retain saved funding/terminal assumptions and per-cell validity. Legacy grids remain unverified. Shocks are deterministic scenarios, not probabilities; unsupported specialized tables stay unavailable |
 | Reverse DCF | Requires valid owned saved inputs and actual convergence. Financial-services reverse analysis is unsupported. Bisection does not prove a unique root or find every possible root |
@@ -195,7 +195,7 @@ Recorded dated activity is not broker-verified execution. Replay rejects missing
 openings, oversells, negative cash, ambiguous identity, unsupported adjustments,
 and more than 20,000 rows. Same-day record order is not verified settlement order.
 
-New snapshots retain activity/hash/FX provenance; legacy/manual history and later
+Financial corrections require a complete reconciled ledger; notes-only edits leave balances unchanged. New snapshots retain activity/hash/FX provenance; legacy/manual history and later
 corrections remain provisional without rewriting old snapshots. TWR uses the
 selected period; annualized MWR uses the first cash flow. Fixed-weight price risk
 is not realized total return. Alignment must match interval endpoints and cannot

@@ -1,12 +1,11 @@
 from typing import Any
 
 from fastapi import APIRouter
-from pydantic import BaseModel, Field, model_validator
+from app.schemas.wacc import WaccCalculationRequest
 
 from app.schemas.common import ApiMeta, ApiResponse
 from app.services.synthetic_rating_catalog import (
     SYNTHETIC_RATING_SOURCE,
-    SyntheticRatingFirmType,
 )
 from app.services.wacc_engine import (
     CostOfEquityService,
@@ -17,51 +16,6 @@ from app.services.wacc_engine import (
 )
 
 router = APIRouter(prefix="/api/valuation/wacc", tags=["wacc"])
-
-
-class WaccCalculationRequest(BaseModel):
-    risk_free_rate: float
-    beta: float
-    mature_erp: float
-    country_risk_premium: float = 0.0
-    lambda_crp: float = 1.0
-
-    interest_coverage_ratio: float
-    firm_type: SyntheticRatingFirmType | None = None
-    is_large_mfg: bool | None = Field(
-        default=None,
-        description="Legacy large/small selector; prefer firm_type.",
-        json_schema_extra={"deprecated": True},
-    )
-    marginal_tax_rate: float
-
-    market_equity: float
-    total_debt: float
-
-    terminal_wacc: float
-    years_to_fade: int = 5
-    total_years: int = 10
-
-    @model_validator(mode="after")
-    def validate_firm_type_inputs(self):
-        if self.firm_type is None or self.is_large_mfg is None:
-            return self
-        legacy_type = (
-            SyntheticRatingFirmType.LARGE_NON_FINANCIAL
-            if self.is_large_mfg
-            else SyntheticRatingFirmType.SMALL_OR_RISKY
-        )
-        if self.firm_type != legacy_type:
-            raise ValueError("firm_type and legacy is_large_mfg inputs conflict")
-        return self
-
-    @property
-    def resolved_firm_type(self) -> SyntheticRatingFirmType:
-        if self.firm_type is not None:
-            return self.firm_type
-        if self.is_large_mfg is False:
-            return SyntheticRatingFirmType.SMALL_OR_RISKY
-        return SyntheticRatingFirmType.LARGE_NON_FINANCIAL
 
 
 @router.post("/calculate", response_model=ApiResponse[dict[str, Any]])

@@ -12,6 +12,7 @@ from app.models import Company
 from app.models.dcf import DcfAssumptionSet
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
 from app.services.dcf import calculate_dcf
+from app.services.valuation_context import company_calculation_context
 
 
 def generate_quick_valuation_assumptions(
@@ -39,7 +40,8 @@ def calculate_quick_valuation(
         reinvestment_method="sales_to_capital",
         **assumption_values,
     )
-    output, projection_years, _ = calculate_dcf(assumption_set, include_sensitivity=False)
+    output, projection_years, _ = calculate_dcf(assumption_set, include_sensitivity=False,
+        **company_calculation_context(company))
     supplied_growth_years = set(payload.revenue_growth_years_json)
     missing_growth_years = [
         year

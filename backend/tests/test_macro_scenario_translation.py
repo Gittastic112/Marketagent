@@ -51,8 +51,8 @@ def test_translates_sector_macro_shocks_into_estimated_impacts():
     assert result["method"] == "sector_macro_sensitivity"
     assert result["sic_code"] == "9999"
     assert result["industry_name"] == "Test Industry"
-    assert result["estimated_value_impact_pct"] == pytest.approx(-0.045)
-    assert result["estimated_operating_income_impact_pct"] == pytest.approx(-0.0175)
+    assert result["estimated_value_impact_pct"] == pytest.approx(0.015)
+    assert result["estimated_operating_income_impact_pct"] == pytest.approx(0.0025)
     assert result["affected_assumptions"] == [
         "risk_free_rate",
         "terminal_value",
@@ -78,3 +78,12 @@ def test_missing_sector_macro_sensitivity_raises_lookup_error():
             inflation_shock=0.0,
             currency_shock=0.0,
         )
+
+
+@pytest.mark.parametrize("duration", [-3.0, 0.0, 3.0])
+@pytest.mark.parametrize("shock", [-.01, 0, .01])
+def test_duration_is_negative_rate_slope(duration, shock):
+    impact, covered, missing = MacroScenarioTranslationService._weighted_impact(
+        [duration, None, None, None], dict(rate_shock=shock, gdp_shock=0, inflation_shock=0, currency_shock=0), None)
+    assert impact == pytest.approx(-duration * shock)
+    assert covered == impact and missing == []

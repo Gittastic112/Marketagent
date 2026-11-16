@@ -116,8 +116,8 @@ class CapitalStructureService:
         Returns Equity Weight, Debt Weight
         """
         total_capital = market_equity + total_debt
-        if total_capital <= 0:
-            return 1.0, 0.0
+        if any(not math.isfinite(v) or v < 0 for v in (market_equity, total_debt)) or not math.isfinite(total_capital) or total_capital <= 0:
+            raise ValueError("Capital amounts must be nonnegative with positive finite total capital")
 
         return market_equity / total_capital, total_debt / total_capital
 
@@ -147,7 +147,12 @@ class WaccService:
         By default, keeps WACC constant for (total_years - years_to_fade), then linear fades to terminal.
         Example: 10 year DCF, 5 year fade: Years 1-5 use current_wacc, Years 6-10 fade linearly to terminal_wacc.
         """
-        constant_years = max(0, total_years - years_to_fade)
+        if (not isinstance(total_years, int) or isinstance(total_years, bool) or not 1 <= total_years <= 30
+                or not isinstance(years_to_fade, int) or isinstance(years_to_fade, bool) or not 0 <= years_to_fade <= total_years):
+            raise ValueError("WACC horizon must be 1 to 30 years with fade inside the horizon")
+        if any(not math.isfinite(v) or v < 0 for v in (current_wacc, terminal_wacc)):
+            raise ValueError("WACC rates must be finite and nonnegative")
+        constant_years = total_years - years_to_fade
         wacc_array: list[float] = []
 
         for i in range(1, total_years + 1):

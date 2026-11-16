@@ -181,7 +181,7 @@ def list_valuation_model_summaries(
     summaries: list[schemas.ValuationModelSummaryRead] = []
     for model in models:
         latest = max(model.assumption_sets, key=lambda item: item.created_at, default=None)
-        output = latest.outputs if latest is not None else None
+        output = schemas.DcfOutputRead.model_validate(latest.outputs, context={"assumption_set": latest}) if latest is not None and latest.outputs is not None else None
         if latest is None:
             readiness, detail = "setup_incomplete", "No saved assumption set"
         elif latest.is_stale:
@@ -209,7 +209,7 @@ def list_valuation_model_summaries(
             latest_run_at=latest.created_at if latest else None,
             readiness=readiness,
             readiness_detail=detail,
-            intrinsic_value_per_share=output.intrinsic_value_per_share if output else None,
+            intrinsic_value_per_share=output.intrinsic_value_per_share if output and readiness == "calculated" else None,
             model_quality_score=output.model_quality_score if output else None,
             cash_flow_currency=latest.cash_flow_currency if latest else None,
         ))
@@ -351,6 +351,9 @@ def get_dcf_results(model_id: int, assumption_id: int, db: Session = Depends(get
 @router.get("/valuation-models/{model_id}/assumptions/{assumption_id}/sensitivity", response_model=ApiResponse[list[schemas.DcfSensitivityTableRead]])
 def get_dcf_sensitivity(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Sequence[schemas.DcfSensitivityTableRead]:
     aset = get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
+    from app.services.valuation_context import saved_model_selection_warnings
+    if saved_model_selection_warnings(aset):
+        raise PublicApiError(status_code=422, code="VALUATION_MODEL_INAPPROPRIATE", message="Financial-sector FCFF sensitivity is unavailable. Review an equity-based model.")
     return ApiResponse(data=aset.sensitivity_tables)
 
 
@@ -366,7 +369,9 @@ def get_dcf_scenarios(model_id: int, assumption_id: int, db: Session = Depends(g
         raise PublicApiError(status_code=422, code="SCENARIO_INPUTS_INVALID", message="Correct invalid saved assumptions before generating scenarios.") from None
 
     from app.services.scenario_engine import ScenarioEngine
-    scenarios = ScenarioEngine.run_scenarios(aset, model_type=aset.valuation_model.model_type or "fcff_dcf")
+    from app.services.valuation_context import company_calculation_context
+    scenarios = ScenarioEngine.run_scenarios(aset, model_type=aset.valuation_model.model_type or "fcff_dcf",
+        **company_calculation_context(aset.valuation_model.company))
     return ApiResponse(data=scenarios)
 
 
@@ -432,8 +437,9 @@ def create_change_log(model_id: int, assumption_id: int, payload: schemas.Valuat
 def get_diagnostics(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     aset = get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
 
-    if aset.outputs and aset.outputs.warnings_json:
-        return ApiResponse(data=[schemas.DiagnosticWarning(**w) for w in aset.outputs.warnings_json])
+    if aset.outputs:
+        result = schemas.DcfOutputRead.model_validate(aset.outputs, context={"assumption_set": aset})
+        return ApiResponse(data=[schemas.DiagnosticWarning(**w) for w in result.warnings_json])
     return ApiResponse(data=[])
 
 @router.post(

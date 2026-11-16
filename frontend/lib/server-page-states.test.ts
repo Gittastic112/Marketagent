@@ -304,6 +304,28 @@ test("dashboard selector preserves explicit selection and never substitutes afte
   assert.doesNotMatch(failed, /Mock Data portfolio|Portfolio value/);
 });
 
+test("Today starts with a bounded review queue and preserves the explicit All and portfolio selections", async () => {
+  for (const [searchParams, expectedState] of [[{}, "needs_review"], [{review_state: "all", portfolio_id: "41"}, null]] as const) {
+    const html = await pageHtml("app/page", url => {
+      if (url.startsWith("/review-queue")) {
+        const query = new URL(url, "http://localhost").searchParams;
+        assert.equal(query.get("limit"), "6");
+        assert.equal(query.get("state"), expectedState);
+        if ("portfolio_id" in searchParams) assert.equal(query.get("portfolio_id"), "41");
+        return success(emptyQueue);
+      }
+      return success(dashboardData(null));
+    }, undefined, searchParams);
+    assert.ok(html.indexOf('aria-label="Research summary"') < html.indexOf('aria-label="Research review queue"'));
+    assert.ok(html.indexOf('aria-label="Daily overview"') < html.indexOf('aria-label="Research review queue"'));
+    assert.ok(html.indexOf('Daily Intelligence Brief') < html.indexOf('Continue your research'));
+    assert.match(html, /review_state=all/);
+    assert.match(html, /Source updates do not change saved valuations/);
+    assert.match(html, /Coverage and ordering/);
+    if ("portfolio_id" in searchParams) assert.match(html, /review_state=all&amp;portfolio_id=41/);
+  }
+});
+
 test("dashboard incomplete snapshot names exact price and FX gaps within the portfolio link", async () => {
   for (const calculation_status of ["partial", "not_available"] as const) {
     const snapshot: PortfolioSnapshot = {id: 42, portfolio_id: 41, snapshot_date: "2026-11-04",

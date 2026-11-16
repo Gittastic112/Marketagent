@@ -10,7 +10,8 @@ from sqlalchemy.orm import Session
 from app.models.dcf import DcfAssumptionSet, DcfDecisionLog, ValuationModel
 from app.schemas.valuation_inputs import DcfAssumptionSetCreate, DcfAssumptionSetWrite, DcfAssumptionVersionWrite
 from app.services.assumption_diff_service import AssumptionDiffService
-from app.services.dcf import calculate_dcf
+from app.services.dcf import calculate_dcf, require_finite_dcf_result
+from app.services.valuation_context import company_calculation_context, saved_model_selection_warnings
 from app.services.assumption_provenance import required_fields_by_model, unavailable_discount_component
 
 
@@ -64,15 +65,22 @@ def preview_assumption_version(db, model, request):
     output = None
     diagnostics = []
     if not missing:
-        output, _, _ = calculate_dcf(DcfAssumptionSet(id=0, **inputs), model_type=model.model_type, include_sensitivity=False)
-        diagnostics = [item for item in output.warnings_json or [] if isinstance(item, dict)]
+        try:
+            output, projections, _ = calculate_dcf(DcfAssumptionSet(id=0, **inputs), model_type=model.model_type, include_sensitivity=False,
+                **company_calculation_context(model.company))
+            diagnostics = [item for item in output.warnings_json or [] if isinstance(item, dict)]
+            require_finite_dcf_result(output, projections, model.model_type)
+        except (ValueError, ArithmeticError):
+            output = None
+            diagnostics.append({"severity": "blocking", "module": "calculation_range",
+                "message": "The proposed calculation cannot produce finite principal values. Review the inputs."})
     def summary(value):
         if value is None:
             return None
         return {key: getattr(value, key) if isinstance(getattr(value, key), (int, float))
             and isfinite(getattr(value, key)) else None for key in OUTPUT_FIELDS}
     blocked = any(item.get("severity") in {"critical", "blocking"} for item in diagnostics)
-    ready = not missing and not blocked
+    ready = output is not None and not missing and not blocked
     previous_result = previous.outputs if previous else None
     previous_warnings = previous_result.warnings_json if previous_result else None
     previous_safe = bool(previous and not previous.is_stale and previous.diluted_shares and previous.diluted_shares > 0
@@ -115,9 +123,17 @@ def create_assumption_version(db: Session, model: ValuationModel, request: DcfAs
         if not preview["ready"]:
             raise ValueError("Resolve the required inputs and blocking diagnostics before saving this preview.")
     row = DcfAssumptionSet(**inputs)
+    row.valuation_model = model
+    if saved_model_selection_warnings(row):
+        raise ValueError("This company's financial classification requires an equity-based model. FCFF assumptions were not saved.")
     db.add(row)
     db.flush()
-    output, projections, sensitivities = calculate_dcf(row, model_type=model.model_type)
+    try:
+        output, projections, sensitivities = calculate_dcf(row, model_type=model.model_type,
+            **company_calculation_context(model.company))
+        require_finite_dcf_result(output, projections, model.model_type)
+    except ArithmeticError:
+        raise ValueError("The calculation exceeds the supported numeric range. Review the inputs before saving.") from None
     db.add(output)
     db.add_all(projections)
     db.add_all(sensitivities)

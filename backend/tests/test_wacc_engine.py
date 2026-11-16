@@ -172,12 +172,8 @@ def test_capital_structure() -> None:
     assert eq_w == 0.8
     assert db_w == 0.2
 
-    eq_w, db_w = CapitalStructureService.calculate_market_weights(
-        market_equity=-100.0,
-        total_debt=50.0,
-    )
-    assert eq_w == 1.0
-    assert db_w == 0.0
+    with pytest.raises(ValueError, match="Capital amounts"):
+        CapitalStructureService.calculate_market_weights(market_equity=-100.0, total_debt=50.0)
 
 
 def test_wacc_calculation() -> None:

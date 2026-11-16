@@ -65,13 +65,13 @@ integration, then evidence. A package is not authorization to rewrite historical
 | R7 · Research workflow | A3-8/A3-10/A3-11/A4-3 plus D1/D2: complete private-source approval, fix thesis links and memo contracts, retain AI origin, record exact brief/thesis review decisions | End-to-end owner-scoped approval/receipt flow, real event links and memo generation; new events between capture/click remain pending; no-change/blocked thesis decisions retain evidence and reject foreign owners |
 | R8 · Auth and workers | A4-4 through A4-8: align research timeouts, recover sign-in states, record AI attempts before calls, reconcile expired leases and constrain callbacks to the same origin | Browser recovery and callback tests; delayed/interrupted provider doubles plus worker restart tests show pending/unknown/failed outcomes, no silent duplicate sends, and one terminal run outcome |
 
-Ten local sets implement R0's guards, R1's boundaries and R2's A1-F2 through A1-F5;
-see the [repair receipt](../../data/reviews/review-repairs-ten-sets-20261115.json).
-Finish release validation/publication/installation, then implement A1-F6/A1-F7
-and R3. R0 still blocks populated legacy conversion or restore. R2 relies on R1's
-immutable evidence boundary; R3 establishes validation used by R6; R4 follows the
-currency/freshness decisions; R5 follows R2's asset/period identity. R7 depends on R1
-ownership and durable evidence. R8 must respect the same private-run policy.
+The first ten repairs are installed and merged in PR 18. The next ten implement
+A1-F6/F7, all four R3 findings and A3-2 through A3-5, with final release checks
+pending. The [follow-up receipt](../../data/reviews/review-financial-integrity-ten-sets-20261115.json)
+records exact evidence. Next: A3-9 return-method alignment, R5 evidence intake,
+then R6 editor/export integrity. R0 still blocks populated legacy conversion or
+restore; original evidence and historical snapshots remain preserved. R7 depends
+on R1 ownership and durable evidence; R8 respects the same private-run policy.
 Work sequentially unless an explicit parallel batch assigns exclusive files.
 
 Before each package, recheck its pinned claim against the current code, inspect

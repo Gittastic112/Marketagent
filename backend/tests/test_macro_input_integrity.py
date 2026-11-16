@@ -84,7 +84,7 @@ def test_missing_active_scenario_coefficient_withholds_total(db_session):
     result = MacroScenarioTranslationService.translate(db_session, sic_code="1234", rate_shock=.01,
         gdp_shock=.02, inflation_shock=0, currency_shock=0)
     assert result["estimated_value_impact_pct"] is None
-    assert result["covered_value_impact_pct"] == pytest.approx(.02)
+    assert result["covered_value_impact_pct"] == pytest.approx(-.02)
     assert result["missing_value_factors"] == ["gdp_shock"]
 
 

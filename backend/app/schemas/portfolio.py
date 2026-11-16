@@ -310,6 +310,7 @@ class PortfolioAttributionRead(BaseModel):
 
 
 class PortfolioReturnMetricRead(BaseModel):
+    base_currency: str | None = None
     calculation_status: Literal["complete", "partial", "not_available"]
     return_decimal: float | None
     start_date: date | None
@@ -365,7 +366,30 @@ class PortfolioPeriodAttributionRead(BaseModel):
     source_transaction_ids: list[int] = Field(default_factory=list)
 
 
+class PortfolioBenchmarkPriceEvidenceRead(BaseModel):
+    market_price_id: int
+    price_date: date
+    fx_observation_id: int | None
+    fx_date: date
+    target_date: date
+    price_age_days: int
+    fx_age_days: int
+    is_stale: bool
+
+
+class PortfolioFlowFxEvidenceRead(BaseModel):
+    transaction_id: int
+    target_date: date
+    fx_observation_id: int | None
+    fx_date: date
+    fx_age_days: int
+    is_stale: bool
+
+
 class PortfolioOpportunityCostRead(BaseModel):
+    base_currency: str | None = None
+    price_evidence: list[PortfolioBenchmarkPriceEvidenceRead] = Field(default_factory=list)
+    flow_fx_evidence: list[PortfolioFlowFxEvidenceRead] = Field(default_factory=list)
     calculation_status: Literal["complete", "partial", "not_available", "not_configured"]
     portfolio_id: int
     start_date: date
@@ -491,6 +515,8 @@ class PortfolioAnalyticsRead(BaseModel):
     currency_exposure: dict[str, float]
     asset_type_exposure: dict[str, float]
     concentration_score: float | None
+    exposure_status: Literal["complete", "not_available"] = "not_available"
+    missing_weight_tickers: list[str] = Field(default_factory=list)
     diversification_warnings: list[str]
     fx_impact: float | None = None
     opportunity_cost: float | None = None

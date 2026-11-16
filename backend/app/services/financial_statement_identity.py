@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import math
 from typing import Any, Callable
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models.financial import FinancialStatementPeriod
+from app.services.valuation_input_units import canonical_financial_input, SCALES
 
 
 ABSOLUTE_TOLERANCE = 0.01
@@ -106,6 +108,22 @@ class FinancialStatementIdentityService:
                 })
                 continue
 
+            # Arithmetic is only meaningful within one verified currency and scale.
+            # Keep the reported values intact; mixed scales require explicit review.
+            factors = []
+            for name in required_metrics:
+                metric = metrics_by_name[name][0]
+                _, basis = canonical_financial_input("net_income", metric.value,
+                    {"unit": metric.unit}, period.currency)
+                factors.append(basis.get("unit_multiplier") if basis["unit_alignment_status"] != "unavailable" else None)
+            if None in factors or len(set(factors)) != 1:
+                checks.append({**base, "status": "failed", "blocking": True,
+                    "actual_value": None, "expected_value": None, "delta": None,
+                    "tolerance": None, "inputs": {},
+                    "unit_issue": "Inputs require finite values in the same verified currency and scale; no identity was calculated."})
+                continue
+            scale = next((name for name, factor in SCALES.items() if factor == factors[0]), "")
+            base["unit"] = f"{period.currency.upper()} {scale}".strip()
             values = {name: float(metrics_by_name[name][0].value) for name in required_metrics}
             actual = values[identity["actual_metric"]]
             expected_fn: Callable[[dict[str, float]], float] = identity["expected"]
@@ -113,6 +131,11 @@ class FinancialStatementIdentityService:
             if after_tax_adjustment:
                 expected += values["equity_method_income_after_tax"]
             delta = actual - expected
+            if not all(math.isfinite(value) for value in (actual, expected, delta)):
+                checks.append({**base, "status": "failed", "blocking": True,
+                    "actual_value": None, "expected_value": None, "delta": None,
+                    "tolerance": None, "inputs": {}, "unit_issue": "The identity exceeds supported numeric limits."})
+                continue
             tolerance = _tolerance(actual, expected)
             passed = abs(delta) <= tolerance
             checks.append({

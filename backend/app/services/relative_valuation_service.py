@@ -85,6 +85,26 @@ class RelativeValuationService:
 def reconcile_output_read(data: dict[str, Any], assumptions: Any) -> dict[str, Any]:
     """Return a detached response copy. Never mutate persisted ratios or warnings."""
     result = dict(data)
+    from pydantic import ValidationError
+    from app.schemas.valuation_inputs import DcfAssumptionSetWrite
+    if assumptions is not None:
+        try:
+            # Transient scenarios have not received database defaults yet.
+            # Validate supplied inputs while allowing absent optional/defaulted fields.
+            DcfAssumptionSetWrite.model_validate({
+                name: field(assumptions, name) for name in DcfAssumptionSetWrite.model_fields
+                if field(assumptions, name) is not None})
+        except ValidationError:
+            result["warnings_json"] = [*(result.get("warnings_json") or []), {
+                "severity": "blocking", "module": "input_validation",
+                "message": "Stored inputs do not meet current finite-value, unit or growth validation. Preserve this version and review a new calculation."}]
+    for key, value in result.items():
+        if isinstance(value, float) and not finite(value):
+            result[key] = None
+    from app.services.valuation_context import saved_model_selection_warnings
+    additional = saved_model_selection_warnings(assumptions)
+    if additional and not any(isinstance(w, dict) and w.get("module") == "model_selection" for w in result.get("warnings_json") or []):
+        result["warnings_json"] = [*(result.get("warnings_json") or []), *additional]
     price = field(assumptions, "current_market_price") if assumptions is not None else result.get("current_market_price")
     stored_price = result.get("current_market_price")
     if not finite(price) or price <= 0 or not finite(stored_price) or stored_price <= 0:

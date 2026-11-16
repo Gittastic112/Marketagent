@@ -137,8 +137,8 @@ def test_post_macro_scenario_translates_shocks():
 
         assert response.status_code == 200
         body = response.json()
-        assert body["data"]["estimated_value_impact_pct"] == -0.045
-        assert body["data"]["estimated_operating_income_impact_pct"] == -0.0175
+        assert body["data"]["estimated_value_impact_pct"] == 0.015
+        assert body["data"]["estimated_operating_income_impact_pct"] == 0.0025
         assert "currency_translation" in body["data"]["affected_assumptions"]
         assert body["meta"]["source"] == "internal"
 

@@ -11,7 +11,8 @@ from app.models.company import Company
 from app.models.dcf import DcfAssumptionSet, ValuationModel, ValuationSetupDraft
 from app.schemas.valuation_inputs import DcfAssumptionSetWrite
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
-from app.services.dcf import calculate_dcf
+from app.services.dcf import calculate_dcf, require_finite_dcf_result
+from app.services.valuation_context import company_calculation_context
 from app.services.industry_mapping import IndustryMappingService
 from app.services.valuation_source_inputs import source_input_signature
 from app.services.valuation_input_units import INPUT_UNIT_POLICY, MONEY_FIELDS, SHARE_FIELDS
@@ -420,7 +421,14 @@ class ValuationSetupDraftService:
             output, projection_years, sensitivity_tables = calculate_dcf(
                 assumption_set,
                 model_type=model_type,
+                **company_calculation_context(company),
             )
+            try:
+                require_finite_dcf_result(output, projection_years, model_type)
+                if any(w.get("module") == "model_selection" and w.get("severity") == "blocking" for w in output.warnings_json or []):
+                    raise ValueError("The company's classification requires an equity-based model.")
+            except (ValueError, ArithmeticError) as exc:
+                raise HTTPException(status_code=422, detail=str(exc)) from exc
             db.add(output)
             db.add_all(projection_years)
             db.add_all(sensitivity_tables)

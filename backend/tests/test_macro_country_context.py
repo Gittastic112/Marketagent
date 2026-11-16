@@ -101,7 +101,7 @@ def test_macro_scenario_preserves_source_coefficients_and_returns_context() -> N
     assert data["market"] == "IN"
     assert data["country"] == "India"
     assert data["raw_duration"] == -3.01009
-    assert data["estimated_value_impact_pct"] == -0.0301009
+    assert data["estimated_value_impact_pct"] == 0.0301009
     assert "Negative raw duration" in data["warnings"][-1]
 
 

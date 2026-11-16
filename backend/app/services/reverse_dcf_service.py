@@ -8,9 +8,12 @@ from app.models.dcf import DcfAssumptionSet
 from app.schemas.valuation_inputs import DcfAssumptionSetWrite, ReverseDcfRequest
 from app.schemas.valuation_outputs import DiagnosticWarning, ReverseDcfResponse
 from app.services.reverse_dcf_engine import MarketImpliedAssumptionSolver
+from app.services.valuation_context import saved_model_selection_warnings
 
 
 def solve_saved_reverse_dcf(row: DcfAssumptionSet, request: ReverseDcfRequest) -> ReverseDcfResponse:
+    if saved_model_selection_warnings(row):
+        raise ValueError("Financial-sector companies require an equity-based model; FCFF reverse calculations are unavailable.")
     if row.is_stale:
         raise ValueError("Saved assumptions are stale. Review and save a current calculation first.")
     model_type = row.valuation_model.model_type or "fcff_dcf"

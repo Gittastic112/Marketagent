@@ -59,6 +59,7 @@ from app.models import (
     PortfolioTransaction,
 )
 from app.services.portfolio_holdings import apply_transaction_to_holding, apply_transaction_to_cash
+from app.services.portfolio_transaction_corrections import correct_transaction
 from app.services.portfolio_valuation import calculate_portfolio_valuation
 from app.services.portfolio_analytics import calculate_portfolio_analytics, record_daily_snapshot
 from app.services.portfolio_attribution_engine import PortfolioAttributionEngine
@@ -331,6 +332,7 @@ def create_portfolio_transaction(
     require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_transaction_refs(db, payload)
     transaction = PortfolioTransaction(**payload.model_dump())
+    db.execute(select(Portfolio.id).where(Portfolio.id == payload.portfolio_id).with_for_update()).one()
     db.add(transaction)
     try:
         apply_transaction_to_holding(db, transaction)
@@ -387,12 +389,7 @@ def update_portfolio_transaction(
     require_owned_payload_portfolio(db, payload, current_user["id"])
     validate_portfolio_transaction_refs(db, payload)
     try:
-        apply_transaction_to_holding(db, transaction, direction=-1)
-        apply_transaction_to_cash(db, transaction, direction=-1)
-        for field, value in payload.model_dump(exclude_unset=True).items():
-            setattr(transaction, field, value)
-        apply_transaction_to_holding(db, transaction)
-        apply_transaction_to_cash(db, transaction)
+        correct_transaction(db, transaction, payload.model_dump(exclude_unset=True))
         commit_or_conflict(db)
     except HTTPException:
         db.rollback()
@@ -410,9 +407,7 @@ def delete_portfolio_transaction(transaction_id: int, db: Session = Depends(get_
         current_user["id"],
     )
     try:
-        apply_transaction_to_holding(db, transaction, direction=-1)
-        apply_transaction_to_cash(db, transaction, direction=-1)
-        db.delete(transaction)
+        correct_transaction(db, transaction, None)
         commit_or_conflict(db)
     except HTTPException:
         db.rollback()

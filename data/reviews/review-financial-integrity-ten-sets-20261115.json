@@ -1,0 +1,270 @@
+{
+  "schema_version": 1,
+  "kind": "review_financial_integrity_ten_sets",
+  "date": "2026-11-15",
+  "status": "implemented_validation_in_progress",
+  "branch": "codex/review-financial-integrity-20261115",
+  "scope": "Ten further bounded review repairs. This does not certify all 39 findings, genuine portfolio activity or daily-use acceptance.",
+  "cross_cutting_reason": "Shared financial contracts require coordinated API, calculation, ownership-context, presentation and regression changes across more than ten files.",
+  "first_release_followup": {
+    "pull_request": "https://github.com/Gittastic112/Marketagent/pull/18",
+    "merged_commit": "d6902dfa014a4f249677efcd7ba3cc0c0d1d4c4b",
+    "verified_head": "25027c746fe40e32cfab2cac33be44f8da65c24b",
+    "workflow": "https://github.com/Gittastic112/Marketagent/actions/runs/43796500471",
+    "all_seven_checks_passed": true,
+    "local_backend": {
+      "passed": 2007,
+      "skipped": 15
+    },
+    "installation": {
+      "installed_at": "2026-11-16T02:52:36Z",
+      "source_commit": "a9fd56eeec15998212bf23c880d91f9cb839eedc",
+      "frontend_source_commit": "f1008bf5b4d3e4076f28a42193a6ff85f161e97f",
+      "project": "market-intelligence-review-20261112-financial-history",
+      "images": {
+        "backend": {
+          "previous": "sha256:b816dc38f7ecfea07c55640281629bfa5eb9d2a5fd459f152983aceebe7c2cce",
+          "installed": "sha256:9b952f6d72dce5a8ebfa5a79390e684e26c12b728a4ad6cbc83531f7831439ea",
+          "container": "4240c9f10f141c4af8a4729142a2eec375d314c6a7025919f2a9afc680bbffc6"
+        },
+        "frontend": {
+          "previous": "sha256:77acb42526ae691c55432921111286ba89a8c882dfb96daa30f9a4ecb2d779c2",
+          "installed": "sha256:fbb91d6f0e41298f1bf78c46f2b22ffeeebcc46d2293eca0fe88e22a84cdec46",
+          "container": "4b1bb2545a55d8f96c2181f65c1410b5ae684c87bf730a47f7fa2d8c069c0576"
+        },
+        "scheduler": {
+          "previous": "sha256:b816dc38f7ecfea07c55640281629bfa5eb9d2a5fd459f152983aceebe7c2cce",
+          "installed": "sha256:9b952f6d72dce5a8ebfa5a79390e684e26c12b728a4ad6cbc83531f7831439ea",
+          "container": "c756ac2728e88ab431c5b5372251714a6f8d36d4048f3d619ffa663a7cfd8241"
+        }
+      },
+      "unchanged_tables": 110,
+      "settings_unchanged": true,
+      "mounts_unchanged": true,
+      "protections_unchanged": true,
+      "database_restarted": false,
+      "volumes_unchanged": true,
+      "new_backup": false,
+      "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+      "database_revision": "u3u3u3u3u3u3",
+      "database_fingerprint": "f31249b7294c3b94ec62a900fd5bb38398748fa03d3318d84d8d9369ee838bfc",
+      "asset_bytes_unchanged": true,
+      "recovery_target_preflight": true,
+      "optional_services_stayed_disabled": true
+    },
+    "browser": "Signed-in Today workspace reloaded successfully in the in-app browser. Read-only check; no research records changed.",
+    "fixes": [
+      "Read-only Alembic inspection no longer enters the upgrade guard.",
+      "Browser evidence test checks receipt invalidation without overwriting an original source.",
+      "Source-page browser assertions target the visible route during navigation."
+    ]
+  },
+  "sets": [
+    {
+      "number": 1,
+      "finding": "A1-F6",
+      "outcome": "Block arithmetic across incompatible or unknown accounting units",
+      "behavior": "Identity checks require finite operands with the same known scale and currency, retain the true unit label, and return a unit_issue instead of a misleading sum. Existing metrics are unchanged.",
+      "tests": [
+        "backend/tests/test_financial_identity_math.py"
+      ]
+    },
+    {
+      "number": 2,
+      "finding": "A1-F7",
+      "outcome": "Normalize percentage points using workbook format evidence",
+      "behavior": "Ordinary percentage-point values, including small, zero and negative values, divide by 100. Actual Excel percent-formatted fractions are preserved. Raw values, number formats and transformations remain in source locators.",
+      "tests": [
+        "backend/tests/test_screener_percentage_units.py",
+        "backend/tests/test_financial_extraction_workflow.py"
+      ],
+      "limit": "Existing extractions are not silently reclassified."
+    },
+    {
+      "number": 3,
+      "finding": "A2-1",
+      "outcome": "Reject invalid saved valuation inputs and non-finite calculations",
+      "behavior": "New writes bound canonical growth years, finite numeric growth and nonnegative equity-bridge claims. Preview and save withhold unsupported numeric results; failed saves roll back. Legacy responses add blocking diagnostics without rewriting stored inputs or outputs.",
+      "tests": [
+        "backend/tests/test_valuation_write_guards.py",
+        "backend/tests/test_implied_pricing_integrity.py"
+      ],
+      "limit": "Missing input defaults elsewhere in the engine and exact historical exports remain separate open boundaries."
+    },
+    {
+      "number": 4,
+      "finding": "A2-2",
+      "outcome": "Carry company classification through valuation guards",
+      "behavior": "Saved calculations, preview, quick calculation, draft promotion, scenarios, sensitivity and reverse DCF receive company sector/industry context. Financial-sector FCFF writes are blocked, legacy reads are flagged, and the dedicated equity model remains supported.",
+      "tests": [
+        "backend/tests/test_valuation_write_guards.py",
+        "backend/tests/test_specialized_valuation_integrity.py"
+      ]
+    },
+    {
+      "number": 5,
+      "finding": "A2-3",
+      "outcome": "Use the duration sign consistently",
+      "behavior": "Interest-rate contribution is minus duration times the rate shock; other macro coefficients retain their existing signs. The UI explains decimal shock units and direction.",
+      "tests": [
+        "backend/tests/test_macro_scenario_translation.py",
+        "backend/tests/test_api_macro_sensitivity.py",
+        "backend/tests/test_macro_country_context.py",
+        "backend/tests/test_macro_input_integrity.py"
+      ],
+      "original_source": {
+        "path": "data/damodaran/raw/macrodur.xls",
+        "sha256": "3dd6478f092f76f1ae3cdef30834ec25395f6212910c3673b2ce6f1bc78bdb83",
+        "sheet": "Duration Calculator",
+        "cells": {
+          "D4": -1.7818396366496092,
+          "D5": 1.7818396366496092
+        },
+        "observation": "The stored D-column slope and duration have opposite signs. Original workbook bytes were not modified."
+      }
+    },
+    {
+      "number": 6,
+      "finding": "A2-8",
+      "outcome": "Validate WACC units, capital and horizon",
+      "behavior": "Pure contracts require finite bounded decimal rates, nonnegative capital with a positive finite total, and a valid fade/projection horizon. Invalid capital no longer invents a fully equity-funded company. Existing public imports remain compatible.",
+      "tests": [
+        "backend/tests/test_api_wacc.py",
+        "backend/tests/test_wacc_engine.py",
+        "backend/tests/test_schema_boundaries.py"
+      ]
+    },
+    {
+      "number": 7,
+      "finding": "A3-2",
+      "outcome": "Replay financial corrections against complete recorded history",
+      "behavior": "Notes-only edits leave balances and dates unchanged. Financial edits/deletions lock affected portfolios, reconcile current positions/cash with the old ledger, simulate the corrected chronology, then update atomically. Unsupported openings, oversells and unfunded activity are rejected. Old snapshots are never rewritten.",
+      "tests": [
+        "backend/tests/test_portfolio_transaction_corrections.py",
+        "backend/tests/test_api_portfolios.py"
+      ],
+      "limit": "Recorded history is not broker-verified. Same-day ordering follows record IDs; incomplete opening history blocks financial correction. Backdated new posting remains a separate workflow."
+    },
+    {
+      "number": 8,
+      "finding": "A3-3",
+      "outcome": "Preserve the currency of historical return calculations",
+      "behavior": "Historical cash flows use the selected snapshot currency, not a later preference. Mixed or invalid snapshot currencies withhold comparisons. Return responses expose the calculation currency.",
+      "tests": [
+        "backend/tests/test_portfolio_currency_and_coverage.py",
+        "backend/tests/test_portfolio_performance.py"
+      ]
+    },
+    {
+      "number": 9,
+      "finding": "A3-4",
+      "outcome": "Withhold benchmarks with stale quote or FX evidence",
+      "behavior": "Boundary and flow-date quotes and required FX must be within five calendar days. Responses retain dates, ages and source IDs; the performance panel exposes calculation sources.",
+      "tests": [
+        "backend/tests/test_portfolio_currency_and_coverage.py"
+      ],
+      "limit": "Five calendar days is an explicit policy, not an exchange-calendar claim. A3-9 return-method alignment remains open."
+    },
+    {
+      "number": 10,
+      "finding": "A3-5",
+      "outcome": "Keep unknown weights unavailable",
+      "behavior": "Any missing or non-finite holding weight withholds weighted exposures, concentration and top-position rankings. Missing tickers and coverage state are explicit; no zero substitution or renormalization is applied.",
+      "tests": [
+        "backend/tests/test_portfolio_currency_and_coverage.py",
+        "backend/tests/test_portfolio_analytics.py"
+      ]
+    }
+  ],
+  "validation": {
+    "failed_before": [
+      "Unit/percentage cases: 18 failures against original source.",
+      "Valuation write guards: 35 failures before fixes.",
+      "Rate/WACC checks: 19 failures before fixes.",
+      "Portfolio correction cases: 6 failures before fixes.",
+      "Currency/freshness/weight cases: 6 failures before fixes."
+    ],
+    "final_backend": {
+      "passed": 2100,
+      "failed": 1,
+      "skipped": 15,
+      "failure": "The existing PDF locator certification fixture hit the bounded parser time limit during the full run.",
+      "isolated_retry": {
+        "passed": 1,
+        "seconds": 10.63
+      },
+      "limit": "This is not a clean full-suite pass; hosted release validation is pending."
+    },
+    "frontend": {
+      "tests_passed": 395,
+      "typecheck": "passed",
+      "dependency_environment": "Locked dependencies from the production builder; current allowlisted source copied over the image source.",
+      "wire_contracts": 36,
+      "documentation_checks": "95 active files and 1259 links; 24 checker tests passed."
+    },
+    "browser": {
+      "environment": "Localhost-only temporary frontend preview, existing authenticated session, read-only normal data.",
+      "passed": [
+        "Desktop overview appears before review items; review/brief columns render.",
+        "Default Needs review and explicit All each show six records with accurate counts.",
+        "Coverage disclosure retains scope, capture time and limitations.",
+        "390px mobile check has equal page/client widths and no horizontal overflow.",
+        "Stale evidence remains labelled in the brief."
+      ],
+      "limitations": [
+        "Does not establish genuine-data financial accuracy or daily use."
+      ],
+      "preview_removed": true
+    },
+    "hosted_financial_baseline": {
+      "head": "2137597",
+      "workflow": "https://github.com/Gittastic112/Marketagent/actions/runs/43799295805",
+      "backend_passed": 2101,
+      "backend_skipped": 15,
+      "frontend_passed": 395,
+      "production_build": "passed"
+    }
+  },
+  "installation": {
+    "status": "pending"
+  },
+  "cleanup": {
+    "status": "pending"
+  },
+  "preservation": {
+    "no_historical_rewrites": true,
+    "no_normal_research_mutations": true,
+    "no_new_backups": true,
+    "raw_reports_unchanged": true,
+    "protected_local_configuration_excluded": true
+  },
+  "privacy": {
+    "commit_email": "GitHub noreply identity",
+    "github_browser_signed_out": true,
+    "temporary_cli_logout": "pending",
+    "private_data_and_review_links_excluded": true
+  },
+  "remaining_primary_findings_after_this_batch": 19,
+  "limits": [
+    "Populated legacy conversion and restore remain blocked pending preserving proof.",
+    "Historical original values/assets already lost are not reconstructed.",
+    "Automated Mock Data checks do not count as the user using the product.",
+    "No public application hosting, new provider intake or AI disclosure was performed."
+  ],
+  "source_commit": "b290b8e657af0ffc221d2b3280eae81ba9271b61",
+  "additional_user_requested_ui": {
+    "scope": "Today home page",
+    "changes": [
+      "Research summary appears before the review queue.",
+      "Default six-item Needs review filter with explicit All and preserved portfolio selection.",
+      "The portfolio summary, daily brief and active alerts precede the research queue, matching the user-selected screenshot order. Source activity and full event detail are expandable.",
+      "Notebook shows four most recently updated notes with a link to all notes.",
+      "Source provenance, stale/Mock Data labels, incomplete snapshots and coverage limits remain visible or explicitly expandable."
+    ],
+    "validation": "Initial layout passed desktop/mobile/filter checks. Final screenshot-guided ordering is undergoing its focused checks and rebuild."
+  },
+  "publication": {
+    "pull_request": "https://github.com/Gittastic112/Marketagent/pull/19",
+    "status": "draft_hosted_checks_pending"
+  }
+}
