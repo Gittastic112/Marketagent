@@ -55,7 +55,10 @@ def run_migrations_online() -> None:
         context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
-            assert_legacy_upgrade_safe(connection, ScriptDirectory.from_config(config), context.get_revision_argument())
+            # Inspection/autogeneration has no destination revision. Only a
+            # requested migration can cross the destructive legacy boundary.
+            if context.get_context().opts.get("destination_rev") is not None:
+                assert_legacy_upgrade_safe(connection, ScriptDirectory.from_config(config), context.get_revision_argument())
             context.run_migrations()
 
 

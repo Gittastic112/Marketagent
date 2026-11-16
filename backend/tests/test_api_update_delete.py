@@ -102,9 +102,17 @@ def test_update_and_delete_raw_document(client: TestClient) -> None:
     assert created_response.status_code == 201
     created = response_data(created_response)
 
-    update_response = client.patch(
+    rejected_response = client.patch(
         f"/raw-documents/{created['id']}",
         json={"title": "Updated title", "raw_text": "Updated text"},
+    )
+    assert rejected_response.status_code == 409
+    retained = response_data(client.get(f"/raw-documents/{created['id']}"))
+    assert retained["title"] == "Initial title"
+    assert retained["raw_text"] is None
+    assert retained["content_hash"] == "document-hash-1"
+    update_response = client.patch(
+        f"/raw-documents/{created['id']}", json={"title": "Updated title"},
     )
     delete_response = client.delete(f"/raw-documents/{created['id']}")
     get_response = client.get(f"/raw-documents/{created['id']}")

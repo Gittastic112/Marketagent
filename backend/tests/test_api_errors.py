@@ -198,7 +198,8 @@ def test_delete_raw_document_with_linked_events_returns_clear_conflict(client: T
     response = client.delete(f"/raw-documents/{document['id']}")
 
     assert response.status_code == 409
-    assert response.json()["detail"] == "Raw document cannot be deleted while it has linked events. Delete linked events first."
+    assert response.json()["detail"] == "Raw document cannot be deleted while retained evidence depends on it."
+    assert client.get(f"/raw-documents/{document['id']}").status_code == 200
 
 
 def test_delete_event_with_linked_alerts_returns_clear_conflict(client: TestClient) -> None:

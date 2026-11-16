@@ -1,11 +1,14 @@
 """Mock Data preflight checks. Never run a destructive historical migration."""
 from pathlib import Path
 
+from alembic import command
+from alembic.config import Config
 from alembic.script import ScriptDirectory
 import pytest
 from sqlalchemy import create_engine, text
 
 from app.db.migration_safety import assert_legacy_upgrade_safe, assert_offline_upgrade_safe, crosses_legacy_drop
+from app.core.config import get_settings
 
 
 SCRIPT = ScriptDirectory(str(Path(__file__).resolve().parents[1] / "alembic"))
@@ -57,3 +60,27 @@ def test_partial_target_before_drop_is_allowed_and_offline_crossing_is_rejected(
 def test_preflight_does_not_misclassify_downgrade_or_relative_upgrade():
     assert crosses_legacy_drop(SCRIPT, "423m1d347c29", (SCRIPT.get_current_head(),)) is False
     assert crosses_legacy_drop(SCRIPT, "+1", ("423m1d347c29",)) is True
+
+
+@pytest.mark.parametrize("revision", [None, "423m1d347c29", SCRIPT.get_current_head()])
+def test_current_command_remains_read_only_without_a_migration_target(tmp_path, monkeypatch, revision):
+    url = f"sqlite:///{tmp_path / 'inspection.sqlite'}"
+    engine = create_engine(url)
+    with engine.begin() as connection:
+        connection.execute(text("CREATE TABLE evidence_ledger (id INTEGER, evidence TEXT)"))
+        connection.execute(text("INSERT INTO evidence_ledger VALUES (1, 'Mock Data retained evidence')"))
+        connection.execute(text("CREATE TABLE alembic_version (version_num VARCHAR(32))"))
+        if revision:
+            connection.execute(text("INSERT INTO alembic_version VALUES (:revision)"), {"revision": revision})
+    monkeypatch.setenv("DATABASE_URL", url)
+    get_settings.cache_clear()
+    config = Config(str(Path(__file__).resolve().parents[2] / "alembic.ini"))
+    config.set_main_option("script_location", str(SCRIPT.dir))
+    command.current(config)
+    if revision == "423m1d347c29":
+        with pytest.raises(RuntimeError, match="preserving conversion"):
+            command.upgrade(config, "head")
+    with engine.connect() as connection:
+        assert connection.execute(text("SELECT evidence FROM evidence_ledger")).scalar_one() == "Mock Data retained evidence"
+        assert connection.execute(text("SELECT version_num FROM alembic_version")).scalar_one_or_none() == revision
+    engine.dispose()
