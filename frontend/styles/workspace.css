@@ -195,7 +195,7 @@
 .today-workspace .panel-content { padding: 20px; }
 .today-workspace .review-queue { margin-bottom: 0; }
 .today-text-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--accent-strong); }
-.today-ticker { font-size: 11px; font-weight: 700; letter-spacing: 0.025em; color: var(--accent-strong); }
+.today-ticker { font-size: 12px; font-weight: 700; letter-spacing: 0.025em; color: var(--accent-strong); }
 .today-notes { list-style: none; margin: 0 0 14px; padding: 0; }
 .today-notes li { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
 .today-notes li:first-child { padding-top: 0; }
@@ -217,7 +217,7 @@
 @media (max-width: 640px) {
   .today-workspace .today-secondary { display: flex; flex-direction: column; }
   .today-workspace .metric { padding: 14px; }
-  .today-workspace .metric-label { font-size: 11px; }
+  .today-workspace .metric-label { font-size: 12px; }
   .today-workspace .metric-value { font-size: 24px; }
   .today-workspace .panel-content { padding: 16px; }
   .today-notes li { grid-template-columns: 40px minmax(0, 1fr); gap: 8px; }
@@ -263,10 +263,10 @@ a.metric:hover {
 
 .today-brief-status { display: flex; gap: 6px; flex-wrap: wrap; }
 .today-brief-summary { font-size: 13px; line-height: 1.65; color: var(--text-secondary); margin: 14px 0; }
-.today-brief-events h3 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-top: 20px; }
-.today-brief-events > p { font-size: 11px; }
+.today-brief-events h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-top: 20px; }
+.today-brief-events > p { font-size: 12px; }
 .today-brief-events article { padding: 14px 0; border-bottom: 1px solid var(--line); }
 .today-brief-events article > a { display: flex; align-items: start; gap: 10px; color: var(--text); font-size: 13px; font-weight: 600; line-height: 1.6; }
 .today-brief-events article > a svg { flex-shrink: 0; margin-top: 3px; color: var(--accent); }
-.today-brief-events article > p { margin: 7px 0 0; color: var(--text-secondary); font-size: 11px; line-height: 1.6; }
-.today-brief section[aria-label="Stored source coverage"] { margin: 16px 0; font-size: 11px; }
+.today-brief-events article > p { margin: 7px 0 0; color: var(--text-secondary); font-size: 12px; line-height: 1.6; }
+.today-brief section[aria-label="Stored source coverage"] { margin: 16px 0; font-size: 12px; }
