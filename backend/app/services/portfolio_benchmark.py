@@ -219,6 +219,11 @@ def calculate_benchmark_opportunity_cost(
         if Decimal(start.total_portfolio_value) > 0
         else None
     )
+    if flow_report.flows:
+        # Boundary price return and a cash-subtracted portfolio return are not
+        # comparable under flows, even if deposits and withdrawals net to zero.
+        benchmark_return = portfolio_return = None
+        warnings.append("Return percentages and spread are unavailable with external cash flows until both sides use the same return method; the matched-flow ending-wealth comparison remains available.")
     replay_verified = snapshot_replay_is_verified(start, db) and snapshot_replay_is_verified(end, db)
     if not replay_verified:
         warnings.append("Legacy snapshot history or subsequently changed activity is unverified for transaction replay; benchmark comparison is provisional.")

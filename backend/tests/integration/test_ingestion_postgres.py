@@ -106,6 +106,39 @@ def company_id(engine):
         return company.id
 
 
+@pytest.mark.parametrize("existing", [False, True])
+def test_concurrent_sec_retries_keep_one_identity_and_one_text(pg_engine, monkeypatch, existing):
+    from app.models import Source
+    from app.services import sec_ingestion as sec
+    identity = company_id(pg_engine)
+    filing = sec.SecFilingMetadata("0000000001-26-000001", "10-K", date(2026, 1, 1),
+        filing_url="https://www.sec.gov/Archives/edgar/data/1/mock.htm")
+    with Session(pg_engine, autoflush=False) as db:
+        source = Source(name="Mock Data SEC concurrency", source_type="sec")
+        db.add(source); db.commit()
+        source_id = source.id
+        if existing:
+            sec.ingest_sec_filing_metadata(db, source_id, identity, [filing])
+    fetched = Barrier(2)
+    def fetch(*args, **kwargs):
+        fetched.wait(timeout=10)
+        return "Mock Data immutable SEC text"
+    monkeypatch.setattr(sec, "fetch_sec_filing_text", fetch)
+    def ingest(_):
+        with Session(pg_engine, autoflush=False) as db:
+            return sec.ingest_sec_filing_metadata(db, source_id, identity, [filing, filing], download_text=True)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(ingest, range(2)))
+    assert sum(r.created_count for r in results) == int(not existing)
+    assert sum(r.completed_text_count for r in results) == int(existing)
+    assert sum(r.error_count for r in results) == 0
+    assert sum(r.skipped_duplicate_count for r in results) == 3
+    with Session(pg_engine) as db:
+        document = db.scalar(select(RawDocument))
+        assert db.scalar(select(func.count()).select_from(RawDocument)) == 1
+        assert document.raw_text == "Mock Data immutable SEC text"
+
+
 def test_concurrent_price_retries_have_one_daily_row(pg_engine, monkeypatch):
     identity = company_id(pg_engine)
     fetched = Barrier(2)
