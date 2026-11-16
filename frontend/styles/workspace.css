@@ -195,7 +195,7 @@
 .today-workspace .panel-content { padding: 20px; }
 .today-workspace .review-queue { margin-bottom: 0; }
 .today-text-link { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--accent-strong); }
-.today-ticker { font-size: 12px; font-weight: 700; letter-spacing: 0.025em; color: var(--accent-strong); }
+.today-ticker { min-width: 0; overflow-wrap: anywhere; font-size: 12px; font-weight: 700; letter-spacing: 0.025em; color: var(--accent-strong); }
 .today-notes { list-style: none; margin: 0 0 14px; padding: 0; }
 .today-notes li { display: grid; grid-template-columns: 45px minmax(0, 1fr) auto; align-items: start; gap: 12px; padding: 13px 0; border-bottom: 1px solid var(--line); }
 .today-notes li:first-child { padding-top: 0; }
