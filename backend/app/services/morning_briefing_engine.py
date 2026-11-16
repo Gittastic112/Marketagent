@@ -17,6 +17,7 @@ from app.models import (
     PortfolioHolding,
     ProcessingRun,
     ThesisNote,
+    User,
 )
 from app.services.contradiction_detector import detect_thesis_contradiction
 from app.services.dcf_variable_mapper import map_event_to_dcf_variables
@@ -71,6 +72,9 @@ class MorningBriefingEngine:
         target_date: date | None = None,
     ) -> DailyBrief:
         brief_date = target_date or date.today()
+        # Serialize deterministic get-or-create across workers and normal reads.
+        # A late worker can reuse the saved snapshot after another lease took over.
+        db.scalar(select(User.id).where(User.id == user_id).with_for_update())
         existing = db.scalar(
             select(DailyBrief)
             .where(
@@ -580,16 +584,25 @@ class MorningBriefingEngine:
                 DailyBrief.review_status == "reviewed",
             )
             .order_by(
-                func.coalesce(DailyBrief.reviewed_at, DailyBrief.created_at).desc(),
+                DailyBrief.created_at.desc(),
                 DailyBrief.id.desc(),
             )
             .limit(1)
         )
-        last_review_date = (
-            last_reviewed_brief.reviewed_at or last_reviewed_brief.created_at
-            if last_reviewed_brief
-            else None
-        )
+        last_review_date = None
+        if last_reviewed_brief:
+            # A review acknowledges captured coverage, never arrivals before the later click.
+            # Legacy snapshots without a coverage endpoint use their creation time conservatively.
+            last_review_date = last_reviewed_brief.created_at
+            coverage = (last_reviewed_brief.payload_json or {}).get("public_coverage") or {}
+            endpoint = coverage.get("window_end_inclusive") if isinstance(coverage, dict) else None
+            if isinstance(endpoint, str):
+                try:
+                    parsed = datetime.fromisoformat(endpoint)
+                    if parsed.tzinfo is not None and parsed <= captured_at:
+                        last_review_date = parsed
+                except ValueError:
+                    pass
         event_query = (
             select(Event)
             .options(selectinload(Event.company), selectinload(Event.raw_document))

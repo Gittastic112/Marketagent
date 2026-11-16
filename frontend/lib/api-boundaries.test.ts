@@ -100,6 +100,7 @@ const expectedExports = [
   "reviewFinancialCandidate",
   "reviewFinancialCandidatePeriod",
   "reviewPeerValuationSet",
+  "reviewThesisImpact",
   "runBottomUpMacroSensitivity",
   "runMacroScenario",
   "runNarrativeToNumbers",

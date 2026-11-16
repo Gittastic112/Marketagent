@@ -99,16 +99,12 @@ def extract_narratives_from_events(
             db.flush()
             created_clusters += 1
 
-        claim = db.scalar(
-            select(NarrativeClaim).where(
-                NarrativeClaim.cluster_id == cluster.id,
-                NarrativeClaim.claim_text == claim_text,
-            )
-        )
-        if claim is None:
-            db.add(NarrativeClaim(cluster_id=cluster.id, claim_text=claim_text))
-            db.flush()
-            created_claims += 1
+        # Each generated claim retains its exact output. Equal text from a different
+        # generation must not silently inherit another output's review state.
+        db.add(NarrativeClaim(cluster_id=cluster.id, claim_text=claim_text,
+            origin="mock" if output.is_mock else "ai", ai_output_id=output.id))
+        db.flush()
+        created_claims += 1
 
         db.add(
             NarrativeMention(

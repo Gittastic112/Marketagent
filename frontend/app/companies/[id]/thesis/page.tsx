@@ -4,6 +4,7 @@ import type { Company, ThesisNote } from "@/lib/api";
 import Link from "next/link";
 import { DataHealthUpdater } from "@/components/providers/data-health-updater";
 import { DataStateNotices } from "@/components/ui/data-states";
+import { ThesisImpactReview } from "@/components/thesis-impact-review";
 
 export const dynamic = "force-dynamic";
 
@@ -101,7 +102,8 @@ export default async function ThesisEnginePage({ params, searchParams }: { param
                                   fontWeight: "bold"
                                 }}>
                                   [{imp.impact_classification}]
-                                </span> {imp.rationale}<br /><span className="badge">{(imp.review_status || "unreviewed").replaceAll("_", " ")}</span>{" "}<Link href={`/events/${imp.event_id}`}>Inspect source event</Link>
+                                </span> {imp.rationale}<br /><span className="badge">{(imp.review_status || "unreviewed").replaceAll("_", " ")}</span>{" "}<Link href={`/events/${imp.event_id}/evidence-resolution`}>Inspect source event</Link>
+                                <ThesisImpactReview key={`${imp.id}-${imp.review_status}`} impact={imp} />
                               </div>
                             ))}
                           </div>

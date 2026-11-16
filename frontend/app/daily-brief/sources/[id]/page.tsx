@@ -2,8 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BriefSourceFindings } from "@/components/brief-source-findings";
 import { BriefSourceLifecycle } from "@/components/brief-source-lifecycle";
+import { AiOutputMetadata } from "@/components/ai-metadata";
+import { AiOutputReviewControls } from "@/components/ai-output-review-controls";
 import { ErrorState, PageHeader, Panel } from "@/components/page";
 import type { BriefSource } from "@/lib/api/brief-sources";
+import type { AiOutput } from "@/lib/api/ai";
 import { serverFetchApiResponse } from "@/lib/server-api";
 
 export default async function BriefSourcePage({ params }: { params: Promise<{ id: string }> }) {
@@ -12,6 +15,9 @@ export default async function BriefSourcePage({ params }: { params: Promise<{ id
   const response = await serverFetchApiResponse<BriefSource & { text: string }>(`/brief-sources/${id}`);
   const source = response.data;
   if (!source) return <ErrorState message="Source is unavailable or does not belong to this account." errors={response.errors} />;
+  const outputResponse = source.ai_output_id
+    ? await serverFetchApiResponse<AiOutput>(`/ai-outputs/${source.ai_output_id}`) : null;
+  const output = outputResponse?.data;
   return <>
     <PageHeader eyebrow={`Private research · ${source.ticker}`} title={source.title} status={source.as_of_date || "Source date unknown"} />
     <div className="section-intro"><Link href="/daily-brief" prefetch={false}>← Research inbox</Link><Link href={`/companies/${source.company_id}`}>Company workspace</Link>
@@ -29,5 +35,16 @@ export default async function BriefSourcePage({ params }: { params: Promise<{ id
       <details open><summary>Stored source text</summary><pre className="brief-source-text">{source.text}</pre></details>
     </Panel>
     {source.analysis && <Panel title="Ranked findings and valuation review"><BriefSourceFindings source={source} includeAnchors /></Panel>}
+    {source.ai_output_id && <Panel title="Review this AI interpretation">
+      <p>Review the quoted source and interpretation before approving. Approval does not change financial inputs.
+        After approval, return to the source comparison and save a receipt for its current evidence.</p>
+      {output ? <>
+        <AiOutputMetadata aiOutput={output} />
+        {output.execution_status === "success" && <AiOutputReviewControls
+          key={`${output.id}-${output.human_review_status}-${output.reviewed_at ?? "pending"}`}
+          initialOutput={output} />}
+      </> : <ErrorState message="The AI review could not be loaded. Reload this page to retry." errors={outputResponse?.errors} />}
+      <Link href={`/daily-brief/triage?company_id=${source.company_id}`}>Review the current source comparison</Link>
+    </Panel>}
   </>;
 }

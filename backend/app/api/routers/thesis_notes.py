@@ -14,6 +14,8 @@ from app.api.dependencies import get_current_user
 from app.db.session import get_db
 from app.models import ThesisNote, ThesisAssumption, ThesisChange
 from app.models.thesis_note import EventThesisImpact
+from app.schemas.research import ThesisImpactReview
+from app.services.thesis_review import review_thesis_impact
 
 
 router = APIRouter()
@@ -129,6 +131,11 @@ def create_thesis_impact(assumption_id: int, payload: schemas.EventThesisImpactC
 @router.delete("/thesis-impacts/{impact_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_thesis_impact(impact_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> None:
     delete_record(db, get_owned_thesis_impact(db, impact_id, current_user["id"]))
+
+
+@router.post("/thesis-impacts/{impact_id}/review", response_model=ApiResponse[schemas.EventThesisImpactRead])
+def review_impact(impact_id: int, payload: ThesisImpactReview, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=review_thesis_impact(db, impact_id, current_user["id"], payload))
 
 
 @router.post("/thesis-notes/{thesis_note_id}/changes", response_model=ApiResponse[ThesisChangeRead], status_code=status.HTTP_201_CREATED)

@@ -193,6 +193,7 @@ from app.schemas.research import (
     ThesisAssumptionUpdate,
     EventThesisImpactCreate,
     EventThesisImpactRead,
+    ThesisImpactReview,
     ThesisAssumptionRead,
     ThesisChangeCreate,
     ThesisChangeRead,

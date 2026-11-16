@@ -9948,6 +9948,239 @@
       },
       "ResearchSession": {
         "$defs": {
+          "AiOutputRead": {
+            "properties": {
+              "citation_validation_status": {
+                "title": "Citation Validation Status",
+                "type": "string"
+              },
+              "citations_json": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Citations Json",
+                "type": "array"
+              },
+              "confidence_label": {
+                "title": "Confidence Label",
+                "type": "string"
+              },
+              "consent_decision_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Consent Decision Id"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "evaluation_json": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evaluation Json"
+              },
+              "execution_status": {
+                "title": "Execution Status",
+                "type": "string"
+              },
+              "external_data_classes_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes Json",
+                "type": "array"
+              },
+              "failure_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Failure Code"
+              },
+              "human_review_status": {
+                "title": "Human Review Status",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_blocked": {
+                "title": "Is Blocked",
+                "type": "boolean"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "limitations": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Limitations"
+              },
+              "model_name": {
+                "title": "Model Name",
+                "type": "string"
+              },
+              "output_text": {
+                "title": "Output Text",
+                "type": "string"
+              },
+              "privacy_disclosure_version": {
+                "title": "Privacy Disclosure Version",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reference_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Id"
+              },
+              "reference_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Type"
+              },
+              "review_notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Review Notes"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewed At"
+              },
+              "reviewer_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewer Id"
+              },
+              "source_ids_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Source Ids Json",
+                "type": "array"
+              },
+              "source_scope": {
+                "title": "Source Scope",
+                "type": "string"
+              },
+              "transmission_scope": {
+                "title": "Transmission Scope",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "model_name",
+              "provider_name",
+              "is_mock",
+              "prompt_version",
+              "input_hash",
+              "source_scope",
+              "citation_validation_status",
+              "privacy_disclosure_version",
+              "transmission_scope",
+              "execution_status",
+              "is_blocked",
+              "output_text",
+              "confidence_label",
+              "human_review_status",
+              "created_at"
+            ],
+            "title": "AiOutputRead",
+            "type": "object"
+          },
           "ResearchAiOutputRead": {
             "description": "Full review contract so research responses use the same approval gates as document AI.",
             "properties": {
@@ -10241,6 +10474,13 @@
           }
         },
         "properties": {
+          "attempts": {
+            "items": {
+              "$ref": "#/$defs/AiOutputRead"
+            },
+            "title": "Attempts",
+            "type": "array"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",

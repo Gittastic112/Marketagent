@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import type { AiOutput } from '@/lib/api/ai';
 import { readableCitations } from '@/lib/ai-citation-suggestions';
@@ -6,6 +8,9 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: AiOutput }) {
   const [showDetails, setShowDetails] = useState(false);
 
   if (!aiOutput) return null;
+  const execution = aiOutput.evaluation_json?.execution;
+  const finishedAt = execution && typeof execution === 'object' && 'finished_at' in execution
+    && typeof execution.finished_at === 'string' ? execution.finished_at : null;
 
   return (
     <div style={{ marginTop: '0.75rem', padding: '0.75rem', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '0.5rem', fontSize: '0.8rem' }}>
@@ -33,6 +38,10 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: AiOutput }) {
       {showDetails && (
         <div style={{ marginTop: '0.75rem', paddingTop: '0.75rem', borderTop: '1px dashed var(--border-color)' }}>
           <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '0.5rem', marginBottom: '0.5rem' }}>
+            <span>Saved output:</span><span>#{aiOutput.id} · {aiOutput.provider_name}</span>
+            <span>Recorded:</span><span>{aiOutput.created_at}</span>
+            {finishedAt && <><span>Completed:</span><span>{finishedAt}</span></>}
+            <span>Input hash:</span><span style={{overflowWrap:'anywhere',minWidth:0}}>{aiOutput.input_hash}</span>
             <span style={{ color: 'var(--muted)' }}>Execution:</span>
             <span>{aiOutput.execution_status} {aiOutput.failure_code ? `(${aiOutput.failure_code})` : ''}</span>
             <span style={{ color: 'var(--muted)' }}>Confidence:</span>
@@ -42,6 +51,7 @@ export function AiOutputMetadata({ aiOutput }: { aiOutput: AiOutput }) {
             <span style={{ color: 'var(--muted)' }}>Prompt Version:</span>
             <span style={{ fontFamily: 'monospace' }}>{aiOutput.prompt_version}</span>
           </div>
+          <p>{aiOutput.limitations}</p>
 
           {aiOutput.citations_json && Array.isArray(aiOutput.citations_json) && aiOutput.citations_json.length > 0 && (
             <div style={{ marginTop: '0.5rem' }}>
