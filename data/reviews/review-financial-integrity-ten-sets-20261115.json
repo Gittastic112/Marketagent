@@ -202,7 +202,28 @@
       "wire_contracts": 36,
       "documentation_checks": "95 active files and 1259 links; 24 checker tests passed."
     },
-    "browser": "pending"
+    "browser": {
+      "environment": "Localhost-only temporary frontend preview, existing authenticated session, read-only normal data.",
+      "passed": [
+        "Desktop overview appears before review items; review/brief columns render.",
+        "Default Needs review and explicit All each show six records with accurate counts.",
+        "Coverage disclosure retains scope, capture time and limitations.",
+        "390px mobile check has equal page/client widths and no horizontal overflow.",
+        "Stale evidence remains labelled in the brief."
+      ],
+      "limitations": [
+        "Does not establish genuine-data financial accuracy or daily use."
+      ],
+      "preview_removed": true
+    },
+    "hosted_financial_baseline": {
+      "head": "2137597",
+      "workflow": "https://github.com/Gittastic112/Marketagent/actions/runs/43799295805",
+      "backend_passed": 2101,
+      "backend_skipped": 15,
+      "frontend_passed": 395,
+      "production_build": "passed"
+    }
   },
   "installation": {
     "status": "pending"
@@ -236,11 +257,11 @@
     "changes": [
       "Research summary appears before the review queue.",
       "Default six-item Needs review filter with explicit All and preserved portfolio selection.",
-      "Brief and company links sit beside the primary queue; source activity and detailed alerts/events are expandable.",
+      "The portfolio summary, daily brief and active alerts precede the research queue, matching the user-selected screenshot order. Source activity and full event detail are expandable.",
       "Notebook shows four most recently updated notes with a link to all notes.",
       "Source provenance, stale/Mock Data labels, incomplete snapshots and coverage limits remain visible or explicitly expandable."
     ],
-    "validation": "395 frontend tests and typecheck passed; responsive browser checks pending."
+    "validation": "Initial layout passed desktop/mobile/filter checks. Final screenshot-guided ordering is undergoing its focused checks and rebuild."
   },
   "publication": {
     "pull_request": "https://github.com/Gittastic112/Marketagent/pull/19",

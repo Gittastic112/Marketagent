@@ -70,6 +70,10 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <Link prefetch={false} className="metric" href="/thesis-notes"><div className="metric-label"><FileText size={16} aria-hidden="true" />Thesis notes</div><div className="metric-value">{thesisNotes.length}</div><div className="metric-detail">Saved research context<ArrowUpRight size={14} aria-hidden="true" /></div></Link>
     </section>
     {portfolio?.description && <details className="disclosure basis-disclosure"><summary>Portfolio basis & assumptions</summary><p>{portfolio.description}</p></details>}
+    <section className="today-research-grid today-daily-overview" aria-label="Daily overview">
+      <DailyBriefPanel dailyBrief={dailyBrief} />
+      <AlertsPanel alerts={alerts} companiesById={companiesById} />
+    </section>
     <div className="today-research-grid">
       <div className="content-stack today-primary">
         {queue}
@@ -84,7 +88,6 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </Panel>
       </div>
       <aside className="content-stack today-secondary" aria-label="Research context">
-        <DailyBriefPanel dailyBrief={dailyBrief} />
         <Panel title="Your companies" actions={<Link prefetch={false} href="/companies">Add Company</Link>}>
           {companies.length === 0 ? <EmptyState label="Add a company to start collecting research." /> : <div className="today-company-links">{companies.map(company =>
             <Link prefetch={false} key={company.id} href={`/companies/${company.id}`}>{company.ticker}<ArrowUpRight size={13} aria-hidden="true" /></Link>)}</div>}
@@ -101,9 +104,8 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
         </details>
       </aside>
     </div>
-    <details className="disclosure today-more-activity"><summary>Alerts and event detail <span className="muted">{activeAlerts.length} alerts to review · {events.length} loaded events</span></summary>
-      <div className="dashboard-content-grid">
-        <AlertsPanel alerts={alerts} companiesById={companiesById} />
+    <details className="disclosure today-more-activity"><summary>More event detail <span className="muted">{events.length} loaded events</span></summary>
+      <div className="content-stack">
         <EventsTimeline events={events} companies={companies} />
       </div>
     </details>

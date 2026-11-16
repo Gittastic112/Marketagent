@@ -66,7 +66,7 @@ valuation validation and financial-sector context, duration/WACC bounds, and
 portfolio corrections, snapshot currency, benchmark freshness and unknown weights.
 Those ten are implemented; final release validation and installation are pending.
 The requested Today redesign brings the overview before a six-item review queue,
-keeps the brief alongside it, and folds secondary activity into disclosures.
+places the brief and active alerts before it, and folds secondary activity into disclosures.
 The [review ledger](limitations.md#returned-code-review) owns the remaining 19
 primary findings. Next: A3-9 return-method alignment, then R5 evidence intake and
 R6 saved-editor/export integrity. Populated legacy conversion remains held.

@@ -173,7 +173,9 @@
 }
 
 /* Today: overview first, bounded review queue, secondary evidence alongside. */
-.today-workspace .page-header { margin-bottom: 24px; }
+.today-workspace .page-header { margin-bottom: 20px; padding-bottom: 16px; align-items: center; }
+.today-workspace .page-header h1 { font-size: 28px; }
+.today-workspace .basis-disclosure { background: transparent; border: 0; padding: 0; margin: 0 0 20px; font-size: 12px; }
 .today-context:empty { display: none; }
 .today-workspace .dashboard-portfolio-picker { margin-bottom: 18px; font-size: 13px; }
 .today-workspace .dashboard-portfolio-picker select { max-width: 300px; padding-block: 8px; }
@@ -184,6 +186,8 @@
 .today-workspace .metric-detail { font-size: 12px; line-height: 1.5; }
 .today-research-grid { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
 .today-research-grid > * { min-width: 0; }
+.today-daily-overview { margin-bottom: 20px; }
+.today-daily-overview > .panel { margin-bottom: 0; }
 .today-workspace .content-stack { gap: 20px; }
 .today-workspace .panel { box-shadow: none; }
 .today-workspace .panel-header { padding: 18px 20px; }

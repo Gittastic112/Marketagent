@@ -317,6 +317,8 @@ test("Today starts with a bounded review queue and preserves the explicit All an
       return success(dashboardData(null));
     }, undefined, searchParams);
     assert.ok(html.indexOf('aria-label="Research summary"') < html.indexOf('aria-label="Research review queue"'));
+    assert.ok(html.indexOf('aria-label="Daily overview"') < html.indexOf('aria-label="Research review queue"'));
+    assert.ok(html.indexOf('Daily Intelligence Brief') < html.indexOf('Continue your research'));
     assert.match(html, /review_state=all/);
     assert.match(html, /Source updates do not change saved valuations/);
     assert.match(html, /Coverage and ordering/);
