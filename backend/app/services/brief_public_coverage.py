@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Event, ProcessingRun
 from app.schemas.brief import BriefPublicCoverage
+from app.services.processing_run_visibility import public_processing_run_filter
 
 EVENT_CAP = 50
 FAILED_RUN_CAP = 10
@@ -33,7 +34,7 @@ def is_failed_run(run: ProcessingRun) -> bool:
 def count_public_inputs(db: Session, start: datetime | None, end: datetime) -> tuple[int, int]:
     # Scalar subqueries avoid loading bodies or joining unrelated private records.
     events = select(func.count(Event.id)).where(*time_window(Event.created_at, start, end)).scalar_subquery()
-    runs = select(func.count(ProcessingRun.id)).where(failed_run_filter(),
+    runs = select(func.count(ProcessingRun.id)).where(public_processing_run_filter(), failed_run_filter(),
         *time_window(ProcessingRun.started_at, start, end)).scalar_subquery()
     event_count, run_count = db.execute(select(events, runs)).one()
     return int(event_count), int(run_count)

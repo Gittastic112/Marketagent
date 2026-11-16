@@ -156,6 +156,7 @@ def run_due_daily_brief_schedules(
             run_type="daily_brief_schedule",
             source_type="internal",
             metadata={
+                "user_id": candidate.user_id,
                 "schedule_id": candidate.id,
                 "scheduled_for": due_at.isoformat(),
                 "generation_mode": GENERATION_MODE,

@@ -20,6 +20,7 @@ from app.api.schemas import (
 )
 from app.db.session import get_db
 from app.models import Alert, Event, EventEvidenceReference, RawDocument
+from app.models.thesis_note import EventThesisImpact
 from app.services.evidence_trail_service import build_evidence_trail
 from app.services.event_evidence_resolution import (
     EvidenceResolutionError,
@@ -90,6 +91,9 @@ def update_event(event_id: int, payload: EventUpdate, db: Session = Depends(get_
 @router.delete("/events/{event_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_event(event_id: int, db: Session = Depends(get_db)) -> None:
     event = get_or_404(db, Event, event_id)
+    db.refresh(event, with_for_update=True)
+    if has_matching_record(db, select(EventThesisImpact.id).where(EventThesisImpact.event_id == event_id)):
+        raise HTTPException(status_code=409, detail="Event cannot be deleted while retained thesis evidence depends on it.")
     if has_matching_record(db, select(Alert.id).where(Alert.event_id == event_id)):
         raise HTTPException(
             status_code=409,

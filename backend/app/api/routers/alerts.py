@@ -6,7 +6,7 @@ from app.api.helpers import apply_alert_review_timestamp, commit_or_conflict, de
 from app.api.schemas import ApiMeta, ApiResponse, AlertCreate, AlertRead, AlertUpdate, EvidenceTrailRead
 from app.api.dependencies import get_current_user
 from app.db.session import get_db
-from app.models import Alert, Event, PortfolioHolding
+from app.models import Alert, Event, Portfolio, PortfolioHolding
 from app.services.evidence_trail_service import build_evidence_trail
 
 
@@ -28,7 +28,11 @@ def create_alert(payload: AlertCreate, db: Session = Depends(get_db), current_us
 def list_alerts(owned_only: bool = False, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> list[Alert]:
     stmt = select(Alert).where(Alert.user_id == current_user["id"])
     if owned_only:
-        stmt = stmt.join(PortfolioHolding, Alert.company_id == PortfolioHolding.company_id)
+        stmt = stmt.where(select(PortfolioHolding.id).join(Portfolio).where(
+            PortfolioHolding.company_id == Alert.company_id,
+            PortfolioHolding.quantity != 0,
+            Portfolio.user_id == current_user["id"],
+        ).exists())
     stmt = stmt.order_by(Alert.id)
     return ApiResponse(data=list(db.scalars(stmt)))
 

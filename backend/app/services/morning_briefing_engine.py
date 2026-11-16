@@ -6,6 +6,7 @@ from typing import Any
 
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session, selectinload
+from app.services.processing_run_visibility import public_processing_run_filter
 
 from app.models import (
     Alert,
@@ -620,7 +621,7 @@ class MorningBriefingEngine:
         processing_failure_query = (
             select(ProcessingRun)
             .where(
-                failed_run_filter(),
+                public_processing_run_filter(), failed_run_filter(),
                 *time_window(ProcessingRun.started_at, last_review_date, captured_at),
             )
             .order_by(ProcessingRun.started_at.desc(), ProcessingRun.id.desc())

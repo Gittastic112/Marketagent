@@ -25,6 +25,7 @@ from app.models import (
 )
 from app.services.morning_briefing_engine import MorningBriefingEngine
 from app.services.brief_public_coverage import count_public_inputs, is_failed_run, public_coverage_context
+from app.services.processing_run_visibility import public_processing_run_filter
 from app.services.review_queue import build_review_queue
 from app.schemas.review_queue import ReviewQueueRead, ReviewQueueState
 
@@ -111,7 +112,7 @@ def get_dashboard_overview(
         db.scalars(
             select(ProcessingRun)
             .options(noload("*"))
-            .where(ProcessingRun.started_at <= captured_at)
+            .where(public_processing_run_filter(), ProcessingRun.started_at <= captured_at)
             .order_by(ProcessingRun.created_at.desc(), ProcessingRun.id.desc())
             .limit(20)
         )

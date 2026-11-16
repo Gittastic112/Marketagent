@@ -149,7 +149,7 @@ def apply_portfolio_evidence_bundle(
         source_type="user_source_labeled_csv",
         started_at=datetime.now(UTC),
         status="running",
-        metadata_json={"portfolio_id": portfolio_id, "claim_type": "Fact"},
+        metadata_json={"user_id": current_user["id"], "portfolio_id": portfolio_id, "claim_type": "Fact"},
     )
     db.add(run)
     db.commit()
