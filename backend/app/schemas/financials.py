@@ -309,6 +309,7 @@ class FinancialStatementIdentityCheckRead(BaseModel):
     delta: float | None = None
     tolerance: float | None = None
     unit: str
+    unit_issue: str | None = None
     inputs: dict[str, float] = Field(default_factory=dict)
     missing_metrics: list[str] = Field(default_factory=list)
     ambiguous_metrics: list[str] = Field(default_factory=list)

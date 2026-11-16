@@ -283,6 +283,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                     <td className="px-4 py-2 text-gray-900">
                       {check.label}
                       <span className="block text-xs text-gray-500">{financialIdentityFormula(check.formula)}</span>
+                      {check.actual_value !== null && <span className="block text-xs text-gray-500">Units: {check.unit}</span>}
                     </td>
                     <td className={`px-4 py-2 ${check.status === "passed" ? "text-green-700" : check.status === "failed" ? "text-red-700" : "text-amber-700"}`}>
                       {check.status.replaceAll("_", " ")}
@@ -296,7 +297,7 @@ export default async function FundamentalsPage(props: { params: Promise<{ id: st
                     <td className="px-4 py-2 text-gray-600">
                       {check.delta !== null
                         ? `${check.delta.toLocaleString()} (tolerance ${check.tolerance?.toLocaleString()})`
-                        : check.ambiguous_metrics.length > 0
+                        : check.unit_issue ? check.unit_issue : check.ambiguous_metrics.length > 0
                           ? `Duplicate metrics: ${check.ambiguous_metrics.map(financialMetricLabel).join(", ")}`
                           : `Missing: ${check.missing_metrics.map(financialMetricLabel).join(", ")}`}
                     </td>

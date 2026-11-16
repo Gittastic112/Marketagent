@@ -243,6 +243,7 @@ export type FinancialStatementIdentityCheck = {
   delta: number | null;
   tolerance: number | null;
   unit: string;
+  unit_issue?: string | null;
   inputs: Record<string, number>;
   missing_metrics: string[];
   ambiguous_metrics: string[];

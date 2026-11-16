@@ -82,3 +82,30 @@ def test_generic_sec_equity_income_does_not_infer_after_tax_presentation():
     # The actual generic SEC concept does not establish statement presentation.
     # An exact report review must establish the after-tax metric separately.
     assert ("equity_method_income_after_tax", 2025) not in selected
+
+
+def test_identity_reports_the_actual_shared_scale():
+    check = FinancialStatementIdentityService.evaluate_period(period([
+        ("pre_tax_income", 100), ("tax_expense", 20), ("net_income", 80),
+    ]))["checks"][0]
+    assert check["unit"] == "USD million"
+
+
+@pytest.mark.parametrize("unit", ["USD", "INR million", "", "USD unknown", "percentage"])
+def test_identity_does_not_add_incompatible_or_unknown_units(unit):
+    source = period([("pre_tax_income", 100), ("tax_expense", 20), ("net_income", 80)])
+    source.metrics[1].unit = unit
+    check = FinancialStatementIdentityService.evaluate_period(source)["checks"][0]
+    assert check["blocking"]
+    assert check["status"] != "passed"
+    assert check["actual_value"] is None
+    assert check["inputs"] == {}
+    assert check["unit_issue"]
+    assert source.metrics[1].unit == unit
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), -float("inf")])
+def test_identity_rejects_nonfinite_source_values(value):
+    source = period([("pre_tax_income", value), ("tax_expense", 20), ("net_income", 80)])
+    check = FinancialStatementIdentityService.evaluate_period(source)["checks"][0]
+    assert check["blocking"] and check["actual_value"] is None

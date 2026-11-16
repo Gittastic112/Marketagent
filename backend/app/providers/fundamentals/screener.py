@@ -1,5 +1,7 @@
 from typing import Dict, List, Tuple
 import datetime
+import math
+import re
 from sqlalchemy.orm import Session
 from app.models.financial import FinancialExtractionCandidate
 
@@ -111,13 +113,22 @@ class ScreenerExcelParser:
 
             # Iterate through columns and extract
             for col, (year, p_type, column_label) in year_headers.items():
-                val = sheet.cell(row=r, column=col).value
-                if val is not None and isinstance(val, (int, float)):
+                cell = sheet.cell(row=r, column=col)
+                val = cell.value
+                if isinstance(val, (int, float)) and not isinstance(val, bool) and math.isfinite(val):
                     # Handle units: OPM % is usually percentage, ROCE % is percentage
                     # Screener exports them as absolute numbers (e.g., 20.5 for 20.5%)
                     final_val = float(val)
-                    if matched_code in ("opm", "roce") and final_val > 1.0:
-                        final_val = final_val / 100.0 # convert 20.5 to 0.205
+                    transformation = "reported_value"
+                    if matched_code in ("opm", "roce"):
+                        # Excel percent formats store fractions; ordinary Screener
+                        # percentage rows store percentage points, including 0/negative values.
+                        numeric_format = re.sub(r'"[^\"]*"|\\.', '', cell.number_format)
+                        if "%" in numeric_format:
+                            transformation = "excel_percentage_fraction"
+                        else:
+                            final_val /= 100.0
+                            transformation = "percentage_points_divided_by_100"
 
                     candidate = FinancialExtractionCandidate(
                         company_id=company_id,
@@ -149,12 +160,16 @@ class ScreenerExcelParser:
                             "column": col,
                             "cell": sheet.cell(row=r, column=col).coordinate,
                             "header_row": header_row,
+                            "raw_value": val,
+                            "number_format": cell.number_format,
+                            "unit_transformation": transformation,
                         },
                         extraction_warnings=None,
-                        extraction_method="screener_excel_v1",
+                        extraction_method="screener_excel_v2",
                         confidence_label="high",
                         review_status="needs_review"
                     )
                     candidates.append(candidate)
 
+        wb.close()
         return candidates
