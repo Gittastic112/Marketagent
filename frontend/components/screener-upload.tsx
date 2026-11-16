@@ -20,7 +20,10 @@ export function ScreenerUpload({ companyId }: { companyId: number }) {
 
     try {
       const res = await uploadScreenerExport(companyId, file);
-      setSuccessMsg(`Successfully extracted ${res.extracted_count} metrics. They are now pending review below.`);
+      setSuccessMsg(res.status === "original_restored"
+        ? "Original workbook restored. Existing candidates and reviewed values were preserved."
+        : res.extracted_count === 0 ? "Original workbook saved. No supported metrics were extracted."
+        : `Original workbook saved. ${res.extracted_count} extracted metrics are pending review below.`);
       setFile(null);
       setTimeout(() => window.location.reload(), 1500);
     } catch (err: unknown) {
