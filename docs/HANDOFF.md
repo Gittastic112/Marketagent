@@ -69,9 +69,11 @@ The [release checkpoint](archive/checkpoints/2026/review-financial-integrity-rel
 supersedes the JSON checkpoint's pending release status with final verification and cleanup evidence.
 The requested Today redesign brings the overview before a six-item review queue,
 places the brief and active alerts before it, and folds secondary activity into disclosures.
-The [review ledger](limitations.md#returned-code-review) owns the remaining 19
-primary findings. Next: A3-9 return-method alignment, then R5 evidence intake and
-R6 saved-editor/export integrity. Populated legacy conversion remains held.
+The [review ledger](limitations.md#returned-code-review) owns the remaining work.
+The next ten repairs are installed locally in the [evidence/workflow receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json):
+A3-9, A1-F8 through F12 and A2-4 through A2-7. Local and browser checks pass.
+GitHub publication is deferred at the user's request. Nine primary findings remain unimplemented,
+in R7/R8. Populated legacy conversion remains held.
 The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
 raw reports remain unchanged and ignored, with private chat links excluded.
 Normal data and the essential recovery set are preserved; no new backup or

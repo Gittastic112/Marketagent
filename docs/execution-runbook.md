@@ -284,7 +284,10 @@ their default target is also port 13000. The runner checks occupied ports before
 cleanup and uses only the installed Playwright package, without downloading one.
 Fixture mutations send the signed-in page's Origin. A container browser base URL
 must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
-host/Origin guards intact. If shared filesystem trace folders fail, write artifacts
+host/Origin guards intact. Use loopback or HTTPS so browser cryptography remains
+available. A container runner can share the disposable frontend's network namespace
+and use its loopback address; do not disable browser security to trust an HTTP hostname.
+If shared filesystem trace folders fail, write artifacts
 inside the test container and copy completed results to output/playwright. Use
 explicit disposable credentials and staged source; do not read protected env files.
 On macOS, source bindings and artifact writes can also add validation overhead.
@@ -305,8 +308,9 @@ The page matrix covers 50 routes at 1440px and 390px. It saves screenshots and
 route-measurements.json under each test's output directory, including failures.
 CI retains passing and failing browser evidence for seven days. This is rendered
 page/selected-workflow proof, not every control/state or cold-start/load certification.
-On small Docker VMs, finish image builds before backend PDF tests or browser runs;
-resource-limit failures remain failures, and must pass a serial rerun without
+On small Docker VMs, finish image builds before backend PDF tests or browser runs.
+Stop completed disposable test services before installing the verified application images.
+Resource-limit failures remain failures, and must pass a serial rerun without
 raising the parser or route budgets.
 
 The release script builds, migrates a fresh PostgreSQL database, checks readiness,

@@ -31,6 +31,7 @@ acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
+| November 16, evidence/workflow repairs | Ten further repairs installed locally; backend, frontend, concurrency and production-build checks pass. All 73 browser cases are verified across the full run and three documented reruns. Existing data and essential recovery material are unchanged. GitHub publication is deferred by the user. [Receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json) |
 | November 15, review releases | Both ten-repair batches are installed and merged in [PR 18](https://github.com/Gittastic112/Marketagent/pull/18) and [PR 19](https://github.com/Gittastic112/Marketagent/pull/19). All seven hosted gates pass on the final source: 2,101 backend tests (15 skipped), 395 frontend tests, 71 browser workflows and seven PostgreSQL checks. Today places the portfolio overview, daily brief and alerts before the six-item research queue; installed desktop/mobile checks pass. All 110 tables, asset bytes, settings and volumes are preserved; no PostgreSQL restart or new backup. [Release and cleanup checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md) |
 | November 15, returned code-review intake | All 39 primary findings checked against main at `6505082`; review severities retained as 1 critical, 13 high and 25 medium. Five finding IDs locally reproduced with isolated Mock Data or shell argument inspection: A3-1, A1-F9, A2-1, A2-8 and A4-2. The migration metadata forms one connected 73-revision chain; this does not prove populated upgrade safety. No HTTP authentication, PostgreSQL restore, browser or deployed-data incident proof was added at intake. All repairs were open at that checkpoint; the [ledger](limitations.md#returned-code-review) owns current status. [Sanitized evidence receipt](../data/reviews/code-review-intake-20261115.json) |
 | November 14, dependency and full-suite follow-up | OpenTelemetry API 1.45.2 and Soup Sieve 4.1.1 are installed. Hash-verified dependency audit reports no known vulnerabilities; 1,963 backend tests pass, seven PostgreSQL-only cases skipped in this isolated SQLite run. Four rate/industry-mix tests now exercise explicit refresh and verify that reopening preserves existing inputs. Draft return-link sizing and bounded thesis-table scrolling are repaired and checked in the installed browser; 393 frontend tests, type checking and production build pass. Nine browser specs follow current navigation and explicit actions without weakening their assertions. All 110 tables, settings and recovery material remain unchanged; four containers/four essential images remain, with zero build cache. [Receipt](../data/reviews/dependency-security-20261114.json) · [Hosted checks on PR 17](https://github.com/Gittastic112/Marketagent/pull/17) |
@@ -107,12 +108,12 @@ effort. M05 remains next. The [completion tracker](roadmaps/completion-tracker.m
 preserves exact gates and explicit deferrals. No new acceptance points are earned
 by reorganizing documentation.
 
-Next: complete the second repair release, then A3-9 return-method alignment,
-R5 evidence intake and R6 editor/export integrity in the [review sequence](roadmaps/product-roadmap.md#review-repair-sequence).
+Next: R7/R8 in the
+[review sequence](roadmaps/product-roadmap.md#review-repair-sequence). Publish the installed evidence/workflow batch when the user resumes GitHub authorization.
 Preservation, financial validation, ownership and recovery defects precede new features.
 P0/P1 and bounded P2-P5 slices remain delivered, with the newly recorded limitations;
-passing earlier suites did not cover these cases. Saved-version export currently
-uses reconciled responses, so its exact-history wording is not established (A2-7).
+passing earlier suites did not cover these cases. Saved-version export now uses an owner-scoped raw archive endpoint, separate
+from the current read-time interpretation. Historical calculations remain unverified.
 The [workspace plan](roadmaps/research-workspace-plan.md) resumes after the repair gates;
 dated source proposals, initial-model preview and wider period support remain open.
 No acceptance gates advance from this review or its documentation integration.
