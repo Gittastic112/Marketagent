@@ -14,16 +14,17 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage({ searchParams }: { searchParams: Promise<{ portfolio_id?: string; review_state?: string }> }) {
   const { portfolio_id: selectedId, review_state: reviewState } = await searchParams;
+  const selectedReview = reviewState === undefined ? "needs_review" : reviewState === "all" ? "" : reviewState;
   const query = selectedId === undefined ? "" : `?portfolio_id=${encodeURIComponent(selectedId)}`;
-  const reviewQuery = new URLSearchParams({ limit: "12", ...(selectedId ? { portfolio_id: selectedId } : {}), ...(reviewState ? { state: reviewState } : {}) });
+  const reviewQuery = new URLSearchParams({ limit: "6", ...(selectedId ? { portfolio_id: selectedId } : {}), ...(selectedReview ? { state: selectedReview } : {}) });
   const [overviewRes, reviewRes] = await Promise.all([
     serverFetchApiResponse<DashboardOverview>(`/dashboard/overview${query}`, { timeoutMs: 30_000 }),
     serverFetchApiResponse<ReviewQueue>(`/review-queue?${reviewQuery}`),
   ]);
-  const queue = <ResearchReviewQueue report={reviewRes.data} error={reviewRes.errors[0]?.message} selectedState={reviewState} portfolioId={selectedId ? Number(selectedId) : undefined} />;
+  const queue = <ResearchReviewQueue report={reviewRes.data} error={reviewRes.errors[0]?.message} selectedState={selectedReview} portfolioId={selectedId ? Number(selectedId) : undefined} />;
   const overview = overviewRes.data;
   const heading = <PageHeader eyebrow="Research workspace" title="Today"
-    description="What changed, what needs attention, and where to look next."
+    description="Review the evidence. Pick up where you left off."
     actions={<><Link prefetch={false} className="secondary-button" href="/alerts">Review alerts</Link><Link prefetch={false} className="primary-button" href="/daily-brief">Open daily brief <ArrowUpRight size={16} aria-hidden="true" /></Link></>} />;
   if (!overview) return <>{heading}{queue}<ErrorState message="The dashboard could not be loaded." errors={overviewRes.errors} /></>;
 
@@ -34,13 +35,15 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
   const recentRuns = runs.slice(0, 5);
   const failedRuns = recentRuns.filter(run => ["failed", "error"].includes(run.status));
   const snapshotNeedsInputs = Boolean(snapshot && snapshot.calculation_status !== "complete");
+  const recentNotes = [...thesisNotes].sort((a, b) => b.updated_at.localeCompare(a.updated_at) || b.id - a.id).slice(0, 4);
 
-  return <>
+  return <div className="today-workspace">
     {heading}
-    {queue}
     <DataStateNotices metas={[overviewRes.meta]}
       mockMessage="One or more dashboard panels use Mock Data, not source-backed research." />
+    <div className="today-context">
     {overview.portfolios.length > 1 && <form action="/" className="dashboard-portfolio-picker">
+      <input type="hidden" name="review_state" value={selectedReview || "all"} />
       <label htmlFor="dashboard-portfolio">Portfolio</label>
       <select id="dashboard-portfolio" name="portfolio_id" defaultValue={portfolio?.id}>
         {overview.portfolios.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
@@ -48,6 +51,7 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <button className="secondary-button" type="submit">Show portfolio</button>
       <Link href="/portfolio">View all portfolios</Link>
     </form>}
+    </div>
     <section className="metric-grid dashboard-metrics" aria-label="Research summary">
       <Link prefetch={false} className="metric metric-featured" href={portfolio ? `/portfolio/${portfolio.id}` : "/portfolio/manage"}>
         <div className="metric-label"><BriefcaseBusiness size={16} aria-hidden="true" />Portfolio value</div>
@@ -66,15 +70,27 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
       <Link prefetch={false} className="metric" href="/thesis-notes"><div className="metric-label"><FileText size={16} aria-hidden="true" />Thesis notes</div><div className="metric-value">{thesisNotes.length}</div><div className="metric-detail">Saved research context<ArrowUpRight size={14} aria-hidden="true" /></div></Link>
     </section>
     {portfolio?.description && <details className="disclosure basis-disclosure"><summary>Portfolio basis & assumptions</summary><p>{portfolio.description}</p></details>}
-    <div className="dashboard-content-grid">
-      <div className="content-stack">
-        <DailyBriefPanel dailyBrief={dailyBrief} />
+    <div className="today-research-grid">
+      <div className="content-stack today-primary">
+        {queue}
         <Panel title="Thesis notebook" actions={<Link prefetch={false} href="/thesis-notes">Write Thesis</Link>}>
-          {thesisNotes.length === 0 ? <EmptyState label="No thesis notes yet. Record a thesis and the assumptions that would change it." /> : <div className="table-wrap"><table>
-            <thead><tr><th>Thesis</th><th>Company</th><th>Review state</th></tr></thead>
-            <tbody>{thesisNotes.map(note => <tr key={note.id}><td><Link href={`/thesis-notes/${note.id}`}>{note.title}</Link></td><td>{companiesById.get(note.company_id)?.ticker || `#${note.company_id}`}</td><td><span className="badge">{note.status}</span></td></tr>)}</tbody>
-          </table></div>}
+          {recentNotes.length === 0 ? <EmptyState label="No thesis notes yet. Record a thesis and the assumptions that would change it." /> : <>
+            <ul className="today-notes">{recentNotes.map(note => <li key={note.id}>
+              <span className="today-ticker">{companiesById.get(note.company_id)?.ticker || `#${note.company_id}`}</span>
+              <Link href={`/thesis-notes/${note.id}`}>{note.title}</Link><span className="badge">{note.status}</span>
+            </li>)}</ul>
+            <Link className="today-text-link" href="/thesis-notes">View all {thesisNotes.length} notes <ArrowUpRight size={14} aria-hidden="true" /></Link>
+          </>}
         </Panel>
+      </div>
+      <aside className="content-stack today-secondary" aria-label="Research context">
+        <DailyBriefPanel dailyBrief={dailyBrief} />
+        <Panel title="Your companies" actions={<Link prefetch={false} href="/companies">Add Company</Link>}>
+          {companies.length === 0 ? <EmptyState label="Add a company to start collecting research." /> : <div className="today-company-links">{companies.map(company =>
+            <Link prefetch={false} key={company.id} href={`/companies/${company.id}`}>{company.ticker}<ArrowUpRight size={13} aria-hidden="true" /></Link>)}</div>}
+          <Link className="today-text-link" href="/valuation">Open valuation workspace <ArrowUpRight size={14} aria-hidden="true" /></Link>
+        </Panel>
+        <details className="disclosure today-source-activity"><summary>Source activity <span className={failedRuns.length ? "badge badge-error" : "muted"}>{failedRuns.length ? `${failedRuns.length} failed` : `${recentRuns.length} recent runs`}</span></summary>
         <Panel title="Recent source activity" actions={<Link prefetch={false} href="/data-health">Data health →</Link>}>
           {failedRuns.length > 0 && <p className="basis-note">{failedRuns.length} of the last {recentRuns.length} processing runs failed. Open data health for details.</p>}
           {recentRuns.length === 0 ? <EmptyState label="No processing runs yet. Configure sources and run ingestion to collect evidence." /> : <div className="run-list">{recentRuns.map(run => <div className="run-row" key={run.id}>
@@ -82,18 +98,14 @@ export default async function HomePage({ searchParams }: { searchParams: Promise
             <span className={`badge ${["failed", "error"].includes(run.status) ? "badge-error" : ""}`}>{run.status.replaceAll("_", " ")}</span>
           </div>)}</div>}
         </Panel>
-      </div>
-      <div className="content-stack">
+        </details>
+      </aside>
+    </div>
+    <details className="disclosure today-more-activity"><summary>Alerts and event detail <span className="muted">{activeAlerts.length} alerts to review · {events.length} loaded events</span></summary>
+      <div className="dashboard-content-grid">
         <AlertsPanel alerts={alerts} companiesById={companiesById} />
         <EventsTimeline events={events} companies={companies} />
-        <Panel title="Continue research">
-          <div className="research-links">
-            <Link prefetch={false} href="/companies">Add Company <ArrowUpRight size={16} aria-hidden="true" /></Link>
-            <Link prefetch={false} href="/valuation">Valuation workspace <ArrowUpRight size={16} aria-hidden="true" /></Link>
-            <Link prefetch={false} href="/documents">Review source documents <ArrowUpRight size={16} aria-hidden="true" /></Link>
-          </div>
-        </Panel>
       </div>
-    </div>
-  </>;
+    </details>
+  </div>;
 }
