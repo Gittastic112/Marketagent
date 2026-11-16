@@ -323,3 +323,42 @@ def test_competing_stale_acknowledgements_record_one_review(pg_engine):
         assert sorted(pool.map(review, range(2))) == [200, 409]
     with Session(pg_engine) as db:
         assert db.scalar(select(func.count()).select_from(DcfDecisionLog)) == 1
+def test_competing_daily_brief_workers_share_one_durable_claim(pg_engine, monkeypatch):
+    from datetime import time, timedelta
+    from threading import Event as ThreadEvent
+    from app.models import User, DailyBriefSchedule, DailyBrief
+    from app.services import daily_brief_schedule as schedules
+    owner = "mock-concurrent-brief"
+    now = datetime.now(UTC)
+    with Session(pg_engine) as db:
+        db.add(User(id=owner, email="brief@example.invalid", name="Mock Data worker")); db.commit()
+        schedule = schedules.configure_daily_brief_schedule(db, user_id=owner, enabled=True, timezone_name="UTC",
+            local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+        schedule.next_run_at = now - timedelta(minutes=1); db.commit()
+        identity = schedule.id
+    entered, release = ThreadEvent(), ThreadEvent()
+    original = schedules.MorningBriefingEngine.get_or_generate_briefing
+    def held(db, user_id, target_date):
+        with Session(pg_engine) as observer:
+            row = observer.get(DailyBriefSchedule, identity)
+            assert row.last_processing_run_id is not None
+            assert observer.get(ProcessingRun, row.last_processing_run_id).status == "running"
+        entered.set()
+        assert release.wait(15)
+        return original(db, user_id, target_date)
+    monkeypatch.setattr(schedules.MorningBriefingEngine, "get_or_generate_briefing", held)
+    def run():
+        with Session(pg_engine) as db:
+            return schedules.run_due_daily_brief_schedules(db, now=now)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(run)
+        try:
+            assert entered.wait(15)
+            assert pool.submit(run).result(15)["schedules_checked"] == 0
+        finally:
+            release.set()
+        assert first.result(15)["briefs_created"] == 1
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
+        assert db.scalar(select(func.count()).select_from(ProcessingRun)) == 1
+        assert db.scalar(select(ProcessingRun.status)) == "success"

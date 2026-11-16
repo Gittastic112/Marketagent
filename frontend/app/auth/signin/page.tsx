@@ -1,5 +1,6 @@
 "use client";
 
+import { localCallback } from "@/lib/auth-navigation";
 import { LogIn } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -23,15 +24,20 @@ export default function SignInPage() {
 function SignInForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const isConfigurationError = searchParams.get("error") === "Configuration";
+
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [readiness, setReadiness] = useState<AuthReadiness | null>(null);
   const [readinessError, setReadinessError] = useState(false);
+  const [checkNumber, setCheckNumber] = useState(0);
 
   useEffect(() => {
     let active = true;
-    fetch("/api/auth/readiness", { cache: "no-store" })
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 10_000);
+    setReadiness(null);
+    setReadinessError(false);
+    fetch("/api/auth/readiness", { cache: "no-store", signal: controller.signal })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Readiness check failed");
@@ -40,6 +46,7 @@ function SignInForm() {
       })
       .then((result) => {
         if (active) {
+          if (typeof result.configured !== "boolean" || !Array.isArray(result.missing)) throw new Error("Invalid readiness");
           setReadiness(result);
         }
       })
@@ -47,32 +54,42 @@ function SignInForm() {
         if (active) {
           setReadinessError(true);
         }
-      });
+      }).finally(() => clearTimeout(timer));
     return () => {
       active = false;
+      clearTimeout(timer);
+      controller.abort();
     };
-  }, []);
+  }, [checkNumber]);
 
-  const authUnavailable = isConfigurationError || readinessError || readiness?.configured === false;
+  const authUnavailable = readinessError || readiness?.configured !== true;
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (isSubmitting || authUnavailable) return;
     setIsSubmitting(true);
     setError(null);
     const formData = new FormData(event.currentTarget);
-    const result = await signIn("credentials", {
-      redirect: false,
-      username: formData.get("username"),
-      password: formData.get("password"),
-    });
-    if (result?.error) {
-      setError("Sign-in failed. Check the provided credentials.");
+    const callbackUrl = localCallback(searchParams.get("callbackUrl"), window.location.origin);
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        callbackUrl,
+        username: formData.get("username"),
+        password: formData.get("password"),
+      });
+      if (!result?.ok || result.error) {
+        setError("Sign-in failed. Check the provided credentials and try again.");
+        return;
+      }
+      router.replace(callbackUrl);
+      router.refresh();
+    } catch {
+      setError("Sign-in could not be confirmed. Your entries are retained; try again when the connection recovers.");
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-    const callbackUrl = searchParams.get("callbackUrl");
-    router.replace(callbackUrl?.startsWith("/") ? callbackUrl : "/");
-    router.refresh();
+
   }
 
   return (
@@ -89,7 +106,7 @@ function SignInForm() {
           <label htmlFor="password">Password</label>
           <input id="password" name="password" type="password" autoComplete="current-password" required />
         </div>
-        {isConfigurationError || readiness?.configured === false ? (
+        {readiness?.configured === false ? (
           <p style={{ color: "var(--danger)", margin: 0 }}>
             Local authentication is not configured
             {readiness?.missing.length ? `: ${readiness.missing.join(", ")}` : "."}
@@ -100,10 +117,11 @@ function SignInForm() {
             Unable to verify local authentication configuration.
           </p>
         ) : null}
-        {error ? <p style={{ color: "var(--danger)", margin: 0 }}>{error}</p> : null}
+        {(readinessError || readiness?.configured === false) && <button type="button" onClick={() => setCheckNumber(value => value + 1)}>Check configuration again</button>}
+        {error ? <p role="alert" style={{ color: "var(--danger)", margin: 0 }}>{error}</p> : null}
         <button type="submit" disabled={isSubmitting || readiness === null || authUnavailable}>
           <LogIn size={16} />
-          {isSubmitting ? "Signing in..." : readiness === null ? "Checking configuration..." : "Sign in"}
+          {isSubmitting ? "Signing in..." : readinessError ? "Configuration unavailable" : readiness === null ? "Checking configuration..." : "Sign in"}
         </button>
       </form>
     </div>

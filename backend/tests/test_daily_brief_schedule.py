@@ -170,3 +170,39 @@ def test_scheduler_poll_interval_has_a_safe_floor(monkeypatch) -> None:
 
     monkeypatch.setenv("DAILY_BRIEF_SCHEDULER_INTERVAL_SECONDS", "invalid")
     assert scheduler_interval_seconds() == 60
+
+
+def test_interrupted_claim_has_one_durable_owned_attempt_and_restart_closes_it(db_session, monkeypatch):
+    import pytest
+    now = datetime(2026, 11, 16, 8, tzinfo=UTC)
+    schedule = configure_daily_brief_schedule(db_session, user_id="admin_user_id_fallback", enabled=True,
+        timezone_name="UTC", local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+    schedule.next_run_at = now - timedelta(minutes=1)
+    db_session.commit()
+    class Interrupted(BaseException):
+        pass
+    generate = __import__("app.services.daily_brief_schedule", fromlist=["MorningBriefingEngine"]).MorningBriefingEngine
+    original = generate.get_or_generate_briefing
+    def interrupt(*_args):
+        db_session.rollback()
+        db_session.refresh(schedule)
+        assert schedule.last_processing_run_id is not None
+        run = db_session.get(ProcessingRun, schedule.last_processing_run_id)
+        assert run.status == "running" and run.metadata_json["schedule_id"] == schedule.id
+        raise Interrupted()
+    monkeypatch.setattr(generate, "get_or_generate_briefing", interrupt)
+    with pytest.raises(Interrupted):
+        run_due_daily_brief_schedules(db_session, now=now)
+    old_id = schedule.last_processing_run_id
+    unrelated = ProcessingRun(run_type="daily_brief_schedule", status="running", started_at=now,
+        metadata_json={"user_id": "other-owner", "schedule_id": schedule.id})
+    db_session.add(unrelated); db_session.commit()
+    monkeypatch.setattr(generate, "get_or_generate_briefing", original)
+    result = run_due_daily_brief_schedules(db_session, now=now + timedelta(minutes=11))
+    assert result["briefs_created"] == 1
+    old = db_session.get(ProcessingRun, old_id)
+    assert old.status == "failed" and old.finished_at is not None
+    assert old.error_details_json["error_type"] == "daily_brief_lease_expired"
+    assert db_session.get(ProcessingRun, unrelated.id).status == "running"
+    assert schedule.last_processing_run_id != old_id
+    assert db_session.get(ProcessingRun, schedule.last_processing_run_id).status == "success"

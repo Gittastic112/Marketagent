@@ -183,6 +183,8 @@ def evaluate_ai_output(output: AiOutput) -> dict[str, Any]:
     return {
         "version": "ai-output-eval-v4",
         # Generation provenance is immutable even when citation/review checks change.
+        **({"execution": output.evaluation_json["execution"]}
+           if isinstance(output.evaluation_json, dict) and "execution" in output.evaluation_json else {}),
         **({"valuation_basis": output.evaluation_json["valuation_basis"]}
            if isinstance(output.evaluation_json, dict) and "valuation_basis" in output.evaluation_json else {}),
         **({"prior_human_reviews": output.evaluation_json["prior_human_reviews"]}

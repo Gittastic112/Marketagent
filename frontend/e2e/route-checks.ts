@@ -117,7 +117,7 @@ export async function verifyRoute(
   viewport: { width: number; height: number },
 ) {
   await page.setViewportSize(viewport);
-  const routeStartedAt = Date.now();
+  const routeStartedAt = performance.now();
   await page.goto(path);
   await expect(page.locator("main")).toBeVisible();
   await expect.poll(() => page.evaluate(() => document.fonts.status)).toBe("loaded");
@@ -131,7 +131,7 @@ export async function verifyRoute(
     await expect(page.getByLabel("Username", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Sign in", exact: true })).toBeEnabled();
   }
-  const routeReadyMs = Date.now() - routeStartedAt;
+  const routeReadyMs = performance.now() - routeStartedAt;
   expect(
     routeReadyMs,
     `${label} must render within the route-ready budget`,

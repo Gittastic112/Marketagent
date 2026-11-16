@@ -1,5 +1,6 @@
 import { getToken } from "next-auth/jwt";
 import type { NextRequest } from "next/server";
+import { backendTimeoutMs } from "@/lib/backend-timeout";
 
 import {
   createBackendAuthHeaders,
@@ -7,7 +8,6 @@ import {
 import { backendRequestHeaders, isSameOriginMutation, readBoundedBody, trustedBrowserOrigin } from "@/lib/request-security";
 
 const API_BASE_URL = process.env.API_BASE_URL ?? process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
-const BACKEND_TIMEOUT_MS = 15_000;
 
 type RouteContext = {
   params: Promise<{
@@ -59,10 +59,7 @@ async function proxyRequest(request: NextRequest, context: RouteContext) {
   }
   const sourceUrl = new URL(request.url);
   const targetPath = path.map(encodeURIComponent).join("/");
-  // Explicit AI scans allow the provider's bounded 30-second call plus validation.
-  // Ordinary navigation keeps its short timeout.
-  const timeoutMs = request.method === "POST" && /^brief-sources\/\d+\/analyze$/.test(targetPath)
-    ? 45_000 : BACKEND_TIMEOUT_MS;
+  const timeoutMs = backendTimeoutMs(request.method, targetPath);
   const targetUrl = `${API_BASE_URL}/${targetPath}${sourceUrl.search}`;
   const headers = backendRequestHeaders(request.headers);
   const authHeaders = createBackendAuthHeaders(

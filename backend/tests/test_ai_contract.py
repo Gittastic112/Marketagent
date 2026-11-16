@@ -87,3 +87,39 @@ def test_provider_failure_is_recorded_without_silent_mock_fallback(db_session) -
     assert stored.failure_code == "AI_PROVIDER_FAILED"
     assert stored.output_text == ""
     assert "sensitive upstream response" not in (stored.limitations or "")
+
+
+def test_dispatch_receipt_is_committed_before_callback_and_survives_interruption(db_session):
+    decision(db_session)
+    class Interrupted(BaseException):
+        pass
+
+    def interrupted(_provider):
+        # Rollback discards only uncommitted state. The dispatch record must survive.
+        db_session.rollback()
+        attempt = db_session.scalar(select(AiOutput))
+        assert attempt is not None
+        assert attempt.execution_status == "pending"
+        assert attempt.transmission_scope == "unknown"
+        assert attempt.output_text == ""
+        raise Interrupted()
+
+    with pytest.raises(Interrupted):
+        execute_ai_generation(db_session, provenance=provenance(), provider=FailingProvider(), generate=interrupted)
+    db_session.rollback()
+    first = db_session.scalar(select(AiOutput))
+    assert first.execution_status == "pending"
+
+    # A new explicit request preserves the uncertain predecessor and finalizes one new record.
+    seen = []
+    def succeeds(_provider):
+        rows = list(db_session.scalars(select(AiOutput).order_by(AiOutput.id)))
+        assert len(rows) == 2
+        seen.append(rows[-1].id)
+        assert rows[-1].evaluation_json["execution"]["previous_attempt_id"] == first.id
+        return AIProviderResult(model_name="test-model", output_text="Mock Data result",
+                                limitations="Test only", confidence_label="low")
+    result = execute_ai_generation(db_session, provenance=provenance(), provider=FailingProvider(), generate=succeeds)
+    assert result.id == seen[0] and result.execution_status == "success"
+    assert first.execution_status == "pending"
+    assert len(list(db_session.scalars(select(AiOutput)))) == 2
