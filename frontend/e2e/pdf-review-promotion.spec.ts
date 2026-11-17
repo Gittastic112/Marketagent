@@ -40,8 +40,8 @@ test("PDF upload, candidate review, promotion, and reconciliation", async ({ pag
   await uploadPanel.getByRole("button", { name: "Upload PDF" }).click();
   await expect(uploadPanel.getByRole("status")).toContainText("1 of 1 pages scanned, 1 tables, 12 candidates");
   await uploadPanel.getByRole("link", {name: "Review this document or extract additional pages"}).click();
-  await page.getByText("Extract additional PDF pages", {exact: true}).click();
-  await page.getByLabel("Additional pages", {exact: true}).fill("1");
+  await page.getByRole("main").getByText("Extract additional PDF pages", {exact: true}).click();
+  await page.getByRole("main").getByLabel("Additional pages", {exact: true}).fill("1");
   await page.getByRole("button", {name: "Extract selected pages"}).click();
   await expect(page.getByRole("status")).toContainText("All selected pages were already extracted");
   await page.goto(`/companies/${company.id}/fundamentals`);

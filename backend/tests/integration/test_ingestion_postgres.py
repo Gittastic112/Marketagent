@@ -362,3 +362,50 @@ def test_competing_daily_brief_workers_share_one_durable_claim(pg_engine, monkey
         assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
         assert db.scalar(select(func.count()).select_from(ProcessingRun)) == 1
         assert db.scalar(select(ProcessingRun.status)) == "success"
+
+
+def test_replacement_brief_worker_does_not_claim_a_late_workers_snapshot(pg_engine, monkeypatch):
+    from datetime import time, timedelta
+    from threading import Event as ThreadEvent
+    from sqlalchemy import event
+    from app.models import User, DailyBrief
+    from app.services import daily_brief_schedule as schedules
+
+    now = datetime.now(UTC)
+    owner = "mock-expired-brief"
+    with Session(pg_engine) as db:
+        db.add(User(id=owner, email="expired@example.invalid", name="Mock Data expired worker")); db.commit()
+        schedule = schedules.configure_daily_brief_schedule(db, user_id=owner, enabled=True,
+            timezone_name="UTC", local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+        schedule.next_run_at = now - timedelta(minutes=1); db.commit()
+    entered, release, replacement_claim = ThreadEvent(), ThreadEvent(), ThreadEvent()
+    original = schedules.MorningBriefingEngine.generate_briefing
+    def held(*args, **kwargs):
+        entered.set()
+        assert release.wait(15)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(schedules.MorningBriefingEngine, "generate_briefing", held)
+    def observe_claim(connection, cursor, statement, parameters, context, executemany):
+        if entered.is_set() and statement.startswith("UPDATE ") and "SET last_processing_run_id=" in statement:
+            replacement_claim.set()
+    event.listen(pg_engine, "before_cursor_execute", observe_claim)
+    def run(at):
+        with Session(pg_engine) as db:
+            return schedules.run_due_daily_brief_schedules(db, now=at)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(run, now)
+        try:
+            assert entered.wait(15)
+            replacement = pool.submit(run, now + timedelta(minutes=11))
+            # The replacement reaches its claim while the original still holds
+            # the owner lock. Its claim can wait; a second committed run is not
+            # a prerequisite for releasing the original worker.
+            assert replacement_claim.wait(15)
+        finally:
+            release.set()
+            event.remove(pg_engine, "before_cursor_execute", observe_claim)
+        assert first.result(15)["schedules_completed"] == 0
+        assert replacement.result(15)["briefs_created"] == 0
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
+        assert sorted(db.scalars(select(ProcessingRun.status))) == ["failed", "success"]
