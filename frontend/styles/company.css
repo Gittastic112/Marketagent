@@ -29,6 +29,17 @@
 .valuation-model-description summary { cursor: pointer; color: var(--color-text-muted); }
 .valuation-model-description p { min-width: 180px; max-width: 40ch; white-space: normal; }
 
+.thesis-assumptions-table { min-width: 960px; table-layout: fixed; }
+.thesis-assumptions-table th:first-child { width: 34%; }
+.thesis-assumptions-table th:nth-child(2) { width: 38%; }
+.thesis-assumptions-table th:last-child { width: 28%; white-space: normal; }
+.thesis-assumptions-table td { vertical-align: top; white-space: normal; overflow-wrap: anywhere; }
+.thesis-assumptions-table td > p { margin: var(--space-3) 0 0; line-height: 1.6; }
+.thesis-assumption-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+.thesis-assumption-meta .badge { flex-basis: auto; }
+.thesis-assumptions-table details label { margin: var(--space-3) 0; }
+.thesis-assumptions-table .button-row { flex-wrap: wrap; }
+
 @media (max-width: 760px) {
   .company-summary-grid { grid-template-columns: minmax(0, 1fr); }
   .company-tools-menu { flex-basis: 100%; padding: 0; }

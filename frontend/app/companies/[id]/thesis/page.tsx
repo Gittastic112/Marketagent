@@ -67,30 +67,24 @@ export default async function ThesisEnginePage({ params, searchParams }: { param
             <EmptyState label="No structured assumptions added to this thesis." />
           ) : (
             <div className="table-wrap" role="region" aria-label="Thesis assumptions" tabIndex={0}>
-              <table>
+              <table className="thesis-assumptions-table">
                 <thead>
                   <tr>
-                    <th>Category</th>
-                    <th>Assumption</th>
-                    <th>Importance</th>
-                    <th>Confidence</th>
-                    <th>Evidence Chain</th>
-                    <th>Falsification Trigger</th>
+                    <th scope="col">Assumption</th>
+                    <th scope="col">Evidence and review</th>
+                    <th scope="col">What would change this view</th>
                   </tr>
                 </thead>
                 <tbody>
                   {activeThesis.assumptions.map((assump) => (
                     <tr key={assump.id}>
-                      <td><span className="badge">{assump.category || "General"}</span></td>
-                      <td style={{ maxWidth: "300px", whiteSpace: "normal" }}><strong>{assump.description}</strong></td>
-                      <td>{assump.importance}</td>
                       <td>
-                        <span style={{
-                          color: assump.current_confidence === 'high' ? 'var(--success)' : assump.current_confidence === 'low' ? 'var(--error)' : 'var(--warning)',
-                          fontWeight: 600
-                        }}>
-                          {assump.current_confidence}
-                        </span>
+                        <div className="thesis-assumption-meta">
+                          <span className="badge">{assump.category || "General"}</span>
+                          <span>Importance: {assump.importance || "Not recorded"}</span>
+                          <span>Confidence: {assump.current_confidence || "Not recorded"}</span>
+                        </div>
+                        <p>{assump.description}</p>
                       </td>
                       <td>
                         {assump.impacts && assump.impacts.length > 0 ? (
@@ -111,7 +105,7 @@ export default async function ThesisEnginePage({ params, searchParams }: { param
                           <span className="muted" style={{ fontSize: "0.85rem" }}>No events linked</span>
                         )}
                       </td>
-                      <td style={{ maxWidth: "250px", whiteSpace: "normal", color: "var(--muted)", fontStyle: "italic", fontSize: "0.85rem" }}>
+                      <td>
                         {assump.falsification_trigger || "None defined"}
                       </td>
                     </tr>

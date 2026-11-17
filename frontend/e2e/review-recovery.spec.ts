@@ -71,10 +71,11 @@ test("private source approval refreshes its comparison basis and requires a new 
 });
 
 test("thesis evidence navigation, preserving review and company memo download work together", async ({ page }) => {
+  await page.setViewportSize({width:1280,height:900});
   await signIn(page);
   const company = await createCompany(page, {ticker:"NINE",local_symbol:"NINE",name:"Mock Data final review company"});
   const note = await backendData<{id:number}>(page,"/thesis-notes",{method:"POST",data:{company_id:company.id,title:"Mock Data preserved thesis",thesis_text:"Original research rationale"}});
-  const assumption = await backendData<{id:number}>(page,`/thesis-notes/${note.id}/assumptions`,{method:"POST",data:{thesis_note_id:note.id,description:"Mock Data assumption"}});
+  const assumption = await backendData<{id:number}>(page,`/thesis-notes/${note.id}/assumptions`,{method:"POST",data:{thesis_note_id:note.id,description:"Mock Data assumption: recurring profitability requires comparable source periods and separate review of temporary benefits before changing the saved research view."}});
   const event = await backendData<{id:number}>(page,"/events",{method:"POST",data:{company_id:company.id,title:"Mock Data precise event",event_type:"manual",information_speed:"slow"}});
   const impact = await backendData<{id:number}>(page,`/thesis-assumptions/${assumption.id}/impacts`,{method:"POST",data:{event_id:event.id,thesis_assumption_id:assumption.id,impact_classification:"Weakens",rationale:"Retained original counterevidence"}});
   await page.goto(`/companies/${company.id}/thesis?note_id=${note.id}`);
@@ -84,6 +85,13 @@ test("thesis evidence navigation, preserving review and company memo download wo
   await page.goto(`/companies/${company.id}/thesis?note_id=${note.id}`);
   const main = page.getByRole("main");
   await main.getByText("Record evidence review",{exact:true}).click();
+  const assumptionCells = main.getByRole("region",{name:"Thesis assumptions"}).locator("tbody tr").first().locator("td");
+  for (const cell of await assumptionCells.all()) {
+    expect(await cell.evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThan(250);
+  }
+  await page.setViewportSize({width:390,height:844});
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
+  await page.setViewportSize({width:1280,height:900});
   await main.getByLabel("Review reason").fill("Mock Data complete evidence inspected; retain thesis with counterevidence.");
   await main.getByRole("button",{name:"Reviewed; no thesis change"}).click();
   await expect(main.getByText("reviewed",{exact:true})).toBeVisible();
