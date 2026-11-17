@@ -70,9 +70,10 @@ A1-F6/F7, all four R3 findings and A3-2 through A3-5. The
 [release checkpoint](../archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md)
 records final checks, the requested Today order and preservation. The
 [evidence/workflow batch](../../data/reviews/review-evidence-workflows-ten-sets-20261116.json) installs A3-9 and R5/R6 locally;
-its browser checks pass and GitHub publication is deferred by the user. Proceed to R7/R8. R0 still blocks populated legacy conversion or
-restore; original evidence and historical snapshots remain preserved. R7 depends
-on R1 ownership and durable evidence; R8 respects the same private-run policy.
+its browser checks pass and GitHub publication is deferred by the user. The
+[remaining nine](../../data/reviews/review-research-recovery-nine-sets-20261116.json) install R7/R8 and D1/D2 with scoped verification.
+Publication remains deferred; the limitation ledger owns residual work. R0 still blocks
+populated legacy conversion or restore; original evidence and historical snapshots remain preserved.
 Work sequentially unless an explicit parallel batch assigns exclusive files.
 
 Before each package, recheck its pinned claim against the current code, inspect

@@ -72,13 +72,14 @@ places the brief and active alerts before it, and folds secondary activity into 
 The [review ledger](limitations.md#returned-code-review) owns the remaining work.
 The next ten repairs are installed locally in the [evidence/workflow receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json):
 A3-9, A1-F8 through F12 and A2-4 through A2-7. Local and browser checks pass.
-GitHub publication is deferred at the user's request. Nine primary findings remain unimplemented,
-in R7/R8. Populated legacy conversion remains held.
+GitHub publication is deferred at the user's request. The remaining nine R7/R8
+repairs and D1/D2 are installed with verification in the [research/recovery receipt](../data/reviews/review-research-recovery-nine-sets-20261116.json).
+Populated legacy conversion remains held.
 The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
 raw reports remain unchanged and ignored, with private chat links excluded.
-Normal data and the essential recovery set are preserved; no new backup or
-acceptance points are created. Reuse the active Compose project; obsolete images,
-build cache and generated dependency files have been removed under the retention policy.
+Preserve normal data and the essential recovery set. The additive provenance
+migration retains one bounded pre-change recovery copy; no acceptance points are created.
+Reuse the active Compose project; remove temporary build resources under the retention policy.
 After the repair gates, resume dated-source proposals, initial-model preview,
 wider period support and P6/P7 in the research workspace plan.
 

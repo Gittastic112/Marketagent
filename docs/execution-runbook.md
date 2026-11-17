@@ -118,9 +118,20 @@ The browser runner also executes `backend/tests/integration/test_ingestion_postg
 against its disposable PostgreSQL database. It proves row/advisory locking that
 SQLite cannot exercise. The test requires `INGESTION_TEST_DATABASE_URL`, rejects
 database names without the `_e2e` suffix, and allocates/removes only its own random
-schema. Four checks cover ingestion locks, review writers and competing saved
-valuation versions. The default offline backend suite skips them; a skip is not
+schema. Checks cover ingestion locks, review writers, competing saved
+valuation versions and durable daily-brief worker claims. The default offline backend suite skips them; a skip is not
 concurrency proof. Never point this variable at the normal database.
+
+The optional `backend/tests/e2e_research_app.py` browser fixture delays one exact
+Mock Data research message beyond 15 seconds. It requires `APP_ENV=test`, explicit
+`AI_DEMO_MODE=true` and an `_e2e` database. In that isolated backend use
+`uvicorn e2e_research_app:app` with the fixture directory on `PYTHONPATH`, then set
+`E2E_DELAYED_RESEARCH=true` for `frontend/e2e/review-recovery.spec.ts`.
+The fixture is excluded from the application image. A normal browser run skips
+three provider-backed cases (lost response, narrative origin and latency). Run
+those separately with this fixture; keep unconfigured-provider browser checks on
+the ordinary backend with no provider or demo mode. Neither environment establishes
+live-provider delivery or latency.
 
 Critical frontend/backend contracts are checked in both suites. For an intentional
 wire change, regenerate the manifest using the backend dependencies, review its
