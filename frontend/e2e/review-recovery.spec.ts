@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { randomUUID } from "node:crypto";
 import { backendData, createCompany, signIn } from "./helpers";
 
 test("sign-in recovers readiness and transport failures without losing entries", async ({ page }) => {
@@ -73,7 +74,8 @@ test("private source approval refreshes its comparison basis and requires a new 
 test("thesis evidence navigation, preserving review and company memo download work together", async ({ page }) => {
   await page.setViewportSize({width:1280,height:900});
   await signIn(page);
-  const company = await createCompany(page, {ticker:"NINE",local_symbol:"NINE",name:"Mock Data final review company"});
+  const ticker = `N${randomUUID().replaceAll("-", "").slice(0, 8).toUpperCase()}`;
+  const company = await createCompany(page, {ticker,local_symbol:ticker,name:"Mock Data final review company"});
   const note = await backendData<{id:number}>(page,"/thesis-notes",{method:"POST",data:{company_id:company.id,title:"Mock Data preserved thesis",thesis_text:"Original research rationale"}});
   const assumption = await backendData<{id:number}>(page,`/thesis-notes/${note.id}/assumptions`,{method:"POST",data:{thesis_note_id:note.id,description:"Mock Data assumption: recurring profitability requires comparable source periods and separate review of temporary benefits before changing the saved research view."}});
   const event = await backendData<{id:number}>(page,"/events",{method:"POST",data:{company_id:company.id,title:"Mock Data precise event",event_type:"manual",information_speed:"slow"}});
@@ -104,7 +106,7 @@ test("thesis evidence navigation, preserving review and company memo download wo
   const download = page.waitForEvent("download");
   await page.getByRole("link",{name:/Download.*Memo/i}).click();
   const file = await download;
-  expect(file.suggestedFilename()).toBe("memo_NINE.md");
+  expect(file.suggestedFilename()).toBe(`memo_${ticker}.md`);
   expect(await file.failure()).toBeNull();
 });
 

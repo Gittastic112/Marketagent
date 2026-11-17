@@ -29,7 +29,7 @@
 .valuation-model-description summary { cursor: pointer; color: var(--color-text-muted); }
 .valuation-model-description p { min-width: 180px; max-width: 40ch; white-space: normal; }
 
-.thesis-assumptions-table { min-width: 960px; table-layout: fixed; }
+.thesis-assumptions-table { min-width: 900px; table-layout: fixed; }
 .thesis-assumptions-table th:first-child { width: 34%; }
 .thesis-assumptions-table th:nth-child(2) { width: 38%; }
 .thesis-assumptions-table th:last-child { width: 28%; white-space: normal; }
