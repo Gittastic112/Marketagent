@@ -1,0 +1,58 @@
+name: One-time Marketagent deliverables export
+
+on:
+  push:
+    branches:
+      - export/marketagent-deliverables-20261118
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+      - name: Package PR 20 changed files and handoff
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE=371b58c02cfd2b80429f28dbc13629165b5e392d
+          TARGET=33df697d0f33c584944c440b5ec5835aea0aee24
+          mkdir -p dist/staging/Marketagent_PR20_Changed_Files
+          git diff --name-only --diff-filter=ACMR "$BASE" "$TARGET" |
+            while IFS= read -r path; do
+              test -f "$path" || continue
+              mkdir -p "dist/staging/Marketagent_PR20_Changed_Files/$(dirname "$path")"
+              cp "$path" "dist/staging/Marketagent_PR20_Changed_Files/$path"
+            done
+          cat > dist/staging/READ_FIRST.md <<'EOF'
+          # Marketagent new deliverables
+
+          This package contains the exact added and modified files from the research adapters implementation in PR #20.
+
+          Base commit: 371b58c02cfd2b80429f28dbc13629165b5e392d
+          Final commit: 33df697d0f33c584944c440b5ec5835aea0aee24
+          GitHub PR: https://github.com/Gittastic112/Marketagent/pull/20
+          CI result: https://github.com/Gittastic112/Marketagent/actions/runs/44228408999
+
+          The Marketagent_PR20_Changed_Files folder is a **change set**, not a stand-alone runnable checkout. Use the full repository and the feature branch to run the application.
+
+          Start with Marketagent_PR20_Changed_Files/docs/adapters/README.md and verification.md.
+          The examples are labeled Mock Data. Live provider access, OCR model provisioning and actual installed-app acceptance require additional setup.
+
+          The separate consolidated GitHub reuse research Markdown is supplied alongside this archive in the conversation package.
+          EOF
+          (cd dist/staging && zip -q -r ../Marketagent_PR20_Source_and_Deliverables.zip .)
+          unzip -t dist/Marketagent_PR20_Source_and_Deliverables.zip | tail -1
+          ls -lh dist/Marketagent_PR20_Source_and_Deliverables.zip
+      - name: Upload deliverables ZIP
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: marketagent-pr20-source-and-deliverables
+          path: dist/Marketagent_PR20_Source_and_Deliverables.zip
+          retention-days: 7
+          if-no-files-found: error
