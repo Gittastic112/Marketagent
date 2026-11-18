@@ -416,6 +416,22 @@ def _ensure_peer_receipt_recovery_fixtures(db) -> None:
         db.commit()
 
 
+def _ensure_chart_fixture(db) -> None:
+    company = _company(db, ticker="E2ECHART", market="US", exchange="NASDAQ", currency="USD", country="United States")
+    if db.query(MarketPrice.id).filter_by(company_id=company.id).first():
+        return
+    for day, price in [(5, 100), (6, 90), (7, 92)]:
+        db.add(MarketPrice(company_id=company.id, ticker=company.ticker, currency="USD", price=price,
+                           as_of_date=date(2026, 1, day), provider_name="e2e_mock_fixture", market="US",
+                           exchange="NASDAQ", price_type="end_of_day", adjustment_state="unadjusted", claim_type="Mock Data"))
+    source = Source(name="Mock Data chart filings", source_type="filing")
+    db.add(source)
+    db.flush()
+    db.add(RawDocument(company_id=company.id, source_id=source.id, title="Mock Data earnings filing",
+                       document_type="sec_filing_metadata", published_at=datetime(2026, 1, 6, tzinfo=UTC),
+                       content_hash=sha256(b"e2e-chart-source").hexdigest()))
+
+
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
@@ -424,6 +440,7 @@ def main() -> None:
         _ensure_private_comparison_fixture(db)
         _ensure_ai_review_fixture(db)
         _ensure_company_currency_fixture(db)
+        _ensure_chart_fixture(db)
         db.commit()
 
 

@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Float, ForeignKey, JSON, String, Text, func
+from sqlalchemy import DateTime, Float, ForeignKey, JSON, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -32,6 +32,21 @@ class ThesisNote(Base):
     changes = relationship(
         "ThesisChange", back_populates="thesis_note", lazy="selectin", cascade="all, delete-orphan"
     )
+    price_pins = relationship("ThesisPricePin", cascade="all, delete-orphan")
+
+
+class ThesisPricePin(Base):
+    __tablename__ = "thesis_price_pins"
+    __table_args__ = (UniqueConstraint("thesis_note_id", "request_id", name="uq_thesis_price_pin_request"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    thesis_note_id: Mapped[int] = mapped_column(ForeignKey("thesis_notes.id", ondelete="CASCADE"), index=True)
+    company_id: Mapped[int] = mapped_column(ForeignKey("companies.id"), index=True)
+    request_id: Mapped[str] = mapped_column(String(36))
+    fingerprint: Mapped[str] = mapped_column(String(64), index=True)
+    anchor: Mapped[dict[str, Any]] = mapped_column(JSON)
+    text: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
 class ThesisAssumption(Base):

@@ -2,7 +2,7 @@
 
 **Source reviewed:** 2026-11-04. Runtime verification is recorded in Current State.
 
-**Current source head:** `v4v4v4v4v4v4`. Adds nullable narrative-claim origin and an exact AI-output reference. Existing claims keep unknown origin; no backfill or content rewrite occurs. The preceding scoped permission decisions grant no implicit consent. Projection calendar years may remain unknown.
+**Current source head:** `w5w5w5w5w5w5`. Adds `thesis_price_pins`. Each private annotation belongs to a thesis and retains the original price, date, listing, provider and adjustment basis. A per-thesis request key protects retries. The migration creates an empty table and indexes. Existing thesis and price records retain their original content.
 Check Current State for the normal runtime's verified revision.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic
