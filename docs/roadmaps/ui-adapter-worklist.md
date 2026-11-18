@@ -1,6 +1,6 @@
 # Marketagent UI and adapter worklist
 
-November 18, 2026. The Geist redesign and adapter integration are installed locally from `codex/review-research-recovery-20261116`. Open **Advanced → Research Lab**. The [release receipt](../../data/reviews/ui-adapter-release-20261118.json) records exact images, checks, source runs, preservation and cleanup. The [next ten repairs](../../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are installed; GitHub publication is authorized.
+November 18, 2026. The Geist redesign, adapter integration and [next ten repairs](../../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are installed and merged in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20); all seven hosted gates passed. Open **Advanced → Research Lab**. The [release receipt](../../data/reviews/ui-adapter-release-20261118.json) records original-source verification; [Current State](../current-state.md#dated-validation) owns final publication and cleanup. Local uncommitted source and private configuration remain preserved.
 
 ## November 18 handoff for build, UI and data verification
 
