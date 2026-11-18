@@ -4,6 +4,7 @@ import { PageHeader, Panel } from "@/components/page";
 export default function AdvancedPage() {
   return <><PageHeader eyebrow="Specialist tools" title="Advanced research" description="Use these tools when their inputs and limitations fit the question." />
     <Panel title="Analysis"><ul>
+      <li><Link prefetch={false} href="/research-lab">Research Lab</Link> for allocation scenarios, return reports, peer discovery and source evidence.</li>
       <li><Link href="/valuation/quick">Quick valuation</Link>: an explicit-input estimate; not a replacement for reviewed saved models.</li>
       <li><Link href="/macro">Macro scenarios</Link>: inspect assumptions and source coverage before translating a scenario.</li>
       <li><Link href="/portfolio/regime">Market regime</Link>: market structure and evidence, not a trading signal.</li>

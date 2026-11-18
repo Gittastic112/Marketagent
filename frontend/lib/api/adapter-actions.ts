@@ -35,6 +35,14 @@ export type MarketAdapterProvider = "fmp" | "massive" | "nse_mcp";
 export type MarketAdapterAction = keyof DataRequestByAction;
 export type DataAdapterExecution = { receipt: DataAdapterReceipt; meta: ApiMeta };
 
+export function providersForMarketAction(action: MarketAdapterAction): MarketAdapterProvider[] {
+  if (action === "identity" || action === "calendar") return [];
+  if (action === "dated-quote") return ["nse_mcp"];
+  if (action === "reference") return ["massive"];
+  if (action === "corporate-actions") return ["massive", "nse_mcp"];
+  return ["fmp", "massive", "nse_mcp"];
+}
+
 export const getSourceAdapterCapabilities = () => fetchApi<SourceAdapterCapability[]>("/api/source-adapters");
 export const getExtractionDocuments = (companyId: number) => fetchApi<{ items: RawDocument[]; total: number }>(`/raw-documents/library?company_id=${companyId}&limit=100`);
 
@@ -48,12 +56,14 @@ export function runSourceAdapter<K extends SourceAction>(action: K, payload: Sou
 }
 
 export async function runDataAdapter<K extends MarketAdapterAction>(provider: MarketAdapterProvider, action: K, payload: DataRequestByAction[K]): Promise<DataAdapterExecution> {
+  const supported = providersForMarketAction(action);
+  if (supported.length && !supported.includes(provider)) throw new Error("The selected provider does not support this data action.");
   const path = action === "identity" ? "/api/data-adapters/identity/openfigi"
     : action === "calendar" ? "/api/data-adapters/calendars/schedule"
       : `/api/data-adapters/${provider}/${action}`;
   // Freshness is computed in the response envelope, not only in the stored receipt.
   const response = await api.post<DataAdapterReceipt>(path, payload);
-  if (response.errors.length) throw new ApiError(response.errors[0].message, 200);
+  if (response.errors.length) throw new ApiError(response.errors[0].message, 200, response.errors[0]);
   if (!response.data) throw new ApiError("The adapter returned no source receipt.", 200);
   return { receipt: response.data, meta: response.meta };
 }

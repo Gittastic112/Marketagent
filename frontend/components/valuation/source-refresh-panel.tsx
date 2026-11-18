@@ -6,7 +6,8 @@ import { cancelValuationSourceRefresh, fetchValuationRefreshRun, fetchValuationR
   type ValuationRefreshRun } from "@/lib/api/valuation-refresh";
 import { useLatestResource } from "@/lib/use-latest-resource";
 
-export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished, onBusyChange }: {
+export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished, onBusyChange, disabled = false }: {
+  disabled?: boolean;
   companyId: number;
   beforeQueue: () => Promise<unknown>;
   onFinished: () => Promise<void>;
@@ -75,6 +76,7 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
   }
 
   async function queue() {
+    if (disabled || starting || pending) return;
     setStarting(true);
     setError(null);
     onBusyChange(true);
@@ -112,7 +114,7 @@ export function ValuationSourceRefreshPanel({ companyId, beforeQueue, onFinished
           <h2 id="source-refresh-title">Refresh source inputs</h2>
           <p className="subtitle">Latest annual SEC statements, FRED rates and available prices feed this draft alongside your benchmark priors.</p>
         </div>
-        <button type="button" className="secondary-button" onClick={queue} disabled={starting || pending}>
+        <button type="button" className="secondary-button" onClick={queue} disabled={disabled || starting || pending}>
           <RefreshCw size={16} aria-hidden="true" />
           {starting ? "Saving draft..." : pending ? "Refreshing in background..." : "Fetch latest source inputs"}
         </button>

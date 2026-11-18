@@ -32,11 +32,12 @@ loading, empty, error, stale, partial, not-configured, mock, and success states.
 
 ## Run
 
-Preferred, from the repository root:
-
-```bash
-docker compose up --build -d
-```
+For an existing installation, use the selected project and runtime override in
+[Operations](../docs/operations.md#select-the-installed-local-stack). Frontend
+changes require a production build and replacement of the frontend service;
+restarting its existing container does not install changed source. Follow the
+[frontend-only update](../docs/operations.md#update-only-the-frontend) procedure for presentation-only changes. The combined adapter release also updates the backend and follows the [release checklist](../docs/roadmaps/ui-adapter-worklist.md#release-checklist).
+For a new installation, use [Local setup](../docs/local-development.md#start-and-sign-in).
 
 Open `http://localhost:3000`.
 
@@ -61,6 +62,16 @@ npm run typecheck
 Use the [runbook](../docs/execution-runbook.md) for the supported Docker
 production-build gate and isolated browser runner. Use Playwright for changed user workflows. A successful build proves compilation,
 not live provider behavior or visual correctness.
+
+## Geist presentation
+
+Bundled Geist fonts, neutral light/dark tokens, compact navigation and controls
+are owned by the [style map](styles/README.md). The sidebar stores its display
+preference in localStorage. Cmd/Ctrl+K opens company and evidence search. The sidebar links to the full evidence-search page.
+The [UI notes](../docs/geist-ui.md) explain the prototype-to-application scope,
+route behavior and visual checks. The [adapter worklist](../docs/roadmaps/ui-adapter-worklist.md) covers the combined release. The
+[current state](../docs/current-state.md#dated-validation) records verification;
+source availability does not mean the new UI is installed.
 
 ## Key Locations
 

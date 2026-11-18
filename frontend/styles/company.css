@@ -29,6 +29,17 @@
 .valuation-model-description summary { cursor: pointer; color: var(--color-text-muted); }
 .valuation-model-description p { min-width: 180px; max-width: 40ch; white-space: normal; }
 
+.thesis-assumptions-table { min-width: 900px; table-layout: fixed; }
+.thesis-assumptions-table th:first-child { width: 34%; }
+.thesis-assumptions-table th:nth-child(2) { width: 38%; }
+.thesis-assumptions-table th:last-child { width: 28%; white-space: normal; }
+.thesis-assumptions-table td { vertical-align: top; white-space: normal; overflow-wrap: anywhere; }
+.thesis-assumptions-table td > p { margin: var(--space-3) 0 0; line-height: 1.6; }
+.thesis-assumption-meta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+.thesis-assumption-meta .badge { flex-basis: auto; }
+.thesis-assumptions-table details label { margin: var(--space-3) 0; }
+.thesis-assumptions-table .button-row { flex-wrap: wrap; }
+
 @media (max-width: 760px) {
   .company-summary-grid { grid-template-columns: minmax(0, 1fr); }
   .company-tools-menu { flex-basis: 100%; padding: 0; }
@@ -42,7 +53,7 @@
 .company-tabs {
   border-bottom: 1px solid var(--color-border-default);
   display: flex;
-  gap: var(--space-1);
+  gap: 24px;
   margin: -8px 0 var(--space-6);
   flex-wrap: wrap;
   overflow: visible;
@@ -55,13 +66,13 @@
   flex: 0 0 auto;
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
-  padding: 12px var(--space-3);
+  padding: 12px 0;
 }
 
 .company-tabs a:hover,
 .company-tabs a.active {
-  border-bottom-color: var(--color-accent);
-  color: var(--color-accent-strong);
+  border-bottom-color: var(--color-text);
+  color: var(--color-text);
 }
 
 .company-overview-header {
@@ -101,7 +112,9 @@
   align-items: baseline;
   display: flex;
   flex-wrap: wrap;
-  font-size: clamp(26px, 2.5vw, 34px);
+  font-size: clamp(28px, 2.5vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
   gap: var(--space-2);
   margin: 0;
 }
@@ -135,7 +148,7 @@
 
 .company-market-price > span:first-child {
   font-size: clamp(24px, 2.5vw, 32px);
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-medium);
 }
 
 .company-market-price .is-positive {
@@ -160,7 +173,7 @@
 .company-market-stat strong {
   color: var(--color-text);
   font-size: var(--font-size-xs);
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .sync-price-control {

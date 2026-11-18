@@ -30,7 +30,7 @@ MAX_PDF_BYTES = 40 * 1024 * 1024
 MAX_PDF_PAGES = 1_000
 MAX_FULL_SCAN_PAGES = 500
 MAX_TARGETED_PAGES = 75
-PDF_EXTRACTION_METHOD = "pdf_targeted_v7"
+PDF_EXTRACTION_METHOD = "pdf_targeted_v8"
 PDF_SOURCE_NAME = "Manual PDF Filings"
 ALLOWED_PDF_MIME_TYPES = {"application/pdf", "application/octet-stream"}
 ALLOWED_DOCUMENT_TYPES = {
@@ -418,32 +418,7 @@ def ingest_pdf_financials(
     )
     db.add(asset)
 
-    candidates = [
-        FinancialExtractionCandidate(
-            company_id=company.id,
-            raw_document_id=raw_document.id,
-            metric_code=item.metric_code,
-            reported_label=item.reported_label,
-            value=item.value,
-            unit=item.unit,
-            fiscal_year=item.fiscal_year,
-            period_type=item.period_type,
-            source_text=item.source_text,
-            source_line_number=None,
-            source_page=item.source_page,
-            source_section=item.source_section,
-            source_table_name=item.source_table_name,
-            source_row_label=item.source_row_label,
-            source_column_label=item.source_column_label,
-            source_cell_reference=item.source_cell_reference,
-            source_locator_json=item.source_locator_json,
-            extraction_warnings=item.extraction_warnings,
-            extraction_method=PDF_EXTRACTION_METHOD,
-            confidence_label=item.confidence_label,
-            review_status="needs_review",
-        )
-        for item in parsed.candidates
-    ]
+    candidates = _pdf_candidates(company.id, raw_document.id, parsed)
     db.add_all(candidates)
 
     workflow = db.scalar(
@@ -472,6 +447,43 @@ def ingest_pdf_financials(
         warnings=list(parsed.warnings),
         candidates=candidates,
     )
+
+
+def extract_retained_pdf_pages(db: Session, raw_document_id: int, page_ranges: str) -> PdfFinancialExtractionResultRead:
+    requested = parse_pdf_page_ranges(page_ranges)
+    if not requested:
+        raise HTTPException(422, "Select the additional pages to extract.")
+    document = db.scalar(select(RawDocument).where(RawDocument.id == raw_document_id)
+        .with_for_update().execution_options(populate_existing=True))
+    asset = db.scalar(select(DocumentAsset).where(DocumentAsset.raw_document_id == raw_document_id))
+    if document is None or asset is None:
+        raise HTTPException(404, "Retained document asset not found.")
+    if asset.mime_type != "application/pdf" or (document.raw_payload_json or {}).get("source_kind") != "pdf_filing_upload":
+        raise HTTPException(422, "Additional financial extraction requires a retained PDF filing.")
+    if requested[-1] > asset.page_count:
+        raise HTTPException(422, "Selected page is outside the retained PDF.")
+    if hashlib.sha256(asset.content).hexdigest() != asset.sha256:
+        raise HTTPException(409, "Retained PDF integrity check failed.")
+    previous = set((document.raw_payload_json or {}).get("scanned_pages", []))
+    missing = tuple(page for page in requested if page not in previous)
+    if not missing:
+        return PdfFinancialExtractionResultRead(raw_document_id=document.id, asset=asset, page_count=asset.page_count,
+            scanned_page_count=0, scanned_pages=[], table_count=0, created_count=0, skipped_existing_count=0,
+            warnings=["All selected pages were already extracted. Existing candidates and reviews are unchanged."])
+    period_type = {"annual_report": "annual", "quarterly_result": "quarterly"}.get(document.document_type, "unknown")
+    parsed = parse_pdf_financial_tables(asset.content, page_numbers=missing, period_type=period_type)
+    candidates = _pdf_candidates(document.company_id, document.id, parsed)
+    db.add_all(candidates)
+    document.raw_text = "\n\n".join(part for part in [document.raw_text, parsed.raw_text] if part)
+    scanned = sorted(previous | set(parsed.scanned_pages))
+    document.raw_payload_json = {**document.raw_payload_json, "scanned_pages": scanned,
+        "extraction_scope": "full_document" if len(scanned) == asset.page_count else "targeted_pages"}
+    # The caller commits candidates, coverage and the Processing Run together.
+    db.flush()
+    return PdfFinancialExtractionResultRead(raw_document_id=document.id, asset=asset, page_count=asset.page_count,
+        scanned_page_count=len(parsed.scanned_pages), scanned_pages=list(parsed.scanned_pages),
+        table_count=parsed.table_count, created_count=len(candidates), skipped_existing_count=0,
+        warnings=list(parsed.warnings), candidates=candidates)
 
 
 def _safe_filename(filename: str | None) -> str:
@@ -700,11 +712,15 @@ def _statement_line_candidates(
                   "appropriations/transfers": "appropriations"}
         if block in blocks:
             statement_block = blocks[block]
-        if re.search(r"earnings per (?:equity )?share", normalized_line) and not re.search(r"weighted|computed|dividing", normalized_line):
+        # Denominator headings also contain "earnings per share". Resolve that
+        # context first so repeated Basic/Diluted labels remain share counts.
+        if re.fullmatch(r"(?:shares used in computing earnings per share|"
+                        r"weighted average number of equity shares used as denominator):?", normalized_line):
+            share_context = True
+            eps_context = False
+        elif re.search(r"earnings per (?:equity )?share", normalized_line) and not re.search(r"weighted|computed|dividing", normalized_line):
             eps_context = True
             share_context = False
-        if re.match(r"weighted average number of equity shares used as denominator$", normalized_line):
-            share_context = True
         if re.match(r"(?:other|total) comprehensive income", normalized_line):
             attribution = "comprehensive"
         elif re.match(r"(?:net )?profit.*attributable to", normalized_line):
@@ -966,7 +982,7 @@ def _metric_for_statement_line(
         if "basic" in normalized:
             return "basic_shares", "Basic shares", source_line
         return None
-    if share_context and normalized in {"basic eps", "diluted eps"}:
+    if share_context and normalized in {"basic", "diluted", "basic eps", "diluted eps"}:
         code = "basic_shares" if normalized.startswith("basic") else "diluted_shares"
         return code, code.replace("_", " ").capitalize(), source_line
     if eps_context and re.fullmatch(r"(?:[12]\) )?(basic|diluted)(?: earnings per share| eps)?(?:\s*\([^)]*\))?\d?", normalized):
@@ -1291,7 +1307,8 @@ def _candidate_unit(metric_code: str, currency: str | None, scale: str | None, *
     if metric_code in {"basic_shares", "diluted_shares"}:
         explicit = _SCALE_PATTERN.search(source_label)
         if not explicit:
-            explicit = re.search(r"\bshares?\s+(?:are\s+)?(?:in\s+)?(thousands?|millions?|billions?)\b", page_text, re.I)
+            explicit = re.search(r"\bshares?(?:,?\s+which\s+are\s+reflected)?\s+"
+                                 r"(?:are\s+)?(?:in\s+)?(thousands?|millions?|billions?)\b", page_text, re.I)
         if explicit:
             share_unit = explicit.group(1).lower().rstrip('s')
             return "shares thousand" if share_unit == "000" else f"shares {share_unit}"
@@ -1333,3 +1350,32 @@ def _bbox_dict(bbox: tuple[float, float, float, float]) -> dict[str, float]:
         "x1": float(bbox[2]),
         "bottom": float(bbox[3]),
     }
+
+
+def _pdf_candidates(company_id: int, raw_document_id: int, parsed: ParsedPdf) -> list[FinancialExtractionCandidate]:
+    return [
+        FinancialExtractionCandidate(
+            company_id=company_id,
+            raw_document_id=raw_document_id,
+            metric_code=item.metric_code,
+            reported_label=item.reported_label,
+            value=item.value,
+            unit=item.unit,
+            fiscal_year=item.fiscal_year,
+            period_type=item.period_type,
+            source_text=item.source_text,
+            source_line_number=None,
+            source_page=item.source_page,
+            source_section=item.source_section,
+            source_table_name=item.source_table_name,
+            source_row_label=item.source_row_label,
+            source_column_label=item.source_column_label,
+            source_cell_reference=item.source_cell_reference,
+            source_locator_json=item.source_locator_json,
+            extraction_warnings=item.extraction_warnings,
+            extraction_method=PDF_EXTRACTION_METHOD,
+            confidence_label=item.confidence_label,
+            review_status="needs_review",
+        )
+        for item in parsed.candidates
+    ]

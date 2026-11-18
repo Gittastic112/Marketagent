@@ -24,6 +24,8 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
   const [privacyAcknowledged, setPrivacyAcknowledged] = useState(false);
   const [lastResponseWasMock, setLastResponseWasMock] = useState(false);
   const [sendError, setSendError] = useState<string | null>(null);
+  const [uncertain, setUncertain] = useState(false);
+  const [checking, setChecking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const reads = useMemo(createRequestGate, []);
@@ -59,7 +61,7 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || busy.current || !privacyAcknowledged || !session) return;
+    if (!input.trim() || busy.current || uncertain || !privacyAcknowledged || !session) return;
 
     const content = input.trim();
     const current = writes.begin();
@@ -81,8 +83,9 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
       const confirmed = refreshed?.messages.some(message => !knownIds.has(message.id)
         && message.role === "user" && message.content === content);
       if (confirmed) setInput("");
+      setUncertain(true);
       setSendError(`${err instanceof Error ? err.message : "The AI response failed."} ${confirmed
-        ? "Your research message was saved without an assistant response."
+        ? "Your research message was saved. The response may still be running; check its result before retrying."
         : "Save could not be confirmed. Your text is retained. Inspect the session before retrying to avoid duplicates."}`);
     } finally {
       busy.current = false;
@@ -90,8 +93,22 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
     }
   };
 
+  async function checkResult() {
+    setChecking(true);
+    const refreshed = await fetchSession();
+    if (refreshed) {
+      const pending = refreshed.attempts?.some(attempt => attempt.execution_status === "pending");
+      setSendError(pending
+        ? "An attempt is pending or its outcome is unknown. No request was resent. Check again before deciding to retry."
+        : "Latest stored messages and attempts loaded. No request was resent.");
+    }
+    setChecking(false);
+  }
+
   if (loading) return <div role="status" style={{ padding: "2rem" }}>Loading session...</div>;
   if (error || !session) return <><ErrorState message={error || "Session unavailable"} /><button type="button" onClick={() => void fetchSession()}>Reload session</button></>;
+  const unattachedAttempts = session.attempts?.filter(attempt =>
+    !session.messages.some(message => message.ai_output?.id === attempt.id)) ?? [];
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "calc(100vh - 4rem)" }}>
@@ -144,6 +161,16 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
           </p>
         )}
         {sendError ? <p className="inline-error" role="alert">{sendError}</p> : null}
+        {(uncertain || unattachedAttempts.length > 0) && <div>
+          <button type="button" disabled={checking || sending} onClick={() => void checkResult()}>{checking ? "Checking result..." : "Check result"}</button>
+          {uncertain && <button type="button" disabled={checking || sending} onClick={() => {setUncertain(false); setSendError("Sending again creates a new explicit request. Review the stored messages first to avoid duplicates.");}}>I checked the result; enable a new request</button>}
+          <ul>{unattachedAttempts.map(attempt => <li key={attempt.id}>
+            Attempt {attempt.id}: {attempt.execution_status === "pending" ? "pending or outcome unknown" : attempt.execution_status}. {attempt.limitations}
+            {attempt.execution_status === "success" && <details><summary>Inspect saved output not attached to a message</summary>
+              <p className="preserve-whitespace">{attempt.output_text}</p><AiOutputMetadata aiOutput={attempt} />
+            </details>}
+          </li>)}</ul>
+        </div>}
         {sending && <p role="status">Sending research message. Waiting for saved-message confirmation.</p>}
         <label style={{ display: "flex", gap: "0.5rem", alignItems: "flex-start", marginBottom: "0.75rem", fontSize: "0.85rem" }}>
           <input
@@ -169,7 +196,7 @@ function SessionWorkspace({sessionId}: {sessionId: string}) {
           <button
             type="submit"
             className="primary-button"
-            disabled={!input.trim() || sending || !privacyAcknowledged}
+            disabled={!input.trim() || sending || uncertain || !privacyAcknowledged}
             style={{ padding: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center" }}
           >
             Send

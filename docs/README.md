@@ -23,6 +23,7 @@ the task at hand. Each subject below has one current owner.
 | [Operations](operations.md) | Existing installations, provider runs, credentials, backups, and recovery |
 | [Architecture](architecture.md) | Runtime, ownership, authentication, and data flow |
 | [Code map](code-map.md) | Repository layout and feature-to-source navigation |
+| [Geist UI notes](geist-ui.md) | Presentation changes and signed-in browser acceptance |
 | [Route inventory](route-inventory.md) | Every frontend source page |
 | [API map](reference/api-map.md) | Every backend HTTP router module and its owner |
 | [Database schema](database-schema.md) | Persistence domains and migration policy |
@@ -36,7 +37,7 @@ the task at hand. Each subject below has one current owner.
 
 ## Maintain the project
 
-The [roadmap](roadmaps/product-roadmap.md) owns priorities. The
+The [UI and adapter worklist](roadmaps/ui-adapter-worklist.md) covers this integration and its release gates. The [roadmap](roadmaps/product-roadmap.md) owns priorities. The
 [research workspace plan](roadmaps/research-workspace-plan.md) specifies the target
 navigation, screen layouts, connected workflows, backend changes, delivery packages
 and acceptance tests for the November 13 simplification work. [Operations retention

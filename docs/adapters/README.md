@@ -2,7 +2,7 @@
 
 Implementation batch: November 17, 2026. Baseline: `371b58c02cfd2b80429f28dbc13629165b5e392d`.
 
-This guide covers the implemented source adapters, optional dependencies, consuming APIs, interface changes, verification, and remaining roadmap work. It describes source on the implementation branch. It does not certify or change an existing installation.
+This guide covers the implemented source adapters, optional dependencies, consuming APIs, interface changes, verification, and remaining roadmap work. The [combined worklist](../roadmaps/ui-adapter-worklist.md) records integration with the Geist UI, local release gates and the remaining scope of each research package.
 
 ## What is implemented
 
@@ -72,7 +72,7 @@ docker build -f backend/Dockerfile \
   -t marketagent-adapters .
 ```
 
-Both arguments default to false. Use the existing installation's Compose project and the [operations procedure](../operations.md) for any eventual rollout. Building an image is separate from replacing running services.
+Normal Compose builds also accept `INSTALL_RESEARCH_ADAPTERS` and `INSTALL_TABLE_ADAPTERS` from private settings. Both arguments default to false. Use the existing installation's Compose project and the [operations procedure](../operations.md) for any eventual rollout. Building an image is separate from replacing running services.
 
 ### Separate OCR environment
 
@@ -105,6 +105,8 @@ Configure server-side values through the existing settings mechanism. Blank cred
 | `SOURCE_ADAPTER_PYTHON` | Optional server-controlled OCR interpreter |
 | `SOURCE_ADAPTER_MODEL_DIR` | Preprovisioned local OCR model assets |
 | `RESEARCH_PEER_SNAPSHOT_PATH` | FinanceDatabase CSV with its adjacent `.manifest.json` |
+
+In Compose, the default peer snapshot is `/workspace/data/reference/financedatabase.csv` on the existing read-only data mount. Place the CSV and its adjacent manifest under `data/reference/` on the host. Override the path for another snapshot or set it explicitly empty to disable discovery. The snapshot CLI makes both public files readable by the backend's separate user. An OCR interpreter and model files must also be provisioned inside the runtime or mounted explicitly.
 
 Capability responses describe configuration and dependency readiness. Provider entitlement, source completeness, current network access and successful extraction are established by individual attempts.
 

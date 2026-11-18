@@ -154,7 +154,7 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
                                     <RetainedActionForm label="Remove company exposure tag" action={removeCompanyExposureTag} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                       <input type="hidden" name="company_id" value={company.id} />
                                       <input type="hidden" name="tag_id" value={tag.id} />
-                                      <button type="submit" className="text-red-500 text-xs" title="Remove tag">✕</button>
+                                      <button type="submit" className="text-[var(--danger)] text-xs" title="Remove tag">✕</button>
                                     </RetainedActionForm>
                                   </li>
                                 ))}
@@ -195,11 +195,11 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
               <h4 className="text-sm font-medium mb-2">Existing Tags</h4>
               <div className="flex flex-wrap gap-2">
                 {exposureTags.map(tag => (
-                  <span key={tag.id} className="inline-flex items-center gap-1 bg-gray-100 px-2 py-1 rounded text-xs">
+                  <span key={tag.id} className="inline-flex items-center gap-1 bg-muted px-2 py-1 rounded text-xs">
                     <span title={tag.description || ''}>{tag.name}</span>
                     <RetainedActionForm label="Delete exposure tag" action={deleteExposureTag} className="inline" style={{display: 'inline'}}>
                       <input type="hidden" name="id" value={tag.id} />
-                      <button type="submit" className="text-red-500 hover:text-red-700 ml-1" title="Delete tag">×</button>
+                      <button type="submit" className="text-[var(--danger)] hover:text-[var(--danger)] ml-1" title="Delete tag">×</button>
                     </RetainedActionForm>
                   </span>
                 ))}

@@ -88,6 +88,8 @@ def refresh(destination: Path, revision: str, exchanges: list[str]) -> dict:
     with tempfile.NamedTemporaryFile(dir=destination.parent, delete=False) as stream:
         stream.write(payload)
         temp_csv = Path(stream.name)
+    # The host writes this public dataset. The container reads it as a different UID.
+    temp_csv.chmod(0o644)
     temp_csv.replace(destination)
     target_manifest = Path(str(destination) + ".manifest.json")
     with tempfile.NamedTemporaryFile(
@@ -95,6 +97,7 @@ def refresh(destination: Path, revision: str, exchanges: list[str]) -> dict:
     ) as stream:
         json.dump(manifest, stream, sort_keys=True, indent=2)
         temp_manifest = Path(stream.name)
+    temp_manifest.chmod(0o644)
     temp_manifest.replace(target_manifest)
     return manifest
 

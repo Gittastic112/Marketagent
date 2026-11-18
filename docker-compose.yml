@@ -34,6 +34,9 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      args:
+        INSTALL_RESEARCH_ADAPTERS: ${INSTALL_RESEARCH_ADAPTERS:-false}
+        INSTALL_TABLE_ADAPTERS: ${INSTALL_TABLE_ADAPTERS:-false}
     container_name: market_intel_backend
     restart: unless-stopped
     init: true
@@ -49,7 +52,12 @@ services:
       MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-alphavantage}
       ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
       FMP_API_KEY: ${FMP_API_KEY:-}
+      MASSIVE_API_KEY: ${MASSIVE_API_KEY:-}
       OPENFIGI_API_KEY: ${OPENFIGI_API_KEY:-}
+      EARNINGSCALL_API_KEY: ${EARNINGSCALL_API_KEY:-}
+      RESEARCH_PEER_SNAPSHOT_PATH: ${RESEARCH_PEER_SNAPSHOT_PATH-/workspace/data/reference/financedatabase.csv}
+      SOURCE_ADAPTER_MODEL_DIR: ${SOURCE_ADAPTER_MODEL_DIR:-}
+      SOURCE_ADAPTER_PYTHON: ${SOURCE_ADAPTER_PYTHON:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
@@ -153,6 +161,7 @@ services:
       MARKET_DATA_PROVIDER: ${MARKET_DATA_PROVIDER:-alphavantage}
       ALPHA_VANTAGE_API_KEY: ${ALPHA_VANTAGE_API_KEY:-}
       FMP_API_KEY: ${FMP_API_KEY:-}
+      MASSIVE_API_KEY: ${MASSIVE_API_KEY:-}
       VALUATION_REFRESH_ENABLED: ${VALUATION_REFRESH_ENABLED:-false}
       VALUATION_REFRESH_OWNER_ID: ${VALUATION_REFRESH_OWNER_ID:-local-user}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}

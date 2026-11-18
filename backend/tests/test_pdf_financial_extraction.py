@@ -337,3 +337,47 @@ def test_pdf_asset_routes_require_an_authenticated_session(client) -> None:
     assert metadata.status_code == 401
     assert content.status_code == 401
     assert rendered.status_code == 401
+
+
+def test_retained_pdf_continuation_preserves_original_reviews_and_is_idempotent(client, db):
+    import hashlib
+    import pypdfium2 as pdfium
+    from sqlalchemy import select
+    company = _company(db)
+    with pdfium.PdfDocument(FIXTURE.read_bytes()) as original, pdfium.PdfDocument.new() as combined:
+        combined.import_pages(original)
+        combined.import_pages(original)
+        buffer = BytesIO()
+        combined.save(buffer)
+    content = buffer.getvalue()
+    uploaded = client.post(f"/api/companies/{company.id}/filings/pdf",
+        files={"file": ("Mock Data two pages.pdf", content, "application/pdf")},
+        data={"document_type": "annual_report", "page_ranges": "1"})
+    assert uploaded.status_code == 201
+    result = response_data(uploaded)
+    document_id = result["raw_document_id"]
+    candidate = db.get(FinancialExtractionCandidate, result["candidates"][0]["id"])
+    candidate.review_status = "reviewed"
+    db.commit()
+    original_state = (candidate.id, candidate.value, candidate.updated_at, candidate.source_locator_json)
+    response = client.post(f"/api/raw-documents/{document_id}/extract-pdf-pages", json={"page_ranges": "1-2"})
+    assert response.status_code == 200
+    assert response_data(response)["scanned_pages"] == [2]
+    assert response_data(response)["created_count"] == 12
+    db.refresh(candidate)
+    assert candidate.review_status == "reviewed"
+    assert (candidate.id, candidate.value, candidate.updated_at, candidate.source_locator_json) == original_state
+    asset = db.scalar(select(DocumentAsset))
+    assert asset.content == content and asset.sha256 == hashlib.sha256(content).hexdigest()
+    repeated = client.post(f"/api/raw-documents/{document_id}/extract-pdf-pages", json={"page_ranges": "2"})
+    assert repeated.status_code == 200 and response_data(repeated)["created_count"] == 0
+    assert db.query(FinancialExtractionCandidate).count() == 24
+    document = db.get(RawDocument, document_id)
+    db.refresh(document)
+    assert document.raw_payload_json["scanned_pages"] == [1, 2]
+    assert document.raw_text.count("[Page 2]") == 1
+    invalid = client.post(f"/api/raw-documents/{document_id}/extract-pdf-pages", json={"page_ranges": "3"})
+    assert invalid.status_code == 422
+    runs = list(db.scalars(select(ProcessingRun).where(ProcessingRun.run_type == "pdf_page_extraction").order_by(ProcessingRun.id)))
+    assert [run.status for run in runs] == ["success", "success", "failed"]
+    assert runs[0].metadata_json["scanned_pages"] == [2]

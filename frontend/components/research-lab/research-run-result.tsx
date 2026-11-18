@@ -23,6 +23,7 @@ export function ResearchRunResult({ run }: { run: ResearchRun }) {
   const [page, setPage] = useState(0);
   const weights = numericRecord(run.result.weights) ?? numericRecord(run.result.final_weights);
   const metrics = record(run.result.metrics);
+  const benchmark = record(run.result.benchmark);
   const curve = Array.isArray(run.result.equity_curve) ? run.result.equity_curve.filter((point): point is ResearchCurvePoint => {
     const row = record(point);
     return Boolean(row && typeof row.date === "string" && [row.wealth_index, row.return_decimal, row.drawdown].every(value => typeof value === "number" && Number.isFinite(value)));
@@ -51,6 +52,11 @@ export function ResearchRunResult({ run }: { run: ResearchRun }) {
     {metrics && <div className="table-wrap" role="region" aria-label="Research calculation metrics" tabIndex={0}>
       <table><caption>Saved calculation metrics</caption><thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
         <tbody>{Object.entries(metrics).map(([key, value]) => <tr key={key}><th scope="row">{key.replaceAll("_", " ")}</th><td>{metricValue(key, value)}</td></tr>)}</tbody></table>
+    </div>}
+    {benchmark && <div className="table-wrap" role="region" aria-label="Saved benchmark comparison" tabIndex={0}>
+      <table><caption>Saved benchmark comparison · Calculations</caption><thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
+        <tbody>{Object.entries(benchmark).map(([key, value]) => <tr key={key}><th scope="row">{key.replaceAll("_", " ")}</th><td>{metricValue(key, value)}</td></tr>)}</tbody></table>
+      <p className="basis-note">Benchmark return and annualized tracking error are percentages. Beta and correlation are unitless ratios. Unavailable means the saved inputs do not define the ratio.</p>
     </div>}
     {!!curve.length && <>
       <h4>Hypothetical wealth index</h4><p className="basis-note">Initial capital basis: 1. Source: saved run #{run.run_id}; {curve[0].date} to {curve.at(-1)?.date}. Calculated by {run.manifest.adapter}; saved {run.manifest.created_at}.</p>

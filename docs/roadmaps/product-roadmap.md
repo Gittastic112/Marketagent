@@ -1,9 +1,11 @@
 # Product roadmap
 
-Priorities for the local research/demo release. Reconciled November 15, 2026.
+Priorities for the local research/demo release. Updated November 17, 2026.
 [Current State](../current-state.md) owns evidence, the
 [feature register](feature-register.md) owns capability status, and the
 [limitation ledger](../limitations.md) owns unresolved boundaries.
+
+The [UI and adapter worklist](ui-adapter-worklist.md) tracks the combined local release and the 16 research packages.
 
 M01-M04 retain 40 accepted gate points. M05 is next in the
 [completion tracker](completion-tracker.md). These are acceptance gates, not an
@@ -61,17 +63,19 @@ integration, then evidence. A package is not authorization to rewrite historical
 | R3 · Valuation engines | A2-1/A2-2/A2-3/A2-8: validate complete growth paths, finite outputs and nonnegative claims; wire financial-sector guards; reconcile duration signs and WACC units/horizons | Malformed/overflow inputs cannot be preview-ready or saved; all model entry points enforce classification; macro sign tests follow one declared coefficient convention; valid explicit zeros survive |
 | R4 · Portfolio calculations | A3-2/A3-3/A3-4/A3-5/A3-9: replay corrections chronologically, preserve snapshot currency, enforce quote/FX freshness, withhold unknown weights, align return methods | Buy/split/bonus correction and metadata-only edit cases pass; mixed-currency and stale/unknown-price cases cannot look complete; equal economic wealth reconciles under external cash flows without rewriting old snapshots |
 | R5 · Source acquisition | A1-F8 through A1-F12: retry missing filing text, deduplicate within batches, continue stored PDF pages, backfill section comparisons, route history to the correct asset | Repeated attempts are idempotent under autoflush=False and PostgreSQL concurrency; partial failures retain progress; new PDF ranges preserve bytes and candidates; browser links reach the exact source/page |
-| R6 · Valuation workflow | A2-4 through A2-7: preserve edits during saves, synchronize visible growth with reviewed values, acknowledge exact stale versions, export raw saved history separately from current interpretation | Delayed-response browser tests preserve unsent edits; refreshed growth matches submitted values; concurrent newer events cannot be cleared; exports match stored values/warnings while read reconciliation remains available |
+| R6 · Valuation workflow | A2-4 through A2-7: preserve edits during saves, synchronize visible growth with reviewed values, acknowledge exact stale versions, export raw saved history separately from current interpretation | Delayed-response browser tests keep edits paused while a submitted save is pending; refreshed growth matches submitted values; concurrent newer events cannot be cleared; exports match stored values/warnings while read reconciliation remains available |
 | R7 · Research workflow | A3-8/A3-10/A3-11/A4-3 plus D1/D2: complete private-source approval, fix thesis links and memo contracts, retain AI origin, record exact brief/thesis review decisions | End-to-end owner-scoped approval/receipt flow, real event links and memo generation; new events between capture/click remain pending; no-change/blocked thesis decisions retain evidence and reject foreign owners |
 | R8 · Auth and workers | A4-4 through A4-8: align research timeouts, recover sign-in states, record AI attempts before calls, reconcile expired leases and constrain callbacks to the same origin | Browser recovery and callback tests; delayed/interrupted provider doubles plus worker restart tests show pending/unknown/failed outcomes, no silent duplicate sends, and one terminal run outcome |
 
 The first ten repairs are installed and merged in PR 18. PR 19 installs the next ten:
 A1-F6/F7, all four R3 findings and A3-2 through A3-5. The
 [release checkpoint](../archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md)
-records final checks, the requested Today order and preservation. Next: A3-9 return-method alignment, R5 evidence intake,
-then R6 editor/export integrity. R0 still blocks populated legacy conversion or
-restore; original evidence and historical snapshots remain preserved. R7 depends
-on R1 ownership and durable evidence; R8 respects the same private-run policy.
+records final checks, the requested Today order and preservation. The
+[evidence/workflow batch](../../data/reviews/review-evidence-workflows-ten-sets-20261116.json) installs A3-9 and R5/R6 locally;
+its browser checks pass and GitHub publication is deferred by the user. The
+[remaining nine](../../data/reviews/review-research-recovery-nine-sets-20261116.json) install R7/R8 and D1/D2 with scoped verification.
+Publication remains deferred; the limitation ledger owns residual work. R0 still blocks
+populated legacy conversion or restore; original evidence and historical snapshots remain preserved.
 Work sequentially unless an explicit parallel batch assigns exclusive files.
 
 Before each package, recheck its pinned claim against the current code, inspect

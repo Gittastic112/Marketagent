@@ -7,6 +7,8 @@ from sqlalchemy.orm import Session
 
 from app.api.helpers import commit_or_conflict, company_has_linked_records, create_record, delete_record, get_or_404, update_record
 from app.api.errors import PublicApiError
+from app.api.dependencies import get_current_user
+from app.services.company_memo import company_memo
 from app.api.schemas import (
     ApiResponse,
     CompanyCreate,
@@ -460,49 +462,11 @@ def update_industry_mapping(company_id: int, payload: dict, db: Session = Depend
 from fastapi.responses import Response
 
 @router.get("/companies/{company_id}/memo", response_class=Response)
-def export_company_memo(company_id: int, db: Session = Depends(get_db)):
+def export_company_memo(company_id: int, db: Session = Depends(get_db),
+                        current_user: dict = Depends(get_current_user)):
     company = get_or_404(db, Company, company_id)
-
-    # Gather thesis notes
-    from app.models.thesis import ThesisNote
-    notes = db.scalars(select(ThesisNote).where(ThesisNote.company_id == company_id).order_by(ThesisNote.created_at.desc())).all()
-
-    # Gather recent events
-    from app.models.event import Event
-    events = db.scalars(select(Event).where(Event.company_id == company_id).order_by(Event.event_date.desc()).limit(10)).all()
-
-    lines = []
-    lines.append(f"# Investment Memo: {company.name} ({company.ticker})")
-    lines.append("")
-    lines.append(f"**Sector:** {company.sector or '-'} | **Industry:** {company.industry or '-'}")
-    lines.append(f"**Exchange:** {company.exchange or '-'} | **Currency:** {company.currency or 'USD'}")
-    lines.append("")
-
-    if company.exposure_tags:
-        tags = ", ".join(t.name for t in company.exposure_tags)
-        lines.append(f"**Exposure Tags:** {tags}")
-        lines.append("")
-
-    lines.append("## Thesis Notes")
-    if not notes:
-        lines.append("No thesis notes recorded.")
-    for note in notes:
-        lines.append(f"### Note ({note.created_at.strftime('%Y-%m-%d')})")
-        lines.append(note.content)
-        lines.append("")
-
-    lines.append("## Recent Events")
-    if not events:
-        lines.append("No recent events recorded.")
-    for event in events:
-        date_str = event.event_date.strftime('%Y-%m-%d') if event.event_date else "Unknown Date"
-        lines.append(f"### {date_str} - {event.headline}")
-        if event.summary:
-            lines.append(event.summary)
-        lines.append("")
-
-    markdown_content = "\n".join(lines)
-
-    response = Response(content=markdown_content, media_type="text/markdown")
-    response.headers["Content-Disposition"] = f"attachment; filename=memo_{company.ticker}.md"
-    return response
+    content, filename = company_memo(db, company, current_user["id"])
+    return Response(content=content, media_type="text/markdown", headers={
+        "Content-Disposition": f'attachment; filename="{filename}"',
+        "Cache-Control": "private, no-store",
+    })

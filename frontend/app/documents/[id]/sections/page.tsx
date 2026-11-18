@@ -15,6 +15,7 @@ import { serverFetchApiResponse } from "@/lib/server-api";
 import { DataStateNotices } from "@/components/ui/data-states";
 import type { ApiMeta } from "@/lib/api";
 import Link from "next/link";
+import { PdfPageExtraction } from "@/components/pdf-page-extraction";
 
 interface PageProps {
   params: Promise<{
@@ -69,11 +70,11 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
     const originalUrl = document?.url && /^https?:\/\//i.test(document.url) ? document.url : null;
     let workbookAsset: DocumentAsset | null = null;
     let workbookNotice: string | null = null;
-    if (document?.document_type === "screener_export") {
+    if (document?.document_type === "screener_export" || document?.content_hash?.startsWith("pdf-filing:")) {
       try {
         workbookAsset = (await serverFetchApiResponse<DocumentAsset>(`/api/raw-documents/${documentId}/asset`)).data;
       } catch (error) {
-        workbookNotice = error instanceof ApiError && error.status === 404
+        workbookNotice = document?.document_type !== "screener_export" ? "Retained PDF availability could not be checked. Reload to retry." : error instanceof ApiError && error.status === 404
           ? "The original workbook was not retained by the older importer. Upload the identical original file for this company to restore it without changing reviewed values."
           : "Original workbook availability could not be checked. Reload to retry.";
       }
@@ -114,7 +115,8 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           metas={metas}
           mockMessage="One or more sections are using mock data. Treat affected source trails as placeholders."
         />
-        {workbookAsset ? <p><a className="secondary-button" href={`/api/backend/api/raw-documents/${documentId}/asset/content`}>Download original workbook</a></p> : null}
+        {workbookAsset ? <p><a className="secondary-button" href={`/api/backend/api/raw-documents/${documentId}/asset/content`}>{workbookAsset.mime_type === "application/pdf" ? "Open original PDF" : "Download original workbook"}</a></p> : null}
+        {workbookAsset?.mime_type === "application/pdf" ? <PdfPageExtraction documentId={documentId} /> : null}
         {workbookNotice ? <p className="notice notice-warning">{workbookNotice}</p> : null}
 
         {selectedCandidate ? (

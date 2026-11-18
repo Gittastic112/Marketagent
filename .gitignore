@@ -25,6 +25,9 @@ dist/
 build/
 
 # Local reports, traces and coverage. Ignoring does not authorize deletion.
+/data/reference/financedatabase.csv
+/data/reference/financedatabase.csv.manifest.json
+/data/reference/financedatabase.LICENSE
 *.log
 npm-debug.log*
 yarn-debug.log*

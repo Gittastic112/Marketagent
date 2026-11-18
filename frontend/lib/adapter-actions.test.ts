@@ -1,7 +1,42 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { runDataAdapter, runSourceAdapter } from "./api/adapter-actions.ts";
+import { providersForMarketAction, runDataAdapter, runSourceAdapter } from "./api/adapter-actions.ts";
+import { ApiError } from "./api/contract.ts";
+import { listResearchRuns } from "./api/research-lab.ts";
 import { summarizeApiMetas } from "./data-state-meta.ts";
+
+test("unsupported provider actions fail before a request and dated actions use eligible providers", async () => {
+  assert.deepEqual(providersForMarketAction("corporate-actions"), ["massive", "nse_mcp"]);
+  assert.deepEqual(providersForMarketAction("dated-quote"), ["nse_mcp"]);
+  assert.deepEqual(providersForMarketAction("reference"), ["massive"]);
+  const original = globalThis.fetch;
+  let requests = 0;
+  globalThis.fetch = (async () => { requests++; return Response.json({}); }) as typeof fetch;
+  try {
+    await assert.rejects(() => runDataAdapter("fmp", "corporate-actions", { market: "US", ticker: "MOCK", start_date: "2025-01-01", end_date: "2025-01-02" }), /provider/i);
+    assert.equal(requests, 0);
+  } finally { globalThis.fetch = original; }
+});
+
+test("failed adapter envelopes retain only safe audit details and history uses a stable cursor", async () => {
+  const original = globalThis.fetch;
+  globalThis.fetch = (async () => Response.json({ data: null, meta: {}, errors: [{
+    code: "SOURCE_UNAVAILABLE", message: "Source unavailable", processing_run_id: 42, retryable: true, private_input: "private",
+  }] })) as typeof fetch;
+  try {
+    await assert.rejects(() => runDataAdapter("fmp", "quote", { market: "US", ticker: "MOCK" }), error => {
+      assert.ok(error instanceof ApiError);
+      assert.equal(error.processingRunId, 42);
+      assert.equal(error.retryable, true);
+      assert.ok(!JSON.stringify(error).includes("private"));
+      return true;
+    });
+    let url = "";
+    globalThis.fetch = (async input => { url = String(input); return Response.json({ data: [], meta: {}, errors: [] }); }) as typeof fetch;
+    await listResearchRuns(123);
+    assert.ok(url.endsWith("/api/research-lab/runs?limit=25&before_run_id=123"));
+  } finally { globalThis.fetch = original; }
+});
 
 test("source and market actions map to explicit registered routes with unchanged payloads", async () => {
   const original = globalThis.fetch;

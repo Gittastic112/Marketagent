@@ -106,6 +106,39 @@ def company_id(engine):
         return company.id
 
 
+@pytest.mark.parametrize("existing", [False, True])
+def test_concurrent_sec_retries_keep_one_identity_and_one_text(pg_engine, monkeypatch, existing):
+    from app.models import Source
+    from app.services import sec_ingestion as sec
+    identity = company_id(pg_engine)
+    filing = sec.SecFilingMetadata("0000000001-26-000001", "10-K", date(2026, 1, 1),
+        filing_url="https://www.sec.gov/Archives/edgar/data/1/mock.htm")
+    with Session(pg_engine, autoflush=False) as db:
+        source = Source(name="Mock Data SEC concurrency", source_type="sec")
+        db.add(source); db.commit()
+        source_id = source.id
+        if existing:
+            sec.ingest_sec_filing_metadata(db, source_id, identity, [filing])
+    fetched = Barrier(2)
+    def fetch(*args, **kwargs):
+        fetched.wait(timeout=10)
+        return "Mock Data immutable SEC text"
+    monkeypatch.setattr(sec, "fetch_sec_filing_text", fetch)
+    def ingest(_):
+        with Session(pg_engine, autoflush=False) as db:
+            return sec.ingest_sec_filing_metadata(db, source_id, identity, [filing, filing], download_text=True)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        results = list(pool.map(ingest, range(2)))
+    assert sum(r.created_count for r in results) == int(not existing)
+    assert sum(r.completed_text_count for r in results) == int(existing)
+    assert sum(r.error_count for r in results) == 0
+    assert sum(r.skipped_duplicate_count for r in results) == 3
+    with Session(pg_engine) as db:
+        document = db.scalar(select(RawDocument))
+        assert db.scalar(select(func.count()).select_from(RawDocument)) == 1
+        assert document.raw_text == "Mock Data immutable SEC text"
+
+
 def test_concurrent_price_retries_have_one_daily_row(pg_engine, monkeypatch):
     identity = company_id(pg_engine)
     fetched = Barrier(2)
@@ -257,3 +290,122 @@ def test_identical_reviewed_save_retries_share_one_receipt_and_version(pg_engine
     with Session(pg_engine) as db:
         assert db.query(DcfAssumptionSet).count() == 2
         assert db.query(DcfDecisionLog).count() == 1
+
+
+def test_competing_stale_acknowledgements_record_one_review(pg_engine):
+    from app.models import User
+    from app.models.dcf import DcfAssumptionSet, ValuationModel, DcfDecisionLog
+    from app.schemas.valuation import StaleValuationReviewCreate
+    from app.services.valuation_review import acknowledge_stale_review, stale_review_token
+    identity = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-reviewer", email="mock-reviewer@example.invalid", name="Mock Data reviewer"))
+        db.flush()
+        model = ValuationModel(company_id=identity, name="Mock Data review race", user_id="mock-reviewer")
+        db.add(model); db.flush()
+        row = DcfAssumptionSet(valuation_model_id=model.id, is_stale=True, stale_reason="Mock Data new filing")
+        db.add(row); db.commit()
+        row_id = row.id
+        request = StaleValuationReviewCreate(expected_updated_at=row.updated_at, review_token=stale_review_token(row),
+            reason="Mock Data reviewed; retain the assumptions.")
+    started = Barrier(2)
+    def review(_):
+        with Session(pg_engine) as db:
+            started.wait(timeout=10)
+            try:
+                acknowledge_stale_review(db, row_id, request, "mock-reviewer")
+                db.commit()
+                return 200
+            except ValueError:
+                db.rollback()
+                return 409
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert sorted(pool.map(review, range(2))) == [200, 409]
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DcfDecisionLog)) == 1
+def test_competing_daily_brief_workers_share_one_durable_claim(pg_engine, monkeypatch):
+    from datetime import time, timedelta
+    from threading import Event as ThreadEvent
+    from app.models import User, DailyBriefSchedule, DailyBrief
+    from app.services import daily_brief_schedule as schedules
+    owner = "mock-concurrent-brief"
+    now = datetime.now(UTC)
+    with Session(pg_engine) as db:
+        db.add(User(id=owner, email="brief@example.invalid", name="Mock Data worker")); db.commit()
+        schedule = schedules.configure_daily_brief_schedule(db, user_id=owner, enabled=True, timezone_name="UTC",
+            local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+        schedule.next_run_at = now - timedelta(minutes=1); db.commit()
+        identity = schedule.id
+    entered, release = ThreadEvent(), ThreadEvent()
+    original = schedules.MorningBriefingEngine.get_or_generate_briefing
+    def held(db, user_id, target_date):
+        with Session(pg_engine) as observer:
+            row = observer.get(DailyBriefSchedule, identity)
+            assert row.last_processing_run_id is not None
+            assert observer.get(ProcessingRun, row.last_processing_run_id).status == "running"
+        entered.set()
+        assert release.wait(15)
+        return original(db, user_id, target_date)
+    monkeypatch.setattr(schedules.MorningBriefingEngine, "get_or_generate_briefing", held)
+    def run():
+        with Session(pg_engine) as db:
+            return schedules.run_due_daily_brief_schedules(db, now=now)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(run)
+        try:
+            assert entered.wait(15)
+            assert pool.submit(run).result(15)["schedules_checked"] == 0
+        finally:
+            release.set()
+        assert first.result(15)["briefs_created"] == 1
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
+        assert db.scalar(select(func.count()).select_from(ProcessingRun)) == 1
+        assert db.scalar(select(ProcessingRun.status)) == "success"
+
+
+def test_replacement_brief_worker_does_not_claim_a_late_workers_snapshot(pg_engine, monkeypatch):
+    from datetime import time, timedelta
+    from threading import Event as ThreadEvent
+    from sqlalchemy import event
+    from app.models import User, DailyBrief
+    from app.services import daily_brief_schedule as schedules
+
+    now = datetime.now(UTC)
+    owner = "mock-expired-brief"
+    with Session(pg_engine) as db:
+        db.add(User(id=owner, email="expired@example.invalid", name="Mock Data expired worker")); db.commit()
+        schedule = schedules.configure_daily_brief_schedule(db, user_id=owner, enabled=True,
+            timezone_name="UTC", local_time=time(7), days_of_week=list(range(7)), now=now - timedelta(days=1))
+        schedule.next_run_at = now - timedelta(minutes=1); db.commit()
+    entered, release, replacement_claim = ThreadEvent(), ThreadEvent(), ThreadEvent()
+    original = schedules.MorningBriefingEngine.generate_briefing
+    def held(*args, **kwargs):
+        entered.set()
+        assert release.wait(15)
+        return original(*args, **kwargs)
+    monkeypatch.setattr(schedules.MorningBriefingEngine, "generate_briefing", held)
+    def observe_claim(connection, cursor, statement, parameters, context, executemany):
+        if entered.is_set() and statement.startswith("UPDATE ") and "SET last_processing_run_id=" in statement:
+            replacement_claim.set()
+    event.listen(pg_engine, "before_cursor_execute", observe_claim)
+    def run(at):
+        with Session(pg_engine) as db:
+            return schedules.run_due_daily_brief_schedules(db, now=at)
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first = pool.submit(run, now)
+        try:
+            assert entered.wait(15)
+            replacement = pool.submit(run, now + timedelta(minutes=11))
+            # The replacement reaches its claim while the original still holds
+            # the owner lock. Its claim can wait; a second committed run is not
+            # a prerequisite for releasing the original worker.
+            assert replacement_claim.wait(15)
+        finally:
+            release.set()
+            event.remove(pg_engine, "before_cursor_execute", observe_claim)
+        assert first.result(15)["schedules_completed"] == 0
+        assert replacement.result(15)["briefs_created"] == 0
+    with Session(pg_engine) as db:
+        assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
+        assert sorted(db.scalars(select(ProcessingRun.status))) == ["failed", "success"]

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useState } from "react";
+import Link from "next/link";
 import { Panel } from "@/components/page";
 import { getSourceAdapterCapabilities, getExtractionDocuments, runSourceAdapter, type SourceAction, type SourceAdapterResult, type SourceRequestByAction } from "@/lib/api/adapter-actions";
 import { fetchResearchCompanies } from "@/lib/api/research-search";
@@ -9,6 +10,7 @@ import { useLatestResource } from "@/lib/use-latest-resource";
 import { parseResearchJson, researchNumber } from "@/lib/research-lab-input";
 import { ResearchJsonInput } from "./json-input";
 import { AdapterReceipt } from "./adapter-receipt";
+import { AdapterFailure } from "./adapter-failure";
 
 const ACTIONS: Record<SourceAction, string> = { "sec-facts": "SEC annual facts", "india-filings": "India filing metadata", transcript: "Earnings transcript", extract: "Stored PDF extraction", "fred-vintage": "FRED vintage observations" };
 
@@ -16,23 +18,26 @@ export function SourceAdapterPanel() {
   const id = useId();
   const [action, setAction] = useState<SourceAction>("sec-facts");
   const [companyId, setCompanyId] = useState("");
-  const [records, setRecords] = useState("");
+  const [companyDrafts, setCompanyDrafts] = useState<Record<string, string>>({});
+  const records = companyDrafts[companyId] ?? "";
+  const setRecords = (value: string) => setCompanyDrafts(drafts => ({ ...drafts, [companyId]: value }));
   const [transcriptProvider, setTranscriptProvider] = useState<SourceRequestByAction["transcript"]["provider"]>("earningscall");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Error | null>(null);
   const [result, setResult] = useState<SourceAdapterResult | null>(null);
+  const candidateDocumentId = result?.raw_document_ids?.length === 1 ? result.raw_document_ids[0] : null;
   const requests = useMemo(createRequestGate, []);
   const companies = useLatestResource(useCallback(fetchResearchCompanies, []));
   const capabilities = useLatestResource(useCallback(getSourceAdapterCapabilities, []));
   useEffect(() => () => requests.invalidate(), [requests]);
-  function reset() { requests.invalidate(); setError(""); setResult(null); }
+  function reset() { requests.invalidate(); setError(null); setResult(null); }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (busy) return;
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "").trim();
     const current = requests.begin();
-    setBusy(true); setError(""); setResult(null);
+    setBusy(true); setError(null); setResult(null);
     try {
       let payload: SourceRequestByAction[SourceAction];
       if (action === "sec-facts") payload = { max_years: researchNumber(text("max_years"), "Maximum years"), ...(text("as_of") ? { as_of: text("as_of") } : {}) };
@@ -42,7 +47,7 @@ export function SourceAdapterPanel() {
       else payload = { series_id: text("series_id"), as_of: text("as_of"), observation_start: text("observation_start"), observation_end: text("observation_end"), mode: text("mode") as SourceRequestByAction["fred-vintage"]["mode"], max_pages: researchNumber(text("max_pages"), "Maximum pages") };
       const receipt = await runSourceAdapter(action, payload, companyId ? Number(companyId) : undefined, text("document_id") ? Number(text("document_id")) : undefined);
       if (current()) setResult(receipt);
-    } catch (failure) { if (current()) setError(failure instanceof Error ? failure.message : "The source action could not complete."); }
+    } catch (failure) { if (current()) setError(failure instanceof Error ? failure : new Error("The source action could not complete.")); }
     finally { if (current()) setBusy(false); }
   }
 
@@ -60,14 +65,14 @@ export function SourceAdapterPanel() {
         {companies.data?.data?.map(company => <option key={company.id} value={company.id}>{company.ticker} · {company.name} · {company.market}/{company.primary_exchange || company.exchange || "unknown"}</option>)}</select>
       {companies.status === "error" || companies.data?.errors.length ? <p role="alert">Tracked companies unavailable. Refresh the page and try again.</p> : null}
     </div>}
-    <form key={`${action}:${companyId}`} onSubmit={submit} aria-label={`${ACTIONS[action]} adapter inputs`}>
+    <form key={`${action}:${companyId}`} onSubmit={submit} onChange={() => { if (!busy) reset(); }} aria-label={`${ACTIONS[action]} adapter inputs`}>
       <fieldset disabled={busy || (action !== "fred-vintage" && !companyId)} className="research-lab-fieldset">
         <legend>{ACTIONS[action]} inputs</legend>
         {action === "sec-facts" && <><p>Extract supported annual SEC facts into the existing candidate review workflow. Unsupported periods stay excluded.</p><div className="form-grid">
           <div className="field"><label htmlFor={`${id}-asof`}>As-of cutoff (optional)</label><input id={`${id}-asof`} name="as_of" type="date" /></div>
           <div className="field"><label htmlFor={`${id}-years`}>Maximum years</label><input id={`${id}-years`} name="max_years" type="number" min={1} max={10} defaultValue={5} required /></div></div></>}
         {action === "india-filings" && <><div className="field"><label htmlFor={`${id}-exchange`}>Metadata exchange</label><select id={`${id}-exchange`} name="exchange"><option>NSE</option><option>BSE</option></select></div>
-          <ResearchJsonInput label="Official filing metadata JSON" value={records} onChange={setRecords} description="Paste the official metadata records already obtained from the selected exchange. This intake stores metadata and traceability; it does not scrape an exchange website or certify attachment contents." /></>}
+          <ResearchJsonInput label="Official filing metadata JSON" value={records} onChange={setRecords} description="Paste official metadata for this company from the selected exchange. Draft text stays with this company while this page is open. Intake does not scrape the exchange or certify attachment contents." /></>}
         {action === "transcript" && <div className="form-grid">
           <div className="field"><label htmlFor={`${id}-provider`}>Transcript provider</label><select id={`${id}-provider`} name="provider" value={transcriptProvider} onChange={event => setTranscriptProvider(event.target.value as SourceRequestByAction["transcript"]["provider"])}><option value="earningscall">EarningsCall</option><option value="fmp">FMP</option></select></div>
           <div className="field"><label htmlFor={`${id}-year`}>Fiscal year</label><input id={`${id}-year`} name="fiscal_year" type="number" min={1990} max={2100} required /></div>
@@ -91,7 +96,14 @@ export function SourceAdapterPanel() {
       </fieldset>
     </form>
     {busy && <p role="status">Waiting for the source processing receipt…</p>}
-    {error && <p role="alert">{error}</p>}
+    <AdapterFailure error={error} />
+    {result && companyId && !!result.candidate_ids?.length && <section aria-label="Source candidate review">
+      <p>{result.candidate_ids.length} candidate(s) need review. <Link href={`/companies/${companyId}/fundamentals`} prefetch={false}>Review company candidates</Link></p>
+      {candidateDocumentId !== null && <details><summary>Inspect individual candidate evidence</summary><ul>
+        {result.candidate_ids.map(candidateId => <li key={candidateId}><Link prefetch={false}
+          href={`/documents/${candidateDocumentId}/${action === "extract" ? "financial-evidence" : "sections"}?candidate_id=${candidateId}`}>Inspect candidate #{candidateId}</Link></li>)}
+      </ul></details>}
+    </section>}
     {result && <AdapterReceipt provider={result.adapter} runId={result.processing_run_id ?? null} observedAt={result.observed_at} status={result.status ?? "source response"}
       documents={result.raw_document_ids ?? []} warnings={result.warnings ?? []} result={{ fetched_count: result.fetched_count, created_count: result.created_count,
         duplicate_count: result.duplicate_count, candidate_ids: result.candidate_ids, details: result.details }} />}

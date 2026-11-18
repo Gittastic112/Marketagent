@@ -2,7 +2,7 @@
 
 **Source reviewed:** 2026-11-04. Runtime verification is recorded in Current State.
 
-**Current source head:** `u3u3u3u3u3u3`. Adds scoped AI permission decisions and an optional output-to-decision link without backfilling grants or rewriting existing outputs. Projection calendar years may remain unknown.
+**Current source head:** `v4v4v4v4v4v4`. Adds nullable narrative-claim origin and an exact AI-output reference. Existing claims keep unknown origin; no backfill or content rewrite occurs. The preceding scoped permission decisions grant no implicit consent. Projection calendar years may remain unknown.
 Check Current State for the normal runtime's verified revision.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic

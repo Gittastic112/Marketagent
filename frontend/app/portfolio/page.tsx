@@ -130,7 +130,7 @@ export default async function PortfolioPage() {
                 <h3 className="text-lg font-medium mb-4">{portfolio.name} Exposures</h3>
                 <p className="muted">Calculation from priced holdings in {portfolio.base_currency}. Tags can overlap, so tag weights need not total 100%.</p>
                 {sortedTags.length === 0 && untaggedValue === 0 ? (
-                  <p className="text-sm text-gray-500">No exposure data calculated.</p>
+                  <p className="text-sm text-muted-foreground">No exposure data calculated.</p>
                 ) : (
                   <div tabIndex={0} className="table-wrap">
                     <table>
@@ -150,7 +150,7 @@ export default async function PortfolioPage() {
                           </tr>
                         ))}
                         {untaggedValue > 0 && (
-                          <tr className="text-gray-500">
+                          <tr className="text-muted-foreground">
                             <td><em>Untagged</em></td>
                             <td className="text-right">{numberText(untaggedValue)}</td>
                             <td className="text-right">{numberText(untaggedPercent)}%</td>

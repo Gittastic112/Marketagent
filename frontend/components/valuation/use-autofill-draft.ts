@@ -201,6 +201,7 @@ export function useAutofillDraft({
     const saved = await fetchApi<ValuationSetupDraft>(`/valuation-drafts/${draftId}`);
     if (!isCurrent()) return;
     setValues(saved.assumptions_json);
+    setGrowthText(JSON.stringify(saved.assumptions_json.revenue_growth_years_json ?? {}, null, 2));
     setUpdatedAt(saved.updated_at);
     setReviewedFields(new Set(saved.reviewed_fields_json));
     setEditedFields(new Set(saved.edited_fields_json));

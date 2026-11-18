@@ -98,10 +98,11 @@ def peers(
 @router.get("/runs", response_model=ApiResponse[list[ResearchRunSummary]])
 def runs(
     limit: int = Query(default=25, ge=1, le=100),
+    before_run_id: int | None = Query(default=None, ge=1),
     db: Session = Depends(get_db),
     user: dict = Depends(get_current_user),
 ):
-    return ApiResponse(data=service.history(db, str(user["id"]), limit))
+    return ApiResponse(data=service.history(db, str(user["id"]), limit, before_run_id))
 
 
 @router.get("/runs/{run_id}", response_model=ApiResponse[ResearchRunResult])

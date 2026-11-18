@@ -94,6 +94,7 @@ class FredProvider(BaseMacroProvider):
                 or mode not in {"as_of", "initial_release"} or not 1 <= max_pages <= 10):
             raise ValueError("Invalid FRED vintage request.")
         raw_pages, revisions = [], []
+        seen_revisions: dict[tuple[date, date], tuple[float | None, date]] = {}
         count = None
         offset = 0
         for _ in range(max_pages):
@@ -129,6 +130,10 @@ class FredProvider(BaseMacroProvider):
                         raise ValueError
                 except (KeyError, ValueError, TypeError, OverflowError):
                     raise RuntimeError("FRED returned invalid vintage observations.") from None
+                identity, content = (observed, start), (value, end)
+                if identity in seen_revisions and seen_revisions[identity] != content:
+                    raise RuntimeError("FRED returned conflicting vintage observations.")
+                seen_revisions[identity] = content
                 revisions.append({"date": observed.isoformat(), "value": value,
                     "raw_value": raw_value, "realtime_start": start.isoformat(),
                     "realtime_end": end.isoformat()})

@@ -186,7 +186,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-slate-600">
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Loader2 className="h-4 w-4 animate-spin" />
         <span>Loading industry allocations...</span>
       </div>
@@ -197,11 +197,11 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
     <section className="industry-mix-card">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h3 className="text-lg font-medium text-slate-900">Revenue-Weighted Industry Mix</h3>
-          <p className="text-sm text-slate-500">Damodaran benchmark allocation for {company.ticker}</p>
+          <h3 className="text-lg font-medium text-foreground">Revenue-Weighted Industry Mix</h3>
+          <p className="text-sm text-muted-foreground">Damodaran benchmark allocation for {company.ticker}</p>
         </div>
         {mix && (
-          <div className={`flex items-center gap-2 text-sm ${hasEdits ? "text-amber-700" : "text-green-700"}`}>
+          <div className={`flex items-center gap-2 text-sm ${hasEdits ? "text-[var(--warning)]" : "text-[var(--success)]"}`}>
             <CheckCircle2 className="h-4 w-4" />
             <span>{hasEdits ? "Unsaved changes" : "Saved as User Assumption"}</span>
           </div>
@@ -209,7 +209,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       </div>
 
       {error && (
-        <div className="mb-4 flex items-center rounded-md bg-red-50 p-3 text-sm text-red-700" role="alert">
+        <div className="mb-4 flex items-center rounded-md bg-[var(--danger-bg)] p-3 text-sm text-[var(--danger)]" role="alert">
           <AlertCircle className="mr-2 h-4 w-4" />
           {error}
         </div>
@@ -229,7 +229,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
             <span>As of {mix.as_of_date || "date not provided"}. Weights are shown rounded; saved precision is retained.</span>
             <Button variant="outline" className="secondary-button" disabled={saving || autofilling} onClick={() => setEditing(true)}>Edit business mix</Button>
           </div>
-          <p className={`text-sm ${mix.coverage_status === "complete" ? "text-green-700" : "text-amber-700"}`}>
+          <p className={`text-sm ${mix.coverage_status === "complete" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
             {mix.coverage_status} benchmark coverage
           </p>
           <details className="industry-mix-basis">
@@ -243,7 +243,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       )}
 
       {!mix && company.damodaran_industry && (
-        <p className="mb-3 text-sm text-slate-600">
+        <p className="mb-3 text-sm text-muted-foreground">
           Saved comparison: <strong>{company.damodaran_industry}</strong>. No revenue mix is saved.
           Enter supported business weights before saving a mix; a single-industry comparison does not establish those weights.
         </p>
@@ -252,7 +252,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       {(editing || !mix) && <fieldset className="industry-mix-edit-fields m-0 min-w-0 border-0 p-0" disabled={saving || autofilling}>
       {candidates.length > 0 && (
         <div className="mb-4 flex flex-wrap items-center gap-2 text-sm">
-          <span className="text-slate-600">Profile text matches, review before use:</span>
+          <span className="text-muted-foreground">Profile text matches, review before use:</span>
           {candidates.map((candidate) => (
             <Button
               key={candidate.industryName}
@@ -281,7 +281,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
               <label className="industry-mix-field industry-mix-segment">
                 <span className="industry-mix-field-label">Business segment {index + 1}</span>
               <input
-                className="h-10 min-w-0 rounded-md border border-slate-300 px-3 text-sm"
+                className="h-10 min-w-0 rounded-md border border-border px-3 text-sm"
                 aria-label="Segment name"
                 value={row.segmentName}
                 onChange={(event) => updateRow(row.key, { segmentName: event.target.value })}
@@ -290,7 +290,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
               <label className="industry-mix-field industry-mix-industry">
                 <span className="industry-mix-field-label">Industry comparison</span>
               <select
-                className="h-10 min-w-0 rounded-md border border-slate-300 bg-white px-3 text-sm"
+                className="h-10 min-w-0 rounded-md border border-border bg-card px-3 text-sm"
                 aria-label={`Industry for ${row.segmentName || "segment"}`}
                 value={row.industryName}
                 onChange={(event) => updateRow(row.key, {
@@ -308,7 +308,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
                 <span className="industry-mix-field-label">Share of revenue</span>
                 <div className="relative">
                 <input
-                  className="h-10 w-full rounded-md border border-slate-300 px-3 pr-7 text-right text-sm tabular-nums"
+                  className="h-10 w-full rounded-md border border-border px-3 pr-7 text-right text-sm tabular-nums"
                   aria-label={`Revenue weight for ${row.segmentName || "segment"}`}
                   type="number"
                   min="0.01"
@@ -317,17 +317,17 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
                   value={row.weightPercent || ""}
                   onChange={(event) => updateRow(row.key, { weightPercent: Number(event.target.value) })}
                 />
-                <span className="pointer-events-none absolute right-2 top-2.5 text-sm text-slate-500">%</span>
+                <span className="pointer-events-none absolute right-2 top-2.5 text-sm text-muted-foreground">%</span>
                 </div>
               </label>
-              <div className="industry-mix-coverage text-xs text-slate-600">
+              <div className="industry-mix-coverage text-xs text-muted-foreground">
                 {row.benchmarkAvailability ? (
                   <span className="tabular-nums">
                     {Object.values(row.benchmarkAvailability).filter(Boolean).length}/
                     {Object.keys(row.benchmarkAvailability).length} benchmark groups
                   </span>
                 ) : (
-                  <span className="text-slate-600">Save to check</span>
+                  <span className="text-muted-foreground">Save to check</span>
                 )}
               </div>
               <Button
@@ -351,30 +351,30 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
         </Button>
         <div className="flex items-center gap-3">
           {mix && (
-            <span className={`text-xs font-medium uppercase ${mix.coverage_status === "complete" ? "text-green-700" : "text-amber-700"}`}>
+            <span className={`text-xs font-medium uppercase ${mix.coverage_status === "complete" ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
               {mix.coverage_status} benchmark coverage
             </span>
           )}
-          <span className={`text-sm font-medium tabular-nums ${Math.abs(totalWeight - 100) <= 0.01 ? "text-green-700" : "text-amber-700"}`}>
+          <span className={`text-sm font-medium tabular-nums ${Math.abs(totalWeight - 100) <= 0.01 ? "text-[var(--success)]" : "text-[var(--warning)]"}`}>
             Total {totalWeight.toFixed(2)}%
           </span>
         </div>
       </div>
 
-      <div className="mt-4 grid gap-3 border-t border-slate-200 pt-4 lg:grid-cols-[180px_1fr_1.2fr]">
-        <label className="text-sm font-medium text-slate-700">
+      <div className="mt-4 grid gap-3 border-t border-border pt-4 lg:grid-cols-[180px_1fr_1.2fr]">
+        <label className="text-sm font-medium text-foreground">
           As-of date
           <input
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 px-3 font-normal"
+            className="mt-1 h-10 w-full rounded-md border border-border px-3 font-normal"
             type="date"
             value={asOfDate}
             onChange={(event) => setAsOfDate(event.target.value)}
           />
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-foreground">
           Weight source
           <select
-            className="mt-1 h-10 w-full rounded-md border border-slate-300 bg-white px-3 font-normal"
+            className="mt-1 h-10 w-full rounded-md border border-border bg-card px-3 font-normal"
             value={sourceDocumentId ?? ""}
             onChange={(event) => setSourceDocumentId(event.target.value ? Number(event.target.value) : null)}
           >
@@ -384,10 +384,10 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
             ))}
           </select>
         </label>
-        <label className="text-sm font-medium text-slate-700">
+        <label className="text-sm font-medium text-foreground">
           Basis note
           <textarea
-            className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 font-normal"
+            className="mt-1 w-full rounded-md border border-border px-3 py-2 font-normal"
             rows={3}
             maxLength={1000}
             value={notes}
@@ -397,7 +397,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       </div>
 
       {mix?.source_document_id && (
-        <div className="mt-3 flex items-center gap-2 text-xs text-slate-600">
+        <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
           <FileText className="h-4 w-4" />
           <span>
             Source: {sourceDocuments.find((document) => document.id === mix.source_document_id)?.title || `Document ${mix.source_document_id}`}
@@ -407,7 +407,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       </fieldset>}
 
       {mix?.warnings.length ? (
-        <div className="industry-mix-warnings mt-3 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
+        <div className="industry-mix-warnings mt-3 rounded-md border border-[var(--warning-border)] bg-[var(--warning-bg)] p-3 text-sm text-[var(--warning)]">
           <div className="font-medium">Some industry benchmarks are unavailable for this mix</div>
           <ul>{mix.warnings.slice(0, 2).map((warning, index) => <li key={index}>{industryWarningText(warning)}</li>)}</ul>
           {mix.warnings.length > 2 && <details>
@@ -433,7 +433,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
           Draft from saved mix
         </Button>
       </div>
-      {mix && hasEdits && <p className="mt-2 text-sm text-amber-800" role="status">Save or cancel your changes before drafting assumptions from this mix.</p>}
+      {mix && hasEdits && <p className="mt-2 text-sm text-[var(--warning)]" role="status">Save or cancel your changes before drafting assumptions from this mix.</p>}
     </section>
   );
 }

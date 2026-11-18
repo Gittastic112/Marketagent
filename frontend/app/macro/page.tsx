@@ -209,7 +209,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
               <div className="button-row" style={{ gridColumn: "1 / -1" }}>
                 <button type="submit">Import Series & Observations</button>
               </div>
-              <p className="text-sm text-gray-500 mt-2" style={{ gridColumn: "1 / -1" }}>
+              <p className="text-sm text-muted-foreground mt-2" style={{ gridColumn: "1 / -1" }}>
                 Requires FRED API key. Use only for configured US macro series.
               </p>
             </RetainedActionForm>
@@ -257,13 +257,13 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {seriesList.map((series) => (
-                <div key={series.id} className="border border-gray-200 rounded p-4">
+                <div key={series.id} className="border border-border rounded p-4">
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="text-lg font-medium">{series.name}</h3>
                     <DeleteRecordForm action={deleteMacroSeriesWithState} recordId={series.id} />
                   </div>
-                  {series.description && <p className="text-sm text-gray-600 mb-2">{series.description}</p>}
-                  <div className="text-xs text-gray-500 mb-4 flex gap-4">
+                  {series.description && <p className="text-sm text-muted-foreground mb-2">{series.description}</p>}
+                  <div className="text-xs text-muted-foreground mb-4 flex gap-4">
                     <span>Units: {series.units || "N/A"}</span>
                     <span>Freq: {series.frequency || "N/A"}</span>
                     <span>Source: {series.provider_name || "Manual"}</span>
@@ -278,12 +278,12 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
 
                   <h4 className="text-sm font-medium mb-2 border-b pb-1">Observations</h4>
                   {series.observations.length === 0 ? (
-                    <p className="text-sm text-gray-500">No data points yet.</p>
+                    <p className="text-sm text-muted-foreground">No data points yet.</p>
                   ) : (
                     <div className="max-h-48 overflow-y-auto" role="region" aria-label={`${series.name} observations`} tabIndex={0}>
                       <table className="w-full text-sm">
                         <thead>
-                          <tr className="text-left text-gray-500">
+                          <tr className="text-left text-muted-foreground">
                             <th className="font-normal pb-1">Record</th>
                             <th className="font-normal pb-1">Date</th>
                             <th className="font-normal pb-1 text-right">Value</th>
@@ -291,7 +291,7 @@ export default async function MacroPage({ searchParams }: MacroPageProps) {
                         </thead>
                         <tbody>
                           {[...series.observations].sort((a, b) => new Date(b.date_recorded).getTime() - new Date(a.date_recorded).getTime()).map((obs) => (
-                            <tr key={obs.id} className="border-t border-gray-100">
+                            <tr key={obs.id} className="border-t border-border">
                               <td className="py-1">#{obs.id}</td>
                               <td className="py-1">{obs.date_recorded}</td>
                               <td className="py-1 text-right">{obs.value}</td>

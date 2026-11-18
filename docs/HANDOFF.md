@@ -2,10 +2,9 @@
 
 ## Latest source boundary
 
-November 17, 2026: the authorized [adapter implementation](adapters/README.md)
-starts from main `371b58c02cfd2b80429f28dbc13629165b5e392d`; its
-[verification receipt](adapters/verification.md) distinguishes source checks from installation.
-Earlier review pins retain their original context. CI runs on main pushes, pull requests, and tags.
+November 18, 2026. The Geist/PR20 integration and the next ten adapter/workflow repairs are tested and installed. Saved-run validation/history, audited failures, source form scope, candidate links, benchmark display and revision conflict checks are repaired. The [latest receipt](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) owns verification, unchanged data, one verified backup and cleanup. [Original-source proof](../data/reviews/ui-adapter-release-20261118.json) remains bounded.
+
+> Priorities 1 and 2 are complete; priority 3 has bounded original-source proof for configured peers, SEC, NSE, ALFRED, OpenFIGI and native PDF/Camelot. Finish the held US-action, transcript and OCR cases only when the [listed prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites) are available. Otherwise continue the company-evidence and workflow backlog in the [worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip). Preserve uncommitted source, data and essential recovery material. [PR 20](https://github.com/Gittastic112/Marketagent/pull/20) owns publication and hosted checks for the combined tree. Do not count these checks as actual-use days or legacy recovery acceptance.
 
 Repository navigation and [Compose ownership](../docker/README.md) are documented.
 Python editor paths live in pyproject.toml; personal editor/agent overrides stay
@@ -33,10 +32,10 @@ Historical checkpoints retain evidence; they are not a current execution queue.
 
 ## Preserve while maintaining
 
-Keep unique data, original assets and reviewed evidence. Apply the November 13
-[essential retention policy](operations.md#essential-retention-policy): one verified
-recovery set, with a distinct temporary pre-change set only when needed; no routine
-docs/UI database dumps or permanent rollback stacks. Preserve necessary failure
+Keep unique data, original assets and reviewed evidence. Apply the November 18
+[essential retention policy](operations.md#essential-retention-policy): at most one
+verified recovery set at rest. A replacement briefly coexists only until verified.
+No routine docs/UI database dumps or permanent rollback stacks. Preserve necessary failure
 evidence; remove identified disposable material under the bounded policy.
 Confirm the actual target before any operational change. Do not reset,
 clean, or broadly stage a checkout to conceal pre-existing work. Cleanup does not
@@ -69,14 +68,17 @@ The [release checkpoint](archive/checkpoints/2026/review-financial-integrity-rel
 supersedes the JSON checkpoint's pending release status with final verification and cleanup evidence.
 The requested Today redesign brings the overview before a six-item review queue,
 places the brief and active alerts before it, and folds secondary activity into disclosures.
-The [review ledger](limitations.md#returned-code-review) owns the remaining 19
-primary findings. Next: A3-9 return-method alignment, then R5 evidence intake and
-R6 saved-editor/export integrity. Populated legacy conversion remains held.
+The [review ledger](limitations.md#returned-code-review) owns the remaining work.
+The next ten repairs are installed locally in the [evidence/workflow receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json):
+A3-9, A1-F8 through F12 and A2-4 through A2-7. Local and browser checks pass.
+The latest release receipt supersedes the original publication deferral. The remaining nine R7/R8
+repairs and D1/D2 are installed with verification in the [research/recovery receipt](../data/reviews/review-research-recovery-nine-sets-20261116.json).
+Populated legacy conversion remains held.
 The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
 raw reports remain unchanged and ignored, with private chat links excluded.
-Normal data and the essential recovery set are preserved; no new backup or
-acceptance points are created. Reuse the active Compose project; obsolete images,
-build cache and generated dependency files have been removed under the retention policy.
+Preserve normal data and the essential recovery set. The verified current recovery set now supersedes the earlier migration
+copy; no actual-use or legacy-conversion acceptance points are created.
+Reuse the active Compose project; remove temporary build resources under the retention policy.
 After the repair gates, resume dated-source proposals, initial-model preview,
 wider period support and P6/P7 in the research workspace plan.
 

@@ -1,6 +1,6 @@
 # Current State
 
-Source and review integration updated November 17, 2026. Recorded results below identify
+Source and local installation updated November 18, 2026. Recorded results below identify
 their exact revisions and environments; they do not certify an existing installation.
 
 ## Product position
@@ -32,7 +32,12 @@ acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
-| November 17, adapter implementation branch | Concrete FMP/Massive/NSE, identity/calendar, SEC/PDF/transcript/vintage adapters; Research Lab and safer memo/import/search UI. Actual optional-library fixtures and captured official NSE samples were exercised. This environment has no Docker and no installed-app access; hosted/runtime/model/entitlement limits remain explicit in the [verification receipt](adapters/verification.md). |
+| November 18, next ten workflow repairs | Saved-receipt integrity, cursor history, audited failures, provider choices, input/receipt scope, company drafts, candidate links, benchmark units, revision conflicts and one-backup retention are installed. 2,273 backend checks pass, with 20 PostgreSQL checks separately; 422 frontend cases, TypeScript, 39 contracts, 103 repository checks and ten desktop/mobile browser cases pass. All 110 table and original-asset fingerprints are unchanged. The single current format-3 backup was restored and matches those fingerprints. [Latest receipt](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) owns cleanup and publication status. |
+| November 18, combined UI/adapters and source verification | Installed Geist/PR20 integration, accessibility/search repairs and PDF parser v8. 2,244 core backend tests pass (37 profile skips), plus 125 optional-adapter checks; 418 frontend tests, TypeScript, contracts, 109 repository checks, production builds and 20 disposable PostgreSQL checks pass. All 86 standard browser cases have passing final results across runs; 221 route/viewport/theme states and focused repair checks pass. The signed-in in-app browser verifies selected desktop/mobile workflows in both themes. Original-source runs verify peers, an SEC amendment/deduplication, an NSE action, ALFRED revisions, OpenFIGI ambiguity and native PDF/Camelot evidence. Installation fingerprints are unchanged; source additions preserve prior financial evidence, valuations and portfolios. The [receipt](../data/reviews/ui-adapter-release-20261118.json) owns exact identities, repairs, data changes, failures/rechecks and cleanup. [Remaining prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites) stay held; GitHub remains deferred. |
+| November 17, combined local source | Merged Geist and the ZIP's 173 PR paths with the later November 16 repairs. Search, navigation and the Research Lab share the same shell. See the [integration checklist](roadmaps/ui-adapter-worklist.md) for checks on this tree and release gates. |
+| November 17, upstream adapter branch | [CI run 44228408999](https://github.com/Gittastic112/Marketagent/actions/runs/44228408999) passed for PR head `33df697`. The [adapter receipt](adapters/verification.md) identifies the optional-library fixtures, provider samples and runtime scope. |
+| November 16, research/recovery repairs | Remaining nine R7/R8 repairs plus D1/D2 installed locally. 2,127 backend, 400 frontend and 12 PostgreSQL checks pass; all 80 browser cases have passing final results across recorded runs. Installed read-only checks confirm the readable thesis review layout. Original records in 109 data tables, stored assets, settings, volumes and existing backup are preserved through the additive migration. One pre-change archive is validated, not restored. GitHub remains deferred. [Receipt](../data/reviews/review-research-recovery-nine-sets-20261116.json) |
+| November 16, evidence/workflow repairs | Ten further repairs installed locally; backend, frontend, concurrency and production-build checks pass. All 73 browser cases are verified across the full run and three documented reruns. Existing data and essential recovery material are unchanged. GitHub publication is deferred by the user. [Receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json) |
 | November 15, review releases | Both ten-repair batches are installed and merged in [PR 18](https://github.com/Gittastic112/Marketagent/pull/18) and [PR 19](https://github.com/Gittastic112/Marketagent/pull/19). All seven hosted gates pass on the final source: 2,101 backend tests (15 skipped), 395 frontend tests, 71 browser workflows and seven PostgreSQL checks. Today places the portfolio overview, daily brief and alerts before the six-item research queue; installed desktop/mobile checks pass. All 110 tables, asset bytes, settings and volumes are preserved; no PostgreSQL restart or new backup. [Release and cleanup checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md) |
 | November 15, returned code-review intake | All 39 primary findings checked against main at `6505082`; review severities retained as 1 critical, 13 high and 25 medium. Five finding IDs locally reproduced with isolated Mock Data or shell argument inspection: A3-1, A1-F9, A2-1, A2-8 and A4-2. The migration metadata forms one connected 73-revision chain; this does not prove populated upgrade safety. No HTTP authentication, PostgreSQL restore, browser or deployed-data incident proof was added at intake. All repairs were open at that checkpoint; the [ledger](limitations.md#returned-code-review) owns current status. [Sanitized evidence receipt](../data/reviews/code-review-intake-20261115.json) |
 | November 14, dependency and full-suite follow-up | OpenTelemetry API 1.45.2 and Soup Sieve 4.1.1 are installed. Hash-verified dependency audit reports no known vulnerabilities; 1,963 backend tests pass, seven PostgreSQL-only cases skipped in this isolated SQLite run. Four rate/industry-mix tests now exercise explicit refresh and verify that reopening preserves existing inputs. Draft return-link sizing and bounded thesis-table scrolling are repaired and checked in the installed browser; 393 frontend tests, type checking and production build pass. Nine browser specs follow current navigation and explicit actions without weakening their assertions. All 110 tables, settings and recovery material remain unchanged; four containers/four essential images remain, with zero build cache. [Receipt](../data/reviews/dependency-security-20261114.json) · [Hosted checks on PR 17](https://github.com/Gittastic112/Marketagent/pull/17) |
@@ -66,8 +71,11 @@ It changes no financial acceptance gates.
 - The [adapter batch](adapters/README.md) adds owned, hashed research run exports,
   bounded compute/extraction workers, explicit provider inspection, generated
   adapter contracts and optional locked dependency profiles. It adds no migrations
-  or automatic financial approval. Next.js is patched to 16.4.5. Existing installed
-  release evidence below is not extended by these source changes.
+  or automatic financial approval. Next.js is patched to 16.4.5. The combined
+  release is installed with the analysis and Camelot profiles. Original-source
+  validation candidates remain unapproved; prior reviewed histories and saved
+  valuation inputs are unchanged. The PDF v8 repair retains incorrect new v7
+  share-count candidates as rejected evidence rather than rewriting them.
 - All four companies have three selected reviewed annual histories. No selected
   candidate remains pending; Apple/NVIDIA operating checklists are 10/13 source-linked
   per year and Meta/Alphabet remain 8/13. The [current ledger](limitations.md#selected-company-review-follow-up)
@@ -114,12 +122,12 @@ effort. M05 remains next. The [completion tracker](roadmaps/completion-tracker.m
 preserves exact gates and explicit deferrals. No new acceptance points are earned
 by reorganizing documentation.
 
-Next: complete the second repair release, then A3-9 return-method alignment,
-R5 evidence intake and R6 editor/export integrity in the [review sequence](roadmaps/product-roadmap.md#review-repair-sequence).
+Next: address the residual boundaries in the
+[review sequence](roadmaps/product-roadmap.md#review-repair-sequence). GitHub publication is authorized for the installed combined tree; the latest receipt supersedes earlier deferrals.
 Preservation, financial validation, ownership and recovery defects precede new features.
 P0/P1 and bounded P2-P5 slices remain delivered, with the newly recorded limitations;
-passing earlier suites did not cover these cases. Saved-version export currently
-uses reconciled responses, so its exact-history wording is not established (A2-7).
+passing earlier suites did not cover these cases. Saved-version export now uses an owner-scoped raw archive endpoint, separate
+from the current read-time interpretation. Historical calculations remain unverified.
 The [workspace plan](roadmaps/research-workspace-plan.md) resumes after the repair gates;
 dated source proposals, initial-model preview and wider period support remain open.
 No acceptance gates advance from this review or its documentation integration.

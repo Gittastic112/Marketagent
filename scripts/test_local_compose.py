@@ -284,6 +284,23 @@ class ReleaseRunnerTests(RunnerCommandFixture):
 
 
 class LocalComposeTests(unittest.TestCase):
+    def test_research_adapter_settings_reach_only_the_consuming_services(self):
+        compose = (ROOT / "docker-compose.yml").read_text()
+        backend = compose.split("\n  backend:\n", 1)[1].split("\n  frontend:\n", 1)[0]
+        frontend = compose.split("\n  frontend:\n", 1)[1].split("\n  scheduler:\n", 1)[0]
+        for key in ("MASSIVE_API_KEY", "EARNINGSCALL_API_KEY", "SOURCE_ADAPTER_MODEL_DIR",
+                    "SOURCE_ADAPTER_PYTHON"):
+            with self.subTest(key=key):
+                self.assertIn(f"{key}: ${{{key}:-}}", backend)
+                self.assertNotIn(key, frontend)
+        for key in ("INSTALL_RESEARCH_ADAPTERS", "INSTALL_TABLE_ADAPTERS"):
+            self.assertIn(f"{key}: ${{{key}:-false}}", backend)
+        self.assertIn("RESEARCH_PEER_SNAPSHOT_PATH: ${RESEARCH_PEER_SNAPSHOT_PATH-/workspace/data/reference/financedatabase.csv}", backend)
+        self.assertIn("./data:/workspace/data:ro", backend)
+        self.assertNotIn("RESEARCH_PEER_SNAPSHOT_PATH", frontend)
+        source_worker = compose.split("container_name: market_intel_source_scheduler", 1)[1].split("    ports:", 1)[0]
+        self.assertIn("MASSIVE_API_KEY: ${MASSIVE_API_KEY:-}", source_worker)
+
     def test_postgres_security_build_is_shared_by_runtime_browser_and_recovery(self):
         for name in ("docker-compose.yml", "docker-compose.e2e.yml", "docker-compose.recovery.yml"):
             with self.subTest(compose=name):

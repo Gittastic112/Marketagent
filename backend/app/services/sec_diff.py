@@ -53,6 +53,8 @@ def generate_section_diffs(db: Session, current_document: RawDocument, prior_doc
     Returns a list of FilingSectionDiff objects.
     """
     current_sections = list(db.scalars(select(FilingSection).where(FilingSection.raw_document_id == current_document.id)))
+    existing = {row.current_section_id: row for row in db.scalars(select(FilingSectionDiff)
+        .where(FilingSectionDiff.current_section_id.in_([section.id for section in current_sections])))}
 
     diffs = []
 
@@ -66,7 +68,7 @@ def generate_section_diffs(db: Session, current_document: RawDocument, prior_doc
                 removed_words=0,
                 diff_html=f'<ins class="diff-add">{html.escape(section.text_content)}</ins>'
             )
-            db.add(diff)
+            diff = _retain_diff_identity(db, existing, diff)
             diffs.append(diff)
         return diffs
 
@@ -94,7 +96,28 @@ def generate_section_diffs(db: Session, current_document: RawDocument, prior_doc
                 diff_html=diff_html
             )
 
-        db.add(diff)
+        diff = _retain_diff_identity(db, existing, diff)
         diffs.append(diff)
 
     return diffs
+
+
+def _retain_diff_identity(db: Session, existing: dict, proposed: FilingSectionDiff) -> FilingSectionDiff:
+    stored = existing.get(proposed.current_section_id)
+    if stored is None:
+        db.add(proposed)
+        return proposed
+    for field in ("prior_section_id", "added_words", "removed_words", "diff_html"):
+        setattr(stored, field, getattr(proposed, field))
+    return stored
+
+
+def section_diffs_need_refresh(db: Session, sections: list[FilingSection], prior: RawDocument | None) -> bool:
+    if not sections:
+        return False
+    prior_sections = list(db.scalars(select(FilingSection).where(FilingSection.raw_document_id == prior.id))) if prior else []
+    if prior and not prior_sections:
+        return True
+    expected = {section.item_name: section.id for section in prior_sections}
+    return any(len(section.diffs_as_current) != 1 or
+        section.diffs_as_current[0].prior_section_id != expected.get(section.item_name) for section in sections)

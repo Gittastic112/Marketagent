@@ -29,6 +29,8 @@ The final frontend tree is `f4a8e90b2df3eb21d8cd63bf30edb5831fc3883e`; the integ
 
 ### Hosted follow-up
 
+GitHub reports [successful CI run 44228408999](https://github.com/Gittastic112/Marketagent/actions/runs/44228408999) on the final packaged head `33df697d0f33c584944c440b5ec5835aea0aee24`. The [combined checkout](../roadmaps/ui-adapter-worklist.md) has additional changes and its own verification record.
+
 The first complete hosted run on head `788855f` passed repository checks, the container-security job and the PostgreSQL recovery drill. It exposed three verification issues: a default PyPI timeout, optional calendar tests executing without their optional dependency, and NSE fixtures outside the baseline test image. The browser job ran 71 workflows: 70 passed and one stopped on an ambiguous Search-button selector. These findings produced the bounded timeout, test-packaging and exact-selector corrections below; no gates or assertions were removed. The [PR checks](https://github.com/Gittastic112/Marketagent/pull/20/checks) provide subsequent hosted status.
 
 W3's repaired tests passed **44/44** with the optional profile. A separately installed hash-locked core/test-only environment, using a staged backend tree without any documentation directory, produced **40 passed and exactly 4 calendar skips**. Every NSE test passed there. Calendar skips apply only when the distribution is absent; an installed but broken package still fails. The [browser follow-up](../workstreams/evidence/adapters-20261117/W1/hosted-browser-20261118.md) records the precise selector correction and the existing desktop/mobile memo workflows that passed.
@@ -123,6 +125,6 @@ Next was upgraded from 16.4.1 to 16.4.5 after the host build reported its upstre
 | Actual installed app | Configure selected dependencies/providers, open Research Lab, inspect real capabilities and complete explicit end-to-end operations |
 | Paid and public provider connectivity | Verify configured credentials, entitlements, limits and real company/listing responses through the app transport |
 | OCR | Provision compatible local Docling assets and run representative documents within the stated resource limits; Marker remains unavailable until the upstream dependency conflict is resolved |
-| Hosted CI | Inspect the draft PR's checks; local results do not imply hosted checks passed |
+| Hosted CI | The packaged head passed as recorded above. Run equivalent gates for the combined source. |
 
 No deployment, main-branch merge, portfolio change, evidence approval, trade or external AI request is part of this batch. The remaining product roadmap is listed in the [implementation guide](README.md#remaining-roadmap-work).

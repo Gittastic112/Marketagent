@@ -32,6 +32,7 @@ export type RssIngestionResult = {
 export type SecFilingIngestionResult = {
   fetched_count: number;
   created_count: number;
+  completed_text_count: number;
   skipped_duplicate_count: number;
   error_count: number;
   errors: string[];

@@ -112,9 +112,9 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
             {requiredMissingFields.includes(field) ? " · required value missing" : " · review or correct value"}</li>)}</ul>
         </div>}
       </section>
-      <ValuationSourceRefreshPanel companyId={company.id} beforeQueue={persistDraft}
+      <ValuationSourceRefreshPanel companyId={company.id} beforeQueue={persistDraft} disabled={saveState === "saving"}
         onFinished={loadRefreshedDraft} onBusyChange={setPipelineBusy} />
-      <fieldset disabled={pipelineBusy} className="valuation-draft-fields">
+      <fieldset disabled={pipelineBusy || saveState === "saving"} className="valuation-draft-fields">
         {sourceMetadata.input_unit_policy === "full_currency_and_shares_v1" ? (
           <section className="panel" style={{ padding: "16px 20px" }}>
             <strong>Valuation input units</strong>

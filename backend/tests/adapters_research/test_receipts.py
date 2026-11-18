@@ -62,6 +62,54 @@ def test_tampered_saved_input_or_output_blocks_export(client, db_session, monkey
     assert blocked.json()["errors"][0]["code"] == "RESEARCH_RUN_HASH_MISMATCH"
 
 
+@pytest.mark.parametrize("damage", ["run_id", "kind", "manifest", "result_shape", "input_shape", "adapter"])
+def test_saved_receipt_rejects_malformed_or_misbound_content_without_rewriting(
+    client, db_session, monkeypatch, damage
+):
+    monkeypatch.setattr(service, "run_bounded", lambda kind, data: allocate(AllocationRequest.model_validate(data)))
+    response = client.post("/api/research-lab/allocation", json={"dataset": dataset_payload(), "objective": "equal_weight"})
+    run = db_session.get(ProcessingRun, response.json()["data"]["run_id"])
+    metadata = json.loads(json.dumps(run.metadata_json))
+    saved = metadata["research_result"]
+    if damage == "run_id":
+        saved["run_id"] += 1000
+    elif damage == "kind":
+        saved["kind"] = "peers"
+    elif damage == "manifest":
+        del saved["manifest"]
+    elif damage == "result_shape":
+        metadata["research_result"] = ["Mock Data malformed receipt"]
+    elif damage == "input_shape":
+        metadata["input"] = None
+    else:
+        saved["manifest"]["adapter"] = "Mock Data mismatched adapter"
+    run.metadata_json = metadata
+    db_session.commit()
+    for suffix in ("", "/export", "/report.html"):
+        blocked = client.get(f"/api/research-lab/runs/{run.id}{suffix}")
+        assert blocked.status_code == 409
+        assert blocked.json()["errors"][0]["code"] == "RESEARCH_RUN_INVALID"
+        assert "Mock Data" not in blocked.text
+    db_session.expire_all()
+    assert db_session.get(ProcessingRun, run.id).metadata_json == metadata
+    assert client.get("/api/research-lab/runs").status_code == 200
+
+
+def test_history_cursor_keeps_old_runs_reachable_and_owner_scoped(client, db_session, monkeypatch):
+    monkeypatch.setattr(service, "run_bounded", lambda kind, data: allocate(AllocationRequest.model_validate(data)))
+    request = AllocationRequest(dataset=dataset_payload(), objective="equal_weight")
+    own_ids = [service.execute(db_session, "admin_user_id_fallback", "allocation", request).run_id for _ in range(5)]
+    other = service.execute(db_session, "different-user", "allocation", request).run_id
+    first = client.get("/api/research-lab/runs?limit=2").json()["data"]
+    assert [row["run_id"] for row in first] == own_ids[-2:][::-1]
+    service.execute(db_session, "admin_user_id_fallback", "allocation", request)
+    second = client.get(f"/api/research-lab/runs?limit=2&before_run_id={first[-1]['run_id']}").json()["data"]
+    third = client.get(f"/api/research-lab/runs?limit=2&before_run_id={second[-1]['run_id']}").json()["data"]
+    assert [row["run_id"] for row in second + third] == own_ids[:-2][::-1]
+    assert other not in [row["run_id"] for row in first + second + third]
+    assert client.get("/api/research-lab/runs?before_run_id=0").status_code == 422
+
+
 def test_missing_adapter_is_failure_receipt_not_mock_success(
     client, db_session, monkeypatch
 ):

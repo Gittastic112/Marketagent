@@ -2,12 +2,13 @@
 
 import { useEffect, useId, useMemo, useState } from "react";
 import { Panel } from "@/components/page";
-import { runDataAdapter, type DataAdapterExecution, type DataRequestByAction, type MarketAdapterAction, type MarketAdapterProvider } from "@/lib/api/adapter-actions";
+import { runDataAdapter, providersForMarketAction, type DataAdapterExecution, type DataRequestByAction, type MarketAdapterAction, type MarketAdapterProvider } from "@/lib/api/adapter-actions";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { createRequestGate } from "@/lib/latest-request";
 import { parseResearchJson } from "@/lib/research-lab-input";
 import { ResearchJsonInput } from "./json-input";
 import { AdapterReceipt } from "./adapter-receipt";
+import { AdapterFailure } from "./adapter-failure";
 
 const ACTIONS: Record<MarketAdapterAction, string> = {
   quote: "Market quote", history: "Dated price history", "dated-quote": "NSE dated observation", "corporate-actions": "Corporate actions",
@@ -20,21 +21,23 @@ export function MarketAdapterPanel() {
   const [provider, setProvider] = useState<MarketAdapterProvider>("fmp");
   const [overrides, setOverrides] = useState("");
   const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<Error | null>(null);
   const [execution, setExecution] = useState<DataAdapterExecution | null>(null);
   const requests = useMemo(createRequestGate, []);
   useEffect(() => () => requests.invalidate(), [requests]);
-  const selectedProvider = action === "dated-quote" ? "nse_mcp" : action === "reference" ? "massive" : provider;
+  const providers = providersForMarketAction(action);
+  const selectedProvider = providers.includes(provider) ? provider : providers[0] ?? provider;
   const marketInput = action !== "identity" && action !== "calendar";
   const dateRange = ["history", "corporate-actions", "calendar"].includes(action);
   const receipt = execution?.receipt;
+  function resetReceipt() { requests.invalidate(); setExecution(null); setError(null); }
 
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); if (busy) return;
     const data = new FormData(event.currentTarget);
     const text = (name: string) => String(data.get(name) ?? "").trim();
     const current = requests.begin();
-    setBusy(true); setError(""); setExecution(null);
+    setBusy(true); setError(null); setExecution(null);
     try {
       let payload: DataRequestByAction[MarketAdapterAction];
       if (action === "identity") {
@@ -52,7 +55,7 @@ export function MarketAdapterPanel() {
       }
       const result = await runDataAdapter(selectedProvider, action, payload);
       if (current()) setExecution(result);
-    } catch (failure) { if (current()) setError(failure instanceof Error ? failure.message : "The data adapter could not complete."); }
+    } catch (failure) { if (current()) setError(failure instanceof Error ? failure : new Error("The data adapter could not complete.")); }
     finally { if (current()) setBusy(false); }
   }
 
@@ -60,13 +63,13 @@ export function MarketAdapterPanel() {
     <p>Choose a provider and run an explicit request. Availability depends on server configuration and provider entitlement. Sources and response hashes are retained in Processing Runs. Corporate actions remain evidence; they are not applied to holdings automatically.</p>
     <div className="form-grid">
       <div className="field"><label htmlFor={`${id}-action`}>Data action</label><select id={`${id}-action`} value={action} disabled={busy}
-        onChange={event => { requests.invalidate(); setExecution(null); setError(""); setAction(event.target.value as MarketAdapterAction); }}>
+        onChange={event => { resetReceipt(); setAction(event.target.value as MarketAdapterAction); }}>
         {Object.entries(ACTIONS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
       {marketInput && <div className="field"><label htmlFor={`${id}-provider`}>Explicit provider</label><select id={`${id}-provider`} value={selectedProvider} disabled={busy || action === "dated-quote" || action === "reference"}
-        onChange={event => { requests.invalidate(); setExecution(null); setError(""); setProvider(event.target.value as MarketAdapterProvider); }}>
-        <option value="fmp">FMP</option><option value="massive">Massive</option><option value="nse_mcp">Official NSE MCP</option></select></div>}
+        onChange={event => { resetReceipt(); setProvider(event.target.value as MarketAdapterProvider); }}>
+        {providers.map(value => <option key={value} value={value}>{{ fmp: "FMP", massive: "Massive", nse_mcp: "Official NSE MCP" }[value]}</option>)}</select></div>}
     </div>
-    <form key={`${action}:${selectedProvider}`} onSubmit={submit} aria-label={`${ACTIONS[action]} adapter inputs`}>
+    <form key={`${action}:${selectedProvider}`} onSubmit={submit} onChange={() => { if (!busy) resetReceipt(); }} aria-label={`${ACTIONS[action]} adapter inputs`}>
       <fieldset className="research-lab-fieldset" disabled={busy}><legend>{ACTIONS[action]} inputs</legend>
         {marketInput && <div className="form-grid">
           <div className="field"><label htmlFor={`${id}-ticker`}>Ticker or local symbol</label><input id={`${id}-ticker`} name="ticker" maxLength={40} required /></div>
@@ -99,7 +102,7 @@ export function MarketAdapterPanel() {
         <button type="submit">{busy ? "Requesting source data…" : `Run ${ACTIONS[action].toLowerCase()}`}</button>
       </fieldset>
     </form>
-    {busy && <p role="status">Waiting for the source receipt…</p>}{error && <p role="alert">{error}</p>}
+    {busy && <p role="status">Waiting for the source receipt…</p>}<AdapterFailure error={error} />
     {receipt && execution && <>
       <DataStateNotices metas={[execution.meta]} showWarnings={false} staleMessage="This source observation exceeds the adapter freshness threshold. Check its source timestamp and market session before use." />
       <AdapterReceipt provider={receipt.provider} runId={receipt.processing_run_id} observedAt={receipt.observed_at}

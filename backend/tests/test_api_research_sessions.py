@@ -119,3 +119,19 @@ def test_research_session_owner_can_delete_session_and_messages(
     assert response.status_code == 204
     assert db_session.get(ResearchSession, created["id"]) is None
     assert db_session.query(ResearchMessage).count() == 0
+def test_session_exposes_own_pending_attempts_for_reconciliation(client, db_session):
+    from app.models.ai import AiOutput
+    from app.models.user import User
+    from conftest import TEST_USER_ID
+    session = client.post("/research/sessions", json={"title": "Mock Data interrupted chat"}).json()["data"]
+    db_session.add(User(id="other-attempt", email="other-attempt@example.invalid", name="Other"))
+    db_session.flush()
+    for owner in [TEST_USER_ID, "other-attempt"]:
+        db_session.add(AiOutput(user_id=owner, reference_type="research_session", reference_id=session["id"],
+            provider_name="mock", model_name="test", is_mock=True, prompt_version="test", input_hash="test",
+            output_text="", confidence_label="none", execution_status="pending", transmission_scope="none"))
+    db_session.commit()
+    detail = client.get(f"/research/sessions/{session['id']}").json()["data"]
+    assert len(detail["attempts"]) == 1
+    assert detail["attempts"][0]["execution_status"] == "pending"
+    assert detail["messages"] == []

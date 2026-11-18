@@ -1,27 +1,34 @@
 # Capabilities and limitations
 
-Reconciled November 15, 2026. [Current State](current-state.md) owns verification; the [feature register](roadmaps/feature-register.md) owns capability status.
+Reconciled November 18, 2026. [Current State](current-state.md) owns verification; the [feature register](roadmaps/feature-register.md) owns capability status.
 Historical operational narratives and review exceptions remain in the [prior ledger](archive/assessments/limitations-before-2026-11-10.md).
+
+<a id="geist-ui-installation"></a>
+
+## Installed adapters and remaining source prerequisites
+
+The combined Geist UI and PR 20 adapters are installed locally. The [release receipt](../data/reviews/ui-adapter-release-20261118.json) records source-backed peer, SEC amendment, NSE action, ALFRED revision, OpenFIGI ambiguity and native PDF/Camelot checks. These are bounded examples, not complete provider acceptance or approved financial inputs. The [next ten workflow repairs](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are also installed; GitHub publication is authorized. These repairs do not complete the held source cases below.
+
+| Held case | Exact prerequisite |
+|---|---|
+| US corporate actions, run 281 | Privately configured `MASSIVE_API_KEY` with corporate-action entitlement. No subscription was purchased and no holding adjustment was applied. |
+| Transcript and correction, runs 284/285 | Privately configured FMP or EarningsCall credentials with transcript access, followed by an actual corrected-call example. Retrieval and correction acceptance remain unproved. |
+| Docling/Marker OCR, runs 290/291 | A compatible isolated interpreter, approved local model files and a genuine scanned-page example. Both reported missing dependencies. Marker 2.2.0 also conflicts with the approved Pillow/filelock profile; do not install it into the main runtime. No model downloads were started. |
+| PDF completeness | The Apple FY2025 page check preserves the original bytes and six Camelot cells; currency remains unresolved in those candidates. The standard parser's share-denominator/EPS confusion is repaired in v8; the six erroneous new v7 candidates are retained as rejected. Neither extractor proves complete statements or scanned-page OCR. |
+
+Provider keys stay outside chat and repository files. Broader provider edge cases remain in the [adapter worklist](roadmaps/ui-adapter-worklist.md); current reference peers do not establish historical membership or economic comparability.
 
 ## Confirmed scope and input checklist
 
-The approved release is local personal US/India research/demo with USD portfolio reporting.
-November 9 scope: four technology companies, hypothetical holdings and Sample Apple research;
-the sourced Apple valuation is a separate Estimate with explicit analyst assumptions.
+The approved release is local personal US/India research/demo with USD portfolio reporting. November 9 scope: four technology companies, hypothetical holdings and Sample Apple research; the sourced Apple valuation is a separate Estimate with explicit analyst assumptions.
 
-The historical universe and eleven scenarios were removed November 5; their source/review evidence remains.
-Sixty named old database archives were deleted with approval November 9. Remaining recovery/evidence
-material now follows the [essential retention policy](operations.md#essential-retention-policy).
+The historical universe and eleven scenarios were removed November 5; their source/review evidence remains. Sixty named old database archives were deleted with approval November 9. Remaining recovery/evidence material follows the [essential retention policy](operations.md#essential-retention-policy).
 
-Do not restore historical companies, expand the portfolio, fabricate activity,
-create local disposable datasets, or grant external-AI permissions as a setup or
-cleanup side effect. Delegated review authorizes supported, recorded judgments;
-it does not supply missing facts or independent human certification.
-The [decision log](roadmaps/review-decisions.md) retains that distinction.
+Do not restore historical companies, expand the portfolio, fabricate activity, create local disposable datasets, or grant external-AI permissions as a setup or cleanup side effect.
+Delegated review authorizes supported, recorded judgments; it does not supply missing facts or independent human certification. The [decision log](roadmaps/review-decisions.md) retains that distinction.
 
-The [October 17 scope revision](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026)
-defers Mac/off-device protection and excludes genuine portfolio validation from
-v1. These requirements are deferred or outside scope, not passed.
+The [October 17 scope revision](roadmaps/completion-tracker.md#scope-revision-approved-october-17-2026) defers Mac/off-device protection and excludes genuine portfolio validation from v1.
+These requirements are deferred or outside scope, not passed.
 
 ## Ordered operator handoff
 
@@ -34,9 +41,7 @@ v1. These requirements are deferred or outside scope, not passed.
 | M09/M10: acceptance | Keep the prerequisite order. Record five actual business days of research/demo use, observed failures, and final acceptance. The last user-reported count is zero; agent tests do not create use days |
 | Deferred protection/recovery | Resume host settings, encrypted off-device storage, key recovery, and the additional populated restore rehearsal only within an explicit safe scope. Preserve existing recovery evidence |
 
-M01-M04 retain 40 accepted milestone points. No cleanup or general assurance
-closes the remaining gates. The [tracker](roadmaps/completion-tracker.md) owns
-the exact check IDs and [Operations](operations.md) owns operational procedures.
+M01-M04 retain 40 accepted milestone points. No cleanup or general assurance closes the remaining gates. The [tracker](roadmaps/completion-tracker.md) owns the exact check IDs and [Operations](operations.md) owns operational procedures.
 
 ## Selected-company review follow-up
 
@@ -76,17 +81,14 @@ The user reconfirmed zero actual-use days on November 12; automated checks do no
 | Issuer versus security | A shared-issuer fallback supports separate GOOG/GOOGL securities, but Company.cik remains unique. Dedicated issuer/security identity and class-share reconciliation remain open |
 | Normalization and history | New calculations require compatible explicit inputs and current promoted provenance. Historical outputs are not automatically repaired; ambiguous current-revision linkage stays unavailable |
 | Benchmark priors | Versioned industry workbooks are priors, not company facts. Unsupported adjusted-margin columns, small samples, invalid ratio blends, and Global-labeled India inputs cannot become company-specific assumptions |
-| FRED revisions | New dates import; changes to stored dates require review. Full vintage storage is absent. DGS10 is a reviewed USD proxy, not a universal discount rate |
+| FRED revisions | The explicit ALFRED adapter retains original as-of snapshots and revision intervals; a GDP revision pair is verified. Ordinary macro ingestion still treats changes to stored dates as review work and does not automatically build a complete vintage history. DGS10 is a reviewed USD proxy, not a universal discount rate |
 | Source scheduling | One attempt per local weekday after 07:00, without automatic failure retry or missed-date backfill. Explicit retry/cancel retains audit history; no dedicated heartbeat or notification transport |
 | Historical financial exceptions | HDFC comparability/EPS, Alphabet lease and overlap, Microsoft preferred balance, Reliance net external-revenue weights, Airtel put/NCI scope, current awards, and parent/child claim bridges remain source-specific open questions in retained receipts. Historical scenarios do not resolve them |
 | Data rights | Personal-use Yahoo access is explicitly selected; it is not a licensed professional or redistribution feed. No Google Sheets bridge or licensed comparable-company feed is implemented |
 
 ## Workspace follow-up
 
-The [adapter guide](adapters/README.md) owns new source/runtime limits, including
-provider entitlements, the NSE connection, OCR dependencies/models and deployment checks.
-Research return inputs remain caller assertions; current peer snapshots are not historical universes.
-DBOS, pgvector, named presets, guidance review and the unified company workbench remain open there.
+The [adapter worklist](roadmaps/ui-adapter-worklist.md) tracks wider NSE transport/calendar coverage, research inputs and the remaining company, search and portfolio work. Supplied returns and current peer snapshots have limited historical provenance.
 
 P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.json) closes WS04's page-load writes. The [November 14 slices](../data/reviews/research-workspace-ten-sets-20261114.json) close WS06's missing thesis chooser and add dated evidence, saved-model previews and a bounded queue. The [workspace plan](roadmaps/research-workspace-plan.md) owns packages; remaining gaps follow.
 
@@ -94,14 +96,14 @@ P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.
 |---|---|---|
 | WS03 | Dated financial rows expose original values, source timing and conflicts, but do not select or rebase draft/model inputs. Saved-model preview dates label research, not historical market/source reconstruction. Initial model creation still uses the existing direct gated path | P2/P3: carry explicit source revisions/date/knowledge into a draft proposal and initial-model preview, then preserve that evidence in an atomic save receipt. Never promote partial subtotals as complete facts |
 | WS05 | New annual promotions snapshot exact available period/basis fields in candidate metadata. Quarterly/YTD, transition durations outside 300-400 days, missing years and conflicting stored identities remain held; legacy unknown basis remains unknown | P2.3: design full period identity before expanding ingestion, with an additive migration only if needed. Existing annual end confirmations remain separate User Assumptions with retained source notes/history; no historical rows were rewritten |
-| WS07 | Today and holdings queues cover selected existing workflows, not every missing input or stale model. Old failed runs can remain after a later success; source links do not preserve every originating filter/date or provide a complete resumable task | P4-P6: reconcile source attempts, add explicit no-change/blocked outcomes and context-preserving returns, and measure query latency. Current owner scope, counts, limits and holdings basis remain enforced |
+| WS07 | Today and holdings queues cover selected existing workflows, not every missing input or stale model. Old failed runs can remain after a later success; source links do not preserve every originating filter/date or provide a complete resumable task | Thesis impacts now support preserving no-change/blocker decisions. P4-P6 still need broader source-attempt reconciliation, context-preserving returns and measured query latency. Current owner scope, counts, limits and holdings basis remain enforced |
 | WS08 | Existing backup pruning is count-based, defaults off and cannot protect semantic recovery roles or active pre-change pins | Apply the [essential retention policy](operations.md#essential-retention-policy) through reviewed targets; automation remains off until role-safe behavior is implemented and tested |
 
 The user authorised implementation after planning. P1 and ten bounded P2-P5 slices are delivered; complete package acceptance and source-specific financial gaps remain open. Tests do not establish actual research-use days or final acceptance.
 
 ## Returned code review
 
-November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Twenty bounded repairs are installed and merged in PRs 18 and 19; 19 remain unimplemented. Residual boundaries below remain explicit.
+November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Twenty bounded repairs are installed and merged in PRs 18 and 19. The [next ten](../data/reviews/review-evidence-workflows-ten-sets-20261116.json) and [remaining nine](../data/reviews/review-research-recovery-nine-sets-20261116.json) are installed locally with scoped checks passing. The latest receipt owns publication status. Guarded legacy conversion and other residual boundaries below remain open; installation is not blanket closure.
 The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves reviewer claims; the [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json) records initial evidence. This ledger owns status; the [roadmap](roadmaps/product-roadmap.md#review-repair-sequence) owns order and [decisions](roadmaps/review-decisions.md#returned-review-design-decisions) own policy. The [financial integrity receipt](../data/reviews/review-financial-integrity-ten-sets-20261115.json) retains its implementation checkpoint; the [release checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md) records final checks and installation.
 
 | Repair group and IDs | Open boundary |
@@ -110,11 +112,11 @@ The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves 
 | R1: A3-1, A1-F1, A3-6, A3-7 | Local source protects dependent event/document evidence, blocks source-defining API edits, scopes nonzero holdings and private runs. Corrected evidence is imported separately. Legacy private runs without recorded owners remain hidden, not reassigned. The first release is installed and merged |
 | R2: A1-F2 through A1-F7 | F2-F5 installed: new overrides retain origin; ambiguous PDF duration is held; workbooks retain bytes and allow exact-hash reattachment; SEC dates use fact-level filed metadata. Lost old override values/original files are not reconstructed. Browser download completion remains unverified. F6/F7 now block incompatible units and preserve raw percent-format transformation evidence; existing extractions are not rewritten |
 | R3: A2-1, A2-2, A2-3, A2-8 | Installed finite growth/claim/output checks, company-context propagation, negative-duration slope convention and WACC rate/capital/horizon bounds. Legacy invalid responses are blocked without rewriting stored values |
-| R4: A3-2, A3-3, A3-4, A3-5, A3-9 | A3-2 through A3-5 installed: reconciled chronological corrections, snapshot-currency returns, five-calendar-day quote/FX gates and unavailable unknown-weight summaries. A3-9 return-method alignment remains open; incomplete opening history blocks correction |
-| R5: A1-F8 through A1-F12 | Metadata-only SEC sources cannot acquire text on retry; same-batch duplicates bypass pending rows; PDF page continuation and filing-diff backfill are blocked; financial history can route to the wrong evidence view |
-| R6: A2-4 through A2-7 | In-flight saves can lose or mislabel edits; refreshed growth text can diverge from reviewed values; stale acknowledgement can clear unseen events; exact-version exports use reconciled values/warnings |
-| R7: A3-8, A3-10, A3-11, A4-3; D1/D2 | Private-source approval is not reachable, thesis event links/memo contracts are broken, and derived AI claims lose origin. Brief review uses click-time dismissal; thesis impacts lack a preserving completion action. D1 is intentional existing behavior; D2 is part of WS07, not a new primary finding |
-| R8: A4-4 through A4-8 | Research response deadlines can precede persisted replies; sign-in cannot recover from some readiness/errors; interrupted AI calls lack a pre-send receipt; expired leases can orphan run status; callback validation accepts network-path URLs. Redirect risk is source-based, not a demonstrated login bypass |
+| R4: A3-2, A3-3, A3-4, A3-5, A3-9 | A3-2 through A3-5 installed: reconciled chronological corrections, snapshot-currency returns, five-calendar-day quote/FX gates and unavailable unknown-weight summaries. A3-9 now withholds return percentages/spread under external flows while retaining matched-flow ending wealth; a common flow-adjusted return method remains unavailable. Incomplete opening history blocks correction |
+| R5: A1-F8 through A1-F12 | Installed locally: explicit SEC retries complete missing text with audit counts; batch/concurrent identities are guarded; retained PDF pages can be extended; parser retries repair predecessor comparisons; history uses PDF geometry/page links. Existing reviewed evidence is preserved. Scheduled backfill and OCR remain unavailable |
+| R6: A2-4 through A2-7 | Installed locally: pending saves pause editing, refreshed growth adopts the displayed values, acknowledgement requires the exact observed state and a reason, and raw saved exports retain original warnings/calculations. Browser checks pass; the latest receipt owns publication status. This does not validate historical calculations |
+| R7: A3-8, A3-10, A3-11, A4-3; D1/D2 | Installed: source-detail AI approval, exact event links, owned memo notes, per-generation narrative provenance, snapshot-coverage acknowledgement and preserving thesis decisions. Original claims retain unknown origin; foreign AI output remains private. Approval still does not certify financial meaning or change valuation inputs |
+| R8: A4-4 through A4-8 | Installed: bounded generation deadlines, read-only result reconciliation, recoverable sign-in, same-origin callbacks, durable pre-send AI attempts and expired-worker recovery. Pending/unknown remote outcomes cannot be cancelled or proved undelivered; explicit retry may duplicate remote work. No automatic resend or live-provider delivery claim |
 
 The separate commit-identity observation is a privacy follow-up, not a fortieth primary finding. Raw reports remain local and unchanged; no public-history rewrite, account change, new data backup or application repair was performed by this intake.
 
@@ -125,7 +127,7 @@ reinvestment, discounting, terminal assumptions, equity claims and diluted share
 
 | Method or consumer | Boundary |
 |---|---|
-| Core FCFF | Explicit zeros survive and missing/nonpositive/nonfinite shares withhold per-share value; other missing-value presets remain. New saved inputs and calculated outputs enforce finite ranges; legacy invalid responses carry blocking diagnostics. Saved rows are not recalculated on read; response reconciliation is distinct from raw history (A2-7) |
+| Core FCFF | Explicit zeros survive and missing/nonpositive/nonfinite shares withhold per-share value; other missing-value presets remain. New saved inputs and calculated outputs enforce finite ranges; legacy invalid responses carry blocking diagnostics. Saved rows are not recalculated on read; response reconciliation is separate from the raw saved-version archive |
 | Calendar basis | Projections use relative periods. Calendar years remain null without a fiscal anchor; legacy unanchored years are withheld. Old integer-only images cannot safely consume new nullable rows |
 | Sensitivities and scenarios | Canonical FCFF sensitivities retain saved funding/terminal assumptions and per-cell validity. Legacy grids remain unverified. Shocks are deterministic scenarios, not probabilities; unsupported specialized tables stay unavailable |
 | Reverse DCF | Requires valid owned saved inputs and actual convergence. Financial-services reverse analysis is unsupported. Bisection does not prove a unique root or find every possible root |

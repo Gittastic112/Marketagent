@@ -1,0 +1,985 @@
+{
+  "date": "2026-11-18",
+  "status": "installed_verified_publication_deferred_source_prerequisites_held",
+  "priorities": {
+    "1": "Complete: combined Geist UI, all 173 PR 20 adapter paths and the existing November 16 repairs validated and built.",
+    "2": "Complete: desktop/mobile and both themes checked; matching local services installed and verified.",
+    "3": "Bounded original-source examples verified for available providers. US corporate actions, transcript correction and scanned-page OCR remain held for explicit prerequisites."
+  },
+  "source": {
+    "base_head": "f4010d2d4a82b9ca003726be5734aa49fce42e34",
+    "branch": "codex/review-research-recovery-20261116",
+    "preexisting_readable_files": 221,
+    "preexisting_files_unchanged": 211,
+    "intentionally_changed_preexisting_paths": [
+      "docs/HANDOFF.md",
+      "docs/current-state.md",
+      "docs/data-sources.md",
+      "docs/limitations.md",
+      "docs/roadmaps/ui-adapter-worklist.md",
+      "frontend/components/research-command-palette.tsx",
+      "frontend/e2e/search-workflows.spec.ts",
+      "frontend/styles/foundation.css",
+      "frontend/styles/navigation.css",
+      "frontend/styles/responsive.css"
+    ],
+    "unexpected_changes": [
+
+    ],
+    "protected_files_not_read": [
+      ".codex/config.toml",
+      ".env.example"
+    ],
+    "build_input_files": 1191,
+    "build_inputs_match_current_source": true,
+    "changed_files": [
+      "backend/app/services/pdf_financial_extraction.py",
+      "backend/tests/test_pdf_statement_regressions.py",
+      "frontend/styles/foundation.css",
+      "frontend/app/daily-brief/sources/[id]/page.tsx",
+      "frontend/components/research-command-palette.tsx",
+      "frontend/app/research/page.tsx",
+      "frontend/components/ai-metadata.tsx",
+      "frontend/styles/navigation.css",
+      "frontend/styles/responsive.css",
+      "frontend/e2e/search-workflows.spec.ts",
+      "frontend/e2e/pdf-review-promotion.spec.ts",
+      "docs/HANDOFF.md",
+      "docs/current-state.md",
+      "docs/limitations.md",
+      "docs/roadmaps/ui-adapter-worklist.md",
+      "docs/data-sources.md",
+      "data/reviews/ui-adapter-release-20261118.json"
+    ],
+    "cross_cutting_reason": "Combined UI and adapter acceptance exposed accessibility, search, mobile layout and original-PDF classification defects. Owning code, focused regression tests, five current references and one release receipt are coordinated; unrelated existing work is preserved.",
+    "preexisting_integration": "Geist UI and adapter PR 20 work was already present and uncommitted; this release preserves it.",
+    "new_commits": [
+
+    ],
+    "github_published": false,
+    "github_access_requested": false,
+    "privacy": "Protected environment files and personal agent configuration were neither read nor modified. No private chat links or credentials are included."
+  },
+  "repairs": [
+    {
+      "area": "Disclosure and source controls",
+      "change": "Settings disclosure targets and source comparison links meet the existing minimum control-size checks."
+    },
+    {
+      "area": "Search focus and Escape",
+      "change": "Focus the search field after the modal opens. The first Escape closes even with a nonempty query and returns focus to the trigger."
+    },
+    {
+      "area": "Search position and mobile choices",
+      "change": "Center the dialog, separate its close control, and restrict header icon sizing to direct children so mobile search choices retain readable widths."
+    },
+    {
+      "area": "Dark theme",
+      "change": "AI-session controls and mock/unsupported-claim badges use the shared accessible theme colors."
+    },
+    {
+      "area": "Original PDF financial semantics",
+      "change": "Parser pdf_targeted_v8 resolves share-denominator headings before EPS headings and preserves explicit share-in-thousands units separately from monetary scales."
+    },
+    {
+      "area": "Browser regression coverage",
+      "change": "Cover modal position, first-Escape behavior, focus restoration and unclipped mobile/desktop choices in both themes; scope the PDF candidate link to its exact identifier."
+    }
+  ],
+  "verification": {
+    "repository_unit_tests": {
+      "passed": 109,
+      "evidence": "repository-tests.log"
+    },
+    "final_documentation_check": {
+      "status": "passed",
+      "checker_unit_tests": 24,
+      "active_markdown_files": 103,
+      "local_links": 1417,
+      "evidence": "final-docs-check.log",
+      "repair": "Preserved the historical Geist installation anchor and kept the limitation ledger within its 240-line budget."
+    },
+    "core_backend": {
+      "passed": 2244,
+      "skipped": 37,
+      "warnings": 49,
+      "subtests_passed": 2,
+      "evidence": "backend-tests.log",
+      "skip_boundary": "Optional-library and PostgreSQL tests run separately in their required profiles; the full core run does not exercise external providers."
+    },
+    "optional_adapters": {
+      "passed": 125,
+      "warnings": 215,
+      "subtests_passed": 2,
+      "evidence": "adapter-tests.log",
+      "dependency_consistency": true,
+      "openapi_snapshot_matches": true
+    },
+    "postgres": {
+      "passed": 20,
+      "evidence": "postgres-tests.log",
+      "scope": "12 ingestion/concurrency checks and eight fresh-migration/legacy-rejection checks against disposable PostgreSQL. This is not a populated legacy conversion or restore drill."
+    },
+    "critical_api_contracts": {
+      "passed": 39,
+      "evidence": "critical-contracts-final.log"
+    },
+    "frontend": {
+      "passed": 418,
+      "typecheck": true,
+      "generated_adapter_types_match": true,
+      "npm_audit_vulnerabilities": 0,
+      "evidence": "frontend-checks.log"
+    },
+    "dependencies": {
+      "runtime_locked": 66,
+      "test_locked": 70,
+      "analysis_profile_locked": 89,
+      "extraction_profile_locked": 16,
+      "ocr_profile_locked": 122,
+      "ocr_runtime_installed": false
+    },
+    "production_builds": {
+      "backend": "passed, arm64, research and table-extraction profiles",
+      "frontend": "passed, arm64, Geist UI and final mobile repair"
+    },
+    "browser": {
+      "final_standard_cases": {
+        "passed": 86
+      },
+      "passing_result_scope": "Final result per case across the full suite and focused repair reruns; not a single uninterrupted all-green run.",
+      "additional_theme_repair_cases_passed": 4,
+      "route_viewport_theme_states": 221,
+      "unresolved_route_failures": [
+
+      ],
+      "maximum_route_ready_ms": 12179.278,
+      "route_budget_ms": 15000,
+      "isolation": "Mock Data only in disposable tmpfs PostgreSQL and isolated test services; no browser fixtures added to the normal database.",
+      "runs": [
+        {
+          "name": "browser",
+          "stats": {
+            "startTime": "2026-11-18T06:36:59.964Z",
+            "duration": 907438.849,
+            "expected": 78,
+            "skipped": 3,
+            "unexpected": 5,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-retry",
+          "stats": {
+            "startTime": "2026-11-18T06:55:42.279Z",
+            "duration": 264431.42600000004,
+            "expected": 6,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-delayed",
+          "stats": {
+            "startTime": "2026-11-18T07:14:45.233Z",
+            "duration": 23029.297,
+            "expected": 3,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-dark",
+          "stats": {
+            "startTime": "2026-11-18T07:00:31.883Z",
+            "duration": 533202.3840000001,
+            "expected": 0,
+            "skipped": 0,
+            "unexpected": 4,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-theme-repair",
+          "stats": {
+            "startTime": "2026-11-18T07:14:02.217Z",
+            "duration": 21376.533,
+            "expected": 4,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-final-repair",
+          "stats": {
+            "startTime": "2026-11-18T07:36:04.732Z",
+            "duration": 204179.11099999998,
+            "expected": 6,
+            "skipped": 0,
+            "unexpected": 5,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-final-repair-retry",
+          "stats": {
+            "startTime": "2026-11-18T07:40:08.059Z",
+            "duration": 128029.297,
+            "expected": 11,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-mobile-red",
+          "stats": {
+            "startTime": "2026-11-18T07:45:02.380Z",
+            "duration": 6921.075,
+            "expected": 0,
+            "skipped": 0,
+            "unexpected": 1,
+            "flaky": 0
+          }
+        },
+        {
+          "name": "browser-mobile-final",
+          "stats": {
+            "startTime": "2026-11-18T07:48:20.208Z",
+            "duration": 13290.257000000001,
+            "expected": 2,
+            "skipped": 0,
+            "unexpected": 0,
+            "flaky": 0
+          }
+        }
+      ],
+      "evidence": "browser-summary.json",
+      "compact_artifacts_retained": true,
+      "resolved_bulk_png_and_trace_artifacts_removed": true
+    },
+    "installed_manual_browser": {
+      "browser": "in-app browser",
+      "viewports": [
+        [
+          1440,
+          900
+        ],
+        [
+          390,
+          844
+        ]
+      ],
+      "themes": [
+        "light",
+        "dark"
+      ],
+      "checked": [
+        "Today opens with the overview and brief/alerts before the bounded research queue.",
+        "Search opens with input focus, finds the existing Apple entry, closes on the first Escape with a typed query and restores trigger focus.",
+        "Search dialog is centered on desktop and scope choices remain readable on mobile in both themes.",
+        "Research Lab capability states render and saved peer run 276 reopens.",
+        "The peer JSON export download completes. API export hashes were independently verified; the downloaded browser file was not read."
+      ],
+      "original_light_theme_restored": true,
+      "temporary_viewport_override_reset": true,
+      "screenshots": [
+        "installed-desktop-search.jpg",
+        "installed-mobile-search.jpg"
+      ]
+    },
+    "failures_resolved": [
+      "Real browser checks exposed small disclosure/source-link targets, dark-theme contrast, search focus/Escape behavior and mobile scope-button clipping. Owning code and focused reruns close these failures.",
+      "The new original-PDF regression first produced two failures and one negative-case pass; 129 focused parser tests pass after the repair.",
+      "The final PDF browser check initially used a substring link selector that also matched candidate IDs 10-12. Exact candidate-link matching fixes the test ambiguity.",
+      "A fresh disposable database lacked the reference fixture expected by two theme checks. Seeding only that disposable stack and rerunning produced 11 passing repair cases.",
+      "The first contract rerun lacked its mounted frontend contract directory. The correctly mounted final run passes all 39 contracts.",
+      "Heavy test/build contention and a missing disposable PDF fixture mount were corrected; timing budgets and product assertions were not weakened."
+    ],
+    "protected_file_scan_boundary": "The secret scan passed for the sanitized available source. Protected file contents were excluded and are not claimed as scanned.",
+    "git_diff_check": {
+      "passed": true,
+      "note": "Git reports an existing CRLF notice for the untouched corpus hash CSV; there are no diff whitespace errors."
+    }
+  },
+  "installation": {
+    "compose_project": "market-intelligence-review-20261112-financial-history",
+    "override": "output/milestones/product-development-20261107/runtime-images.yml",
+    "services": [
+      {
+        "name": "/market_intel_backend",
+        "id": "a669a026738b9f6f4b644512c8c9ee1846e1f5159f1b71f42013e257bc76d961",
+        "image": "sha256:ffc2bbff06315ff4df9ece9bb055d07c10309ba857a8b34de31610debc1e3aef",
+        "tag": "market-intelligence-review-backend:20261118-adapters-r2",
+        "running": true,
+        "health": "healthy",
+        "application_settings_preserved": true,
+        "ports_preserved": true,
+        "mounts_preserved": true,
+        "compose_project_preserved": true,
+        "database_container_preserved": null,
+        "loopback_only": true
+      },
+      {
+        "name": "/market_intel_frontend",
+        "id": "bc7677f2e32e04e1f973bd99f2884438b16f6c5943bf342b60d936ef29d7b9e2",
+        "image": "sha256:7352963da6ac3916b7059036e8cf99cf2f00b2d6e7432d1ee0c34d595e49afb6",
+        "tag": "market-intelligence-review-frontend:20261118-geist-r3",
+        "running": true,
+        "health": "healthy",
+        "application_settings_preserved": true,
+        "ports_preserved": true,
+        "mounts_preserved": true,
+        "compose_project_preserved": true,
+        "database_container_preserved": null,
+        "loopback_only": true
+      },
+      {
+        "name": "/market_intel_scheduler",
+        "id": "0191dd225b2988aeb44d0ad0d8f8c343237e6e6b496c4d4f3844a3f077c52cde",
+        "image": "sha256:ffc2bbff06315ff4df9ece9bb055d07c10309ba857a8b34de31610debc1e3aef",
+        "tag": "market-intelligence-review-backend:20261118-adapters-r2",
+        "running": true,
+        "health": null,
+        "application_settings_preserved": true,
+        "ports_preserved": true,
+        "mounts_preserved": true,
+        "compose_project_preserved": true,
+        "database_container_preserved": null,
+        "loopback_only": true
+      },
+      {
+        "name": "/market_intel_postgres",
+        "id": "2e7314405f4e7c7b2d551e5e30c3db9d8239a8a5cee89cbdb76bc6f828cbbdc5",
+        "image": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e",
+        "tag": "market-intelligence-review-postgres:20261107-security-r2",
+        "running": true,
+        "health": "healthy",
+        "application_settings_preserved": true,
+        "ports_preserved": true,
+        "mounts_preserved": true,
+        "compose_project_preserved": true,
+        "database_container_preserved": true,
+        "loopback_only": true
+      }
+    ],
+    "schema_migration": false,
+    "schema_head": "v4v4v4v4v4v4",
+    "database_container_unchanged": true,
+    "source_scheduler_started": false,
+    "pgadmin_started": false,
+    "network_exposure": "Existing 127.0.0.1 bindings only; no public deployment.",
+    "install_fingerprint_checks": [
+      {
+        "phase": "combined installation",
+        "all_110_tables_and_assets_unchanged": true
+      },
+      {
+        "phase": "PDF and search repair",
+        "all_110_tables_and_assets_unchanged": true
+      },
+      {
+        "phase": "final frontend-only mobile repair",
+        "all_110_tables_and_assets_unchanged": true
+      }
+    ]
+  },
+  "original_source_cases": {
+    "peers": {
+      "status": "verified_reference_example",
+      "processing_run_ids": [
+        276
+      ],
+      "query": "Infosys",
+      "candidate_matches": 8,
+      "separate_infosys_listings": [
+        "INFY",
+        "INFY.BO",
+        "INFY.NS"
+      ],
+      "snapshot": {
+        "license": "MIT",
+        "license_url": "https://github.com/JerBouma/FinanceDatabase/blob/93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1/LICENSE",
+        "observed_at": "2026-11-18T05:28:23.684955+00:00",
+        "revision": "93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1",
+        "row_count": 17886,
+        "schema_version": "financedatabase-snapshot/v1",
+        "sha256": "09b148a4cc6ef3d65b67c9e1d6998668f9c59cfd221e3a1c553dfd2b662b98a6",
+        "source": "JerBouma/FinanceDatabase",
+        "sources": [
+          {
+            "exchange": "BSE",
+            "sha256": "209696efc31937c63ebeceaa43984693e3e605ca7074f1c93391b6c23fb8ec0e",
+            "url": "https://raw.githubusercontent.com/JerBouma/FinanceDatabase/93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1/database/equities/BSE.csv"
+          },
+          {
+            "exchange": "NMS",
+            "sha256": "4cd50a114e04bf281f4bf22f27863e8e786b263360e9be21926fe2779b83bcd2",
+            "url": "https://raw.githubusercontent.com/JerBouma/FinanceDatabase/93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1/database/equities/NMS.csv"
+          },
+          {
+            "exchange": "NSE",
+            "sha256": "4bee1263bbaf2bb292d86a72e7d00fbf56b078c1cd575e7648f72789a61f6082",
+            "url": "https://raw.githubusercontent.com/JerBouma/FinanceDatabase/93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1/database/equities/NSE.csv"
+          },
+          {
+            "exchange": "NYQ",
+            "sha256": "2f67e9891ab6ada3c761069195f1abe4e7da42603caa96b02e53404a7d07a4a4",
+            "url": "https://raw.githubusercontent.com/JerBouma/FinanceDatabase/93b872f0e4b4e05e8d35b7f0a39efe9245bcc2c1/database/equities/NYQ.csv"
+          }
+        ]
+      },
+      "input_sha256": "b7a24f9ddc91c515538ede38fb01c1cf256e69e718d8dfa49a3b278d9070057a",
+      "output_sha256": "b04aaccb695c88b90900ff962ab70a86aa31a913ebb388d8ace83a878b1cb4ba",
+      "verification": {
+        "run_id": 276,
+        "reopened_result_matches": true,
+        "input_hash_matches": true,
+        "output_hash_matches": true,
+        "snapshot_hash_matches": true,
+        "infosys_listings": [
+          {
+            "symbol": "INFY",
+            "exchange": "NYQ",
+            "currency": "USD",
+            "isin": "US4567881085"
+          },
+          {
+            "symbol": "INFY.BO",
+            "exchange": "BSE",
+            "currency": "INR",
+            "isin": "INE009A01021"
+          },
+          {
+            "symbol": "INFY.NS",
+            "exchange": "NSE",
+            "currency": "INR",
+            "isin": "INE009A01021"
+          }
+        ]
+      },
+      "limitation": "Substring candidates from a current reference snapshot are not reviewed economic peers or a historical universe."
+    },
+    "sec_amendment": {
+      "runs": [
+        277,
+        278,
+        279
+      ],
+      "raw_document_id": 51,
+      "exact_original_fact_matches": 24,
+      "before_form": "10-K",
+      "after_form": "10-K/A",
+      "changed_values": 8,
+      "repeat_created": 0,
+      "repeat_duplicates": 12,
+      "original_payload_sha256": "318ec41504bbfc17c05a974991cb9c56e3f5958c11b8ad083a2f6085d324f45f",
+      "review_status": "needs_review",
+      "missing_core_metric": "debt",
+      "knowledge_precision": "filing date only",
+      "status": "verified_original_example",
+      "fiscal_year": 2009,
+      "before_cutoff": "2010-01-24",
+      "after_cutoff": "2010-01-25",
+      "before_accession": "0001193125-09-214859",
+      "after_accession": "0001193125-10-012091",
+      "new_candidates": 24,
+      "promoted": 0,
+      "valuation_date_unchanged": true
+    },
+    "nse_action": {
+      "run": 280,
+      "raw_document_id": 52,
+      "original_payload_sha256": "0e7a1f888e0d1234764cde0c08bb4eb914ea3ec38e4f31e6a571eb1307739bc1",
+      "action_count": 1,
+      "source_locator": "$.result.content[0].text::actions[0]",
+      "cash_amount_inferred_from_prose": false,
+      "holdings_applied": false,
+      "status": "verified_original_example",
+      "symbol": "INFY",
+      "exchange": "NSE",
+      "ex_date": "2026-11-03",
+      "original_description": "Interim Dividend - Rs 26 Per Share",
+      "cash_amount": null,
+      "currency": null,
+      "publication_time": "unknown"
+    },
+    "us_corporate_actions": {
+      "status": "held",
+      "processing_run_ids": [
+        281
+      ],
+      "http_status": 503,
+      "code": "PROVIDER_NOT_CONFIGURED",
+      "prerequisite": "Privately configure a Massive key with corporate-action entitlement. No subscription was purchased."
+    },
+    "alfred_revisions": {
+      "status": "verified_original_example",
+      "series": "GDP",
+      "snapshots": [
+        {
+          "run": 282,
+          "raw_document_id": 53,
+          "as_of": "2020-04-30",
+          "observation_date": "2020-01-01",
+          "raw_value": "21537.94",
+          "original_revisions": 1,
+          "original_payload_sha256": "92cb32dd5dd57c317235be2ff5fbcaec0c43858e76434fdd1da5e0bc383ad800"
+        },
+        {
+          "run": 283,
+          "raw_document_id": 54,
+          "as_of": "2020-06-30",
+          "observation_date": "2020-01-01",
+          "raw_value": "21539.689",
+          "original_revisions": 3,
+          "original_payload_sha256": "5c8507ba2f98d21b6bf39d4b0906745acfbb056d0036dd8e330ac2d0a90cdf9c"
+        }
+      ],
+      "earlier_snapshot_preserved": true,
+      "current_macro_values_overwritten": false,
+      "units_inferred": false
+    },
+    "transcripts": {
+      "status": "held",
+      "processing_run_ids": [
+        284,
+        285
+      ],
+      "http_status": 503,
+      "code": "PROVIDER_NOT_CONFIGURED",
+      "prerequisite": "Privately configure FMP or EarningsCall transcript access and supply or identify a genuine corrected-call example."
+    },
+    "openfigi": {
+      "run": 286,
+      "raw_document_id": 55,
+      "exact_original_candidates": 25,
+      "resolution": "ambiguous",
+      "original_payload_sha256": "7389c98074480f929e980f8a9b631c77b45ce05ec5ae124152229b0200b7f956",
+      "automatic_merge": false,
+      "status": "verified_original_example",
+      "symbol": "INFY",
+      "exchange_filter": null,
+      "publication_or_historical_identity_inferred": false
+    },
+    "original_pdf": {
+      "status": "bounded_native_and_camelot_proof_complete_statement_and_ocr_coverage_unproved",
+      "source_url": "https://s2.q4cdn.com/470004039/files/doc_earnings/2025/q4/filing/10K-Q4-2025-as-filed.pdf",
+      "evidence": {
+        "upload_run": 287,
+        "camelot_run": 288,
+        "raw_document_id": 56,
+        "original_bytes": 1858048,
+        "original_sha256": "3eb270b22acb7d8d8e9c32a43dc221dec3345f8e4bca02755fdbc1ee16c823de",
+        "page_checked": 32,
+        "printed_page": 29,
+        "camelot_cells_matched_visually": 6,
+        "units_require_review": true,
+        "full_statement_coverage": false,
+        "promoted": false
+      },
+      "repair": {
+        "parser": "pdf_targeted_v8",
+        "raw_document_id": 56,
+        "original_sha256": "3eb270b22acb7d8d8e9c32a43dc221dec3345f8e4bca02755fdbc1ee16c823de",
+        "matched_original_rows": 9,
+        "share_count_rows": 6,
+        "share_unit": "shares thousand",
+        "share_counts_classified_as_eps": 0,
+        "mode": "non-writing installed parser verification",
+        "missing_money_currency_retained": true,
+        "full_statement_coverage": false
+      },
+      "newly_rejected_predecessor_candidate_ids": [
+        2117,
+        2118,
+        2120,
+        2121,
+        2123,
+        2124
+      ],
+      "rejection_policy": "Retained and rejected through the normal review API with reasons; no historical candidate rewrite or deletion.",
+      "native_repair_mode": "Non-writing verification on the installed v8 parser; nine original rows match, six share-count rows retain explicit share units, zero share rows are classified as EPS.",
+      "camelot_candidate_ids": [
+        2126,
+        2127,
+        2128,
+        2129,
+        2130,
+        2131
+      ],
+      "unresolved": "Money currency remains unknown in the selected candidates. Full statements, continued tables and scanned-page accuracy are not accepted."
+    },
+    "ocr": {
+      "status": "held",
+      "processing_run_ids": [
+        290,
+        291
+      ],
+      "http_status": 503,
+      "code": "EXTRACTION_DEPENDENCY_MISSING",
+      "prerequisite": "Compatible isolated interpreter, approved local model files and a genuine scanned-page example. Marker 2.2.0 conflicts with the approved Pillow/filelock profile.",
+      "model_downloads_started": false
+    }
+  },
+  "data_preservation": {
+    "tables": 110,
+    "original_rows": 6434,
+    "unchanged_original_rows": 6432,
+    "total_rows_after": 6502,
+    "table_changes": [
+      {
+        "table": "company_market_data",
+        "original_rows": 4,
+        "unchanged_original_rows": 3,
+        "changed_or_removed_original_hashes": 1,
+        "additional_hashes": 1
+      },
+      {
+        "table": "company_setup_workflows",
+        "original_rows": 1,
+        "unchanged_original_rows": 0,
+        "changed_or_removed_original_hashes": 1,
+        "additional_hashes": 1
+      },
+      {
+        "table": "document_assets",
+        "original_rows": 0,
+        "unchanged_original_rows": 0,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 1
+      },
+      {
+        "table": "financial_extraction_candidates",
+        "original_rows": 638,
+        "unchanged_original_rows": 638,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 39
+      },
+      {
+        "table": "market_prices",
+        "original_rows": 1006,
+        "unchanged_original_rows": 1006,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 1
+      },
+      {
+        "table": "market_regime_scores",
+        "original_rows": 14,
+        "unchanged_original_rows": 14,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 1
+      },
+      {
+        "table": "processing_runs",
+        "original_rows": 90,
+        "unchanged_original_rows": 90,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 16
+      },
+      {
+        "table": "raw_documents",
+        "original_rows": 31,
+        "unchanged_original_rows": 31,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 6
+      },
+      {
+        "table": "sources",
+        "original_rows": 4,
+        "unchanged_original_rows": 4,
+        "changed_or_removed_original_hashes": 0,
+        "additional_hashes": 4
+      }
+    ],
+    "workflow": {
+      "proof": {
+        "company_id": 13,
+        "filing_status_before": "reviewed",
+        "filing_status_after": "complete",
+        "all_other_workflow_fields_preserved": true
+      },
+      "step_before": "valuation",
+      "step_after": "financial_review",
+      "financial_extraction_before": "reviewed",
+      "financial_extraction_after": "needs_review"
+    },
+    "separate_quote_activity": {
+      "run_id": 289,
+      "run_type": "market_quote_ingestion",
+      "company_id": 13,
+      "status": "completed",
+      "provider": "yfinance_personal",
+      "started_at": "2026-11-18T07:23:50.372035+00:00",
+      "finished_at": "2026-11-18T07:23:55.217151+00:00",
+      "has_http_request_context": true
+    },
+    "prior_financial_candidates_metrics_revisions_models_portfolios_and_original_assets_unchanged": true,
+    "newly_rejected_pdf_candidate_ids": [
+      2117,
+      2118,
+      2120,
+      2121,
+      2123,
+      2124
+    ],
+    "new_candidates_promoted": 0,
+    "new_financial_candidates": 39,
+    "new_candidates_rejected": 6,
+    "new_candidates_remaining_unreviewed": 33,
+    "deployment_changes_to_existing_data": false,
+    "expected_intake_status_change": "Apple setup returns to financial review because new unreviewed source candidates exist; filing and extraction status changes are recorded.",
+    "separate_quote_activity_origin": "A separately audited HTTP quote refresh, run 289, occurred during verification. Its initiator was not attributed to these source probes. It is not described as a scheduled refresh.",
+    "retained_essential_backups": [
+      {
+        "path": "output/milestones/valuation-inputs-asof-20261112/final-dated-review.dump",
+        "bytes": 5754235,
+        "sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a"
+      },
+      {
+        "path": "output/review-research-recovery-20261116/pre-provenance-migration.dump",
+        "bytes": 5754491,
+        "sha256": "9c02891b61ed08e7c3c85d856c5b3316c177eba66a14c20e89de1afa025e31ce"
+      }
+    ],
+    "essential_backup_hashes_unchanged": true,
+    "new_database_dumps": 0,
+    "volumes_deleted": 0,
+    "source_assets_deleted": 0,
+    "actual_use_days_added": 0,
+    "populated_legacy_restore_accepted": false,
+    "financial_completeness_accepted": false
+  },
+  "cleanup": {
+    "docker_before": [
+      {
+        "Active": "4",
+        "Reclaimable": "4.977GB (52%)",
+        "Size": "9.468GB",
+        "TotalCount": "25",
+        "Type": "Images"
+      },
+      {
+        "Active": "7",
+        "Reclaimable": "0B (0%)",
+        "Size": "413.7kB",
+        "TotalCount": "7",
+        "Type": "Containers"
+      },
+      {
+        "Active": "1",
+        "Reclaimable": "167.9kB (0%)",
+        "Size": "195.9MB",
+        "TotalCount": "2",
+        "Type": "Local Volumes"
+      },
+      {
+        "Active": "0",
+        "Reclaimable": "0B",
+        "Size": "0B",
+        "TotalCount": "0",
+        "Type": "Build Cache"
+      }
+    ],
+    "docker_after": [
+      {
+        "Active": "3",
+        "Reclaimable": "798.8MB (21%)",
+        "Size": "3.726GB",
+        "TotalCount": "4",
+        "Type": "Images"
+      },
+      {
+        "Active": "4",
+        "Reclaimable": "0B (0%)",
+        "Size": "221.2kB",
+        "TotalCount": "4",
+        "Type": "Containers"
+      },
+      {
+        "Active": "1",
+        "Reclaimable": "167.9kB (0%)",
+        "Size": "195.9MB",
+        "TotalCount": "2",
+        "Type": "Local Volumes"
+      },
+      {
+        "Active": "0",
+        "Reclaimable": "0B",
+        "Size": "0B",
+        "TotalCount": "0",
+        "Type": "Build Cache"
+      }
+    ],
+    "docker_unique_image_storage_reduction_approx_bytes": 5742000000,
+    "measurement": "Docker system df unique image storage, 9.468 GB to 3.726 GB; rounded display values, not a sum of shared image virtual sizes or a claim about host sparse-disk compaction.",
+    "removed_or_untagged_image_targets": [
+      "market-intelligence-frontend-test:20261118-geist",
+      "market-intelligence-browser-test:20261118",
+      "market-intelligence-adapters-test:20261118-core",
+      "market-intelligence-adapters-test:20261118-analysis",
+      "market-intelligence-review-backend:20261116-recovery",
+      "market-intelligence-review-frontend:20261116-recovery-ui",
+      "market-intelligence-review-backend:20261118-adapters",
+      "market-intelligence-review-frontend:20261118-geist",
+      "market-intelligence-review-frontend:20261118-geist-r2",
+      "node:24-slim@sha256:0e0ff40c39bc087845bfb27465a0df4ea419520094bc35842ff83dd8cbe6f9b6",
+      "python:3.14-slim@sha256:44dd04494ee8f3b538294360e7c4b3acb87c8268e4d0a4828a6500b1eff50061",
+      "sha256:63b4a4174726afeacad1f11f1ee07ddf29fef5ebc9feddadc4bd1465643ef5a0",
+      "sha256:e9459ea5112327b0ec5a8956e479cdb4c0e5ba7d124ea848303ae36c3e32025f",
+      "sha256:dd2565f0a8cbaaf689fde2732e071b4fbf5f2994f9d00bcea5bccb357e1887bf",
+      "sha256:b02119d83fe12fb67e3c1b5b190e8dcae030f6bb736944f6742d2bf97d91dd13",
+      "sha256:9753cf4ec42065cb6501469d6dbf2e44ac1240bb0f0950a632f3edd203d58b8a",
+      "sha256:e6e28faec30ade98aafe7dd9a21d8de237d44866569741c74b95e1854243b074",
+      "sha256:82da483df5aafef6118c6e12cdec1647c96099968d5660cfabb41fa01f49a632",
+      "sha256:ec16a66a7af7477ccfad9c36a490f7862a6c4b6b52d27821f25a1891b17c0b06",
+      "sha256:4775ba6050ff91170aa71a3ac0831edcfb722068e625d7d6f2948e41a972bd6c",
+      "sha256:ae833323d4fa8f886e6ff9f7e80d5e325f04a73f794786231e2ee7cfe9ecf522"
+    ],
+    "removed_unreferenced_ancestor_ids": [
+      "sha256:09b445c84c04fc284616fd86914a260c1a368ea7352dd039bc87d6d674cce8c9",
+      "sha256:3a419dd4409836316a4d1b874465a25dbc626bb6549a4a8a03d9194dc0551330",
+      "sha256:e04a45ac60b560355573026ea71d1f37cd0faa3e20f78f8bc867ad23defbdd5a",
+      "sha256:1273131ff4c6ceaaa223d017941335d0f3402f581b4c1fc2e4826323926d3098",
+      "sha256:5d34284239cb46a0802b9286cbca2af3032c0f63fa8c70a87db3a0d8b19b1b58",
+      "sha256:23a8b401f097d23098cd19194bf4f10603e40050e1d185f39474e20ebd47c18d",
+      "sha256:4cac2a96c42c8159f5ecb50acb8d9bcdb75012cf2fa1548b30e944adafc19c07",
+      "sha256:e7a420568b252bffba50edbb7bdb7263bf476d884703439c7cc7730a655f2478",
+      "sha256:fe640910bd22ee5bcf4c2e45dd93ef8341be3ad87f94672173409306113152d6",
+      "sha256:7acf238c04bc0ffaa01b352c0b72458af2cc61db446a34710d4f18b25e2d2f27",
+      "sha256:53646a28017d360fd391f653f00a12802796727ee96f26968a5b5227c6fae536",
+      "sha256:714295ee0e26715806b93f0e622c6331318a6e23e2495babe22cb875bce54df7",
+      "sha256:d125d6471b48fa436e7183b1094c7067362ebccb8d95c99ef54357c31d6aee7d",
+      "sha256:6e1efcbb01e06aa476836559b5215031178e21edc9b9e44003d92196af85323c",
+      "sha256:df844f307431529255172a958bce08945b79b68cbdfea53bb8909e9226dd6988",
+      "sha256:1939e21a918da4630f17dec1dc50eb190cc85c5592961b49a7b85c4273bad568",
+      "sha256:364e4e029964851f83ae2a33319600045bda721fb5630511db18ec1c33cdf502",
+      "sha256:c2dc3f3e1f8d83db8d7707a75f2d6e9e9b9542d0e97e4457108da7c1ecce35b7",
+      "sha256:ff00f600ffa2e17fd9eb325a3efe3448491e06f5a9d0dd34c4364d68e4701448",
+      "sha256:6b7d9c81aab4a6dd815d3b7a9cb8baf46130b83c982ddcb8f55c2983c3df6431",
+      "sha256:7d3e38235bc87ac9dd1690a1af789c3b6a0ccdb5917741a957cd7e60a61085aa",
+      "sha256:c046d3cf157ad2591577142c9526e837369446309230661ae64b476702a359ff",
+      "sha256:1638339405fe6d35498ef24589ddafb2ba4f9809476e2b1e1386250ae7adc42b",
+      "sha256:8e12055d7828bc922d5b9303bd6f2d79b26abf809acdceb3b0a7076e8ef06e49",
+      "sha256:5ec104bceefed301ca466dd47b896b65e521456ab0ebeb963f129e7e083c4d08",
+      "sha256:a9ce7ab11cd9ae1b48b67539276b0afcec3c3dc79ac01baa17c22763f456009c",
+      "sha256:c2553eb0d454634996dfa496a4519d75d02720165923fdf81faecd4e59498ee3",
+      "sha256:281b788e10d227b5136f0d17b3e9738f3286e6c9fee7f18abffdc616934b300d",
+      "sha256:3d9440971b2e4496c3e7259826a29fd772640059244a942e38f5727f50bae6fd",
+      "sha256:e1fef9db64f6c4ea27df805836d9d1521daee12a7fd19ca313a233be7a275982",
+      "sha256:0b68585fa325a5e777827fc745660ed7a78cd59e620a36f092d40fd1d9dcb735",
+      "sha256:b562edabea3d1e5aea24b32705f2d58dfadccb198911164798fc526be6f62325",
+      "sha256:9e91933e71759b6568de111b56a40a5676b26fb2a57970a1c6bdba1d7155fe11",
+      "sha256:ff8bbd80cafad727a7735c53ac499186f44220e52b59fe428e6b77b191a65c55",
+      "sha256:bd188dfe1398ac16d9fa918d4eca494343db86a6476b6c0854a0999e320bfdf6",
+      "sha256:c541380bcd45d7ca47601ea658ebba52a66bd492bda0b4ef899b24b543ee8822",
+      "sha256:eebc76ab7010c28e25ef7016de4caaa6ec76a5a578f875584a70f82fbffd270d",
+      "sha256:104db2395199e87559255e3145861185c51af992a2cb146af45d51438b0a03d4",
+      "sha256:2f233b01a4b2778c2b26d397cd6b6cdb142899b61678fa59db9a75e7d2538e4e",
+      "sha256:8e8db8b7950696f02a15eb828cd27bf5926bdccfc043b76463fd592a9a0c1d37",
+      "sha256:fb8f06c024d2a3890bedfe231ea23783e763743820a4c7749c70e46e05db37d6",
+      "sha256:b1a172c1c75333e86471c5b39bf2a3b85079b64c6877499779d6294feb22066f",
+      "sha256:8065518a7aaad7ed2ed335f83cb37f0e8ce2ebc5fb4e1d2bc83e96d46e5dcd98",
+      "sha256:d8a7a456a908244d965db43f9222451b237db3343457f4d546a1f6819a3b93f9",
+      "sha256:c9d9f90cfa0d364328794440039b215956dd245c6ac5a1f2fcd65ec0569696a9",
+      "sha256:8971d1c2be2644bd0c5463d5c6a7dedb85ad3eb253197a2bf1cd5028b0d52f0b",
+      "sha256:852058c3bb8f69e4a7cfda30d2ea2410c7ba76ff4b380f017c3935dc1a4354b0",
+      "sha256:e538d019a11b180e16e1c8e620ef1f00562a6c1ee7fd7f461e5dbfef86f6562c",
+      "sha256:0a82d3567446efd179e40ae23d665f9e75cb726e2575b9fa1e6608681a7ba3f5",
+      "sha256:0531ccd8197e1f3a3be59f2a3dcd1e29558c2ec9ac59c15c0f4f1b051046ff47",
+      "sha256:243908dc2e4a716328a594ace5d11cb58557fcfffb3eefed474e5aba9e030eba",
+      "sha256:4ab7a13e8301588ab611594db643b79ac679b986926c917474166d257c08b074",
+      "sha256:c00665cb6e4be63351a572ee72889b8467267ddfbb8cd9a8bfb56a30b4b27ef8",
+      "sha256:7301e6ea0301cf3d3a99c324670a608e3a72eb2ea3598ce9062171935e8ce09a",
+      "sha256:bae72466b9a2ddcb7b24db7d1353ab2ef26fc1b769233be54aff45dc9c2274f5",
+      "sha256:e50d6d34755e104623e1dd302e71b46353221ad1af09411a87d6c2eacf249626",
+      "sha256:092bde39dfaa56eefe7ae7d6ed41077e7eb8ddacdd0f2f44d5295eb3e9110e73",
+      "sha256:0f7421875df34ca64799aed32caa97fcf99942ce4bd16405ddc95244a54e714e",
+      "sha256:38b09b0ee90f5cf60b3e4badfae490d970f77ebc20061a1b04aa96701cea421b",
+      "sha256:e6632bdf9c07bfceddf2ddd1d684011402a7fb58f85e66b2f5edf71acd408cab",
+      "sha256:23ee403e8d164d112bd46049fd2fc658911f40bb491d32232292a7c5d19e9dc0"
+    ],
+    "removed_final_test_container_ids": [
+      "bc56acd6a4d467af5cab3e65dae8e96125c9444ae0587ffd7dad8cbc2a5c67bf",
+      "a28e3de1d4a5aa24b1a95788742dc9bd2dbe590a3fed1544d0c5a72fb908ae3e",
+      "010a18731e1f19278a5bd3ceb1f9dbb3994b11b89bae31e88043e7e6147a930d"
+    ],
+    "removed_test_network": "mi2018-verification_default",
+    "retained_images": [
+      {
+        "Id": "sha256:ffc2bbff06315ff4df9ece9bb055d07c10309ba857a8b34de31610debc1e3aef",
+        "Parent": "sha256:2dfb7891bfee65f5f94745d568bde13ff1ca48489bf7b4fe5f6bf97fad1cf840",
+        "RepoTags": [
+          "market-intelligence-review-backend:20261118-adapters-r2"
+        ],
+        "Size": 1809565909,
+        "Created": "2026-11-18T07:33:08.05227597Z",
+        "working_directory": "/workspace"
+      },
+      {
+        "Id": "sha256:7352963da6ac3916b7059036e8cf99cf2f00b2d6e7432d1ee0c34d595e49afb6",
+        "Parent": "sha256:839d165599dfac0e7159a6d98b386cd68515a01b0bb4908e166fc28f31b8f8ff",
+        "RepoTags": [
+          "market-intelligence-review-frontend:20261118-geist-r3"
+        ],
+        "Size": 454504553,
+        "Created": "2026-11-18T07:47:28.095458423Z",
+        "working_directory": "/app"
+      },
+      {
+        "Id": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e",
+        "RepoTags": [
+          "market-intelligence-review-postgres:20261107-security-r2"
+        ],
+        "Size": 662635059,
+        "Created": "2026-11-07T19:34:33.430263175Z",
+        "working_directory": null
+      },
+      {
+        "Id": "sha256:68c98ecd57186b0a5ec07af2a2901513b0ed494273dae7967c076c703728c993",
+        "RepoTags": [
+          "market-intelligence-tools:local"
+        ],
+        "Size": 1001788920,
+        "Created": "2026-11-16T03:42:57.158456716Z",
+        "working_directory": "/workspace"
+      }
+    ],
+    "tools_image_reason": "Host Git is unavailable; the retained local tools image remains necessary for repository operations and checks.",
+    "preserved_volumes": [
+      "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882",
+      "market-intelligence-md-filescopy_marketintel_postgres_data"
+    ],
+    "browser_capture_targets_removed": 371,
+    "browser_capture_bytes_removed": 289574990,
+    "temporary_host_files_status": "complete",
+    "earlier_failed_build_container_cleanup": {
+      "container_id": "92432526439af02587cc862c972ea2bb9c7d47b246ef57d741be656de115d799",
+      "name": "/busy_wescoff",
+      "reason": "Failed disposable browser dependency build",
+      "writable_bytes": 19615744,
+      "mounts": [
+
+      ]
+    },
+    "exact_private_cleanup_manifests": [
+      "cleanup-plan.json",
+      "cleanup-docker.json",
+      "cleanup-parent-plan.json",
+      "cleanup-media.json",
+      "cleanup-temp.json"
+    ],
+    "no_global_prune": true,
+    "no_volume_deletion": true,
+    "no_new_rollback_stack": true,
+    "temporary_host_files_removed_bytes": 53029470,
+    "temporary_host_targets_removed": 51,
+    "host_total_removed_bytes": 342604460
+  },
+  "evidence_directory": "output/ui-adapter-release-20261118",
+  "next_work_owner": "docs/limitations.md#installed-adapters-and-remaining-source-prerequisites",
+  "publication": "GitHub stays deferred at the user request. No commits, pushes, account changes or temporary GitHub login were made."
+}

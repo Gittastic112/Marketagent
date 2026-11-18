@@ -35,3 +35,35 @@ for (const width of [1440, 390]) {
     await expect(page.getByRole("main").getByRole("heading", { name: "Revenue-Weighted Industry Mix", exact: true })).toBeVisible();
   });
 }
+
+for (const manual of [false, true]) {
+  test(`Mock Data source refresh displays the adopted growth schedule (manual=${manual})`, async ({page}) => {
+    const {createCompany, expandDraftSections} = await import("./helpers");
+    await signIn(page);
+    const ticker = `G${manual ? "M" : "A"}${Date.now().toString().slice(-7)}`;
+    const company = await createCompany(page, {ticker, local_symbol: ticker, name: "Mock Data growth refresh"});
+    await page.goto(`/companies/${company.id}/valuation/draft`);
+    await page.getByRole("button", {name: "Create draft", exact: true}).click();
+    await expandDraftSections(page);
+    const growth = {"1": manual ? 0.123 : 0.087, "2": 0.04};
+    if (manual) await page.locator("#revenue-growth:visible").fill(JSON.stringify(growth));
+    const draft = await backendData<{id: number}>(page, `/companies/${company.id}/valuation-drafts/current`);
+    await page.route(`**/api/backend/valuation-drafts/${draft.id}`, async route => {
+      if (route.request().method() !== "GET") return route.continue();
+      const response = await route.fetch();
+      const body = await response.json();
+      body.data.assumptions_json.revenue_growth_years_json = growth;
+      await route.fulfill({response, json: body});
+    });
+    await page.route(`**/api/backend/companies/${company.id}/valuation-source-refresh`, async route => {
+      if (route.request().method() !== "POST") return route.continue();
+      await route.fulfill({json: {data: {id: 9999, company_id: company.id, status: "success", started_at: "2026-11-16T00:00:00Z",
+        finished_at: "2026-11-16T00:00:01Z", scheduled_for: null, steps: [], warnings: ["Mock Data refresh response"], draft_ids: [draft.id]},
+        meta: {status: "success", source: "mock", is_mock: true, is_stale: false, warnings: ["Mock Data refresh response"]}, errors: []}});
+    });
+    await page.getByRole("button", {name: "Fetch latest source inputs"}).click();
+    await expect(page.getByText("Source refresh finished.", {exact: false})).toBeVisible();
+    await expect(page.locator("#revenue-growth:visible")).toHaveValue(JSON.stringify(growth, null, 2));
+    expect(JSON.parse(await page.locator('#revenue-growth').evaluate((element: HTMLTextAreaElement) => String(new FormData(element.form!).get('revenue_growth_years_json'))))).toEqual(growth);
+  });
+}

@@ -83,3 +83,23 @@ test("validation errors expose actionable field paths without echoing submitted 
       && error.status === 422 && error.message === "dataset.observations.2.returns: Field required" && !error.message.includes("private-source-text"));
   });
 });
+
+test("failed operations retain safe processing-run details for both HTTP and envelope errors", async () => {
+  for (const status of [200, 503]) {
+    const detail = { code: "ADAPTER_TIMEOUT", message: "Source request timed out", processing_run_id: 42, retryable: true, input: "private-source-text" };
+    await withFetch(() => Response.json({ data: null, meta: {}, errors: [detail] }, { status }), async () => {
+      await assert.rejects(() => postApi("/test", {}), (error: unknown) => error instanceof ApiError
+        && error.status === status && error.code === "ADAPTER_TIMEOUT" && error.processingRunId === 42 && error.retryable === true
+        && !JSON.stringify(error).includes("private-source-text"));
+    });
+  }
+});
+
+test("error receipts reject malformed run identifiers without retaining private input", () => {
+  for (const value of [-1, 0, true, "42", Number.MAX_SAFE_INTEGER + 1]) {
+    const error = new ApiError("Unavailable", 503, { processing_run_id: value, retryable: "yes", input: "private" });
+    assert.equal(error.processingRunId, undefined);
+    assert.equal(error.retryable, undefined);
+    assert.ok(!JSON.stringify(error).includes("private"));
+  }
+});

@@ -10,6 +10,7 @@ import { fetchResearchCompanies, searchStoredEvidence } from "@/lib/api/research
 import { createRequestGate } from "@/lib/latest-request";
 import { useLatestResource } from "@/lib/use-latest-resource";
 import { matchingResearchCompanies, researchResultHref } from "@/lib/research-search";
+import { isWorkspaceSearchShortcut } from "@/lib/workspace-chrome";
 import { DataStateNotices } from "@/components/ui/data-states";
 
 type Scope = "companies" | "evidence" | "lookup";
@@ -18,15 +19,17 @@ export function ResearchCommandPalette() {
   const [open, setOpen] = useState(false);
   useEffect(() => {
     function shortcut(event: globalThis.KeyboardEvent) {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k" && !event.altKey) {
-        event.preventDefault(); setOpen(value => !value);
-      }
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      const editing = Boolean(target?.isContentEditable || target?.closest('input, textarea, select, [role="textbox"]'));
+      if (!isWorkspaceSearchShortcut(event, editing) || document.querySelector('dialog[open], [aria-modal="true"]')) return;
+      event.preventDefault();
+      setOpen(true);
     }
     document.addEventListener("keydown", shortcut);
     return () => document.removeEventListener("keydown", shortcut);
   }, []);
   return <>
-    <button type="button" className="secondary-button topbar-search-link" aria-label="Search companies and evidence" title="Search companies and evidence (Ctrl or Command K)" onClick={() => setOpen(true)}>
+    <button type="button" className="secondary-button topbar-search-link" aria-label="Search companies and evidence" aria-haspopup="dialog" aria-keyshortcuts="Meta+K Control+K" title="Search companies and evidence (Ctrl or Command K)" onClick={() => setOpen(true)}>
       <Search size={16} aria-hidden="true" /><span>Search</span><kbd aria-hidden="true">⌘/Ctrl K</kbd>
     </button>
     {open && <ResearchSearchDialog onClose={() => setOpen(false)} />}
@@ -36,6 +39,7 @@ export function ResearchCommandPalette() {
 function ResearchSearchDialog({ onClose }: { onClose: () => void }) {
   const id = useId();
   const dialog = useRef<HTMLDialogElement>(null);
+  const queryInput = useRef<HTMLInputElement>(null);
   const [scope, setScope] = useState<Scope>("companies");
   const [query, setQuery] = useState("");
   const [market, setMarket] = useState("");
@@ -54,6 +58,7 @@ function ResearchSearchDialog({ onClose }: { onClose: () => void }) {
     const previous = document.activeElement as HTMLElement | null;
     const element = dialog.current;
     element?.showModal();
+    queryInput.current?.focus();
     return () => { element?.close(); previous?.focus(); requests.invalidate(); lookupRequests.invalidate(); };
   }, [requests, lookupRequests]);
 
@@ -90,6 +95,14 @@ function ResearchSearchDialog({ onClose }: { onClose: () => void }) {
     }
   }
   function moveThroughResults(event: KeyboardEvent<HTMLDialogElement>) {
+    if (event.key === "Escape") {
+      // Search fields can consume Escape to clear their text before the native
+      // dialog receives a cancel event. Dismiss consistently on the first key.
+      event.preventDefault();
+      event.stopPropagation();
+      onClose();
+      return;
+    }
     if (!["ArrowDown", "ArrowUp"].includes(event.key)) return;
     const target = event.target as HTMLElement;
     if (target.id !== `${id}-query` && !target.hasAttribute("data-search-result")) return;
@@ -119,7 +132,7 @@ function ResearchSearchDialog({ onClose }: { onClose: () => void }) {
           <button key={value} type="button" className="secondary-button" aria-pressed={scope === value} onClick={() => changeScope(value)}>{label}</button>)}
       </div>
       <div className="field"><label htmlFor={`${id}-query`}>{scope === "lookup" ? "Ticker to look up" : "Search terms"}</label>
-        <input id={`${id}-query`} autoFocus type="search" value={query} maxLength={scope === "lookup" ? 40 : 200}
+        <input ref={queryInput} id={`${id}-query`} type="search" value={query} maxLength={scope === "lookup" ? 40 : 200}
           placeholder={scope === "companies" ? "Name, ticker, exchange or ISIN" : scope === "evidence" ? "Search stored evidence (at least 2 characters)" : "Ticker"}
           onChange={event => changeQuery(event.target.value)} /></div>
       {scope !== "evidence" && <div className="form-grid">

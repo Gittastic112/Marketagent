@@ -38,7 +38,7 @@
 }
 
 .panel-content {
-  padding: 24px;
+  padding: 20px;
   min-width: 0;
 }
 
@@ -52,7 +52,7 @@
   border-bottom: 1px solid var(--line);
   display: flex;
   justify-content: space-between;
-  padding: 16px 24px;
+  padding: 14px 20px;
   gap: 16px;
 }
 
@@ -152,8 +152,8 @@ table {
 th,
 td {
   border-bottom: 1px solid var(--line);
-  font-size: 14px;
-  padding: 16px 24px;
+  font-size: 13px;
+  padding: 14px 20px;
   text-align: left;
   vertical-align: middle;
   line-height: 1.45;
@@ -165,10 +165,10 @@ th {
   white-space: nowrap;
   color: var(--muted);
   font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: 500;
+  text-transform: none;
   letter-spacing: 0;
-  background: rgba(255, 255, 255, 0.01);
+  background: var(--color-sidebar);
 }
 
 tr {
@@ -212,27 +212,27 @@ tr:last-child td {
 }
 
 label {
-  color: #475467;
+  color: var(--text);
   font-size: var(--font-size-xs);
-  font-weight: 600;
-  text-transform: uppercase;
+  font-weight: 500;
+  text-transform: none;
   letter-spacing: 0;
 }
 
 input,
 select,
 textarea {
-  background: #ffffff;
+  background: var(--surface);
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--text);
   font: inherit;
   font-size: 14px;
-  min-height: 42px;
-  padding: 10px 14px;
+  min-height: 38px;
+  padding: 8px 11px;
   width: 100%;
   transition: var(--transition);
-  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.02);
 }
 
 input:focus,
@@ -240,8 +240,8 @@ select:focus,
 textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent-light), inset 0 1px 2px rgba(0,0,0,0.05);
-  background: #ffffff;
+  box-shadow: 0 0 0 2px var(--accent-light);
+  background: var(--surface);
 }
 
 select {
@@ -310,16 +310,16 @@ textarea {
 button,
 .primary-button,
 .btn {
-  background: var(--accent);
+  background: var(--text);
   border: 1px solid transparent;
-  border-radius: 8px;
-  color: #ffffff;
+  border-radius: 6px;
+  color: var(--surface);
   cursor: pointer;
   font: inherit;
-  font-weight: 600;
-  font-size: 14px;
-  min-height: 40px;
-  padding: 8px 20px;
+  font-weight: 500;
+  font-size: 13px;
+  min-height: 36px;
+  padding: 7px 13px;
   transition: box-shadow var(--transition), border-color var(--transition), transform var(--transition);
   box-shadow: var(--shadow-sm);
   display: inline-flex;
@@ -331,8 +331,8 @@ button,
 button:hover,
 .primary-button:hover,
 .btn-primary:hover {
-  background: var(--accent-strong);
-  color: #ffffff;
+  background: color-mix(in srgb, var(--text) 88%, var(--surface));
+  color: var(--surface);
 }
 
 button:active {
@@ -348,9 +348,9 @@ button:active {
 
 .danger-button:hover {
   background: var(--danger);
-  color: #fff;
+  color: var(--surface);
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+  box-shadow: none;
 }
 
 .secondary-button,
@@ -391,7 +391,7 @@ button:disabled {
 .edit-panel {
   max-width: 100%;
   min-width: 0;
-  background: rgba(0,0,0,0.02);
+  background: var(--color-sidebar);
   border-radius: 8px;
   border: 1px solid var(--line);
   padding: 12px;
@@ -443,16 +443,16 @@ button:disabled {
 }
 
 .badge {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-sidebar);
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: 5px;
   color: var(--text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 500;
-  padding: 4px 10px;
+  padding: 2px 7px;
   white-space: nowrap;
   letter-spacing: 0;
 }

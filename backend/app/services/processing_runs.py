@@ -132,6 +132,9 @@ def record_ingestion_run(
     metadata: dict | None = None,
 ) -> ProcessingRun:
     finished_at = datetime.now(UTC)
+    completed_text_count = getattr(result, "completed_text_count", None)
+    if completed_text_count is not None:
+        metadata = {**(metadata or {}), "completed_text_count": completed_text_count}
     run = ProcessingRun(
         run_type=run_type,
         source_type=source_type,
@@ -163,7 +166,8 @@ def record_ingestion_run(
 
 
 def _status_for_result(result: IngestionResult) -> str:
-    return _status_for_counts(error_count=result.error_count, created_count=result.created_count)
+    return _status_for_counts(error_count=result.error_count,
+        created_count=result.created_count + getattr(result, "completed_text_count", 0))
 
 
 def _status_for_counts(*, error_count: int, created_count: int) -> str:

@@ -2095,6 +2095,7 @@ export interface operations {
     runs_api_research_lab_runs_get: {
         parameters: {
             query?: {
+                before_run_id?: number | null;
                 limit?: number;
             };
             header?: never;

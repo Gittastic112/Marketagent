@@ -34,7 +34,7 @@ async function apiError(response: Response): Promise<ApiError> {
   try {
     const body = await response.json();
     if (body && Array.isArray(body.errors) && body.errors.length > 0) {
-      return new ApiError(body.errors[0].message, response.status);
+      return new ApiError(body.errors[0].message, response.status, body.errors[0]);
     }
     if (body && typeof body.detail === "string") {
       return new ApiError(body.detail, response.status);
@@ -61,7 +61,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   if (payload && typeof payload === "object" && "meta" in payload) {
     const apiResponse = payload as ApiResponse<T>;
     if (apiResponse.errors && apiResponse.errors.length > 0) {
-      throw new ApiError(apiResponse.errors[0].message, response.status);
+      throw new ApiError(apiResponse.errors[0].message, response.status, apiResponse.errors[0]);
     }
     return apiResponse.data as T;
   }

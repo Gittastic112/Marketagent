@@ -193,3 +193,19 @@ def test_export_escapes_untrusted_titles_and_warnings():
     )
     assert "<script>" not in rendered and "<img" not in rendered
     assert "&lt;script&gt;" in rendered
+
+
+def test_export_displays_benchmark_percentages_and_undefined_ratios():
+    rendered = render_html({
+        "run_id": 7,
+        "result": {"metrics": {"total_return": 0.25}, "benchmark": {
+            "total_return": 0.125, "tracking_error_annualized": 0.0,
+            "beta": 1.2, "correlation": None}},
+        "manifest": {"adapter": "Mock Data", "adapter_version": "1", "created_at": "2025-01-01",
+                     "input_sha256": "a" * 64, "output_sha256": "b" * 64},
+    })
+    assert "Saved benchmark comparison" in rendered
+    assert "25.00%" in rendered and "12.50%" in rendered and "0.00%" in rendered
+    assert "<th scope=\"row\">beta</th><td>1.2</td>" in rendered
+    assert "<th scope=\"row\">correlation</th><td>Unavailable</td>" in rendered
+    assert "Ratios are unitless" in rendered

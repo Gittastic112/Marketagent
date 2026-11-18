@@ -1,24 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { LogIn, LogOut, Search, ShieldCheck } from "lucide-react";
+import { LogIn, LogOut, ShieldCheck } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import { workspaceLocation } from "@/lib/workspace-chrome";
 import { ResearchCommandPalette } from "./research-command-palette";
 
 export function TopBar() {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
   return (
     <header className="topbar">
-      <p className="topbar-context">Personal research <span>Evidence before conviction</span></p>
+      <nav className="workspace-breadcrumb" aria-label="Breadcrumb"><Link prefetch={false} href="/">Workspace</Link><span aria-hidden="true">/</span><span aria-current="page">{workspaceLocation(pathname)}</span></nav>
       <div className="topbar-actions">
         <Link prefetch={false} href="/data-health" className="data-freshness">
           <ShieldCheck size={16} aria-hidden="true" />Data health
         </Link>
         <div className="user-controls">
           <ResearchCommandPalette />
-          <Link prefetch={false} href="/search" className="secondary-button topbar-search-link" aria-label="Search evidence" title="Search evidence">
-            <Search size={16} aria-hidden="true" /><span>Search evidence</span>
-          </Link>
           {status === "authenticated" ? (
             <button className="secondary-button" type="button" onClick={() => signOut({ callbackUrl: "/" })} title="Sign out" aria-label="Sign out">
               <LogOut size={16} aria-hidden="true" />

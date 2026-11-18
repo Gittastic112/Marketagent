@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -13,6 +13,7 @@ from app.api.schemas import (
 from app.api.ai_errors import public_ai_error
 from app.api.dependencies import get_current_user
 from app.services.ai_contract import AIExecutionError, require_privacy_disclosure
+from app.services.narrative_origin import claims_with_origin
 from app.db.session import get_db
 from app.models.narrative import NarrativeCluster, NarrativeClaim, NarrativeMention
 
@@ -41,23 +42,29 @@ def delete_narrative_cluster(cluster_id: int, db: Session = Depends(get_db)) -> 
 
 # Narrative Claims
 @router.post("/narrative-claims", response_model=ApiResponse[NarrativeClaimRead], status_code=status.HTTP_201_CREATED)
-def create_narrative_claim(payload: NarrativeClaimCreate, db: Session = Depends(get_db)) -> NarrativeClaim:
-    return ApiResponse(data=create_record(db, NarrativeClaim, payload))
+def create_narrative_claim(payload: NarrativeClaimCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    get_or_404(db, NarrativeCluster, payload.cluster_id)
+    claim = NarrativeClaim(**payload.model_dump(), origin="manual")
+    db.add(claim); db.commit(); db.refresh(claim)
+    return ApiResponse(data=claims_with_origin(db, [claim], current_user["id"])[0])
 
 @router.get("/narrative-claims", response_model=ApiResponse[list[NarrativeClaimRead]])
-def list_narrative_claims(cluster_id: int | None = None, db: Session = Depends(get_db)) -> list[NarrativeClaim]:
+def list_narrative_claims(cluster_id: int | None = None, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     query = select(NarrativeClaim).order_by(NarrativeClaim.created_at.desc())
     if cluster_id:
         query = query.where(NarrativeClaim.cluster_id == cluster_id)
-    return ApiResponse(data=list(db.scalars(query)))
+    return ApiResponse(data=claims_with_origin(db, list(db.scalars(query)), current_user["id"]))
 
 @router.get("/narrative-claims/{claim_id}", response_model=ApiResponse[NarrativeClaimRead])
-def get_narrative_claim(claim_id: int, db: Session = Depends(get_db)) -> NarrativeClaim:
-    return ApiResponse(data=get_or_404(db, NarrativeClaim, claim_id))
+def get_narrative_claim(claim_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=claims_with_origin(db, [get_or_404(db, NarrativeClaim, claim_id)], current_user["id"])[0])
 
 @router.patch("/narrative-claims/{claim_id}", response_model=ApiResponse[NarrativeClaimRead])
-def update_narrative_claim(claim_id: int, payload: NarrativeClaimUpdate, db: Session = Depends(get_db)) -> NarrativeClaim:
-    return ApiResponse(data=update_record(db, get_or_404(db, NarrativeClaim, claim_id), payload))
+def update_narrative_claim(claim_id: int, payload: NarrativeClaimUpdate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    claim = get_or_404(db, NarrativeClaim, claim_id)
+    if claim.ai_output_id is not None:
+        raise HTTPException(status_code=409, detail="Generated claims retain their original evidence. Add a separate manual claim to record a correction.")
+    return ApiResponse(data=claims_with_origin(db, [update_record(db, claim, payload)], current_user["id"])[0])
 
 @router.delete("/narrative-claims/{claim_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_narrative_claim(claim_id: int, db: Session = Depends(get_db)) -> None:

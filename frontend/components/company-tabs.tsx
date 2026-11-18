@@ -57,7 +57,7 @@ export function CompanyTabs({ companyId }: { companyId: string }) {
             {tab.label}
             {tab.sections.some(segment => staleSegments[segment]) && (
               <span title="This section has stale data" aria-label="This section has stale data">
-                <AlertTriangle className="text-amber-500" size={14} aria-hidden="true" />
+                <AlertTriangle className="text-[var(--warning)]" size={14} aria-hidden="true" />
               </span>
             )}
           </Link>

@@ -4,7 +4,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
@@ -189,24 +189,27 @@ def _owned_query(user_id: str):
     )
 
 
-def history(db: Session, user_id: str, limit: int = 25) -> list[ResearchRunSummary]:
+def history(db: Session, user_id: str, limit: int = 25, before_run_id: int | None = None) -> list[ResearchRunSummary]:
+    query = _owned_query(user_id)
+    if before_run_id is not None:
+        query = query.where(ProcessingRun.id < before_run_id)
     runs = db.scalars(
-        _owned_query(user_id).order_by(ProcessingRun.id.desc()).limit(limit)
+        query.order_by(ProcessingRun.id.desc()).limit(limit)
     ).all()
-    return [
-        ResearchRunSummary(
+    summaries = []
+    for run in runs:
+        metadata = run.metadata_json or {}
+        saved = metadata.get("research_result")
+        manifest = saved.get("manifest") if isinstance(saved, dict) else None
+        summaries.append(ResearchRunSummary(
             run_id=run.id,
-            kind=(run.metadata_json or {}).get("kind", "unknown"),
+            kind=metadata.get("kind") if isinstance(metadata.get("kind"), str) else "unknown",
             status=run.status,
             created_at=run.started_at,
-            input_sha256=(run.metadata_json or {}).get("input_sha256"),
-            adapter=(run.metadata_json or {})
-            .get("research_result", {})
-            .get("manifest", {})
-            .get("adapter"),
-        )
-        for run in runs
-    ]
+            input_sha256=metadata.get("input_sha256") if isinstance(metadata.get("input_sha256"), str) else None,
+            adapter=manifest.get("adapter") if isinstance(manifest, dict) and isinstance(manifest.get("adapter"), str) else None,
+        ))
+    return summaries
 
 
 def saved_run(db: Session, user_id: str, run_id: int) -> dict:
@@ -223,10 +226,23 @@ def saved_run(db: Session, user_id: str, run_id: int) -> dict:
             409,
         )
     saved = metadata["research_result"]
-    manifest = saved["manifest"]
-    if manifest["input_sha256"] != digest(metadata["input"]) or manifest[
-        "output_sha256"
-    ] != digest(saved["result"]):
+    try:
+        parsed = ResearchRunResult.model_validate(saved)
+        if (
+            type(saved["run_id"]) is not int or parsed.run_id != run.id
+            or parsed.kind != metadata.get("kind")
+            or run.run_type != f"research_lab_{parsed.kind}"
+            or not isinstance(metadata.get("input"), dict)
+            or parsed.manifest.adapter != parsed.result.get("adapter")
+            or parsed.manifest.adapter_version != parsed.result.get("adapter_version")
+        ):
+            raise ValueError("Receipt identity is inconsistent")
+        input_hash, output_hash = digest(metadata["input"]), digest(saved["result"])
+    except (ValidationError, KeyError, TypeError, ValueError, OverflowError):
+        raise ResearchAdapterError(
+            "RESEARCH_RUN_INVALID", "The saved research receipt is incomplete or inconsistent. Its original record has been preserved.", 409
+        ) from None
+    if parsed.manifest.input_sha256 != input_hash or parsed.manifest.output_sha256 != output_hash or metadata.get("input_sha256") != input_hash:
         raise ResearchAdapterError(
             "RESEARCH_RUN_HASH_MISMATCH",
             "Stored research content no longer matches its receipt.",

@@ -112,14 +112,29 @@ def report(request: ReportRequest) -> dict:
     }
 
 
+_PERCENT_METRICS = {"total_return", "annualized_return", "annualized_volatility", "max_drawdown", "win_rate", "tracking_error_annualized"}
+
+
+def _metric_table(metrics: dict, caption: str) -> str:
+    rows = []
+    for key, value in metrics.items():
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            displayed = "Unavailable"
+        elif key in _PERCENT_METRICS:
+            displayed = f"{value * 100:.2f}%"
+        else:
+            displayed = f"{value:,.4f}".rstrip("0").rstrip(".")
+        rows.append(f'<tr><th scope="row">{html.escape(str(key).replace("_", " "))}</th><td>{displayed}</td></tr>')
+    return f"<table><caption>{caption}</caption><thead><tr><th scope=\"col\">Metric</th><th scope=\"col\">Value</th></tr></thead><tbody>{''.join(rows)}</tbody></table>"
+
+
 def render_html(saved: dict) -> str:
     """Only our own escaped markup, no provider templates, scripts, or remote assets."""
     result, manifest = saved["result"], saved["manifest"]
     metrics = result.get("metrics", {})
-    cells = "".join(
-        f"<tr><th>{html.escape(str(key))}</th><td>{html.escape(str(value) if value is not None else 'Unavailable')}</td></tr>"
-        for key, value in metrics.items()
-    )
+    tables = _metric_table(metrics, "Saved calculation metrics")
+    if isinstance(result.get("benchmark"), dict):
+        tables += _metric_table(result["benchmark"], "Saved benchmark comparison")
     warnings = "".join(
         f"<li>{html.escape(str(warning))}</li>" for warning in saved.get("warnings", [])
     )
@@ -140,7 +155,7 @@ def render_html(saved: dict) -> str:
         "td,th{padding:10px;text-align:left;border-bottom:1px solid #ddd}table{width:100%;border-collapse:collapse}code{overflow-wrap:anywhere}svg{width:100%}</style><body>"
         f"<h1>{html.escape(result.get('title', 'Marketagent research report'))}</h1>"
         f"<p>Run {int(saved['run_id'])}. Hypothetical research. Adapter {html.escape(manifest['adapter'])} {html.escape(manifest['adapter_version'])}.</p>"
-        f"{svg}<table>{cells}</table><h2>Qualifications</h2><ul>{warnings}</ul>"
+        f"{svg}{tables}<p>Returns, volatility, drawdown, win rate and tracking error are percentages. Ratios are unitless.</p><h2>Qualifications</h2><ul>{warnings}</ul>"
         f"<h2>Reproducibility</h2><p>Input SHA256 <code>{html.escape(manifest['input_sha256'])}</code></p>"
         f"<p>Output SHA256 <code>{html.escape(manifest['output_sha256'])}</code></p>"
         f"<p>Saved at {html.escape(manifest['created_at'])}. Download the JSON export for the exact inputs and manifest.</p></body></html>"

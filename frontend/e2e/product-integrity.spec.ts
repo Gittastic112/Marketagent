@@ -173,6 +173,10 @@ test("research discloses AI transmission and rejects an unconfigured provider be
   await expect(page.locator("p.inline-error[role=alert]")).toContainText("Save could not be confirmed");
   await expect(page.getByRole("main").getByText(/Your research message was saved/)).toHaveCount(0);
   await expect(input).toHaveValue(question);
+  await expect(page.getByRole("button", {name: "Send", exact: true})).toBeDisabled();
+  await page.getByRole("button", {name: "Check result", exact: true}).click();
+  await expect(page.locator("p.inline-error[role=alert]")).toContainText("No request was resent");
+  await page.getByRole("button", {name: "I checked the result; enable a new request", exact: true}).click();
   await expect(page.getByRole("button", {name: "Send", exact: true})).toBeEnabled();
   await expect(page.getByText("No messages yet. Start the research session by asking a question.")).toBeVisible();
   const stored = await backendData<{messages: unknown[]}>(page, `/research/sessions/${sessionId}`);

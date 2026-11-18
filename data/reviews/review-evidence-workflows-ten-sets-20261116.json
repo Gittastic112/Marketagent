@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "kind": "review_evidence_workflows_ten_sets",
+  "date": "2026-11-16",
+  "status": "installed_locally_publication_deferred",
+  "source_commit": "409330e",
+  "branch": "codex/review-evidence-workflows-20261116",
+  "scope": "Ten bounded repairs; no migration, source rewrite or acceptance points.",
+  "sets": [
+    {
+      "number": 1,
+      "finding": "A3-9",
+      "outcome": "Keep matched-flow ending wealth; withhold incompatible return percentages and spread when external flows exist, including net-zero flows."
+    },
+    {
+      "number": 2,
+      "finding": "A1-F8",
+      "outcome": "Retry empty or failed SEC text into the existing identity; preserve populated bytes and report recovered text in Processing Runs."
+    },
+    {
+      "number": 3,
+      "finding": "A1-F9",
+      "outcome": "Flush accepted identities and serialize same-company inserts; concurrent and repeated batches keep one source."
+    },
+    {
+      "number": 4,
+      "finding": "A1-F10",
+      "outcome": "Extract additional bounded page ranges from a hash-verified retained PDF; preserve asset bytes, previous candidates and reviews."
+    },
+    {
+      "number": 5,
+      "finding": "A1-F11",
+      "outcome": "Reuse valid filing sections and repair missing or outdated predecessor comparisons atomically and idempotently."
+    },
+    {
+      "number": 6,
+      "finding": "A1-F12",
+      "outcome": "Reviewed history uses candidate PDF geometry/page routing, with document evidence fallback."
+    },
+    {
+      "number": 7,
+      "finding": "A2-4",
+      "outcome": "Pause draft and peer editing during pending saves and prevent overlapping refresh/promotion actions."
+    },
+    {
+      "number": 8,
+      "finding": "A2-5",
+      "outcome": "Refresh the visible growth editor from the same adopted assumptions, including retained manual schedules."
+    },
+    {
+      "number": 9,
+      "finding": "A2-6",
+      "outcome": "Require the inspected timestamp, review token and reason; reject obsolete acknowledgements and retain unchanged-assumption review receipts."
+    },
+    {
+      "number": 10,
+      "finding": "A2-7",
+      "outcome": "Owner-scoped exact exports serialize raw stored inputs, outputs, warnings and receipts; current interpretation remains separate."
+    }
+  ],
+  "validation": {
+    "backend": {
+      "passed": 2117,
+      "skipped": 18,
+      "code_checkpoint": "0de3877"
+    },
+    "postgres_concurrency": {
+      "passed": 10
+    },
+    "frontend": {
+      "passed": 398,
+      "typecheck": "passed",
+      "production_build": "passed",
+      "code_checkpoint": "7676ce6",
+      "final_production_build_code_checkpoint": "409330e"
+    },
+    "final_focused_backend": {
+      "passed": 35
+    },
+    "browser": {
+      "status": "passed_with_documented_reruns",
+      "initial_findings": [
+        "Promoted candidate evidence was filtered out; fixed in 7676ce6.",
+        "Disposable HTTP container hostname lacked secure-context browser cryptography; final runner uses loopback matching normal installation."
+      ],
+      "passed": 73,
+      "full_run": {
+        "passed": 70,
+        "failed": 3
+      },
+      "targeted_rerun": {
+        "passed": 3,
+        "failed": 0,
+        "changes": "Corrected the new Mock Data response envelope and unique company identities. Repeated the portfolio check unchanged after its connection reset; no time budget, assertion or application security change."
+      },
+      "basis": "Isolated Mock Data, application images at 7676ce6, loopback browser origin; desktop/mobile routes, keyboard/accessibility and changed workflows. The later CSS-only production image at 409330e passed separate desktop/mobile layout checks. No genuine-use acceptance claimed.",
+      "normal_in_app_visual": "Unavailable: in-app browser connection remained offline. Representative isolated screenshots were visually inspected."
+    },
+    "hosted_ci": "deferred with GitHub publication",
+    "history_integration_followup": {
+      "passed": 37,
+      "regression": "Promoted candidates remain available for reviewed-history evidence without reappearing in the review queue.",
+      "code_checkpoint": "7676ce6"
+    },
+    "ticker_layout": {
+      "status": "passed",
+      "basis": "Isolated Mock Data; actual production UI image",
+      "results": [
+        {
+          "width": 1440,
+          "rows": 4,
+          "long_tickers_wrap": true,
+          "no_title_overlap": true,
+          "no_page_overflow": true
+        },
+        {
+          "width": 390,
+          "rows": 4,
+          "long_tickers_wrap": true,
+          "no_title_overlap": true,
+          "no_page_overflow": true
+        }
+      ]
+    },
+    "documentation": {
+      "active_markdown": 95,
+      "local_links": 1266,
+      "checker_unit_tests": 24
+    },
+    "contracts": 39,
+    "privacy": "Changed source, tests, documentation and receipt scanned with zero credential-pattern findings; private author identity retained."
+  },
+  "preservation": {
+    "normal_data": "All 110 table fingerprints and original asset fingerprints unchanged across application replacement; database container was not restarted.",
+    "essential_backup": "Existing verified recovery set reused and SHA-256 unchanged; no new dump.",
+    "database_migration": "none",
+    "initial_local_changes": "preserved and excluded",
+    "raw_review_reports": "unchanged and excluded",
+    "private_authors": "GitHub noreply identity"
+  },
+  "release": {
+    "github": "Deferred by user. No push, pull request, merge, repository-setting or visibility change in this batch. Temporary authorization files removed.",
+    "installation": {
+      "installed_at": "2026-11-16T17:23:04Z",
+      "source_commit": "409330e",
+      "images": {
+        "backend": "sha256:d3ec84553c02172f15ca8e65dde49fa4acdabef979ba7c38213aa8b25b648f2d",
+        "frontend": "sha256:09b6260297fb0d60e34c26b1675035f29a3363cf26759b7f1d7ae44ff9fe7718",
+        "scheduler": "sha256:d3ec84553c02172f15ca8e65dde49fa4acdabef979ba7c38213aa8b25b648f2d"
+      },
+      "database_restarted": false,
+      "database_revision": [
+        "u3u3u3u3u3u3"
+      ],
+      "unchanged_tables": 110,
+      "assets_unchanged": true,
+      "settings_unchanged": true,
+      "mounts_unchanged": true,
+      "protections_unchanged": true,
+      "volumes_unchanged": true,
+      "reused_backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a",
+      "new_backup": false,
+      "optional_services_stayed_disabled": true
+    },
+    "cleanup": {
+      "completed_at": "2026-11-16T17:24:03Z",
+      "containers": [
+        {
+          "name": "mi16-browser-final",
+          "id": "1c11f74e65fc150291f57a005cb29688f7994c5c4abc4efc8e68b39136f88642"
+        },
+        {
+          "name": "mi16-backend-e2e",
+          "id": "c65a0046925a9f2330c95086283ee5f4e230db87e6dd40d654754bdd6267f5c5"
+        },
+        {
+          "name": "mi16-frontend-e2e",
+          "id": "70bac39a23f82a3c3208b02a6bbca3398c6b6c20386a333a9215d99bf6f79691"
+        },
+        {
+          "name": "mi16-postgres-check",
+          "id": "162a5a12aa71f54a7431485ccef45a48ca9a7aa3f56218c7a3a1a1b671d2542d"
+        },
+        {
+          "name": "mi16-frontend-final",
+          "id": "e6f67a2127a3ea6540d2721057ecb7fcc5440fa30b4f3bc72b390e411580f32e"
+        },
+        {
+          "name": "mi-review-git-20261116",
+          "id": "040c9d4bd80f0f554bd5afa717b11d8cd5cc18e6397747b3664eb5fe7b32e617"
+        }
+      ],
+      "network": {
+        "name": "mi16-review-check",
+        "id": "4c5cd7064bc178bff982e413fb7055dc563a5fad24708ccc1603c4ad6cfc7405"
+      },
+      "images": [
+        {
+          "id": "sha256:8526dd0635d53c88ffd44e50efcbac277b8397f23029d13e5cc0f01648b59d03",
+          "tags": [
+            "market-intelligence-review-frontend:20261116-evidence"
+          ],
+          "size_bytes": 519567727
+        },
+        {
+          "id": "sha256:d58ae1ddfa422b534729015627ef0091f950bedfa357e4e83049190c111c78a4",
+          "tags": [
+            "mi16-browser-tests:latest"
+          ],
+          "size_bytes": 2892019481
+        },
+        {
+          "id": "sha256:faba3823977db497da51a390ca518c7127f2151ba3a45e9008476473006015fc",
+          "tags": [
+            "market-intelligence-review-frontend:20261115-integrity"
+          ],
+          "size_bytes": 452894609
+        },
+        {
+          "id": "sha256:8a2bec191fb8c57a44550f49172410aa76905cf53dc51b9a7334c075e67cd761",
+          "tags": [
+            "market-intelligence-review-backend:20261115-integrity"
+          ],
+          "size_bytes": 837139453
+        }
+      ],
+      "cache_ids": [
+        "npeo7gcth4gpadmcnnhcl31x6",
+        "1v0mwvf3msfq41k2xbtjhl96d",
+        "9b4lbmoik6w0456pzadhjei5j",
+        "nmjv5get5ulit9uwu1q2a8uuy",
+        "xqaf9kq1e9nma0n1nsyx30s4x",
+        "ykak23ej98ojdomj7u43u1fk0",
+        "y0p60a5k7cmbmls57ljctcjyf",
+        "xdj9tk467vxl40px71ehm6xpp",
+        "1n6fl04lyo8twt4j0vagqnm8a",
+        "8hms2y0eyiivi18h5rhm8412g",
+        "zi0d57ugkknehvsbvv6f3kosp",
+        "q2tiq49wmhw4v5zw4huunzdur",
+        "5dqm1gxkmvszkuj0ink8hj16c",
+        "0070idll4fd6rhrj0g39pjo4j",
+        "eecah5jyzlwoyb6z0sh0mf77j",
+        "499gplyspcheuwhj1rtzjitqc",
+        "bvc8jcuz6dlrldnesfbjpcrol",
+        "ytzl5x1xba75bw4201xggu5jc",
+        "tkq1063yuyb4kbx2r2ppggb1x",
+        "fr1lzyx2sy2yvbm2y4lzsv69i",
+        "jmb020fjeo9mswkq8kc91ugti",
+        "cc7juua3p3vy9w2vfo96sgpki",
+        "m6cxy3k8ywu3ggk1uqgp3heux",
+        "ttrotr24jivdkcn3rznagffjp",
+        "13ouxvvpannqb79slsbjyu9m0",
+        "339z07qv6qsb9zxb7wy026op9",
+        "zz8islrsorfxx9zqiq7bp1dks",
+        "bcmnxqdsu5bc9h804hvkp9284",
+        "swt1jq2jgdtsm06tj0r12snmu",
+        "hs23cnbnfh3v87w0b914zkw6v",
+        "3scceisc3s2s9hezr1dk31lty",
+        "sbbarj86ghavwkt4zf394wa7k",
+        "k6xiam0iabst23ttkmjm4nrqk",
+        "n00wjkpn8yigjl64vpzhjrzf8",
+        "fj3hczdex33s76a0qblgmmxi1",
+        "rv3z0t8uohpc7ukjl6slfrocc",
+        "xj90y2481r6404eii6u8dqunt",
+        "mw164fkdxou2qi2ubfzy6tcuj",
+        "p24blhnsonvti9w6mmvzoyl32",
+        "2dvvxrsab7wxu4dd43g34pzey",
+        "wxem32svgvn9rj7e1n6blc4va",
+        "qw8hkje6h9qlxjk4s9ljywzam",
+        "vevar1pubf8qg1nt91aqq5wp7",
+        "j080dey1fpa7tnkv1o4cmoo6p",
+        "jfn96dlhs386ct93zakuv440d",
+        "r9nqjh469jrfa45r8oz21f7ki",
+        "tkue4px1qqhu8welw5jc8bejy",
+        "rzuzqqxul3i5ld2pny40lfm3e",
+        "pqo2ocmwn4ngmeg1u6okz9iui",
+        "l0ayjwnj50lxny1iacjxyuuvp",
+        "r9d5lplhymk2adq7p2vprwr6m",
+        "vp0fu7xxeskyhlgw1jtixr6lj",
+        "oe97r2m63mcett4s6vsx1xl1f",
+        "n906iq9qlu4lxy0iz0jqx3n32",
+        "cg9yfwidiij69p9vi83ig7r39",
+        "lt32vsw7vuab83sy4wbl98f9r"
+      ],
+      "before": {
+        "layers_bytes": 4693943928,
+        "images": 8,
+        "containers": 10,
+        "container_writable_bytes": 163459072,
+        "volumes": 2,
+        "volume_bytes": 193911542,
+        "cache_records": 56,
+        "cache_bytes": 3997142271
+      },
+      "after": {
+        "layers_bytes": 2188096210,
+        "images": 4,
+        "containers": 4,
+        "container_writable_bytes": 77824,
+        "volumes": 2,
+        "volume_bytes": 193911542,
+        "cache_records": 0,
+        "cache_bytes": 0
+      },
+      "image_layers_released_bytes": 2505847718,
+      "build_cache_report": "Total:\t3.997GB",
+      "note": "Image and build-cache sizes overlap and must not be added. Logical Docker accounting does not establish immediate host disk-image shrinkage.",
+      "preserved": {
+        "normal_container_ids": [
+          "f372df7ace2fb78924658a2548567d863b1e034b4b82f0e4ededb373706a8abe",
+          "2be3bcdf6e855b4a15989fd5044b1b53f14b2cdfed8cb40865fb233daa0cb77d",
+          "d2651710184de38fa5970ff38d77e9bc5a10a71b4be30013fa06a32680f30496",
+          "2e7314405f4e7c7b2d551e5e30c3db9d8239a8a5cee89cbdb76bc6f828cbbdc5"
+        ],
+        "volume_names": [
+          "bb0769eb2d4134fd84a56d8b844c24999afcd8abe0133a329c2ad674d42a0882",
+          "market-intelligence-md-filescopy_marketintel_postgres_data"
+        ],
+        "backup_sha256": "97d4c7ac27a19e69b15d97a84320f3b038d7fb260b8a9e69ec81b5c4fa60a31a"
+      },
+      "filesystem": {
+        "removed": [
+          {
+            "path": "/tmp/mi16-backend-build.log",
+            "allocated_bytes": 8192
+          },
+          {
+            "path": "/tmp/mi16-backend-final-build.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-backend-full.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-browser-final-tests.log",
+            "allocated_bytes": 20480
+          },
+          {
+            "path": "/tmp/mi16-browser-image.log",
+            "allocated_bytes": 61440
+          },
+          {
+            "path": "/tmp/mi16-browser-origin-failure.md",
+            "allocated_bytes": 24576
+          },
+          {
+            "path": "/tmp/mi16-browser-tests.log",
+            "allocated_bytes": 12288
+          },
+          {
+            "path": "/tmp/mi16-browser-typecheck.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-build",
+            "allocated_bytes": 57921536
+          },
+          {
+            "path": "/tmp/mi16-cleanup.rb",
+            "allocated_bytes": 8192
+          },
+          {
+            "path": "/tmp/mi16-cleanup.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-clean-files.rb",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-docker",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-docs-final.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-docs.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-e2e-final-seed.log",
+            "allocated_bytes": 0
+          },
+          {
+            "path": "/tmp/mi16-e2e-seed.log",
+            "allocated_bytes": 0
+          },
+          {
+            "path": "/tmp/mi16-evidence-tests.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-final-focused.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-finalize-docs.rb",
+            "allocated_bytes": 8192
+          },
+          {
+            "path": "/tmp/mi16-first-regressions-after.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-first-regressions-before.log",
+            "allocated_bytes": 12288
+          },
+          {
+            "path": "/tmp/mi16-frontend-build.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-frontend-deps.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-frontend-final-build.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-frontend-final-image.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-frontend-final-tests.log",
+            "allocated_bytes": 36864
+          },
+          {
+            "path": "/tmp/mi16-frontend-tests.log",
+            "allocated_bytes": 36864
+          },
+          {
+            "path": "/tmp/mi16-git",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-history-after.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-history-before.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-install.rb",
+            "allocated_bytes": 8192
+          },
+          {
+            "path": "/tmp/mi16-install.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-npm-install.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-postgres-tests.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-pytest",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-runtime-frontend-build.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-sec-tests.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-static-unit.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-sync.rb",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-valuation-tests.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-browser-retry.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-ui-build.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-ui-image.log",
+            "allocated_bytes": 4096
+          },
+          {
+            "path": "/tmp/mi16-ui-check.cjs",
+            "allocated_bytes": 4096
+          }
+        ],
+        "allocated_bytes_released": 58286080
+      },
+      "earlier_test_reset": [
+        {
+          "name": "/mi16-browser-runner",
+          "id": "8e8775130b1fc009538cc7f4f60b10c9fb4bc0cb9b992e0299772ef765a6698c",
+          "image": "sha256:d58ae1ddfa422b534729015627ef0091f950bedfa357e4e83049190c111c78a4"
+        },
+        {
+          "name": "/mi16-backend-e2e",
+          "id": "1ac407b3a7e7af4029caeff066241cc745070bfc9803da7aab1157a3a6cd9272",
+          "image": "sha256:47c98b17ab7c9aec325817035af98e7a707c93dbc2a13e95e81eb8abd87775c8"
+        },
+        {
+          "name": "/mi16-frontend-e2e",
+          "id": "80fe9dd9a9c3e764badaa38af54b983074ad32e157df32606a4a55e9823bbba6",
+          "image": "sha256:34829e76da6f3e39264152db1341126616d727932ccb3ad93da1eb3fc962f99c"
+        },
+        {
+          "name": "/mi16-postgres-check",
+          "id": "e11d45070baa503853f728d0c348261eb073cf70b4ee355aaee69c667b2b4d7b",
+          "image": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e"
+        },
+        {
+          "name": "/mi16-browser-final",
+          "id": "0d2793e39f057137805188c012de6435b06f8fda6ca91b3f3307acc94f02e546",
+          "image": "sha256:d58ae1ddfa422b534729015627ef0091f950bedfa357e4e83049190c111c78a4"
+        },
+        {
+          "name": "/mi16-frontend-e2e",
+          "id": "e3d94ae33aa9214eb63f82d668ce81dce31210fc91e9722cf1b3a53e04f30f1e",
+          "image": "sha256:8526dd0635d53c88ffd44e50efcbac277b8397f23029d13e5cc0f01648b59d03"
+        }
+      ],
+      "earlier_automatically_removed": "Source-mounted unit-test containers used --rm. The temporary mi16-frontend-check build container was also removed after artifact extraction."
+    }
+  },
+  "build_note": "Docker Hub returned Forbidden. Local application images use the previously verified patched runtime images and unchanged dependency locks; canonical container builds remain a hosted release gate.",
+  "ui_followup": "Long Today tickers wrap inside their column instead of overlapping thesis titles."
+}

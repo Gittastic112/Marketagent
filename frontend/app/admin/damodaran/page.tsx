@@ -99,18 +99,18 @@ export default function AdminDamodaranPage() {
       <PageHeader eyebrow="Administration" title="Damodaran Source Versions" />
 
       <Panel title="Inspect Workbook Metadata">
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-muted-foreground mb-4">
           Parse an Excel workbook and record its hash, source date, and sheet metadata. This form does not load typed benchmark rows; use a reviewed source-specific importer for application data.
         </p>
 
         {uploadError && (
-          <div className="bg-red-50 text-red-700 p-3 rounded mb-4 text-sm">
+          <div className="bg-[var(--danger-bg)] text-[var(--danger)] p-3 rounded mb-4 text-sm">
             {uploadError}
           </div>
         )}
 
         {uploadSuccess && (
-          <div className="bg-green-50 text-green-700 p-3 rounded mb-4 text-sm">
+          <div className="bg-[var(--success-bg)] text-[var(--success)] p-3 rounded mb-4 text-sm">
             {uploadSuccess}
           </div>
         )}
@@ -122,7 +122,7 @@ export default function AdminDamodaranPage() {
               id="damodaran-dataset-code"
               value={datasetCode}
               onChange={(e) => setDatasetCode(e.target.value)}
-              className="border border-gray-300 rounded p-2 text-sm w-full max-w-xs"
+              className="border border-border rounded p-2 text-sm w-full max-w-xs"
             >
               <option value="implied_erp">Implied ERP (implied_erp.xls)</option>
               <option value="country_risk">Country Risk (ctryprem.xls)</option>
@@ -138,14 +138,14 @@ export default function AdminDamodaranPage() {
               type="file"
               accept=".xls,.xlsx"
               onChange={(e) => setFileToUpload(e.target.files?.[0] || null)}
-              className="border border-gray-300 rounded p-2 text-sm w-full max-w-md"
+              className="border border-border rounded p-2 text-sm w-full max-w-md"
             />
           </div>
 
           <button
             type="submit"
             disabled={!fileToUpload || uploading}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded w-fit disabled:opacity-50"
+            className="bg-[var(--accent)] hover:bg-[var(--accent)] text-white font-medium py-2 px-4 rounded w-fit disabled:opacity-50"
           >
             {uploading ? "Parsing..." : "Parse Workbook"}
           </button>
@@ -158,11 +158,11 @@ export default function AdminDamodaranPage() {
         ) : error ? (
           <ErrorState message="Failed to load import history" errors={error} />
         ) : files.length === 0 ? (
-          <p className="text-sm text-gray-500 italic p-4">No datasets have been imported yet.</p>
+          <p className="text-sm text-muted-foreground italic p-4">No datasets have been imported yet.</p>
         ) : (
           <div tabIndex={0} className="overflow-x-auto">
             <table className="w-full text-sm text-left border-collapse">
-              <thead className="bg-gray-50 text-gray-700">
+              <thead className="bg-muted text-foreground">
                 <tr>
                   <th className="px-4 py-3 border-b font-medium">Date Imported</th>
                   <th className="px-4 py-3 border-b font-medium">Dataset</th>
@@ -173,21 +173,21 @@ export default function AdminDamodaranPage() {
               </thead>
               <tbody>
                 {files.map((f) => (
-                  <tr key={f.id} className="border-b hover:bg-gray-50">
+                  <tr key={f.id} className="border-b hover:bg-muted">
                     <td className="px-4 py-3">{new Date(f.created_at).toLocaleString()}</td>
                     <td className="px-4 py-3">
                       <strong>#{f.id} {f.dataset_code}</strong>
-                      <div className="text-gray-500">{f.country || f.region || "Global"}</div>
+                      <div className="text-muted-foreground">{f.country || f.region || "Global"}</div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">
+                    <td className="px-4 py-3 text-muted-foreground">
                       <strong>{f.filename}</strong>
-                      <div className="text-gray-500">{f.canonical_source_path || "No canonical path"}</div>
-                      <div className="font-mono text-xs text-gray-500">{f.source_sha256 ? f.source_sha256.slice(0, 16) : "No source hash"}</div>
+                      <div className="text-muted-foreground">{f.canonical_source_path || "No canonical path"}</div>
+                      <div className="font-mono text-xs text-muted-foreground">{f.source_sha256 ? f.source_sha256.slice(0, 16) : "No source hash"}</div>
                     </td>
-                    <td className="px-4 py-3 text-gray-600">
+                    <td className="px-4 py-3 text-muted-foreground">
                       <strong>{f.is_active ? "Active" : "Inactive"} | {f.import_kind.replaceAll("_", " ")}</strong>
-                      <div className="text-gray-500">Source {f.source_as_of || "unknown"} | {f.date_confidence}</div>
-                      <div className="text-gray-500">{f.row_count === null ? "No typed rows" : `${f.row_count.toLocaleString()} typed rows`}</div>
+                      <div className="text-muted-foreground">Source {f.source_as_of || "unknown"} | {f.date_confidence}</div>
+                      <div className="text-muted-foreground">{f.row_count === null ? "No typed rows" : `${f.row_count.toLocaleString()} typed rows`}</div>
                     </td>
                     <td className="px-4 py-3">
                       {f.import_kind === "metadata_only" && !f.is_active ? (
@@ -197,12 +197,12 @@ export default function AdminDamodaranPage() {
                             setRollbackMessage(null);
                             setRollbackError(null);
                           }}
-                          className="text-red-600 hover:text-red-800 font-medium"
+                          className="text-[var(--danger)] hover:text-[var(--danger)] font-medium"
                         >
                           Delete metadata
                         </button>
                       ) : (
-                        <span className="text-gray-500">Preserved</span>
+                        <span className="text-muted-foreground">Preserved</span>
                       )}
                     </td>
                   </tr>
@@ -212,7 +212,7 @@ export default function AdminDamodaranPage() {
           </div>
         )}
         {rollbackTarget !== null ? (
-          <div role="alertdialog" aria-labelledby="rollback-title" className="mt-4 border border-red-200 bg-red-50 p-3 text-sm text-red-800">
+          <div role="alertdialog" aria-labelledby="rollback-title" className="mt-4 border border-[var(--danger)] bg-[var(--danger-bg)] p-3 text-sm text-[var(--danger)]">
             <strong id="rollback-title">Delete metadata upload #{rollbackTarget}?</strong>
             <p>This removes only the inactive metadata record.</p>
             <div className="flex gap-2">
@@ -221,8 +221,8 @@ export default function AdminDamodaranPage() {
             </div>
           </div>
         ) : null}
-        {rollbackMessage ? <p role="status" className="mt-4 text-sm text-green-700">{rollbackMessage}</p> : null}
-        {rollbackError ? <p role="alert" className="mt-4 text-sm text-red-700">{rollbackError}</p> : null}
+        {rollbackMessage ? <p role="status" className="mt-4 text-sm text-[var(--success)]">{rollbackMessage}</p> : null}
+        {rollbackError ? <p role="alert" className="mt-4 text-sm text-[var(--danger)]">{rollbackError}</p> : null}
       </Panel>
     </div>
   );

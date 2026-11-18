@@ -146,11 +146,11 @@
   }
 
   .data-freshness,
-  .user-controls .secondary-button span {
+  .user-controls > .secondary-button span {
     display: none;
   }
 
-  .user-controls .secondary-button {
+  .user-controls > .secondary-button {
     height: 40px;
     justify-content: center;
     padding: 0;
@@ -259,4 +259,31 @@
   td {
     padding: 12px var(--space-4);
   }
+}
+
+@media (max-width: 1100px) and (min-width: 961px) {
+  .app-shell { grid-template-columns: 196px minmax(0, 1fr); }
+  .main { padding: 26px 24px; }
+  .topbar { padding-inline: 24px; }
+  .topbar-search-link span, .data-freshness { display: none; }
+}
+@media (max-width: 960px) {
+  .sidebar { display: flex; flex-direction: column; max-width: 280px; width: min(86vw, 280px); }
+  .topbar { position: static; gap: 12px; }
+  .workspace-breadcrumb { font-size: 12px; gap: 8px; }
+  .main { padding-top: 26px; }
+  .saved-valuation-header h1 { font-size: 28px; }
+}
+@media (max-width: 640px) {
+  .workspace-breadcrumb > a, .workspace-breadcrumb > [aria-hidden="true"] { display: none; }
+  .topbar { justify-content: space-between; padding: 8px 16px; min-height: 56px; }
+  .topbar-actions, .user-controls { gap: 6px; }
+  .page-header { align-items: flex-start; gap: 16px; }
+  .company-tabs { gap: 20px; }
+  .company-tabs a { font-size: 13px; }
+  .page-header-actions { gap: 8px; }
+  .today-workspace .dashboard-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .today-workspace .metric-value { font-size: 24px; }
+  .theme-switch button { min-height: 36px; width: 36px; }
+  .valuation-version-panel > button { width: 100%; }
 }

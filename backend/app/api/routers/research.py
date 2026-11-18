@@ -10,6 +10,7 @@ from app.api.dependencies import get_current_user
 from app.db.session import get_db
 from app.models.research import ResearchSession, ResearchMessage
 from app.models.raw_document import RawDocument
+from app.models.ai import AiOutput
 from app.services.evidence_search import search_evidence
 from app.schemas.common import ApiResponse
 from app.api.ai_errors import ai_output_meta, public_ai_error
@@ -87,7 +88,12 @@ def get_session(
         include_messages=True,
     )
 
-    return ApiResponse(data=session)
+    detail = schemas.ResearchSessionDetail.model_validate(session)
+    detail.attempts = [schemas.AiOutputRead.model_validate(output) for output in db.scalars(
+        select(AiOutput).where(AiOutput.user_id == current_user["id"],
+            AiOutput.reference_type == "research_session", AiOutput.reference_id == session.id)
+        .order_by(AiOutput.id.desc()).limit(10))]
+    return ApiResponse(data=detail)
 
 
 @router.delete("/sessions/{session_id}", status_code=status.HTTP_204_NO_CONTENT)

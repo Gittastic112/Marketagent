@@ -104,3 +104,48 @@ test("stored corpus search finds and filters owned research records", async ({ p
   await expect(results.getByRole("link", { name: `${query} thesis` })).toBeVisible();
   await expect(results.getByRole("link", { name: `${query} alert` })).toHaveCount(0);
 });
+
+test("workspace shortcut opens one search dialog and preserves the current page and form focus", async ({ page }) => {
+  await signIn(page);
+  await page.goto("/search");
+  const formInput = page.getByRole("main").getByLabel("Search terms");
+  const trigger = page.getByRole("button", { name: "Search companies and evidence" });
+  const dialog = page.getByRole("dialog", { name: "Find research" });
+  await trigger.focus();
+  await page.keyboard.press("Control+k");
+  await expect(dialog).toBeVisible();
+  await expect(dialog.getByLabel("Search terms")).toBeFocused();
+  await expect.poll(async () => {
+    const bounds = await dialog.boundingBox();
+    const width = await page.evaluate(() => document.documentElement.clientWidth);
+    return bounds ? Math.abs(bounds.x + bounds.width / 2 - width / 2) : Infinity;
+  }).toBeLessThan(2);
+  await dialog.getByLabel("Search terms").fill("Apple");
+  await expect(page).toHaveURL(/\/search$/);
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
+  await expect(trigger).toBeFocused();
+  await formInput.fill("cash flow");
+  await page.keyboard.press("Control+k");
+  await expect(dialog).toHaveCount(0);
+  await expect(formInput).toHaveValue("cash flow");
+
+  for (const width of [1440, 390]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const theme of ["light", "dark"]) {
+      if (width === 390) await page.getByRole("button", { name: "Open navigation" }).click();
+      await page.getByRole("button", { name: `Use ${theme} theme` }).click();
+      if (width === 390) await page.getByRole("button", { name: "Close navigation panel" }).click();
+      await trigger.click();
+      await expect(dialog.getByLabel("Search terms")).toBeFocused();
+      for (const button of await dialog.getByRole("group", { name: "Search scope" }).getByRole("button").all()) {
+        await expect(button).toBeVisible();
+        expect(await button.evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+      }
+      await dialog.getByLabel("Search terms").fill("Apple");
+      await page.keyboard.press("Escape");
+      await expect(dialog).toHaveCount(0);
+      await expect(trigger).toBeFocused();
+    }
+  }
+});

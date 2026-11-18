@@ -150,6 +150,21 @@ def test_alfred_partial_and_changed_page_count(monkeypatch):
         provider.fetch_vintage_observations("MOCK", **kwargs)
 
 
+@pytest.mark.parametrize("mode", ["as_of", "initial_release"])
+@pytest.mark.parametrize("changed", ["value", "realtime_end"])
+def test_alfred_rejects_conflicting_unselected_revisions_across_pages(monkeypatch, mode, changed):
+    """Mock Data: even an expired or unselected revision must not contradict itself."""
+    provider = FredProvider("not-a-real-key")
+    older = {"date": "2024-01-01", "value": "1", "realtime_start": "2024-02-01", "realtime_end": "2024-03-01"}
+    newer = {**older, "value": "2", "realtime_start": "2024-03-02", "realtime_end": "9999-12-31"}
+    conflict = {**older, changed: "3" if changed == "value" else "2024-02-28"}
+    rows = [newer, older, conflict] if mode == "as_of" else [older, newer, {**newer, changed: "3" if changed == "value" else "2024-04-01"}]
+    pages = iter([{"count": 3, "offset": 0, "observations": rows[:2]}, {"count": 3, "offset": 2, "observations": rows[2:]}])
+    monkeypatch.setattr(provider, "_request", lambda *args: next(pages))
+    with pytest.raises(RuntimeError, match="conflicting vintage"):
+        provider.fetch_vintage_observations("MOCK", as_of=date(2024, 4, 1), observation_start=date(2024, 1, 1), observation_end=date(2024, 1, 1), mode=mode)
+
+
 @pytest.fixture
 def source_client(db):
     app = FastAPI()

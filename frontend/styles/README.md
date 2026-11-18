@@ -19,8 +19,17 @@ Its imports define cascade order. Keep that order when changing ownership.
 
 Domain breakpoints stay beside their rules when already grouped there.
 The final responsive imports intentionally override earlier shared rules.
-The extraction preserves the previous selectors, declarations, and ordering;
-it does not redesign the interface.
+The shared presentation follows the approved Marketagent Geist prototype:
+neutral surfaces, blue accents, compact controls, tabular figures, and thin borders.
+Geist Sans and Geist Mono are bundled under `public/fonts` with their OFL license;
+rendering does not require a third-party font request. Foundation owns the light
+and dark tokens. The sidebar theme control stores only a display preference under
+`marketagent:theme`. Navigation uses the existing routes; Cmd/Ctrl+K opens the
+company and evidence palette and leaves editing fields and modal navigation alone.
+
+The visual system preserves the existing data-state components, backend-owned
+calculations, review gates, saved-version identity and export behavior. The demo's
+fixture values and browser-only financial calculations are not application data.
 
 Source integrity tests follow local CSS imports through a
 [test helper](../lib/test-support/read-styles.ts). Run frontend tests and typecheck

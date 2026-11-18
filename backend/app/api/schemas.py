@@ -32,6 +32,8 @@ from app.schemas.valuation_outputs import (
 )
 
 from app.schemas.valuation import (
+    StaleValuationReviewCreate,
+    SavedValuationExportRead,
     DcfOutputRead,
     QuickValuationAssumptionsRead,
     DcfAssumptionSetRead,
@@ -191,6 +193,7 @@ from app.schemas.research import (
     ThesisAssumptionUpdate,
     EventThesisImpactCreate,
     EventThesisImpactRead,
+    ThesisImpactReview,
     ThesisAssumptionRead,
     ThesisChangeCreate,
     ThesisChangeRead,
@@ -277,6 +280,7 @@ from app.schemas.health import (
 )
 
 from app.schemas.financials import (
+    PdfPageExtractionCreate,
     FinancialReviewSourceLink,
     FinancialReviewFieldRead,
     FinancialReviewPeriodRead,
