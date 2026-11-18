@@ -7,6 +7,9 @@ import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import { DataStateNotices } from "@/components/ui/data-states";
 import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, ThesisNote } from "@/lib/api";
+import type { PricePin } from "@/lib/api/price-timeline";
+import { hasUsableData } from "@/lib/data-state-meta";
+import { formatDataLabel } from "@/lib/formatting";
 
 async function createAssumptionAction(formData: FormData) {
   "use server";
@@ -56,9 +59,10 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
   try {
     const { id } = await params;
     const noteId = Number(id);
-    const [noteRes, companiesRes] = await Promise.all([
+    const [noteRes, companiesRes, pricePins] = await Promise.all([
       serverFetchApiResponse<ThesisNote>(`/thesis-notes/${noteId}`),
-      serverFetchApiResponse<Company[]>("/companies")
+      serverFetchApiResponse<Company[]>("/companies"),
+      serverFetchApiResponse<PricePin[]>(`/thesis-notes/${noteId}/price-pins`)
     ]);
     const note = noteRes.data!;
     const companies = companiesRes.data || [];
@@ -93,6 +97,17 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
             </div>
           </div>
         </Panel>
+
+        <section id="price-pins" aria-label="Pinned price notes"><Panel title="Pinned price notes">
+          {!hasUsableData(pricePins) ? <ErrorState message="Pinned notes could not be loaded." errors={pricePins.errors} />
+            : pricePins.data.length ? <ul className="price-detail-list">{pricePins.data.map(pin => <li key={pin.id}>
+              <Link href={`/companies/${pin.company_id}?price_series=${pin.anchor.key}&price_date=${pin.anchor.date}#price-history`}>
+                {pin.anchor.symbol} · {pin.anchor.date} · {pin.anchor.currency} {pin.anchor.price}
+              </Link>
+              <small>{pin.anchor.claim_type === "Mock Data" ? "Mock Data · " : ""}Close when pinned · {formatDataLabel(pin.anchor.provider)} · {formatDataLabel(pin.anchor.adjustment)}</small>
+              <p className="price-note-text">{pin.text}</p>
+            </li>)}</ul> : <p>Open a date on the <Link href={`/companies/${note.company_id}#price-history`}>company price chart</Link> to pin a note to this thesis.</p>}
+        </Panel></section>
 
         {/* Assumptions */}
         <Panel title="Assumptions">

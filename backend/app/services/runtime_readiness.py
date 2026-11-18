@@ -4,8 +4,9 @@ from sqlalchemy import inspect, text
 from sqlalchemy.orm import Session
 
 
-EXPECTED_MIGRATION_HEAD = "v4v4v4v4v4v4"
+EXPECTED_MIGRATION_HEAD = "w5w5w5w5w5w5"
 REQUIRED_SCHEMA: dict[str, set[str]] = {
+    "thesis_price_pins": {"id", "thesis_note_id", "company_id", "request_id", "fingerprint", "anchor", "text", "created_at"},
     "narrative_claims": {"id", "claim_text", "origin", "ai_output_id"},
     "ai_consent_decisions": {"id", "user_id", "provider_name", "action_key", "revision", "state", "disclosure_version", "scope_hash", "external_data_classes_json", "created_at"},
     "ai_outputs": {"id", "user_id", "consent_decision_id"},

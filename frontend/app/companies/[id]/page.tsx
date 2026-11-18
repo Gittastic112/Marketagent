@@ -8,6 +8,8 @@ import { DataStateNotices, EmptyState, ErrorState, PageHeader, Panel } from "@/c
 import { ScoreExplanationView } from "@/components/score-explanation";
 import { triggerEventClassification } from "@/app/actions";
 import { CompanyMarketHeader } from "@/components/company-market-header";
+import { CompanyPriceChart } from "@/components/company-price-chart";
+import type { PriceTimeline } from "@/lib/api/price-timeline";
 import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
@@ -28,6 +30,8 @@ type CompanyDetailPageProps = {
     sec_lookup?: string | string[];
     form_type?: string | string[];
     filing_year?: string | string[];
+    price_series?: string | string[];
+    price_date?: string | string[];
   }>;
 };
 
@@ -150,10 +154,16 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (company.market) quoteParams.set("market", company.market);
     if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
     if (company.currency) quoteParams.set("currency", company.currency);
-    const [marketQuote, financialTrends, modelSummaries] = await Promise.all([
+    const priceQuery = new URLSearchParams();
+    const priceSeries = firstParam(query?.price_series);
+    const priceDate = firstParam(query?.price_date);
+    if (priceSeries) priceQuery.set("series", priceSeries);
+    if (priceDate) priceQuery.set("through", priceDate);
+    const [marketQuote, financialTrends, modelSummaries, priceTimeline] = await Promise.all([
       serverFetchApiResponse<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`),
       serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`),
-      serverFetchApiResponse<ValuationModelSummary[]>(`/companies/${company.id}/valuation-model-summaries`)
+      serverFetchApiResponse<ValuationModelSummary[]>(`/companies/${company.id}/valuation-model-summaries`),
+      serverFetchApiResponse<PriceTimeline>(`/companies/${company.id}/price-timeline${priceQuery.size ? `?${priceQuery}` : ""}`)
     ]);
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
@@ -220,6 +230,18 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
           </div>
           <a className="secondary-button company-memo-link" href={`/api/backend/companies/${company.id}/memo`} target="_blank" rel="noopener noreferrer">Download memo</a>
         </header>
+
+        <section id="price-history" className="company-overview-history" aria-label="Stock price history">
+          <Panel title="Price history">
+            {hasUsableData(priceTimeline) && Array.isArray(priceTimeline.data.points) && Array.isArray(priceTimeline.data.choices) ? <>
+              <DataStateNotices metas={[priceTimeline.meta]} />
+              <CompanyPriceChart key={`${company.id}-${priceTimeline.data.series?.key}-${priceDate ?? ""}`}
+                data={priceTimeline.data} companyId={company.id} requestedDate={priceDate}
+                notes={thesisNotesAvailable ? detail.thesisNotes.map(({ id, title }) => ({ id, title })) : null} />
+            </> : <><ErrorState message="Price history could not be loaded." errors={priceTimeline.errors} />
+              <Link href={`/companies/${company.id}#price-history`}>Reload latest history</Link></>}
+          </Panel>
+        </section>
 
         <div className="company-summary-grid">
           <Suspense fallback={<p role="status">Loading business context…</p>}><CompanyResearchCards companyIds={[company.id]} compact /></Suspense>

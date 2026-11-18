@@ -26,6 +26,8 @@ boundaries. Experimental and unavailable methods remain labeled.
 
 ## Dated validation
 
+Company price history uses a single stored closing-price series at a time. Moves of at least 5% are marked against the preceding comparable close within seven calendar days. Dated sources and event summaries give context. Private pins record the exact observation on the selected thesis. The original close remains readable on that thesis after a provider correction.
+
 These are recorded results for the cited revisions and environments. Automated
 cleanup checks do not extend financial, provider, installed-runtime, or daily-use
 acceptance.
