@@ -47,8 +47,8 @@ AI is not the primary ingestion layer. Current ingestion and scoring should rema
   fixed-prompt probes for the currently configured GEMINI_MODEL. An unrelated
   model's success or a configured unsupported provider key is not working proof.
 - **Source Capability Matrix:** `GET /api/source-capabilities?market=US|IN` reports whether each source class is available, manual-only, not configured, or unsupported for the selected market.
-  Price status follows the selected adapter and its own configuration. FMP remains
-  unsupported even with a key; personal-use prices need no key. SEC requires a
+  Price status follows the selected adapter and its own configuration. FMP and
+  Massive require keys; NSE MCP and personal-use prices need no key. SEC requires a
   valid contact and implemented FRED ingestion requires its key. Configuration is
   separate from fetch success, coverage, freshness and reviewed facts.
 - **Daily Brief:** Automatically pulls the highest-priority scored events and latest alerts when requested.
@@ -301,7 +301,7 @@ RSS ingestion exists in `backend/app/services/rss_ingestion.py`.
   The response identifies the explicitly selected adapter, not a fallback wrapper.
 - Normalized quote/history results carry provider, provider symbol, market, exchange, ticker, currency, source/observed time, price type, delay, adjustment state, and warnings. Stored `market_prices` and `company_market_data` rows expose this provenance; manual rows are labeled `manual` and legacy rows are labeled `legacy_unknown`.
 - `/market-prices` renders source/timing labels and warning details so manual, legacy, unofficial, and configured-provider rows are distinguishable without inspecting the API.
-- Alpha Vantage and explicit `yfinance_personal` adapters are implemented. yfinance is unofficial and personal-use oriented, never a silent fallback, and emits a warning on every result. FMP is an explicit non-operational placeholder and returns `PROVIDER_NOT_IMPLEMENTED`.
+- Alpha Vantage, FMP, Massive, official NSE MCP and explicit `yfinance_personal` adapters are implemented through the existing factory. yfinance remains unofficial, personal-use oriented and explicitly selected. FMP/Massive currently support scoped US listings; NSE history preserves EQ-series gaps and unadjusted basis. See [adapter contracts and verification](adapters/README.md).
 - The personal provider is pinned to yfinance 1.7.0 after live checks found the
   old 0.2.37 dependency failed for both US and NSE symbols. Latest quotes still
   have unknown source time/delay, not verified real-time status. Daily history

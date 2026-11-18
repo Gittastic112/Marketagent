@@ -108,6 +108,7 @@ export type NarrativeToNumbersRequest = {
 export type ValuationAIEvidence = {
   assumption_set_id: number; assumptions_updated_at?: string; valuation_model_id: number;
   scenario: string; output_id?: number | null; output_calculated_at?: string | null; currency?: string | null;
+  output_hash?: string | null;
   ai_output_id: number; claim_type: "AI Interpretation"; is_current: boolean; basis_verified: boolean;
   provider_name: string; model_name: string; prompt_version: string; input_hash: string;
   source_ids: string[]; generated_at: string; review_status: string; is_mock: boolean;
@@ -154,7 +155,7 @@ export type ValuationMemoResponse = {
 
 export async function generateValuationMemo(valuationId: number, scenario: string,
   basis?: {assumption_set_id: number; assumptions_updated_at: string}): Promise<ValuationMemoResponse> {
-  return postApi<ValuationMemoResponse>(`/valuation/${valuationId}/scenarios/${scenario}/ai/memo`, {
+  return postApi<ValuationMemoResponse>(`/valuation/${valuationId}/scenarios/${encodeURIComponent(scenario)}/ai/memo`, {
     privacy_disclosure_version: AI_PRIVACY_DISCLOSURE_VERSION,
     ...basis,
   });

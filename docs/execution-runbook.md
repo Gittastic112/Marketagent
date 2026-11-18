@@ -36,6 +36,13 @@ Compose explicitly select the test target. Supported Linux/Python 3.14 environme
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
 
+The [adapter guide](adapters/README.md) owns optional analysis/table profiles and a
+separate OCR interpreter. The lock checker verifies their pins and compatibility.
+CI installs analysis/table profiles for network-disabled adapter tests and checks
+the generated OpenAPI/TypeScript pair. OCR models are not downloaded in tests.
+For host verification, set `PYTHONPATH` to the absolute backend directory; some
+existing subprocess tests intentionally rely on that explicit runtime setting.
+
 ## Dependency and container updates
 
 Edit direct requirements intentionally, then regenerate locks with Python 3.14,

@@ -309,6 +309,13 @@ select exact targets manually until role-aware retention is implemented and test
 
 ## Data and operational tools
 
+The [adapter operator guide](adapters/README.md) covers explicit Research Lab/source
+actions, provider keys, optional image build arguments, isolated OCR and reference
+snapshot refresh. These source additions do not install themselves into a running
+stack. Keep the existing Compose project, data and review state when scheduling a
+rollout; verify its exact image/profile identity. Marker currently reports a
+dependency conflict, and Docling needs preprovisioned models plus an inference check.
+
 ### US benchmark intake
 
 The user-approved US-specific January 2026 sources have separate dated filenames.

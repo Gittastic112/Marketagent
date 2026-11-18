@@ -5,76 +5,9 @@ import { useRouter } from "next/navigation";
 
 import { EmptyState, Panel } from "@/components/page";
 import { LoadingState } from "@/components/ui/data-states";
-import type { ApiResponse } from "@/lib/api";
 import { createRequestGate } from "@/lib/latest-request";
-
-
-type EvidenceRowError = {
-  row_index: number;
-  field: string;
-  message: string;
-};
-
-type EvidencePreviewRow = {
-  row_index: number;
-  record_type: string | null;
-  action: "create" | "skip" | "error";
-  message: string;
-  errors: EvidenceRowError[];
-};
-
-type EvidencePreview = {
-  is_preview: true;
-  filename: string;
-  content_sha256: string;
-  byte_size: number;
-  total_rows: number;
-  create_count: number;
-  skip_count: number;
-  error_count: number;
-  market_price_count: number;
-  fx_rate_count: number;
-  can_apply: boolean;
-  claim_type: "Fact";
-  contains_mock_data: false;
-  scope: {
-    portfolio_id: number;
-    portfolio_name: string;
-    holding_tickers: string[];
-    benchmark_ticker: string | null;
-    allowed_fx_pairs: string[];
-  };
-  rows: EvidencePreviewRow[];
-};
-
-type EvidenceApplyResult = {
-  status: "completed";
-  processing_run_id: number;
-  content_sha256: string;
-  created_count: number;
-  market_prices_created: number;
-  fx_rates_created: number;
-  skipped_duplicate_count: number;
-  contains_mock_data: false;
-  claim_type: "Fact";
-};
-
-function responseError(payload: unknown, fallback: string): string {
-  if (!payload || typeof payload !== "object") return fallback;
-  const body = payload as {
-    detail?: string | { message?: string };
-    errors?: Array<{ message?: string }>;
-  };
-  if (typeof body.detail === "string") return body.detail;
-  if (typeof body.detail?.message === "string") return body.detail.message;
-  if (typeof body.errors?.[0]?.message === "string") return body.errors[0].message;
-  return fallback;
-}
-
-function actionBadge(action: EvidencePreviewRow["action"]) {
-  const className = action === "create" ? "badge-success" : action === "skip" ? "badge-warn" : "badge-danger";
-  return <span className={`badge ${className}`}>{action}</span>;
-}
+import { applyPortfolioEvidence, previewPortfolioEvidence, type EvidenceApplyResult, type EvidencePreview } from "@/lib/api/portfolio-evidence";
+import { EvidenceReviewTable } from "./evidence-review-table";
 
 export function PortfolioEvidenceImporter({ portfolioId }: { portfolioId: number }) {
   return <PortfolioEvidenceImportSession key={portfolioId} portfolioId={portfolioId} />;
@@ -93,6 +26,8 @@ function PortfolioEvidenceImportSession({ portfolioId }: { portfolioId: number }
   const [error, setError] = useState<string | null>(null);
 
   function selectFile(selected: File | null) {
+    requests.current.invalidate();
+    setPhase("idle");
     setFile(selected);
     setPreview(null);
     setResult(null);
@@ -106,24 +41,19 @@ function PortfolioEvidenceImportSession({ portfolioId }: { portfolioId: number }
 
   async function previewFile(event: React.FormEvent) {
     event.preventDefault();
-    if (!file) return;
+    if (!file || phase !== "idle") return;
+    if (file.size > 2 * 1024 * 1024) { setError("The evidence CSV exceeds the 2 MiB limit."); return; }
     const isCurrent = requests.current.begin();
     setPhase("previewing");
     setPreview(null);
     setResult(null);
     setError(null);
-    const formData = new FormData();
-    formData.append("file", file);
     try {
-      const response = await fetch(
-        `/api/backend/portfolios/${portfolioId}/evidence-bundle/preview`,
-        { method: "POST", body: formData },
-      );
-      const payload = (await response.json().catch(() => null)) as ApiResponse<EvidencePreview> | null;
-      if (!response.ok || !payload?.data) {
-        throw new Error(responseError(payload, "The evidence bundle could not be previewed."));
+      const data = await previewPortfolioEvidence(portfolioId, file);
+      if (data.scope.portfolio_id !== portfolioId) {
+        throw new Error("The returned preview belongs to another portfolio. Select the file and preview again.");
       }
-      if (isCurrent()) setPreview(payload.data);
+      if (isCurrent()) setPreview(data);
     } catch (caught) {
       if (isCurrent()) setError(caught instanceof Error ? caught.message : "The evidence bundle could not be previewed.");
     } finally {
@@ -132,24 +62,15 @@ function PortfolioEvidenceImportSession({ portfolioId }: { portfolioId: number }
   }
 
   async function applyFile() {
-    if (!file || !preview?.can_apply) return;
+    if (!file || !preview?.can_apply || phase !== "idle") return;
     const isCurrent = requests.current.begin();
     setPhase("applying");
     setError(null);
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("expected_sha256", preview.content_sha256);
     try {
-      const response = await fetch(
-        `/api/backend/portfolios/${portfolioId}/evidence-bundle/apply`,
-        { method: "POST", body: formData },
-      );
-      const payload = (await response.json().catch(() => null)) as ApiResponse<EvidenceApplyResult> | null;
-      if (!response.ok || !payload?.data) {
-        throw new Error(responseError(payload, "The evidence bundle could not be applied."));
-      }
+      const data = await applyPortfolioEvidence(portfolioId, file, preview.content_sha256);
       if (!isCurrent()) return;
-      setResult(payload.data);
+      if (data.content_sha256 !== preview.content_sha256) throw new Error("The returned receipt does not match the previewed file. Reload the portfolio before retrying.");
+      setResult(data);
       setFile(null);
       setPreview(null);
       if (fileInput.current) fileInput.current.value = "";
@@ -250,25 +171,7 @@ function PortfolioEvidenceImportSession({ portfolioId }: { portfolioId: number }
             Scope: holdings {preview.scope.holding_tickers.join(", ") || "none"}; benchmark {preview.scope.benchmark_ticker || "not configured"}; FX pairs {preview.scope.allowed_fx_pairs.join(", ") || "none required"}.
           </p>
 
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>CSV row</th><th>Type</th><th>Action</th><th>Result</th></tr></thead>
-              <tbody>
-                {preview.rows.map((row) => (
-                  <tr key={row.row_index}>
-                    <td>{row.row_index}</td>
-                    <td>{row.record_type || "Invalid"}</td>
-                    <td>{actionBadge(row.action)}</td>
-                    <td>
-                      {row.errors.length
-                        ? row.errors.map((item) => `${item.field}: ${item.message}`).join("; ")
-                        : row.message}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <EvidenceReviewTable key={preview.content_sha256} rows={preview.rows} />
 
           {preview.error_count ? (
             <p role="status" style={{ color: "var(--danger)", fontWeight: 600 }}>

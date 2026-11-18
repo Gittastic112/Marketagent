@@ -1,0 +1,84 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> market-intelligence-frontend@0.1.0 build
+> next build
+
+▲ Next.js 16.4.5 (Turbopack)
+✓ Running next.config.mjs took 13ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1639ms
+  Running TypeScript ...
+  Finished TypeScript in 3.2s ...
+  Collecting page data using 8 workers ...
+  Generating static pages using 8 workers (0/28) ...
+  Generating static pages using 8 workers (7/28)
+  Generating static pages using 8 workers (14/28)
+  Generating static pages using 8 workers (21/28)
+✓ Generating static pages using 8 workers (28/28) in 352ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ○ /_not-found
+├ ○ /admin/damodaran
+├ ○ /advanced
+├ ƒ /alerts
+├ ƒ /alerts/[id]
+├ ƒ /api/auth/[...nextauth]
+├ ƒ /api/auth/readiness
+├ ƒ /api/backend/[...path]
+├ ○ /auth/signin
+├ ƒ /companies
+├ ƒ /companies/[id]
+├ ƒ /companies/[id]/decisions
+├ ƒ /companies/[id]/evidence
+├ ƒ /companies/[id]/filings
+├ ƒ /companies/[id]/fundamentals
+├ ƒ /companies/[id]/setup
+├ ƒ /companies/[id]/thesis
+├ ƒ /companies/[id]/valuation
+├ ƒ /companies/[id]/valuation/[model_id]
+├ ƒ /companies/[id]/valuation/draft
+├ ƒ /companies/[id]/valuation/peers
+├ ƒ /daily-brief
+├ ƒ /daily-brief/sources/[id]
+├ ƒ /daily-brief/triage
+├ ƒ /daily-brief/triage/reviews/[id]
+├ ƒ /data
+├ ƒ /data-health
+├ ƒ /documents
+├ ƒ /documents/[id]/ai
+├ ƒ /documents/[id]/event-evidence
+├ ƒ /documents/[id]/financial-evidence
+├ ƒ /documents/[id]/sections
+├ ƒ /evaluations
+├ ƒ /events
+├ ƒ /events/[id]/evidence-resolution
+├ ○ /icon.svg
+├ ƒ /intelligence/review
+├ ƒ /macro
+├ ƒ /market-prices
+├ ƒ /narratives
+├ ƒ /portfolio
+├ ƒ /portfolio/[id]
+├ ƒ /portfolio/manage
+├ ƒ /portfolio/regime
+├ ƒ /research
+├ ○ /research-lab
+├ ○ /research/sessions
+├ ƒ /research/sessions/[id]
+├ ƒ /search
+├ ƒ /settings
+├ ƒ /social
+├ ƒ /sources
+├ ƒ /thesis-notes
+├ ƒ /thesis-notes/[id]
+├ ƒ /valuation
+└ ƒ /valuation/quick
+
+
+ƒ Proxy (Middleware)
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand

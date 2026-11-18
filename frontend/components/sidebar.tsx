@@ -63,6 +63,7 @@ const navGroups: NavGroup[] = [
     label: "Advanced",
     items: [
       { href: "/advanced", label: "Advanced tools", icon: Gauge },
+      { href: "/research-lab", label: "Research Lab", icon: ChartNoAxesCombined },
       { href: "/portfolio/regime", label: "Market regime", icon: Gauge },
       { href: "/macro", label: "Macro", icon: ChartNoAxesCombined },
       { href: "/valuation/quick", label: "Quick valuation", icon: ChartNoAxesCombined },

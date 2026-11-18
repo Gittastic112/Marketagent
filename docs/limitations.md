@@ -69,7 +69,7 @@ The user reconfirmed zero actual-use days on November 12; automated checks do no
 | Area | Current limitation |
 |---|---|
 | Public hosting and broker access | Local credentials and owner scoping are not production identity or complete tenant isolation. No broker sync or approved broker-token design |
-| Data coverage and freshness | No trading-grade real-time guarantee. Official India ingestion remains manual/partial. FMP and several market-regime provider modules are unavailable |
+| Data coverage and freshness | No trading-grade real-time guarantee. FMP/Massive/NSE adapters are implemented with explicit market, entitlement and live-verification limits. India filing intake remains partial; several market-regime inputs remain manual |
 | Financial extraction | Selected layouts and standard SEC tags are supported; complete statements, custom disclosures, charts, OCR, and issuer-specific accounting are not universally covered |
 | Financial review plans | Read-only three-year tracks expose gaps and conflicts, bounded to 2,000 rows per evidence class. Source linkage does not prove the statement is correct or applicable |
 | SEC units and component scope | Reviewed million-scale bases cannot be filled with mismatched full-currency/share candidates. Legacy long-term-only debt is insufficient for total debt. Lease, current/noncurrent, and share-class scope require review |
@@ -82,6 +82,11 @@ The user reconfirmed zero actual-use days on November 12; automated checks do no
 | Data rights | Personal-use Yahoo access is explicitly selected; it is not a licensed professional or redistribution feed. No Google Sheets bridge or licensed comparable-company feed is implemented |
 
 ## Workspace follow-up
+
+The [adapter guide](adapters/README.md) owns new source/runtime limits, including
+provider entitlements, the NSE connection, OCR dependencies/models and deployment checks.
+Research return inputs remain caller assertions; current peer snapshots are not historical universes.
+DBOS, pgvector, named presets, guidance review and the unified company workbench remain open there.
 
 P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.json) closes WS04's page-load writes. The [November 14 slices](../data/reviews/research-workspace-ten-sets-20261114.json) close WS06's missing thesis chooser and add dated evidence, saved-model previews and a bounded queue. The [workspace plan](roadmaps/research-workspace-plan.md) owns packages; remaining gaps follow.
 

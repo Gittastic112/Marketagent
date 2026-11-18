@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { LogIn, LogOut, Search, ShieldCheck } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import { ResearchCommandPalette } from "./research-command-palette";
 
 export function TopBar() {
   const { data: session, status } = useSession();
@@ -14,6 +15,7 @@ export function TopBar() {
           <ShieldCheck size={16} aria-hidden="true" />Data health
         </Link>
         <div className="user-controls">
+          <ResearchCommandPalette />
           <Link prefetch={false} href="/search" className="secondary-button topbar-search-link" aria-label="Search evidence" title="Search evidence">
             <Search size={16} aria-hidden="true" /><span>Search evidence</span>
           </Link>

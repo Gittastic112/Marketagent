@@ -1,0 +1,4381 @@
+{
+  "components": {
+    "schemas": {
+      "AdapterActionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "ticker",
+          "start_date",
+          "end_date"
+        ],
+        "title": "AdapterActionRequest",
+        "type": "object"
+      },
+      "AdapterActionsResult": {
+        "properties": {
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/CorporateActionEvidence"
+            },
+            "title": "Actions",
+            "type": "array"
+          },
+          "coverage": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty"
+            ],
+            "title": "Coverage",
+            "type": "string"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/AdapterCoverageGap"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "coverage"
+        ],
+        "title": "AdapterActionsResult",
+        "type": "object"
+      },
+      "AdapterCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Version"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "available"
+        ],
+        "title": "AdapterCapability",
+        "type": "object"
+      },
+      "AdapterCoverageGap": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          },
+          "retryable": {
+            "default": false,
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "start_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Date"
+          }
+        },
+        "required": [
+          "code"
+        ],
+        "title": "AdapterCoverageGap",
+        "type": "object"
+      },
+      "AdapterDatedQuoteRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "requested_date": {
+            "format": "date",
+            "title": "Requested Date",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "ticker",
+          "requested_date"
+        ],
+        "title": "AdapterDatedQuoteRequest",
+        "type": "object"
+      },
+      "AdapterDatedQuoteResult": {
+        "properties": {
+          "actual_date": {
+            "format": "date",
+            "title": "Actual Date",
+            "type": "string"
+          },
+          "point": {
+            "$ref": "#/components/schemas/MarketHistoryResult"
+          },
+          "previous_session_substitution": {
+            "default": false,
+            "title": "Previous Session Substitution",
+            "type": "boolean"
+          },
+          "requested_date": {
+            "format": "date",
+            "title": "Requested Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "requested_date",
+          "actual_date",
+          "point"
+        ],
+        "title": "AdapterDatedQuoteResult",
+        "type": "object"
+      },
+      "AdapterHistoryRequest": {
+        "additionalProperties": false,
+        "description": "Inclusive dates; distinct from the legacy trailing-days request.",
+        "properties": {
+          "adjustment": {
+            "default": "provider",
+            "enum": [
+              "provider",
+              "unadjusted",
+              "split_adjusted"
+            ],
+            "title": "Adjustment",
+            "type": "string"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "ticker",
+          "start_date",
+          "end_date"
+        ],
+        "title": "AdapterHistoryRequest",
+        "type": "object"
+      },
+      "AdapterHistoryResult": {
+        "properties": {
+          "coverage": {
+            "enum": [
+              "complete",
+              "partial",
+              "empty"
+            ],
+            "title": "Coverage",
+            "type": "string"
+          },
+          "gaps": {
+            "items": {
+              "$ref": "#/components/schemas/AdapterCoverageGap"
+            },
+            "title": "Gaps",
+            "type": "array"
+          },
+          "points": {
+            "items": {
+              "$ref": "#/components/schemas/MarketHistoryResult"
+            },
+            "title": "Points",
+            "type": "array"
+          },
+          "requested_end": {
+            "format": "date",
+            "title": "Requested End",
+            "type": "string"
+          },
+          "requested_start": {
+            "format": "date",
+            "title": "Requested Start",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "requested_start",
+          "requested_end",
+          "coverage"
+        ],
+        "title": "AdapterHistoryResult",
+        "type": "object"
+      },
+      "AllocationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "annual_expected_returns": {
+            "anyOf": [
+              {
+                "patternProperties": {
+                  "^[A-Za-z0-9_.:^/=-]+$": {
+                    "exclusiveMinimum": -1.0,
+                    "maximum": 10.0,
+                    "type": "number"
+                  }
+                },
+                "propertyNames": {
+                  "maxLength": 40,
+                  "minLength": 1
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Annual Expected Returns"
+          },
+          "baseline_weights": {
+            "anyOf": [
+              {
+                "patternProperties": {
+                  "^[A-Za-z0-9_.:^/=-]+$": {
+                    "maximum": 1.0,
+                    "minimum": 0.0,
+                    "type": "number"
+                  }
+                },
+                "propertyNames": {
+                  "maxLength": 40,
+                  "minLength": 1
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Weights"
+          },
+          "covariance": {
+            "default": "ledoit_wolf",
+            "enum": [
+              "ledoit_wolf",
+              "sample"
+            ],
+            "title": "Covariance",
+            "type": "string"
+          },
+          "dataset": {
+            "$ref": "#/components/schemas/ResearchDataset"
+          },
+          "groups": {
+            "items": {
+              "$ref": "#/components/schemas/GroupConstraint"
+            },
+            "maxItems": 20,
+            "title": "Groups",
+            "type": "array"
+          },
+          "max_turnover": {
+            "anyOf": [
+              {
+                "maximum": 2.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Turnover"
+          },
+          "max_weight": {
+            "default": 1,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Max Weight",
+            "type": "number"
+          },
+          "min_weight": {
+            "default": 0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Min Weight",
+            "type": "number"
+          },
+          "objective": {
+            "default": "min_volatility",
+            "enum": [
+              "min_volatility",
+              "max_sharpe",
+              "hrp",
+              "equal_weight"
+            ],
+            "title": "Objective",
+            "type": "string"
+          },
+          "risk_free_rate": {
+            "default": 0.04,
+            "exclusiveMinimum": -1.0,
+            "maximum": 1.0,
+            "title": "Risk Free Rate",
+            "type": "number"
+          }
+        },
+        "required": [
+          "dataset"
+        ],
+        "title": "AllocationRequest",
+        "type": "object"
+      },
+      "ApiErrorDetail": {
+        "properties": {
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "field": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field"
+          },
+          "message": {
+            "title": "Message",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processing Run Id"
+          },
+          "provider": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider"
+          },
+          "retryable": {
+            "default": false,
+            "title": "Retryable",
+            "type": "boolean"
+          },
+          "target": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target"
+          }
+        },
+        "required": [
+          "code",
+          "message"
+        ],
+        "title": "ApiErrorDetail",
+        "type": "object"
+      },
+      "ApiMeta": {
+        "properties": {
+          "confidence": {
+            "default": "medium",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "is_mock": {
+            "default": false,
+            "title": "Is Mock",
+            "type": "boolean"
+          },
+          "is_stale": {
+            "default": false,
+            "title": "Is Stale",
+            "type": "boolean"
+          },
+          "last_updated": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Updated"
+          },
+          "processing_time_ms": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processing Time Ms"
+          },
+          "request_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Request Id"
+          },
+          "source": {
+            "default": "internal",
+            "title": "Source",
+            "type": "string"
+          },
+          "status": {
+            "default": "success",
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "title": "ApiMeta",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_AdapterActionsResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_AdapterActionsResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[AdapterActionsResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_AdapterDatedQuoteResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_AdapterDatedQuoteResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[AdapterDatedQuoteResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_AdapterHistoryResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_AdapterHistoryResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[AdapterHistoryResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_CalendarScheduleResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_CalendarScheduleResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[CalendarScheduleResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_IdentityMappingResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_IdentityMappingResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[IdentityMappingResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_MarketQuoteResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_MarketQuoteResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[MarketQuoteResult]]",
+        "type": "object"
+      },
+      "ApiResponse_DataAdapterReceipt_SecurityReferenceResult__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataAdapterReceipt_SecurityReferenceResult_"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[DataAdapterReceipt[SecurityReferenceResult]]",
+        "type": "object"
+      },
+      "ApiResponse_ResearchCapabilities_": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResearchCapabilities"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[ResearchCapabilities]",
+        "type": "object"
+      },
+      "ApiResponse_ResearchRunResult_": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ResearchRunResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[ResearchRunResult]",
+        "type": "object"
+      },
+      "ApiResponse_SourceAdapterResult_": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SourceAdapterResult"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[SourceAdapterResult]",
+        "type": "object"
+      },
+      "ApiResponse_list_ResearchRunSummary__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ResearchRunSummary"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[list[ResearchRunSummary]]",
+        "type": "object"
+      },
+      "ApiResponse_list_SourceAdapterCapability__": {
+        "properties": {
+          "data": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/SourceAdapterCapability"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data"
+          },
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ApiErrorDetail"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/ApiMeta"
+          }
+        },
+        "title": "ApiResponse[list[SourceAdapterCapability]]",
+        "type": "object"
+      },
+      "CalendarScheduleRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "exchange": {
+            "enum": [
+              "XNYS",
+              "XNAS",
+              "XNSE",
+              "XBOM"
+            ],
+            "title": "Exchange",
+            "type": "string"
+          },
+          "overrides": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarSessionOverride"
+            },
+            "maxItems": 100,
+            "title": "Overrides",
+            "type": "array"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "exchange",
+          "start_date",
+          "end_date"
+        ],
+        "title": "CalendarScheduleRequest",
+        "type": "object"
+      },
+      "CalendarScheduleResult": {
+        "properties": {
+          "coverage_end": {
+            "format": "date",
+            "title": "Coverage End",
+            "type": "string"
+          },
+          "coverage_start": {
+            "format": "date",
+            "title": "Coverage Start",
+            "type": "string"
+          },
+          "exchange": {
+            "title": "Exchange",
+            "type": "string"
+          },
+          "library_version": {
+            "title": "Library Version",
+            "type": "string"
+          },
+          "override_hash": {
+            "title": "Override Hash",
+            "type": "string"
+          },
+          "sessions": {
+            "items": {
+              "$ref": "#/components/schemas/CalendarSession"
+            },
+            "title": "Sessions",
+            "type": "array"
+          },
+          "timezone": {
+            "title": "Timezone",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "exchange",
+          "timezone",
+          "library_version",
+          "coverage_start",
+          "coverage_end",
+          "override_hash",
+          "sessions",
+          "warnings"
+        ],
+        "title": "CalendarScheduleResult",
+        "type": "object"
+      },
+      "CalendarSession": {
+        "properties": {
+          "closes_at": {
+            "format": "date-time",
+            "title": "Closes At",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "interruptions": {
+            "items": {
+              "maxItems": 2,
+              "minItems": 2,
+              "prefixItems": [
+                {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                {
+                  "format": "date-time",
+                  "type": "string"
+                }
+              ],
+              "type": "array"
+            },
+            "title": "Interruptions",
+            "type": "array"
+          },
+          "opens_at": {
+            "format": "date-time",
+            "title": "Opens At",
+            "type": "string"
+          },
+          "source": {
+            "default": "library",
+            "enum": [
+              "library",
+              "user_source_override"
+            ],
+            "title": "Source",
+            "type": "string"
+          },
+          "source_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Url"
+          }
+        },
+        "required": [
+          "date",
+          "opens_at",
+          "closes_at"
+        ],
+        "title": "CalendarSession",
+        "type": "object"
+      },
+      "CalendarSessionOverride": {
+        "additionalProperties": false,
+        "properties": {
+          "closed": {
+            "default": false,
+            "title": "Closed",
+            "type": "boolean"
+          },
+          "closes_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Closes At"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "opens_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Opens At"
+          },
+          "reason": {
+            "maxLength": 500,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "source_url": {
+            "maxLength": 1000,
+            "pattern": "^https://",
+            "title": "Source Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "source_url",
+          "reason"
+        ],
+        "title": "CalendarSessionOverride",
+        "type": "object"
+      },
+      "CorporateActionEvidence": {
+        "properties": {
+          "action_type": {
+            "enum": [
+              "split",
+              "bonus",
+              "dividend",
+              "other"
+            ],
+            "title": "Action Type",
+            "type": "string"
+          },
+          "announcement_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Announcement Date"
+          },
+          "cash_amount": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cash Amount"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "ex_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ex Date"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "execution_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Date"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "new_shares": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "New Shares"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "old_shares": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Old Shares"
+          },
+          "payment_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Payment Date"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "provider_record_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Provider Record Id"
+          },
+          "publication_time": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publication Time"
+          },
+          "record_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Record Date"
+          },
+          "source_locator": {
+            "title": "Source Locator",
+            "type": "string"
+          },
+          "source_response_hash": {
+            "title": "Source Response Hash",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "ticker",
+          "market",
+          "action_type",
+          "description",
+          "observed_at",
+          "source_response_hash",
+          "source_locator"
+        ],
+        "title": "CorporateActionEvidence",
+        "type": "object"
+      },
+      "DataAdapterReceipt_AdapterActionsResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AdapterActionsResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[AdapterActionsResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_AdapterDatedQuoteResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AdapterDatedQuoteResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[AdapterDatedQuoteResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_AdapterHistoryResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AdapterHistoryResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[AdapterHistoryResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_CalendarScheduleResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/CalendarScheduleResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[CalendarScheduleResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_IdentityMappingResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/IdentityMappingResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[IdentityMappingResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_MarketQuoteResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/MarketQuoteResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[MarketQuoteResult]",
+        "type": "object"
+      },
+      "DataAdapterReceipt_SecurityReferenceResult_": {
+        "properties": {
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "title": "Processing Run Id",
+            "type": "integer"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/SecurityReferenceResult"
+          },
+          "source_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Source Document Ids",
+            "type": "array"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "observed_at",
+          "processing_run_id",
+          "result"
+        ],
+        "title": "DataAdapterReceipt[SecurityReferenceResult]",
+        "type": "object"
+      },
+      "DocumentExtractionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "enum": [
+              "camelot",
+              "docling",
+              "marker"
+            ],
+            "title": "Adapter",
+            "type": "string"
+          },
+          "pages": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 20,
+            "minItems": 1,
+            "title": "Pages",
+            "type": "array"
+          }
+        },
+        "required": [
+          "adapter",
+          "pages"
+        ],
+        "title": "DocumentExtractionRequest",
+        "type": "object"
+      },
+      "FredVintageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "format": "date",
+            "title": "As Of",
+            "type": "string"
+          },
+          "max_pages": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Max Pages",
+            "type": "integer"
+          },
+          "mode": {
+            "default": "as_of",
+            "enum": [
+              "as_of",
+              "initial_release"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "observation_end": {
+            "format": "date",
+            "title": "Observation End",
+            "type": "string"
+          },
+          "observation_start": {
+            "format": "date",
+            "title": "Observation Start",
+            "type": "string"
+          },
+          "series_id": {
+            "pattern": "^[A-Za-z0-9_.-]{1,80}$",
+            "title": "Series Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "series_id",
+          "as_of",
+          "observation_start",
+          "observation_end"
+        ],
+        "title": "FredVintageRequest",
+        "type": "object"
+      },
+      "GroupConstraint": {
+        "additionalProperties": false,
+        "properties": {
+          "max_weight": {
+            "default": 1,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Max Weight",
+            "type": "number"
+          },
+          "members": {
+            "items": {
+              "maxLength": 40,
+              "minLength": 1,
+              "pattern": "^[A-Za-z0-9_.:^/=-]+$",
+              "type": "string"
+            },
+            "maxItems": 40,
+            "minItems": 1,
+            "title": "Members",
+            "type": "array"
+          },
+          "min_weight": {
+            "default": 0,
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Min Weight",
+            "type": "number"
+          },
+          "name": {
+            "maxLength": 80,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "members"
+        ],
+        "title": "GroupConstraint",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "IdentityCandidate": {
+        "properties": {
+          "composite_figi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Composite Figi"
+          },
+          "exchange_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange Code"
+          },
+          "figi": {
+            "title": "Figi",
+            "type": "string"
+          },
+          "market_sector": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Sector"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "security_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Security Type"
+          },
+          "share_class_figi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share Class Figi"
+          },
+          "ticker": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ticker"
+          }
+        },
+        "required": [
+          "figi"
+        ],
+        "title": "IdentityCandidate",
+        "type": "object"
+      },
+      "IdentityMappingRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "exchange_code": {
+            "anyOf": [
+              {
+                "maxLength": 12,
+                "pattern": "^[A-Za-z0-9]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange Code"
+          },
+          "id_type": {
+            "enum": [
+              "TICKER",
+              "ID_ISIN",
+              "ID_CUSIP",
+              "ID_SEDOL",
+              "ID_BB_GLOBAL"
+            ],
+            "title": "Id Type",
+            "type": "string"
+          },
+          "id_value": {
+            "maxLength": 100,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9 .&/_-]+$",
+            "title": "Id Value",
+            "type": "string"
+          },
+          "include_unlisted_equities": {
+            "default": false,
+            "title": "Include Unlisted Equities",
+            "type": "boolean"
+          },
+          "mic_code": {
+            "anyOf": [
+              {
+                "maxLength": 4,
+                "pattern": "^[A-Za-z0-9]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mic Code"
+          }
+        },
+        "required": [
+          "id_type",
+          "id_value"
+        ],
+        "title": "IdentityMappingRequest",
+        "type": "object"
+      },
+      "IdentityMappingResult": {
+        "properties": {
+          "candidates": {
+            "items": {
+              "$ref": "#/components/schemas/IdentityCandidate"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "resolution": {
+            "enum": [
+              "candidate",
+              "ambiguous",
+              "unresolved"
+            ],
+            "title": "Resolution",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "candidates",
+          "resolution",
+          "observed_at"
+        ],
+        "title": "IdentityMappingResult",
+        "type": "object"
+      },
+      "IndiaFilingsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "exchange": {
+            "enum": [
+              "NSE",
+              "BSE"
+            ],
+            "title": "Exchange",
+            "type": "string"
+          },
+          "records": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "maxItems": 100,
+            "minItems": 1,
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "required": [
+          "exchange",
+          "records"
+        ],
+        "title": "IndiaFilingsRequest",
+        "type": "object"
+      },
+      "MarketDataRequest": {
+        "properties": {
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "market",
+          "ticker"
+        ],
+        "title": "MarketDataRequest",
+        "type": "object"
+      },
+      "MarketHistoryResult": {
+        "properties": {
+          "adjustment_state": {
+            "default": "unknown",
+            "enum": [
+              "adjusted",
+              "unadjusted",
+              "not_applicable",
+              "unknown"
+            ],
+            "title": "Adjustment State",
+            "type": "string"
+          },
+          "close_price": {
+            "title": "Close Price",
+            "type": "string"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "price_type": {
+            "default": "end_of_day",
+            "enum": [
+              "real_time",
+              "delayed",
+              "end_of_day",
+              "unknown",
+              "manual"
+            ],
+            "title": "Price Type",
+            "type": "string"
+          },
+          "provider_name": {
+            "title": "Provider Name",
+            "type": "string"
+          },
+          "provider_symbol": {
+            "title": "Provider Symbol",
+            "type": "string"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider_name",
+          "provider_symbol",
+          "market",
+          "ticker",
+          "currency",
+          "date",
+          "close_price"
+        ],
+        "title": "MarketHistoryResult",
+        "type": "object"
+      },
+      "MarketQuoteResult": {
+        "properties": {
+          "adjustment_state": {
+            "default": "not_applicable",
+            "enum": [
+              "adjusted",
+              "unadjusted",
+              "not_applicable",
+              "unknown"
+            ],
+            "title": "Adjustment State",
+            "type": "string"
+          },
+          "change_percent": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Change Percent"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "current_price": {
+            "title": "Current Price",
+            "type": "string"
+          },
+          "delay_minutes": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delay Minutes"
+          },
+          "exchange": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "fifty_two_week_high": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fifty Two Week High"
+          },
+          "fifty_two_week_low": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fifty Two Week Low"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "market_cap": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Market Cap"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "pe_ratio": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pe Ratio"
+          },
+          "price_type": {
+            "default": "unknown",
+            "enum": [
+              "real_time",
+              "delayed",
+              "end_of_day",
+              "unknown",
+              "manual"
+            ],
+            "title": "Price Type",
+            "type": "string"
+          },
+          "provider_name": {
+            "title": "Provider Name",
+            "type": "string"
+          },
+          "provider_symbol": {
+            "title": "Provider Symbol",
+            "type": "string"
+          },
+          "source_timestamp": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source Timestamp"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider_name",
+          "provider_symbol",
+          "market",
+          "ticker",
+          "currency",
+          "current_price"
+        ],
+        "title": "MarketQuoteResult",
+        "type": "object"
+      },
+      "PeerDiscoveryRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "country": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Country"
+          },
+          "industry": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Industry"
+          },
+          "limit": {
+            "default": 50,
+            "maximum": 100.0,
+            "minimum": 1.0,
+            "title": "Limit",
+            "type": "integer"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 2,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query"
+          },
+          "sector": {
+            "anyOf": [
+              {
+                "maxLength": 100,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sector"
+          }
+        },
+        "title": "PeerDiscoveryRequest",
+        "type": "object"
+      },
+      "ReportObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "date": {
+            "format": "date",
+            "title": "Date",
+            "type": "string"
+          },
+          "return_decimal": {
+            "maximum": 100.0,
+            "minimum": -1.0,
+            "title": "Return Decimal",
+            "type": "number"
+          }
+        },
+        "required": [
+          "date",
+          "return_decimal"
+        ],
+        "title": "ReportObservation",
+        "type": "object"
+      },
+      "ReportRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "benchmark": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ReportObservation"
+                },
+                "maxItems": 2600,
+                "minItems": 2,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Benchmark"
+          },
+          "periods_per_year": {
+            "default": 252,
+            "maximum": 366.0,
+            "minimum": 1.0,
+            "title": "Periods Per Year",
+            "type": "integer"
+          },
+          "returns": {
+            "items": {
+              "$ref": "#/components/schemas/ReportObservation"
+            },
+            "maxItems": 2600,
+            "minItems": 2,
+            "title": "Returns",
+            "type": "array"
+          },
+          "risk_free_rate": {
+            "default": 0.04,
+            "exclusiveMinimum": -1.0,
+            "maximum": 1.0,
+            "title": "Risk Free Rate",
+            "type": "number"
+          },
+          "source_label": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Source Label",
+            "type": "string"
+          },
+          "title": {
+            "default": "Research return report",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "returns",
+          "source_label"
+        ],
+        "title": "ReportRequest",
+        "type": "object"
+      },
+      "ResearchAsset": {
+        "additionalProperties": false,
+        "properties": {
+          "currency": {
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency",
+            "type": "string"
+          },
+          "key": {
+            "maxLength": 40,
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9_.:^/=-]+$",
+            "title": "Key",
+            "type": "string"
+          },
+          "ticker": {
+            "maxLength": 40,
+            "minLength": 1,
+            "title": "Ticker",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "ticker",
+          "currency"
+        ],
+        "title": "ResearchAsset",
+        "type": "object"
+      },
+      "ResearchCapabilities": {
+        "additionalProperties": false,
+        "properties": {
+          "adapters": {
+            "items": {
+              "$ref": "#/components/schemas/AdapterCapability"
+            },
+            "title": "Adapters",
+            "type": "array"
+          },
+          "limits": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Limits",
+            "type": "object"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "adapters",
+          "limits"
+        ],
+        "title": "ResearchCapabilities",
+        "type": "object"
+      },
+      "ResearchDataset": {
+        "additionalProperties": false,
+        "properties": {
+          "assets": {
+            "items": {
+              "$ref": "#/components/schemas/ResearchAsset"
+            },
+            "maxItems": 40,
+            "minItems": 1,
+            "title": "Assets",
+            "type": "array"
+          },
+          "base_currency": {
+            "pattern": "^[A-Z]{3}$",
+            "title": "Base Currency",
+            "type": "string"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/ReturnObservation"
+            },
+            "maxItems": 2600,
+            "minItems": 2,
+            "title": "Observations",
+            "type": "array"
+          },
+          "periods_per_year": {
+            "default": 252,
+            "maximum": 366.0,
+            "minimum": 1.0,
+            "title": "Periods Per Year",
+            "type": "integer"
+          },
+          "return_basis": {
+            "enum": [
+              "price_return",
+              "total_return"
+            ],
+            "title": "Return Basis",
+            "type": "string"
+          },
+          "source_label": {
+            "maxLength": 300,
+            "minLength": 3,
+            "title": "Source Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "base_currency",
+          "return_basis",
+          "source_label",
+          "assets",
+          "observations"
+        ],
+        "title": "ResearchDataset",
+        "type": "object"
+      },
+      "ResearchRunManifest": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "title": "Adapter",
+            "type": "string"
+          },
+          "adapter_version": {
+            "title": "Adapter Version",
+            "type": "string"
+          },
+          "application_observed_cutoff": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Application Observed Cutoff"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "dependencies": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Dependencies",
+            "type": "object"
+          },
+          "deterministic_seed": {
+            "default": 0,
+            "title": "Deterministic Seed",
+            "type": "integer"
+          },
+          "input_sha256": {
+            "title": "Input Sha256",
+            "type": "string"
+          },
+          "knowledge_policy": {
+            "enum": [
+              "unverified_research",
+              "reference_snapshot"
+            ],
+            "title": "Knowledge Policy",
+            "type": "string"
+          },
+          "output_sha256": {
+            "title": "Output Sha256",
+            "type": "string"
+          },
+          "public_information_cutoff": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Public Information Cutoff"
+          },
+          "schema_version": {
+            "const": "research-lab/v1",
+            "default": "research-lab/v1",
+            "title": "Schema Version",
+            "type": "string"
+          },
+          "snapshot_created_at": {
+            "format": "date-time",
+            "title": "Snapshot Created At",
+            "type": "string"
+          },
+          "source_assertion": {
+            "enum": [
+              "user_supplied_unverified",
+              "pinned_reference_snapshot"
+            ],
+            "title": "Source Assertion",
+            "type": "string"
+          },
+          "valuation_as_of": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valuation As Of"
+          }
+        },
+        "required": [
+          "input_sha256",
+          "output_sha256",
+          "created_at",
+          "adapter",
+          "adapter_version",
+          "dependencies",
+          "source_assertion",
+          "snapshot_created_at",
+          "knowledge_policy"
+        ],
+        "title": "ResearchRunManifest",
+        "type": "object"
+      },
+      "ResearchRunResult": {
+        "additionalProperties": false,
+        "properties": {
+          "kind": {
+            "enum": [
+              "allocation",
+              "simulation",
+              "report",
+              "peers"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "manifest": {
+            "$ref": "#/components/schemas/ResearchRunManifest"
+          },
+          "result": {
+            "additionalProperties": true,
+            "title": "Result",
+            "type": "object"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "integer"
+          },
+          "status": {
+            "const": "complete",
+            "default": "complete",
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "manifest",
+          "result"
+        ],
+        "title": "ResearchRunResult",
+        "type": "object"
+      },
+      "ResearchRunSummary": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Adapter"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "input_sha256": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Input Sha256"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "run_id": {
+            "title": "Run Id",
+            "type": "integer"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "run_id",
+          "kind",
+          "status",
+          "created_at"
+        ],
+        "title": "ResearchRunSummary",
+        "type": "object"
+      },
+      "ReturnObservation": {
+        "additionalProperties": false,
+        "properties": {
+          "end_date": {
+            "format": "date",
+            "title": "End Date",
+            "type": "string"
+          },
+          "returns": {
+            "maxProperties": 40,
+            "minProperties": 1,
+            "patternProperties": {
+              "^[A-Za-z0-9_.:^/=-]+$": {
+                "maximum": 100.0,
+                "minimum": -1.0,
+                "type": "number"
+              }
+            },
+            "propertyNames": {
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "title": "Returns",
+            "type": "object"
+          },
+          "start_date": {
+            "format": "date",
+            "title": "Start Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "start_date",
+          "end_date",
+          "returns"
+        ],
+        "title": "ReturnObservation",
+        "type": "object"
+      },
+      "SecFactsAdapterRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "as_of": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "As Of"
+          },
+          "max_years": {
+            "default": 5,
+            "maximum": 10.0,
+            "minimum": 1.0,
+            "title": "Max Years",
+            "type": "integer"
+          }
+        },
+        "title": "SecFactsAdapterRequest",
+        "type": "object"
+      },
+      "SecurityReferenceResult": {
+        "properties": {
+          "active": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "cik": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cik"
+          },
+          "composite_figi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Composite Figi"
+          },
+          "currency": {
+            "title": "Currency",
+            "type": "string"
+          },
+          "exchange": {
+            "title": "Exchange",
+            "type": "string"
+          },
+          "market": {
+            "title": "Market",
+            "type": "string"
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "provider": {
+            "title": "Provider",
+            "type": "string"
+          },
+          "requested_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requested Date"
+          },
+          "share_class_figi": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Share Class Figi"
+          },
+          "ticker": {
+            "title": "Ticker",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "provider",
+          "ticker",
+          "market",
+          "exchange",
+          "currency",
+          "observed_at"
+        ],
+        "title": "SecurityReferenceResult",
+        "type": "object"
+      },
+      "SimulationRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "dataset": {
+            "$ref": "#/components/schemas/ResearchDataset"
+          },
+          "engine": {
+            "default": "native",
+            "enum": [
+              "native",
+              "bt"
+            ],
+            "title": "Engine",
+            "type": "string"
+          },
+          "initial_weights": {
+            "maxProperties": 40,
+            "minProperties": 1,
+            "patternProperties": {
+              "^[A-Za-z0-9_.:^/=-]+$": {
+                "maximum": 1.0,
+                "minimum": 0.0,
+                "type": "number"
+              }
+            },
+            "propertyNames": {
+              "maxLength": 40,
+              "minLength": 1
+            },
+            "title": "Initial Weights",
+            "type": "object"
+          },
+          "rebalance": {
+            "default": "monthly",
+            "enum": [
+              "monthly",
+              "quarterly",
+              "yearly",
+              "each_period"
+            ],
+            "title": "Rebalance",
+            "type": "string"
+          },
+          "strategy": {
+            "default": "buy_and_hold",
+            "enum": [
+              "buy_and_hold",
+              "constant_weight"
+            ],
+            "title": "Strategy",
+            "type": "string"
+          },
+          "transaction_cost_bps": {
+            "default": 0,
+            "maximum": 1000.0,
+            "minimum": 0.0,
+            "title": "Transaction Cost Bps",
+            "type": "number"
+          },
+          "weight_decision_date": {
+            "format": "date",
+            "title": "Weight Decision Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset",
+          "initial_weights",
+          "weight_decision_date"
+        ],
+        "title": "SimulationRequest",
+        "type": "object"
+      },
+      "SourceAdapterCapability": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "title": "Adapter",
+            "type": "string"
+          },
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "dependency_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dependency Version"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "adapter",
+          "available",
+          "status"
+        ],
+        "title": "SourceAdapterCapability",
+        "type": "object"
+      },
+      "SourceAdapterResult": {
+        "additionalProperties": false,
+        "properties": {
+          "adapter": {
+            "title": "Adapter",
+            "type": "string"
+          },
+          "candidate_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Candidate Ids",
+            "type": "array"
+          },
+          "created_count": {
+            "default": 0,
+            "title": "Created Count",
+            "type": "integer"
+          },
+          "details": {
+            "additionalProperties": true,
+            "title": "Details",
+            "type": "object"
+          },
+          "duplicate_count": {
+            "default": 0,
+            "title": "Duplicate Count",
+            "type": "integer"
+          },
+          "fetched_count": {
+            "default": 0,
+            "title": "Fetched Count",
+            "type": "integer"
+          },
+          "observed_at": {
+            "format": "date-time",
+            "title": "Observed At",
+            "type": "string"
+          },
+          "processing_run_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Processing Run Id"
+          },
+          "raw_document_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Raw Document Ids",
+            "type": "array"
+          },
+          "status": {
+            "default": "success",
+            "enum": [
+              "success",
+              "partial",
+              "unavailable"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "adapter",
+          "observed_at"
+        ],
+        "title": "SourceAdapterResult",
+        "type": "object"
+      },
+      "TranscriptRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "exchange": {
+            "anyOf": [
+              {
+                "pattern": "^[A-Z0-9_.-]{1,20}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exchange"
+          },
+          "fiscal_quarter": {
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Fiscal Quarter",
+            "type": "integer"
+          },
+          "fiscal_year": {
+            "maximum": 2100.0,
+            "minimum": 1990.0,
+            "title": "Fiscal Year",
+            "type": "integer"
+          },
+          "level": {
+            "default": 1,
+            "maximum": 4.0,
+            "minimum": 1.0,
+            "title": "Level",
+            "type": "integer"
+          },
+          "provider": {
+            "enum": [
+              "earningscall",
+              "fmp"
+            ],
+            "title": "Provider",
+            "type": "string"
+          }
+        },
+        "required": [
+          "provider",
+          "fiscal_year",
+          "fiscal_quarter"
+        ],
+        "title": "TranscriptRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Marketagent adapter API",
+    "version": "1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/companies/{company_id}/source-adapters/documents/{document_id}/extract": {
+      "post": {
+        "operationId": "document_extract_api_companies__company_id__source_adapters_documents__document_id__extract_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "title": "Company Id",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "title": "Document Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocumentExtractionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SourceAdapterResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Document Extract",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    },
+    "/api/companies/{company_id}/source-adapters/india-filings": {
+      "post": {
+        "operationId": "india_filings_api_companies__company_id__source_adapters_india_filings_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "title": "Company Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IndiaFilingsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SourceAdapterResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "India Filings",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    },
+    "/api/companies/{company_id}/source-adapters/sec-facts": {
+      "post": {
+        "operationId": "sec_facts_api_companies__company_id__source_adapters_sec_facts_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "title": "Company Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecFactsAdapterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SourceAdapterResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Sec Facts",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    },
+    "/api/companies/{company_id}/source-adapters/transcript": {
+      "post": {
+        "operationId": "transcript_api_companies__company_id__source_adapters_transcript_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "company_id",
+            "required": true,
+            "schema": {
+              "title": "Company Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TranscriptRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SourceAdapterResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Transcript",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/calendars/schedule": {
+      "post": {
+        "operationId": "adapter_calendar_api_data_adapters_calendars_schedule_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CalendarScheduleRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_CalendarScheduleResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Calendar",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/identity/openfigi": {
+      "post": {
+        "operationId": "adapter_identity_api_data_adapters_identity_openfigi_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IdentityMappingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_IdentityMappingResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Identity",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/{provider}/corporate-actions": {
+      "post": {
+        "operationId": "adapter_actions_api_data_adapters__provider__corporate_actions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "fmp",
+                "massive",
+                "nse_mcp"
+              ],
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdapterActionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_AdapterActionsResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Actions",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/{provider}/dated-quote": {
+      "post": {
+        "operationId": "adapter_dated_quote_api_data_adapters__provider__dated_quote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "fmp",
+                "massive",
+                "nse_mcp"
+              ],
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdapterDatedQuoteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_AdapterDatedQuoteResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Dated Quote",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/{provider}/history": {
+      "post": {
+        "operationId": "adapter_history_api_data_adapters__provider__history_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "fmp",
+                "massive",
+                "nse_mcp"
+              ],
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdapterHistoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_AdapterHistoryResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter History",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/{provider}/quote": {
+      "post": {
+        "operationId": "adapter_quote_api_data_adapters__provider__quote_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "fmp",
+                "massive",
+                "nse_mcp"
+              ],
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketDataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_MarketQuoteResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Quote",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/data-adapters/{provider}/reference": {
+      "post": {
+        "operationId": "adapter_reference_api_data_adapters__provider__reference_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "provider",
+            "required": true,
+            "schema": {
+              "enum": [
+                "fmp",
+                "massive",
+                "nse_mcp"
+              ],
+              "title": "Provider",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarketDataRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_DataAdapterReceipt_SecurityReferenceResult__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Adapter Reference",
+        "tags": [
+          "data-adapters"
+        ]
+      }
+    },
+    "/api/research-lab/allocation": {
+      "post": {
+        "operationId": "allocation_api_research_lab_allocation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AllocationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchRunResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Allocation",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/capabilities": {
+      "get": {
+        "operationId": "research_capabilities_api_research_lab_capabilities_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchCapabilities_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Research Capabilities",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/peers": {
+      "post": {
+        "operationId": "peers_api_research_lab_peers_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PeerDiscoveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchRunResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Peers",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/report": {
+      "post": {
+        "operationId": "report_api_research_lab_report_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchRunResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Report",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/runs": {
+      "get": {
+        "operationId": "runs_api_research_lab_runs_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 25,
+              "maximum": 100,
+              "minimum": 1,
+              "title": "Limit",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_ResearchRunSummary__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Runs",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/runs/{run_id}": {
+      "get": {
+        "operationId": "run_api_research_lab_runs__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchRunResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Run",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/runs/{run_id}/export": {
+      "get": {
+        "operationId": "export_api_research_lab_runs__run_id__export_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Export",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/runs/{run_id}/report.html": {
+      "get": {
+        "operationId": "html_report_api_research_lab_runs__run_id__report_html_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "title": "Run Id",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Html Report",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/research-lab/simulation": {
+      "post": {
+        "operationId": "simulation_api_research_lab_simulation_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SimulationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_ResearchRunResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Simulation",
+        "tags": [
+          "research-lab"
+        ]
+      }
+    },
+    "/api/source-adapters": {
+      "get": {
+        "operationId": "source_capabilities_api_source_adapters_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_list_SourceAdapterCapability__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Source Capabilities",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    },
+    "/api/source-adapters/fred-vintage": {
+      "post": {
+        "operationId": "fred_vintage_api_source_adapters_fred_vintage_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FredVintageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse_SourceAdapterResult_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "summary": "Fred Vintage",
+        "tags": [
+          "source_adapters"
+        ]
+      }
+    }
+  }
+}

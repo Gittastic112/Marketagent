@@ -1,0 +1,8 @@
+# Separate, optional OCR interpreter only. Do not install into the API environment.
+# This profile deliberately does not constrain to the core spreadsheet/PDF pins.
+pydantic==2.14.0
+docling==2.150.1
+# Marker 2.2.0's Surya dependency requires vulnerable Pillow<11 and filelock<4.
+# Keep its wrapper unavailable until a compatible patched dependency set exists.
+Pillow==13.0.0
+filelock==4.2.12

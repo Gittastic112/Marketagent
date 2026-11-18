@@ -60,6 +60,9 @@ from app.api.routers import (
     evaluation,
     ai_research,
     market_regime,
+    research_lab,
+    source_adapters,
+    data_adapters,
 )
 
 
@@ -125,5 +128,8 @@ for route_group in (
     evaluation.router,
     ai_research.router,
     market_regime.router,
+    research_lab.router,
+    source_adapters.router,
+    data_adapters.router,
 ):
     router.include_router(route_group)

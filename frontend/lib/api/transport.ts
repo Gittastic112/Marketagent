@@ -39,6 +39,16 @@ async function apiError(response: Response): Promise<ApiError> {
     if (body && typeof body.detail === "string") {
       return new ApiError(body.detail, response.status);
     }
+    if (body && Array.isArray(body.detail)) {
+      // Pydantic validation errors retain field names, never echo the submitted input.
+      const messages = body.detail.slice(0, 5).flatMap((item: unknown) => {
+        if (!item || typeof item !== "object" || !("msg" in item) || typeof item.msg !== "string") return [];
+        const location = "loc" in item && Array.isArray(item.loc)
+          ? item.loc.filter((part: unknown) => (typeof part === "string" || typeof part === "number") && part !== "body").join(".") : "";
+        return [`${location ? `${location}: ` : ""}${item.msg}`];
+      });
+      if (messages.length) return new ApiError(messages.join("; "), response.status);
+    }
   } catch {
     // Fall back to the generic message below when the response body is not JSON.
   }

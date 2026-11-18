@@ -8,7 +8,7 @@ import { serverFetchApiResponse } from "@/lib/server-api";
 import type { Company, ExposureTag } from "@/lib/api";
 import Link from "next/link";
 
-export default async function CompaniesPage({ searchParams }: { searchParams: Promise<{ edit?: string; create?: string; q?: string; market?: string }> }) {
+export default async function CompaniesPage({ searchParams }: { searchParams: Promise<{ edit?: string; create?: string; q?: string; market?: string; ticker?: string; exchange?: string }> }) {
   const query = await searchParams;
   try {
     const [companiesRes, exposureTagsRes] = await Promise.all([
@@ -33,7 +33,10 @@ export default async function CompaniesPage({ searchParams }: { searchParams: Pr
           mockMessage="Company or exposure tag data is mocked. Do not treat it as live watchlist coverage."
         />
 
-        {query.create === "1" && <Panel title="Add Company" actions={<Link prefetch={false} href="/companies">Close</Link>}><CompanySetupWizard /></Panel>}
+        {query.create === "1" && <Panel title="Add Company" actions={<Link prefetch={false} href="/companies">Close</Link>}><CompanySetupWizard
+          key={`${query.ticker ?? ""}:${query.market ?? ""}:${query.exchange ?? ""}`}
+          initialTicker={(query.ticker ?? "").trim().slice(0, 40)} initialMarket={query.market === "IN" ? "IN" : "US"}
+          initialExchange={(query.exchange ?? "").trim().slice(0, 80)} /></Panel>}
         <form method="get" className="watchlist-filters">
           <TextField id="company-search" name="q" label="Find a company" defaultValue={query.q || ""} placeholder="Name or ticker" />
           <SelectField id="company-market-filter" name="market" label="Market" defaultValue={query.market || ""}>

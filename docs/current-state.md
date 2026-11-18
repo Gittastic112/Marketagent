@@ -1,6 +1,6 @@
 # Current State
 
-Source and review integration updated November 15, 2026. Recorded results below identify
+Source and review integration updated November 17, 2026. Recorded results below identify
 their exact revisions and environments; they do not certify an existing installation.
 
 ## Product position
@@ -17,6 +17,7 @@ public hosting. [Scope and limitations](limitations.md)
 | Valuation | Reviewed drafts, versioned FCFF and specialized models, scenario/sensitivity diagnostics, reverse DCF, and owner-reviewed peer comparisons |
 | Portfolio | Recorded activity replay, dated snapshots, returns, attribution, benchmark comparisons, and fixed-weight price risk with incomplete-input states |
 | Governance | Processing Runs, source/freshness metadata, explicit external-AI consent, exact-citation review, and retained decision receipts |
+| Adapter Research Lab | Explicit market/source actions, optional financial/table libraries, hypothetical allocation/simulation, versioned reports and reference peer discovery; [setup and boundaries](adapters/README.md) |
 | Runtime | Production-built Next.js/FastAPI/PostgreSQL services, local sign-in, signed internal identity, readiness checks, and backup/recovery tooling |
 
 The [feature register](roadmaps/feature-register.md) owns detailed status. The
@@ -31,6 +32,7 @@ acceptance.
 
 | Date and scope | Recorded evidence |
 |---|---|
+| November 17, adapter implementation branch | Concrete FMP/Massive/NSE, identity/calendar, SEC/PDF/transcript/vintage adapters; Research Lab and safer memo/import/search UI. Actual optional-library fixtures and captured official NSE samples were exercised. This environment has no Docker and no installed-app access; hosted/runtime/model/entitlement limits remain explicit in the [verification receipt](adapters/verification.md). |
 | November 15, review releases | Both ten-repair batches are installed and merged in [PR 18](https://github.com/Gittastic112/Marketagent/pull/18) and [PR 19](https://github.com/Gittastic112/Marketagent/pull/19). All seven hosted gates pass on the final source: 2,101 backend tests (15 skipped), 395 frontend tests, 71 browser workflows and seven PostgreSQL checks. Today places the portfolio overview, daily brief and alerts before the six-item research queue; installed desktop/mobile checks pass. All 110 tables, asset bytes, settings and volumes are preserved; no PostgreSQL restart or new backup. [Release and cleanup checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md) |
 | November 15, returned code-review intake | All 39 primary findings checked against main at `6505082`; review severities retained as 1 critical, 13 high and 25 medium. Five finding IDs locally reproduced with isolated Mock Data or shell argument inspection: A3-1, A1-F9, A2-1, A2-8 and A4-2. The migration metadata forms one connected 73-revision chain; this does not prove populated upgrade safety. No HTTP authentication, PostgreSQL restore, browser or deployed-data incident proof was added at intake. All repairs were open at that checkpoint; the [ledger](limitations.md#returned-code-review) owns current status. [Sanitized evidence receipt](../data/reviews/code-review-intake-20261115.json) |
 | November 14, dependency and full-suite follow-up | OpenTelemetry API 1.45.2 and Soup Sieve 4.1.1 are installed. Hash-verified dependency audit reports no known vulnerabilities; 1,963 backend tests pass, seven PostgreSQL-only cases skipped in this isolated SQLite run. Four rate/industry-mix tests now exercise explicit refresh and verify that reopening preserves existing inputs. Draft return-link sizing and bounded thesis-table scrolling are repaired and checked in the installed browser; 393 frontend tests, type checking and production build pass. Nine browser specs follow current navigation and explicit actions without weakening their assertions. All 110 tables, settings and recovery material remain unchanged; four containers/four essential images remain, with zero build cache. [Receipt](../data/reviews/dependency-security-20261114.json) · [Hosted checks on PR 17](https://github.com/Gittastic112/Marketagent/pull/17) |
@@ -61,6 +63,11 @@ It changes no financial acceptance gates.
 
 ## Latest product changes
 
+- The [adapter batch](adapters/README.md) adds owned, hashed research run exports,
+  bounded compute/extraction workers, explicit provider inspection, generated
+  adapter contracts and optional locked dependency profiles. It adds no migrations
+  or automatic financial approval. Next.js is patched to 16.4.5. Existing installed
+  release evidence below is not extended by these source changes.
 - All four companies have three selected reviewed annual histories. No selected
   candidate remains pending; Apple/NVIDIA operating checklists are 10/13 source-linked
   per year and Meta/Alphabet remain 8/13. The [current ledger](limitations.md#selected-company-review-follow-up)

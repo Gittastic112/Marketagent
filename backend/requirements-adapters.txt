@@ -1,0 +1,9 @@
+# Optional research and exchange-calendar adapters. Preserve the core lock.
+-c requirements.lock
+PyPortfolioOpt==1.6.0
+# HRP 1.6.0 uses scipy.cluster.hierarchy._LINKAGE_METHODS, removed in SciPy 1.18.
+scipy==1.16.3
+bt==1.4.1
+quantstats==0.0.86
+pandas_market_calendars==5.6.1
+edgartools==6.3.0

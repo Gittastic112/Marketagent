@@ -9,7 +9,7 @@ async function createSavedModel(page: Page) {
     local_symbol: `AI${Date.now().toString().slice(-7)}`, name: "Mock Data explanation workflow" });
   const model = await backendData<{id: number}>(page, `/companies/${company.id}/valuation-models`, {
     method: "POST", data: {company_id: company.id, name: "Mock Data saved explanation", model_type: "fcff_dcf"} });
-  const row = await backendData<{id: number; updated_at: string}>(page, `/valuation-models/${model.id}/assumptions`, {
+  const row = await backendData<{id: number; updated_at: string; outputs?: {id: number; created_at: string}}>(page, `/valuation-models/${model.id}/assumptions`, {
     method: "POST", data: {scenario: "Base", story_text: "Mock Data saved story", projection_years_count: 5,
       starting_revenue: 1000, current_operating_margin: 0.2, target_operating_margin: 0.22, tax_rate: 0.25,
       revenue_growth_years_json: {1: 0.05, 2: 0.05, 3: 0.05, 4: 0.05, 5: 0.05},
@@ -20,9 +20,9 @@ async function createSavedModel(page: Page) {
   return {company, model, row, path: `/companies/${company.id}/valuation/${model.id}`};
 }
 
-function evidence(modelId: number, row: {id: number; updated_at: string}) {
+function evidence(modelId: number, row: {id: number; updated_at: string; outputs?: {id: number; created_at: string} | null}) {
   return {assumption_set_id: row.id, assumptions_updated_at: row.updated_at, valuation_model_id: modelId,
-    scenario: "Base", output_id: 1, output_calculated_at: row.updated_at, currency: "USD",
+    scenario: "Base", output_id: row.outputs?.id ?? null, output_calculated_at: row.outputs?.created_at ?? row.updated_at, currency: "USD",
     ai_output_id: 1, claim_type: "AI Interpretation", is_current: true, basis_verified: true,
     provider_name: "mock", model_name: "Mock Data browser fixture", prompt_version: "mock-workflow-v1",
     input_hash: "a".repeat(64), source_ids: [`valuation:${modelId}`, `dcf_assumption_set:${row.id}`],
@@ -230,12 +230,14 @@ for (const width of [1440, 390]) {
     await checkState(page, `memo-error-${width}`);
     await panel.getByRole("button", {name: "Reload stored memo"}).click();
     await expect(panel.getByText(/Review: pending/)).toBeVisible();
-    await expect(panel.getByText(memoText, {exact: true})).toBeVisible();
+    await expect(panel.getByLabel("Memo text")).toContainText("Mock Data memo");
+    await expect(panel.getByLabel("Memo text").locator("script")).toHaveCount(0);
     expect(await page.evaluate(() => "untrustedMemoExecuted" in window)).toBe(false);
     await checkState(page, `memo-success-${width}`);
     const downloadReady = page.waitForEvent("download");
     await panel.getByRole("button", {name: "Download memo with evidence"}).click();
     const download = await downloadReady;
+    expect(download.suggestedFilename()).toBe(`valuation-${model.id}-assumptions-${row.id}-memo-1.md`);
     const downloadPath = test.info().outputPath(download.suggestedFilename());
     await download.saveAs(downloadPath);
     const exported = await readFile(downloadPath, "utf8");

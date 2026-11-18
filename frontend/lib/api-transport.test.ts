@@ -76,3 +76,10 @@ test("exports preserve binary bytes and their separate failure contract", async 
     await assert.rejects(() => postBlobApi("/export-test", {}), /Export failed with status 403/);
   });
 });
+
+test("validation errors expose actionable field paths without echoing submitted data", async () => {
+  await withFetch(() => Response.json({ detail: [{ loc: ["body", "dataset", "observations", 2, "returns"], msg: "Field required", input: "private-source-text" }] }, { status: 422 }), async () => {
+    await assert.rejects(() => postApi("/test", {}), (error: unknown) => error instanceof ApiError
+      && error.status === 422 && error.message === "dataset.observations.2.returns: Field required" && !error.message.includes("private-source-text"));
+  });
+});

@@ -28,12 +28,13 @@ def test_market_health_matches_selected_provider_and_surfaces_error_code(client,
     assert provider["recent_run_count"] == 1
 
 
-def test_fmp_key_does_not_make_unimplemented_adapter_available(client, monkeypatch):
+def test_fmp_implemented_adapter_is_configured_without_claiming_live_entitlement(client, monkeypatch):
     monkeypatch.setenv("MARKET_DATA_PROVIDER", "fmp")
     monkeypatch.setenv("FMP_API_KEY", "mock-key")
     provider = _provider_by_name(client.get("/api/providers/health").json()["data"], "Financial Modeling Prep")
-    assert provider["configured"] is False and provider["status"] == "not_configured"
-    assert "not available" in provider["action_required"].lower()
+    assert provider["configured"] is True and provider["status"] == "configured"
+    assert "entitlement" in provider["notes"].lower()
+    assert provider["last_success_at"] is None
 
 
 def test_ai_health_does_not_claim_unimplemented_providers_are_configured(client, monkeypatch):
@@ -190,10 +191,10 @@ def test_provider_health_reports_configuration_and_processing_run_history(client
     assert ai["notes"] == "Gemini configured"
 
     openfigi = _provider_by_name(providers, "OpenFIGI")
-    assert openfigi["status"] == "missing_key"
-    assert openfigi["configured"] is False
+    assert openfigi["status"] == "configured"
+    assert openfigi["configured"] is True
     assert openfigi["requirement_level"] == "optional"
-    assert openfigi["notes"] is None
+    assert "without a key" in openfigi["notes"]
 
     damodaran = _provider_by_name(providers, "Damodaran Benchmarks")
     assert damodaran["status"] == "working"
@@ -297,3 +298,23 @@ def test_provider_health_reports_owned_rss_source_coverage(client, db) -> None:
     assert rss["coverage_state"] == "2 active RSS sources"
     assert rss["freshness_label"] == "never_run"
     assert "Run RSS Feeds ingestion" in rss["action_required"]
+
+
+@pytest.mark.parametrize('selected,name,key', [('massive','Massive','MASSIVE_API_KEY'),('nse_mcp','NSE MCP',None)])
+def test_new_official_market_adapters_report_configuration_without_claiming_coverage(client,monkeypatch,selected,name,key):
+    monkeypatch.setenv('MARKET_DATA_PROVIDER',selected)
+    if key:
+        monkeypatch.setenv(key,'mock-key')
+    provider=_provider_by_name(client.get('/api/providers/health').json()['data'],name)
+    assert provider['configured'] and provider['status']=='configured'
+    assert provider['last_success_at'] is None
+    assert provider['market']==('IN' if selected=='nse_mcp' else 'US')
+
+
+def test_openfigi_public_mapping_and_keyed_limits_are_distinct(client,monkeypatch):
+    monkeypatch.delenv('OPENFIGI_API_KEY',raising=False)
+    item=_provider_by_name(client.get('/api/providers/health').json()['data'],'OpenFIGI')
+    assert item['configured'] and item['rate_limit_status']=='25 requests/minute without key'
+    monkeypatch.setenv('OPENFIGI_API_KEY','mock-key')
+    item=_provider_by_name(client.get('/api/providers/health').json()['data'],'OpenFIGI')
+    assert item['rate_limit_status']=='250 requests/minute with key'

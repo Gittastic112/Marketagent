@@ -1,4 +1,7 @@
 import logging
+import math
+import re
+from datetime import date
 from typing import Any
 
 from app.providers.base import BaseMacroProvider
@@ -73,3 +76,79 @@ class FredProvider(BaseMacroProvider):
         if not isinstance(observations, list):
             raise RuntimeError("FRED returned invalid observation data.")
         return observations
+
+    def fetch_vintage_observations(
+        self, series_id: str, *, as_of: date, observation_start: date,
+        observation_end: date, mode: str = "as_of", max_pages: int = 5,
+    ) -> dict[str, Any]:
+        """Retrieve ALFRED revisions, retaining intervals and an explicit cutoff.
+
+        This does not mutate the application's current-value macro table. A
+        bounded request may be partial; callers must preserve that status.
+        """
+        if not self.api_key:
+            raise ValueError("FRED API key is required to fetch observations.")
+        series_id = series_id.strip().upper()
+        if (not re.fullmatch(r"[A-Z0-9_.-]{1,80}", series_id)
+                or observation_start > observation_end or as_of > date.today()
+                or mode not in {"as_of", "initial_release"} or not 1 <= max_pages <= 10):
+            raise ValueError("Invalid FRED vintage request.")
+        raw_pages, revisions = [], []
+        count = None
+        offset = 0
+        for _ in range(max_pages):
+            params = {
+                "series_id": series_id, "api_key": self.api_key, "file_type": "json",
+                "realtime_start": "1776-07-04", "realtime_end": as_of.isoformat(),
+                "observation_start": observation_start.isoformat(),
+                "observation_end": observation_end.isoformat(), "output_type": 1,
+                "order_by": "observation_date", "sort_order": "asc", "limit": 1000,
+                "offset": offset,
+            }
+            data = self._request("series/observations", params)
+            rows, reported_count = data.get("observations"), data.get("count")
+            if (not isinstance(rows, list) or len(rows) > 1000
+                    or isinstance(reported_count, bool) or not isinstance(reported_count, int)
+                    or reported_count < 0 or len(rows) > max(0, reported_count - offset)
+                    or data.get("offset", offset) != offset or (count is not None and count != reported_count)):
+                raise RuntimeError("FRED returned inconsistent vintage pagination.")
+            count = reported_count
+            if not rows and offset < count:
+                raise RuntimeError("FRED returned an incomplete vintage page.")
+            raw_pages.append(data)
+            for row in rows:
+                try:
+                    observed = date.fromisoformat(row["date"])
+                    start = date.fromisoformat(row["realtime_start"])
+                    end = date.fromisoformat(row["realtime_end"])
+                    raw_value = row["value"]
+                    value = None if raw_value == "." else float(raw_value)
+                    if (isinstance(raw_value, bool) or (value is not None and not math.isfinite(value))
+                            or start > end or not observation_start <= observed <= observation_end
+                            or start > as_of):
+                        raise ValueError
+                except (KeyError, ValueError, TypeError, OverflowError):
+                    raise RuntimeError("FRED returned invalid vintage observations.") from None
+                revisions.append({"date": observed.isoformat(), "value": value,
+                    "raw_value": raw_value, "realtime_start": start.isoformat(),
+                    "realtime_end": end.isoformat()})
+            offset += len(rows)
+            if offset >= count:
+                break
+        selected: dict[str, dict] = {}
+        for row in revisions:
+            if mode == "as_of" and row["realtime_end"] < as_of.isoformat():
+                continue
+            previous = selected.get(row["date"])
+            if previous and row["realtime_start"] == previous["realtime_start"]:
+                if row["value"] != previous["value"]:
+                    raise RuntimeError("FRED returned conflicting vintage observations.")
+                continue
+            if previous is None or ((row["realtime_start"] > previous["realtime_start"])
+                                    if mode == "as_of" else (row["realtime_start"] < previous["realtime_start"])):
+                selected[row["date"]] = row
+        complete = offset >= (count or 0)
+        return {"series_id": series_id, "as_of": as_of.isoformat(), "mode": mode,
+            "observations": [selected[key] for key in sorted(selected)], "revisions": revisions,
+            "raw_pages": raw_pages, "complete": complete, "fetched_count": offset,
+            "expected_count": count, "warnings": [] if complete else ["VINTAGE_PAGE_BUDGET_EXHAUSTED"]}

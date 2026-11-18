@@ -25,6 +25,12 @@ class Settings(BaseSettings):
     market_data_provider: str = "alphavantage"
     alpha_vantage_api_key: str | None = None
     fmp_api_key: str | None = None
+    massive_api_key: str | None = None
+    openfigi_api_key: str | None = None
+    earningscall_api_key: str | None = None
+    source_adapter_model_dir: str | None = None
+    source_adapter_python: str | None = None
+    research_peer_snapshot_path: str | None = None
     cors_origins: list[str] = ["http://localhost:3000"]
     nextauth_secret: str | None = None
     log_level: str = "INFO"

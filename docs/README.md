@@ -27,6 +27,7 @@ the task at hand. Each subject below has one current owner.
 | [API map](reference/api-map.md) | Every backend HTTP router module and its owner |
 | [Database schema](database-schema.md) | Persistence domains and migration policy |
 | [Data sources](data-sources.md) | Providers, ingestion, freshness, and provenance |
+| [Research adapters](adapters/README.md) | Research Lab, concrete adapters, optional profiles, API contracts and remaining integration limits |
 | [Security threat model](security.md) | Threats, mitigations, and public-release blockers |
 | [Workflow implementation](reference/workflows.md) | Detailed research, valuation, and source-processing flows |
 | [Scoring](scoring.md) | Deterministic event scoring |

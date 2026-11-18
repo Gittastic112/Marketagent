@@ -6,13 +6,30 @@ import type { DcfAssumptionSet } from "@/lib/api/valuation";
 import { AI_DISCLOSURES } from "@/lib/ai-privacy";
 import { createRequestGate } from "@/lib/latest-request";
 import { useLatestResource } from "@/lib/use-latest-resource";
+import { memoBasisError, memoSessionKey, valuationMemoExport, type MemoSelection } from "@/lib/valuation-memo";
 import { AIExplanationEvidence } from "./ai-explanation-evidence";
+import { MemoMarkdown } from "./memo-markdown";
 
-export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
+type MemoPanelProps = {
   valuationId: number; assumptions: DcfAssumptionSet; blocked: boolean;
-}) {
-  const loader = useCallback(() => fetchValuationMemo(valuationId, assumptions.scenario, assumptions.id),
-    [valuationId, assumptions.scenario, assumptions.id]);
+};
+
+export function ValuationMemoPanel(props: MemoPanelProps) {
+  const selection: MemoSelection = { valuationId: props.valuationId, assumptionSetId: props.assumptions.id,
+    scenario: props.assumptions.scenario, assumptionsUpdatedAt: props.assumptions.updated_at,
+    outputId: props.assumptions.outputs?.id };
+  return <ValuationMemoSession key={memoSessionKey(selection)} {...props} />;
+}
+
+function ValuationMemoSession({ valuationId, assumptions, blocked }: MemoPanelProps) {
+  const validate = useCallback((result: ValuationMemoResponse) => {
+    const problem = memoBasisError(result, { valuationId, assumptionSetId: assumptions.id,
+      scenario: assumptions.scenario, assumptionsUpdatedAt: assumptions.updated_at, outputId: assumptions.outputs?.id });
+    if (problem) throw new Error(problem);
+    return result;
+  }, [valuationId, assumptions.id, assumptions.scenario, assumptions.updated_at, assumptions.outputs?.id]);
+  const loader = useCallback(() => fetchValuationMemo(valuationId, assumptions.scenario, assumptions.id).then(validate),
+    [valuationId, assumptions.scenario, assumptions.id, validate]);
   const stored = useLatestResource(loader);
   const [generated, setGenerated] = useState<ValuationMemoResponse | null>(null);
   const [attempted, setAttempted] = useState(false);
@@ -22,6 +39,7 @@ export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
   const gate = useMemo(createRequestGate, []);
   useEffect(() => () => gate.invalidate(), [gate]);
   const memo = attempted ? generated : stored.data;
+  const sourceAnchorPrefix = `memo-${valuationId}-${assumptions.id}-${memo?.evidence?.ai_output_id ?? "legacy"}`;
 
   async function generate() {
     if (!consent || generating || blocked) return;
@@ -31,7 +49,7 @@ export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
       const result = await generateValuationMemo(valuationId, assumptions.scenario, {
         assumption_set_id: assumptions.id, assumptions_updated_at: assumptions.updated_at,
       });
-      if (current()) setGenerated(result);
+      if (current()) setGenerated(validate(result));
     } catch (failure) {
       if (current()) setError(failure instanceof Error ? failure.message : "Memo generation unavailable. Reload stored memo before retrying.");
     } finally { if (current()) setGenerating(false); }
@@ -39,11 +57,11 @@ export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
 
   function download() {
     if (!memo?.memo_markdown) return;
-    const content = `AI Interpretation${memo.is_mock ? " · Mock Data" : ""}\nInterpretation quality is not evaluated.\n\nEvidence:\n${JSON.stringify(memo.evidence ?? {status: "legacy_unverified"}, null, 2)}\n\n${memo.memo_markdown}`;
-    const url = URL.createObjectURL(new Blob([content], {type: "text/plain;charset=utf-8"}));
+    const artifact = valuationMemoExport(memo);
+    const url = URL.createObjectURL(new Blob([artifact.content], {type: artifact.mimeType}));
     const link = document.createElement("a");
-    link.href = url; link.download = `valuation-${valuationId}-assumptions-${assumptions.id}-memo.txt`;
-    link.click(); URL.revokeObjectURL(url);
+    link.href = url; link.download = artifact.filename;
+    link.click(); window.setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
 
   return <section aria-label="Valuation memo" className="stack">
@@ -64,8 +82,9 @@ export function ValuationMemoPanel({ valuationId, assumptions, blocked }: {
     {error && <p role="alert">{error}</p>}
     {generating && <p role="status">Generating an unreviewed AI explanation. Your saved model is unchanged.</p>}
     {memo?.memo_markdown ? <>
-      <AIExplanationEvidence evidence={memo.evidence} />
-      <div className="preserve-whitespace" aria-label="Memo text">{memo.memo_markdown}</div>
+      <AIExplanationEvidence evidence={memo.evidence} sourceAnchorPrefix={sourceAnchorPrefix} />
+      <p className="basis-note">Source markers link only to this memo’s registered inputs. External links are model-provided and have not been verified. Embedded HTML and images are omitted.</p>
+      <MemoMarkdown markdown={memo.memo_markdown} sourceIds={memo.evidence?.source_ids ?? []} sourceAnchorPrefix={sourceAnchorPrefix} />
       <button type="button" className="btn btn-secondary" onClick={download}>Download memo with evidence</button>
     </> : !generating && !error && stored.status === "ready" && <p>No memo generated for this saved version. Generation requires explicit consent.</p>}
   </section>;

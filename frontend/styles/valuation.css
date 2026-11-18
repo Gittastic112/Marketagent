@@ -619,3 +619,12 @@
   font-size: 0.9rem;
   color: var(--text-muted);
 }
+.memo-markdown { min-width: 0; overflow-wrap: anywhere; line-height: 1.65; }
+.memo-markdown > :first-child { margin-top: 0; }
+.memo-markdown h1 { font-size: 1.3rem; }
+.memo-markdown h2 { font-size: 1.15rem; }
+.memo-markdown h3 { font-size: 1rem; }
+.memo-markdown pre { max-width: 100%; overflow-x: auto; padding: 0.75rem; background: var(--surface); }
+.memo-markdown blockquote { margin-inline: 0; padding-left: 1rem; border-left: 2px solid var(--line); color: var(--text-secondary); }
+.memo-markdown .table-wrap { max-width: 100%; margin-block: 0.75rem; }
+.memo-unresolved-link { text-decoration: underline dotted; color: var(--text-secondary); }

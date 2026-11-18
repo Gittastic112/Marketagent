@@ -45,16 +45,18 @@ def probe_public_provider(db: Session, provider: str, *, request: MarketDataRequ
         else:
             selected = get_market_data_provider()
             async def prices():
-                quote = await selected.get_quote(request)
-                history = await selected.get_historical_prices(request, days=7)
+                async with asyncio.timeout(120):
+                    quote = await selected.get_quote(request)
+                    history = await selected.get_historical_prices(request, days=7)
                 if (quote.ticker != request.ticker or quote.market != request.market
                         or (request.currency and quote.currency != request.currency)):
                     raise ValueError("Identity mismatch")
                 return quote, history
             quote, history = asyncio.run(prices())
             evidence = {"provider": selected.provider_name, "quote": quote.model_dump(mode="json"),
-                "history_count": len(history), "first_history_date": min(row.date for row in history).isoformat(),
-                "last_history_date": max(row.date for row in history).isoformat()}
+                "history_count": len(history), "history_empty": not history,
+                "first_history_date": min(row.date for row in history).isoformat() if history else None,
+                "last_history_date": max(row.date for row in history).isoformat() if history else None}
     except MarketDataProviderError as error:
         code = error.code
     except Exception:

@@ -7,6 +7,7 @@ imply that the command leaves no audit record.
 
 | Command | Purpose | Access and effects |
 |---|---|---|
+| [export_adapter_contracts.py](export_adapter_contracts.py) | Export or check the registered adapter OpenAPI subset | Imports source schema without querying providers or the database; writes only the explicitly named output unless --check is selected |
 | [check_public_providers.py](check_public_providers.py) | Explicit SEC, FRED, or market-provider connectivity probe | External request and persisted Processing Run; requires provider configuration and explicit security scope where applicable |
 | [check_ai_provider.py](check_ai_provider.py) | One fixed Gemini connectivity prompt | External AI request and sanitized Processing Run; configurable model; no research or portfolio prompt |
 | [check_portfolio_real_input_readiness.py](check_portfolio_real_input_readiness.py) | Audit one owned portfolio's persisted inputs | Read-only database access; requires portfolio and user IDs; missing inputs remain unavailable |

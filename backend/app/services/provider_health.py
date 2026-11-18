@@ -64,14 +64,18 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             provider_name=market_provider,
             capability="market_prices",
             requirement_level="optional",
-            market="US/IN",
+            market="IN" if market_provider == "NSE MCP" else "US" if market_provider in {"Massive", "Financial Modeling Prep"} else "US/IN",
             configured=_market_data_key_configured(market_provider),
             run_summary=latest_runs.get("market_data_ingestion"),
             missing_action=_market_data_missing_action(market_provider),
             configured_notes=_market_data_provider_notes(market_provider),
             unconfigured_status="not_configured" if market_provider != "Alpha Vantage" else "missing_key",
             rate_limit_status="5 requests/minute (Free)" if market_provider == "Alpha Vantage" else "Unknown",
-            coverage_state="US & Select Global Equities",
+            coverage_state={
+                "Financial Modeling Prep": "US equities; split-adjusted historical close",
+                "Massive": "US equities; explicit split-adjustment basis",
+                "NSE MCP": "NSE EQ equities; unadjusted history with explicit series gaps",
+            }.get(market_provider, "US & Select Global Equities"),
             freshness_threshold_hours=24,
         ),
         _configured_provider(
@@ -92,11 +96,12 @@ def get_provider_health(db: Session) -> list[ProviderHealthRead]:
             capability="identity_resolution",
             requirement_level="optional",
             market=None,
-            configured=bool(_env("OPENFIGI_API_KEY")),
+            configured=True,
             run_summary=None,
-            missing_action="Set OPENFIGI_API_KEY to improve cross-market identity resolution.",
-            configured_notes="Optional identity provider configured",
-            rate_limit_status="25 requests/minute",
+            missing_action="OpenFIGI supports public mapping without a key.",
+            configured_notes="Identity candidates require review; current mappings do not establish historical validity. "
+                + ("API key configured." if _env("OPENFIGI_API_KEY") else "Public mapping is available without a key."),
+            rate_limit_status="250 requests/minute with key" if _env("OPENFIGI_API_KEY") else "25 requests/minute without key",
             coverage_state="Global Equities",
         ),
         _damodaran_health(db),
@@ -139,6 +144,10 @@ def _market_data_provider_name() -> str:
     provider = (_env("MARKET_DATA_PROVIDER") or "alphavantage").lower()
     if provider == "fmp":
         return "Financial Modeling Prep"
+    if provider == "massive":
+        return "Massive"
+    if provider == "nse_mcp":
+        return "NSE MCP"
     if provider == "yfinance_personal":
         return "yfinance (personal/unofficial)"
     if provider not in {"alphavantage", "alpha_vantage"}:
@@ -149,15 +158,15 @@ def _market_data_provider_name() -> str:
 def _market_data_key_name(provider_name: str) -> str | None:
     if provider_name == "Financial Modeling Prep":
         return "FMP_API_KEY"
+    if provider_name == "Massive":
+        return "MASSIVE_API_KEY"
     if provider_name == "Alpha Vantage":
         return "ALPHA_VANTAGE_API_KEY"
     return None
 
 
 def _market_data_key_configured(provider_name: str) -> bool:
-    if provider_name == "Financial Modeling Prep":
-        return False  # Adapter is a stub, even when a key exists.
-    if provider_name == "yfinance (personal/unofficial)":
+    if provider_name in {"yfinance (personal/unofficial)", "NSE MCP"}:
         return True
     if provider_name.startswith("Unsupported"):
         return False
@@ -166,10 +175,10 @@ def _market_data_key_configured(provider_name: str) -> bool:
 
 
 def _market_data_missing_action(provider_name: str) -> str:
-    if provider_name == "Financial Modeling Prep":
-        return "Not available yet: FMP ingestion is not implemented. Select an implemented provider."
     if provider_name.startswith("Unsupported"):
-        return "Set MARKET_DATA_PROVIDER to alphavantage or yfinance_personal."
+        return "Select alphavantage, fmp, massive, nse_mcp, or explicitly opt into yfinance_personal."
+    if provider_name == "NSE MCP":
+        return "Official NSE MCP needs no API key; use an explicit NSE EQ identity."
     key_name = _market_data_key_name(provider_name)
     return f"Set {key_name} to enable provider-backed market prices."
 
@@ -177,6 +186,12 @@ def _market_data_missing_action(provider_name: str) -> str:
 def _market_data_provider_notes(provider_name: str) -> str | None:
     if provider_name == "yfinance (personal/unofficial)":
         return "Explicit local personal-use opt-in; unofficial data must be verified for material decisions."
+    if provider_name == "Financial Modeling Prep":
+        return "Official stable API adapter configured; dataset entitlement and quote delay require provider evidence."
+    if provider_name == "Massive":
+        return "Official US equity adapter configured; last-trade quote access depends on the selected plan."
+    if provider_name == "NSE MCP":
+        return "Official public MCP; delayed source-timestamped quotes and raw EQ history. Partial series coverage is explicit."
     return None
 
 

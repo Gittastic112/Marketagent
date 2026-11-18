@@ -132,3 +132,17 @@
   font-size: 0.8rem;
   color: var(--text-secondary);
 }
+.research-lab-workbench { display: grid; gap: 1rem; min-width: 0; }
+.research-lab-fieldset { padding: 0; border: 0; min-width: 0; }
+.research-lab-fieldset legend { font-size: 1rem; font-weight: 650; margin-block: 0.5rem; }
+.research-lab-fieldset details { margin-block: 0.75rem; }
+.research-lab-workbench pre { max-width: 100%; overflow: auto; padding: 0.75rem; border: 1px solid var(--line); background: var(--surface); white-space: pre; }
+.research-json-input { margin-block: 0.75rem; }
+.research-json-input textarea { min-height: 6rem; width: 100%; resize: vertical; font-family: ui-monospace, monospace; font-size: 0.82rem; }
+.research-json-input .basis-note { margin-block: 0.25rem; }
+.research-json-result { max-height: 30rem; }
+.research-run-result { border-top: 1px solid var(--line); margin-top: 1.5rem; padding-top: 1rem; min-width: 0; overflow-wrap: anywhere; }
+.research-run-provenance { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); gap: 0.5rem; }
+.research-run-provenance dt { color: var(--text-secondary); font-size: 0.8rem; }
+.research-run-provenance dd { margin: 0; }
+.research-curve { height: 260px; min-width: 0; }

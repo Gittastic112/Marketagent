@@ -1,6 +1,6 @@
 # Backend API map
 
-58 HTTP router modules. This inventory maps source ownership; capability
+61 HTTP router modules. This inventory maps source ownership; capability
 status remains in the [feature register](../roadmaps/feature-register.md).
 
 [Route registration](../../backend/app/api/routes.py) assembles the authenticated
@@ -32,6 +32,7 @@ common changes to calculation, persistence, frontend, and test owners.
 | Daily brief | [daily_brief.py](../../backend/app/api/routers/daily_brief.py) |
 | Daily brief schedule | [daily_brief_schedule.py](../../backend/app/api/routers/daily_brief_schedule.py) |
 | Dashboard | [dashboard.py](../../backend/app/api/routers/dashboard.py) |
+| Data adapters | [data_adapters.py](../../backend/app/api/routers/data_adapters.py) |
 | Data transfer | [data_transfer.py](../../backend/app/api/routers/data_transfer.py) |
 | Decisions | [decisions.py](../../backend/app/api/routers/decisions.py) |
 | Evaluation | [evaluation.py](../../backend/app/api/routers/evaluation.py) |
@@ -61,9 +62,11 @@ common changes to calculation, persistence, frontend, and test owners.
 | Regression priors | [regression_priors.py](../../backend/app/api/routers/regression_priors.py) |
 | Relative valuation | [relative_valuation.py](../../backend/app/api/routers/relative_valuation.py) |
 | Research | [research.py](../../backend/app/api/routers/research.py) |
+| Research lab | [research_lab.py](../../backend/app/api/routers/research_lab.py) |
 | Scoring config | [scoring_config.py](../../backend/app/api/routers/scoring_config.py) |
 | Search | [search.py](../../backend/app/api/routers/search.py) |
 | Social | [social.py](../../backend/app/api/routers/social.py) |
+| Source adapters | [source_adapters.py](../../backend/app/api/routers/source_adapters.py) |
 | Source capabilities | [source_capabilities.py](../../backend/app/api/routers/source_capabilities.py) |
 | Source facts | [source_facts.py](../../backend/app/api/routers/source_facts.py) |
 | Sources | [sources.py](../../backend/app/api/routers/sources.py) |

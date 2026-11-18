@@ -82,7 +82,7 @@ def test_source_capabilities_rejects_unsupported_market() -> None:
     ("alphavantage", None, "unused-fixture-key", "not_configured", "Alpha Vantage", True),
     ("alpha_vantage", "fixture-key", None, "available", "Alpha Vantage", True),
     ("yfinance_personal", None, None, "available", "yfinance personal-use", False),
-    ("fmp", None, "fixture-key", "not_supported", "FMP", True),
+    ("fmp", None, "fixture-key", "available", "FMP", True),
     ("unknown", "fixture-key", "fixture-key", "not_supported", "Unsupported provider", False),
 ])
 def test_prices_describe_only_the_selected_implemented_adapter(provider, alpha_key, fmp_key,
@@ -95,7 +95,8 @@ def test_prices_describe_only_the_selected_implemented_adapter(provider, alpha_k
         assert len(prices) == 2
         for row in prices:
             assert (row.status, row.provider_name, row.requires_api_key) == (
-                expected_status, expected_name, needs_key)
+                "not_supported" if provider == "fmp" and row.market == "IN" else expected_status,
+                expected_name, needs_key)
             assert "coverage" in row.notes.lower()
 
 
@@ -127,3 +128,12 @@ def test_new_default_capabilities_are_added_once_to_existing_catalog():
         assert any(row.capability == "fred_macro" for row in first)
         stored = db.scalar(select(MarketSourceCapability).where(MarketSourceCapability.capability == "corporate_announcements"))
         assert stored.notes == "Retain this local note"
+
+
+@pytest.mark.parametrize('provider,market,name,key', [('massive','US','Massive','fixture-key'),('nse_mcp','IN','NSE MCP',None)])
+def test_official_market_capabilities_keep_us_and_india_support_separate(db,provider,market,name,key):
+    settings=Settings(_env_file=None,market_data_provider=provider).model_copy(update={'massive_api_key':key})
+    rows=[row for row in list_source_capabilities(db,settings) if row.capability=='market_prices']
+    assert {row.market:row.status for row in rows}=={market:'available',('IN' if market=='US' else 'US'):'not_supported'}
+    assert {row.provider_name for row in rows}=={name}
+    assert all(row.requires_api_key==(provider=='massive') for row in rows)

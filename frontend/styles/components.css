@@ -474,3 +474,9 @@ button:disabled {
   border-color: rgba(16, 185, 129, 0.3);
   color: var(--success);
 }
+.evidence-row-review { min-width: 0; margin-block: 1rem; }
+.evidence-row-review .form-grid { margin-bottom: 0.75rem; }
+.evidence-row-review .table-wrap { max-height: 32rem; }
+.evidence-row-review .evidence-row-jump { width: 6rem; }
+.evidence-row-selected { outline: 2px solid var(--accent, currentColor); outline-offset: -2px; }
+.evidence-row-review td ul { padding-left: 1rem; margin: 0; }

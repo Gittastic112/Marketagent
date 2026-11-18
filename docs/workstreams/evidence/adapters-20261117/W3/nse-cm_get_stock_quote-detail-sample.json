@@ -1,0 +1,18 @@
+{
+  "request": {
+    "symbol": "INFY"
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"updatedAt\":\"2026-11-18T02:06:11.089841353Z\",\"stock\":{\"type\":\"CM\",\"symbol\":\"INFY\",\"series\":\"EQ\",\"openPrice\":1141.0,\"highPrice\":1145.0,\"lowPrice\":1125.3,\"preClosePrice\":1145.1,\"lastTradedPrice\":1130.0,\"indicativeClosePrice\":0.0,\"change\":-15.1,\"perChange\":-1.32,\"volume\":7145680,\"value\":810.38442312,\"fiftyTwoWeekHigh\":1728.0,\"fiftyTwoWeekLow\":980.4,\"perChange30d\":-2.69,\"latestTimestamp\":\"2026-11-17 16:00:29\"}}"
+        }
+      ],
+      "isError": false
+    }
+  }
+}

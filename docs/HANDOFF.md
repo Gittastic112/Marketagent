@@ -2,10 +2,10 @@
 
 ## Latest source boundary
 
-November 15, 2026: the returned four-part review covers main at
-`6505082e4e5df600f8f922c6d39256065c58d154`, after PR 17 and the default-branch switch.
-CI runs on main pushes, pull requests, and tags. Archived branch references retain
-their original verification context.
+November 17, 2026: the authorized [adapter implementation](adapters/README.md)
+starts from main `371b58c02cfd2b80429f28dbc13629165b5e392d`; its
+[verification receipt](adapters/verification.md) distinguishes source checks from installation.
+Earlier review pins retain their original context. CI runs on main pushes, pull requests, and tags.
 
 Repository navigation and [Compose ownership](../docker/README.md) are documented.
 Python editor paths live in pyproject.toml; personal editor/agent overrides stay
