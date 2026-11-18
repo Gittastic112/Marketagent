@@ -13,7 +13,7 @@ test("inspect a marked close, pin to a private thesis and reopen its chart", asy
     const chart = page.getByRole("region", { name: "Stock price history" });
     await expect(chart.getByText(/Mock Data · E2e/)).toBeVisible();
     await expect(chart.locator(".recharts-line-curve")).toBeVisible();
-    await chart.getByLabel("Inspect date").selectOption("2026-01-07");
+    await chart.getByRole("combobox", { name: /^Inspect date/ }).selectOption("2026-01-07");
     await chart.getByRole("button", { name: "Open point details" }).click();
     await expect(page.getByRole("region", { name: "Preceding close coverage" }).getByRole("link", { name: "Mock Data earnings filing" })).toBeVisible();
     await page.keyboard.press("Escape");
