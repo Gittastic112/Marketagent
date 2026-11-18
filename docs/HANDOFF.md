@@ -8,9 +8,7 @@ November 18, 2026. The Geist/PR20 integration and the next ten adapter/workflow 
 
 > Priorities 1 and 2 are complete; priority 3 has bounded original-source proof for configured peers, SEC, NSE, ALFRED, OpenFIGI and native PDF/Camelot. Finish the held US-action, transcript and OCR cases only when the [listed prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites) are available. Otherwise continue the company-evidence and workflow backlog in the [worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip). Preserve uncommitted source, data and essential recovery material. [PR 20](https://github.com/Gittastic112/Marketagent/pull/20) owns publication and hosted checks for the combined tree. Do not count these checks as actual-use days or legacy recovery acceptance.
 
-Repository navigation and [Compose ownership](../docker/README.md) are documented.
-Python editor paths live in pyproject.toml; personal editor/agent overrides stay
-local. The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
+The [Compose guide](../docker/README.md) identifies each environment. The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
 retains the scanner, style-ownership, and conservative CI-selection evidence.
 
 ## Start a change

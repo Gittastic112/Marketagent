@@ -16,9 +16,18 @@ const priceLabel = (price: number, currency: string) => `${currency} ${formatNum
 const seriesLabel = (series: PriceSeries) =>
   [series.claim_type === "Mock Data" && "Mock Data", formatDataLabel(series.provider), series.symbol, series.exchange, series.currency, formatDataLabel(series.adjustment)].filter(Boolean).join(" · ");
 
-function PointInspector({ point, series, notes, companyId, pins, onSave }: {
+function SourceList({ records }: { records: PricePoint["sources"] }) {
+  return <ul className="price-detail-list">{records.map(source => <li key={`${source.document_id}-${source.event_id ?? "doc"}`}>
+    <Link href={source.event_id ? `/events/${source.event_id}/evidence-resolution` : `/documents/${source.document_id}/sections`}>{source.title}</Link>
+    <small>{source.sample ? "Mock Data · " : ""}{source.event_id ? `Event on ${source.context_date}` : "Stored source"} · {source.source} · Published {source.published}</small>
+    {source.summary && <p>{source.summary}</p>}
+    {source.event_id && <Link href={`/documents/${source.document_id}/sections`}>Open source document</Link>}
+  </li>)}</ul>;
+}
+
+function PointInspector({ point, series, notes, companyId, pins, precedingSources, onSave }: {
   point: PricePoint; series: PriceSeries; notes: ThesisChoice[] | null; companyId: number;
-  pins: PricePin[]; onSave: (pin: PricePin) => void;
+  pins: PricePin[]; precedingSources: PricePoint["sources"]; onSave: (pin: PricePin) => void;
 }) {
   const [thesisId, setThesisId] = useState(notes?.length === 1 ? String(notes[0].id) : "");
   const [body, setBody] = useState("");
@@ -52,14 +61,13 @@ function PointInspector({ point, series, notes, companyId, pins, onSave }: {
       : <p className="muted">A comparable change is unavailable for this date.</p>}
     <section aria-label="Dated evidence">
       <h3>What happened around this close?</h3>
-      {point.sources.length ? <>
-        <p className="muted">Records are dated on this close or between stored closes. Publication can follow the close. Timing alone cannot establish the cause.</p>
-        <ul className="price-detail-list">{point.sources.map(source => <li key={`${source.document_id}-${source.event_id ?? "doc"}`}>
-          <Link href={source.event_id ? `/events/${source.event_id}/evidence-resolution` : `/documents/${source.document_id}/sections`}>{source.title}</Link>
-          <small>{source.sample ? "Mock Data · " : ""}{source.event_id ? `Event on ${source.context_date}` : "Stored source"} · {source.source} · Published {source.published}</small>
-          {source.summary && <p>{source.summary}</p>}
-          {source.event_id && <Link href={`/documents/${source.document_id}/sections`}>Open source document</Link>}
-        </li>)}</ul>
+      {point.sources.length || precedingSources.length ? <>
+        <p className="muted">Publication can follow the close. Timing alone cannot establish the cause.</p>
+        {point.sources.length > 0 && <SourceList records={point.sources} />}
+        {precedingSources.length > 0 && point.previous_date && <section aria-label="Preceding close coverage">
+          <h4>On the preceding close date · {longDate(point.previous_date)}</h4>
+          <SourceList records={precedingSources} />
+        </section>}
       </> : <p className="muted">No matching dated source is shown. The cause of this move is unverified.</p>}
     </section>
     <section aria-label="Private thesis notes">
@@ -168,6 +176,7 @@ export function CompanyPriceChart({ data, companyId, notes, requestedDate }: {
       <div className="price-dialog-heading"><h2 id="price-point-title">{longDate(point.date)}</h2>
         <button className="secondary-button" type="button" onClick={() => dialog.current?.close()}>Close</button></div>
       <PointInspector key={point.date} point={point} series={series} notes={notes} companyId={companyId}
+        precedingSources={data.points.find(p => p.date === point.previous_date)?.sources.filter(s => s.context_date === point.previous_date) ?? []}
         pins={pinsFor(point)} onSave={pin => setSaved(old => old.some(p => p.id === pin.id) ? old : [...old, pin])} />
     </dialog>
   </>;
