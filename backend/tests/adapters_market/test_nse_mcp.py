@@ -12,7 +12,7 @@ from app.providers.market_data.transport import WireResponse
 from app.schemas.data_adapters import AdapterActionRequest, AdapterDatedQuoteRequest, AdapterHistoryRequest, MarketDataRequest
 from app.services.market_data.base import MarketDataProviderError
 
-EVIDENCE = Path(__file__).resolve().parents[3] / 'docs/workstreams/evidence/adapters-20261117/W3'
+EVIDENCE = Path(__file__).resolve().parent / 'fixtures'
 NOW = datetime(2026,11,18,2,10,tzinfo=timezone.utc)
 ID = dict(market="IN",exchange="NSE",ticker="INFY",currency="INR")
 

@@ -15,16 +15,23 @@ This is source-level implementation evidence. It does not certify an existing in
 | Generated TypeScript staleness | Passed | Regeneration from the committed adapter OpenAPI snapshot |
 | Host frontend production build | Passed | Node 24.22.1; Next 16.4.5 |
 | Frontend dependency audit | **0 vulnerabilities** | Actual `npm audit --json` result |
-| Repository check unit tests | **38 passed** | Documentation, dependency-lock, CI-scope and container-workflow checks |
+| Repository check unit tests | **107 passed** | Complete repository static-gate unit-test set |
+| Python dependency audit | **No known vulnerabilities found in all four profiles** | Actual pip-audit 2.10.1 on baseline test, analysis, table and separate OCR locks; 60-second socket timeout |
 | Optional Python advisory metadata | **193 distinct exact versions checked; 0 query errors; 0 returned known-advisory findings** | Official PyPI JSON metadata for the selected analysis, table and Docling profiles |
 | Live FinanceDatabase reference snapshot | Downloaded, hash verified and parsed | Four exchange files at one fixed upstream commit; 17,886 combined rows |
-| Browser workflows | **Blocked before page creation** | Chromium could not create a socket in this environment |
-| Docker, PostgreSQL migration and container release gates | **Not run here** | Docker unavailable; existing release gates remain in CI |
+| Local custom browser harness | **Blocked before page creation** | Chromium could not create a socket in this environment; separate from hosted browser checks |
+| Local Docker, PostgreSQL migration and container release gates | **Not run here** | Docker unavailable locally; hosted checks are recorded separately |
 | Normal installed application | **Not accessed or changed** | No user's running database, holdings or service installation was modified |
 
 The backend run above included the final source-adapter request-context, identity, date-precision and Marker dependency guards. After that full run, allocation/simulation results were given their existing input `source_label` for visible Mock Data provenance; the research suite was rerun separately. See the [coordinator receipt](../workstreams/evidence/adapters-20261117/W5/README.md) for that final focused result and repository checks.
 
-The tested frontend tree is `1a62c0ec90704ecb3b1dc93fbe2ba3fb1fc7ee10`. The integrated frontend tree matches the isolated UI worktree's tested tree exactly. A host production build is not a browser test.
+The final frontend tree is `f4a8e90b2df3eb21d8cd63bf30edb5831fc3883e`; the integrated and isolated UI worktrees match. The 409-test suite and TypeScript check passed on that tree. The host production build used tree `1a62c0ec90704ecb3b1dc93fbe2ba3fb1fc7ee10`; the only subsequent frontend change narrows an E2E selector, with runtime UI code unchanged. A host production build is not a browser test.
+
+### Hosted follow-up
+
+The first complete hosted run on head `788855f` passed repository checks, the container-security job and the PostgreSQL recovery drill. It exposed three verification issues: a default PyPI timeout, optional calendar tests executing without their optional dependency, and NSE fixtures outside the baseline test image. The browser job ran 71 workflows: 70 passed and one stopped on an ambiguous Search-button selector. These findings produced the bounded timeout, test-packaging and exact-selector corrections below; no gates or assertions were removed. The [PR checks](https://github.com/Gittastic112/Marketagent/pull/20/checks) provide subsequent hosted status.
+
+W3's repaired tests passed **44/44** with the optional profile. A separately installed hash-locked core/test-only environment, using a staged backend tree without any documentation directory, produced **40 passed and exactly 4 calendar skips**. Every NSE test passed there. Calendar skips apply only when the distribution is absent; an installed but broken package still fails. The [browser follow-up](../workstreams/evidence/adapters-20261117/W1/hosted-browser-20261118.md) records the precise selector correction and the existing desktop/mobile memo workflows that passed.
 
 ## Reproducing the backend test environment
 
@@ -101,7 +108,9 @@ Real HRP execution failed with SciPy 1.18.1 because the selected PyPortfolioOpt 
 
 Marker 2.2.0 requires the Surya 0.23 series, which constrains Pillow below 11 and filelock below 4. Exact-version advisory metadata showed known issues in the corresponding resolved versions. A combined profile with patched Pillow 13.0.0 and filelock 4.2.12 could not resolve. The shipped OCR lock therefore contains Docling and patched dependencies; Marker remains blocked. The dependency resolver was not bypassed.
 
-Standard `pip-audit` attempts timed out on package-service requests in this environment. They are not counted as a successful audit. A separate exact-version query of official PyPI JSON vulnerability metadata completed for all 193 distinct selected optional-profile versions, with no query errors or returned findings. The [compact result](../workstreams/evidence/adapters-20261117/W5/python-advisory-metadata.json) records the method and profile counts. CI still runs normal `pip-audit` for each profile. No container OS vulnerability scan was performed here.
+Initial `pip-audit` attempts timed out on package-service requests at its default 15-second timeout, both locally and in the first full hosted run. Retrying with the supported 60-second socket timeout completed successfully for the baseline test lock and all three optional profiles, with no known vulnerabilities found. CI uses that timeout while retaining its failure behavior. Results are retained in the [coordinator receipt](../workstreams/evidence/adapters-20261117/W5/README.md#runtime-and-dependency-evidence).
+
+A separate exact-version query of official PyPI JSON vulnerability metadata also completed for all 193 distinct selected optional-profile versions, with no query errors or returned findings. The [compact result](../workstreams/evidence/adapters-20261117/W5/python-advisory-metadata.json) records the method and profile counts. No local container OS vulnerability scan was performed; hosted status is evaluated separately.
 
 Next was upgraded from 16.4.1 to 16.4.5 after the host build reported its upstream root-parameter cache advisories. The final build and npm audit passed. The [frontend receipt](../workstreams/evidence/adapters-20261117/W1/README.md#security-patch) links the maintainer advisories. This does not assert that an exploit occurred in this application.
 

@@ -99,7 +99,7 @@ test("stored corpus search finds and filters owned research records", async ({ p
   await expect(results.getByText("Private", { exact: true }).first()).toBeVisible();
 
   await page.getByRole("combobox", { name: "Record type" }).selectOption("thesis");
-  await page.getByRole("button", { name: "Search" }).click();
+  await page.locator('form[action="/search"]').getByRole("button", { name: "Search", exact: true }).click();
   await expect(page).toHaveURL(new RegExp(`q=${query}.*type=thesis|type=thesis.*q=${query}`));
   await expect(results.getByRole("link", { name: `${query} thesis` })).toBeVisible();
   await expect(results.getByRole("link", { name: `${query} alert` })).toHaveCount(0);

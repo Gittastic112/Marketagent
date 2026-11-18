@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timezone
+from importlib.metadata import PackageNotFoundError, version
 import json
 
 import pytest
@@ -10,6 +11,15 @@ from app.providers.market_data import transport
 from app.providers.market_data.transport import WireResponse
 from app.schemas.data_adapters import CalendarScheduleRequest, IdentityMappingRequest
 from app.services.market_data.base import MarketDataProviderError
+
+
+@pytest.fixture
+def installed_calendar():
+    # Only an absent distribution is optional. Broken installed imports must fail.
+    try:
+        version("pandas-market-calendars")
+    except PackageNotFoundError:
+        pytest.skip("optional pandas_market_calendars adapter is not installed")
 
 
 def test_openfigi_preserves_ambiguity_and_delisted_request(monkeypatch):
@@ -28,7 +38,7 @@ def test_openfigi_preserves_ambiguity_and_delisted_request(monkeypatch):
     assert result.candidates[0].share_class_figi != result.candidates[1].share_class_figi
 
 
-def test_calendar_real_library_early_close_and_dst():
+def test_calendar_real_library_early_close_and_dst(installed_calendar):
     result=get_exchange_schedule(CalendarScheduleRequest(exchange='XNYS',start_date='2025-07-01',end_date='2025-07-07'))
     by_day={s.date.isoformat():s for s in result.sessions}
     assert '2025-07-04' not in by_day
@@ -38,13 +48,13 @@ def test_calendar_real_library_early_close_and_dst():
     assert result.library_version=='5.6.1'
 
 
-def test_calendar_outside_coverage_rejected():
+def test_calendar_outside_coverage_rejected(installed_calendar):
     with pytest.raises(MarketDataProviderError) as exc:
         get_exchange_schedule(CalendarScheduleRequest(exchange='XNSE',start_date='2027-01-01',end_date='2027-01-05'))
     assert exc.value.code=='CALENDAR_OUTSIDE_COVERAGE'
 
 
-def test_weekend_override_is_explicit_sourced_and_hashed():
+def test_weekend_override_is_explicit_sourced_and_hashed(installed_calendar):
     request=CalendarScheduleRequest(exchange='XNSE',start_date='2023-11-12',end_date='2023-11-12',overrides=[{
         'date':'2023-11-12','opens_at':'2023-11-12T18:15:00+05:30','closes_at':'2023-11-12T19:15:00+05:30',
         'source_url':'https://www.nseindia.com/mock-announcement','reason':'Mock Data override to verify weekend behavior'}])
@@ -54,7 +64,7 @@ def test_weekend_override_is_explicit_sourced_and_hashed():
     assert empty.sessions==[] and empty.override_hash!=result.override_hash
 
 
-def test_override_local_date_mismatch_fails():
+def test_override_local_date_mismatch_fails(installed_calendar):
     request=CalendarScheduleRequest(exchange='XNSE',start_date='2025-01-06',end_date='2025-01-06',overrides=[{
         'date':'2025-01-06','opens_at':'2025-01-05T01:00:00Z','closes_at':'2025-01-05T02:00:00Z',
         'source_url':'https://www.nseindia.com/mock-announcement','reason':'Mock Data'}])

@@ -53,3 +53,17 @@ python -m pytest -q -p no:cacheprovider \
 ```
 
 135 tests passed after the final source-capability follow-up. Checks cover actual HTTP request construction/SSE parsing, secret exclusion, date/identity/currency/basis rejection, partial pagination, captured NSE mapping, real calendar early-close/DST behavior, duplicate source preservation, owner-isolated run visibility, cancellation, router authorization and typed envelopes. Calendar libraries emit NumPy timedelta deprecation warnings with the pinned baseline; tested schedules still pass. SQLite tests do not prove PostgreSQL concurrency, and local router tests do not replace root's combined registration/route-security checks.
+
+## Core test image compatibility repair
+
+November 18, 2026: hosted run `44226913614` exposed two test-environment assumptions: the core test image excludes optional calendar dependencies and does not copy the documentation directory. The repair starts from published commit `788855f319abcb82de597097b91c7147ed2ab32d` and changes only W3 tests, their captured fixtures and this receipt.
+
+The four calendar tests now skip only when the `pandas-market-calendars` distribution is absent. Package imports and actual schedule checks still execute when it is installed, so broken installed dependencies are not treated as optional skips. The five captured JSON files consumed by the NSE tests are copied byte for byte into `backend/tests/adapters_market/fixtures`; the original public evidence remains here. The tests no longer depend on documentation being present in an image.
+
+Verification:
+
+* The installed optional profile runs all market adapter tests: **44 passed**, including all four calendar tests.
+* A new Python 3.14.10 environment containing only the hashed core/test lock runs the same tests: **40 passed, 4 skipped**. All seven NSE tests pass. This check used a temporary tree containing only the backend application, market tests and their parent fixture file, with no `docs` directory.
+* All five fixture copies were checked for byte equality with the preserved public responses. No provider calls, Dockerfile changes or test assertions were removed.
+
+These checks establish the two Python test environments locally. The repaired hosted container run remains the coordinator's release check.
