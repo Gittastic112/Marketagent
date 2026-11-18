@@ -7,7 +7,7 @@ Historical operational narratives and review exceptions remain in the [prior led
 
 ## Installed adapters and remaining source prerequisites
 
-The combined Geist UI and PR 20 adapters are installed locally. The [release receipt](../data/reviews/ui-adapter-release-20261118.json) records source-backed peer, SEC amendment, NSE action, ALFRED revision, OpenFIGI ambiguity and native PDF/Camelot checks. These are bounded examples, not complete provider acceptance or approved financial inputs. The [next ten workflow repairs](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are also installed; GitHub publication is authorized. These repairs do not complete the held source cases below.
+The combined Geist UI and PR 20 adapters are installed locally. The [release receipt](../data/reviews/ui-adapter-release-20261118.json) records source-backed peer, SEC amendment, NSE action, ALFRED revision, OpenFIGI ambiguity and native PDF/Camelot checks. These are bounded examples, not complete provider acceptance or approved financial inputs. The [next ten workflow repairs](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are also installed and the combined source is merged in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20), with all seven hosted gates passing. These repairs do not complete the held source cases below.
 
 | Held case | Exact prerequisite |
 |---|---|
