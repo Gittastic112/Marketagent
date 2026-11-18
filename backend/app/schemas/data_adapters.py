@@ -276,5 +276,3 @@ class DataAdapterReceipt(BaseModel, Generic[AdapterData]):
     source_document_ids: list[int] = Field(default_factory=list)
     result: AdapterData
     warnings: list[str] = Field(default_factory=list)
-
-
