@@ -7635,6 +7635,328 @@
         ],
         "title": "FilingDiscoveryRead",
         "type": "object"
+      },
+      "PdfFinancialExtractionResult": {
+        "$defs": {
+          "DocumentAssetRead": {
+            "properties": {
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "mime_type": {
+                "title": "Mime Type",
+                "type": "string"
+              },
+              "original_filename": {
+                "title": "Original Filename",
+                "type": "string"
+              },
+              "page_count": {
+                "title": "Page Count",
+                "type": "integer"
+              },
+              "raw_document_id": {
+                "title": "Raw Document Id",
+                "type": "integer"
+              },
+              "sha256": {
+                "title": "Sha256",
+                "type": "string"
+              },
+              "size_bytes": {
+                "title": "Size Bytes",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "id",
+              "raw_document_id",
+              "original_filename",
+              "mime_type",
+              "size_bytes",
+              "sha256",
+              "page_count",
+              "created_at"
+            ],
+            "title": "DocumentAssetRead",
+            "type": "object"
+          },
+          "FinancialExtractionCandidateRead": {
+            "properties": {
+              "company_id": {
+                "title": "Company Id",
+                "type": "integer"
+              },
+              "confidence_label": {
+                "title": "Confidence Label",
+                "type": "string"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "extraction_method": {
+                "title": "Extraction Method",
+                "type": "string"
+              },
+              "extraction_warnings": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Extraction Warnings"
+              },
+              "fiscal_year": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Fiscal Year"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "metric_code": {
+                "title": "Metric Code",
+                "type": "string"
+              },
+              "period_type": {
+                "title": "Period Type",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "title": "Raw Document Id",
+                "type": "integer"
+              },
+              "reported_label": {
+                "title": "Reported Label",
+                "type": "string"
+              },
+              "review_status": {
+                "title": "Review Status",
+                "type": "string"
+              },
+              "source_cell_reference": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Cell Reference"
+              },
+              "source_column_label": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Column Label"
+              },
+              "source_line_number": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Line Number"
+              },
+              "source_locator_json": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Locator Json"
+              },
+              "source_page": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Page"
+              },
+              "source_row_label": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Row Label"
+              },
+              "source_section": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Section"
+              },
+              "source_table_name": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Source Table Name"
+              },
+              "source_text": {
+                "title": "Source Text",
+                "type": "string"
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Unit"
+              },
+              "updated_at": {
+                "format": "date-time",
+                "title": "Updated At",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              }
+            },
+            "required": [
+              "id",
+              "company_id",
+              "raw_document_id",
+              "metric_code",
+              "reported_label",
+              "value",
+              "period_type",
+              "source_text",
+              "extraction_method",
+              "confidence_label",
+              "review_status",
+              "created_at",
+              "updated_at"
+            ],
+            "title": "FinancialExtractionCandidateRead",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "asset": {
+            "$ref": "#/$defs/DocumentAssetRead"
+          },
+          "candidates": {
+            "items": {
+              "$ref": "#/$defs/FinancialExtractionCandidateRead"
+            },
+            "title": "Candidates",
+            "type": "array"
+          },
+          "created_count": {
+            "title": "Created Count",
+            "type": "integer"
+          },
+          "page_count": {
+            "title": "Page Count",
+            "type": "integer"
+          },
+          "raw_document_id": {
+            "title": "Raw Document Id",
+            "type": "integer"
+          },
+          "scanned_page_count": {
+            "title": "Scanned Page Count",
+            "type": "integer"
+          },
+          "scanned_pages": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Scanned Pages",
+            "type": "array"
+          },
+          "skipped_existing_count": {
+            "title": "Skipped Existing Count",
+            "type": "integer"
+          },
+          "table_count": {
+            "title": "Table Count",
+            "type": "integer"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "raw_document_id",
+          "created_count",
+          "skipped_existing_count",
+          "asset",
+          "page_count",
+          "scanned_page_count",
+          "table_count"
+        ],
+        "title": "PdfFinancialExtractionResultRead",
+        "type": "object"
       }
     },
     "financials": {
@@ -8978,6 +9300,81 @@
         ],
         "title": "RuntimeReadinessRead",
         "type": "object"
+      },
+      "SecFilingIngestionResult": {
+        "properties": {
+          "alerts_created": {
+            "default": 0,
+            "title": "Alerts Created",
+            "type": "integer"
+          },
+          "alerts_skipped_below_threshold": {
+            "default": 0,
+            "title": "Alerts Skipped Below Threshold",
+            "type": "integer"
+          },
+          "alerts_skipped_existing": {
+            "default": 0,
+            "title": "Alerts Skipped Existing",
+            "type": "integer"
+          },
+          "completed_text_count": {
+            "default": 0,
+            "title": "Completed Text Count",
+            "type": "integer"
+          },
+          "created": {
+            "title": "Created",
+            "type": "integer"
+          },
+          "created_count": {
+            "title": "Created Count",
+            "type": "integer"
+          },
+          "error_count": {
+            "default": 0,
+            "title": "Error Count",
+            "type": "integer"
+          },
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "events_created": {
+            "default": 0,
+            "title": "Events Created",
+            "type": "integer"
+          },
+          "events_skipped_existing": {
+            "default": 0,
+            "title": "Events Skipped Existing",
+            "type": "integer"
+          },
+          "fetched_count": {
+            "title": "Fetched Count",
+            "type": "integer"
+          },
+          "skipped_duplicate_count": {
+            "title": "Skipped Duplicate Count",
+            "type": "integer"
+          },
+          "skipped_duplicates": {
+            "title": "Skipped Duplicates",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "fetched_count",
+          "created_count",
+          "skipped_duplicate_count",
+          "created",
+          "skipped_duplicates"
+        ],
+        "title": "SecFilingIngestionRead",
+        "type": "object"
       }
     },
     "research": {
@@ -9551,6 +9948,239 @@
       },
       "ResearchSession": {
         "$defs": {
+          "AiOutputRead": {
+            "properties": {
+              "citation_validation_status": {
+                "title": "Citation Validation Status",
+                "type": "string"
+              },
+              "citations_json": {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "title": "Citations Json",
+                "type": "array"
+              },
+              "confidence_label": {
+                "title": "Confidence Label",
+                "type": "string"
+              },
+              "consent_decision_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Consent Decision Id"
+              },
+              "created_at": {
+                "format": "date-time",
+                "title": "Created At",
+                "type": "string"
+              },
+              "evaluation_json": {
+                "anyOf": [
+                  {
+                    "additionalProperties": true,
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Evaluation Json"
+              },
+              "execution_status": {
+                "title": "Execution Status",
+                "type": "string"
+              },
+              "external_data_classes_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "External Data Classes Json",
+                "type": "array"
+              },
+              "failure_code": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Failure Code"
+              },
+              "human_review_status": {
+                "title": "Human Review Status",
+                "type": "string"
+              },
+              "id": {
+                "title": "Id",
+                "type": "integer"
+              },
+              "input_hash": {
+                "title": "Input Hash",
+                "type": "string"
+              },
+              "is_blocked": {
+                "title": "Is Blocked",
+                "type": "boolean"
+              },
+              "is_mock": {
+                "title": "Is Mock",
+                "type": "boolean"
+              },
+              "limitations": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Limitations"
+              },
+              "model_name": {
+                "title": "Model Name",
+                "type": "string"
+              },
+              "output_text": {
+                "title": "Output Text",
+                "type": "string"
+              },
+              "privacy_disclosure_version": {
+                "title": "Privacy Disclosure Version",
+                "type": "string"
+              },
+              "prompt_version": {
+                "title": "Prompt Version",
+                "type": "string"
+              },
+              "provider_name": {
+                "title": "Provider Name",
+                "type": "string"
+              },
+              "raw_document_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Raw Document Id"
+              },
+              "reference_id": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Id"
+              },
+              "reference_type": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Type"
+              },
+              "review_notes": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Review Notes"
+              },
+              "reviewed_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewed At"
+              },
+              "reviewer_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reviewer Id"
+              },
+              "source_ids_json": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Source Ids Json",
+                "type": "array"
+              },
+              "source_scope": {
+                "title": "Source Scope",
+                "type": "string"
+              },
+              "transmission_scope": {
+                "title": "Transmission Scope",
+                "type": "string"
+              }
+            },
+            "required": [
+              "id",
+              "model_name",
+              "provider_name",
+              "is_mock",
+              "prompt_version",
+              "input_hash",
+              "source_scope",
+              "citation_validation_status",
+              "privacy_disclosure_version",
+              "transmission_scope",
+              "execution_status",
+              "is_blocked",
+              "output_text",
+              "confidence_label",
+              "human_review_status",
+              "created_at"
+            ],
+            "title": "AiOutputRead",
+            "type": "object"
+          },
           "ResearchAiOutputRead": {
             "description": "Full review contract so research responses use the same approval gates as document AI.",
             "properties": {
@@ -9844,6 +10474,13 @@
           }
         },
         "properties": {
+          "attempts": {
+            "items": {
+              "$ref": "#/$defs/AiOutputRead"
+            },
+            "title": "Attempts",
+            "type": "array"
+          },
           "created_at": {
             "format": "date-time",
             "title": "Created At",
@@ -10147,6 +10784,55 @@
           "limitations"
         ],
         "title": "ReviewQueueRead",
+        "type": "object"
+      }
+    },
+    "valuation": {
+      "SavedValuationExport": {
+        "properties": {
+          "assumption_set_id": {
+            "title": "Assumption Set Id",
+            "type": "integer"
+          },
+          "decision_receipts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Decision Receipts",
+            "type": "array"
+          },
+          "export_kind": {
+            "const": "raw_saved_valuation_v1",
+            "title": "Export Kind",
+            "type": "string"
+          },
+          "limitations": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Limitations",
+            "type": "array"
+          },
+          "model_id": {
+            "title": "Model Id",
+            "type": "integer"
+          },
+          "saved_version": {
+            "additionalProperties": true,
+            "title": "Saved Version",
+            "type": "object"
+          }
+        },
+        "required": [
+          "model_id",
+          "assumption_set_id",
+          "export_kind",
+          "saved_version",
+          "decision_receipts",
+          "limitations"
+        ],
+        "title": "SavedValuationExportRead",
         "type": "object"
       }
     },

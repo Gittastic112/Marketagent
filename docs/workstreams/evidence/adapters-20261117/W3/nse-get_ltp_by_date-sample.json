@@ -1,0 +1,19 @@
+{
+  "request": {
+    "symbol": "INFY",
+    "date": "2025-11-09"
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 5,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "1476.8"
+        }
+      ],
+      "isError": false
+    }
+  }
+}

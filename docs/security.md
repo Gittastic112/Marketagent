@@ -360,6 +360,16 @@ Security requirements:
   item in a batch. Record the precise permitting decision on successful or failed
   dispatched outputs. Revocation stops subsequent sends; it cannot recall sent
   data or cancel an already dispatched request. Permission history is owner-only.
+- Commit an owned pending attempt before dispatch, with its input/source basis and
+  exact permitting decision. Finalize that same record on completion or failure.
+  Interrupted dispatch stays pending with unknown remote delivery; explicit retries
+  link the prior matching attempt. Never silently resend. Completion time is
+  recorded separately from attempt creation. Research sessions expose only their
+  owner's latest ten attempts and offer a read-only result check after connection loss.
+- Research-message and private-source analysis POSTs have a 60-second proxy
+  deadline; ordinary requests retain 15 seconds. A timeout does not cancel the
+  provider or prove failure. Sign-in configuration can be rechecked and callback
+  paths must resolve to the same origin, including decoded network-path inputs.
 - Research chat discloses selected document titles/excerpts as well as private
   messages, and checks permission before saving the new message. Existing
   provider-failure message recovery remains separate from an absent permission.

@@ -1,6 +1,6 @@
 # Feature Register
 
-**Documentation reconciliation:** 2026-11-10. Runtime validation dates remain in
+**Documentation reconciliation:** 2026-11-17. Runtime validation dates remain in
 [Current State](../current-state.md). The latest research scope is four selected
 companies, with Sample research and a separately sourced Apple Estimate.
 
@@ -37,7 +37,11 @@ Status meanings:
 | Private-source input comparison | Built, with analyst review receipts | Quoted period/currency/scope labels, exact evidence, immutable analyst receipts, and stale-review rejection. Bounded to 50 sources; no semantic contradiction or corroboration certification. |
 | Stored evidence search | Built | Unified stored research with shared/owner-scoped boundaries. AI content must be approved and unblocked; search is not independent source verification. |
 | Portfolios, holdings, cash, transactions | Built | No broker sync |
-| Manual and provider-backed prices | Partial | The selected adapter and its own configuration determine availability. FMP remains unsupported; configuration does not certify stored coverage or freshness |
+| Manual and provider-backed prices | Partial | Explicit Alpha Vantage, yfinance_personal, FMP, Massive and NSE MCP adapters; each provider's market/entitlement/adjustment limits remain. Configuration does not certify stored coverage or freshness |
+| Source adapter intake | Built, review-required | EdgarTools and selected PDF tables, ALFRED snapshots, FMP/EarningsCall transcripts and supplied India disclosure metadata retain original evidence and Processing Runs. Optional OCR model inference remains unverified. |
+| Identity and calendar inspection | Built with bounded coverage | OpenFIGI candidates retain ambiguity; versioned calendars and source-labeled overrides do not auto-merge identities or certify unsupported historical dates. |
+| Research Lab | Experimental | Constrained PyPortfolioOpt allocations, compounded native/bt simulations, QuantStats exports and local reference peers use explicit research inputs and owner-scoped receipts. No trading, automatic ledger edits, or historical-universe certification. |
+| Research navigation and artifact display | Built, source-verified | Company/evidence command palette, exact-file price/FX review and Markdown memo/citation exports preserve their existing auth, review and saved-artifact boundaries. Installed browser verification remains separate. |
 | Portfolio valuation and exposure | Built | Current value, cash, exposures, and concentration are source-aware |
 | Portfolio performance and attribution | Built; research/demo scope | Recorded activity/FX replay, snapshots, TWR/MWR, attribution, and price risk. Legacy or corrected history stays provisional. Genuine activity and multi-currency certification are outside v1. |
 | FCFF DCF and scenarios | Built | Reviewed drafts, explicit units, atomic versions, deterministic calculations, and trust-gated results. Historical approved scenarios were removed; saved assumptions do not certify company facts. |

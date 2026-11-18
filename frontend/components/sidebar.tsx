@@ -15,6 +15,7 @@ import {
   Menu,
   Newspaper,
   Settings,
+  Search,
   ShieldCheck,
   TrendingUp,
   X,
@@ -23,6 +24,7 @@ import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ThemeSwitch } from "@/components/theme-switch";
 
 type NavItem = {
   href: string;
@@ -63,6 +65,7 @@ const navGroups: NavGroup[] = [
     label: "Advanced",
     items: [
       { href: "/advanced", label: "Advanced tools", icon: Gauge },
+      { href: "/research-lab", label: "Research Lab", icon: ChartNoAxesCombined },
       { href: "/portfolio/regime", label: "Market regime", icon: Gauge },
       { href: "/macro", label: "Macro", icon: ChartNoAxesCombined },
       { href: "/valuation/quick", label: "Quick valuation", icon: ChartNoAxesCombined },
@@ -143,7 +146,7 @@ export function Sidebar() {
   return (
     <>
       <div className="mobile-nav-bar">
-        <span className="mobile-brand">Market Intelligence</span>
+        <span className="mobile-brand">Marketagent</span>
         <button
           ref={openButtonRef}
           type="button"
@@ -167,7 +170,10 @@ export function Sidebar() {
       ) : null}
       <aside ref={sidebarRef} id="primary-sidebar" role={open ? "dialog" : undefined} aria-modal={open ? true : undefined} aria-label="Navigation" className={`sidebar${open ? " sidebar-open" : ""}`}>
         <div className="sidebar-heading">
-          <Link href="/" className="brand" prefetch={false}><span className="brand-mark" aria-hidden="true">MI</span><span>Market<br />Intelligence</span></Link>
+          <Link href="/" className="brand" prefetch={false}>
+            <svg className="brand-symbol" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 20V11l6 5V5l6 5V2l6 5v13H3Z" stroke="currentColor" strokeWidth="2" strokeLinejoin="round" /></svg>
+            <span>Marketagent</span>
+          </Link>
           <button
             type="button"
             className="icon-button sidebar-close"
@@ -177,6 +183,8 @@ export function Sidebar() {
             <X size={20} />
           </button>
         </div>
+        <div className="workspace-identity"><span className="workspace-initial" aria-hidden="true">M</span><span>Personal workspace</span></div>
+        <Link href="/search" prefetch={false} className="sidebar-search"><Search size={16} aria-hidden="true" /><span>Search evidence</span></Link>
         <nav className="nav" aria-label="Primary navigation">
           {navGroups.map((group) => {
             const links = group.items.map((item) => {
@@ -199,6 +207,10 @@ export function Sidebar() {
               : <div className="nav-group" key={group.label}><p className="nav-group-label">{group.label}</p>{links}</div>;
           })}
         </nav>
+        <div className="sidebar-footer">
+          <Link href="/data-health" prefetch={false} className="workspace-integrity"><ShieldCheck size={16} aria-hidden="true" /><span>Evidence & assumptions<small>Review source and model context</small></span></Link>
+          <div className="sidebar-footer-row"><span>Research workspace</span><ThemeSwitch /></div>
+        </div>
       </aside>
     </>
   );

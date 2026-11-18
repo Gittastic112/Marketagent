@@ -1,6 +1,6 @@
 # Frontend Route Inventory
 
-Source inventory reviewed: 2026-11-14. 51 App Router pages.
+Source inventory reviewed: 2026-11-17. 52 App Router pages.
 
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's
@@ -64,6 +64,7 @@ page source and the count. Auth/API routes are outside this page list.
 | `/portfolio` | [Page source](../frontend/app/portfolio/page.tsx) |
 | `/portfolio/regime` | [Page source](../frontend/app/portfolio/regime/page.tsx) |
 | `/research` | [Page source](../frontend/app/research/page.tsx) |
+| `/research-lab` | [Page source](../frontend/app/research-lab/page.tsx) |
 | `/research/sessions/[id]` | [Page source](../frontend/app/research/sessions/[id]/page.tsx) |
 | `/research/sessions` | [Page source](../frontend/app/research/sessions/page.tsx) |
 | `/search` | [Page source](../frontend/app/search/page.tsx) |

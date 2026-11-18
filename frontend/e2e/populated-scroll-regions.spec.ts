@@ -77,7 +77,7 @@ test("populated macro observations and thesis assumptions are reachable and scro
     await expect(assumptions).toContainText("Mock Data assumption 1");
     await reachWithTab(page, assumptions);
     const scrollsHorizontally = await assumptions.evaluate(element => element.scrollWidth > element.clientWidth);
-    // Desktop may fit all six columns; the populated mobile table must overflow.
+    // Desktop may fit the text columns; the populated mobile table must overflow.
     if (width === 390) expect(scrollsHorizontally).toBe(true);
     if (scrollsHorizontally) {
       const beforeRight = await assumptions.evaluate(element => element.scrollLeft);

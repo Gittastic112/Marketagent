@@ -17,7 +17,7 @@ def test_saved_brief_counts_eligible_inputs_and_all_three_caps(db_session, monke
     reviewed_at = now - timedelta(hours=2)
     previous = DailyBrief(user_id=OWNER, brief_date=date.today() - timedelta(days=1),
         title="Previous", summary="Previous", payload_json={}, review_status="reviewed",
-        reviewed_at=reviewed_at)
+        created_at=reviewed_at, reviewed_at=reviewed_at)
     db_session.add(previous)
     for index in range(55):
         db_session.add(Event(event_type="manual", information_speed="slow", title=f"Event {index}",

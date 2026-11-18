@@ -13,7 +13,7 @@ from app.api.schemas import (
     RawDocumentUpdate,
 )
 from app.db.session import get_db
-from app.models import RawDocument, FinancialExtractionCandidate
+from app.models import Company, RawDocument, FinancialExtractionCandidate
 from app.schemas.document_library import DocumentLibraryRead
 from app.services.source_preservation import changes_source_evidence, has_document_dependents
 
@@ -147,7 +147,7 @@ def delete_raw_document(raw_document_id: int, db: Session = Depends(get_db)) -> 
 from app.api.schemas import FilingSectionRead, FilingSectionDiffRead, ApiMeta
 from app.models.sec_parsing import FilingSection, FilingSectionDiff
 from app.services.sec_parsing import parse_sec_filing
-from app.services.sec_diff import generate_section_diffs
+from app.services.sec_diff import generate_section_diffs, section_diffs_need_refresh
 from app.services.event_extraction import _find_prior_comparable_filing
 
 @router.get("/raw-documents/{raw_document_id}/sections", response_model=ApiResponse[list[FilingSectionRead]])
@@ -155,21 +155,9 @@ def get_raw_document_sections(raw_document_id: int, db: Session = Depends(get_db
     document = get_or_404(db, RawDocument, raw_document_id)
     sections = list(db.scalars(select(FilingSection).where(FilingSection.raw_document_id == raw_document_id).order_by(FilingSection.id)))
 
-    is_stale = False
-    warnings = []
-
     actual_prior_document = _find_prior_comparable_filing(db, document)
-    if actual_prior_document and sections:
-        for section in sections:
-            for diff in section.diffs_as_current:
-                if diff.prior_section_id:
-                    prior_section_doc_id = db.scalar(select(FilingSection.raw_document_id).where(FilingSection.id == diff.prior_section_id))
-                    if prior_section_doc_id != actual_prior_document.id:
-                        is_stale = True
-                        warnings.append("Diffs are based on an outdated prior filing. Run parser again to update.")
-                        break
-            if is_stale:
-                break
+    is_stale = section_diffs_need_refresh(db, sections, actual_prior_document)
+    warnings = ["Filing comparisons are missing or outdated. Run parser again to update."] if is_stale else []
 
     meta = ApiMeta(is_stale=is_stale, warnings=warnings)
     return ApiResponse(data=sections, meta=meta)
@@ -189,13 +177,14 @@ def get_raw_document_section_diffs(raw_document_id: int, db: Session = Depends(g
 def parse_raw_document(raw_document_id: int, db: Session = Depends(get_db)) -> ApiResponse[dict[str, str]]:
     document = get_or_404(db, RawDocument, raw_document_id)
 
-    # Check if already parsed
+    # Serialize shared predecessor parsing and keep existing section identities.
+    if document.company_id is not None:
+        db.scalar(select(Company).where(Company.id == document.company_id).with_for_update())
+    else:
+        db.scalar(select(RawDocument).where(RawDocument.id == document.id).with_for_update())
     existing_sections = list(db.scalars(select(FilingSection).where(FilingSection.raw_document_id == document.id)))
-    if existing_sections:
-        return ApiResponse(data={"status": f"Already parsed into {len(existing_sections)} sections."})
-
-    sections = parse_sec_filing(db, document)
-    db.commit()
+    sections = existing_sections or parse_sec_filing(db, document)
+    db.flush()
 
     # Try diffing
     prior_document = _find_prior_comparable_filing(db, document)
@@ -203,7 +192,7 @@ def parse_raw_document(raw_document_id: int, db: Session = Depends(get_db)) -> A
         prior_sections = list(db.scalars(select(FilingSection).where(FilingSection.raw_document_id == prior_document.id)))
         if not prior_sections:
             parse_sec_filing(db, prior_document)
-            db.commit()
+            db.flush()
 
     diffs = generate_section_diffs(db, document, prior_document)
     db.commit()

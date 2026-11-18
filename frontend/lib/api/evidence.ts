@@ -1,5 +1,6 @@
 /** Contracts and endpoint helpers for evidence. Import transport directly, never the compatibility facade. */
 import api from "./transport.ts";
+import type { AiOutput } from "./ai.ts";
 import { AI_PRIVACY_DISCLOSURE_VERSION } from "../ai-privacy.ts";
 
 export type EvidenceSearchResult = {
@@ -352,6 +353,8 @@ export interface NarrativeClaim {
   cluster_id: number;
   claim_text: string;
   created_at: string;
+  origin: "legacy_unknown" | "manual" | "ai" | "mock";
+  ai_output: AiOutput | null;
 }
 
 export interface NarrativeMention {
@@ -371,6 +374,12 @@ export type EventThesisImpact = {
   review_status: string;
   created_at: string;
 };
+
+export async function reviewThesisImpact(id: number, decision: "no_change" | "blocked", reason: string, expectedStatus: string) {
+  return api.post<EventThesisImpact>(`/thesis-impacts/${id}/review`, {
+    decision, reason, expected_status: expectedStatus,
+  }).then(response => response.data as EventThesisImpact);
+}
 
 export async function classifyEventImpact(eventId: number): Promise<{ message: string }> {
   return api.post<{ message: string }>(`/events/${eventId}/classify-impact`, {

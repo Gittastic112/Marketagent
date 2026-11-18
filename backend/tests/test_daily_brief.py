@@ -166,7 +166,7 @@ def test_generate_daily_brief_ranks_events_and_preserves_evidence() -> None:
     assert brief["source_raw_document_ids"] == [raw_document_id]
 
 
-def test_generate_daily_brief_respects_last_review_date() -> None:
+def test_generate_daily_brief_preserves_unseen_events_before_click_time() -> None:
     engine = create_engine("sqlite+pysqlite:///:memory:")
     Base.metadata.create_all(engine)
 
@@ -185,7 +185,7 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
         session.add(old_brief)
         session.commit()
 
-        # Event created after brief creation but before the actual review should be ignored.
+        # An event arriving after capture was not displayed, even if the user reviewed later.
         company = Company(ticker="AAPL", name="Apple Inc.")
         event_old = Event(
             company=company,
@@ -211,11 +211,9 @@ def test_generate_daily_brief_respects_last_review_date() -> None:
         new_brief_orm = MorningBriefingEngine.generate_briefing(session, user_id=USER_ID)
         new_brief = new_brief_orm.payload_json
 
-    # Should only contain 'New Event'
     high_mat = new_brief["high_materiality_events"]
-    assert len(high_mat) == 1
-    assert high_mat[0]["headline"] == "New Event"
-    assert new_brief["last_reviewed_at"].startswith("2026-03-01")
+    assert {event["headline"] for event in high_mat} == {"Old Event", "New Event"}
+    assert new_brief["last_reviewed_at"].startswith("2026-01-01")
 
 
 def test_briefing_never_invents_zero_portfolio_move_and_keeps_source_context() -> None:

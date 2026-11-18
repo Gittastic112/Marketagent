@@ -16,6 +16,8 @@ BINARY_ROUTE_ALLOWLIST = frozenset(
         ("GET", "/export/portfolio-transactions"),
         ("GET", "/export/raw-documents"),
         ("GET", "/portfolios/{portfolio_id}/evidence-bundle/template"),
+        ("GET", "/api/research-lab/runs/{run_id}/export"),
+        ("GET", "/api/research-lab/runs/{run_id}/report.html"),
     }
 )
 

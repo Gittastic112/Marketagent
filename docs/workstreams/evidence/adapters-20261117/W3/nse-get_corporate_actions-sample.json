@@ -1,0 +1,20 @@
+{
+  "request": {
+    "symbol": "INFY",
+    "fromDate": "2025-11-01",
+    "toDate": "2025-11-10"
+  },
+  "response": {
+    "jsonrpc": "2.0",
+    "id": 3,
+    "result": {
+      "content": [
+        {
+          "type": "text",
+          "text": "{\"symbol\":\"INFY\",\"from\":\"2025-11-01\",\"to\":\"2025-11-10\",\"count\":0,\"actions\":[]}"
+        }
+      ],
+      "isError": false
+    }
+  }
+}

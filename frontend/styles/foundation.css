@@ -1,4 +1,13 @@
-@custom-variant dark (&:where(.dark, .dark *));
+@font-face {
+  font-family: Geist; src: url('/fonts/Geist.woff2') format('woff2');
+  font-style: normal; font-weight: 100 900; font-display: swap;
+}
+@font-face {
+  font-family: 'Geist Mono'; src: url('/fonts/GeistMono.woff2') format('woff2');
+  font-style: normal; font-weight: 100 900; font-display: swap;
+}
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
   --color-background: var(--color-canvas);
@@ -8,20 +17,22 @@
   --color-muted: var(--color-surface-muted);
   --color-muted-foreground: var(--color-text-muted);
   --color-border: var(--color-border-default);
-  --color-primary: var(--color-accent);
-  --color-primary-foreground: #ffffff;
+  --color-primary: var(--color-text);
+  --color-primary-foreground: var(--color-surface);
   --font-sans: var(--font-family-sans);
+  --font-mono: var(--font-family-mono);
   --radius-sm: var(--radius-small);
   --radius-md: var(--radius-medium);
   --radius-lg: var(--radius-large);
 }
 
 :root {
-  --font-family-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-size-xs: 13px;
-  --font-size-sm: 15px;
-  --font-size-md: 16px;
-  --font-size-lg: 20px;
+  --font-family-mono: "Geist Mono", ui-monospace, monospace;
+  --font-family-sans: Geist, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-md: 15px;
+  --font-size-lg: 18px;
   --font-size-xl: 30px;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
@@ -34,19 +45,22 @@
   --space-5: 20px;
   --space-6: 24px;
   --space-8: 32px;
-  --color-canvas: #f5f7fa;
+  --color-canvas: #ffffff;
+  --color-sidebar: #fafafa;
+  color-scheme: light;
   --color-surface: #ffffff;
-  --color-surface-hover: #f7f9fb;
-  --color-surface-muted: #f0f3f7;
-  --color-text: #172033;
-  --color-text-muted: #5d697a;
-  --color-border-default: #d8dee8;
-  --color-border-strong: #b8c2d0;
-  --color-accent: #0f766e;
-  --color-accent-strong: #115e59;
-  --color-accent-soft: #dff4f1;
+  --color-surface-hover: #f5f5f5;
+  --color-surface-muted: #f4f4f5;
+  --color-text: #171717;
+  --color-text-muted: #6b6b6b;
+  --color-border-default: #e5e5e5;
+  --color-border-strong: #cfcfcf;
+  --color-accent: #0068d6;
+  --color-accent-strong: #0058b5;
+  --color-accent-soft: #eff6ff;
   --color-info: #2563eb;
   --color-info-soft: #eaf1ff;
+  --color-prototype: #6b21a8;
   --background-start: var(--color-surface);
   --background-end: var(--color-canvas);
   --surface: var(--color-surface);
@@ -57,7 +71,7 @@
   --line: var(--color-border-default);
   --accent: var(--color-accent);
   --accent-strong: var(--color-accent-strong);
-  --accent-glow: rgba(15, 118, 110, 0.2);
+  --accent-glow: rgba(0, 104, 214, 0.14);
   --accent-light: var(--color-accent-soft);
   --warning: #8a5700;
   --warning-bg: #fff7df;
@@ -65,9 +79,9 @@
   --danger-bg: #fff0ee;
   --success: #067647;
   --success-bg: #e8f7ef;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 2px 8px rgba(23, 32, 51, 0.08);
-  --shadow-lg: 0 8px 24px rgba(23, 32, 51, 0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.025);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.035);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.12);
   --shadow-glow: 0 0 20px var(--accent-glow);
   --radius-small: 4px;
   --radius-medium: 6px;
@@ -87,7 +101,7 @@
   --brand-primary: var(--color-accent);
   --color-green-700: var(--success);
   --color-neutral-500: var(--color-text-muted);
-  --color-neutral-600: #475467;
+  --color-neutral-600: var(--color-text-muted);
   --color-red-700: var(--danger);
   --error: var(--danger);
   --error-bg: var(--danger-bg);
@@ -103,7 +117,36 @@
   --warn: var(--warning);
   --warning-border: #f2c94c;
   --warning-color: var(--warning);
-  --warning-text: #7a4d00;
+  --warning-text: var(--warning);
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-canvas: #111111;
+  --color-sidebar: #151515;
+  --color-surface: #171717;
+  --color-surface-hover: #242424;
+  --color-surface-muted: #212121;
+  --color-text: #ededed;
+  --color-text-muted: #a1a1a1;
+  --color-border-default: #303030;
+  --color-border-strong: #4b4b4b;
+  --color-accent: #78b6ff;
+  --color-accent-strong: #a1cdff;
+  --color-accent-soft: #11243c;
+  --color-info: #78b6ff;
+  --color-info-soft: #11243c;
+  --color-prototype: #d5a4ff;
+  --warning: #e8be67;
+  --warning-bg: #30270f;
+  --warning-border: #6b5424;
+  --danger: #ff8c91;
+  --danger-bg: #34191b;
+  --success: #65cfa3;
+  --success-bg: #122b21;
+  --shadow-sm: 0 1px 2px #0002;
+  --shadow-md: 0 4px 20px #0002;
+  --shadow-lg: 0 12px 40px #0005;
 }
 
 * {
@@ -123,6 +166,12 @@ body {
   line-height: 1.5;
   max-width: 100%;
   overflow-x: clip;
+}
+
+summary {
+  cursor: pointer;
+  min-height: 32px;
+  padding-block: var(--space-1);
 }
 
 h1,
@@ -161,4 +210,10 @@ a:hover {
 :where(p, li, .empty, .basis-note) a:not(.btn, .primary-button, .secondary-button) {
   text-decoration: underline;
   text-underline-offset: 0.15em;
+}
+
+code, kbd, pre, .numeric, .source-hash { font-family: var(--font-family-mono); }
+::selection { background: var(--color-accent-soft); color: var(--color-text); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }

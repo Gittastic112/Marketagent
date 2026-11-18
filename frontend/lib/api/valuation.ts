@@ -229,6 +229,7 @@ export type ValuationAssumptionChangeLog = {
 };
 
 export type DcfAssumptionSet = {
+  stale_review_token?: string | null;
   id: number;
   valuation_model_id: number;
   scenario: string;
@@ -411,8 +412,19 @@ export async function solveReverseDcf(request: ReverseDcfRequest): Promise<Rever
   return postApi<ReverseDcfResponse>(`/dcf/reverse`, request);
 }
 
-export async function resolveStaleValuation(modelId: number, assumptionId: number): Promise<DcfAssumptionSet> {
-  return postApi<DcfAssumptionSet>(`/valuation-models/${modelId}/assumptions/${assumptionId}/resolve-stale`, {});
+export async function resolveStaleValuation(modelId: number, assumptionId: number, review: {
+  expected_updated_at: string; review_token: string; reason: string;
+}): Promise<DcfAssumptionSet> {
+  return postApi<DcfAssumptionSet>(`/valuation-models/${modelId}/assumptions/${assumptionId}/resolve-stale`, review);
+}
+
+export type SavedValuationExport = {
+  model_id: number; assumption_set_id: number; export_kind: "raw_saved_valuation_v1";
+  saved_version: Record<string, unknown>; decision_receipts: Record<string, unknown>[]; limitations: string[];
+};
+
+export async function exportSavedValuation(modelId: number, assumptionId: number): Promise<SavedValuationExport> {
+  return fetchApi<SavedValuationExport>(`/valuation-models/${modelId}/assumptions/${assumptionId}/export`);
 }
 
 export async function getValuationChangeLogs(modelId: number, assumptionId: number): Promise<ValuationAssumptionChangeLog[]> {

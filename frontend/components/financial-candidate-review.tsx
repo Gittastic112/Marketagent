@@ -139,9 +139,9 @@ export function FinancialCandidateReview({
   if (candidates.length === 0) {
     return (
       <div className="space-y-4">
-        {error ? <p className="text-sm text-red-700" role="alert">{error}</p> : null}
-        {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
-        <p className="text-sm text-gray-500">
+        {error ? <p className="text-sm text-[var(--danger)]" role="alert">{error}</p> : null}
+        {notice ? <p className="text-sm text-[var(--success)]" role="status">{notice}</p> : null}
+        <p className="text-sm text-muted-foreground">
           No candidates awaiting review. Add or select a filing to extract more source entries.
         </p>
       </div>
@@ -169,52 +169,52 @@ export function FinancialCandidateReview({
         </div>
       )}
 
-      {error ? <div role="alert" className="text-sm text-red-700">{error} <button type="button" className="btn btn-secondary" onClick={() => void reloadCandidates()}>Reload candidates (discard unsaved correction)</button></div> : null}
-      {notice ? <p className="text-sm text-green-700" role="status">{notice}</p> : null}
-      <p className="text-sm text-gray-600">Promotion accepts annual evidence with an exact source period-end date. Interim, YTD, missing dates and conflicting stored periods are held without changing history. Reviewing a value does not resolve its period identity.</p>
+      {error ? <div role="alert" className="text-sm text-[var(--danger)]">{error} <button type="button" className="btn btn-secondary" onClick={() => void reloadCandidates()}>Reload candidates (discard unsaved correction)</button></div> : null}
+      {notice ? <p className="text-sm text-[var(--success)]" role="status">{notice}</p> : null}
+      <p className="text-sm text-muted-foreground">Promotion accepts annual evidence with an exact source period-end date. Interim, YTD, missing dates and conflicting stored periods are held without changing history. Reviewing a value does not resolve its period identity.</p>
 
       <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8" role="region" aria-label="Extracted financial candidates" tabIndex={0}>
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-          <table className="min-w-full divide-y divide-gray-300">
+          <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
-                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900">Metric</th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Value</th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Period</th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Review Status</th>
-                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Actions</th>
+                <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-foreground">Metric</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Value</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Period</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Review Status</th>
+                <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-foreground">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {candidates.map((candidate) => (
                 <tr key={candidate.id}>
-                  <td className="py-4 pl-4 pr-3 text-sm font-medium text-gray-900" style={{ minWidth: "18rem", maxWidth: "32rem", overflowWrap: "anywhere" }}>
+                  <td className="py-4 pl-4 pr-3 text-sm font-medium text-foreground" style={{ minWidth: "18rem", maxWidth: "32rem", overflowWrap: "anywhere" }}>
                     {candidate.metric_code.replaceAll("_", " ")}
                     <br />
-                    <span className="text-xs font-normal text-gray-500">{financialEvidenceClaimType(candidate)}</span>
-                    {financialOverrideNotice(candidate) && <p className="text-xs font-normal text-amber-700 dark:text-amber-300">{financialOverrideNotice(candidate)}</p>}
+                    <span className="text-xs font-normal text-muted-foreground">{financialEvidenceClaimType(candidate)}</span>
+                    {financialOverrideNotice(candidate) && <p className="text-xs font-normal text-[var(--warning)] dark:text-[var(--warning)]">{financialOverrideNotice(candidate)}</p>}
                     <br />
-                    <span className="text-xs font-normal text-gray-500">From: &quot;{candidate.source_text}&quot;</span>
+                    <span className="text-xs font-normal text-muted-foreground">From: &quot;{candidate.source_text}&quot;</span>
                     <br />
-                    <span className="text-xs font-normal text-gray-500">
+                    <span className="text-xs font-normal text-muted-foreground">
                       {financialEvidenceLocatorLabel(candidate)}
                     </span>
                     <Link
                       href={financialEvidenceHref(candidate)}
                       target={candidate.source_locator_json?.type === "pdf_table_cell" ? "_blank" : undefined}
                       rel={candidate.source_locator_json?.type === "pdf_table_cell" ? "noopener noreferrer" : undefined}
-                      className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-blue-700 hover:text-blue-900"
+                      className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-[var(--accent)] hover:text-[var(--accent)]"
                     >
                       Open evidence
                       <ExternalLink aria-hidden="true" size={13} />
                     </Link>
                     {candidate.extraction_warnings ? (
-                      <span className="mt-1 block text-xs font-normal text-amber-700">
+                      <span className="mt-1 block text-xs font-normal text-[var(--warning)]">
                         {candidate.extraction_warnings.split(";").join(" / ")}
                       </span>
                     ) : null}
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-foreground">
                     {editingId === candidate.id ? (
                       <div className="flex flex-wrap items-center gap-2">
                         <input
@@ -223,7 +223,7 @@ export function FinancialCandidateReview({
                           aria-label="Corrected value"
                           value={editValue}
                           onChange={(e) => setEditValue(e.target.value === "" ? "" : Number(e.target.value))}
-                          className="block w-24 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                          className="block w-24 rounded-md border-0 py-1.5 text-foreground shadow-sm ring-1 ring-inset ring-border placeholder:text-muted-foreground focus:ring-2 focus:ring-inset focus:ring-[var(--accent)] sm:text-sm sm:leading-6"
                         />
                         <input
                           type="text"
@@ -231,12 +231,12 @@ export function FinancialCandidateReview({
                           placeholder="e.g. INR crore"
                           value={editUnit}
                           onChange={(e) => setEditUnit(e.target.value)}
-                          className="block w-32 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                          className="block w-32 rounded-md border-0 py-1.5 text-foreground shadow-sm ring-1 ring-inset ring-border placeholder:text-muted-foreground focus:ring-2 focus:ring-inset focus:ring-[var(--accent)] sm:text-sm sm:leading-6"
                         />
                         <button
                           onClick={() => handleOverride(candidate.id)}
                           disabled={typeof editValue !== "number" || !Number.isFinite(editValue) || !editUnit.trim()}
-                          className="text-xs font-medium text-blue-600 hover:text-blue-500"
+                          className="text-xs font-medium text-[var(--accent)] hover:text-[var(--accent)]"
                         >
                           Save
                         </button>
@@ -246,7 +246,7 @@ export function FinancialCandidateReview({
                             setEditValue("");
                             setEditUnit("");
                           }}
-                          className="text-xs font-medium text-gray-600 hover:text-gray-500"
+                          className="text-xs font-medium text-muted-foreground hover:text-muted-foreground"
                         >
                           Cancel
                         </button>
@@ -257,7 +257,7 @@ export function FinancialCandidateReview({
                       </span>
                     )}
                   </td>
-                  <td className="px-3 py-4 text-sm text-gray-500">
+                  <td className="px-3 py-4 text-sm text-muted-foreground">
                     <div>FY {candidate.fiscal_year ?? "unknown"} · {candidate.period_type || "Unknown basis"}</div>
                     <div>{typeof candidate.source_locator_json?.end === "string" ? `Ends ${candidate.source_locator_json.end}` : "Source extraction has no end date"}</div>
                     {typeof candidate.source_locator_json?.start === "string" && <div>Starts {candidate.source_locator_json.start}</div>}
@@ -287,16 +287,16 @@ export function FinancialCandidateReview({
                     <span
                       className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
                         candidate.review_status === "reviewed" || candidate.review_status === "overridden"
-                          ? "bg-green-50 text-green-700 ring-green-600/20"
+                          ? "bg-[var(--success-bg)] text-[var(--success)] ring-[var(--success)]/20"
                           : candidate.review_status === "rejected"
-                          ? "bg-red-50 text-red-700 ring-red-600/10"
+                          ? "bg-[var(--danger-bg)] text-[var(--danger)] ring-[var(--danger)]/10"
                           : "bg-yellow-50 text-yellow-800 ring-yellow-600/20"
                       }`}
                     >
                       {candidate.review_status.replaceAll("_", " ")}
                     </span>
                   </td>
-                  <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                  <td className="whitespace-nowrap px-3 py-4 text-sm text-muted-foreground">
                     {candidate.review_status === "needs_review" && editingId !== candidate.id && (
                       <div className="flex gap-3">
                         <button
@@ -309,13 +309,13 @@ export function FinancialCandidateReview({
                             }
                             void handleReview(candidate.id, "reviewed");
                           }}
-                          className="text-green-600 hover:text-green-900 font-medium"
+                          className="text-[var(--success)] hover:text-[var(--success)] font-medium"
                         >
                           {candidate.unit ? "Accept" : "Add unit"}
                         </button>
                         <button
                           onClick={() => handleReview(candidate.id, "rejected")}
-                          className="text-red-600 hover:text-red-900 font-medium"
+                          className="text-[var(--danger)] hover:text-[var(--danger)] font-medium"
                         >
                           Reject
                         </button>
@@ -325,7 +325,7 @@ export function FinancialCandidateReview({
                             setEditValue(candidate.value);
                             setEditUnit(candidate.unit || "");
                           }}
-                          className="text-blue-600 hover:text-blue-900 font-medium"
+                          className="text-[var(--accent)] hover:text-[var(--accent)] font-medium"
                         >
                           Override
                         </button>
@@ -335,7 +335,7 @@ export function FinancialCandidateReview({
                        <div className="flex gap-3">
                          <button
                            onClick={() => handleReview(candidate.id, "needs_review")}
-                           className="text-gray-600 hover:text-gray-900 font-medium"
+                           className="text-muted-foreground hover:text-foreground font-medium"
                          >
                            Undo
                          </button>
@@ -349,12 +349,12 @@ export function FinancialCandidateReview({
         </div>
       </div>
 
-      <div className="flex justify-end border-t border-gray-200 pt-4">
+      <div className="flex justify-end border-t border-border pt-4">
         <button
           type="button"
           disabled={!canPromote || isSubmitting}
           onClick={handlePromote}
-          className={`rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ${
+          className={`rounded-md bg-[var(--accent)] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[var(--accent)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)] ${
             (!canPromote || isSubmitting) ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >

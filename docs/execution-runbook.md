@@ -36,6 +36,13 @@ Compose explicitly select the test target. Supported Linux/Python 3.14 environme
 install backend/requirements-test.lock with `--require-hashes`; requirements.lock
 is runtime-only. The `.txt` files declare direct dependencies; Docker installs locks.
 
+The [adapter guide](adapters/README.md) owns optional analysis/table profiles and a
+separate OCR interpreter. The lock checker verifies their pins and compatibility.
+CI installs analysis/table profiles for network-disabled adapter tests and checks
+the generated OpenAPI/TypeScript pair. OCR models are not downloaded in tests.
+For host verification, set `PYTHONPATH` to the absolute backend directory; some
+existing subprocess tests intentionally rely on that explicit runtime setting.
+
 ## Dependency and container updates
 
 Edit direct requirements intentionally, then regenerate locks with Python 3.14,
@@ -118,9 +125,20 @@ The browser runner also executes `backend/tests/integration/test_ingestion_postg
 against its disposable PostgreSQL database. It proves row/advisory locking that
 SQLite cannot exercise. The test requires `INGESTION_TEST_DATABASE_URL`, rejects
 database names without the `_e2e` suffix, and allocates/removes only its own random
-schema. Four checks cover ingestion locks, review writers and competing saved
-valuation versions. The default offline backend suite skips them; a skip is not
+schema. Checks cover ingestion locks, review writers, competing saved
+valuation versions and durable daily-brief worker claims. The default offline backend suite skips them; a skip is not
 concurrency proof. Never point this variable at the normal database.
+
+The optional `backend/tests/e2e_research_app.py` browser fixture delays one exact
+Mock Data research message beyond 15 seconds. It requires `APP_ENV=test`, explicit
+`AI_DEMO_MODE=true` and an `_e2e` database. In that isolated backend use
+`uvicorn e2e_research_app:app` with the fixture directory on `PYTHONPATH`, then set
+`E2E_DELAYED_RESEARCH=true` for `frontend/e2e/review-recovery.spec.ts`.
+The fixture is excluded from the application image. A normal browser run skips
+three provider-backed cases (lost response, narrative origin and latency). Run
+those separately with this fixture; keep unconfigured-provider browser checks on
+the ordinary backend with no provider or demo mode. Neither environment establishes
+live-provider delivery or latency.
 
 Critical frontend/backend contracts are checked in both suites. For an intentional
 wire change, regenerate the manifest using the backend dependencies, review its
@@ -284,7 +302,10 @@ their default target is also port 13000. The runner checks occupied ports before
 cleanup and uses only the installed Playwright package, without downloading one.
 Fixture mutations send the signed-in page's Origin. A container browser base URL
 must match the disposable frontend's NEXTAUTH_URL host and port. Keep the app's
-host/Origin guards intact. If shared filesystem trace folders fail, write artifacts
+host/Origin guards intact. Use loopback or HTTPS so browser cryptography remains
+available. A container runner can share the disposable frontend's network namespace
+and use its loopback address; do not disable browser security to trust an HTTP hostname.
+If shared filesystem trace folders fail, write artifacts
 inside the test container and copy completed results to output/playwright. Use
 explicit disposable credentials and staged source; do not read protected env files.
 On macOS, source bindings and artifact writes can also add validation overhead.
@@ -305,8 +326,9 @@ The page matrix covers 50 routes at 1440px and 390px. It saves screenshots and
 route-measurements.json under each test's output directory, including failures.
 CI retains passing and failing browser evidence for seven days. This is rendered
 page/selected-workflow proof, not every control/state or cold-start/load certification.
-On small Docker VMs, finish image builds before backend PDF tests or browser runs;
-resource-limit failures remain failures, and must pass a serial rerun without
+On small Docker VMs, finish image builds before backend PDF tests or browser runs.
+Stop completed disposable test services before installing the verified application images.
+Resource-limit failures remain failures, and must pass a serial rerun without
 raising the parser or route budgets.
 
 The release script builds, migrates a fresh PostgreSQL database, checks readiness,

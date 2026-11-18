@@ -39,6 +39,10 @@ class NarrativeClaim(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     cluster_id: Mapped[int] = mapped_column(ForeignKey("narrative_clusters.id"), index=True)
     claim_text: Mapped[str] = mapped_column(Text)
+    # Null means legacy origin unknown. Never infer or backfill an old claim's authoring basis.
+    origin: Mapped[str | None] = mapped_column(String(30), nullable=True)
+    ai_output_id: Mapped[int | None] = mapped_column(
+        ForeignKey("ai_outputs.id", name="fk_narrative_claim_ai_output"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     cluster: Mapped["NarrativeCluster"] = relationship("NarrativeCluster", back_populates="claims")

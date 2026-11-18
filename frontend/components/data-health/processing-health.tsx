@@ -150,7 +150,7 @@ export function ProcessingHealthTables({ processingRunsRes, sourcesRes, processi
                       <td>{source?.name ?? (run.source_type || "—")}</td>
                       <td>{statusBadge(run.status)}</td>
                       <td>{run.fetched_count}</td>
-                      <td>{run.created_count}</td>
+                      <td>{run.created_count}{typeof run.metadata_json?.completed_text_count === "number" && run.metadata_json.completed_text_count > 0 && <small className="muted"><br />{run.metadata_json.completed_text_count} filing text recovered</small>}</td>
                       <td>{run.skipped_duplicate_count}</td>
                       <td style={{ color: run.error_count > 0 ? "var(--error)" : undefined }}>{run.error_count}</td>
                       <td style={{ fontSize: "0.85rem" }}>{formatDate(run.started_at)}</td>

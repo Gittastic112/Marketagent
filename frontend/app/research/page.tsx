@@ -37,7 +37,7 @@ export default async function ResearchPage() {
         />
 
         <div className="research-actions">
-          <Link prefetch={false} href="/research/sessions" className="secondary-button" style={{ backgroundColor: "var(--accent-color)", color: "white" }}>AI Sessions</Link>
+          <Link prefetch={false} href="/research/sessions" className="primary-button">AI Sessions</Link>
           <Link prefetch={false} href="/documents" className="secondary-button">All Documents</Link>
           <Link prefetch={false} href="/events" className="secondary-button">All Events</Link>
           <Link prefetch={false} href="/thesis-notes" className="secondary-button">All Thesis Notes</Link>

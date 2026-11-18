@@ -3,6 +3,7 @@
 | Document | Owns |
 |---|---|
 | [Product roadmap](product-roadmap.md) | Priorities and prerequisites |
+| [UI and adapter worklist](ui-adapter-worklist.md) | Local release sequence and outstanding work across the 16 adapter research packages |
 | [Completion tracker](completion-tracker.md) | Stable task IDs, milestone order, acceptance evidence, and deferrals |
 | [Feature register](feature-register.md) | Implemented, partial, experimental, and unavailable capability status |
 | [Review decisions](review-decisions.md) | Recorded user approvals and delegated judgments |

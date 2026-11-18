@@ -9,8 +9,8 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = "", variant = "default", size = "default", ...props }, ref) => {
     const variantClass =
       variant === "outline"
-        ? "border border-slate-300 bg-white text-slate-900 hover:bg-slate-50"
-        : "bg-slate-900 text-white hover:bg-slate-800";
+        ? "secondary-button"
+        : "primary-button";
     const sizeClass = size === "sm" ? "px-3 py-1.5 text-sm" : "px-4 py-2 text-sm";
 
     return (

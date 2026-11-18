@@ -58,6 +58,53 @@ until the investigation is complete. The November 12
 output/milestones/financial-completion-20261112/deployment-history retain the
 earlier rollout evidence; they do not require indefinite container retention.
 
+## Update only the frontend
+
+Use this for a presentation-only release after source application, frontend
+tests/typecheck and documentation checks. The [Geist UI notes](geist-ui.md)
+describe visual acceptance. For the combined Geist and adapter release, use the [frontend and backend checklist](roadmaps/ui-adapter-worklist.md#release-checklist). First verify the selected
+project, current frontend image ID, mounts and port bindings using the existing
+base file and runtime override. Preserve unrelated working-tree edits and all
+private settings. A source patch alone does not change a production container.
+
+Choose an unused release tag; this example is for the Geist update. Do not replace
+an installed or retained rollback tag. From the original repository root:
+
+~~~bash
+runtime_override=output/milestones/product-development-20261107/runtime-images.yml
+frontend_image=market-intelligence-review-frontend:geist-20261117-1
+docker compose -f docker-compose.yml -f "$runtime_override" ps --all
+docker compose -f docker-compose.yml -f "$runtime_override" images frontend
+docker build --tag "$frontend_image" frontend
+~~~
+
+Stop if the build fails. Record the previous frontend image reference and ID;
+then set only `services.frontend.image` in the existing runtime override to the
+new image reference. Keep the same two Compose files, project name, network,
+volumes and other service images. Adding a third persistent override changes the
+configuration-file labels checked by the existing recovery helpers.
+
+After source/build gates pass and the override is reviewed, replace only the
+frontend. This command does not recreate PostgreSQL, the backend or workers:
+
+~~~bash
+docker compose -f docker-compose.yml -f "$runtime_override" config --quiet && \
+  docker compose -f docker-compose.yml -f "$runtime_override" up -d --no-deps --no-build frontend
+docker compose -f docker-compose.yml -f "$runtime_override" ps --all
+curl --fail http://127.0.0.1:3000/api/auth/readiness
+curl --fail http://127.0.0.1:8000/api/readiness
+~~~
+
+Wait for frontend readiness before browser acceptance; startup can take time.
+Verify sign-in, affected routes, both themes and mobile layout against existing
+records. Record the actual source revision, image ID and scoped results in
+[Current State](current-state.md). Do not mark the UI installed merely because
+the build succeeded. If it fails acceptance, restore the prior frontend image
+reference in the same override and repeat the frontend-only replacement.
+Keep that predecessor until verification passes, then apply the
+[retention policy](#essential-retention-policy). This change needs no database
+dump, migration, seed, restore, new normal stack or volume removal.
+
 ## Rotate the local database password
 
 This is an operator maintenance step, not an instruction for an agent to read
@@ -235,7 +282,7 @@ the earlier planning measurement, not a new claim about their exact current size
 
 ### Essential retention policy
 
-Effective November 13, 2026, following the user's request to retain only essentials.
+Updated November 18, 2026: the user requires at most one retained backup set.
 This replaces the earlier seven-local/four-weekly-copy target and blanket retention
 of stopped rollback stacks. It is an operating policy, not installed automated
 pruning. Retain the following roles, not a fresh copy per task or build.
@@ -245,7 +292,7 @@ pruning. Retain the following roles, not a fresh copy per task or build.
 | Live database and original asset stores | Keep the active authoritative data and required assets | Never delete/reset as routine cleanup |
 | Original source reports, reviewed evidence, saved model versions and decision receipts | Keep canonical originals and the references needed to interpret decisions | Remove only proved redundant physical copies; unique evidence/history is not build waste |
 | Current recovery set | One latest verified complete set covering database and required assets, with manifest and checksums | Replace only after the successor passes the required verification; never remove the only good copy first |
-| Pre-change recovery set | At most one additional distinct set for an active schema/substantial data change, with a named task and release condition | Retire after the change is verified and the current recovery set covers the resulting state; one set can fulfil both roles before writes |
+| Pre-change recovery role | Use the single verified set as the pre-change recovery point | Replace it after the change and successor restore proof pass; no separately retained predecessor |
 | Current runtime images | Keep images used by the installed services | Retire a replaced image after the new service passes its scoped checks and no active rollback role needs it |
 | Application rollback image | At most one predecessor per changed service while validating that deployment | Release after readiness, affected browser behavior and compatibility checks pass; no permanent stopped rollback container |
 | Tools/test image | Keep only a currently required, non-redundant image | Retire when a verified replacement exists or the workflow no longer needs it |
@@ -254,8 +301,9 @@ pruning. Retain the following roles, not a fresh copy per task or build.
 | Screenshots, reports and logs | Keep a compact validation receipt, representative proof and the minimum evidence needed for unresolved failures | Remove repeated captures, bulk exports and reproducible logs once they add no unique diagnostic value |
 | Failed/incomplete backup or restore artifacts | Keep failure reason and the minimum necessary reproducer; retain any unique recoverable data | After diagnosis, remove disposable payloads by exact path; failure must never displace the verified recovery set |
 
-The ordinary local recovery budget is therefore one verified set, temporarily two
-distinct sets when an active data/schema change needs a separate rollback point.
+The local recovery budget is one verified set at rest. Creating and verifying its
+replacement temporarily requires both copies; remove the predecessor immediately
+after the successor passes. A failed replacement must preserve the previous copy.
 This favours current recovery over a long series of historical restore dates;
 source revisions and model/decision history remain in the application.
 Do not rotate an active pre-change set merely because a newer timestamp exists.
@@ -301,13 +349,19 @@ do not restore over the normal database or call an unverified dump fully verifie
    verification and measured byte savings. Reuse it in other docs by link.
 
 Do not add a scheduled job or notification to enforce this policy without a user
-request for automation. The current backup script defaults to pruning off and a
-count of seven when explicitly enabled. Its pruning logic validates script-owned
-folders but cannot protect a semantic pre-change pin. Merely setting the count to
-two is unsafe if the root contains a pinned older set. Leave automatic pruning off;
-select exact targets manually until role-aware retention is implemented and tested.
+request for automation. The backup script defaults to pruning off and retains one
+verified set when pruning is explicitly enabled. Enable it only after confirming
+the current change no longer needs the predecessor. It validates script-owned
+folders; unrelated archives require a separate inventory and exact-path cleanup.
 
 ## Data and operational tools
+
+The [adapter operator guide](adapters/README.md) covers explicit Research Lab/source
+actions, provider keys, optional image build arguments, isolated OCR and reference
+snapshot refresh. These source additions do not install themselves into a running
+stack. Keep the existing Compose project, data and review state when scheduling a
+rollout; verify its exact image/profile identity. Marker currently reports a
+dependency conflict, and Docling needs preprovisioned models plus an inference check.
 
 ### US benchmark intake
 
@@ -403,11 +457,11 @@ remain review-required and do not alter saved models.
   `BACKUP_ROOT` selects a local folder. Directories/files use 0700/0600. Failed
   backups retain a folder without a valid `COMPLETE` marker for inspection. Old
   `.partial` backups remain incomplete. Script retention defaults off; its current
-  fallback count is seven if pruning is explicitly enabled. The count-only helper
+  fallback count is one if pruning is explicitly enabled. The count-only helper
   deletes older verified format-2/3 folders owned by the script and preserves
   invalid, unrelated, legacy and linked folders. It does not protect active pins.
   Apply the [essential retention policy](#essential-retention-policy), keep automatic
-  pruning off until role-safe, and never remove the only verified recovery copy.
+  pruning off during an active rollback need, and never remove the only verified recovery copy.
   The metadata helper uses host Python when available; set
   `RECOVERY_PYTHON_IMAGE=market-intelligence-tools:local` after building the tools
   target to use bounded, network-disabled Docker instead. `DOCKER_BIN` accepts

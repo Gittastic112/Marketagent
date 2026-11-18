@@ -23,8 +23,18 @@ test("Mock Data peer review preserves sources and revisions through edits and re
     await peer.getByLabel("Currency", { exact: true }).fill("USD");
     await peer.getByLabel("P/E", { exact: true }).fill(String(10 + index));
   }
+  let releaseSave!: () => void;
+  const pendingSave = new Promise<void>(resolve => { releaseSave = resolve; });
+  await page.route("**/api/backend/api/valuation/relative/peer-sets", async route => {
+    if (route.request().method() === "POST") await pendingSave;
+    await route.continue();
+  });
   await manager.getByRole("button", { name: "Save draft peer set", exact: true }).click();
+  await expect(manager.getByLabel("Peer-set name")).toBeDisabled();
+  await expect(manager.getByLabel("Selection notes")).toBeDisabled();
+  releaseSave();
   await expect(manager.getByText("Draft peer set saved.", { exact: false })).toBeVisible();
+  await page.unrouteAll({behavior: "wait"});
   const sets = await backendData<Array<{ id: number }>>(page, `/api/valuation/relative/peer-sets?company_id=${company.id}&include_archived=true`);
   expect(sets).toHaveLength(1);
   const card = manager.locator(`#peer-set-${sets[0].id}`);

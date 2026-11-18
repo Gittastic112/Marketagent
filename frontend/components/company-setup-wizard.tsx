@@ -9,14 +9,16 @@ import { lookupCompanyByTicker, fetchApiResponse } from "@/lib/api";
 
 const initialState: FormActionState = { error: null };
 
-export function CompanySetupWizard() {
+export function CompanySetupWizard({ initialTicker = "", initialMarket = "US", initialExchange = "" }: {
+  initialTicker?: string; initialMarket?: "US" | "IN"; initialExchange?: string;
+}) {
   const [state, formAction, pending] = useActionState(createCompanyWithState, initialState);
 
   const [step, setStep] = useState(1);
 
   // Step 1 State
-  const [market, setMarket] = useState("US");
-  const [ticker, setTicker] = useState("");
+  const [market, setMarket] = useState<string>(initialMarket);
+  const [ticker, setTicker] = useState(initialTicker);
 
   // Lookup/Metadata State
   const [lookupPending, setLookupPending] = useState(false);
@@ -24,15 +26,15 @@ export function CompanySetupWizard() {
   const [lookupError, setLookupError] = useState<string | null>(null);
 
   // Company Payload State
-  const [exchange, setExchange] = useState("NASDAQ");
+  const [exchange, setExchange] = useState(initialExchange || (initialMarket === "IN" ? "NSE" : "NASDAQ"));
   const [localSymbol, setLocalSymbol] = useState("");
   const [name, setName] = useState("");
   const [cik, setCik] = useState("");
   const [isin, setIsin] = useState("");
   const [regulatoryId, setRegulatoryId] = useState("");
-  const [regulatoryIdType, setRegulatoryIdType] = useState("CIK");
-  const [country, setCountry] = useState("United States");
-  const [currency, setCurrency] = useState("USD");
+  const [regulatoryIdType, setRegulatoryIdType] = useState(initialMarket === "IN" ? "ISIN" : "CIK");
+  const [country, setCountry] = useState(initialMarket === "IN" ? "India" : "United States");
+  const [currency, setCurrency] = useState(initialMarket === "IN" ? "INR" : "USD");
   const [damodaranIndustry, setDamodaranIndustry] = useState("");
   const [sector, setSector] = useState("");
   const [industry, setIndustry] = useState("");

@@ -1,8 +1,10 @@
 from collections.abc import Callable
 from dataclasses import dataclass
+from datetime import UTC, datetime
 import logging
 import os
 
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.core.hashing import sha256_text
@@ -133,6 +135,7 @@ def persist_ai_output(
     failure_code: str | None = None,
     transmission_scope: str | None = None,
     consent_decision_id: int | None = None,
+    execution_metadata: dict | None = None,
 ) -> AiOutput:
     output = AiOutput(
         user_id=provenance.user_id,
@@ -156,7 +159,10 @@ def persist_ai_output(
         limitations=limitations,
         confidence_label=confidence_label,
         human_review_status="pending",
-        evaluation_json={"valuation_basis": provenance.valuation_basis} if provenance.valuation_basis else None,
+        evaluation_json={
+            **({"valuation_basis": provenance.valuation_basis} if provenance.valuation_basis else {}),
+            **({"execution": execution_metadata} if execution_metadata else {}),
+        } or None,
     )
     db.add(output)
     db.commit()
@@ -198,41 +204,66 @@ def execute_ai_generation(
             transmission_scope="none")
         raise
 
+    previous = db.scalar(select(AiOutput.id).where(
+        AiOutput.user_id == provenance.user_id,
+        AiOutput.reference_type == provenance.reference_type,
+        AiOutput.reference_id == provenance.reference_id,
+        AiOutput.prompt_version == provenance.prompt_version,
+        AiOutput.input_hash == sha256_text(provenance.input_text),
+        AiOutput.execution_status.in_(("pending", "failed", "unknown")),
+    ).order_by(AiOutput.id.desc()).limit(1))
+    is_mock = isinstance(selected_provider, MockAIProvider)
+    attempt = persist_ai_output(db, provenance=provenance,
+        provider_name=selected_provider.provider_name,
+        model_name=getattr(selected_provider, "model_name", "not_confirmed"),
+        is_mock=is_mock, output_text="", confidence_label="none",
+        limitations="Attempt recorded. Completion and remote delivery are not confirmed. Check its result before explicitly retrying.",
+        execution_status="pending", transmission_scope="none" if is_mock else "unknown",
+        consent_decision_id=consent_decision_id,
+        execution_metadata={"previous_attempt_id": previous, "dispatch_recorded": True})
+    attempt_id = attempt.id
+    try:
+        # The receipt is durable before dispatch; recheck permission at the send boundary.
+        current_consent = require_provider_consent(db, provider=selected_provider, provenance=provenance)
+        if current_consent != consent_decision_id:
+            raise AIExecutionError(code="AI_CONSENT_CHANGED",
+                message="AI permission changed before dispatch. Review permissions before retrying.",
+                status_code=409, retryable=False, provider_name=selected_provider.provider_name)
+    except AIExecutionError as exc:
+        attempt.execution_status = "failed"
+        attempt.failure_code = exc.code
+        attempt.limitations = exc.message
+        attempt.transmission_scope = "none"
+        attempt.evaluation_json = {**(attempt.evaluation_json or {}), "execution": {
+            **(attempt.evaluation_json or {}).get("execution", {}), "finished_at": datetime.now(UTC).isoformat()}}
+        db.commit()
+        raise
+
     try:
         result = generate(selected_provider)
     except Exception as exc:
-        provider_name = selected_provider.provider_name
-        is_mock = provider_name == "mock"
-        logger.error(
-            "AI provider execution failed",
-            extra={"provider": provider_name, "exception_type": type(exc).__name__},
-        )
-        error = AIProviderFailed(provider_name)
-        persist_ai_output(
-            db,
-            provenance=provenance,
-            provider_name=provider_name,
-            model_name="unavailable",
-            is_mock=is_mock,
-            output_text="",
-            limitations=error.message,
-            confidence_label="none",
-            execution_status="failed",
-            failure_code=error.code,
-            transmission_scope="none" if is_mock else "external_provider",
-            consent_decision_id=consent_decision_id,
-        )
+        db.rollback()
+        attempt = db.get(AiOutput, attempt_id)
+        logger.error("AI provider execution failed", extra={
+            "provider": selected_provider.provider_name, "exception_type": type(exc).__name__})
+        error = AIProviderFailed(selected_provider.provider_name)
+        attempt.execution_status = "failed"
+        attempt.failure_code = error.code
+        attempt.limitations = error.message + " Remote delivery may have occurred; no automatic retry was made."
+        attempt.transmission_scope = "none" if is_mock else "unknown"
+        attempt.evaluation_json = {**(attempt.evaluation_json or {}), "execution": {
+            **(attempt.evaluation_json or {}).get("execution", {}), "finished_at": datetime.now(UTC).isoformat()}}
+        db.commit()
         raise error from exc
 
-    is_mock = selected_provider.provider_name == "mock"
-    return persist_ai_output(
-        db,
-        provenance=provenance,
-        provider_name=selected_provider.provider_name,
-        model_name=result.model_name,
-        is_mock=is_mock,
-        output_text=result.output_text,
-        limitations=result.limitations,
-        confidence_label=result.confidence_label,
-        consent_decision_id=consent_decision_id,
-    )
+    attempt.model_name = result.model_name
+    attempt.output_text = result.output_text
+    attempt.limitations = result.limitations
+    attempt.confidence_label = result.confidence_label
+    attempt.execution_status = "success"
+    attempt.transmission_scope = "none" if is_mock else "external_provider"
+    attempt.evaluation_json = {**(attempt.evaluation_json or {}), "execution": {
+        **(attempt.evaluation_json or {}).get("execution", {}), "finished_at": datetime.now(UTC).isoformat()}}
+    db.commit()
+    db.refresh(attempt)
+    return attempt

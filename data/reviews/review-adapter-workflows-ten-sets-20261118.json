@@ -1,0 +1,241 @@
+{
+  "date": "2026-11-18",
+  "scope": "Ten adapter and workflow review repairs, installed local release and bounded cleanup",
+  "fixes": [
+    "Validate saved receipt shape, adapter identity, run identity and input/output hashes before reopen or export.",
+    "Page owner-scoped research history with an older-run cursor beyond the first 25 results.",
+    "Preserve safe failure code, retryability and Processing Run identity; link failed attempts to their audit history.",
+    "Offer only supported market-provider actions and reject unsupported combinations before making requests.",
+    "Clear an old source or market receipt when its inputs change.",
+    "Keep Indian filing JSON drafts scoped to their company during page navigation.",
+    "Link source results to the company review and exact document/candidate evidence.",
+    "Display benchmark comparisons in the UI and HTML with explicit units and unavailable undefined ratios.",
+    "Reject conflicting ALFRED revisions across pages, including revisions not selected for the requested date.",
+    "Default opt-in backup retention to one; preserve the prior verified set if its replacement fails."
+  ],
+  "verification": {
+    "backend": {
+      "passed": 2273,
+      "skipped": 20,
+      "skip_reason": "PostgreSQL-only checks executed separately",
+      "subtests": 2
+    },
+    "postgresql": {
+      "passed": 20,
+      "scope": "12 ingestion/concurrency and 8 fresh migration/legacy rejection checks; not populated legacy conversion"
+    },
+    "frontend": {
+      "passed": 422,
+      "scope": "382 general cases plus 40 contract cases after correcting the missing test fixture mount"
+    },
+    "repository": {
+      "passed": 103
+    },
+    "api_contracts": 39,
+    "typecheck": "passed",
+    "generated_contracts": "matched",
+    "production_builds": "passed",
+    "browser": {
+      "passed": 10,
+      "viewports": [
+        1440,
+        390
+      ],
+      "scope": "Four isolated simulation/reopen/export cases and six explicitly mocked form/recovery cases; final single run passed",
+      "initial_failures": "Four selector/format expectations corrected; all ten then passed"
+    },
+    "installed_browser": "Signed-in owned peer run reopened, current provider choices and history controls verified; mobile content width 380 at viewport 390"
+  },
+  "installation": {
+    "services": [
+      {
+        "name": "market_intel_postgres",
+        "id": "2e7314405f4e7c7b2d551e5e30c3db9d8239a8a5cee89cbdb76bc6f828cbbdc5",
+        "image": "sha256:ba023b77f84f85def321997ce68bf869bb0674e1bc71c674db2b0b0035dbfc8e",
+        "tag": "market-intelligence-review-postgres:20261107-security-r2",
+        "health": "healthy",
+        "ports": {
+          "5432/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "5432"
+            }
+          ]
+        },
+        "mounts": [
+          {
+            "Type": "volume",
+            "Destination": "/var/lib/postgresql/data",
+            "RW": true,
+            "volume": "market-intelligence-md-filescopy_marketintel_postgres_data"
+          }
+        ]
+      },
+      {
+        "name": "market_intel_backend",
+        "id": "54aecd68bad9393abd16b5e2520203d18791c7d95fb6a8dfc7a62463735ab66c",
+        "image": "sha256:ede882fa10e401f75e0cb80ed8d850d94afa69160bd2919776ddc47cd626ff46",
+        "tag": "market-intelligence-review-backend:20261118-next-ten",
+        "health": "healthy",
+        "ports": {
+          "8000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "8000"
+            }
+          ]
+        },
+        "mounts": [
+          {
+            "Type": "bind",
+            "Destination": "/workspace/data",
+            "RW": false,
+            "volume": null
+          }
+        ]
+      },
+      {
+        "name": "market_intel_frontend",
+        "id": "d93668746e6305005769f4fff17f64af354769637847465ce1917e986b51493d",
+        "image": "sha256:c76e4687459878fd09a49588ff1fcfc2c78cc2152e021e520fa523bf23f707ea",
+        "tag": "market-intelligence-review-frontend:20261118-next-ten",
+        "health": "healthy",
+        "ports": {
+          "3000/tcp": [
+            {
+              "HostIp": "127.0.0.1",
+              "HostPort": "3000"
+            }
+          ]
+        },
+        "mounts": [
+
+        ]
+      },
+      {
+        "name": "market_intel_scheduler",
+        "id": "bc250274bfb71a39515f08234f1e35e2d59485326f083f0bfb1191d965aeeba4",
+        "image": "sha256:ede882fa10e401f75e0cb80ed8d850d94afa69160bd2919776ddc47cd626ff46",
+        "tag": "market-intelligence-review-backend:20261118-next-ten",
+        "health": null,
+        "ports": {
+        },
+        "mounts": [
+
+        ]
+      }
+    ],
+    "database_container_preserved": true,
+    "settings_preserved": true,
+    "ports": "127.0.0.1 only",
+    "migration_change": false
+  },
+  "preservation": {
+    "tables": 110,
+    "assets": 1,
+    "all_fingerprints_unchanged": true,
+    "changed": [
+
+    ]
+  },
+  "recovery": {
+    "retained_sets": 1,
+    "path": "backups/20261118T213804Z-15938-market-intelligence",
+    "format": 3,
+    "database_bytes": 7010794,
+    "set_bytes": 7049596,
+    "database_sha256": "b8952133614cd3f7108cc7d10207281f13070e82436c8d5e4a15bf4ce0442eeb",
+    "isolated_restore": "passed",
+    "restored_table_and_asset_inventory": "matches installed data",
+    "reason": "Small independent recovery copy for unique research records and original assets that Git history cannot restore.",
+    "limits": "Same-disk recovery only; no off-device or populated legacy-conversion claim."
+  },
+  "cleanup": {
+    "superseded_backup_files": 195,
+    "superseded_backup_bytes": 1040676717,
+    "browser_recordings": 100,
+    "browser_recording_bytes": 443533814,
+    "docker_before": [
+      {
+        "Active": "4",
+        "Reclaimable": "5.124GB (57%)",
+        "Size": "8.973GB",
+        "TotalCount": "14",
+        "Type": "Images"
+      },
+      {
+        "Active": "4",
+        "Reclaimable": "143.8MB (99%)",
+        "Size": "144MB",
+        "TotalCount": "6",
+        "Type": "Containers"
+      },
+      {
+        "Active": "1",
+        "Reclaimable": "167.9kB (0%)",
+        "Size": "195.9MB",
+        "TotalCount": "2",
+        "Type": "Local Volumes"
+      },
+      {
+        "Active": "0",
+        "Reclaimable": "0B",
+        "Size": "0B",
+        "TotalCount": "0",
+        "Type": "Build Cache"
+      }
+    ],
+    "docker_after": [
+      {
+        "Active": "3",
+        "Reclaimable": "2.512GB (46%)",
+        "Size": "5.438GB",
+        "TotalCount": "6",
+        "Type": "Images"
+      },
+      {
+        "Active": "4",
+        "Reclaimable": "0B (0%)",
+        "Size": "217.1kB",
+        "TotalCount": "4",
+        "Type": "Containers"
+      },
+      {
+        "Active": "1",
+        "Reclaimable": "167.9kB (0%)",
+        "Size": "195.9MB",
+        "TotalCount": "2",
+        "Type": "Local Volumes"
+      },
+      {
+        "Active": "0",
+        "Reclaimable": "0B",
+        "Size": "0B",
+        "TotalCount": "0",
+        "Type": "Build Cache"
+      }
+    ],
+    "remaining_containers": 4,
+    "named_images": "Current backend, frontend, PostgreSQL and local recovery/check tools only",
+    "build_cache_bytes": 0,
+    "volumes": "Live database and unique small configuration volume retained",
+    "exact_targets": "Local output/review-next-ten-20261118 cleanup inventories retain exact paths, image/container IDs and byte measurements. Temporary publication/build paths are removed after GitHub verification."
+  },
+  "github": {
+    "pull_request": "https://github.com/Gittastic112/Marketagent/pull/20",
+    "default_branch": "main",
+    "source_history": "Preserve both the adapter PR history and the existing local review history; no force push or local reset.",
+    "private_paths_excluded": [
+      ".codex/config.toml",
+      ".env.example",
+      "frontend/.env.local.example"
+    ],
+    "public_templates": "Retain the already published PR 20 template blobs; private local template edits are not read or uploaded.",
+    "hosted_status": "The PR exact-head checks and final merge record own hosted status; this receipt records local verification."
+  },
+  "boundaries": [
+    "No ingestion, financial promotion, valuation assumption changes or user-record rewrites in this batch.",
+    "Held provider entitlements, transcript/OCR prerequisites, financial completeness, actual-use days and populated legacy conversion remain in docs/limitations.md."
+  ],
+  "local_evidence_directory": "output/review-next-ten-20261118"
+}

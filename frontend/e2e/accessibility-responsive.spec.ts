@@ -13,6 +13,7 @@ const CORE_ROUTES = [
   ["market-regime", "/portfolio/regime"],
   ["companies", "/companies"],
   ["research", "/research"],
+  ["research-lab", "/research-lab"],
   ["narratives", "/narratives"],
   ["events", "/events"],
   ["contradictions", "/intelligence/review"],
@@ -37,7 +38,7 @@ const CORE_ROUTES = [
 
 for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
   test(`core routes at ${viewport.width}px pass semantic, keyboard, overflow, and screenshot gates`, async ({ page }, testInfo) => {
-    // The aggregate audit includes axe and screenshots for 28 pages. Each page
+    // The aggregate audit includes axe and screenshots for the core pages. Each page
     // still has the unchanged 15-second readiness budget in verifyRoutes.
     test.setTimeout(180_000);
     await signIn(page);
@@ -52,6 +53,8 @@ test("mobile navigation exposes and restores keyboard focus", async ({ page }) =
   await trigger.focus();
   await trigger.press("Enter");
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).toBeVisible();
+  await page.keyboard.press("Control+k");
+  await expect(page.getByRole("dialog", { name: "Find research" })).toHaveCount(0);
   await page.getByRole("button", { name: "Close navigation panel" }).press("Enter");
   await expect(page.getByRole("navigation", { name: "Primary navigation" })).not.toBeVisible();
   await expect(trigger).toBeFocused();
@@ -159,4 +162,22 @@ test("mobile intake forms keep readable controls inside their cards", async ({ p
   await expect(submit).toBeVisible();
   expect(await submit.evaluate(element => getComputedStyle(element).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");
   await page.screenshot({path:testInfo.outputPath("regime-form-390.png"), fullPage:true});
+});
+
+test("Research Lab inherits the saved theme and loads both local fonts", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await signIn(page);
+  await page.goto("/advanced");
+  await page.getByRole("main").getByRole("link", { name: "Research Lab" }).click();
+  await expect(page.getByRole("navigation", { name: "Breadcrumb" })).toContainText("Research Lab");
+  await page.getByRole("button", { name: "Use dark theme" }).click();
+  await page.reload();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const loaded = await page.evaluate(async () => Promise.all(["Geist", "Geist Mono"].map(async family => {
+    const faces = await document.fonts.load(`14px "${family}"`);
+    return faces.some(face => face.status === "loaded");
+  })));
+  expect(loaded).toEqual([true, true]);
+  await page.getByRole("button", { name: "Use light theme" }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });

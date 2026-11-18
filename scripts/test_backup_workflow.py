@@ -174,6 +174,26 @@ class BackupWorkflowTests(unittest.TestCase):
         sleep.write_text("#!/usr/bin/env bash\nexit 0\n")
         sleep.chmod(0o755)
 
+    def test_opt_in_pruning_defaults_to_one_verified_backup_and_failed_replacement_keeps_it(self):
+        self.env.pop("BACKUP_RETENTION_COUNT", None)
+        first = self.run_script("backup_local.sh")
+        self.assertEqual(first.returncode, 0, first.stderr)
+        root = Path(self.env["BACKUP_ROOT"])
+        previous = next(root.iterdir())
+        # Give the completed predecessor an older valid owned folder name.
+        older = root / ("20000101T000000Z" + previous.name[16:])
+        previous.rename(older)
+        self.env["BACKUP_PRUNE"] = "true"
+        second = self.run_script("backup_local.sh")
+        self.assertEqual(second.returncode, 0, second.stderr)
+        self.assertFalse(older.exists())
+        complete = [path for path in root.iterdir() if (path / "COMPLETE").is_file()]
+        self.assertEqual(len(complete), 1)
+        self.env["FAKE_DUMP_INTERRUPTED"] = "1"
+        failed = self.run_script("backup_local.sh")
+        self.assertNotEqual(failed.returncode, 0)
+        self.assertTrue((complete[0] / "COMPLETE").is_file())
+
     def test_backup_verifier_uses_the_running_database_image(self):
         result = self.run_script("backup_local.sh")
         self.assertEqual(result.returncode, 0, result.stderr)

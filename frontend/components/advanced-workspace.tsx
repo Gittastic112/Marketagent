@@ -381,7 +381,7 @@ export function AdvancedWorkspace({
 
         <div style={{ display: activeSection === "market_intelligence" ? "block" : "none" }}>
           {latestAssumptionSet ? (
-            <ValuationChangeLogPanel modelId={modelId} assumptionSetId={latestAssumptionSet.id} />
+            <ValuationChangeLogPanel key={latestAssumptionSet.id} modelId={modelId} assumptionSet={latestAssumptionSet} />
           ) : <NotConfiguredState title="Assumption ledger unavailable" description="Save the first reviewed assumption set to start the change ledger." />}
         </div>
 

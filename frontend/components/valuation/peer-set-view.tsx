@@ -8,6 +8,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
   return (
     <details ref={managerRef} open={defaultOpen || undefined} style={{ marginBottom: "1rem", border: "1px solid var(--line)", borderRadius: "8px", padding: "0.75rem" }}>
       <summary style={{ cursor: "pointer", fontWeight: 650 }}>Manage reviewed peer sets</summary>
+      <fieldset disabled={busy} style={{ border: 0, padding: 0, minWidth: 0 }}>
       <p style={{ color: "var(--text-secondary)", fontSize: "0.875rem" }}>
         Enter sourced peer multiples only. Every mutation is version-checked and retained in history.
         Restored or edited sets return to Draft. Diagnostics flag stale, unaligned, sparse, or dispersed evidence without silently removing it.
@@ -67,11 +68,11 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
               {csvPreview.legacyFormat ? " (legacy member-only)" : ""} · target profile {csvPreview.targetContext ? "included" : "missing"}.
             </div>
             {csvPreview.errors.length > 0 && (
-              <ul style={{ color: "#b42318", paddingLeft: "1.2rem" }}>
+              <ul style={{ color: "var(--danger)", paddingLeft: "1.2rem" }}>
                 {csvPreview.errors.map((item, index) => <li key={`${item.row}-${item.field}-${index}`}>Row {item.row ?? "file"}, {item.field}: {item.message}</li>)}
               </ul>
             )}
-            <ul style={{ color: "#856404", paddingLeft: "1.2rem" }}>
+            <ul style={{ color: "var(--warning)", paddingLeft: "1.2rem" }}>
               {csvPreview.warnings.map((warning) => <li key={warning}>{warning}</li>)}
             </ul>
           </div>
@@ -89,12 +90,12 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
                     v{peerSet.version} · {peerSet.includedMemberCount} included peers · {peerSet.aggregationMethod} · {peerSet.reviewStatus} · {peerSet.isActive ? "active" : "archived"}
                     {peerSet.reviewedAt ? ` · reviewed ${new Date(peerSet.reviewedAt).toLocaleDateString()}` : ""}
                   </div>
-                  <div style={{ color: peerSet.diagnostics.warnings.length ? "#856404" : "var(--text-secondary)", fontSize: "0.8rem" }}>
+                  <div style={{ color: peerSet.diagnostics.warnings.length ? "var(--warning)" : "var(--text-secondary)", fontSize: "0.8rem" }}>
                     {peerSet.diagnostics.warnings.length
                       ? `${peerSet.diagnostics.warnings.length} comparability warning(s)`
                       : "No threshold warnings; economic comparability still requires judgment."}
                   </div>
-                  <div style={{ color: peerSet.reviewReceipt?.matchesCurrentDiagnostics ? "var(--text-secondary)" : "#856404", fontSize: "0.8rem" }}>
+                  <div style={{ color: peerSet.reviewReceipt?.matchesCurrentDiagnostics ? "var(--text-secondary)" : "var(--warning)", fontSize: "0.8rem" }}>
                     Diagnostic receipt: {peerSet.reviewReceipt?.matchesCurrentDiagnostics
                       ? `current as of ${peerSet.reviewReceipt.diagnosticsAsOf} (${peerSet.reviewReceipt.diagnosticsSha256.slice(0, 12)}…)`
                       : peerSet.reviewReceipt
@@ -102,7 +103,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
                         : "not recorded; current diagnostics must be acknowledged before valuation use"}
                   </div>
                   {peerSet.storageConsistency.status !== "consistent" && (
-                    <div style={{ color: "#b42318", fontSize: "0.8rem" }}>
+                    <div style={{ color: "var(--danger)", fontSize: "0.8rem" }}>
                       Storage audit: {peerSet.storageConsistency.status}. Reload or repair before relying on this set.
                     </div>
                   )}
@@ -120,7 +121,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
                     </div>
                   )}
                   {peerSet.targetStorageConsistency.status !== "consistent" && (
-                    <div style={{ color: "#b42318", fontSize: "0.8rem" }}>
+                    <div style={{ color: "var(--danger)", fontSize: "0.8rem" }}>
                       Target storage audit: {peerSet.targetStorageConsistency.status}. Repair before review or valuation use.
                     </div>
                   )}
@@ -150,7 +151,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
               </div>
               {peerSet.diagnostics.warnings.length > 0 && (
                 <>
-                  <ul style={{ margin: "0.5rem 0 0", paddingLeft: "1.2rem", fontSize: "0.8rem", color: "#856404" }}>
+                  <ul style={{ margin: "0.5rem 0 0", paddingLeft: "1.2rem", fontSize: "0.8rem", color: "var(--warning)" }}>
                     {peerSet.diagnostics.warnings.map((warning, index) => (
                       <li key={`${warning.code}-${warning.method || "set"}-${index}`}>{warning.message}</li>
                     ))}
@@ -187,7 +188,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
       <div style={{ display: "grid", gap: "0.75rem" }}>
         <h4 style={{ margin: 0 }}>{editing ? `Edit ${editing.name} (v${editing.version})` : "Create peer-set draft"}</h4>
         {editing?.reviewStatus === "reviewed" && (
-          <p style={{ margin: 0, color: "#856404", fontSize: "0.85rem" }}>
+          <p style={{ margin: 0, color: "var(--warning)", fontSize: "0.85rem" }}>
             Saving changes will invalidate the current review. The prior reviewed revision remains in history.
           </p>
         )}
@@ -302,6 +303,7 @@ export function PeerSetManagerView({ companyId, peerSets, defaultOpen, managerRe
           {editing && <button type="button" className="secondary-button" onClick={resetForm} disabled={busy}>Cancel edit</button>}
         </div>
       </div>
+      </fieldset>
     </details>
   );
 }

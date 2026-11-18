@@ -87,6 +87,7 @@ class SecFilingIngestionCreate(BaseModel):
 class SecFilingIngestionRead(BaseModel):
     fetched_count: int
     created_count: int
+    completed_text_count: int = 0
     skipped_duplicate_count: int
     error_count: int = 0
     errors: list[str] = Field(default_factory=list)

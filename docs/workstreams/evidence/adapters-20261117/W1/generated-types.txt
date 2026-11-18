@@ -1,0 +1,6 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> market-intelligence-frontend@0.1.0 check:adapter-types
+> node scripts/generate-adapter-types.mjs --check
+
+Adapter types match the committed OpenAPI snapshot.

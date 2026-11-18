@@ -19,10 +19,10 @@ export function ScenarioRangePanel({ modelId, assumptions, modelType }: { modelI
     <p style={{ color: "var(--text-secondary)" }}>Estimates from deterministic shocks to saved User Assumptions, not probabilities or forecast returns. Unsaved edits are excluded. Currency: {assumptions.cash_flow_currency ?? "Not configured"}.</p>
     <button type="button" onClick={retry}>Recalculate scenarios</button>
     {!rows.length && <p>No scenarios returned. Retry or inspect the saved model.</p>}
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: "1rem", marginTop: "1rem" }}>
-      {rows.map((row, index) => <article key={row.scenario_name + index} className="valuation-output-card" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
+    <div className="valuation-scenario-grid">
+      {rows.map((row, index) => <article key={row.scenario_name + index} className="valuation-output-card valuation-scenario-card" style={{ minWidth: 0, overflowWrap: "anywhere" }}>
         <h4>{row.scenario_name}</h4><p>{row.description}</p>
-        <p>Estimate per share: <strong>{row.value}</strong></p>
+        <p className="scenario-estimate">Estimate per share: <strong>{row.value}</strong></p>
         <p>Gap to saved comparison price: {row.gap}</p>
         <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem" }}>Calculation: intrinsic value / saved price − 1. The saved price is a User Assumption, not a live quote.</p>
         {row.state.reasons.map(reason => <p key={reason}>{reason}</p>)}

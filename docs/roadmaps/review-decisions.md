@@ -3,7 +3,9 @@
 The [versioned register](../../data/reviews/research-demo-decisions.json) owns
 financial decisions, evidence, rationale and supersession. This page also owns
 the November 15 returned-review design defaults. Defaults guide future repairs;
-they are not claims that the application already behaves that way.
+they are not by themselves claims that the application behaves that way. The
+[research/recovery receipt](../../data/reviews/review-research-recovery-nine-sets-20261116.json)
+records implementation and verification of the brief-coverage and preserving thesis decisions.
 
 ## Current scope
 

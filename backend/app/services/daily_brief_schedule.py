@@ -6,12 +6,11 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import or_, select
 from sqlalchemy.orm import Session
 
-from app.models import DailyBrief, DailyBriefSchedule
+from app.models import DailyBrief, DailyBriefSchedule, ProcessingRun
 from app.services.morning_briefing_engine import MorningBriefingEngine
 from app.services.processing_runs import (
     complete_processing_run,
     fail_processing_run,
-    start_processing_run,
 )
 
 
@@ -59,7 +58,7 @@ def configure_daily_brief_schedule(
 ) -> DailyBriefSchedule:
     current_time = _as_utc(now or datetime.now(UTC))
     schedule = db.scalar(
-        select(DailyBriefSchedule).where(DailyBriefSchedule.user_id == user_id)
+        select(DailyBriefSchedule).where(DailyBriefSchedule.user_id == user_id).with_for_update()
     )
     if schedule is None:
         schedule = DailyBriefSchedule(user_id=user_id)
@@ -68,7 +67,6 @@ def configure_daily_brief_schedule(
     schedule.timezone = timezone_name
     schedule.local_time = local_time
     schedule.days_of_week = sorted(set(days_of_week))
-    schedule.lease_expires_at = None
     schedule.next_run_at = (
         compute_next_scheduled_run(
             timezone_name=timezone_name,
@@ -113,114 +111,101 @@ def schedule_response(schedule: DailyBriefSchedule, *, now: datetime | None = No
     }
 
 
+def _close_expired_attempts(db: Session, schedule: DailyBriefSchedule, now: datetime) -> None:
+    # Match recorded ownership and schedule identity, including legacy attempts whose
+    # schedule pointer was never set. Do not infer ownership from a run's timestamp.
+    runs = list(db.scalars(select(ProcessingRun).where(
+        ProcessingRun.run_type == "daily_brief_schedule", ProcessingRun.status == "running",
+        ProcessingRun.started_at <= now,
+        ProcessingRun.metadata_json["user_id"].as_string() == schedule.user_id,
+        ProcessingRun.metadata_json["schedule_id"].as_integer() == schedule.id,
+    ).with_for_update()))
+    for run in runs:
+        run.status = "failed"
+        run.finished_at = now
+        run.error_count = 1
+        run.error_details_json = {"error_type": "daily_brief_lease_expired",
+            "message": "The worker lease expired without a recorded completion. Any stored brief is preserved."}
+    schedule.lease_expires_at = None
+    if runs:
+        schedule.last_status = "failed"
+
+
 def run_due_daily_brief_schedules(
-    db: Session,
-    *,
-    user_id: str | None = None,
-    now: datetime | None = None,
+    db: Session, *, user_id: str | None = None, now: datetime | None = None,
 ) -> dict[str, int]:
     current_time = _as_utc(now or datetime.now(UTC))
-    query = (
-        select(DailyBriefSchedule)
-        .where(
-            DailyBriefSchedule.enabled.is_(True),
-            DailyBriefSchedule.next_run_at.is_not(None),
-            DailyBriefSchedule.next_run_at <= current_time,
-            or_(
-                DailyBriefSchedule.lease_expires_at.is_(None),
-                DailyBriefSchedule.lease_expires_at <= current_time,
-            ),
-        )
-        .order_by(DailyBriefSchedule.next_run_at, DailyBriefSchedule.id)
-        .with_for_update(skip_locked=True)
-    )
-    if user_id is not None:
-        query = query.where(DailyBriefSchedule.user_id == user_id)
-    schedules = list(db.scalars(query))
-    result = {
-        "schedules_checked": len(schedules),
-        "schedules_completed": 0,
-        "briefs_created": 0,
-        "failures": 0,
-    }
+    scope = [DailyBriefSchedule.user_id == user_id] if user_id is not None else []
+    expired_ids = list(db.scalars(select(DailyBriefSchedule.id).where(*scope,
+        DailyBriefSchedule.lease_expires_at <= current_time)))
+    for identity in expired_ids:
+        schedule = db.scalar(select(DailyBriefSchedule).where(*scope,
+            DailyBriefSchedule.id == identity, DailyBriefSchedule.lease_expires_at <= current_time,
+        ).with_for_update(skip_locked=True).execution_options(populate_existing=True))
+        if schedule is not None:
+            _close_expired_attempts(db, schedule, current_time)
+        db.commit()
 
-    for candidate in schedules:
-        due_at = _as_utc(candidate.next_run_at or current_time)
+    due = [*scope, DailyBriefSchedule.enabled.is_(True),
+        DailyBriefSchedule.next_run_at <= current_time,
+        or_(DailyBriefSchedule.lease_expires_at.is_(None), DailyBriefSchedule.lease_expires_at <= current_time)]
+    identities = list(db.scalars(select(DailyBriefSchedule.id).where(*due)
+        .order_by(DailyBriefSchedule.next_run_at, DailyBriefSchedule.id)))
+    result = {"schedules_checked": 0, "schedules_completed": 0, "briefs_created": 0, "failures": 0}
+    for identity in identities:
+        # Reload and lock one claim at a time. A previous commit releases all row locks.
+        candidate = db.scalar(select(DailyBriefSchedule).where(*due, DailyBriefSchedule.id == identity)
+            .with_for_update(skip_locked=True).execution_options(populate_existing=True))
+        if candidate is None:
+            db.rollback()
+            continue
+        due_at = _as_utc(candidate.next_run_at)
         candidate.lease_expires_at = current_time + timedelta(minutes=SCHEDULE_LEASE_MINUTES)
         candidate.last_attempted_at = current_time
         candidate.last_status = "running"
-        db.commit()
-
-        run = start_processing_run(
-            db,
-            run_type="daily_brief_schedule",
-            source_type="internal",
-            metadata={
-                "user_id": candidate.user_id,
-                "schedule_id": candidate.id,
-                "scheduled_for": due_at.isoformat(),
-                "generation_mode": GENERATION_MODE,
-            },
-        )
+        run = ProcessingRun(run_type="daily_brief_schedule", source_type="internal", status="running",
+            started_at=current_time, metadata_json={"user_id": candidate.user_id, "schedule_id": candidate.id,
+                "scheduled_for": due_at.isoformat(), "generation_mode": GENERATION_MODE})
+        db.add(run)
+        db.flush()
+        candidate.last_processing_run_id = run.id
+        run_id, owner, timezone_name = run.id, candidate.user_id, candidate.timezone
+        db.commit()  # The lease and its attempt become durable in the same transaction.
+        result["schedules_checked"] += 1
         try:
-            target_date = due_at.astimezone(ZoneInfo(candidate.timezone)).date()
-            existing = db.scalar(
-                select(DailyBrief).where(
-                    DailyBrief.user_id == candidate.user_id,
-                    DailyBrief.brief_date == target_date,
-                )
-            )
-            brief = MorningBriefingEngine.get_or_generate_briefing(
-                db,
-                candidate.user_id,
-                target_date,
-            )
-            created_count = 0 if existing is not None else 1
-            completed_run = complete_processing_run(
-                db,
-                run,
-                created_count=created_count,
-                metadata_patch={"brief_id": brief.id},
-            )
-            schedule = db.get(DailyBriefSchedule, candidate.id)
-            if schedule is None:
+            target_date = due_at.astimezone(ZoneInfo(timezone_name)).date()
+            existing = db.scalar(select(DailyBrief).where(DailyBrief.user_id == owner, DailyBrief.brief_date == target_date))
+            brief = MorningBriefingEngine.get_or_generate_briefing(db, owner, target_date)
+            created_count = int(existing is None)
+            schedule = db.scalar(select(DailyBriefSchedule).where(DailyBriefSchedule.id == identity)
+                .with_for_update().execution_options(populate_existing=True))
+            persisted_run = db.get(ProcessingRun, run_id, populate_existing=True)
+            if schedule is None or schedule.last_processing_run_id != run_id or persisted_run.status != "running":
+                db.rollback()  # A replacement owns completion; never resurrect an expired attempt.
                 continue
             schedule.last_status = "success"
             schedule.last_succeeded_at = current_time
-            schedule.last_processing_run_id = completed_run.id
             schedule.last_brief_id = brief.id
             schedule.lease_expires_at = None
-            schedule.next_run_at = compute_next_scheduled_run(
-                timezone_name=schedule.timezone,
-                local_time=schedule.local_time,
-                days_of_week=schedule.days_of_week,
-                after_utc=max(current_time, due_at),
-            )
-            db.commit()
+            schedule.next_run_at = compute_next_scheduled_run(timezone_name=schedule.timezone,
+                local_time=schedule.local_time, days_of_week=schedule.days_of_week,
+                after_utc=max(current_time, due_at)) if schedule.enabled else None
+            complete_processing_run(db, persisted_run, created_count=created_count, metadata_patch={"brief_id": brief.id})
             result["schedules_completed"] += 1
             result["briefs_created"] += created_count
         except Exception:
             db.rollback()
-            persisted_run = db.get(type(run), run.id)
-            if persisted_run is not None:
-                failed_run = fail_processing_run(
-                    db,
-                    persisted_run,
-                    error_type="daily_brief_generation_failed",
-                )
-            else:
-                failed_run = None
-            schedule = db.get(DailyBriefSchedule, candidate.id)
-            if schedule is not None:
+            schedule = db.scalar(select(DailyBriefSchedule).where(DailyBriefSchedule.id == identity)
+                .with_for_update().execution_options(populate_existing=True))
+            persisted_run = db.get(ProcessingRun, run_id, populate_existing=True)
+            if schedule is not None and schedule.last_processing_run_id == run_id and persisted_run is not None and persisted_run.status == "running":
                 schedule.last_status = "failed"
-                schedule.last_processing_run_id = failed_run.id if failed_run else None
                 schedule.lease_expires_at = None
-                schedule.next_run_at = compute_next_scheduled_run(
-                    timezone_name=schedule.timezone,
-                    local_time=schedule.local_time,
-                    days_of_week=schedule.days_of_week,
-                    after_utc=max(current_time, due_at),
-                )
-                db.commit()
+                schedule.next_run_at = compute_next_scheduled_run(timezone_name=schedule.timezone,
+                    local_time=schedule.local_time, days_of_week=schedule.days_of_week,
+                    after_utc=max(current_time, due_at)) if schedule.enabled else None
+                fail_processing_run(db, persisted_run, error_type="daily_brief_generation_failed")
+            else:
+                db.rollback()
             result["failures"] += 1
     return result

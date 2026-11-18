@@ -27,9 +27,37 @@ from app.services.pdf_page_rendering import (
     render_pdf_page_png,
 )
 from app.services.pdf_jobs import PdfJobError
+from app.schemas.financials import PdfPageExtractionCreate
+from app.services.pdf_financial_extraction import extract_retained_pdf_pages
 
 
 router = APIRouter(tags=["pdf-filings"])
+
+
+@router.post("/api/raw-documents/{raw_document_id}/extract-pdf-pages", response_model=ApiResponse[PdfFinancialExtractionResultRead])
+def extract_pdf_pages(raw_document_id: int, payload: PdfPageExtractionCreate,
+    db: Session = Depends(get_db), _user: dict = Depends(get_current_user)):
+    document = db.get(RawDocument, raw_document_id)
+    if document is None:
+        raise HTTPException(404, "Document not found")
+    run = start_processing_run(db, run_type="pdf_page_extraction", source_type="manual_financial_upload",
+        source_id=document.source_id, company_id=document.company_id,
+        metadata={"raw_document_id": raw_document_id, "parser": PDF_EXTRACTION_METHOD, "requested_pages": payload.page_ranges})
+    try:
+        result = extract_retained_pdf_pages(db, raw_document_id, payload.page_ranges)
+        complete_processing_run(db, run, fetched_count=result.scanned_page_count, created_count=result.created_count,
+            metadata_patch={"asset_id": result.asset.id, "sha256": result.asset.sha256,
+                "scanned_pages": result.scanned_pages, "warnings": result.warnings})
+        response = ApiResponse(data=result)
+        response.meta.source = PDF_SOURCE_NAME
+        response.meta.warnings.extend(result.warnings)
+        return response
+    except Exception as exc:
+        db.rollback()
+        fail_processing_run(db, run, error_type=type(exc).__name__, message="Retained PDF page extraction failed.")
+        if isinstance(exc, HTTPException):
+            raise
+        raise HTTPException(500, "Unable to extract the selected PDF pages.") from None
 
 
 @router.post(

@@ -36,7 +36,7 @@ export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-3 bg-gray-50 border border-gray-200 rounded-md">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-2 p-3 bg-muted border border-border rounded-md">
       <label className="text-sm font-medium" htmlFor={fileInputId}>{label}</label>
       <div className="flex items-center gap-2">
         <input
@@ -44,7 +44,7 @@ export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
           type="file"
           accept=".csv"
           onChange={(e) => setFile(e.target.files?.[0] || null)}
-          className="text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-gray-200 file:text-gray-700 hover:file:bg-gray-300"
+          className="text-sm file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-muted file:text-foreground hover:file:bg-muted"
           required
         />
         <button
@@ -56,7 +56,7 @@ export function CsvUploadForm({ endpoint, label }: CsvUploadFormProps) {
         </button>
       </div>
       {message && (
-        <p aria-live="polite" className={`text-xs mt-1 ${status === "success" ? "text-green-600" : "text-red-600"}`}>
+        <p aria-live="polite" className={`text-xs mt-1 ${status === "success" ? "text-[var(--success)]" : "text-[var(--danger)]"}`}>
           {message}
         </p>
       )}

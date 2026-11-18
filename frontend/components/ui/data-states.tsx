@@ -369,7 +369,7 @@ export function UnsupportedState({ message = "This feature is currently unsuppor
 
 export function ManualDataBadge() {
   return (
-    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "4px", color: "#1d4ed8", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(59, 130, 246, 0.1)", border: "1px solid rgba(59, 130, 246, 0.3)", borderRadius: "4px", color: "var(--accent)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       Manual Data
     </span>
   );
@@ -377,7 +377,7 @@ export function ManualDataBadge() {
 
 export function PrototypeBadge() {
   return (
-    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(168, 85, 247, 0.1)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "4px", color: "#6b21a8", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
+    <span style={{ fontSize: "var(--font-size-xs)", padding: "0.1rem 0.4rem", backgroundColor: "rgba(168, 85, 247, 0.1)", border: "1px solid rgba(168, 85, 247, 0.3)", borderRadius: "4px", color: "var(--color-prototype)", textTransform: "uppercase", letterSpacing: "0.04em", verticalAlign: "middle" }}>
       Prototype
     </span>
   );
@@ -409,9 +409,9 @@ export function ConfidenceIndicator({ level }: { level: "high" | "medium" | "low
 
 export function ReviewStateBadge({ state }: { state: "reviewed" | "unreviewed" | "needs_review" }) {
   const styles = {
-    reviewed: { color: "#166534", bg: "rgba(34, 197, 94, 0.1)", border: "rgba(34, 197, 94, 0.3)" },
+    reviewed: { color: "var(--success)", bg: "rgba(34, 197, 94, 0.1)", border: "rgba(34, 197, 94, 0.3)" },
     unreviewed: { color: "var(--text-secondary)", bg: "var(--surface)", border: "var(--border)" },
-    needs_review: { color: "#854d0e", bg: "rgba(234, 179, 8, 0.1)", border: "rgba(234, 179, 8, 0.3)" }
+    needs_review: { color: "var(--warning)", bg: "rgba(234, 179, 8, 0.1)", border: "rgba(234, 179, 8, 0.3)" }
   };
 
   const current = styles[state] || styles.unreviewed;

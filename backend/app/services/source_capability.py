@@ -43,12 +43,12 @@ DEFAULT_SOURCE_CAPABILITIES = [
     {
         "market": "US",
         "source_type": "market_prices",
-        "provider_name": "Alpha Vantage/FMP",
+        "provider_name": "Configured market adapter",
         "capability": "market_prices",
         "status": "not_configured",
         "requires_api_key": True,
         "freshness_expected_seconds": 3_600,
-        "notes": "Provider-backed US prices require ALPHA_VANTAGE_API_KEY or FMP_API_KEY.",
+        "notes": "US prices use the explicitly selected supported adapter and its own credentials when required.",
     },
     {
         "market": "IN",
@@ -73,12 +73,12 @@ DEFAULT_SOURCE_CAPABILITIES = [
     {
         "market": "IN",
         "source_type": "market_prices",
-        "provider_name": "Alpha Vantage/FMP",
+        "provider_name": "Configured market adapter",
         "capability": "market_prices",
         "status": "not_configured",
         "requires_api_key": True,
         "freshness_expected_seconds": 3_600,
-        "notes": "Provider-backed India prices require symbol support and ALPHA_VANTAGE_API_KEY or FMP_API_KEY.",
+        "notes": "India prices require an explicitly selected India-capable adapter; official NSE MCP needs no key.",
     },
     {
         "market": "IN",
@@ -174,7 +174,7 @@ def _with_effective_status(row: MarketSourceCapability, settings: Settings) -> S
 
     if row.capability == "market_prices":
         selected = settings.market_data_provider.strip().lower()
-        requires_api_key = selected in {"alphavantage", "alpha_vantage", "fmp"}
+        requires_api_key = selected in {"alphavantage", "alpha_vantage", "fmp", "massive"}
         if selected in {"alphavantage", "alpha_vantage"}:
             provider_name = "Alpha Vantage"
             status = "available" if settings.alpha_vantage_api_key else "not_configured"
@@ -183,8 +183,17 @@ def _with_effective_status(row: MarketSourceCapability, settings: Settings) -> S
             provider_name, status = "yfinance personal-use", "available"
             notes = "Explicitly selected personal-use adapter. No API key; timing and delay may be unknown. Check stored coverage and Data Health."
         elif selected == "fmp":
-            provider_name, status = "FMP", "not_supported"
-            notes = "Not available yet: the FMP adapter is not implemented, even with a key. No provider coverage is implied."
+            provider_name = "FMP"
+            status = "not_supported" if row.market != "US" else "available" if settings.fmp_api_key else "not_configured"
+            notes = "The implemented FMP adapter supports US equity quotes and split-adjusted history. Entitlement, delay and stored coverage require checks; no India mapping is implied."
+        elif selected == "massive":
+            provider_name = "Massive"
+            status = "not_supported" if row.market != "US" else "available" if getattr(settings, "massive_api_key", None) else "not_configured"
+            notes = "The implemented Massive adapter supports US equities with explicit adjustment basis. Last-trade access, entitlements and stored coverage require checks."
+        elif selected == "nse_mcp":
+            provider_name = "NSE MCP"
+            status = "available" if row.market == "IN" else "not_supported"
+            notes = "Official public NSE MCP supports exact EQ identities, delayed quotes and unadjusted history. Series gaps and partial coverage remain visible; it does not supply US prices."
         else:
             provider_name, status = "Unsupported provider", "not_supported"
             notes = "The selected price adapter is unsupported. No provider coverage or automatic fallback is available."

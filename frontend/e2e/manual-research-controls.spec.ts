@@ -112,6 +112,10 @@ test("research transport and permission failures retain the question without cla
   await expect(page.getByText(/Your research message was saved/)).toHaveCount(0);
   expect((await backendData<{messages: unknown[]}>(page, `/research/sessions/${session.id}`)).messages).toHaveLength(0);
   fail = false;
+  await expect(page.getByRole("button", {name: "Send", exact: true})).toBeDisabled();
+  await page.getByRole("button", {name: "Check result", exact: true}).click();
+  await expect(page.locator("main:visible").getByRole("alert")).toContainText("No request was resent");
+  await page.getByRole("button", {name: "I checked the result; enable a new request", exact: true}).click();
   await page.getByRole("button", {name: "Send", exact: true}).click();
   await expect(page.locator("main:visible").getByRole("alert")).toContainText("No current permission allows this AI action");
   await expect(page.locator("main:visible").getByRole("alert")).toContainText("Save could not be confirmed");
@@ -148,7 +152,7 @@ test("a Mock Data post-save provider failure confirms only the refreshed user me
   await page.getByRole("checkbox").check();
   await page.getByRole("button", {name: "Send", exact: true}).click();
   await expect(page.locator("main:visible").getByRole("alert")).toContainText("The AI provider could not complete the request");
-  await expect(page.locator("main:visible").getByRole("alert")).toContainText("Your research message was saved without an assistant response");
+  await expect(page.locator("main:visible").getByRole("alert")).toContainText("Your research message was saved. The response may still be running");
   await expect(page.locator("main:visible").getByRole("alert")).not.toContainText("Save could not be confirmed");
   await expect(input).toHaveValue("");
   await expect(page.locator("#message-984202")).toContainText(content);

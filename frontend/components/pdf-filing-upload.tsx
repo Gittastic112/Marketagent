@@ -103,6 +103,7 @@ export function PdfFilingUpload({ companyId }: { companyId: number }) {
           <p style={{ margin: 0 }}>
             {result.scanned_page_count} of {result.page_count} pages scanned, {result.table_count} tables, {result.created_count} candidates.
           </p>
+          <a href={`/documents/${result.raw_document_id}/sections`}>Review this document or extract additional pages</a>
           {result.warnings.length ? (
             <p className="muted" style={{ marginBottom: 0 }}>{result.warnings.join(" / ")}</p>
           ) : null}

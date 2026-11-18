@@ -25,6 +25,8 @@ from app.services.quick_valuation import (
 )
 from app.schemas.common import ApiResponse
 from app.schemas.valuation_inputs import DcfAssumptionVersionWrite
+from app.schemas.valuation import StaleValuationReviewCreate, SavedValuationExportRead
+from app.services.valuation_review import acknowledge_stale_review, export_saved_valuation
 
 router = APIRouter(prefix="", tags=["valuations"])
 
@@ -397,15 +399,23 @@ def get_assumption_priors(country: str, industry: str, db: Session = Depends(get
     return ApiResponse(data=priors)
 
 @router.post("/valuation-models/{model_id}/assumptions/{assumption_id}/resolve-stale", response_model=ApiResponse[schemas.DcfAssumptionSetRead])
-def resolve_stale_valuation(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> schemas.DcfAssumptionSetRead:
-    aset = get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
-
-    aset.is_stale = False
-    aset.stale_reason = None
-    aset.stale_event_id = None
+def resolve_stale_valuation(model_id: int, assumption_id: int, payload: StaleValuationReviewCreate,
+    db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> schemas.DcfAssumptionSetRead:
+    get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
+    try:
+        aset = acknowledge_stale_review(db, assumption_id, payload, current_user["id"])
+    except ValueError as exc:
+        db.rollback()
+        raise PublicApiError(status_code=409, code="STALE_REVIEW_CONFLICT", message=str(exc)) from None
     db.commit()
     db.refresh(aset)
     return ApiResponse(data=aset)
+
+
+@router.get("/valuation-models/{model_id}/assumptions/{assumption_id}/export", response_model=ApiResponse[SavedValuationExportRead])
+def export_raw_saved_valuation(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    row = get_owned_assumption_set(db, model_id, assumption_id, current_user["id"])
+    return ApiResponse(data=export_saved_valuation(row))
 
 @router.get("/valuation-models/{model_id}/assumptions/{assumption_id}/change-logs", response_model=ApiResponse[list[schemas.ValuationAssumptionChangeLogRead]])
 def list_change_logs(model_id: int, assumption_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> Sequence[schemas.ValuationAssumptionChangeLogRead]:

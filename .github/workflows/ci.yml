@@ -93,7 +93,10 @@ jobs:
         run: |
           python scripts/check_dependency_locks.py
           python -m pip install pip-audit==2.10.1
-          pip-audit -r backend/requirements-test.lock --progress-spinner off --require-hashes
+          pip-audit -r backend/requirements-test.lock --progress-spinner off --require-hashes --timeout 60
+          for profile in adapters extraction ocr; do
+            pip-audit -r "backend/requirements-$profile.lock" --progress-spinner off --no-deps --disable-pip --timeout 60
+          done
 
   release-baseline:
     needs: repository-checks
@@ -104,6 +107,11 @@ jobs:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Verify clean-checkout backend, migration, and frontend baseline
         run: ./scripts/verify_release_baseline.sh
+      - name: Verify installed optional research and table adapters without network
+        run: |
+          docker build -f backend/Dockerfile --target test --build-arg INSTALL_RESEARCH_ADAPTERS=true --build-arg INSTALL_TABLE_ADAPTERS=true -t market-intelligence-adapters-test .
+          docker run --rm --network none -e DATABASE_URL=postgresql+psycopg://test:test@localhost/marketagent_test -e SEC_USER_AGENT='Marketagent CI adapter-tests@marketagent.test' -e APP_ENV=test -e OPENBLAS_NUM_THREADS=1 -e OMP_NUM_THREADS=1 market-intelligence-adapters-test python -m pytest -q -p no:cacheprovider backend/tests/adapters_market backend/tests/adapters_sources backend/tests/adapters_research
+          docker run --rm --network none -e DATABASE_URL=postgresql+psycopg://test:test@localhost/marketagent_test -e SEC_USER_AGENT='Marketagent CI adapter-tests@marketagent.test' -e APP_ENV=test -v "$PWD/frontend/lib/api/generated:/contracts:ro" market-intelligence-adapters-test python backend/scripts/export_adapter_contracts.py --output /contracts/adapters.openapi.json --check
 
   browser-quality-gate:
     needs: repository-checks
@@ -125,6 +133,9 @@ jobs:
       - name: Install browser test dependencies
         working-directory: frontend
         run: npm ci
+      - name: Verify generated adapter TypeScript
+        working-directory: frontend
+        run: npm run check:adapter-types
       - name: Run isolated browser workflows
         run: ./scripts/run_browser_workflows.sh
       - name: Retain browser evidence

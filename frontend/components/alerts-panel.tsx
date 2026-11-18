@@ -59,7 +59,7 @@ export function AlertsPanel({ alerts, companiesById }: AlertsPanelProps) {
                 </Link>
                 <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                   <ScoreBreakdown score={alert.portfolio_priority_score} explanation={alert.score_explanation_json} />
-                  <span className="badge" style={{ backgroundColor: severityColor, color: "#fff", border: "none" }}>
+                  <span className="badge" style={{ backgroundColor: severityColor, color: "var(--surface)", border: "none" }}>
                     {alert.severity}
                   </span>
                 </div>

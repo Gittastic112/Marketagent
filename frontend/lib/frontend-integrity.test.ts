@@ -419,12 +419,14 @@ test("portfolio detail exposes an honest real-input readiness audit", () => {
 test("portfolio evidence import requires server preview, provenance, and exact-file apply", () => {
   const detail = readFrontendFile("components/portfolio/setup.tsx");
   const importer = readFrontendFile("components/portfolio/portfolio-evidence-importer.tsx");
+  const evidenceApi = readFrontendFile("lib/api/portfolio-evidence.ts");
 
   assert.match(detail, /PortfolioEvidenceImporter/);
   assert.match(importer, /evidence-bundle\/template/);
-  assert.match(importer, /evidence-bundle\/preview/);
-  assert.match(importer, /evidence-bundle\/apply/);
-  assert.match(importer, /expected_sha256/);
+  assert.match(evidenceApi, /evidence-bundle\/preview/);
+  assert.match(evidenceApi, /evidence-bundle\/apply/);
+  assert.match(evidenceApi, /expected_sha256/);
+  assert.match(importer, /applyPortfolioEvidence\(portfolioId, file, preview\.content_sha256\)/);
   assert.match(importer, /preview\.can_apply/);
   assert.match(importer, /provider, source URL, and source timestamp/);
   assert.match(importer, /does not independently verify the provider/);

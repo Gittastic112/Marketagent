@@ -10,6 +10,7 @@ import { DeleteRecordForm } from "@/components/delete-record-form";
 import { TextField, TextAreaField } from "@/components/form-fields";
 import { AI_DISCLOSURES, AI_PRIVACY_DISCLOSURE_VERSION } from "@/lib/ai-privacy";
 import { formatDataLabel } from "@/lib/formatting";
+import { AiOutputMetadata } from "@/components/ai-metadata";
 
 export const dynamic = "force-dynamic";
 
@@ -116,6 +117,10 @@ export default async function NarrativesPage() {
                       {claims.map((claim) => (
                         <div key={claim.id} className="brief-item" style={{ padding: "0.5rem 0", borderBottom: "1px solid var(--border-color)" }}>
                           <p style={{ margin: 0 }}>{claim.claim_text}</p>
+                          <p className="cell-secondary">{claim.origin === "manual" ? "User Assumption" : claim.origin === "mock" ? "Mock Data" : claim.origin === "ai" ? "AI Interpretation" : "Legacy claim: origin unknown"}
+                            {claim.ai_output ? ` · Human review: ${claim.ai_output.human_review_status.replaceAll("_", " ")}` :
+                              claim.origin === "ai" || claim.origin === "mock" ? " · Originating output is private to its author; review status unavailable" : ""}</p>
+                          {claim.ai_output && <AiOutputMetadata aiOutput={claim.ai_output} />}
                           <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)" }}>Added {formatDate(claim.created_at)}</span>
                         </div>
                       ))}

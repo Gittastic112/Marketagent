@@ -330,7 +330,7 @@
   align-items: start;
   display: grid;
   gap: var(--space-5);
-  grid-template-columns: 210px minmax(0, 1fr) 280px;
+  grid-template-columns: 170px minmax(0, 1fr) 290px;
   max-width: 100%;
   min-width: 0;
 }
@@ -375,8 +375,8 @@
 .valuation-section-group button {
   background: transparent;
   border: 0;
-  border-left: 3px solid transparent;
-  border-radius: 0 var(--radius-medium) var(--radius-medium) 0;
+  border-left: 1px solid transparent;
+  border-radius: var(--radius-medium);
   color: var(--color-text-muted);
   box-shadow: none;
   font-size: var(--font-size-sm);
@@ -395,7 +395,7 @@
 
 .valuation-section-group button.is-active {
   background: var(--color-accent-soft);
-  border-left-color: var(--color-accent);
+  border-left-color: transparent;
   color: var(--color-accent-strong);
   font-weight: var(--font-weight-semibold);
 }
@@ -404,7 +404,7 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border-default);
   border-radius: var(--radius-large);
-  min-height: 600px;
+  min-height: 480px;
   min-width: 0;
   padding: clamp(20px, 2vw, 28px);
 }
@@ -452,9 +452,10 @@
 }
 
 .valuation-output-value {
-  color: var(--color-accent);
-  font-size: clamp(24px, 2.5vw, 32px);
-  font-weight: var(--font-weight-bold);
+  color: var(--color-text);
+  font-size: clamp(26px, 2.5vw, 32px);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: -0.04em;
   overflow-wrap: anywhere;
 }
 
@@ -619,3 +620,31 @@
   font-size: 0.9rem;
   color: var(--text-muted);
 }
+
+.saved-valuation-header h1 { margin: 0; font-size: 30px; font-weight: 600; letter-spacing: -0.04em; }
+.saved-valuation-company { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+.saved-valuation-meta { font-size: 12px; }
+.valuation-output-card > h3 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
+.valuation-output-card dt { font-size: 12px; color: var(--muted); }
+.valuation-output-card dt small { font-size: 12px; }
+.valuation-output-card dd { margin-top: 7px; font-variant-numeric: tabular-nums; }
+.valuation-scenario-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 12px; margin-top: 20px; }
+.valuation-scenario-card { box-shadow: none; background: var(--color-sidebar); }
+.valuation-scenario-card h4 { margin: 0 0 12px; font-size: 13px; font-weight: 600; }
+.valuation-scenario-card > p { font-size: 12px; }
+.valuation-scenario-card .scenario-estimate { display: flex; flex-direction: column; gap: 6px; color: var(--muted); }
+.scenario-estimate strong { font-family: var(--font-family-mono); color: var(--text); font-size: 23px; font-weight: 500; letter-spacing: -0.04em; }
+.valuation-version-panel { display: flex; flex-wrap: wrap; align-items: start; gap: 12px 20px; }
+.valuation-version-panel > details { flex: 1 1 250px; min-width: 0; }
+.valuation-version-panel > details[open] { flex-basis: 100%; }
+.valuation-version-panel > p { flex-basis: 100%; margin: 0; font-size: 12px; color: var(--muted); }
+
+.memo-markdown { min-width: 0; overflow-wrap: anywhere; line-height: 1.65; }
+.memo-markdown > :first-child { margin-top: 0; }
+.memo-markdown h1 { font-size: 1.3rem; }
+.memo-markdown h2 { font-size: 1.15rem; }
+.memo-markdown h3 { font-size: 1rem; }
+.memo-markdown pre { max-width: 100%; overflow-x: auto; padding: 0.75rem; background: var(--surface); }
+.memo-markdown blockquote { margin-inline: 0; padding-left: 1rem; border-left: 2px solid var(--line); color: var(--text-secondary); }
+.memo-markdown .table-wrap { max-width: 100%; margin-block: 0.75rem; }
+.memo-unresolved-link { text-decoration: underline dotted; color: var(--text-secondary); }

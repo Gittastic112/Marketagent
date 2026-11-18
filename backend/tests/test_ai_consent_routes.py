@@ -124,7 +124,7 @@ def test_research_provider_failure_after_grant_preserves_only_user_message(clien
     assert output.user_id == db_session.get(AiConsentDecision, grant["id"]).user_id
     assert output.execution_status == "failed" and output.failure_code == "AI_PROVIDER_FAILED"
     assert output.provider_name == "gemini" and not output.is_mock
-    assert output.transmission_scope == "external_provider"
+    assert output.transmission_scope == "unknown"  # A provider error cannot confirm remote delivery.
     assert output.privacy_disclosure_version == "v1"
     assert output.external_data_classes_json == ["private_research_messages"]
     assert output.source_ids_json == [f"research_session:{session['id']}"]

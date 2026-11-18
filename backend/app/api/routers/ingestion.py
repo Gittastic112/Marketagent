@@ -445,6 +445,7 @@ def sec_ingestion_response(result: SecIngestionResult, pipeline: PostIngestionPi
     response: dict[str, int | list[str]] = {
         "fetched_count": result.fetched_count,
         "created_count": result.created_count,
+        "completed_text_count": result.completed_text_count,
         "skipped_duplicate_count": result.skipped_duplicate_count,
         "error_count": result.error_count,
         "errors": list(result.errors),

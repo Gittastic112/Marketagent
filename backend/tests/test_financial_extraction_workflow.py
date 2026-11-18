@@ -398,6 +398,14 @@ def test_review_override_and_promote_candidates_use_reviewed_unit_currency_and_f
 
     remaining = db.query(FinancialExtractionCandidate).filter_by(company_id=company.id).all()
     assert sorted([(candidate.metric_code, candidate.review_status) for candidate in remaining]) == sorted([("cash", "rejected"), ("debt", "promoted"), ("revenue", "promoted")])
+    history_evidence = response_data(client.get(
+        f"/api/companies/{company.id}/financial-statements/extracted?include_promoted=true"))
+    assert {candidate["id"] for candidate in history_evidence} == {candidate.id for candidate in remaining}
+    assert all(candidate["raw_document_id"] == document.id for candidate in history_evidence)
+    other_company = Company(ticker="OTHERHISTORY", name="Mock Data unrelated history")
+    db.add(other_company); db.commit()
+    assert response_data(client.get(
+        f"/api/companies/{other_company.id}/financial-statements/extracted?include_promoted=true")) == []
 
 
 def test_promote_candidates_rejects_conflicting_reviewed_currencies(client, db) -> None:

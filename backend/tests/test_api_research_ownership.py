@@ -173,7 +173,9 @@ def test_valuation_model_and_child_routes_enforce_parent_ownership(
         f"/valuation-models/{model['id']}/assumptions/{assumption_set.id}/forecast"
     ).status_code == 404
     assert client.post(
-        f"/valuation-models/{model['id']}/assumptions/{assumption_set.id}/resolve-stale"
+        f"/valuation-models/{model['id']}/assumptions/{assumption_set.id}/resolve-stale",
+        json={"expected_updated_at": assumption_set.updated_at.isoformat(), "review_token": "0" * 64,
+            "reason": "Mock Data ownership check"},
     ).status_code == 404
     assert client.get(
         f"/valuation-models/{model['id']}/assumptions/{assumption_set.id}/change-logs"

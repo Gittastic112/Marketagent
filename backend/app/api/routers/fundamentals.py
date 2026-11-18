@@ -307,11 +307,13 @@ def ingest_screener_excel(
     "/api/companies/{company_id}/financial-statements/extracted",
     response_model=ApiResponse[list[FinancialExtractionCandidateRead]],
 )
-def list_extracted_financials(company_id: int, db: Session = Depends(get_db)) -> ApiResponse[list[FinancialExtractionCandidateRead]]:
+def list_extracted_financials(
+    company_id: int, include_promoted: bool = False, db: Session = Depends(get_db),
+) -> ApiResponse[list[FinancialExtractionCandidateRead]]:
     company = db.get(Company, company_id)
     if not company:
         raise HTTPException(status_code=404, detail="Company not found")
-    return ApiResponse(data=list_extracted_financial_candidates(db, company_id))
+    return ApiResponse(data=list_extracted_financial_candidates(db, company_id, include_promoted=include_promoted))
 
 
 @router.get(

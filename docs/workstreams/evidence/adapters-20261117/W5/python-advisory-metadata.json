@@ -1,0 +1,11 @@
+{
+  "method": "Exact-version PyPI JSON vulnerability metadata",
+  "profiles": {
+    "adapters": 89,
+    "extraction": 16,
+    "ocr": 122
+  },
+  "distinct_dependencies": 193,
+  "errors": [],
+  "findings": []
+}

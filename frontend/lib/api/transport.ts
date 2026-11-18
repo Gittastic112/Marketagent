@@ -34,10 +34,20 @@ async function apiError(response: Response): Promise<ApiError> {
   try {
     const body = await response.json();
     if (body && Array.isArray(body.errors) && body.errors.length > 0) {
-      return new ApiError(body.errors[0].message, response.status);
+      return new ApiError(body.errors[0].message, response.status, body.errors[0]);
     }
     if (body && typeof body.detail === "string") {
       return new ApiError(body.detail, response.status);
+    }
+    if (body && Array.isArray(body.detail)) {
+      // Pydantic validation errors retain field names, never echo the submitted input.
+      const messages = body.detail.slice(0, 5).flatMap((item: unknown) => {
+        if (!item || typeof item !== "object" || !("msg" in item) || typeof item.msg !== "string") return [];
+        const location = "loc" in item && Array.isArray(item.loc)
+          ? item.loc.filter((part: unknown) => (typeof part === "string" || typeof part === "number") && part !== "body").join(".") : "";
+        return [`${location ? `${location}: ` : ""}${item.msg}`];
+      });
+      if (messages.length) return new ApiError(messages.join("; "), response.status);
     }
   } catch {
     // Fall back to the generic message below when the response body is not JSON.
@@ -51,7 +61,7 @@ async function parseApiResponse<T>(response: Response): Promise<T> {
   if (payload && typeof payload === "object" && "meta" in payload) {
     const apiResponse = payload as ApiResponse<T>;
     if (apiResponse.errors && apiResponse.errors.length > 0) {
-      throw new ApiError(apiResponse.errors[0].message, response.status);
+      throw new ApiError(apiResponse.errors[0].message, response.status, apiResponse.errors[0]);
     }
     return apiResponse.data as T;
   }

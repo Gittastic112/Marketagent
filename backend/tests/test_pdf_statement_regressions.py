@@ -129,6 +129,26 @@ def test_unexplained_extra_columns_and_partial_number_tokens_are_skipped():
     assert [(r.fiscal_year, r.value) for r in result] == [(2026, 100)]
 
 
+@pytest.mark.parametrize("share_heading", [
+    "Shares used in computing earnings per share:",
+    "Weighted average number of equity shares used as denominator",
+])
+def test_share_denominator_heading_ends_eps_context(share_heading):
+    # Mock Data: repeated Basic/Diluted labels under two different headings.
+    result = rows("Amounts in USD millions, except number of shares, which are reflected in thousands\n"
+        "FY2026 FY2025\nEarnings per share:\nBasic 2.50 2.00\nDiluted 2.40 1.90\n"
+        f"{share_heading}\nBasic 120 110\nDiluted 125 115\n"
+        "Earnings per share:\nBasic 3.00 2.80", currency="USD", scale="million")
+    current = [(r.metric_code, r.value, r.unit) for r in result if r.fiscal_year == 2026]
+    assert current == [("basic_eps", 2.50, "USD/share"), ("diluted_eps", 2.40, "USD/share"),
+        ("basic_shares", 120, "shares thousand"), ("diluted_shares", 125, "shares thousand"),
+        ("basic_eps", 3.00, "USD/share")]
+
+
+def test_unheaded_basic_and_diluted_labels_do_not_establish_share_or_eps_basis():
+    assert rows("FY2026 FY2025\nBasic 120 110\nDiluted 125 115") == []
+
+
 def test_equal_values_on_separate_rows_are_not_deduplicated():
     result = rows("Notes FY2026 FY2025\nBorrowings 12 20 10\nBorrowings 18 20 10")
     assert len(_consolidate_candidates(result)) == 4

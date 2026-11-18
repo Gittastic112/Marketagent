@@ -4,7 +4,7 @@ import type { AiOutput } from "./ai.ts";
 import { AI_PRIVACY_DISCLOSURE_VERSION } from "../ai-privacy.ts";
 
 export type ResearchMessage = {id: number; role: string; content: string; created_at: string; ai_output: AiOutput | null};
-export type ResearchSession = {id: number; title: string; messages: ResearchMessage[]};
+export type ResearchSession = {id: number; title: string; messages: ResearchMessage[]; attempts?: AiOutput[]};
 
 export function fetchResearchSession(id: string): Promise<ResearchSession> {
   return fetchApi<ResearchSession>(`/research/sessions/${encodeURIComponent(id)}`);

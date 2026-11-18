@@ -87,6 +87,12 @@ class EventThesisImpactRead(EventThesisImpactCreate):
     review_status: str = "unreviewed"
 
 
+class ThesisImpactReview(BaseModel):
+    decision: Literal["no_change", "blocked"]
+    reason: str = Field(min_length=1, max_length=2000, pattern=r"\S")
+    expected_status: str = Field(min_length=1, max_length=40)
+
+
 class ThesisAssumptionRead(ThesisAssumptionCreate):
     model_config = ConfigDict(from_attributes=True)
 
@@ -201,6 +207,8 @@ class NarrativeClaimRead(NarrativeClaimCreate):
 
     id: int
     created_at: datetime
+    origin: Literal["legacy_unknown", "manual", "ai", "mock"] = "legacy_unknown"
+    ai_output: AiOutputRead | None = None
 
 
 class NarrativeMentionCreate(BaseModel):
@@ -269,6 +277,7 @@ class ResearchSessionRead(BaseModel):
 
 class ResearchSessionDetail(ResearchSessionRead):
     messages: list[ResearchMessageRead] = Field(default_factory=list)
+    attempts: list[AiOutputRead] = Field(default_factory=list)
 
 
 class VariantPerceptionCreate(BaseModel):

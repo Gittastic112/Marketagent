@@ -178,13 +178,13 @@ export default async function EventsPage({ searchParams }: {
                                       <RetainedActionForm label="Remove event corroboration" action={removeEventCorroboration} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                         <input type="hidden" name="event_id" value={event.id} />
                                         <input type="hidden" name="target_event_id" value={c.id} />
-                                        <button type="submit" className="text-red-500" title="Remove link">✕</button>
+                                        <button type="submit" className="text-[var(--danger)]" title="Remove link">✕</button>
                                       </RetainedActionForm>
                                     </li>
                                   ))}
                                 </ul>
                               ) : (
-                                <p className="text-sm text-gray-500">No corroborating events.</p>
+                                <p className="text-sm text-muted-foreground">No corroborating events.</p>
                               )}
                               <RetainedActionForm label="Add event corroboration" action={addEventCorroboration} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />
@@ -208,13 +208,13 @@ export default async function EventsPage({ searchParams }: {
                                       <RetainedActionForm label="Remove event contradiction" action={removeEventContradiction} className="inline-form" style={{display: 'inline', marginLeft: '8px'}}>
                                         <input type="hidden" name="event_id" value={event.id} />
                                         <input type="hidden" name="target_event_id" value={c.id} />
-                                        <button type="submit" className="text-red-500" title="Remove link">✕</button>
+                                        <button type="submit" className="text-[var(--danger)]" title="Remove link">✕</button>
                                       </RetainedActionForm>
                                     </li>
                                   ))}
                                 </ul>
                               ) : (
-                                <p className="text-sm text-gray-500">No contradicting events.</p>
+                                <p className="text-sm text-muted-foreground">No contradicting events.</p>
                               )}
                               <RetainedActionForm label="Add event contradiction" action={addEventContradiction} className="inline-form mt-2">
                                 <input type="hidden" name="event_id" value={event.id} />

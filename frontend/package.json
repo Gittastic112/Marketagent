@@ -16,15 +16,19 @@
     "test:e2e:portfolio": "../scripts/run_browser_workflows.sh portfolio-runtime-smoke.spec.ts",
     "test:e2e:brief": "../scripts/run_browser_workflows.sh daily-brief-runtime-smoke.spec.ts",
     "test:e2e:accessibility": "../scripts/run_browser_workflows.sh accessibility-responsive.spec.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "generate:adapter-types": "node scripts/generate-adapter-types.mjs",
+    "check:adapter-types": "node scripts/generate-adapter-types.mjs --check"
   },
   "dependencies": {
     "lucide-react": "^1.20.0",
-    "next": "16.4.1",
+    "next": "16.4.5",
     "next-auth": "^4.24.15",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "recharts": "^2.15.0"
+    "react-markdown": "10.1.0",
+    "recharts": "^2.15.0",
+    "remark-gfm": "4.0.1"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.13.0",
@@ -33,6 +37,7 @@
     "@types/node": "24.10.2",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "openapi-typescript": "7.13.0",
     "tailwindcss": "^4.3.3",
     "typescript": "5.9.3"
   },

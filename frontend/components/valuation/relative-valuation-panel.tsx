@@ -32,7 +32,7 @@ function RequestNotice({ label, resource }: {
 }) {
   if (resource.status === "loading") return <p role="status">Loading {label}...</p>;
   if (resource.status !== "error") return null;
-  return <div role="alert" style={{ marginBottom: "12px", color: "#b71c1c" }}>
+  return <div role="alert" style={{ marginBottom: "12px", color: "var(--danger)" }}>
     <p>{label} unavailable: {resource.error}</p>
     <button type="button" onClick={() => { void resource.reload().catch(() => {}); }}>Retry {label}</button>
   </div>;
@@ -160,7 +160,7 @@ function CompanyRelativeValuationPanel({
   };
 
   return (
-    <div className="valuation-panel" style={{ border: "1px solid #eaeaea", borderRadius: "8px", padding: "16px", marginTop: "16px", backgroundColor: "#fafafa" }}>
+    <div className="valuation-panel" style={{ border: "1px solid var(--line)", borderRadius: "8px", padding: "16px", marginTop: "16px", backgroundColor: "var(--color-sidebar)" }}>
       <h3 style={{ marginTop: 0, marginBottom: "16px" }}>Relative Valuation</h3>
 
       <div style={{ marginBottom: "1rem" }}>
@@ -173,7 +173,7 @@ function CompanyRelativeValuationPanel({
             setResult(null);
             setError(null);
           }}
-          style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid var(--line)" }}
         >
           <option value="industry_aggregate">Source-backed industry aggregate</option>
           <option value="reviewed_peer_set">User-reviewed peer set</option>
@@ -188,7 +188,7 @@ function CompanyRelativeValuationPanel({
             value={selectedCountry}
             onChange={(e) => { setSelectedCountry(e.target.value); setSelectedIndustry(""); }}
             disabled={countryResource.status !== "ready" || countries.length === 0}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid var(--line)" }}
           >
             {countries.length === 0 && <option value="">{countryResource.status === "ready" ? "No active pricing sources" : "Countries unavailable"}</option>}
             {countries.map(c => <option key={c} value={c}>{c}</option>)}
@@ -203,7 +203,7 @@ function CompanyRelativeValuationPanel({
             value={selectedIndustry}
             onChange={(e) => setSelectedIndustry(e.target.value)}
             disabled={!selectedCountry || industryResource.status !== "ready" || industries.length === 0}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid var(--line)" }}
           >
             <option value="">Select an industry...</option>
             {industries.map(i => <option key={i} value={i}>{i}</option>)}
@@ -221,7 +221,7 @@ function CompanyRelativeValuationPanel({
             value={selectedPeerSetId}
             onChange={(event) => { setSelectedPeerSetId(event.target.value); setResult(null); }}
             disabled={!companyId || peerResource.status !== "ready" || eligiblePeerIds.length === 0}
-            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+            style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid var(--line)" }}
           >
             <option value="">Select a reviewed peer set...</option>
             {peerSets.filter(isPeerSetCalculationReady).map((peerSet) => (
@@ -277,7 +277,7 @@ function CompanyRelativeValuationPanel({
           onClick={handleRun}
           disabled={loading || !benchmarkReady || methods.length === 0 || Boolean(inputBlockedReason)}
           style={{
-            backgroundColor: "#000", color: "#fff", border: "none",
+            backgroundColor: "var(--text)", color: "var(--surface)", border: "none",
             padding: "8px 16px", borderRadius: "4px", cursor: loading || !benchmarkReady || methods.length === 0 ? "not-allowed" : "pointer"
           }}
         >
@@ -288,13 +288,13 @@ function CompanyRelativeValuationPanel({
       {inputBlockedReason && <p role="status">{inputBlockedReason}</p>}
 
       {error && (
-        <div role="alert" style={{ color: "#d32f2f", backgroundColor: "#ffebee", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
+        <div role="alert" style={{ color: "var(--danger)", backgroundColor: "var(--danger-bg)", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
           {error}
         </div>
       )}
 
       {result && !inputBlockedReason && benchmarkReady && resultInputKey === currentInputKey && (
-        <div style={{ borderTop: "1px solid #eaeaea", paddingTop: "16px" }}>
+        <div style={{ borderTop: "1px solid var(--line)", paddingTop: "16px" }}>
           {result.inputBasis && <RelativeInputBasis basis={result.inputBasis} />}
           <h4 style={{ margin: "0 0 12px 0" }}>
             Results against {result.benchmarkType === "reviewed_peer_set" ? result.peerSet?.name : result.industryName}
@@ -306,7 +306,7 @@ function CompanyRelativeValuationPanel({
           </p>
 
           {result.diagnostics.length > 0 && (
-            <div style={{ backgroundColor: "#fff3cd", color: "#856404", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
+            <div style={{ backgroundColor: "var(--warning-bg)", color: "var(--warning)", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
               <strong>Note:</strong>
               <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px" }}>
                 {result.diagnostics.map((d, i) => <li key={i}>{d}</li>)}
@@ -315,7 +315,7 @@ function CompanyRelativeValuationPanel({
           )}
 
           {result.unavailableMethods.length > 0 && (
-            <div style={{ backgroundColor: "#fff8e1", color: "#6d4c00", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
+            <div style={{ backgroundColor: "var(--warning-bg)", color: "var(--warning)", padding: "12px", borderRadius: "4px", marginBottom: "16px", fontSize: "0.875rem" }}>
               <strong>Unavailable methods</strong>
               <ul style={{ margin: "4px 0 0 0", paddingLeft: "20px" }}>
                 {result.unavailableMethods.map((item) => (
@@ -326,12 +326,12 @@ function CompanyRelativeValuationPanel({
           )}
 
           {result.range && (
-            <div style={{ backgroundColor: "#e3f2fd", color: "#0d47a1", padding: "12px", borderRadius: "4px", marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div style={{ backgroundColor: "var(--accent-light)", color: "var(--accent-strong)", padding: "12px", borderRadius: "4px", marginBottom: "16px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div><strong>Implied Range:</strong></div>
               <div>
-                <span style={{ margin: "0 8px", color: "#555" }}>Low: {result.range.low.toFixed(2)}</span>
+                <span style={{ margin: "0 8px", color: "var(--muted)" }}>Low: {result.range.low.toFixed(2)}</span>
                 <span style={{ margin: "0 8px", fontWeight: "bold" }}>Avg: {result.range.base.toFixed(2)}</span>
-                <span style={{ margin: "0 8px", color: "#555" }}>High: {result.range.high.toFixed(2)}</span>
+                <span style={{ margin: "0 8px", color: "var(--muted)" }}>High: {result.range.high.toFixed(2)}</span>
               </div>
             </div>
           )}
@@ -339,7 +339,7 @@ function CompanyRelativeValuationPanel({
           <div className="relative-table-scroll" tabIndex={0} role="region" aria-label="Relative valuation method results">
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.875rem", textAlign: "left" }}>
             <thead>
-              <tr style={{ borderBottom: "2px solid #ddd" }}>
+              <tr style={{ borderBottom: "2px solid var(--line)" }}>
                 <th style={{ padding: "8px 4px" }}>Method</th>
                 <th style={{ padding: "8px 4px" }}>Multiple</th>
                 <th style={{ padding: "8px 4px" }}>Implied EV</th>
@@ -350,7 +350,7 @@ function CompanyRelativeValuationPanel({
             </thead>
             <tbody>
               {result.relativeValues.length > 0 ? result.relativeValues.map((v, i) => (
-                <tr key={i} style={{ borderBottom: "1px solid #eaeaea" }}>
+                <tr key={i} style={{ borderBottom: "1px solid var(--line)" }}>
                   <td style={{ padding: "8px 4px", fontWeight: 500 }}>{v.method}</td>
                   <td style={{ padding: "8px 4px" }}>{v.benchmarkMultiple.toFixed(2)}x</td>
                   <td style={{ padding: "8px 4px" }}>{v.enterpriseValue != null ? v.enterpriseValue.toLocaleString(undefined, { maximumFractionDigits: 0 }) : "-"}</td>
@@ -359,8 +359,8 @@ function CompanyRelativeValuationPanel({
                   <td style={{ padding: "8px 4px" }}>
                     <span style={{
                       padding: "2px 6px", borderRadius: "12px", fontSize: "0.75rem",
-                      backgroundColor: v.reliability === "high" ? "#e8f5e9" : v.reliability === "medium" ? "#fff8e1" : "#ffebee",
-                      color: v.reliability === "high" ? "#2e7d32" : v.reliability === "medium" ? "#f57f17" : "#c62828"
+                      backgroundColor: v.reliability === "high" ? "var(--success-bg)" : v.reliability === "medium" ? "var(--warning-bg)" : "var(--danger-bg)",
+                      color: v.reliability === "high" ? "var(--success)" : v.reliability === "medium" ? "var(--warning)" : "var(--danger)"
                     }}>
                       {v.reliability.toUpperCase()}
                     </span>
@@ -368,7 +368,7 @@ function CompanyRelativeValuationPanel({
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={6} style={{ padding: "16px", textAlign: "center", color: "#666" }}>
+                  <td colSpan={6} style={{ padding: "16px", textAlign: "center", color: "var(--muted)" }}>
                     No results calculated. Ensure financials and benchmark multiples are available.
                   </td>
                 </tr>
@@ -377,7 +377,7 @@ function CompanyRelativeValuationPanel({
           </table>
           </div>
 
-          <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid #eaeaea", fontSize: "0.75rem", color: "#555" }}>
+          <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid var(--line)", fontSize: "0.75rem", color: "var(--muted)" }}>
             {result.benchmarkSources.map((source: PricingSourceProvenance) => (
               <div key={source.datasetVersionId} style={{ marginBottom: "4px" }}>
                 <strong>{source.sourceCode.toUpperCase()}</strong>: {source.sourceFile}, version {source.datasetVersionId}, as of {source.sourceAsOf || "unknown"}, {source.dateConfidence} date confidence

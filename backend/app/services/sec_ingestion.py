@@ -35,6 +35,7 @@ class SecIngestionResult:
     skipped_duplicate_count: int
     error_count: int = 0
     errors: tuple[str, ...] = ()
+    completed_text_count: int = 0
 
     @property
     def created(self) -> int:
@@ -124,6 +125,7 @@ def ingest_sec_filing_metadata(
     company = db.get(Company, company_id)
     ticker = company.ticker if company is not None else f"company-{company_id}"
     created = 0
+    completed_text = 0
     skipped_duplicates = 0
     error_count = 0
     errors: list[str] = []
@@ -131,6 +133,16 @@ def ingest_sec_filing_metadata(
         content_hash = build_sec_content_hash(filing)
         existing = _find_existing_raw_document(db, content_hash, filing.filing_url)
         if existing is not None:
+            if download_text and not (existing.raw_text or "").strip():
+                try:
+                    if _complete_missing_sec_text(db, existing, company_id, http_get, user_agent):
+                        completed_text += 1
+                    else:
+                        skipped_duplicates += 1
+                except Exception:
+                    error_count += 1
+                    errors.append(f"{filing.accession_number}: filing text completion failed")
+                continue
             skipped_duplicates += 1
             continue
         raw_text = None
@@ -139,6 +151,9 @@ def ingest_sec_filing_metadata(
             if filing.filing_url:
                 try:
                     raw_text = fetch_sec_filing_text(filing.filing_url, http_get=http_get, user_agent=user_agent)
+                    if not raw_text or not raw_text.strip():
+                        raw_text = None
+                        raise ValueError("Filing response has no text")
                     text_downloaded = True
                 except Exception as exc:
                     logger.error(
@@ -151,8 +166,18 @@ def ingest_sec_filing_metadata(
                 error_count += 1
                 errors.append(f"{filing.accession_number}: filing_url is required to download filing text")
 
-        db.add(
-            RawDocument(
+        # Serialize identities for this company, including URL matches whose
+        # accession hash differs. The network response is already available.
+        db.scalar(select(Company).where(Company.id == company_id).with_for_update())
+        winner = _find_existing_raw_document(db, content_hash, filing.filing_url)
+        if winner is not None:
+            if raw_text and winner.company_id == company_id and _store_missing_sec_text(db, winner.id, raw_text):
+                completed_text += 1
+            else:
+                skipped_duplicates += 1
+            continue
+
+        document = RawDocument(
                 company_id=company_id,
                 source_id=source_id,
                 document_type="sec_filing_metadata",
@@ -172,8 +197,24 @@ def ingest_sec_filing_metadata(
                 },
                 content_hash=content_hash,
             )
-        )
-        created += 1
+        try:
+            # Explicitly flush each accepted identity with production's
+            # autoflush=False; a savepoint isolates a concurrent unique winner.
+            with db.begin_nested():
+                db.add(document)
+                db.flush()
+            created += 1
+        except IntegrityError:
+            winner = _find_existing_raw_document(db, content_hash, filing.filing_url)
+            if winner is None:
+                raise
+            if raw_text and not (winner.raw_text or "").strip() and winner.company_id == company_id:
+                # Serialize completion against a competing downloader and never
+                # replace populated bytes, even when its response differs.
+                if _store_missing_sec_text(db, winner.id, raw_text):
+                    completed_text += 1
+                    continue
+            skipped_duplicates += 1
 
     db.commit()
     return SecIngestionResult(
@@ -182,7 +223,31 @@ def ingest_sec_filing_metadata(
         skipped_duplicate_count=skipped_duplicates,
         error_count=error_count,
         errors=tuple(errors),
+        completed_text_count=completed_text,
     )
+
+
+def _complete_missing_sec_text(db: Session, document: RawDocument, company_id: int,
+                              http_get: Callable[..., Any] | None, user_agent: str | None) -> bool:
+    if document.company_id != company_id or document.document_type != "sec_filing_metadata" or not document.url:
+        raise ValueError("Stored SEC source identity cannot be completed")
+    # Fetch the retained source URL, not changed metadata supplied on retry.
+    raw_text = fetch_sec_filing_text(document.url, http_get=http_get, user_agent=user_agent)
+    if not raw_text or not raw_text.strip():
+        raise ValueError("Filing response has no text")
+    return _store_missing_sec_text(db, document.id, raw_text)
+
+
+def _store_missing_sec_text(db: Session, document_id: int, raw_text: str) -> bool:
+    with db.begin_nested():
+        document = db.scalar(select(RawDocument).where(RawDocument.id == document_id)
+            .with_for_update().execution_options(populate_existing=True))
+        if (document.raw_text or "").strip():
+            return False
+        document.raw_text = raw_text
+        document.raw_payload_json = {**(document.raw_payload_json or {}), "text_downloaded": True}
+        db.flush()
+    return True
 
 
 def ingest_recent_sec_filings_for_company(

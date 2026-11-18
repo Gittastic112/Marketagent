@@ -1,0 +1,12 @@
+2026-11-18 local verification attempt.
+
+Command: node docs/workstreams/evidence/adapters-20261117/W1/browser-check.mjs
+Browser: system /usr/bin/chromium via @playwright/test, headless.
+
+Launch failed before creating a page:
+FATAL:chrome/browser/process_singleton_posix.cc:297
+Check failed: . socket() failed: Operation not permitted (1)
+Browser exited with SIGABRT.
+
+No browser interactions, screenshots, accessibility results or mocked workflow passes were obtained.
+The temporary application harness and its generated route declarations were removed before the final production build.

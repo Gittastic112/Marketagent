@@ -57,10 +57,10 @@ export default async function ValuationModelDetailPage(props: { params: Promise<
     <>
       <div className="saved-valuation-header">
         <div>
-          <div style={{ fontSize: "1.1rem", fontWeight: 500, color: "var(--text-muted)", marginBottom: "0.25rem" }}>
+          <div className="saved-valuation-company">
             {company.name} ({company.ticker})
           </div>
-          <h1 style={{ fontSize: "2rem", margin: 0, fontWeight: 700 }}>Intrinsic Valuation</h1>
+          <h1>Intrinsic Valuation</h1>
           <div className="saved-valuation-meta">
             <span><strong style={{ color: "var(--text)" }}>Scenario:</strong> {model.name}</span>
             {latestAssumptionSet && (

@@ -31,3 +31,20 @@ def test_unconfigured_probe_and_provider_exception_are_visible_and_sanitized(db,
     assert result["failure_code"] == "PROVIDER_PROBE_FAILED"
     assert "private-key" not in str(result)
     assert "private-key" not in str([run.metadata_json for run in db.scalars(select(ProcessingRun))])
+
+
+def test_market_probe_preserves_valid_empty_history_without_inventing_dates(db,monkeypatch):
+    from app.services.market_data.base import MarketQuoteResult
+    class Provider:
+        provider_name='mock_official'
+        async def get_quote(self,request):
+            return MarketQuoteResult(provider_name=self.provider_name,provider_symbol='MOCK',market='US',
+                ticker='MOCK',currency='USD',current_price=10)
+        async def get_historical_prices(self,request,days):
+            return []
+    monkeypatch.setattr(probes,'get_settings',lambda:SimpleNamespace())
+    monkeypatch.setattr(probes,'get_market_data_provider',lambda:Provider())
+    result=probes.probe_public_provider(db,'market',request=MarketDataRequest(market='US',ticker='MOCK',currency='USD'))
+    assert result['status']=='success' and result['evidence']['history_empty']
+    assert result['evidence']['first_history_date'] is None and result['evidence']['last_history_date'] is None
+    assert not db.scalars(select(MarketPrice)).all()

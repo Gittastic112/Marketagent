@@ -129,6 +129,10 @@ Ordinary reads and deterministic briefs do not call AI.
 
 ## Workflow references
 
+The [adapters](adapters/README.md) reuse the market factory, source preservation and ProcessingRun ledger.
+The Research Lab stores owned hashed scenarios independently of actual holdings and approvals.
+Its guide owns bounded Linux workers, isolated OCR, optional profiles and generated-contract boundaries.
+
 | Flow | Detailed reference |
 |---|---|
 | Brief selection and bounded reads | [Public briefing](reference/workflows.md#public-briefing-selection), [page composition](reference/workflows.md#read-loading-and-page-composition) |
