@@ -17,10 +17,10 @@ is covered in [local development](local-development.md#start-and-sign-in).
 
 ~~~bash
 docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile '*' ps --all
-docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml up -d --no-build postgres backend frontend scheduler
+docker compose -f docker-compose.yml -f output/milestones/product-development-20261107/runtime-images.yml --profile automation up -d --no-build postgres backend frontend scheduler
 ~~~
 
-The source-refresh worker and pgAdmin stay disabled unless deliberately enabled.
+The daily brief scheduler belongs to the `automation` profile. Include `--profile automation` when checking its settings with `config --hash scheduler`. The start command above selects the four installed services. The optional source-refresh worker and pgAdmin can stay disabled.
 Their unused containers need not be retained. The optional pgAdmin image has a
 registry-qualified digest so Docker can fetch that exact version when needed.
 Backend/frontend health checks use 30-second steady-state intervals and
