@@ -386,18 +386,15 @@ remain review-required and do not alter saved models.
   the manual browser gate.
 - scripts/backup_local.sh and restore_local.sh own backup/restore. Inspect exact
   targets and get data-loss authorization before restore/reset/volume deletion.
-  **November 15 safeguard, local source:** target preflight addresses A4-2.
-  Alembic preflight addresses A4-1 by rejecting populated predecessor tables
-  before crossing migration 2167b87f7054, which drops seven
-  tables; later recreation of three tables does not preserve populated old rows.
-  Backend startup and restore invoke `alembic upgrade head`. A current-head database
-  does not rerun the old revision, but an older restored database could cross it.
-  No affected live database or recovery copy has been established. Inspect revision
-  and affected-table inventory read-only. PostgreSQL holds affected-table locks
-  through the migration transaction; offline SQL crossing that revision is refused.
-  A preserving legacy conversion and populated restore remain unproved. A new
-  head-only migration cannot recover earlier dropped rows. Do not rewrite
-  historical migrations, stamp revisions or test by restoring over normal data.
+  Alembic checks older revisions before applying any changes. PostgreSQL holds table locks through the upgrade transaction.
+  The guard protects populated tables at `2167b87f7054`, non-null pricing multiples at `8550649236ca`,
+  and private rows about to receive a fallback owner at `a1a1a1a1a1a1` or `b8b8b8b8b8b8`.
+  The runner refuses offline SQL generation across these revisions. Use the online migration so it can inspect the data and hold the database lock through the upgrade.
+  Empty predecessors can upgrade. Populated predecessors that trigger a guard retain their records and revision.
+  Resolve the legacy definition or rightful owner before a preserving conversion. A current-head database skips earlier revisions.
+  On an explicitly selected installation, `python -m app.db.migration_safety` prints just the table names and counts of fallback-owned records.
+  An empty object means no matching rows in the supported private tables. This read-only diagnostic does not assign an owner.
+  [PostgreSQL preservation evidence](archive/checkpoints/2026/integration-review-2026-11-19.md)
   Format 3 verifies the completed dump in a network-disabled, bounded scratch
   PostgreSQL 16 container; normal writes can continue. Its manifest contains all
   public table counts/content fingerprints and both PDF stores' byte hashes.

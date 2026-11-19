@@ -18,7 +18,7 @@ cleanup() {
   local runner_exit_status=$?
   trap - EXIT INT TERM
   if [[ "$project_started" == true ]]; then
-    "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+    "${COMPOSE[@]}" down --volumes --remove-orphans --rmi local >/dev/null 2>&1 || true
   fi
   exit "$runner_exit_status"
 }

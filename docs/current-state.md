@@ -1,6 +1,6 @@
 # Current state
 
-November 18, 2026. Marketagent is an installed local equity-research, valuation and portfolio application. Its accepted release scope is personal research/demo. A new installation starts with its own database. The [user guide](user-guide.md) describes the installed workflows and the [feature register](roadmaps/feature-register.md) records their implementation status.
+November 19, 2026. Marketagent is an installed local equity-research, valuation and portfolio application. Its accepted release scope is personal research/demo. A new installation starts with its own database. The [user guide](user-guide.md) describes the installed workflows and the [feature register](roadmaps/feature-register.md) records their implementation status.
 
 ## Product position
 
@@ -15,7 +15,9 @@ November 18, 2026. Marketagent is an installed local equity-research, valuation 
 
 ## Dated validation
 
-The last application-code release was [PR 22](https://github.com/Gittastic112/Marketagent/pull/22), merged as [`e3b39d4`](https://github.com/Gittastic112/Marketagent/commit/e3b39d404b72e69ae7084d6c77f51bd04d73f3d9). All seven jobs passed on the [merged application revision](https://github.com/Gittastic112/Marketagent/actions/runs/44419018336).
+The November 19 [integration review and verification record](archive/checkpoints/2026/integration-review-2026-11-19.md) covers 19 findings and the scope of the release checks. Separately, a read-only reconciliation of the existing USD sample portfolio passed 61 comparisons across its two stored dates. Each holding agreed with its recorded quantity and source price. Cash, total value and period attribution reconciled. Base-currency FX was one. No benchmark was configured.
+
+The November 18 application-code release was [PR 22](https://github.com/Gittastic112/Marketagent/pull/22), merged as [`e3b39d4`](https://github.com/Gittastic112/Marketagent/commit/e3b39d404b72e69ae7084d6c77f51bd04d73f3d9). All seven jobs passed on the [merged application revision](https://github.com/Gittastic112/Marketagent/actions/runs/44419018336).
 
 | Evidence | Scope and result |
 |---|---|
@@ -40,4 +42,4 @@ Hosted tests, stored-source observations and actual use answer different questio
 
 M01 through M04 are accepted for **40 of 100 milestone gate points**. M05 is next. Three selected annual histories per company are reviewed. Apple and NVIDIA each have 10 of 13 source-linked checklist fields per year. Meta and Alphabet each have 8 of 13. No selected candidate awaits disposition. The [financial ledger](limitations.md#selected-company-review-follow-up) names the missing disclosures and reconciliations.
 
-Next come dated evidence in a draft, initial-model preview, example portfolio reconciliation and the connected research workflow. The last user-reported actual-use count was zero. M10 requires five actual business days and final acceptance. Genuine brokerage validation, host/off-device protection and populated legacy conversion retain their own scope and prerequisites. [Milestone board](roadmaps/completion-tracker.md#milestone-board) · [Handoff](HANDOFF.md) · [Limitations](limitations.md)
+Next come dated evidence in a draft, initial-model preview, a connected source-to-thesis decision and any resulting reviewed model change. The last user-reported actual-use count was zero. M10 requires five actual business days and final acceptance. Genuine brokerage validation, host/off-device protection and populated legacy conversion retain their own scope and prerequisites. [Milestone board](roadmaps/completion-tracker.md#milestone-board) · [Handoff](HANDOFF.md) · [Limitations](limitations.md)

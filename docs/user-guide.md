@@ -16,7 +16,7 @@ Use the top-bar search button or **Cmd/Ctrl+K** to find a company or stored evid
 2. Choose **1M**, **3M**, **6M** or **All**. Select a point on the chart, choose a marked date in **Key moments**, or use **Inspect date** and **Open point details** with the keyboard.
 3. A diamond marks a rise or fall of at least 5% from the preceding comparable stored close. A circle marks dated source material. A square marks one of your notes. **What happened around this close?** links to stored documents and events. Material from the preceding close has its own date. Check the publication time where available. Splits and distributions can move an unadjusted close. A nearby filing alone cannot establish the cause.
 4. To record your interpretation, choose **Attach to thesis**, enter **Note on this close** and select **Pin to thesis**. If the company has no thesis yet, follow the link to create one and return to the chart.
-5. Open the thesis and find **Pinned price notes**. Each entry keeps the closing price, date, provider and basis you saw when saving. Its link reopens the series and date. If the provider later corrects the quote, the thesis still shows the original observation.
+5. Open the thesis and find **Pinned price notes**. Each entry keeps the closing price, date, provider and basis you saw when saving. Its link opens the private note beside the current stored close for that date. After a correction, the note keeps the price you originally saw. The corrected chart point receives a marker only when a note is attached to that observation.
 
 If the app finds no dated source, the reason remains unverified. A missing or conflicting close can also leave the percentage unavailable. **All** displays up to 365 stored dates for the selected series. [Price comparison and source matching](reference/workflows.md#company-price-history-and-thesis-pins)
 
@@ -39,5 +39,7 @@ Open **Advanced → Research Lab**. Choose an operation and inspect its configur
 ## Review portfolio and macro results
 
 In **Portfolio**, check holdings, cash flows, quote dates, FX and benchmark coverage for the chosen period. The price/FX importer shows a preview before applying the exact reviewed file. Missing values can make a result partial or unavailable.
+
+When the eligible price predates a recorded split or bonus, the app withholds the position value until a compatible price is available. A benchmark comparison uses a single identified series for its boundary and cash-flow dates.
 
 In **Macro Workbench**, supply chronological periods and consistent currency, scale and factor directions. Enter zero only when the input is actually zero. Calculations use the explicit inputs. Covered segment or scenario contributions can be partial. [Feature register](roadmaps/feature-register.md) · [Known limitations](limitations.md)

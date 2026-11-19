@@ -459,6 +459,8 @@ Research/demo gate: present and historical example views reconcile to their date
 labeled inputs or disclose missing coverage. Genuine-input and multi-currency proof
 remain outside v1 under the explicit scope revision; existing records are preserved.
 
+The [November 19 USD sample reconciliation](../archive/checkpoints/2026/integration-review-2026-11-19.md) checked both stored snapshots against the ledger, original quote references and period attribution. The real multi-currency and benchmark gates above remain open.
+
 October 18 [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md)
 passes 64 independent arithmetic checks and six current/historical desktop/mobile
 views. The discovered attribution-table keyboard defect is fixed and verified.

@@ -1,6 +1,6 @@
 # Product roadmap
 
-Priorities for the local research/demo release, November 18, 2026. M01 through M04 have 40 accepted gate points. M05 is the first unfinished milestone. [Milestone board](completion-tracker.md#milestone-board)
+Priorities for the local research/demo release, November 19, 2026. M01 through M04 have 40 accepted gate points. M05 is the first unfinished milestone. [Milestone board](completion-tracker.md#milestone-board)
 
 The price-history chart and private thesis pins are installed. The four returned-review repair batches and the Geist and Research Lab release are published. The [current state](../current-state.md#dated-validation) records the release evidence, the [feature register](feature-register.md) records what works, and the [limitation ledger](../limitations.md) owns missing evidence and operating limits.
 
@@ -31,7 +31,7 @@ does not dispatch agents or replace current status.
 |---|---|---|
 | M05 | Complete the remaining annual inputs for the four scoped companies. Start with the missing component of each issuer's debt, working capital or equity claim. | Match each original disclosure to its period, currency, accounting and share scope. [Selected-company ledger](../limitations.md#selected-company-review-follow-up) |
 | M06 | Carry dated reviewed evidence into a draft and preview the first model before saving. Extend period support only when exact period identity is available. | An explicitly selected source revision survives review, calculation and save. Stale or conflicting inputs remain held. [Workspace plan](research-workspace-plan.md#delivery-sequence) |
-| M07 and M08 | Reconcile the example portfolio and connect a new filing or marked close to a thesis decision and a reviewed valuation change when warranted. | Verify cash, flows, FX, benchmark basis and the exact source and model version used. The price chart already supports a private note on a dated close. |
+| M07 and M08 | Follow a dated filing or marked close to a thesis decision and a reviewed valuation change when warranted. | The two stored USD sample dates reconcile. Record the exact source, private note and model version used for the connected workflow. Genuine multi-currency and benchmark evidence are separate requirements. |
 | M09 and M10 | Exercise the changed workflows on desktop and mobile, verify recovery within scope and record five actual business days of research use. | Keep technical results, user-reported use and final acceptance separately recorded. |
 
 The [adapter worklist](ui-adapter-worklist.md#implementation-backlog-from-the-zip) names the remaining work in each of the 16 packages. For example, allocation and simulation already accept supplied returns. Connecting an owned portfolio requires aligned histories, cash flows, distributions and FX.

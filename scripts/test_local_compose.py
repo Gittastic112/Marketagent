@@ -94,7 +94,11 @@ if name == "npx":
 
     @staticmethod
     def cleanup_calls(calls):
-        return [call for call in RunnerCommandFixture.compose_calls(calls) if "down" in call["args"]]
+        calls = [call for call in RunnerCommandFixture.compose_calls(calls) if "down" in call["args"]]
+        for call in calls:
+            args = call["args"]
+            assert args[args.index("--rmi") + 1] == "local"
+        return calls
 
 
 class BrowserRunnerTests(RunnerCommandFixture):
