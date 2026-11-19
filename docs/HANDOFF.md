@@ -4,7 +4,7 @@
 
 The November 19 release is on `main`. It addresses all 19 findings from the four reviews, plus the mobile target size for editing a company thesis. The [integration record](archive/checkpoints/2026/integration-review-2026-11-19.md) maps the fixes to their evidence. [Merged application PR](https://github.com/Gittastic112/Marketagent/pull/24) · [Verified application commit](https://github.com/Gittastic112/Marketagent/commit/e57d50f0bba1c5f03a5e97dc8a759dd2b11e7f78)
 
-The last recorded check of the normal local installation found the November 18 images and database revision `w5w5w5w5w5w5`. The November 19 images passed signed-in checks on a disposable database at the same revision. Use the installation’s private settings for promotion and record a new normal-runtime check afterward. [Installed-stack procedure](operations.md#select-the-installed-local-stack) · [Price history release](https://github.com/Gittastic112/Marketagent/pull/22)
+The November 19 release is installed locally. The signed-in Today page and its Evidence Trail passed a read-only check after the update. The original database and asset storage were preserved. [Installed verification](current-state.md#dated-validation) · [Installed-stack procedure](operations.md#select-the-installed-local-stack)
 
 ## Next work
 
