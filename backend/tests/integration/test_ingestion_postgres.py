@@ -139,7 +139,7 @@ def test_concurrent_sec_retries_keep_one_identity_and_one_text(pg_engine, monkey
         assert document.raw_text == "Mock Data immutable SEC text"
 
 
-def test_concurrent_price_retries_have_one_daily_row(pg_engine, monkeypatch):
+def test_concurrent_price_retries_have_one_quote_and_one_daily_close(pg_engine, monkeypatch):
     identity = company_id(pg_engine)
     fetched = Barrier(2)
     class Provider:
@@ -159,11 +159,11 @@ def test_concurrent_price_retries_have_one_daily_row(pg_engine, monkeypatch):
             return asyncio.run(ingestion.ingest_company_prices(db, company=db.get(Company, identity), user_id="mock"))
     with ThreadPoolExecutor(max_workers=2) as pool:
         results = list(pool.map(lambda _: ingest(), range(2)))
-    assert sum(row.created_count for row in results) == 1
-    assert sum(row.skipped_duplicate_count for row in results) == 3
+    assert sum(row.created_count for row in results) == 2
+    assert sum(row.skipped_duplicate_count for row in results) == 2
     with Session(pg_engine) as db:
-        assert db.scalar(select(func.count(MarketPrice.id))) == 1
-        assert db.scalar(select(MarketPrice)).price_type == "end_of_day"
+        assert db.scalar(select(func.count(MarketPrice.id))) == 2
+        assert set(db.execute(select(MarketPrice.price_type, MarketPrice.price))) == {("unknown", Decimal("15")), ("end_of_day", Decimal("14"))}
         assert list(db.scalars(select(ProcessingRun.status))) == ["completed", "completed"]
 
 
@@ -409,3 +409,114 @@ def test_replacement_brief_worker_does_not_claim_a_late_workers_snapshot(pg_engi
     with Session(pg_engine) as db:
         assert db.scalar(select(func.count()).select_from(DailyBrief)) == 1
         assert sorted(db.scalars(select(ProcessingRun.status))) == ["failed", "success"]
+
+def test_concurrent_thesis_changes_are_exact_and_failed_insert_is_atomic(pg_engine):
+    from sqlalchemy import event
+    from fastapi import HTTPException
+    from app.api.routers.thesis_notes import create_thesis_change
+    from app.schemas.research import ThesisChangeCreate
+    from app.models import ThesisChange, ThesisNote, User
+    issuer = company_id(pg_engine)
+    with Session(pg_engine) as db:
+        db.add(User(id="mock-thesis-author", email="mock-thesis@example.invalid"))
+        db.flush()
+        note = ThesisNote(company_id=issuer, user_id="mock-thesis-author", title="Mock Data", thesis_text="Fixture")
+        db.add(note); db.commit()
+        identity = note.id
+    payload = ThesisChangeCreate(thesis_note_id=identity, change_summary="Synthetic update", drift_score=0.25)
+    start = Barrier(2)
+    def submit(_):
+        with Session(pg_engine) as db:
+            start.wait(timeout=10)
+            create_thesis_change(identity, payload, db, {"id": "mock-thesis-author"})
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        list(pool.map(submit, range(2)))
+    with Session(pg_engine) as db:
+        with pytest.raises(HTTPException) as denied:
+            create_thesis_change(identity, payload, db, {"id": "another-user"})
+        assert denied.value.status_code == 404
+        def fail_flush(*_):
+            raise RuntimeError("Synthetic storage failure")
+        event.listen(db, "after_flush", fail_flush, once=True)
+        with pytest.raises(RuntimeError, match="Synthetic storage failure"):
+            create_thesis_change(identity, payload, db, {"id": "mock-thesis-author"})
+        db.rollback()
+    with Session(pg_engine) as db:
+        assert db.get(ThesisNote, identity).thesis_drift_score == .5
+        assert len(db.scalars(select(ThesisChange).where(ThesisChange.thesis_note_id == identity)).all()) == 2
+
+def test_identical_concurrent_pin_submissions_keep_one_original(pg_engine):
+    from app.models import ThesisNote, User
+    from app.models.thesis_note import ThesisPricePin
+    from app.schemas.price_timeline import PricePinCreate
+    from app.services.price_timeline import company_timeline, save_pin
+
+    issuer = company_id(pg_engine)
+    owner = "mock-pin-owner"
+    with Session(pg_engine) as db:
+        db.add(User(id=owner, email="mock-pin@example.invalid"))
+        db.flush()
+        note = ThesisNote(user_id=owner, company_id=issuer, title="Mock Data", thesis_text="Fixture")
+        price = MarketPrice(company_id=issuer, ticker="MOCK", provider_symbol="MOCK", market="US",
+                            exchange="NASDAQ", currency="USD", provider_name="fixture",
+                            price_type="end_of_day", adjustment_state="unadjusted", claim_type="Mock Data",
+                            as_of_date=date(2026, 1, 6), price=Decimal("95"))
+        db.add_all([note, price])
+        db.commit()
+        point = company_timeline(db, issuer, owner, None, None).points[0]
+        payload = PricePinCreate(thesis_id=note.id, price_id=price.id, fingerprint=point.fingerprint,
+                                 request_id=uuid4(), text="Mock Data concurrent pin")
+
+    start = Barrier(2)
+
+    def submit(_):
+        with Session(pg_engine) as db:
+            start.wait(timeout=10)
+            return save_pin(db, issuer, owner, payload).id
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        first, retry = pool.map(submit, range(2))
+    assert first == retry
+    with Session(pg_engine) as db:
+        pin = db.scalars(select(ThesisPricePin)).one()
+        assert pin.id == first and Decimal(pin.anchor["price"]) == 95
+
+
+def test_concurrent_backdated_purchases_replay_each_accepted_entry(pg_engine):
+    from app.api.routers.portfolios import create_portfolio_transaction
+    from app.models import Portfolio, PortfolioCashBalance, PortfolioHolding, PortfolioTransaction, User
+    from app.schemas.portfolio import PortfolioTransactionCreate
+
+    issuer = company_id(pg_engine)
+    owner = {"id": "mock-ledger-owner"}
+    with Session(pg_engine) as db:
+        db.add(User(id=owner["id"], email="mock-ledger@example.invalid"))
+        db.flush()
+        portfolio = Portfolio(user_id=owner["id"], name="Mock Data ledger", base_currency="USD")
+        db.add(portfolio)
+        db.commit()
+        portfolio_id = portfolio.id
+
+    def entry(kind, day, quantity, price=0):
+        cash = kind == "deposit"
+        return PortfolioTransactionCreate(portfolio_id=portfolio_id, company_id=None if cash else issuer,
+            ticker="USD" if cash else "MOCK", currency="USD", transaction_date=date(2026, 1, day),
+            transaction_type=kind, quantity=quantity, price=price)
+
+    with Session(pg_engine) as db:
+        for row in (entry("deposit", 1, 5000), entry("buy", 2, 10, 100), entry("split", 4, 2)):
+            create_portfolio_transaction(row, db, owner)
+
+    start = Barrier(2)
+
+    def backdate(quantity):
+        with Session(pg_engine) as db:
+            start.wait(timeout=10)
+            return create_portfolio_transaction(entry("buy", 3, quantity, 100), db, owner).data.id
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        assert len(set(pool.map(backdate, (1, 2)))) == 2
+    with Session(pg_engine) as db:
+        assert db.scalars(select(PortfolioHolding.quantity)).one() == 26
+        assert db.scalars(select(PortfolioCashBalance.amount)).one() == 3700
+        assert db.scalar(select(func.count()).select_from(PortfolioTransaction)) == 5

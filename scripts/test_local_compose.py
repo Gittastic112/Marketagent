@@ -268,6 +268,10 @@ class ReleaseRunnerTests(RunnerCommandFixture):
             project = self.project(compose[0])
             projects.append(project)
             self.assertRegex(project, r"^market-intel-release-check-\d+-\d+-\d+$")
+            frontend_checks = [call for call in compose if "frontend-tests" in call["args"]]
+            self.assertEqual(len(frontend_checks), 1)
+            self.assertEqual(self.project(frontend_checks[0]), project + "-unit")
+            self.assertFalse(any("npm" in call["args"] and "frontend-e2e" in call["args"] for call in compose))
             for call in compose:
                 self.assertEqual(call["args"][:3], ["compose", "--env-file", "/dev/null"])
                 self.assertIn(self.project(call), {project, project + "-unit"})
