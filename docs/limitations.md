@@ -66,14 +66,14 @@ retains the exact filings, quotes, FX, calculations and unresolved differences. 
 | Minority/preferred claims | Wholly-owned scope and Apple's charter support selected zeros. Meta's consolidation policy does not establish zero NCI; historical preferred balances and its conflicting dated quotes remain held. Alphabet NCI/book and quoted preferred values are proxies; preserve depositary/underlying share scope and avoid conversion double counting |
 | Alphabet D&A and weights | Nine-month D&A does not establish missing full-year intangible amortization. Finance-lease amortization is already in PP&E depreciation; the prior USD 1 million lease component difference stays visible. Business revenue alone does not approve benchmark weights |
 
-Remaining gaps require original disclosures or quote reconciliation, not guessed values or historical backfills.
-The user reconfirmed zero actual-use days on November 12; automated checks do not count.
+Remaining gaps require original disclosures or quote reconciliation. The [operator handoff](#ordered-operator-handoff) records actual-use status separately.
 
 ## What is not product-ready
 
 | Area | Current limitation |
 |---|---|
 | Public hosting and broker access | Local credentials and owner scoping are not production identity or complete tenant isolation. No broker sync or approved broker-token design |
+| Company price markers | Up to 365 dates per stored series. Conflicts, unknown adjustment basis and gaps over seven days can withhold a change. Timed filings provide context and a private pin records the analyst's interpretation. Causation and total return require independent evidence. [Measured source coverage](current-state.md#dated-validation) |
 | Data coverage and freshness | No trading-grade real-time guarantee. FMP/Massive/NSE adapters are implemented with explicit market, entitlement and live-verification limits. India filing intake remains partial; several market-regime inputs remain manual |
 | Financial extraction | Selected layouts and standard SEC tags are supported; complete statements, custom disclosures, charts, OCR, and issuer-specific accounting are not universally covered |
 | Financial review plans | Read-only three-year tracks expose gaps and conflicts, bounded to 2,000 rows per evidence class. Source linkage does not prove the statement is correct or applicable |
@@ -99,11 +99,9 @@ P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.
 | WS07 | Today and holdings queues cover selected existing workflows, not every missing input or stale model. Old failed runs can remain after a later success; source links do not preserve every originating filter/date or provide a complete resumable task | Thesis impacts now support preserving no-change/blocker decisions. P4-P6 still need broader source-attempt reconciliation, context-preserving returns and measured query latency. Current owner scope, counts, limits and holdings basis remain enforced |
 | WS08 | Existing backup pruning is count-based, defaults off and cannot protect semantic recovery roles or active pre-change pins | Apply the [essential retention policy](operations.md#essential-retention-policy) through reviewed targets; automation remains off until role-safe behavior is implemented and tested |
 
-The user authorised implementation after planning. P1 and ten bounded P2-P5 slices are delivered; complete package acceptance and source-specific financial gaps remain open. Tests do not establish actual research-use days or final acceptance.
-
 ## Returned code review
 
-November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Twenty bounded repairs are installed and merged in PRs 18 and 19. The [next ten](../data/reviews/review-evidence-workflows-ten-sets-20261116.json) and [remaining nine](../data/reviews/review-research-recovery-nine-sets-20261116.json) are installed locally with scoped checks passing. The latest receipt owns publication status. Guarded legacy conversion and other residual boundaries below remain open; installation is not blanket closure.
+November 15 intake at `6505082`: **39 primary findings**, retaining the reviewers' 1 critical, 13 high and 25 medium severities. Twenty bounded repairs are installed and merged in PRs 18 and 19. The [next ten](../data/reviews/review-evidence-workflows-ten-sets-20261116.json) and [remaining nine](../data/reviews/review-research-recovery-nine-sets-20261116.json) are installed and published in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20). Guarded legacy conversion and other residual boundaries below remain open; installation is not blanket closure.
 The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves reviewer claims; the [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json) records initial evidence. This ledger owns status; the [roadmap](roadmaps/product-roadmap.md#review-repair-sequence) owns order and [decisions](roadmaps/review-decisions.md#returned-review-design-decisions) own policy. The [financial integrity receipt](../data/reviews/review-financial-integrity-ten-sets-20261115.json) retains its implementation checkpoint; the [release checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md) records final checks and installation.
 
 | Repair group and IDs | Open boundary |
@@ -114,7 +112,7 @@ The frozen [intake](../data/reviews/code-review-intake-20261115.json) preserves 
 | R3: A2-1, A2-2, A2-3, A2-8 | Installed finite growth/claim/output checks, company-context propagation, negative-duration slope convention and WACC rate/capital/horizon bounds. Legacy invalid responses are blocked without rewriting stored values |
 | R4: A3-2, A3-3, A3-4, A3-5, A3-9 | A3-2 through A3-5 installed: reconciled chronological corrections, snapshot-currency returns, five-calendar-day quote/FX gates and unavailable unknown-weight summaries. A3-9 now withholds return percentages/spread under external flows while retaining matched-flow ending wealth; a common flow-adjusted return method remains unavailable. Incomplete opening history blocks correction |
 | R5: A1-F8 through A1-F12 | Installed locally: explicit SEC retries complete missing text with audit counts; batch/concurrent identities are guarded; retained PDF pages can be extended; parser retries repair predecessor comparisons; history uses PDF geometry/page links. Existing reviewed evidence is preserved. Scheduled backfill and OCR remain unavailable |
-| R6: A2-4 through A2-7 | Installed locally: pending saves pause editing, refreshed growth adopts the displayed values, acknowledgement requires the exact observed state and a reason, and raw saved exports retain original warnings/calculations. Browser checks pass; the latest receipt owns publication status. This does not validate historical calculations |
+| R6: A2-4 through A2-7 | Installed locally: pending saves pause editing, refreshed growth adopts the displayed values, acknowledgement requires the exact observed state and a reason, and raw saved exports retain original warnings/calculations. Browser checks cover the saved workflow. The correctness of historical calculations still requires independent verification |
 | R7: A3-8, A3-10, A3-11, A4-3; D1/D2 | Installed: source-detail AI approval, exact event links, owned memo notes, per-generation narrative provenance, snapshot-coverage acknowledgement and preserving thesis decisions. Original claims retain unknown origin; foreign AI output remains private. Approval still does not certify financial meaning or change valuation inputs |
 | R8: A4-4 through A4-8 | Installed: bounded generation deadlines, read-only result reconciliation, recoverable sign-in, same-origin callbacks, durable pre-send AI attempts and expired-worker recovery. Pending/unknown remote outcomes cannot be cancelled or proved undelivered; explicit retry may duplicate remote work. No automatic resend or live-provider delivery claim |
 
@@ -233,7 +231,7 @@ Historical drills do not replace an explicitly scoped populated restore or prove
 
 - Domain contracts/actions have compatibility facades; large workflow modules need behavioral boundaries before further moves.
 - Market adapters span providers and services/market_data; keep the existing factory authoritative until a tested migration removes that split.
-- Frontend types are manually synchronized; generation needs an explicit alias, envelope and response-reconciliation plan.
+- The 22 adapter operations use generated TypeScript contracts. Other domains, including company price history, have hand-maintained types. Broader generation needs an alias, envelope and response-reconciliation plan.
 - Source-integrity/browser tests do not certify every form state, legacy caller, screen reader or concurrent-user load.
 - Four-request portfolio loading and query budgets are local guards, not global throttling or capacity certification.
 - Unique test projects prevent accidental target reuse; default ports/shared image tags still need coordinated test lanes.

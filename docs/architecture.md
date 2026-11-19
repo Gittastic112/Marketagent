@@ -107,7 +107,7 @@ Server actions have domain owners behind the original compatibility import.
 [Contract checks](../scripts/check_api_contracts.py),
 [backend boundary tests](../backend/tests/test_schema_boundaries.py), and
 [frontend boundary tests](../frontend/lib/api-boundaries.test.ts) guard these
-boundaries. Frontend types still mirror backend contracts manually.
+boundaries. The [adapter types](adapters/README.md#generated-api-types) are generated from the OpenAPI snapshot for three router groups. Other frontend domains maintain their response types manually.
 
 ## Sources, review, and external AI
 
@@ -129,13 +129,12 @@ Ordinary reads and deterministic briefs do not call AI.
 
 ## Workflow references
 
-The [adapters](adapters/README.md) reuse the market factory, source preservation and ProcessingRun ledger.
-The Research Lab stores owned hashed scenarios independently of actual holdings and approvals.
-Its guide owns bounded Linux workers, isolated OCR, optional profiles and generated-contract boundaries.
+The [adapter guide](adapters/README.md) documents the market factory, preserved source evidence, Processing Runs and bounded workers. Research Lab keeps owned scenarios and hashes separate from actual holdings.
 
 | Flow | Detailed reference |
 |---|---|
 | Brief selection and bounded reads | [Public briefing](reference/workflows.md#public-briefing-selection), [page composition](reference/workflows.md#read-loading-and-page-composition) |
+| Closing price to private thesis | [Series selection, date matching and pin ownership](reference/workflows.md#company-price-history-and-thesis-pins) |
 | Source intake and event interpretation | [Document to intelligence](reference/workflows.md#document-to-intelligence) |
 | Financial review and valuation | [Financials to valuation](reference/workflows.md#financials-to-valuation) |
 | AI citations, private sources, and review | [Exact evidence](reference/workflows.md#ai-claim-to-exact-evidence) |

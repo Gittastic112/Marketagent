@@ -1,23 +1,8 @@
 # Product roadmap
 
-Priorities for the local research/demo release. Updated November 17, 2026.
-[Current State](../current-state.md) owns evidence, the
-[feature register](feature-register.md) owns capability status, and the
-[limitation ledger](../limitations.md) owns unresolved boundaries.
+Priorities for the local research/demo release, November 18, 2026. M01 through M04 have 40 accepted gate points. M05 is the first unfinished milestone. [Milestone board](completion-tracker.md#milestone-board)
 
-The [UI and adapter worklist](ui-adapter-worklist.md) tracks the combined local release and the 16 research packages.
-
-M01-M04 retain 40 accepted gate points. M05 is next in the
-[completion tracker](completion-tracker.md). These are acceptance gates, not an
-engineering-effort percentage. Existing implementation does not supply missing
-financial facts, actual-use days, or final acceptance.
-
-The immediate programme is the returned code-review repair sequence below.
-The [research workspace plan](research-workspace-plan.md) still owns target layouts,
-navigation and P0-P7 specifications. P0/P1 and bounded P2-P5 slices are delivered;
-the returned review identifies gaps in those implemented workflows. Repair their
-trust boundaries before expanding features. This changes priority, not architecture
-or historical acceptance. [Current State](../current-state.md) links dated evidence.
+The price-history chart and private thesis pins are installed. The four returned-review repair batches and the Geist and Research Lab release are published. The [current state](../current-state.md#dated-validation) records the release evidence, the [feature register](feature-register.md) records what works, and the [limitation ledger](../limitations.md) owns missing evidence and operating limits.
 
 ## Planning rule
 
@@ -42,6 +27,15 @@ does not dispatch agents or replace current status.
 
 ## Immediate delivery order
 
+| Order | Deliverable | Evidence required |
+|---|---|---|
+| M05 | Complete the remaining annual inputs for the four scoped companies. Start with the missing component of each issuer's debt, working capital or equity claim. | Match each original disclosure to its period, currency, accounting and share scope. [Selected-company ledger](../limitations.md#selected-company-review-follow-up) |
+| M06 | Carry dated reviewed evidence into a draft and preview the first model before saving. Extend period support only when exact period identity is available. | An explicitly selected source revision survives review, calculation and save. Stale or conflicting inputs remain held. [Workspace plan](research-workspace-plan.md#delivery-sequence) |
+| M07 and M08 | Reconcile the example portfolio and connect a new filing or marked close to a thesis decision and a reviewed valuation change when warranted. | Verify cash, flows, FX, benchmark basis and the exact source and model version used. The price chart already supports a private note on a dated close. |
+| M09 and M10 | Exercise the changed workflows on desktop and mobile, verify recovery within scope and record five actual business days of research use. | Keep technical results, user-reported use and final acceptance separately recorded. |
+
+The [adapter worklist](ui-adapter-worklist.md#implementation-backlog-from-the-zip) names the remaining work in each of the 16 packages. For example, allocation and simulation already accept supplied returns. Connecting an owned portfolio requires aligned histories, cash flows, distributions and FX.
+
 ### Review repair sequence
 
 The [single limitation ledger](../limitations.md#returned-code-review) owns current
@@ -50,10 +44,7 @@ maps all 39 findings to exact source references, evidence qualifications and
 regression requirements. D1 is a deliberate behavior change; D2 and A4-7 overlap
 known WS07/P6 scope. Do not count them as additional undisclosed failures.
 
-Use the existing domain modules and compatibility boundaries. No new architecture,
-provider, agent framework or parallel edit batch is needed. Each row is a repair
-package, split into small commits: regression, narrow repair, relevant UI/contract
-integration, then evidence. A package is not authorization to rewrite historical data.
+These packages identify the original findings and the checks guarding their fixes. The remaining legacy-conversion and evidence boundaries are recorded in the ledger.
 
 | Package and owner | Outcome and finding IDs | Exit evidence |
 |---|---|---|
@@ -67,35 +58,7 @@ integration, then evidence. A package is not authorization to rewrite historical
 | R7 · Research workflow | A3-8/A3-10/A3-11/A4-3 plus D1/D2: complete private-source approval, fix thesis links and memo contracts, retain AI origin, record exact brief/thesis review decisions | End-to-end owner-scoped approval/receipt flow, real event links and memo generation; new events between capture/click remain pending; no-change/blocked thesis decisions retain evidence and reject foreign owners |
 | R8 · Auth and workers | A4-4 through A4-8: align research timeouts, recover sign-in states, record AI attempts before calls, reconcile expired leases and constrain callbacks to the same origin | Browser recovery and callback tests; delayed/interrupted provider doubles plus worker restart tests show pending/unknown/failed outcomes, no silent duplicate sends, and one terminal run outcome |
 
-The first ten repairs are installed and merged in PR 18. PR 19 installs the next ten:
-A1-F6/F7, all four R3 findings and A3-2 through A3-5. The
-[release checkpoint](../archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md)
-records final checks, the requested Today order and preservation. The
-[evidence/workflow batch](../../data/reviews/review-evidence-workflows-ten-sets-20261116.json) installs A3-9 and R5/R6 locally;
-its browser checks pass and GitHub publication is deferred by the user. The
-[remaining nine](../../data/reviews/review-research-recovery-nine-sets-20261116.json) install R7/R8 and D1/D2 with scoped verification.
-Publication remains deferred; the limitation ledger owns residual work. R0 still blocks
-populated legacy conversion or restore; original evidence and historical snapshots remain preserved.
-Work sequentially unless an explicit parallel batch assigns exclusive files.
-
-Before each package, recheck its pinned claim against the current code, inspect
-callers/contracts and preserve local edits. Write behavior regressions first where
-practical. Use the [runbook](../execution-runbook.md) for the selected environment.
-SQLite/helper checks do not prove HTTP authorization, PostgreSQL locking/migrations
-or browser behavior; run those layers when the package changes them. Do not deploy
-a schema change until its data-preservation and recovery prerequisites pass.
-
-Closure requires an exact repair commit, failed-before/passed-after evidence,
-representative UI states where affected, and a ledger update with remaining limits.
-Keep the intake receipt immutable as the review baseline; store only essential new
-proof. No routine backup, second full report copy, persistent test stack or automatic
-pruning is part of these repairs. Policy defaults and conditional owner decisions
-are in [review decisions](review-decisions.md#returned-review-design-decisions).
-
-After these gates, resume the [workspace specifications](research-workspace-plan.md#delivery-sequence):
-selected dated evidence into an explicit draft proposal and initial-model preview,
-then wider period support, P6 reliability and P7 actual use. Source gaps can remain
-honestly unavailable; they do not justify guessed inputs or financial acceptance.
+The first 20 repairs shipped in [PR 18](https://github.com/Gittastic112/Marketagent/pull/18) and [PR 19](https://github.com/Gittastic112/Marketagent/pull/19). The [evidence and workflow repairs](../../data/reviews/review-evidence-workflows-ten-sets-20261116.json) and [remaining nine repairs](../../data/reviews/review-research-recovery-nine-sets-20261116.json) subsequently shipped in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20). R0 rejects unsupported populated legacy migrations. Supporting that conversion still requires a preserving migration and a separate rehearsal. [Residual limits](../limitations.md#returned-code-review)
 
 ## Boundaries to preserve while delivering
 
@@ -117,9 +80,7 @@ and removed-universe receipts remain historical, not current database inventory.
 The next issuer/layout requires official sources, hashes, periods, units,
 security/share scope, reconciliation, and explicit promotion. Minority interests,
 cross-holdings, leases, currency, and dilution must stay visible.
-India automation additionally requires a permitted official endpoint, documented
-response/freshness/rate limits, bounded transport, Processing Runs, fixtures,
-and non-writing preview. Unsupported exchange automation remains manual.
+NSE MCP already supports scoped quotes, history and corporate actions. Expanding India coverage requires a permitted endpoint, documented freshness and limits, bounded requests, Processing Runs and independent checks for the new use case. Other exchanges and unsupported disclosures retain manual intake.
 
 ### Daily evidence-to-decision loop
 
@@ -170,7 +131,7 @@ The [AI boundary](../limitations.md#ai-boundary) owns the exact limitations.
 |---|---|
 | Financial/model review | Supported missing disclosures and explicit assumptions within the selected scope |
 | Additional issuer/layout | Selected company, dated official reports, reproducible reference checks |
-| Official India provider | Permitted endpoint and intended-use rights before adapter implementation |
+| Additional India coverage | The installed NSE MCP adapter has a verified dividend observation. Verify the specific permitted endpoint, listing, session and access terms before expanding price or filing coverage. |
 | Peer comparison expansion | Permitted peer data with currency, accounting, and period definitions before normalization/scoring |
 | Operating acceptance | Actual research use, failure/retry observations, and final acceptance |
 

@@ -49,8 +49,7 @@ The [current ledger](../limitations.md#selected-company-review-follow-up) owns r
 
 These defaults apply the user's preservation, privacy and truthful-UI instructions.
 The [intake receipt](../../data/reviews/code-review-intake-20261115.json) pins the reports;
-the [roadmap](product-roadmap.md#review-repair-sequence) owns sequencing. No immediate
-user answer is needed for the ten-set release follow-up or R2/R3 source fixes. Historical data rewrites remain outside that authorization.
+the [review ledger](../limitations.md#returned-code-review) records the shipped fixes and remaining boundaries. Historical records retain their original values and evidence. The [roadmap](product-roadmap.md#immediate-delivery-order) owns the current delivery order.
 
 | Review question | Adopted design or explicit boundary |
 |---|---|

@@ -33,8 +33,7 @@ the database role. Follow the coordinated
 Compose injects only variables listed in its environment blocks. Adding a root
 environment variable does not automatically configure a container. Compare
 [Compose](../docker-compose.yml) and [backend settings](../backend/app/core/config.py)
-before assuming an override applies. No provider key is needed merely to inspect
-an empty local workspace.
+before assuming an override applies. You can inspect an empty local workspace without a provider key. Company price charts read stored daily closes. To populate a series, use the explicit price intake for a permitted configured provider. [Market data and provenance](data-sources.md) · [Price history walkthrough](user-guide.md#inspect-a-price-move-and-pin-a-thesis-note)
 
 ## Start and sign in
 

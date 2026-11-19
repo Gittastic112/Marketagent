@@ -1,9 +1,8 @@
 # Database Schema Map
 
-**Source reviewed:** 2026-11-04. Runtime verification is recorded in Current State.
+**Source reviewed November 18, 2026.** [Installed readiness and preservation](current-state.md#dated-validation)
 
-**Current source head:** `w5w5w5w5w5w5`. Adds `thesis_price_pins`. Each private annotation belongs to a thesis and retains the original price, date, listing, provider and adjustment basis. A per-thesis request key protects retries. The migration creates an empty table and indexes. Existing thesis and price records retain their original content.
-Check Current State for the normal runtime's verified revision.
+**Current source head:** `w5w5w5w5w5w5`. The [price-pin migration](../backend/alembic/versions/w5w5w5w5w5w5_thesis_price_pins.py) follows `v4v4v4v4v4v4` and adds an initially empty table and indexes.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic
 migrations are the field-level source of truth. Do not duplicate every column
@@ -27,7 +26,7 @@ here; that caused the previous schema document to drift.
 | Sources and documents | `sources`, `raw_documents`, `document_assets`, `processing_runs`, `filing_sections`, `filing_section_diffs` | `source.py`, `raw_document.py`, `document_asset.py`, `processing_run.py`, `sec_parsing.py` |
 | Financial facts | `financial_statement_periods`, `financial_metrics`, `financial_extraction_candidates`, `normalized_financial_snapshots`, `normalized_financial_metrics`, `source_fact_revisions` | `financial.py`, `source_fact_revision.py` |
 | Intelligence | `events`, `event_corroborations`, `event_contradictions`, `event_evidence_references`, `alerts`, `alert_portfolio_impacts`, `daily_briefs`, `scoring_configs` | `event.py`, `event_evidence_reference.py`, `alert.py`, `daily_brief.py`, `scoring_config.py` |
-| Thesis and decisions | `thesis_notes`, `thesis_assumptions`, `event_thesis_impacts`, `thesis_changes`, `evidence_ledger`, `decision_logs`, `variant_perception` | `thesis_note.py`, `evidence.py`, `decision_journal.py`, `variant_perception.py` |
+| Thesis and decisions | `thesis_notes`, `thesis_price_pins`, `thesis_assumptions`, `event_thesis_impacts`, `thesis_changes`, `evidence_ledger`, `decision_logs`, `variant_perception` | `thesis_note.py`, `evidence.py`, `decision_journal.py`, `variant_perception.py` |
 | Portfolio | `portfolios`, `portfolio_holdings`, `portfolio_transactions`, `portfolio_cash_balances`, `portfolio_snapshots`, `portfolio_benchmark_configs` | `portfolio.py` |
 | Market and macro | `market_prices`, `company_market_data`, `market_source_capabilities`, `fx_rate_observations`, `macro_series`, `macro_observations`, `country_market_context`, `market_regime_inputs`, `market_regime_scores` | `market_price.py`, `market_source.py`, `fx_rate.py`, `macro.py`, `country_market_data.py`, `market_regime_input.py`, `market_regime.py` |
 | Macro sensitivity | `sector_macro_sensitivity_benchmarks`, `company_macro_inputs`, `company_macro_sensitivity_results`, `company_macro_segment_exposures` | `macro_sensitivity.py` |
@@ -57,6 +56,7 @@ erDiagram
     RAW_DOCUMENTS ||--o{ FINANCIAL_EXTRACTION_CANDIDATES : yields
     EVENTS ||--o{ ALERTS : triggers
     COMPANIES ||--o{ THESIS_NOTES : has
+    THESIS_NOTES ||--o{ THESIS_PRICE_PINS : owns
     COMPANIES ||--o{ VALUATION_MODELS : has
     VALUATION_MODELS ||--o{ DCF_ASSUMPTION_SETS : contains
     PORTFOLIOS ||--o{ PORTFOLIO_HOLDINGS : contains
@@ -72,6 +72,10 @@ The diagram is intentionally conceptual. Verify exact foreign keys in model and
 migration files before changing cascades or ownership.
 
 ## Lifecycle Boundaries
+
+### Thesis price pins
+
+A pin inherits ownership from its thesis and also records the company. The JSON anchor retains the price, currency, date, provider, listing, adjustment basis, claim type and observation timestamps. The price record ID is inside this snapshot. A later change to the quote leaves the saved observation intact. The pair `(thesis_note_id, request_id)` is unique. The foreign key to the thesis cascades on deletion. A downgrade drops the pin table and any pins it contains. [Model](../backend/app/models/thesis_note.py) · [Read and write rules](reference/workflows.md#company-price-history-and-thesis-pins)
 
 ### Financial facts
 

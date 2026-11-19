@@ -1,9 +1,11 @@
 # Historical workstream evidence
 
-These are dated research/review receipts from November 2-4, 2026. They remain at
+This index covers the November 2–4 financial reviews and the November 17 adapter integration. The financial receipts remain at
 their original paths because decision registers and source records refer to them.
 The historical companies and scenarios were removed November 5; these receipts
 do not describe the current database or authorize their restoration.
+
+The November 17 adapter batch has its own [verification record](../../adapters/verification.md) and [allocation](../adapters-20261117.tsv). Its source, market, research and integration receipts remain under [adapters-20261117](adapters-20261117/). Later installed proof is linked from [Current State](../../current-state.md#dated-validation).
 
 | Recorded batch | Location | Published artifacts before this index |
 |---|---|---:|

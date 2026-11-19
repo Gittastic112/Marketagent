@@ -7,7 +7,7 @@ dependencies. The design reference is [workstream design](../../workstreams/plan
 
 ## When to use
 
-An explicitly requested parallel batch or an assigned stream in that batch.
+An explicitly requested parallel coding batch or an assigned stream in that batch. For independent read-only ChatGPT Pro reviews, use the [coordination guide](../../workstreams/README.md#four-independent-chatgpt-pro-reviews).
 
 ## When NOT to use
 

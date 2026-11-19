@@ -340,6 +340,8 @@ portfolio smoke. Screenshots and traces belong in output/playwright.
 
 ## Completion and documentation
 
+For documentation-only changes, run both the documentation checker and its regression suite from the repository root. Use the [supported environment](#choose-the-right-environment) if host Python or Git is unavailable. A documentation update needs no rebuild of the normal app and no new data backup. Check a changed release claim against its actual hosted run, and check a changed control name against the owning page.
+
 Report changed files, tests, manual checks, remaining risks and next work.
 Distinguish source checks, image builds, isolated fixtures and genuine-input
 evidence. Keep the full test count in [current state](current-state.md), precise

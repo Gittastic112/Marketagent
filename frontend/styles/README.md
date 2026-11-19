@@ -12,7 +12,7 @@ Its imports define cascade order. Keep that order when changing ownership.
 | [components.css](components.css) | Panels, evidence, tables, forms, buttons, and badges |
 | [briefing.css](briefing.css) | Daily brief, comparisons, citations, and score details |
 | [navigation.css](navigation.css) | Shell refinements, navigation, shared layouts, and focus behavior |
-| [company.css](company.css) | Company workspace, events, setup, and field layout |
+| [company.css](company.css) | Company workspace, price chart and point dialog, events, setup and field layout |
 | [valuation.css](valuation.css) | Drafts, industry mixes, source refresh, outputs, and their breakpoints |
 | [feedback.css](feedback.css) | Route states, saved input basis, search, and loading feedback |
 | [responsive.css](responsive.css) | Final mobile and tablet layout overrides |

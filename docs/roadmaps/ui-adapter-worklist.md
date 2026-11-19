@@ -1,10 +1,10 @@
 # Marketagent UI and adapter worklist
 
-November 18, 2026. The Geist redesign, adapter integration and [next ten repairs](../../data/reviews/review-adapter-workflows-ten-sets-20261118.json) are installed and merged in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20); all seven hosted gates passed. Open **Advanced → Research Lab**. The [release receipt](../../data/reviews/ui-adapter-release-20261118.json) records original-source verification; [Current State](../current-state.md#dated-validation) owns final publication and cleanup. Local uncommitted source and private configuration remain preserved.
+The Geist interface and 22 adapter operations shipped in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20). The company price chart and private thesis pins subsequently shipped in [PR 22](https://github.com/Gittastic112/Marketagent/pull/22). Use **Advanced → Research Lab** for adapter operations and **Companies → Overview → Price history** for chart annotations. [Verification by release](../current-state.md#dated-validation)
 
 ## November 18 handoff for build, UI and data verification
 
-Priorities 1 and 2 are complete for this local release. Priority 3 is complete for the configured, bounded source examples below; unavailable entitlements and OCR assets remain explicit prerequisites in the [limitation ledger](../limitations.md#installed-adapters-and-remaining-source-prerequisites). Do not repeat installation work from the earlier 404 checkpoint.
+Priorities 1 and 2 are complete for this local release. Priority 3 is complete for the configured, bounded source examples below; unavailable entitlements and OCR assets remain explicit prerequisites in the [limitation ledger](../limitations.md#installed-adapters-and-remaining-source-prerequisites). The installation and publication steps for this batch are complete.
 
 | Priority | Verified outcome | Next boundary |
 |---|---|---|
@@ -31,7 +31,7 @@ Use these gates for future releases. The dated table above owns this release's o
 |---|---|---|
 | 1 | **Restore locked dependencies.** Run `npm ci` from `frontend` using Node 24. Build the source-mounted Linux/Python test image. Include the analysis and Camelot profiles in a separate build for optional coverage. | Full frontend tests, TypeScript, both adapter contract drift checks, core backend tests and optional adapter suites pass on this combined source. Record skips by profile. |
 | 2 | **Build and test the release.** Build the frontend and backend from the same tree. Run the existing PostgreSQL concurrency/migration and browser gates in the disposable Compose project. | Sign in at desktop and mobile sizes. Verify both themes and fonts, navigation focus, search in a field and a modal, and a Research Lab run, history and download. Verify a saved memo and a price/FX preview. Check empty, unavailable and Mock Data states. |
-| 3 | **Roll out locally.** Inspect the active Compose project, service selection, mounts and loopback ports. Select versioned frontend/backend images and align any worker that uses the changed backend. Preserve existing service state, volumes and the established recovery set. | Readiness passes, signed-in `/research-lab` reports actual capability states, an owned run reopens, and its downloaded hashes match. Record image IDs and the outcome. No schema change ships in this ZIP. |
+| 3 | **Roll out locally.** Inspect the active Compose project, service selection, mounts and loopback ports. Select versioned frontend/backend images and align any worker that uses the changed backend. Preserve existing service state, volumes and the established recovery set. | Readiness passes, signed-in `/research-lab` reports actual capability states, an owned run reopens, and its downloaded hashes match. Record the image IDs and outcome. For a schema change, verify the actual migration head and preservation of the existing data under the [recovery policy](../operations.md#when-to-make-a-backup). |
 | 4 | **Verify data access.** Run one expressly chosen operation through the installed app for each configured source. Start with existing entitlements. Use read-only provider requests and review the corresponding Processing Run and original evidence. | Record provider, operation, listing or series, timestamps, entitlement, freshness, partial counts and safe failures. A missing key or unavailable feed stays visible. See the per-package cases below. |
 | 5 | **Provision optional local assets.** Pin the FinanceDatabase CSV and its manifest. If OCR is wanted, install the separate Docling interpreter and compatible local model assets. | A peer run rechecks its snapshot hash. Sample scanned pages yield exact source-page candidates within the worker limits. Marker stays unavailable pending a compatible dependency set. |
 
@@ -75,7 +75,7 @@ These project gates already existed when the ZIP arrived. They matter if the goa
 | M09 · Interface and responsiveness | Run the connected desktop/mobile workflows on the combined release, measure page responsiveness and repair confirmed regressions. Include worker status, bounded retries, contract drift and read-path performance. |
 | M10 · Acceptance | Complete the installed checks, restart/retry evidence, five actual business days of scoped research use and final acceptance. Track the separately deferred recovery work in the existing ledger. |
 
-The [combined PR 20](https://github.com/Gittastic112/Marketagent/pull/20) owns publication and exact-head hosted checks for the local review fixes, Geist changes and adapters. Require those checks before merging; earlier publication deferrals are superseded.
+For an independent review of these packages, start from the current published commit and use the [review assignments](../workstreams/README.md). The [release evidence](../current-state.md#dated-validation) distinguishes installed source checks from hosted fixtures.
 
 ## Package reconciliation and verification
 

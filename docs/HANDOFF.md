@@ -1,118 +1,29 @@
-# Agent Handoff
+# Agent handoff
 
 ## Latest source boundary
 
-Company pages now include stored closing prices, dated-source markers and private notes pinned to a specific thesis. The [current state](current-state.md#dated-validation) records the verification boundary. For an independent four-chat review, the optional [Pro review packet](workstreams/four-pro-chats.md) assigns data, calculations, research UX and release safety. Remove this link when retiring the packet.
-
-November 18, 2026. The Geist/PR20 integration and the next ten adapter/workflow repairs are tested, installed and merged in [PR 20](https://github.com/Gittastic112/Marketagent/pull/20). All seven hosted gates passed; `main` remains the default branch. Saved-run validation/history, audited failures, source form scope, candidate links, benchmark display and revision conflict checks are repaired. The [latest receipt](../data/reviews/review-adapter-workflows-ten-sets-20261118.json) records local verification and unchanged data; [Current State](current-state.md#dated-validation) records final publication and cleanup. [Original-source proof](../data/reviews/ui-adapter-release-20261118.json) remains bounded.
-
-> Priorities 1 and 2 are complete; priority 3 has bounded original-source proof for configured peers, SEC, NSE, ALFRED, OpenFIGI and native PDF/Camelot. Finish the held US-action, transcript and OCR cases only when the [listed prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites) are available. Otherwise continue the company-evidence and workflow backlog in the [worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip). Preserve uncommitted source, data and essential recovery material. [PR 20](https://github.com/Gittastic112/Marketagent/pull/20) owns publication and hosted checks for the combined tree. Do not count these checks as actual-use days or legacy recovery acceptance.
-
-The [Compose guide](../docker/README.md) identifies each environment. The [efficiency checkpoint](archive/checkpoints/2026/repository-efficiency-2026-11-11.md)
-retains the scanner, style-ownership, and conservative CI-selection evidence.
-
-## Start a change
-
-Read the nearest AGENTS.md, then the matching domain in the
-[code map](code-map.md). The [documentation index](README.md) assigns one
-current owner per topic. [Execution runbook](execution-runbook.md) owns checks;
-[Operations](operations.md) owns changes to an existing installation.
-Inspect local status before editing and preserve uncommitted work.
-
-## Product boundary
-
-This is local equity-research, valuation, and portfolio software with source
-traceability. Research/demo validation does not establish genuine transaction
-accuracy, complete financial facts, daily-use acceptance, or readiness for
-public hosting. Keep sourced facts, estimates, assumptions, and Mock Data distinct.
-
-[Current State](current-state.md) owns dated validation and delivered behavior.
-The [limitation ledger](limitations.md) owns unresolved product and operating gaps.
-Historical checkpoints retain evidence; they are not a current execution queue.
-
-## Preserve while maintaining
-
-Keep unique data, original assets and reviewed evidence. Apply the November 18
-[essential retention policy](operations.md#essential-retention-policy): at most one
-verified recovery set at rest. A replacement briefly coexists only until verified.
-No routine docs/UI database dumps or permanent rollback stacks. Preserve necessary failure
-evidence; remove identified disposable material under the bounded policy.
-Confirm the actual target before any operational change. Do not reset,
-clean, or broadly stage a checkout to conceal pre-existing work. Cleanup does not
-authorize data ingestion, new AI disclosure, broker activity, or public deployment.
+The November 18 application release is installed locally and merged into `main`. Company pages show stored closing prices, source documents around a move and private notes pinned to a thesis. The previous release installed the Geist interface, Research Lab and the adapter workflow repairs. [Price history release](https://github.com/Gittastic112/Marketagent/pull/22) · [Adapter release](https://github.com/Gittastic112/Marketagent/pull/20) · [Verification and preservation](current-state.md#dated-validation)
 
 ## Next work
 
-November 14: ten bounded slices of P2.3-P5.2 in the
-[research workspace plan](roadmaps/research-workspace-plan.md) add dated source
-review, annual period/basis snapshots, explicit draft readiness, saved-model
-preview and retry-safe version saves, history selection/export, Today review
-filters, thesis selection, holdings research and library/secondary entry points.
-The [ten-set receipt](../data/reviews/research-workspace-ten-sets-20261114.json)
-owns installed image identity, checks, preservation and temporary-resource cleanup.
-Earlier explicit draft/discovery actions and financial promotion guards remain.
-The [dependency follow-up](../data/reviews/dependency-security-20261114.json) records
-patched OpenTelemetry/Soup Sieve, full backend verification and replacement image
-identity, plus the draft-link and thesis-table accessibility repairs. The local
-data and recovery set remain unchanged; PR 17 owns hosted checks.
+| Order | Action | Finish condition |
+|---|---|---|
+| 1. Company evidence (M05) | Work through the remaining annual fields for Apple, NVIDIA, Meta and Alphabet, using original filings and the chosen November 12, 2026 valuation date. The eleven previously held candidates already have dispositions. | Record an exact disclosure, period, units and review decision, or document the specific unresolved component. The [company-by-company ledger](limitations.md#selected-company-review-follow-up) identifies each gap. |
+| 2. Valuation workflow (M06) | Carry selected dated evidence into an explicit draft proposal and add a preview before the first model save. Existing saved-model edits already have a preview and version history. | Reproduce the proposed assumptions from their source revisions, confirm the reviewed calculation and verify a retry-safe save. [Workspace specifications](roadmaps/research-workspace-plan.md#delivery-sequence) |
+| 3. Portfolio and research | Reconcile the example portfolio's flows, FX and benchmark basis. Exercise the path from a dated filing or price move to a thesis decision and, where warranted, a reviewed valuation change. | Record the reconciled example, missing inputs and exact evidence. Extend desktop/mobile checks to the changed workflow. [Product roadmap](roadmaps/product-roadmap.md#immediate-delivery-order) |
 
-November 15: the first ten review repairs are installed and merged in
-[PR 18](https://github.com/Gittastic112/Marketagent/pull/18); all seven hosted checks
-pass. The original [repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
-retains its initial local checkpoint. The [financial integrity follow-up](../data/reviews/review-financial-integrity-ten-sets-20261115.json)
-records the next ten fixes: unit/percentage semantics,
-valuation validation and financial-sector context, duration/WACC bounds, and
-portfolio corrections, snapshot currency, benchmark freshness and unknown weights.
-Those ten are installed and merged in [PR 19](https://github.com/Gittastic112/Marketagent/pull/19).
-The [release checkpoint](archive/checkpoints/2026/review-financial-integrity-release-2026-11-15.md)
-supersedes the JSON checkpoint's pending release status with final verification and cleanup evidence.
-The requested Today redesign brings the overview before a six-item review queue,
-places the brief and active alerts before it, and folds secondary activity into disclosures.
-The [review ledger](limitations.md#returned-code-review) owns the remaining work.
-The next ten repairs are installed locally in the [evidence/workflow receipt](../data/reviews/review-evidence-workflows-ten-sets-20261116.json):
-A3-9, A1-F8 through F12 and A2-4 through A2-7. Local and browser checks pass.
-The latest release receipt supersedes the original publication deferral. The remaining nine R7/R8
-repairs and D1/D2 are installed with verification in the [research/recovery receipt](../data/reviews/review-research-recovery-nine-sets-20261116.json).
-Populated legacy conversion remains held.
-The [intake receipt](../data/reviews/code-review-intake-20261115.json) stays frozen;
-raw reports remain unchanged and ignored, with private chat links excluded.
-Preserve normal data and the essential recovery set. The verified current recovery set now supersedes the earlier migration
-copy; no actual-use or legacy-conversion acceptance points are created.
-Reuse the active Compose project; remove temporary build resources under the retention policy.
-After the repair gates, resume dated-source proposals, initial-model preview,
-wider period support and P6/P7 in the research workspace plan.
+Use the [adapter worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) when a task needs a feed or a library. Six bounded original-source or pinned-reference examples have evidence. US corporate actions, transcript corrections and scanned-page OCR have [specific prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites).
 
-November 12: [selected financial review](archive/checkpoints/2026/handoff-review-2026-11-12.md)
-adds reviewed three-year histories for NVIDIA, Meta and Alphabet while preserving
-the existing Apple model and research. Financial completeness remains open.
-The candidate-link and financial-overview repairs are installed and verified in
-the signed-in browser. The active Compose project resolves service selection.
-The [authorized Docker cleanup](../data/reviews/docker-storage-cleanup-20261112.json)
-retains four running containers and verified recovery images, with original data,
-source evidence and backups preserved separately; all 110 tables are unchanged.
-Reuse that project for ordinary updates instead of accumulating stopped stacks. Five more
-historical facts are reviewed. The broader UI repair pass is installed: main pages
-were checked at desktop and mobile sizes, with focused evidence-link, form and
-financial-table checks. Saved records remain unchanged through that UI pass.
-The [financial completion review](../data/reviews/financial-review-completion-20261112.json)
-resolves all eleven selected holds and adds 143 precisely scoped historical facts
-and calculations. Reviewed history and direct source links are installed, including
-a fix for calculation records in the history response. Existing source values and
-saved models are preserved. The [five-input review](../data/reviews/financial-five-input-review-20261112.json)
-adds 47 source-backed records and resolves twelve annual values across four inputs.
-Apple/NVIDIA now have 10/13 source-linked inputs per year; Meta/Alphabet remain 8/13.
-All prior records are preserved. Selected candidate review is finished; remaining
-source gaps and dated valuation methodology requirements are explicit in the
-[current follow-up](limitations.md#selected-company-review-follow-up).
-The [later-source review](../data/reviews/financial-source-followup-20261112.json)
-preserves four more filings without backdating 2026 issuances or annualizing partial-year expense.
-Document detail pages now link the original source even before section parsing.
-The user chose November 12, 2026 as the valuation date. The [dated input review](../data/reviews/valuation-inputs-asof-20261112.json)
-adds eight original filings and four company research notes with 23 calculations.
-Source gaps and a Meta preferred-price conflict remain explicit; no personal decision is pending.
-Annual facts and saved valuation inputs remain unchanged.
+M01 through M04 have 40 accepted gate points. M05 is the first open gate. Five business days of actual research use and final user acceptance remain open. [Milestone board](roadmaps/completion-tracker.md#milestone-board)
 
-Use the [roadmap](roadmaps/product-roadmap.md) for priority and the
-[ordered handoff](limitations.md#ordered-operator-handoff) for prerequisites.
-Structural cleanup does not advance product acceptance gates. Source completeness
-and actual-use evidence cannot be supplied by automated tests.
+## Start a change
+
+1. Inspect local Git status. A working checkout can contain earlier edits beyond its branch tip. Resolve the exact GitHub commit for an independent review.
+2. Read the nearest AGENTS.md, then the owning route, service, model, UI and tests listed in the [code map](code-map.md). For parallel work, choose the [review or implementation workflow](workstreams/README.md).
+3. Use the [execution runbook](execution-runbook.md) for tests. Distinguish inspected source, isolated Mock Data, a signed-in local observation and original-source evidence when reporting results.
+
+## Installed data and recovery
+
+Use the existing Compose project and its verified image and volume selections. Keep the live database, original assets, reviewed evidence and one verified recovery set at rest. A documentation change needs no dump or application rebuild. Use the [installed-stack procedure](operations.md#select-the-installed-local-stack) and [retention policy](operations.md#essential-retention-policy).
+
+The [documentation index](README.md) locates the user guide and technical references. The [limitation ledger](limitations.md) owns open product and operating boundaries. Earlier releases and their receipts are linked from [Current State](current-state.md).

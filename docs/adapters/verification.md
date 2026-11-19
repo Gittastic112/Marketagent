@@ -3,7 +3,7 @@
 Batch: November 17, 2026. Branch: `feat/research-adapters-20261117`.
 Baseline: `371b58c02cfd2b80429f28dbc13629165b5e392d`.
 
-This is source-level implementation evidence. It does not certify an existing installation, a public deployment, paid-provider entitlements or real OCR inference. The [implementation guide](README.md) describes setup and boundaries; [limitations](../limitations.md) remains the current limitations ledger.
+This is the dated verification record for the packaged adapter branch. Its local and hosted results below retain their original scope. The subsequent installed and merged releases are recorded in [Current State](../current-state.md#dated-validation). The [adapter guide](README.md#verification-and-remaining-limits) identifies which original-source cases were later verified.
 
 ## Results
 
@@ -118,13 +118,11 @@ Next was upgraded from 16.4.1 to 16.4.5 after the host build reported its upstre
 
 ## Remaining verification
 
-| Gate | Required evidence |
+| Earlier branch gate | Subsequent evidence or outstanding input |
 |---|---|
-| Docker release baseline | Build the normal and optional-profile images; execute existing isolated backend, frontend and PostgreSQL migration gates |
-| Browser workflows | Run the retained Mock Data harness and application workflows in a permitted Chromium environment, including keyboard use, responsive layout and accessibility |
-| Actual installed app | Configure selected dependencies/providers, open Research Lab, inspect real capabilities and complete explicit end-to-end operations |
-| Paid and public provider connectivity | Verify configured credentials, entitlements, limits and real company/listing responses through the app transport |
-| OCR | Provision compatible local Docling assets and run representative documents within the stated resource limits; Marker remains unavailable until the upstream dependency conflict is resolved |
-| Hosted CI | The packaged head passed as recorded above. Run equivalent gates for the combined source. |
+| Docker, migrations and hosted CI | The integrated [PR 20 run](https://github.com/Gittastic112/Marketagent/actions/runs/44407169031) passed the full gates. The later [price-chart release](https://github.com/Gittastic112/Marketagent/actions/runs/44419018336) also passed. |
+| Browser and installed app | The [installation receipt](../../data/reviews/ui-adapter-release-20261118.json) records responsive/theme checks, Research Lab and source runs. Hosted browser tests use isolated Mock Data. |
+| Provider connectivity | Six installed examples have original-source or pinned-reference evidence. Paid US actions and a corrected transcript still require suitable access and source examples. |
+| OCR | Compatible isolated runtime, approved local assets and a genuine scanned page remain prerequisites. The native PDF/Camelot result concerns selected table cells. |
 
-No deployment, main-branch merge, portfolio change, evidence approval, trade or external AI request is part of this batch. The remaining product roadmap is listed in the [implementation guide](README.md#remaining-roadmap-work).
+Use the [limitation ledger](../limitations.md#installed-adapters-and-remaining-source-prerequisites) for current holds and the [implementation worklist](../roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) for what to build next.

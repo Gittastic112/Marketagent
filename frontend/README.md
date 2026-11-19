@@ -23,7 +23,7 @@ events, alerts, thesis notes, valuation workflows, portfolios, market/macro
 context, research sessions, narratives, search, Data Health, sources, and
 settings. Daily Brief includes private text/PDF intake with explicit AI scans;
 company/portfolio research cards retain filing sources and Comps opens the
-reviewed-peer workspace. These do not imply licensed live company/comps feeds.
+reviewed-peer workspace. The [company price chart](components/company-price-chart.tsx) shows backend-supplied moves, dated sources and private thesis notes. See the [chart workflow](../docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) and [browser regression](e2e/price-timeline.spec.ts).
 Capability status and limitations live in
 [`../docs/roadmaps/feature-register.md`](../docs/roadmaps/feature-register.md).
 

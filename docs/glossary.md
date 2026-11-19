@@ -8,7 +8,7 @@ This glossary explains the technical and financial terms used in the Market Inte
 The part of the app you see in your web browser (built with Next.js). It displays dashboards, buttons, and charts.
 
 ### Backend
-The hidden "brain" of the app (built with Python FastAPI). It processes data, scores events, and talks to the database.
+The Python/FastAPI service that reads and writes research records, processes evidence and runs the financial calculations.
 
 ### API (Application Programming Interface)
 The bridge that allows the Frontend to talk to the Backend, or the Backend to talk to external services (like the SEC).
@@ -27,6 +27,10 @@ testing; Alembic does not guarantee safety or prevent data loss.
 
 ---
 
+## Reading a company price chart
+
+**Stored close** is the provider's end-of-day price for one listing and date. **Adjustment basis** describes how the provider treats events such as splits. **Dated source** is a document or linked event around a chart point, with its own publication date. **Thesis pin** is a private annotation attached to the observation you reviewed. [Chart walkthrough](user-guide.md#inspect-a-price-move-and-pin-a-thesis-note)
+
 ## Infrastructure
 
 ### Docker
@@ -34,10 +38,10 @@ A tool that packages software into containers. It improves reproducibility;
 host architecture, configuration, networking and stored data can still differ.
 
 ### Docker Compose
-A tool that lets you start the whole system (Frontend, Backend, Database) with a single command: `docker compose up`.
+A tool that groups services into a named project. The normal app, disposable tests and recovery rehearsals use different configurations. [Compose guide](../docker/README.md)
 
 ### Container
-A running instance of a Docker image. Think of it as a mini virtual machine dedicated to running just one part of the app.
+An instance of an image, such as the frontend or database service. A stopped container can still occupy disk. The app's persistent records live in its database volume.
 
 ### Environment Variable (.env)
 A process setting, sometimes loaded from a local .env file. Some values are

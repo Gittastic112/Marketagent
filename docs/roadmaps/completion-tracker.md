@@ -1,16 +1,8 @@
 # Completion tracker: local research/demo release v1
 
-Created October 10, 2026. **Accepted milestones: 4/10 (40%). Next: M05.**
-This is a new acceptance baseline, not a claim that the existing app is 0% built.
-Much of the implementation exists; historical tests do not close today's gates.
+**4 of 10 milestones accepted. M05 is next.** The 40 accepted points measure completion of the agreed gates. The November 18 application release added price history and thesis pins. Its tests supply technical workflow evidence. Financial coverage and actual-use acceptance are still open. [Current state](../current-state.md#dated-validation)
 
-**Current data boundary, November 9:** four selected technology companies,
-hypothetical holdings, and Sample Apple research are authorized. The sourced Apple
-valuation is a separate Estimate. The historical 12-company universe and eleven
-scenarios were removed November 5; counts and model receipts below describe that
-history, not current records or permission to restore them. PR9 is merged.
-The [current state](../current-state.md) owns dated product evidence. Missing
-disclosures, actual-use days, and final acceptance remain open.
+The current scope covers four selected technology companies, hypothetical holdings and labeled Sample research. The sourced Apple valuation is a separate Estimate. Historical records below describe the earlier 12-company scope and the eleven scenarios removed November 5. [Scope and prerequisites](../limitations.md#confirmed-scope-and-input-checklist)
 
 ## What 100% means
 
@@ -107,12 +99,12 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M02 | 20% | Clear code and folder ownership | M01 | Accepted October 11 | [Ownership and validation checkpoint](../archive/checkpoints/2026/m02-ownership-2026-10-11.md) |
 | M03 | 30% | Reliable recovery and local security | M02 | Accepted November 2 for research/demo scope | [Rotation and scoped acceptance](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Accepted November 2; prerequisite closed | [Acceptance basis](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
-| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | Historical scenarios approved, then removed; complete issuer facts remain open | [Decision log](review-decisions.md), [applied scenarios](../../data/reviews/historical-scenario-application-20261103.json) |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | Eleven historical models verified, then removed; complete company basis remains open | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
+| M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | First open gate. Four companies have three reviewed annual periods each. Source gaps and eligible industry allocation remain. | [Missing fields by company](../limitations.md#selected-company-review-follow-up), [decisions](review-decisions.md) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | Saved-model previews and version history are available. The issuer basis and first-model preview remain open. | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Existing-data audit repairs observed defects; M08 prerequisite open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [prior remote matrix](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
-| M10 | 100% | Accepted local research/demo release | M09 | Technical preparation underway; prerequisites open | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
+| M10 | 100% | Accepted local research/demo release | M09 | Installed software has technical verification. Reviewed-input freeze, actual research-use days and final acceptance remain open. | [Recovery and release preparation](../archive/checkpoints/2026/release-readiness-2026-10-17.md) |
 
 October 12 recovery and coverage evidence remains linked in the preceding
 checkpoints. The [October 13 connected-workflow checkpoint](../archive/checkpoints/2026/m05-m09-workflows-2026-10-13.md)
@@ -476,6 +468,8 @@ depends on M06 and earns no cumulative acceptance points yet.
 
 ## M08: connected daily research and review
 
+The [company chart and thesis pin workflow](../user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) adds a second entry into the review loop. The dated [runtime and browser checks](../current-state.md#dated-validation) support this feature. The M07 prerequisite and actual-use record retain their own gates.
+
 Owners: Daily Brief, private-source comparison, analyst receipts, evidence/AI;
 [Workstream W1](../workstreams/plan.md#5-w1-reviewed-private-evidence-in-daily-brief).
 
@@ -556,14 +550,7 @@ with measured performance and no unresolved release-blocking regression.
 
 Owners: coordinated release lane, current-state/handoff/ledger and operations runbook.
 
-The October 17 request to finish remaining work authorizes release preparation.
-Fresh install/concurrent-write recovery passed before the user requested no more
-disposable datasets. A new populated-backup rehearsal is prepared but not run;
-normal data must not be reset to substitute for that test. The technical local
-rollout is verified, but reviewed-input freeze, actual-use days and final acceptance
-remain open. The user confirms zero actual-use days and asks for agent function
-testing; those tests do not satisfy M10-04. Off-device recovery and the additional populated-backup rehearsal are
-deferred for this research/demo profile. Future use is never inferred.
+The local rollout and fresh-install exercises have technical verification. The November 18 backup check restored the current-format pre-change dump and compared table and original-asset contents. Upgrading an older populated schema in a separate environment and recovering off-device remain deferred for this release. The reviewed-input freeze, five actual research-use days and final acceptance are open. The last user-reported count was zero. [Recovery and installed verification](../current-state.md#dated-validation)
 
 - [x] M10-01 Freeze reviewed source/dependency identity and rerun clean builds,
   full source/type/contract suites, migrations, dependency scans and browser gates.

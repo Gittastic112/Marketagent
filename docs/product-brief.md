@@ -16,7 +16,7 @@ coverage and acceptance.
 
 1. Inspect what changed in the dashboard and Daily Brief.
 2. Open the underlying source and review its identity, date, scope, and quality.
-3. Review financial candidates and record a thesis or interpretation.
+3. Inspect a stored closing-price move and nearby filings, or review a financial candidate. Pin your interpretation to the exact observed close on a private thesis. [Price history walkthrough](user-guide.md#inspect-a-price-move-and-pin-a-thesis-note)
 4. Make explicit valuation assumptions, calculate, and save a version.
 5. Inspect affected holdings and the basis of displayed portfolio results.
 

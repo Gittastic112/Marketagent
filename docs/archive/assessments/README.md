@@ -7,6 +7,8 @@ detail that drifted.
 
 Use the active documents at `../../` for present behavior.
 
+The [November 17 open-source research report](github-reuse-research-2026-11-17.md) preserves the supplied comparison of external projects. The [adapter worklist](../../roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) identifies the parts actually implemented and the evidence still required.
+
 November 10 repository reconciliation preserves:
 
 - [Previous limitations ledger](limitations-before-2026-11-10.md), including exact historical exceptions.

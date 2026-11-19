@@ -45,7 +45,7 @@ Audit, clean, archive, and relink project documentation without losing useful co
 5. Keep the roadmap and feature register as product planning owners. An explicitly
    requested batch plan owns assignments/acceptance, not a competing product status.
 6. Update `docs/README.md` and any direct references.
-7. Run `python3 scripts/check_docs.py`.
+7. Run `python3 -m unittest scripts.test_check_docs` and `python3 scripts/check_docs.py`. Check published-status claims against the actual application commit and CI run. Keep isolated test results, original-source coverage and user-reported use separate.
 8. Scan active docs for old paths and stale claims.
 9. Record validation scope precisely: compile, unit, container, browser, and
    manual checks are different evidence. Keep a full-baseline count until the

@@ -14,9 +14,11 @@ trading. [Current status and dated validation](docs/current-state.md) ·
 | Workflow | What the application supports |
 |---|---|
 | Review the day | Inspect source-linked events, portfolio exposure, and a deterministic Daily Brief with visible coverage limits |
-| Research a company | Store filings and private research, review extracted financial candidates, and maintain thesis notes with evidence |
+| Investigate a stock move | Open a company’s closing-price chart, inspect filings around a marked date and pin a private note to the original close on your thesis. [Walkthrough](docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
+| Review a company | Read source documents, review extracted financial candidates and follow the evidence used in a thesis or model |
 | Build a valuation | Review inputs, save versioned DCF models, and inspect scenarios, sensitivities, reverse DCF, and reviewed peer comparisons |
 | Track a portfolio | Record activity and inspect dated snapshots, returns, attribution, and risk with missing-input warnings |
+| Run a research experiment | Use supplied returns for allocation, simulations and reports, or inspect candidate peers in Research Lab. [Adapter guide](docs/adapters/README.md) |
 | Inspect data quality | See provider configuration, processing failures, freshness, and review state in Data Health |
 
 Calculations run in the backend. Optional AI can propose interpretations through
@@ -59,6 +61,8 @@ local services. [Architecture](docs/architecture.md) ·
 | [data/](data/README.md) | Versioned runtime references, contract fixtures, and review receipts |
 | [damodaran_knowledge_base_v1/](damodaran_knowledge_base_v1/INDEX.md) | Valuation doctrine and the immutable source corpus |
 | [docs/](docs/README.md) | Product, architecture, setup, operations, and development references |
+
+For day-to-day use, start with the [research guide](docs/user-guide.md). For project status and the next work, start with the [handoff](docs/HANDOFF.md). For an independent code review, see [review coordination](docs/workstreams/README.md).
 
 Use the [code map](docs/code-map.md) to locate a feature's owning files, or the
 [route inventory](docs/route-inventory.md) to find a screen. The
