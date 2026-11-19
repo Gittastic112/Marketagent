@@ -22,7 +22,7 @@ The four reviews examined the application released in [PR 22](https://github.com
 | 14 | Commit a thesis change and its accumulated drift score together, under the owning thesis lock. | PostgreSQL accepts two competing updates exactly once and rolls both writes back on a forced storage failure. A second owner is denied access. |
 | 15 | Treat malformed or unreadable successful JSON responses as unconfirmed writes. Preserve form input and allow deliberate bodyless success. | Server transport tests cover malformed 200/201, rejected response streams, valid JSON and 204. Uncertain writes issue one request. |
 | 16 | Display document, sections, candidate and reference load states independently, with a retry and retained source context. | Server page tests distinguish valid empty results, partial failure, denied access and missing documents. |
-| 17 | Return from a thesis to its original private price anchor and show a later same-date correction separately. | A USD 95 pin reopens alongside the corrected USD 98 close. The corrected point has no original pin. Owner checks, matching request IDs and concurrent pin retries are exercised. |
+| 17 | Return from a thesis to its original private price anchor and show a later same-date correction separately. | The signed-in flow opens the stored filing and verifies its original-source destination before pinning. A USD 95 pin reopens alongside the corrected USD 98 close. The corrected point has no original pin. Owner checks, matching request IDs and concurrent pin retries are exercised. |
 | 18 | Use a native modal for Evidence Trail, with keyboard focus contained and restored to the opener. | Signed-in Firefox at 1440×900 and 390×844 checks opening, Tab, Shift+Tab, Escape and focus return. |
 | 19 | Accept fractional drift scores on the thesis form using its existing numeric contract. | Firefox submits 0.25 by keyboard on desktop and mobile, then rereads both the saved change and the updated thesis total. |
 
@@ -30,6 +30,7 @@ The four reviews examined the application released in [PR 22](https://github.com
 
 | Check | Result and scope |
 |---|---|
+| Core backend | The clean-checkout release job on the initial PR revision passed 2,272 tests with 45 profile-specific skips. The PostgreSQL and optional-profile checks run separately. |
 | PostgreSQL preservation and concurrency | 28 passed, zero skipped, against disposable PostgreSQL. Includes preserved predecessor rows, table locks, competing saves, pin idempotency and chronological purchases. |
 | Optional source, market and research adapters | 139 passed with the pinned packages and network-disabled fixtures. These tests overlap the core backend suite. |
 | Frontend | 425 passed, zero skipped. TypeScript and the generated adapter interface check passed. |

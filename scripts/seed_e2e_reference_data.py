@@ -430,6 +430,7 @@ def _ensure_chart_fixture(db) -> None:
     db.flush()
     db.add(RawDocument(company_id=company.id, source_id=source.id, title="Mock Data earnings filing",
                        document_type="sec_filing_metadata", published_at=datetime(2026, 1, 6, tzinfo=UTC),
+                       url="https://example.invalid/mock-data/chart-filing",
                        content_hash=sha256(b"e2e-chart-source").hexdigest()))
 
 

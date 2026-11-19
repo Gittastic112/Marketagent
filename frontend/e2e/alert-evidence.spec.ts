@@ -83,27 +83,32 @@ test("alert review exposes complete and missing evidence states", async ({ page 
   await expect(page.getByRole("main").getByText("complete evidence", { exact: true })).toBeVisible();
   await expect(page.getByRole("main").getByText("Source Summary", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "View Evidence Trail" }).click();
+  const opener = page.getByRole("button", { name: "View Evidence Trail" });
   const evidenceDialog = page.getByRole("dialog");
-  await expect(evidenceDialog).toBeVisible();
-  await expect(evidenceDialog.getByText(`Evidence Source ${unique}`, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText(`Evidence Filing ${unique}`, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText(evidenceQuote, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText("span-level locator", { exact: true })).toBeVisible();
+  const close = evidenceDialog.getByRole("button", { name: "Close", exact: true });
+  const originalSource = evidenceDialog.getByRole("link", { name: "Open original", exact: true });
   for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
     await page.setViewportSize(viewport);
-    const close = evidenceDialog.getByRole("button", { name: "Close", exact: true });
+    await opener.focus();
+    await opener.press("Enter");
+    await expect(evidenceDialog).toBeVisible();
+    await expect(evidenceDialog.getByText(`Evidence Source ${unique}`, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText(`Evidence Filing ${unique}`, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText(evidenceQuote, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText("span-level locator", { exact: true })).toBeVisible();
+    await expect(originalSource).toBeVisible();
     await expect(close).toBeFocused();
     await page.keyboard.press("Shift+Tab");
-    expect(await evidenceDialog.evaluate(el => el.contains(el.ownerDocument.activeElement))).toBe(true);
+    await expect(originalSource).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(close).toBeFocused();
     await page.keyboard.press("Escape");
-    await expect(page.getByRole("button", { name: "View Evidence Trail" })).toBeFocused();
-    await page.keyboard.press("Enter");
+    await expect(evidenceDialog).toHaveCount(0);
+    await expect(opener).toBeFocused();
   }
-  await evidenceDialog.getByRole("button", { name: "Close" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  await opener.press("Enter");
+  await close.click();
+  await expect(evidenceDialog).toHaveCount(0);
 
   await page.goto("/alerts");
   const row = page.getByRole("row").filter({ hasText: `Review margin evidence ${unique}` });

@@ -21,6 +21,11 @@ test("inspect a marked close, pin to a private thesis and reopen its chart", asy
     const details = page.getByRole("dialog");
     await expect(details.getByText(/-10% from the stored close/)).toBeVisible();
     await expect(details.getByRole("link", { name: "Mock Data earnings filing" })).toBeVisible();
+    await details.getByRole("link", { name: "Mock Data earnings filing" }).click();
+    await expect(page.getByRole("heading", { name: "Mock Data earnings filing" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Open original source" })).toHaveAttribute("href", "https://example.invalid/mock-data/chart-filing");
+    await page.goto(`/companies/${company.id}#price-history`);
+    await chart.getByLabel("Key moments").selectOption("2026-01-06");
     await details.getByLabel("Attach to thesis").selectOption(String(note.id));
     await details.getByLabel("Note on this close").fill("Mock Data check the next disclosure");
     await details.getByRole("button", { name: "Pin to thesis" }).click();
