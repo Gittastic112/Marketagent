@@ -28,15 +28,17 @@ The four reviews examined the application released in [PR 22](https://github.com
 
 ## Checks run on the release candidate
 
+[PR 24](https://github.com/Gittastic112/Marketagent/pull/24) merged at [`e57d50f`](https://github.com/Gittastic112/Marketagent/commit/e57d50f0bba1c5f03a5e97dc8a759dd2b11e7f78). All seven [pull-request checks](https://github.com/Gittastic112/Marketagent/actions/runs/44495900182) passed. The separate [main-branch run](https://github.com/Gittastic112/Marketagent/actions/runs/44497683321) records the checks on the merge commit.
+
 | Check | Result and scope |
 |---|---|
-| Core backend | The clean-checkout release job on the initial PR revision passed 2,272 tests with 45 profile-specific skips. The PostgreSQL and optional-profile checks run separately. |
+| Core backend | The final clean-checkout release and a separate local run each passed 2,272 tests with 45 profile-specific skips. The PostgreSQL and optional-profile checks run separately. |
 | PostgreSQL preservation and concurrency | 28 passed, zero skipped, against disposable PostgreSQL. Includes preserved predecessor rows, table locks, competing saves, pin idempotency and chronological purchases. |
 | Optional source, market and research adapters | 139 passed with the pinned packages and network-disabled fixtures. These tests overlap the core backend suite. |
 | Frontend | 425 passed, zero skipped. TypeScript and the generated adapter interface check passed. |
 | Recovery | 38 backup workflow and recovery metadata tests passed against disposable resources. |
 | Packaging | The standalone frontend was built from its checked-in Dockerfile. The registry refused a fresh pull of the pinned backend base. The local backend package therefore reused the installed immutable runtime and its identical dependency locks with the reviewed application source. |
-| Browser | Signed-in Firefox on disposable PostgreSQL covered alert evidence retention, focus in both directions, corrected price pins and fractional thesis drift. The mobile detail-page audit also identified an undersized link to edit a selected thesis. That action now uses the existing button-sized link style. |
+| Browser | All 92 standard hosted workflows passed. The three opt-in browser workflows passed separately with the isolated Mock Data provider, including delayed delivery and a read-only check after a lost response. Signed-in Firefox on disposable PostgreSQL covered alert evidence retention, focus in both directions, corrected price pins and fractional thesis drift. The mobile detail-page audit also identified an undersized link to edit a selected thesis. That action now uses the existing button-sized link style. |
 
 ## Reproduction and interpretation
 
