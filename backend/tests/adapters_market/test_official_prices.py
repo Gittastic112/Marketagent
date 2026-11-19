@@ -112,6 +112,7 @@ def test_massive_actions_current_endpoint_and_distinct_dates():
     assert result.coverage=="complete" and len(result.actions)==2
     assert client.calls[0][0].endswith("/stocks/v1/splits")
     assert result.actions[0].new_shares==4
+    assert result.actions[0].exchange is None and any("historical listing venue" in w for w in result.actions[0].warnings)
     assert result.actions[1].announcement_date != result.actions[1].ex_date
     assert result.actions[1].publication_time is None
 
@@ -124,3 +125,12 @@ def test_factory_explicit_configuration_has_no_fallback(monkeypatch):
         factory.get_market_data_provider()
     assert exc.value.code == "PROVIDER_NOT_CONFIGURED"
     assert isinstance(factory.get_market_data_provider("fmp"),FMPProvider)
+
+def test_massive_action_rejects_contradictory_vendor_venue():
+    split = {"ticker": "MOCK", "primary_exchange": "XNYS", "execution_date": "2025-01-02",
+             "split_from": 1, "split_to": 2, "adjustment_type": "forward_split"}
+    client = MockTransport([{"status": "OK", "results": [split]}, {"status": "OK", "results": []}])
+    result = asyncio.run(MassiveProvider("key", transport=client).get_actions(AdapterActionRequest(
+        **IDENTITY, start_date="2025-01-01", end_date="2025-01-05")))
+    assert not result.actions and result.coverage == "partial"
+    assert result.gaps[0].code == "PROVIDER_IDENTITY_MISMATCH"

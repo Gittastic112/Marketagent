@@ -8,6 +8,8 @@ Each chat returns findings with a commit permalink, observed or code-traced beha
 
 The four-chat packet is optional and can be deleted after the round. Remove its link from this page at the same time. The product roadmap, application and local workstream rules are independent of that packet.
 
+The [November 19 integration record](../archive/checkpoints/2026/integration-review-2026-11-19.md) records the 19 findings from the first review, their regression coverage and the remaining judgment calls. Start the next round from the new published commit so the four chats can check the repairs against those examples.
+
 ## Parallel local implementation
 
 For a batch explicitly assigned to local workers, use the [workstream scope index](plan.md), an exact edit allocation and one integration owner. Reserve shared contracts, migrations and central documents for that owner. Use isolated tests for writers and one normal installation for the verified result. The [runbook](../execution-runbook.md#parallel-workstream-checks) covers path checks and environment isolation.

@@ -1,4 +1,4 @@
-# Deterministic backend tests only. No normal database, credentials, network or ports.
+# Isolated unit and type checks with local fixtures and no published ports.
 name: market-intelligence-tests
 services:
   backend-tests:
@@ -18,3 +18,14 @@ services:
       - ./scripts:/workspace/scripts:ro
       - ./data:/workspace/data:ro
     command: pytest -q -p no:cacheprovider backend/tests
+
+  frontend-tests:
+    build:
+      context: ./frontend
+      target: builder
+    network_mode: none
+    environment:
+      REPOSITORY_ROOT: /repository
+    volumes:
+      - .:/repository:ro
+    command: ["sh", "-ec", "npm test && npm run typecheck"]

@@ -3,6 +3,7 @@ import { test } from "node:test";
 
 import {
   buildAlertPayload,
+  buildAlertUpdatePayload,
   buildAlertReviewPayload,
   buildCompanyPayload,
   buildEventPayload,
@@ -475,4 +476,12 @@ test("market price payload converts numeric fields and uppercase strings", () =>
     currency: "USD",
     as_of_date: "2026-05-28"
   });
+});
+
+test("editing a title omits missing evidence and relationship controls and preserves explicit clears", () => {
+  const data = new FormData();
+  data.set("title", "Revised title");
+  assert.deepEqual(buildAlertUpdatePayload(data), {title: "Revised title"});
+  data.set("event_id", ""); data.set("evidence", "");
+  assert.deepEqual(buildAlertUpdatePayload(data), {title: "Revised title", event_id: null, evidence: null});
 });

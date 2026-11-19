@@ -3,7 +3,7 @@ from datetime import timedelta
 from urllib.parse import parse_qs, quote, urlsplit
 from zoneinfo import ZoneInfo
 
-from app.providers.market_data.parsing import (epoch_time, fail, integer, iso_date, number,
+from app.providers.market_data.parsing import (EXCHANGES, epoch_time, fail, integer, iso_date, number,
     prior_date_window, unique_points, validate_listing, validate_request)
 from app.providers.market_data.transport import AdapterTransport, provider_error, response_hash
 from app.schemas.data_adapters import (AdapterActionRequest, AdapterActionsResult, AdapterCoverageGap,
@@ -159,9 +159,15 @@ class MassiveProvider(MarketDataProvider):
                         day = iso_date(row.get(date_key), self.provider_name)
                         if not request.start_date <= day <= request.end_date:
                             fail(self.provider_name, "PROVIDER_DATE_MISMATCH")
+                        venue = row.get("primary_exchange") or row.get("exchange")
+                        if venue is not None:
+                            venue = EXCHANGES.get(str(venue).upper())
+                            expected = EXCHANGES.get(request.exchange) if request.exchange else None
+                            if not venue or (expected and venue != expected):
+                                fail(self.provider_name, "PROVIDER_IDENTITY_MISMATCH")
                         kind = "bonus" if action_type == "split" and row.get("adjustment_type") == "stock_dividend" else action_type
                         actions.append(CorporateActionEvidence(provider=self.provider_name, provider_record_id=row.get("id"),
-                            ticker=request.ticker, market=request.market, exchange=request.exchange, action_type=kind,
+                            ticker=request.ticker, market=request.market, exchange=venue, action_type=kind,
                             description=str(row.get("adjustment_type") or row.get("distribution_type") or action_type),
                             ex_date=day if action_type == "dividend" else None,
                             execution_date=day if action_type == "split" else None,
@@ -172,7 +178,8 @@ class MassiveProvider(MarketDataProvider):
                             currency=row.get("currency"), old_shares=number(row.get("split_from"), self.provider_name, optional=True, positive=True),
                             new_shares=number(row.get("split_to"), self.provider_name, optional=True, positive=True),
                             observed_at=observed, source_response_hash=response_hash(data), source_locator=f"$.results[{i}]",
-                            warnings=["Declaration date is not proven provider-availability time. Action evidence is not applied to holdings."]))
+                            warnings=["Declaration date is not proven provider-availability time. Action evidence is not applied to holdings.",
+                                *(["The action record does not identify its historical listing venue."] if not venue else [])]))
             except MarketDataProviderError as exc:
                 gaps.append(AdapterCoverageGap(start_date=request.start_date, end_date=request.end_date,
                     code=exc.code, retryable=exc.retryable))

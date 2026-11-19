@@ -175,6 +175,20 @@ export function buildAlertPayload(formData: FormData): JsonPayload {
   };
 }
 
+export function buildAlertUpdatePayload(formData: FormData): JsonPayload {
+  const patch: JsonPayload = {};
+  for (const field of ["event_id", "company_id"]) {
+    if (formData.has(field)) patch[field] = optionalNumber(formData, field);
+  }
+  for (const field of ["alert_type", "severity", "title", "confidence_bucket", "review_status"]) {
+    if (formData.has(field)) patch[field] = requiredString(formData, field);
+  }
+  for (const field of ["summary", "why_it_matters", "what_changed", "evidence", "review_notes"]) {
+    if (formData.has(field)) patch[field] = optionalString(formData, field);
+  }
+  return patch;
+}
+
 export function buildAlertReviewPayload(formData: FormData): JsonPayload {
   return {
     review_status: requiredString(formData, "review_status"),

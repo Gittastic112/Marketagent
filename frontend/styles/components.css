@@ -480,3 +480,5 @@ button:disabled {
 .evidence-row-review .evidence-row-jump { width: 6rem; }
 .evidence-row-selected { outline: 2px solid var(--accent, currentColor); outline-offset: -2px; }
 .evidence-row-review td ul { padding-left: 1rem; margin: 0; }
+
+.evidence-trail-modal::backdrop { background: rgba(15, 23, 42, 0.34); }

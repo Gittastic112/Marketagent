@@ -1,7 +1,7 @@
 "use client";
 
 import { ExternalLink, FileText, ShieldCheck, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   DataFreshnessIndicator,
@@ -41,6 +41,8 @@ export function EvidenceTrailDrawer({
   isOpen,
   onClose,
 }: EvidenceTrailDrawerProps) {
+  const dialog = useRef<HTMLDialogElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
   const [trail, setTrail] = useState<EvidenceTrail | null>(null);
   const [meta, setMeta] = useState<ApiMeta | undefined>();
   const [loading, setLoading] = useState(false);
@@ -87,31 +89,33 @@ export function EvidenceTrailDrawer({
 
   useEffect(() => {
     if (!isOpen) return;
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+    const element = dialog.current;
+    const trigger = document.activeElement;
+    element?.showModal();
+    closeButton.current?.focus();
+    return () => {
+      element?.close();
+      if (trigger instanceof HTMLElement && trigger.isConnected) trigger.focus();
     };
-    window.addEventListener("keydown", handleEscape);
-    return () => window.removeEventListener("keydown", handleEscape);
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
   return (
-    <>
-      <button
-        aria-label="Close evidence trail"
-        onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(15, 23, 42, 0.34)",
-          border: 0,
-          zIndex: 99,
-          cursor: "default",
+      <dialog ref={dialog} className="evidence-trail-modal"
+        onCancel={event => { event.preventDefault(); onClose(); }}
+        onKeyDown={event => {
+          if (event.key !== "Tab") return;
+          const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>("button:enabled, a[href], [tabindex='0']"));
+          const first = controls[0], last = controls[controls.length - 1];
+          if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+          if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
         }}
-        type="button"
-      />
-      <aside
+        onClick={event => {
+          if (event.target !== event.currentTarget) return;
+          const rect = event.currentTarget.getBoundingClientRect();
+          if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose();
+        }}
         aria-labelledby="evidence-trail-title"
         aria-modal="true"
         role="dialog"
@@ -120,7 +124,7 @@ export function EvidenceTrailDrawer({
           top: 0,
           right: 0,
           bottom: 0,
-          width: "560px",
+          width: "560px", margin: "0 0 0 auto", padding: 0, height: "100dvh", maxHeight: "100dvh",
           maxWidth: "94vw",
           backgroundColor: "var(--surface)",
           borderLeft: "1px solid var(--border)",
@@ -151,7 +155,7 @@ export function EvidenceTrailDrawer({
             ) : null}
           </div>
           <button
-            aria-label="Close"
+            ref={closeButton} aria-label="Close"
             className="btn btn-outline"
             onClick={onClose}
             style={{ width: "36px", height: "36px", padding: 0, display: "grid", placeItems: "center" }}
@@ -372,7 +376,6 @@ export function EvidenceTrailDrawer({
             </div>
           ) : null}
         </div>
-      </aside>
-    </>
+      </dialog>
   );
 }

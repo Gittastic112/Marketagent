@@ -72,6 +72,7 @@ test("alert review exposes complete and missing evidence states", async ({ page 
       title: `Review margin evidence ${unique}`,
       summary: "Margins changed in the latest filing.",
       why_it_matters: "The change may affect the operating-margin thesis.",
+      what_changed: "Mock Data filing update",
       evidence: evidenceQuote,
       confidence_bucket: "high",
     },
@@ -82,15 +83,42 @@ test("alert review exposes complete and missing evidence states", async ({ page 
   await expect(page.getByRole("main").getByText("complete evidence", { exact: true })).toBeVisible();
   await expect(page.getByRole("main").getByText("Source Summary", { exact: true })).toBeVisible();
 
-  await page.getByRole("button", { name: "View Evidence Trail" }).click();
+  const opener = page.getByRole("button", { name: "View Evidence Trail" });
   const evidenceDialog = page.getByRole("dialog");
-  await expect(evidenceDialog).toBeVisible();
-  await expect(evidenceDialog.getByText(`Evidence Source ${unique}`, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText(`Evidence Filing ${unique}`, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText(evidenceQuote, { exact: true })).toBeVisible();
-  await expect(evidenceDialog.getByText("span-level locator", { exact: true })).toBeVisible();
-  await evidenceDialog.getByRole("button", { name: "Close" }).click();
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  const close = evidenceDialog.getByRole("button", { name: "Close", exact: true });
+  const originalSource = evidenceDialog.getByRole("link", { name: "Open original", exact: true });
+  for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 }]) {
+    await page.setViewportSize(viewport);
+    await opener.focus();
+    await opener.press("Enter");
+    await expect(evidenceDialog).toBeVisible();
+    await expect(evidenceDialog.getByText(`Evidence Source ${unique}`, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText(`Evidence Filing ${unique}`, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText(evidenceQuote, { exact: true })).toBeVisible();
+    await expect(evidenceDialog.getByText("span-level locator", { exact: true })).toBeVisible();
+    await expect(originalSource).toBeVisible();
+    await expect(close).toBeFocused();
+    await page.keyboard.press("Shift+Tab");
+    await expect(originalSource).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(close).toBeFocused();
+    await page.keyboard.press("Escape");
+    await expect(evidenceDialog).toHaveCount(0);
+    await expect(opener).toBeFocused();
+  }
+  await opener.press("Enter");
+  await close.click();
+  await expect(evidenceDialog).toHaveCount(0);
+
+  await page.goto("/alerts");
+  const row = page.getByRole("row").filter({ hasText: `Review margin evidence ${unique}` });
+  await row.getByText("Edit", { exact: true }).click();
+  const edit = row.getByRole("form", { name: "Update alert" });
+  await edit.getByLabel("Title").fill(`Reviewed title ${unique}`);
+  await edit.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByRole("row").filter({hasText: `Reviewed title ${unique}` })).toBeVisible();
+  const saved = await backendData<{evidence: string; what_changed: string; company_id: number; event_id: number}>(page, `/alerts/${alert.id}`);
+  expect([saved.evidence, saved.what_changed, saved.company_id, saved.event_id]).toEqual([evidenceQuote, "Mock Data filing update", company.id, event.id]);
 
   const unlinkedAlert = await backendData<{ id: number }>(page, "/alerts", {
     method: "POST",

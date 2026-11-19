@@ -49,8 +49,17 @@ async function serverResponse<T>(
     signal: AbortSignal.timeout(timeoutMs),
   });
 
-  const body = await response.json().catch(() => null) as ApiResponse<T> | { detail?: string } | null;
-  return { response, body };
+  if (response.status === 204 || response.status === 205) return { response, body: null };
+  try {
+    const body = await response.json();
+    if (body === null && response.ok) throw new Error("Expected a JSON result");
+    return { response, body };
+  } catch {
+    if (!response.ok) return { response, body: null };
+    throw new ApiError(method === "GET" ? "The response could not be read. Reload to retry."
+      : "The change could not be confirmed. Check the saved record before retrying.", 502,
+      { code: "UNCONFIRMED_RESPONSE", retryable: false });
+  }
 }
 
 async function serverRequest<T>(method: string, path: string, payload?: unknown): Promise<ApiResponse<T>> {
@@ -101,7 +110,7 @@ async function serverApiResponse<T>(
     }
     if (!response.ok) {
       const detail = body && typeof body === "object" && "detail" in body ? body.detail : undefined;
-      return errorResponse<T>("API_ERROR", detail || `API request failed: ${response.status}`);
+      return errorResponse<T>(response.status === 404 ? "NOT_FOUND" : response.status === 401 ? "NOT_AUTHENTICATED" : response.status === 403 ? "FORBIDDEN" : "API_ERROR", detail || `API request failed: ${response.status}`);
     }
     return {
       data: body as T,
@@ -117,6 +126,7 @@ async function serverApiResponse<T>(
       errors: [],
     };
   } catch (error) {
+    if (error instanceof ApiError && error.code === "UNCONFIRMED_RESPONSE") return errorResponse<T>(error.code, error.message);
     if (error instanceof ApiError && error.message === "AUTH_NOT_CONFIGURED") {
       return errorResponse<T>(error.message, "Local authentication is not configured.");
     }

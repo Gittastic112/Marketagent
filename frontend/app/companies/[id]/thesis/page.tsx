@@ -53,7 +53,7 @@ export default async function ThesisEnginePage({ params, searchParams }: { param
         {activeThesis && <><h2>{activeThesis.title}</h2><p>User Assumption / research interpretation · Updated {new Date(activeThesis.updated_at).toLocaleString()}</p>
           <div className="preserve-whitespace">{activeThesis.thesis_text}</div>
           <p>Supporting or opposing interpretations do not approve financial facts. No linked evidence does not mean no evidence exists.</p>
-          <Link href={`/thesis-notes/${activeThesis.id}`}>Edit this exact note and its evidence</Link></>}
+          <Link className="secondary-button" href={`/thesis-notes/${activeThesis.id}`}>Edit this exact note and its evidence</Link></>}
         {orderedNotes.length > 1 && <details><summary>Other notes for this company ({orderedNotes.length - (activeThesis ? 1 : 0)})</summary><ul>
           {orderedNotes.filter(note => note.id !== activeThesis?.id).map(note => <li key={note.id}><Link href={`?note_id=${note.id}`}>{note.title}</Link> · {note.status}</li>)}
         </ul></details>}

@@ -20,6 +20,9 @@ export async function PortfolioOverview({ portfolio }: { portfolio: Portfolio })
     <DataStateNotices metas={[response.meta]} />
     <div className="section-intro"><span className="badge">Calculation</span><span>Valued as of {value.as_of_date} using stored prices. Individual price dates are shown below; not a live quote.</span></div>
     <p className="basis-note">Current declared balances are User Assumptions. They do not establish historical ownership or broker-verified returns.</p>
+    {value.replay_basis?.blockers.includes("PRICE_PREDATES_SHARE_ACTION") && <p className="notice notice-warning">
+      A stored price predates a split or bonus. Portfolio value is unavailable until a compatible closing price is recorded.
+    </p>}
     <section className="metric-grid portfolio-metrics" aria-label="Portfolio summary">
       <div className="metric metric-featured"><div className="metric-label">Portfolio value</div><div className="metric-value">{money(value.total_portfolio_value)}</div><div className="metric-detail">Positions and cash · {value.base_currency}</div></div>
       <div className="metric"><div className="metric-label">Cost basis</div><div className="metric-value">{money(value.total_cost_basis)}</div><div className="metric-detail">Recorded average costs</div></div>

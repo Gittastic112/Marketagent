@@ -6,8 +6,9 @@ from sqlalchemy import case, func, or_, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.models import Alert, DcfAssumptionSet, DcfOutput, MarketPrice, Portfolio, PortfolioCashBalance, PortfolioHolding, ThesisNote, ValuationModel
+from app.models.market_price import DAILY_PRICE_TYPES
 from app.services.fx_rates import FxRateUnavailable, convert_amount
-from app.services.portfolio_replay import replay_portfolio
+from app.services.portfolio_replay import latest_share_actions, replay_portfolio
 
 
 def get_latest_price(
@@ -78,6 +79,10 @@ def calculate_portfolio_valuation(
     if price_filters:
         # Rank in SQL so a current valuation does not materialize years of prices.
         # Linked company identity wins; unlinked tickers remain a separate namespace.
+        if as_of_date is not None:
+            eligible_prices = MarketPrice.price_type.in_(DAILY_PRICE_TYPES)
+        else:
+            eligible_prices = True
         ranked_prices = select(
             MarketPrice.id,
             func.row_number().over(
@@ -87,7 +92,7 @@ def calculate_portfolio_valuation(
                 )),
                 order_by=(MarketPrice.as_of_date.desc(), MarketPrice.id.desc()),
             ).label("position"),
-        ).where(MarketPrice.as_of_date <= target_date, or_(*price_filters)).subquery()
+        ).where(MarketPrice.as_of_date <= target_date, eligible_prices, or_(*price_filters)).subquery()
         price_records = list(db.scalars(
             select(MarketPrice)
             .join(ranked_prices, ranked_prices.c.id == MarketPrice.id)
@@ -163,6 +168,7 @@ def calculate_portfolio_valuation(
     stale_threshold = timedelta(days=5)
 
     holdings_valuation = []
+    share_actions = latest_share_actions(db, portfolio_id, target_date)
 
     for holding in holdings:
         qty = float(holding.quantity)
@@ -174,6 +180,11 @@ def calculate_portfolio_valuation(
             if holding.company_id is not None
             else latest_price_by_ticker.get(holding.ticker.upper())
         )
+        action_date = share_actions.get((holding.company_id, holding.ticker.upper(), holding.currency.upper()))
+        if latest_price and action_date and latest_price.as_of_date < action_date:
+            replay_basis["status"] = "partial"
+            replay_basis["blockers"] = sorted(set(replay_basis["blockers"]) | {"PRICE_PREDATES_SHARE_ACTION"})
+            latest_price = None
         if replayed_holdings is not None and latest_price and latest_price.adjustment_state not in {"not_applicable", "unadjusted"}:
             replay_basis["status"] = "partial"
             replay_basis["blockers"] = sorted(set(replay_basis["blockers"]) | {"PRICE_ADJUSTMENT_BASIS_UNSUPPORTED"})

@@ -120,6 +120,7 @@ def _price_series(db, company: Company, values: list[float], currency: str) -> l
             currency=currency,
             as_of_date=as_of,
             provider_name="e2e_mock_fixture",
+            provider_symbol=company.ticker,
             price_type="Mock Data",
             adjustment_state="not_applicable",
             warnings_json=["Mock Data used only for isolated browser workflow verification."],
@@ -429,6 +430,7 @@ def _ensure_chart_fixture(db) -> None:
     db.flush()
     db.add(RawDocument(company_id=company.id, source_id=source.id, title="Mock Data earnings filing",
                        document_type="sec_filing_metadata", published_at=datetime(2026, 1, 6, tzinfo=UTC),
+                       url="https://example.invalid/mock-data/chart-filing",
                        content_hash=sha256(b"e2e-chart-source").hexdigest()))
 
 

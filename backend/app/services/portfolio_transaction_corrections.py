@@ -15,8 +15,8 @@ def _conflict(reason):
     raise HTTPException(status_code=409, detail=f"Financial correction requires complete, reconciled recorded history: {reason}. No balances were changed.")
 
 
-def correct_transaction(db, transaction, changes: dict | None):
-    if changes is not None and all(key == "notes" or getattr(transaction, key) == value for key, value in changes.items()):
+def correct_transaction(db, transaction, changes: dict | None, *, inserting: bool = False):
+    if not inserting and changes is not None and all(key == "notes" or getattr(transaction, key) == value for key, value in changes.items()):
         # A note does not participate in holdings, cash, timestamps or replay hashes.
         for key, value in changes.items():
             setattr(transaction, key, value)
@@ -24,7 +24,7 @@ def correct_transaction(db, transaction, changes: dict | None):
     portfolio_ids = sorted({transaction.portfolio_id, (changes or {}).get("portfolio_id") or transaction.portfolio_id})
     db.execute(select(Portfolio.id).where(Portfolio.id.in_(portfolio_ids)).order_by(Portfolio.id).with_for_update()).all()
     db.refresh(transaction)
-    replacement = None
+    replacement = transaction if inserting else None
     if changes is not None:
         try:
             values = PortfolioTransactionCreate.model_validate({
@@ -37,7 +37,9 @@ def correct_transaction(db, transaction, changes: dict | None):
         records = list(db.scalars(select(PortfolioTransaction).where(PortfolioTransaction.portfolio_id == portfolio_id)
             .order_by(PortfolioTransaction.transaction_date, PortfolioTransaction.id).limit(MAX_TRANSACTIONS + 1)
             .with_for_update().execution_options(populate_existing=True)))
-        if len(records) > MAX_TRANSACTIONS:
+        if inserting:
+            records = [row for row in records if row.id != transaction.id]
+        if len(records) + int(inserting) > MAX_TRANSACTIONS:
             _conflict("recorded activity exceeds the supported correction limit")
         holdings = list(db.scalars(select(PortfolioHolding).where(PortfolioHolding.portfolio_id == portfolio_id).with_for_update()))
         balances = list(db.scalars(select(PortfolioCashBalance).where(PortfolioCashBalance.portfolio_id == portfolio_id).with_for_update()))
@@ -86,6 +88,8 @@ def correct_transaction(db, transaction, changes: dict | None):
                 db.add(row)
             row.amount = cash.get(currency, ZERO)
             row.as_of_date = max((item.transaction_date for item in records if item.currency.upper() == currency), default=final_date)
+    if inserting:
+        return
     if changes is None:
         db.delete(transaction)
     else:

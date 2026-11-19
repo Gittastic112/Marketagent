@@ -7,6 +7,10 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 
+# Daily valuation accepts reviewed closes, explicit fund NAV and labeled test fixtures.
+DAILY_PRICE_TYPES = ("end_of_day", "close", "adjusted_close", "official_close", "manual_close", "manual", "nav", "Mock Data")
+
+
 class MarketPrice(Base):
     __tablename__ = "market_prices"
 

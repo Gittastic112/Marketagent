@@ -54,7 +54,9 @@ def test_partial_target_before_drop_is_allowed_and_offline_crossing_is_rejected(
     with pytest.raises(RuntimeError, match="online preflight"):
         assert_offline_upgrade_safe(SCRIPT, "head", None)
     assert_offline_upgrade_safe(SCRIPT, "423m1d347c29", None)
-    assert_offline_upgrade_safe(SCRIPT, "head", "2167b87f7054")
+    with pytest.raises(RuntimeError, match="online preflight"):
+        assert_offline_upgrade_safe(SCRIPT, "head", "2167b87f7054")
+    assert_offline_upgrade_safe(SCRIPT, "head", "b8b8b8b8b8b8")
 
 
 def test_preflight_does_not_misclassify_downgrade_or_relative_upgrade():

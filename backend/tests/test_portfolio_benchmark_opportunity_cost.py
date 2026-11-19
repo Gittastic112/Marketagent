@@ -93,3 +93,33 @@ def test_equal_investment_wealth_does_not_claim_a_mismatched_return_spread(db, f
     assert result["portfolio_return"] is None
     assert result["return_spread"] is None
     assert any("external cash flows" in warning for warning in result["warnings"])
+
+def test_benchmark_selects_only_the_configured_series_and_rejects_conflicting_basis(db):
+    portfolio = Portfolio(name="Mock Data configured series", base_currency="USD")
+    db.add(portfolio); db.flush()
+    db.add(PortfolioBenchmarkConfig(portfolio_id=portfolio.id, ticker="FIX", currency="USD", provider_name="vendor",
+        provider_symbol="FIX.US", effective_from=date(2026, 1, 1)))
+    def point(day, vendor, symbol, value, basis="unadjusted"):
+        row = MarketPrice(ticker="FIX", provider_name=vendor, provider_symbol=symbol, price=value, market="US", exchange="NASDAQ",
+            currency="USD", adjustment_state=basis, price_type="end_of_day", as_of_date=date(2026, 2, day))
+        db.add(row); db.flush()
+        return row.id
+    ids = []
+    for day in (2, 3):
+        db.add(PortfolioSnapshot(portfolio_id=portfolio.id, snapshot_date=date(2026, 2, day),
+            calculation_status="complete", base_currency="USD", total_portfolio_value=100))
+        ids.append(point(day, "vendor", "FIX.US", 100))
+        point(day, "other", "FIX.US", 500 * day)
+        point(day, "vendor", "OTHER", 300 * day)
+    db.commit()
+    def report():
+        return calculate_benchmark_opportunity_cost(db, portfolio.id, date(2026, 2, 2), date(2026, 2, 3))
+    assert report()["benchmark_return"] == 0 and report()["source_market_price_ids"] == ids
+    disputed = point(3, "vendor", "FIX.US", 75)
+    db.commit()
+    assert report()["benchmark_return"] is None and report()["calculation_status"] == "not_available"
+    db.delete(db.get(MarketPrice, disputed))
+    db.flush()
+    point(3, "vendor", "FIX.US", 75, "adjusted")
+    db.commit()
+    assert report()["benchmark_return"] is None and report()["calculation_status"] == "not_available"

@@ -104,6 +104,15 @@ export function SourceAdapterPanel() {
           href={`/documents/${candidateDocumentId}/${action === "extract" ? "financial-evidence" : "sections"}?candidate_id=${candidateId}`}>Inspect candidate #{candidateId}</Link></li>)}
       </ul></details>}
     </section>}
+    {result?.adapter === "alfred" && <section aria-label="Economic series basis">
+      <h3>Economic series basis</h3>
+      {Object.entries(result.details?.series_basis ?? {}).length ? <ul>
+        {Object.entries(result.details?.series_basis ?? {}).map(([vintage, basis]) => {
+          const entry = basis as { units?: string; frequency?: string; seasonal_adjustment?: string };
+          return <li key={vintage}>{vintage} · {entry.units} · {entry.frequency} · {entry.seasonal_adjustment}</li>;
+        })}
+      </ul> : <p>Vintage units, frequency or seasonal basis are unavailable.</p>}
+    </section>}
     {result && <AdapterReceipt provider={result.adapter} runId={result.processing_run_id ?? null} observedAt={result.observed_at} status={result.status ?? "source response"}
       documents={result.raw_document_ids ?? []} warnings={result.warnings ?? []} result={{ fetched_count: result.fetched_count, created_count: result.created_count,
         duplicate_count: result.duplicate_count, candidate_ids: result.candidate_ids, details: result.details }} />}

@@ -101,7 +101,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
         <section id="price-pins" aria-label="Pinned price notes"><Panel title="Pinned price notes">
           {!hasUsableData(pricePins) ? <ErrorState message="Pinned notes could not be loaded." errors={pricePins.errors} />
             : pricePins.data.length ? <ul className="price-detail-list">{pricePins.data.map(pin => <li key={pin.id}>
-              <Link href={`/companies/${pin.company_id}?price_series=${pin.anchor.key}&price_date=${pin.anchor.date}#price-history`}>
+              <Link href={`/companies/${pin.company_id}?price_series=${pin.anchor.key}&price_date=${pin.anchor.date}&thesis=${note.id}&pin=${pin.id}#price-history`}>
                 {pin.anchor.symbol} · {pin.anchor.date} · {pin.anchor.currency} {pin.anchor.price}
               </Link>
               <small>{pin.anchor.claim_type === "Mock Data" ? "Mock Data · " : ""}Close when pinned · {formatDataLabel(pin.anchor.provider)} · {formatDataLabel(pin.anchor.adjustment)}</small>
@@ -201,7 +201,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
           <RetainedActionForm label="Create change" resetOnSuccess action={createChangeAction} className="form-grid">
             <input name="thesis_note_id" type="hidden" value={note.id} />
             <TextAreaField className="field field-wide" id="new-change-summary" label="Change Summary" name="change_summary" required rows={2} />
-            <TextField id="new-change-drift" label="Drift Score" name="drift_score" placeholder="0.0" type="number" />
+            <TextField id="new-change-drift" label="Drift Score" name="drift_score" placeholder="0.0" type="number" step="any" />
             <div className="button-row">
               <button type="submit">Log Change</button>
             </div>

@@ -1,5 +1,7 @@
 # 2026 Checkpoints
 
+- [November 19 integration review and portfolio reconciliation](integration-review-2026-11-19.md)
+
 - [November 15 financial integrity release and installed Today layout](review-financial-integrity-release-2026-11-15.md)
 - [November 12 selected-company source review and installed workflow checks](handoff-review-2026-11-12.md)
 - [Repository efficiency, temporary caches, and CI scope, November 11](repository-efficiency-2026-11-11.md)

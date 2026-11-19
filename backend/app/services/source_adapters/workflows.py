@@ -203,13 +203,15 @@ def ingest_fred_vintage(db: Session, request: FredVintageRequest, *, api_key: st
     record_id = f"{request.series_id.upper()}:{request.mode}:{request.as_of}:{request.observation_start}:{request.observation_end}"
     document, created = _document(db, adapter="alfred", company_id=None, record_id=record_id,
         title=f"{request.series_id.upper()} ALFRED vintage {request.as_of}", kind="macro_vintage",
-        raw_payload=result["raw_pages"], metadata={"vintage": {k: v for k, v in result.items() if k != "raw_pages"},
+        raw_payload={"observations": result["raw_pages"], "series": result["metadata_responses"]},
+        metadata={"vintage": {k: v for k, v in result.items() if k not in {"raw_pages", "metadata_responses"}},
             "request": request.model_dump(mode="json"), "claim_type": "Source Summary"}, observed_at=now,
         url=f"https://fred.stlouisfed.org/series/{request.series_id.upper()}")
     return SourceAdapterResult(adapter="alfred", raw_document_ids=[document.id], fetched_count=result["fetched_count"],
         created_count=int(created), duplicate_count=int(not created), observed_at=now,
         status="success" if result["complete"] else "partial", warnings=result["warnings"],
         details={"observations": result["observations"], "as_of": str(request.as_of), "mode": request.mode,
+                 "series_basis": result["series_basis"], "transformation": result["transformation"],
                  "complete": result["complete"], "current_macro_values_modified": False})
 
 

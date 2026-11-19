@@ -104,6 +104,8 @@ export function CompanyPriceChart({ data, companyId, notes, requestedDate }: {
       const url = new URL(window.location.href);
       url.searchParams.set("price_series", event.target.value);
       url.searchParams.delete("price_date");
+      url.searchParams.delete("thesis");
+      url.searchParams.delete("pin");
       url.hash = "price-history";
       window.location.assign(url);
     }}>{data.choices.map(s => <option value={s.key} key={s.key}>{seriesLabel(s)}</option>)}</select></label>;
@@ -111,7 +113,7 @@ export function CompanyPriceChart({ data, companyId, notes, requestedDate }: {
     <Link href={requestedDate ? `/companies/${companyId}#price-history` : "/market-prices"}>{requestedDate ? "Show latest history" : "Open price records"}</Link></>;
   const selectedPoints = data.points.filter(p => !range || Date.parse(p.date) >= Date.parse(latest.date) - (range - 1) * dayMs);
   const point = selectedPoints.find(p => p.date === date) ?? selectedPoints[selectedPoints.length - 1];
-  const pinsFor = (p: PricePoint) => [...p.pins, ...saved.filter(pin => pin.anchor.price_id === p.price_id && !p.pins.some(old => old.id === pin.id))];
+  const pinsFor = (p: PricePoint) => [...p.pins, ...saved.filter(pin => pin.anchor.price_id === p.price_id && pin.anchor.date === p.date && Number(pin.anchor.price) === p.price && !p.pins.some(old => old.id === pin.id))];
   const moments = selectedPoints.filter(p => p.large_move || p.sources.length || pinsFor(p).length);
   const graph = selectedPoints.flatMap((p, i) => {
     const time = Date.parse(p.date);

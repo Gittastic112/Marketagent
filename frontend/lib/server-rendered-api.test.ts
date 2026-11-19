@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import test from "node:test";
+import ts from "typescript";
+import * as contract from "./api/contract.ts";
 
 const clientApiHelpers = [
   "fetchApi",
@@ -148,4 +150,35 @@ test("financial extraction actions use registered backend routes", () => {
   assert.doesNotMatch(actionsSource, /serverPostApi\(`\/companies\/\$\{companyId\}\/extract-xbrl/);
   assert.match(adminSource, /postFormApi\(`\/api\/admin\/damodaran\/import`/);
   assert.doesNotMatch(adminSource, /NEXT_PUBLIC_API_BASE_URL/);
+});
+
+test("server JSON writes require confirmation, preserve bodyless deletes and never retry implicitly", async () => {
+  const source = readFileSync(path.resolve("lib/server-api.ts"), "utf8");
+  const compiled = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
+  let response: Response;
+  let calls = 0;
+  const mod = { exports: {} as Record<string, (...args: any[]) => Promise<any>> };
+  function require(name: string) {
+    if (name === "server-only") return {};
+    if (name === "next/server") return { connection: async () => {} };
+    if (name === "@/lib/api/contract") return contract;
+    if (name === "@/lib/internal-auth") return { createBackendAuthHeaders: () => ({}) };
+    if (name === "@/lib/server-auth") return { readServerIdentity: async () => ({ id: "fixture" }) };
+    throw new Error(name);
+  }
+  new Function("require", "module", "exports", "fetch", "process", compiled)(require, mod, mod.exports,
+    async () => { calls++; return response; }, { env: {NEXTAUTH_SECRET: "synthetic-test-only"} });
+  for (const status of [200, 201]) {
+    response = new Response("{", {status});
+    await assert.rejects(mod.exports.serverPostApi("/fixture", {}), (e: unknown) =>
+      e instanceof contract.ApiError && e.code === "UNCONFIRMED_RESPONSE" && e.retryable === false);
+  }
+  response = new Response(new ReadableStream({start(controller) { controller.error(new Error("interrupted")); }}));
+  const read = await mod.exports.serverFetchApiResponse("/fixture");
+  assert.equal(read.errors[0].code, "UNCONFIRMED_RESPONSE");
+  response = Response.json({id: 10});
+  assert.deepEqual(await mod.exports.serverPostApi("/fixture", {}), {id: 10});
+  response = new Response(null, {status: 204});
+  assert.equal(await mod.exports.serverDeleteApi("/fixture"), null);
+  assert.equal(calls, 5);
 });

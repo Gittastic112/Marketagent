@@ -16,8 +16,9 @@ from app.models import (
     PortfolioHolding,
     ValuationModel,
 )
+from app.models.market_price import DAILY_PRICE_TYPES
 from app.services.fx_rates import FxRateUnavailable, convert_amount
-from app.services.portfolio_replay import replay_portfolio
+from app.services.portfolio_replay import latest_share_actions, replay_portfolio
 
 
 TRADING_DAYS_PER_YEAR = 252
@@ -43,6 +44,7 @@ def _price_history(
     end_date: date,
 ) -> list[MarketPrice]:
     query = select(MarketPrice).where(
+        MarketPrice.price_type.in_(DAILY_PRICE_TYPES),
         MarketPrice.as_of_date >= start_date,
         MarketPrice.as_of_date <= end_date,
     )
@@ -198,13 +200,12 @@ def calculate_portfolio_risk_return(
     if not holdings:
         blockers.append("The portfolio has no positive-quantity holdings.")
 
+    actions = latest_share_actions(db, portfolio_id, target_date, start_date)
     for position_key, holding in enumerate(holdings):
         row_warnings: list[str] = []
         stale_fx = False
         prices = _price_history(db, holding, start_date, target_date)
-        actions = (replay_basis or {}).get("corporate_actions", [])
-        if any(item["company_id"] == holding.company_id and item["ticker"].upper() == holding.ticker.upper()
-            and start_date.isoformat() <= item["date"] <= target_date.isoformat() for item in actions):
+        if (holding.company_id, holding.ticker.upper(), holding.currency.upper()) in actions:
             row_warnings.append("Price-only risk across a recorded corporate action is unavailable until the historical price adjustment basis is reconciled.")
             prices = []
         elif len({price.adjustment_state for price in prices}) > 1:

@@ -4,13 +4,15 @@
 
 The November 18 application release is installed locally and merged into `main`. Company pages show stored closing prices, source documents around a move and private notes pinned to a thesis. The previous release installed the Geist interface, Research Lab and the adapter workflow repairs. [Price history release](https://github.com/Gittastic112/Marketagent/pull/22) · [Adapter release](https://github.com/Gittastic112/Marketagent/pull/20) · [Verification and preservation](current-state.md#dated-validation)
 
+[PR 24](https://github.com/Gittastic112/Marketagent/pull/24) contains the November 19 integration review. It covers 19 findings across legacy upgrades, source evidence, portfolio math and research workflows. The [ticket and test record](archive/checkpoints/2026/integration-review-2026-11-19.md) identifies the exact proof and remaining release decisions.
+
 ## Next work
 
 | Order | Action | Finish condition |
 |---|---|---|
 | 1. Company evidence (M05) | Work through the remaining annual fields for Apple, NVIDIA, Meta and Alphabet, using original filings and the chosen November 12, 2026 valuation date. The eleven previously held candidates already have dispositions. | Record an exact disclosure, period, units and review decision, or document the specific unresolved component. The [company-by-company ledger](limitations.md#selected-company-review-follow-up) identifies each gap. |
 | 2. Valuation workflow (M06) | Carry selected dated evidence into an explicit draft proposal and add a preview before the first model save. Existing saved-model edits already have a preview and version history. | Reproduce the proposed assumptions from their source revisions, confirm the reviewed calculation and verify a retry-safe save. [Workspace specifications](roadmaps/research-workspace-plan.md#delivery-sequence) |
-| 3. Portfolio and research | Reconcile the example portfolio's flows, FX and benchmark basis. Exercise the path from a dated filing or price move to a thesis decision and, where warranted, a reviewed valuation change. | Record the reconciled example, missing inputs and exact evidence. Extend desktop/mobile checks to the changed workflow. [Product roadmap](roadmaps/product-roadmap.md#immediate-delivery-order) |
+| 3. Portfolio and research | The USD sample portfolio reconciles on its two stored dates. Connect a dated filing or marked move to a thesis decision and a reviewed valuation change when warranted. | Preserve the source, price observation and model version. A real multi-currency account and a configured benchmark still require their own evidence. [Product roadmap](roadmaps/product-roadmap.md#immediate-delivery-order) |
 
 Use the [adapter worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) when a task needs a feed or a library. Six bounded original-source or pinned-reference examples have evidence. US corporate actions, transcript corrections and scanned-page OCR have [specific prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites).
 

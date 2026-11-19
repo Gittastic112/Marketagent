@@ -116,7 +116,8 @@ def run_extraction(adapter: str, content: bytes, *, pages: list[int] | None = No
                 "PYTHONNOUSERSITE": "1", "PYTHONDONTWRITEBYTECODE": "1", "OPENBLAS_NUM_THREADS": "1",
                 "OMP_NUM_THREADS": "1", "TOKENIZERS_PARALLELISM": "false", "TZ": "UTC", "PATH": "/usr/bin:/bin",
                 "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "TORCH_DEVICE": "cpu",
-                "XDG_CACHE_HOME": artifact_path or directory, "HF_HOME": artifact_path or directory}
+                "EDGAR_LOCAL_DATA_DIR": directory, "XDG_CACHE_HOME": artifact_path or directory,
+                "HF_HOME": artifact_path or directory}
             process = subprocess.Popen([python_executable or sys.executable, "-s", "-m", "app.providers.extraction.worker"],
                 stdin=subprocess.PIPE, stdout=output, stderr=subprocess.DEVNULL, env=environment,
                 cwd=directory, close_fds=True, start_new_session=True)

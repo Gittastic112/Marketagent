@@ -1,11 +1,12 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, timedelta
 from decimal import Decimal
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.models import MarketPrice, PortfolioBenchmarkConfig, PortfolioSnapshot
+from app.models import MarketPrice, PortfolioBenchmarkConfig, PortfolioSnapshot, PortfolioTransaction
+from app.models.market_price import DAILY_PRICE_TYPES
 from app.services.fx_rates import FxRateUnavailable, convert_amount
 from app.services.portfolio_cash_flows import normalize_external_cash_flows
 from app.services.portfolio_replay import snapshot_replay_is_verified
@@ -28,26 +29,50 @@ class BenchmarkPricePoint:
             "fx_date", "target_date", "price_age_days", "fx_age_days", "is_stale")}
 
 
+def _series(db, config, start_date, end_date):
+    if not config.provider_name or (config.provider_name != "manual" and not config.provider_symbol):
+        return None
+    conditions = (MarketPrice.ticker == config.ticker, MarketPrice.company_id == config.benchmark_company_id,
+        MarketPrice.currency == config.currency, MarketPrice.provider_name == config.provider_name,
+        MarketPrice.provider_symbol == config.provider_symbol, MarketPrice.price_type.in_(DAILY_PRICE_TYPES))
+    identities = db.execute(select(MarketPrice.market, MarketPrice.exchange, MarketPrice.adjustment_state,
+                                   MarketPrice.price_type, MarketPrice.claim_type)
+        .where(*conditions, MarketPrice.as_of_date.between(start_date - timedelta(days=5), end_date))
+        .distinct().limit(2)).all()
+    if len(identities) != 1:
+        return None
+    market, venue, adjustment, kind, claim = identities[0]
+    if adjustment not in {"adjusted", "split_adjusted", "unadjusted", "not_applicable"}:
+        return None
+    if kind == "end_of_day" and (not market or not venue or adjustment == "not_applicable"):
+        return None
+    if kind == "Mock Data" and "mock" not in config.provider_name.lower():
+        return None
+    return (*conditions, MarketPrice.market == market, MarketPrice.exchange == venue,
+            MarketPrice.adjustment_state == adjustment, MarketPrice.price_type == kind, MarketPrice.claim_type == claim)
+
+
 def _price_point(
     db: Session,
-    config: PortfolioBenchmarkConfig,
+    series,
     target_date: date,
     base_currency: str,
 ) -> BenchmarkPricePoint | None:
-    query = select(MarketPrice).where(
-        MarketPrice.ticker == config.ticker,
-        MarketPrice.as_of_date <= target_date,
-    )
-    if config.benchmark_company_id is not None:
-        query = query.where(MarketPrice.company_id == config.benchmark_company_id)
+    if series is None:
+        return None
+    query = select(MarketPrice).where(*series, MarketPrice.as_of_date <= target_date)
     price = db.scalar(query.order_by(MarketPrice.as_of_date.desc(), MarketPrice.id.desc()).limit(1))
     if price is None or not Decimal(str(price.price)).is_finite() or price.price <= 0:
+        return None
+    conflict = db.scalar(select(MarketPrice.id).where(
+        *series, MarketPrice.as_of_date == price.as_of_date, MarketPrice.price != price.price).limit(1))
+    if conflict is not None:
         return None
     try:
         price_base, fx = convert_amount(
             db,
             price.price,
-            price.currency or config.currency,
+            price.currency,
             base_currency,
             target_date,
             stale_after_days=5,
@@ -142,8 +167,20 @@ def calculate_benchmark_opportunity_cost(
             "source_transaction_ids": [],
         }
 
-    start_price = _price_point(db, config, start_date, start.base_currency)
-    end_price = _price_point(db, config, end_date, start.base_currency)
+    series = _series(db, config, start_date, end_date)
+    if series is None:
+        warnings.append("The configured benchmark needs a single identifiable listing, provider symbol and adjustment basis.")
+    start_price = _price_point(db, series, start_date, start.base_currency)
+    end_price = _price_point(db, series, end_date, start.base_currency)
+    if start_price is not None:
+        action = db.scalar(select(PortfolioTransaction.id).where(PortfolioTransaction.portfolio_id == portfolio_id,
+            PortfolioTransaction.company_id == config.benchmark_company_id, PortfolioTransaction.ticker == config.ticker,
+            PortfolioTransaction.transaction_type.in_(("split", "bonus")),
+            PortfolioTransaction.transaction_date > start_price.price_date,
+            PortfolioTransaction.transaction_date <= end_date).limit(1))
+        if action is not None and db.get(MarketPrice, start_price.market_price_id).adjustment_state != "adjusted":
+            warnings.append("This benchmark spans a recorded share action without a supported adjusted price series.")
+            end_price = None
     flow_report = normalize_external_cash_flows(
         db,
         portfolio_id,
@@ -181,7 +218,7 @@ def calculate_benchmark_opportunity_cost(
     units = Decimal(start.total_portfolio_value) / start_price.price_base
     source_price_ids = [start_price.market_price_id, end_price.market_price_id]
     for flow in flow_report.flows:
-        flow_price = _price_point(db, config, flow.transaction_date, start.base_currency)
+        flow_price = _price_point(db, series, flow.transaction_date, start.base_currency)
         if flow_price is not None:
             evidence.append(flow_price.evidence())
         if flow_price is None or flow_price.is_stale:

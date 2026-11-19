@@ -204,8 +204,10 @@ def test_refresh_keeps_reviewed_evidence_and_creates_revised_candidate(db_sessio
     original = db_session.query(FinancialExtractionCandidate).filter_by(
         company_id=company.id, metric_code="revenue", fiscal_year=2023,
     ).one()
-    original.review_status = "reviewed"
-    db_session.commit()
+    from app.services.financial_extraction import override_candidate_value
+    override_candidate_value(db_session, original.id, 95, "USD")
+    locator = original.source_locator_json.copy()
+    assert extract_xbrl_candidates(db_session, company.id, http_get=mock_http_get)["created_count"] == 0
 
     def revised(*args, **kwargs):
         response = mock_http_get()
@@ -218,8 +220,9 @@ def test_refresh_keeps_reviewed_evidence_and_creates_revised_candidate(db_sessio
     result = extract_xbrl_candidates(db_session, company.id, http_get=revised)
     assert result["created_count"] == 1
     db_session.refresh(original)
-    assert original.value == 383285000000
-    assert original.review_status == "reviewed"
+    assert original.value == 95
+    assert original.review_status == "overridden"
+    assert original.source_locator_json == locator
     assert extract_xbrl_candidates(db_session, company.id, http_get=revised)["created_count"] == 0
 
 

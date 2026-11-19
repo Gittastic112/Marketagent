@@ -127,6 +127,10 @@ def test_alfred_revisions_and_missingness(monkeypatch):
     calls = []
     def get(endpoint, params):
         calls.append(params)
+        if endpoint == "series":
+            return {"seriess": [{"id": "MOCK", "units": "Billions of Dollars", "frequency": "Quarterly",
+                "seasonal_adjustment": "Seasonally Adjusted Annual Rate", "realtime_start": params["realtime_start"],
+                "realtime_end": params["realtime_end"]}]}
         return {"count": len(rows), "observations": rows}
     monkeypatch.setattr(provider, "_request", get)
     kwargs = dict(as_of=date(2024, 4, 1), observation_start=date(2024, 1, 1), observation_end=date(2024, 2, 1))
@@ -135,6 +139,9 @@ def test_alfred_revisions_and_missingness(monkeypatch):
     assert calls[0]["realtime_end"] == "2024-04-01" and calls[0]["output_type"] == 1
     result = provider.fetch_vintage_observations("mock", mode="initial_release", **kwargs)
     assert result["observations"][0]["value"] == 1
+    assert set(result["series_basis"]) == {"2024-02-01", "2024-03-02"}
+    assert result["observations"][0]["series_basis"]["seasonal_adjustment"] == "Seasonally Adjusted Annual Rate"
+    assert result["transformation"] == "lin" and result["complete"]
 
 
 def test_alfred_partial_and_changed_page_count(monkeypatch):
@@ -143,7 +150,7 @@ def test_alfred_partial_and_changed_page_count(monkeypatch):
     monkeypatch.setattr(provider, "_request", lambda *args: {"count": 1001, "observations": [row] * 1000})
     kwargs = dict(as_of=date(2024, 4, 1), observation_start=date(2024, 1, 1), observation_end=date(2024, 1, 1))
     result = provider.fetch_vintage_observations("MOCK", max_pages=1, **kwargs)
-    assert result["complete"] is False and result["warnings"] == ["VINTAGE_PAGE_BUDGET_EXHAUSTED"]
+    assert result["complete"] is False and "VINTAGE_PAGE_BUDGET_EXHAUSTED" in result["warnings"] and "VINTAGE_SERIES_BASIS_UNAVAILABLE" in result["warnings"]
     responses = iter([{"count": 1001, "observations": [row] * 1000}, {"count": 1000, "observations": [row]}])
     monkeypatch.setattr(provider, "_request", lambda *args: next(responses))
     with pytest.raises(RuntimeError, match="pagination"):
@@ -338,6 +345,17 @@ def test_sec_api_creates_review_candidates_without_promoting_and_preserves_revis
     document = db.get(RawDocument, original.raw_document_id)
     raw_bytes = json.dumps(document.raw_payload_json["raw_response"], sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode()
     assert hashlib.sha256(raw_bytes).hexdigest() == document.raw_payload_json["payload_sha256"]
+    from app.services.dated_financial_inputs import dated_financial_inputs
+    from app.services.financial_extraction import promote_reviewed_candidates
+    def revenue(day):
+        report = dated_financial_inputs(db, company.id, valuation_date=day)
+        return next(row for row in report["rows"] if row["metric"] == "revenue")
+    assert revenue(date(2024, 3, 1))["status"] == "missing"
+    assert promote_reviewed_candidates(db, company.id) == 1
+    assert revenue(date(2024, 1, 31))["selected_revision_id"] is None
+    selected = revenue(date(2024, 3, 1))
+    assert selected["original_value"] == 100 and selected["original_unit"] == "USD"
+    assert selected["sources"][0]["locator"]["source_provider"] == "SEC EDGAR"
 
 
 def test_pdf_api_uses_original_bytes_and_never_rewrites_review(source_client, company, db, monkeypatch):
@@ -521,3 +539,44 @@ def test_transcript_transport_bounds_and_safe_parse_failure(monkeypatch, headers
         http.fetch_transcript_json("fmp", {"apikey": "secret-key"})
     assert error.value.code == code
     assert "private" not in str(error.value) and "secret" not in str(error.value)
+
+def test_alfred_units_change_preserves_both_raw_receipts(source_client, db, monkeypatch):
+    from app.core.config import get_settings
+
+    monkeypatch.setenv("FRED_API_KEY", "mock-key")
+    get_settings.cache_clear()
+    basis = {"units": "Index"}
+    row = {"date": "2024-01-01", "value": "123.5", "realtime_start": "2024-02-01", "realtime_end": "9999-12-31"}
+
+    def request(self, endpoint, params):
+        if endpoint == "series":
+            return {"seriess": [{"id": "MOCK", "realtime_start": params["realtime_start"],
+                "realtime_end": params["realtime_end"], "frequency": "Monthly",
+                "seasonal_adjustment": "Not Seasonally Adjusted", **basis}]}
+        return {"count": 1, "observations": [row]}
+
+    monkeypatch.setattr(FredProvider, "_request", request)
+    payload = {"series_id": "MOCK", "as_of": "2024-04-01",
+               "observation_start": "2024-01-01", "observation_end": "2024-01-01"}
+
+    def ingest():
+        response = source_client.post("/api/source-adapters/fred-vintage", json=payload)
+        assert response.status_code == 200, response.text
+        return response.json()["data"]
+
+    first = ingest()
+    basis["units"] = "Percent"
+    revised = ingest()
+    repeated = ingest()
+    assert repeated["raw_document_ids"] == revised["raw_document_ids"]
+    original_doc, revised_doc = (db.get(RawDocument, batch["raw_document_ids"][0]) for batch in (first, revised))
+    assert revised_doc.raw_payload_json["supersedes_raw_document_id"] == original_doc.id
+    assert original_doc.raw_payload_json["payload_sha256"] != revised_doc.raw_payload_json["payload_sha256"]
+    for batch, unit in ((first, "Index"), (revised, "Percent")):
+        observation = batch["details"]["observations"][0]
+        assert batch["status"] == "success" and float(observation["value"]) == 123.5
+        assert observation["basis_vintage"] == "2024-04-01" and observation["series_basis"]["units"] == unit
+    basis.clear()
+    unavailable = ingest()
+    assert unavailable["status"] == "partial" and "VINTAGE_SERIES_BASIS_UNAVAILABLE" in unavailable["warnings"]
+    assert unavailable["details"]["observations"][0]["series_basis"] is None

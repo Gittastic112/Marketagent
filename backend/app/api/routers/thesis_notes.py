@@ -140,12 +140,12 @@ def review_impact(impact_id: int, payload: ThesisImpactReview, db: Session = Dep
 
 @router.post("/thesis-notes/{thesis_note_id}/changes", response_model=ApiResponse[ThesisChangeRead], status_code=status.HTTP_201_CREATED)
 def create_thesis_change(thesis_note_id: int, payload: ThesisChangeCreate, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)) -> ThesisChange:
-    thesis = get_or_404(db, ThesisNote, thesis_note_id, user_id=current_user["id"])
-    if payload.thesis_note_id != thesis_note_id:
-        payload.thesis_note_id = thesis_note_id
-    change = create_record(db, ThesisChange, payload)
-
-    # Update drift score
+    thesis = db.scalar(select(ThesisNote).where(ThesisNote.id == thesis_note_id,
+        ThesisNote.user_id == current_user["id"]).with_for_update().execution_options(populate_existing=True))
+    if thesis is None:
+        raise HTTPException(status_code=404, detail="Record not found")
+    change = ThesisChange(**payload.model_dump(exclude={"thesis_note_id"}), thesis_note_id=thesis_note_id)
+    db.add(change)
     thesis.thesis_drift_score += payload.drift_score
     db.commit()
     db.refresh(change)

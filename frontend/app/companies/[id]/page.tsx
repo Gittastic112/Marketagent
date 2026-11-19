@@ -9,7 +9,7 @@ import { ScoreExplanationView } from "@/components/score-explanation";
 import { triggerEventClassification } from "@/app/actions";
 import { CompanyMarketHeader } from "@/components/company-market-header";
 import { CompanyPriceChart } from "@/components/company-price-chart";
-import type { PriceTimeline } from "@/lib/api/price-timeline";
+import type { PricePin, PriceTimeline } from "@/lib/api/price-timeline";
 import { SyncPriceButton } from "@/components/sync-price-button";
 import { FinancialTrends } from "@/components/financial-trends";
 import { CheckboxField } from "@/components/form-fields";
@@ -32,6 +32,8 @@ type CompanyDetailPageProps = {
     filing_year?: string | string[];
     price_series?: string | string[];
     price_date?: string | string[];
+    thesis?: string | string[];
+    pin?: string | string[];
   }>;
 };
 
@@ -155,16 +157,25 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
     if (company.primary_exchange ?? company.exchange) quoteParams.set("exchange", company.primary_exchange ?? company.exchange ?? "");
     if (company.currency) quoteParams.set("currency", company.currency);
     const priceQuery = new URLSearchParams();
+    const thesisId = Number(firstParam(query?.thesis));
+    const pinId = Number(firstParam(query?.pin));
+    const requestedPin = Number.isSafeInteger(thesisId) && thesisId > 0 && Number.isSafeInteger(pinId) && pinId > 0;
     const priceSeries = firstParam(query?.price_series);
     const priceDate = firstParam(query?.price_date);
     if (priceSeries) priceQuery.set("series", priceSeries);
     if (priceDate) priceQuery.set("through", priceDate);
-    const [marketQuote, financialTrends, modelSummaries, priceTimeline] = await Promise.all([
+    const [marketQuote, financialTrends, modelSummaries, priceTimeline, pinResponse] = await Promise.all([
       serverFetchApiResponse<CompanyMarketData>(`/api/market/quote?${quoteParams.toString()}`),
       serverFetchApiResponse<FinancialStatementPeriod[]>(`/companies/${company.id}/financial-periods`),
       serverFetchApiResponse<ValuationModelSummary[]>(`/companies/${company.id}/valuation-model-summaries`),
-      serverFetchApiResponse<PriceTimeline>(`/companies/${company.id}/price-timeline${priceQuery.size ? `?${priceQuery}` : ""}`)
+      serverFetchApiResponse<PriceTimeline>(`/companies/${company.id}/price-timeline${priceQuery.size ? `?${priceQuery}` : ""}`),
+      requestedPin ? serverFetchApiResponse<PricePin[]>(`/thesis-notes/${thesisId}/price-pins`) : null
     ]);
+
+    const originalPin = hasUsableData(pinResponse) && !pinResponse.errors.length && Array.isArray(pinResponse.data)
+      ? pinResponse.data.find(pin => pin.id === pinId && pin.thesis_note_id === thesisId && pin.company_id === company.id) : null;
+    const sameDate = originalPin && hasUsableData(priceTimeline) && priceTimeline.data.series?.key === originalPin.anchor.key
+      ? priceTimeline.data.points.find(point => point.date === originalPin.anchor.date) : null;
 
     const detail = buildCompanyDetail(company, documents, events, alerts, thesisNotes);
     const secSources = sources.filter(
@@ -232,6 +243,12 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
         </header>
 
         <section id="price-history" className="company-overview-history" aria-label="Stock price history">
+          {requestedPin && (originalPin ? <Panel title="Historical thesis note">
+            <p>Close when pinned · {originalPin.anchor.date} · {originalPin.anchor.currency} {originalPin.anchor.price}</p>
+            <p>{sameDate?.price != null ? `Current stored close for that date · ${originalPin.anchor.currency} ${sameDate.price}` : "Current close for the pinned observation is unavailable."}</p>
+            <p className="price-note-text">{originalPin.text}</p>
+            <Link href={`/thesis-notes/${originalPin.thesis_note_id}#price-pins`}>Open original thesis note</Link>
+          </Panel> : <p>The requested private price note is unavailable.</p>)}
           <Panel title="Price history">
             {hasUsableData(priceTimeline) && Array.isArray(priceTimeline.data.points) && Array.isArray(priceTimeline.data.choices) ? <>
               <DataStateNotices metas={[priceTimeline.meta]} />

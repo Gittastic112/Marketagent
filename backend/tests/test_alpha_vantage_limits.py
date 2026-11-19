@@ -60,7 +60,7 @@ def test_history_sorts_dates_filters_current_future_and_out_of_window_rows(monke
             return cls(2026, 7, 1, 2, tzinfo=timezone.utc)
     monkeypatch.setattr(module, "datetime", Clock)
     async def response(*args, **kwargs):
-        return {"Time Series (Daily)": {
+        return {"Meta Data": {"2. Symbol": "MOCK"}, "Time Series (Daily)": {
             "2026-06-29": {"4. close": "101"}, "2026-07-01": {"4. close": "103"},
             "2026-06-01": {"4. close": "90"}, "2026-06-30": {"4. close": "102"},
             "2026-06-26": {"4. close": "100"}, "bad": {"4. close": "private-input"},
@@ -82,3 +82,15 @@ def test_query_transport_checks_elapsed_time_between_network_reads(monkeypatch):
     with pytest.raises(fixed_json.FixedJsonError) as error:
         fixed_json.read_json(Response(b"{}"), max_bytes=500, started=0)
     assert error.value.kind == "timeout"
+
+@pytest.mark.parametrize("method", ["get_quote", "get_historical_prices"])
+@pytest.mark.parametrize("symbol", [None, "OTHER"])
+def test_provider_must_confirm_symbol(monkeypatch, method, symbol):
+    provider = module.AlphaVantageProvider("fixture")
+    async def response(*args, **kwargs):
+        return {"Global Quote": {"01. symbol": symbol, "05. price": "100"},
+                "Meta Data": {"2. Symbol": symbol}, "Time Series (Daily)": {"2024-01-01": {"4. close": "100"}}}
+    monkeypatch.setattr(provider, "_get_json", response)
+    with pytest.raises(MarketDataProviderError) as error:
+        asyncio.run(getattr(provider, method)(MarketDataRequest(market="US", ticker="MOCK")))
+    assert error.value.code == "PROVIDER_IDENTITY_MISMATCH"

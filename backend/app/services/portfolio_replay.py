@@ -6,7 +6,7 @@ from hashlib import sha256
 import json
 from types import SimpleNamespace
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.models import Company, Portfolio, PortfolioCashBalance, PortfolioHolding, PortfolioTransaction
@@ -41,6 +41,16 @@ def snapshot_replay_is_verified(snapshot, db: Session | None = None) -> bool:
 def manual_snapshot_basis(payload):
     return {**(payload or {}), "replay_basis": {"method": "manual-snapshot-v1", "status": "not_assessed",
         "claim_type": "User Assumption", "blockers": ["MANUALLY_EDITED_SNAPSHOT"]}}
+
+
+def latest_share_actions(db, portfolio_id: int, end: date, start: date | None = None):
+    tx = PortfolioTransaction
+    filters = [tx.portfolio_id == portfolio_id, tx.transaction_type.in_(("split", "bonus")), tx.transaction_date <= end]
+    if start is not None:
+        filters.append(tx.transaction_date >= start)
+    columns = (tx.company_id, func.upper(tx.ticker), func.upper(tx.currency))
+    return {(company, ticker, currency): day for company, ticker, currency, day in
+            db.execute(select(*columns, func.max(tx.transaction_date)).where(*filters).group_by(*columns))}
 
 
 def _key(record):

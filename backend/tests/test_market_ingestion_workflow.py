@@ -32,14 +32,19 @@ def setup(db, monkeypatch):
     return company, ingestion
 
 
-def test_ingestion_same_date_quote_history_has_one_price_and_retry_is_idempotent(db, monkeypatch):
+def test_ingestion_same_date_quote_and_history_remain_distinct_and_retry_is_idempotent(db, monkeypatch):
     company, ingestion = setup(db, monkeypatch)
     first = asyncio.run(ingestion.ingest_company_prices(db, company=company, user_id="admin_user_id_fallback"))
     second = asyncio.run(ingestion.ingest_company_prices(db, company=company, user_id="admin_user_id_fallback"))
-    assert first.created_count == 1 and first.skipped_duplicate_count == 1
+    assert first.created_count == 2 and first.skipped_duplicate_count == 0
     assert second.created_count == 0 and second.skipped_duplicate_count == 2
-    assert db.query(MarketPrice).count() == 1
-    assert db.scalar(select(MarketPrice)).price_type == "end_of_day"
+    assert db.query(MarketPrice).count() == 2
+    close = db.scalar(select(MarketPrice).where(MarketPrice.price_type == "end_of_day"))
+    assert close.id != first.market_price.id
+    prior_close = (close.id, close.price, close.adjustment_state)
+    asyncio.run(ingestion.ingest_company_prices(db, company=company, user_id="admin_user_id_fallback", include_history=False))
+    db.refresh(close)
+    assert (close.id, close.price, close.adjustment_state) == prior_close
 
 
 def test_ingestion_rolls_back_prices_if_downstream_work_fails(db, monkeypatch):
@@ -104,3 +109,27 @@ def test_provider_cannot_store_another_security_under_the_selected_company(db, m
     assert error.value.code == "PROVIDER_IDENTITY_MISMATCH"
     assert db.query(MarketPrice).count() == 0
     assert db.scalar(select(ProcessingRun)).status == "failed"
+
+@pytest.mark.parametrize("history_first", [True, False])
+def test_both_ingestion_orders_preserve_chart_basis_and_distinct_quote(db, monkeypatch, history_first):
+    from app.services.market_data.persistence import persist_history_point, persist_quote, request_for_company
+    from app.services.price_timeline import company_timeline
+    company, _ = setup(db, monkeypatch)
+    request = request_for_company(company)
+    source = Provider()
+    quote = asyncio.run(source.get_quote(request)).model_copy(update={"provider_name": "verified_test", "current_price": Decimal("104")})
+    close = asyncio.run(source.get_historical_prices(request, 5))[0].model_copy(update={
+        "provider_name": "verified_test", "close_price": Decimal("100"), "adjustment_state": "unadjusted"})
+    def history():
+        persist_history_point(db, company=company, point=close)
+        db.flush()
+    def current():
+        persist_quote(db, company=company, quote=quote)
+        db.flush()
+    writes = (history, current) if history_first else (current, history)
+    for write in (*writes, *writes):
+        write()
+    report = company_timeline(db, company.id, "synthetic-owner", None, None)
+    assert db.query(MarketPrice).count() == 2
+    assert len(report.points) == 1 and report.points[0].price == 100 and report.series.adjustment == "unadjusted"
+    assert company.market_data.current_price == 104

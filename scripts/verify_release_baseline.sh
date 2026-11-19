@@ -13,10 +13,10 @@ cleanup() {
   local runner_exit_status=$?
   trap - EXIT INT TERM
   if [[ "$unit_project_started" == true ]]; then
-    "${TEST_COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+    "${TEST_COMPOSE[@]}" down --volumes --remove-orphans --rmi local >/dev/null 2>&1 || true
   fi
   if [[ "$project_started" == true ]]; then
-    "${COMPOSE[@]}" down --volumes --remove-orphans >/dev/null 2>&1 || true
+    "${COMPOSE[@]}" down --volumes --remove-orphans --rmi local >/dev/null 2>&1 || true
   fi
   exit "$runner_exit_status"
 }
@@ -90,10 +90,7 @@ curl --fail --silent "http://127.0.0.1:${E2E_FRONTEND_PORT}/api/auth/readiness" 
 assert_unused_project "$TEST_PROJECT_NAME"
 unit_project_started=true
 "${TEST_COMPOSE[@]}" run --rm --build backend-tests
-# Source guards inspect repository configuration outside the frontend build context.
-"${COMPOSE[@]}" run --rm --no-deps \
-  --volume "$ROOT_DIR:/repository:ro" --env REPOSITORY_ROOT=/repository \
-  frontend-e2e npm test
-"${COMPOSE[@]}" exec -T frontend-e2e npm run typecheck
+# The standalone server has only runtime dependencies. Source and type checks use the builder.
+"${TEST_COMPOSE[@]}" run --rm --build frontend-tests
 
 printf 'Release baseline verification passed.\n'

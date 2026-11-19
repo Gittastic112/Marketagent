@@ -110,6 +110,7 @@ database settings or network access:
 docker compose --env-file /dev/null -f docker-compose.test.yml build backend-tests
 docker compose --env-file /dev/null -f docker-compose.test.yml run --rm backend-tests pytest -q -p no:cacheprovider backend/tests/test_schema_boundaries.py
 docker compose --env-file /dev/null -f docker-compose.test.yml run --rm backend-tests
+docker compose --env-file /dev/null -f docker-compose.test.yml run --rm --build frontend-tests
 ~~~
 
 Replace the focused test path with the behavior being changed. Tests use their
@@ -121,8 +122,9 @@ The explicit empty environment file prevents Compose from reading the root .env
 for these isolated definitions. It does not authorize reading protected files or
 substituting empty settings into the normal runtime.
 
-The browser runner also executes `backend/tests/integration/test_ingestion_postgres.py`
-against its disposable PostgreSQL database. It proves row/advisory locking that
+The disposable runners remove their project-created images during teardown. Named shared images and the normal installation are outside that cleanup. The baseline runs frontend unit and type checks in the builder. Browser flows use the standalone runtime.
+
+The browser runner executes `backend/tests/integration/test_ingestion_postgres.py` and `backend/tests/integration/test_legacy_preservation_postgres.py` against its disposable PostgreSQL database. It proves row/advisory locking that
 SQLite cannot exercise. The test requires `INGESTION_TEST_DATABASE_URL`, rejects
 database names without the `_e2e` suffix, and allocates/removes only its own random
 schema. Checks cover ingestion locks, review writers, competing saved
@@ -317,8 +319,7 @@ it does not disable or raise the normal sign-in throttle. Seed a fresh disposabl
 database before each full run, because some workflow fixtures use fixed identities.
 Use E2E_FRONTEND_PORT and E2E_BACKEND_PORT only when those ports are occupied.
 Do not run two invocations against the same disposable project concurrently.
-The browser script runs a production Next.js build with `npm run start` from
-the builder image. Separately build the normal standalone production image.
+The browser script builds the final standalone frontend image and runs its packaged `node server.js` entry point. Set `E2E_BROWSER=firefox` or `E2E_BROWSER=webkit` to exercise another installed Playwright browser.
 Both Compose definitions bind published ports to 127.0.0.1. Check the actual
 runtime bindings; previously created containers retain their old configuration.
 
