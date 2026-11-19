@@ -684,3 +684,18 @@ test("portfolio return cards distinguish selected-period TWR from annualized MWR
     assert.equal((html.match(/>0\.00%</g) || []).length, 2);
   }
 });
+
+test("document and evidence responses retain their own unavailable and empty states", async () => {
+  const document = {id: 7, title: "Mock Data original filing", url: "https://example.invalid/filing", document_type: "10-K"};
+  const render = (failed: string, status = "NETWORK_ERROR") => pageHtml("app/documents/[id]/sections/page",
+    url => url.includes(failed) ? errorResponse(status, "Mock Data failure") : url.endsWith("/summary") ? success(document)
+      : url.endsWith("/sections") ? success([]) : success(null), undefined, {candidate_id: "3", evidence_reference: "4"});
+  const partial = await render("/sections");
+  assert.match(partial, /Mock Data original filing/); assert.match(partial, /Open original source/);
+  assert.match(partial, /Filing sections could not be loaded/); assert.doesNotMatch(partial, /No sections parsed yet/);
+  const empty = await render("financial-line-items");
+  assert.match(empty, /No sections parsed yet/); assert.match(empty, /Candidate could not be loaded/); assert.match(empty, /Retry evidence/);
+  assert.match(await render("evidence-references"), /Evidence reference could not be loaded/);
+  assert.match(await render("/summary", "NOT_FOUND"), /Document was not found/);
+  assert.match(await render("/summary", "FORBIDDEN"), /unavailable for this session/);
+});

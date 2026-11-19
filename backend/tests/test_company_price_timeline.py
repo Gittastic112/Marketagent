@@ -87,6 +87,13 @@ def test_pin_is_owned_retry_safe_and_retains_original_observation(db, client):
     saved_pins = client.get(f"/thesis-notes/{mine.id}/price-pins").json()["data"]
     assert len(saved_pins) == 1 and saved_pins[0]["anchor"]["price"] == "95.000000"
 
+    reassigned = client.patch(f"/thesis-notes/{mine.id}", json={"company_id": other.id})
+    assert reassigned.status_code == 200, reassigned.text
+    retained = client.get(f"/thesis-notes/{mine.id}/price-pins").json()["data"]
+    assert len(retained) == 1 and retained[0]["company_id"] == issuer.id
+    assert retained[0]["anchor"] == pin["anchor"]
+    assert client.get(f"/thesis-notes/{theirs.id}/price-pins").status_code == 404
+
 
 def test_empty_and_unknown_basis_and_long_gaps(db, client):
     issuer = company(db, "EMPTY")

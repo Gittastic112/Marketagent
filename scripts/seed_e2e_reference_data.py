@@ -120,6 +120,7 @@ def _price_series(db, company: Company, values: list[float], currency: str) -> l
             currency=currency,
             as_of_date=as_of,
             provider_name="e2e_mock_fixture",
+            provider_symbol=company.ticker,
             price_type="Mock Data",
             adjustment_state="not_applicable",
             warnings_json=["Mock Data used only for isolated browser workflow verification."],

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { serverDeleteApi, serverPostApi } from "@/lib/server-api";
-import { buildAlertPayload, buildAlertReviewPayload, buildEventPayload, buildRawDocumentPayload, buildRawDocumentMetadataPayload, buildRssIngestionPayload, buildSecFilingIngestionPayload, buildSourcePayload, getRequiredFormId } from "@/lib/form-payloads";
+import { buildAlertPayload, buildAlertUpdatePayload, buildAlertReviewPayload, buildEventPayload, buildRawDocumentPayload, buildRawDocumentMetadataPayload, buildRssIngestionPayload, buildSecFilingIngestionPayload, buildSourcePayload, getRequiredFormId } from "@/lib/form-payloads";
 import { logAction, actionFormString, createRecord, deleteRecord, updateRecord, formActionError } from "./shared";
 import type { FormActionState } from "./shared";
 
@@ -132,7 +132,7 @@ export async function generateAlerts() {
 }
 
 export async function updateAlert(formData: FormData) {
-  await updateRecord("/alerts", formData, buildAlertPayload(formData), ["/", "/alerts", "/daily-brief"]);
+  await updateRecord("/alerts", formData, buildAlertUpdatePayload(formData), ["/", "/alerts", "/daily-brief"]);
 }
 
 export async function reviewAlert(formData: FormData) {

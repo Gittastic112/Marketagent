@@ -2,7 +2,8 @@ import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerParseFilingSections } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
 import type { DocumentAsset, EventEvidenceReference, FilingSection, FinancialExtractionCandidate, RawDocument } from "@/lib/api";
-import { ApiError } from "@/lib/api/contract";
+import { hasUsableData } from "@/lib/data-state-meta";
+import type { ApiResponse } from "@/lib/api/contract";
 import {
   eventEvidenceGeometry,
   eventEvidenceHref,
@@ -27,6 +28,13 @@ interface PageProps {
   }>;
 }
 
+function evidenceFailure(result: ApiResponse<unknown>, label: string) {
+  const code = result.errors[0]?.code;
+  if (code === "NOT_FOUND") return `${label} was not found.`;
+  if (["UNAUTHORIZED", "NOT_AUTHENTICATED", "FORBIDDEN"].includes(code)) return `Access to ${label.toLowerCase()} is unavailable for this session.`;
+  return `${label} could not be loaded. Reload to retry.`;
+}
+
 export default async function DocumentSectionsPage({ params, searchParams }: PageProps) {
   const { id } = await params;
   const query = await searchParams;
@@ -38,11 +46,23 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
     : query.evidence_reference;
   const referenceId = referenceIdValue ? Number.parseInt(referenceIdValue, 10) : null;
 
+  const retryParams = new URLSearchParams();
+  if (candidateId) retryParams.set("candidate_id", String(candidateId));
+  if (referenceId) retryParams.set("evidence_reference", String(referenceId));
+  const retryHref = `/documents/${documentId}/sections${retryParams.size ? `?${retryParams}` : ""}`;
+
   try {
     const documentRes = await serverFetchApiResponse<RawDocument>(`/raw-documents/${documentId}/summary`);
+    if (!hasUsableData(documentRes) || documentRes.errors.length) return <>
+      <Link href="/documents">Back to documents</Link>
+      <ErrorState message={evidenceFailure(documentRes, "Document")} errors={documentRes.errors} />
+      <a href={retryHref}>Retry document</a>
+    </>;
     const document = documentRes.data;
     const sectionsRes = await serverFetchApiResponse<FilingSection[]>(`/raw-documents/${documentId}/sections`);
-    const sections = sectionsRes.data || [];
+    const sections = hasUsableData(sectionsRes) && !sectionsRes.errors.length && Array.isArray(sectionsRes.data) ? sectionsRes.data : null;
+    let candidateError: string | null = null;
+    let referenceError: string | null = null;
 
     let candidate: FinancialExtractionCandidate | null = null;
     let evidenceReference: EventEvidenceReference | null = null;
@@ -52,8 +72,9 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
     if (sectionsRes.meta) metas.push(sectionsRes.meta);
 
     if (candidateId && Number.isFinite(candidateId)) {
-      const candidateRes = await serverFetchApiResponse<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}`).catch(() => null);
-      if (candidateRes && candidateRes.data) {
+      const candidateRes = await serverFetchApiResponse<FinancialExtractionCandidate>(`/api/financial-line-items/${candidateId}`);
+      if (!hasUsableData(candidateRes) || candidateRes.errors.length) candidateError = evidenceFailure(candidateRes, "Candidate");
+      else {
         candidate = candidateRes.data;
         if (candidateRes.meta) metas.push(candidateRes.meta);
       }
@@ -71,18 +92,17 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
     let workbookAsset: DocumentAsset | null = null;
     let workbookNotice: string | null = null;
     if (document?.document_type === "screener_export" || document?.content_hash?.startsWith("pdf-filing:")) {
-      try {
-        workbookAsset = (await serverFetchApiResponse<DocumentAsset>(`/api/raw-documents/${documentId}/asset`)).data;
-      } catch (error) {
-        workbookNotice = document?.document_type !== "screener_export" ? "Retained PDF availability could not be checked. Reload to retry." : error instanceof ApiError && error.status === 404
-          ? "The original workbook was not retained by the older importer. Upload the identical original file for this company to restore it without changing reviewed values."
-          : "Original workbook availability could not be checked. Reload to retry.";
-      }
+      const asset = await serverFetchApiResponse<DocumentAsset>(`/api/raw-documents/${documentId}/asset`);
+      if (hasUsableData(asset) && !asset.errors.length) workbookAsset = asset.data;
+      else workbookNotice = asset.errors[0]?.code === "NOT_FOUND" && document.document_type === "screener_export"
+        ? "The original workbook was not retained. The matching original can restore it."
+        : evidenceFailure(asset, "Original file");
     }
 
     if (referenceId && Number.isFinite(referenceId)) {
-      const referenceRes = await serverFetchApiResponse<EventEvidenceReference>(`/evidence-references/${referenceId}`).catch(() => null);
-      if (referenceRes && referenceRes.data) {
+      const referenceRes = await serverFetchApiResponse<EventEvidenceReference>(`/evidence-references/${referenceId}`);
+      if (!hasUsableData(referenceRes) || referenceRes.errors.length) referenceError = evidenceFailure(referenceRes, "Evidence reference");
+      else {
         evidenceReference = referenceRes.data;
         if (referenceRes.meta) metas.push(referenceRes.meta);
       }
@@ -103,7 +123,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
         <PageHeader
           eyebrow={`Document ${document?.id}`}
           title={document?.title || "Unknown"}
-          status={`${sections.length} sections`}
+          status={sections ? `${sections.length} sections` : "Section count unavailable"}
           actions={originalUrl ? (
             <a className="secondary-button" href={originalUrl} target="_blank" rel="noopener noreferrer">
               Open original source
@@ -115,6 +135,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           metas={metas}
           mockMessage="One or more sections are using mock data. Treat affected source trails as placeholders."
         />
+        {(sections === null || candidateError || referenceError || workbookNotice) && <a href={retryHref}>Retry evidence</a>}
         {workbookAsset ? <p><a className="secondary-button" href={`/api/backend/api/raw-documents/${documentId}/asset/content`}>{workbookAsset.mime_type === "application/pdf" ? "Open original PDF" : "Download original workbook"}</a></p> : null}
         {workbookAsset?.mime_type === "application/pdf" ? <PdfPageExtraction documentId={documentId} /> : null}
         {workbookNotice ? <p className="notice notice-warning">{workbookNotice}</p> : null}
@@ -134,7 +155,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           </Panel>
         ) : candidateId ? (
           <Panel title="Evidence unavailable">
-            <p>The requested candidate does not exist or belongs to another document.</p>
+            <p>{candidateError ?? "The requested candidate belongs to another document."}</p>
           </Panel>
         ) : null}
 
@@ -168,7 +189,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           </Panel>
         ) : referenceId ? (
           <Panel title="Evidence unavailable">
-            <p>The requested evidence reference does not exist or belongs to another document.</p>
+            <p>{referenceError ?? "The requested reference belongs to another document."}</p>
           </Panel>
         ) : null}
 
@@ -181,7 +202,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
           </RetainedActionForm>
         </Panel> : <p>Workbook evidence uses the original file and its sheet and cell references. Text-section parsing is not available for workbooks.</p>}
 
-        {sections.length === 0 ? (
+        {sections === null ? <ErrorState message={evidenceFailure(sectionsRes, "Filing sections")} errors={sectionsRes.errors} /> : sections.length === 0 ? (
           document?.document_type !== "screener_export" ? <EmptyState label="No sections parsed yet. Click 'Run Parser' above." /> : null
         ) : (
           sections.map((section) => (

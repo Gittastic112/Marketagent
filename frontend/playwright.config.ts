@@ -13,7 +13,8 @@ export default defineConfig({
   reporter: [["list"], ["html", { open: "never", outputFolder: "playwright-report" }]],
   use: {
     baseURL: process.env.E2E_BASE_URL || "http://127.0.0.1:13000",
-    channel: process.env.E2E_BROWSER_CHANNEL || "chrome",
+    browserName: process.env.E2E_BROWSER === "firefox" ? "firefox" : process.env.E2E_BROWSER === "webkit" ? "webkit" : "chromium",
+    channel: process.env.E2E_BROWSER === "firefox" || process.env.E2E_BROWSER === "webkit" ? undefined : process.env.E2E_BROWSER_CHANNEL || "chrome",
     screenshot: "only-on-failure",
     trace: "retain-on-failure",
     video: "off",

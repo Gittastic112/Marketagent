@@ -216,7 +216,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                             <summary>Edit</summary>
                             <RetainedActionForm label="Update alert" action={updateAlert} className="inline-form">
                               <input name="id" type="hidden" value={alert.id} />
-                              <SelectField defaultValue={alert.company_id ?? ""} id={`alert-company-${alert.id}`} label="Company" name="company_id">
+                              <SelectField disabled={!Array.isArray(companiesRes.data) || !!companiesRes.errors.length || (alert.company_id != null && !companiesById.has(alert.company_id))} defaultValue={alert.company_id ?? ""} id={`alert-company-${alert.id}`} label="Company" name="company_id">
                                 <option value="">Unlinked</option>
                                 {companies.map((company) => (
                                   <option key={company.id} value={company.id}>
@@ -224,7 +224,7 @@ export default async function AlertsPage({ searchParams }: AlertsPageProps) {
                                   </option>
                                 ))}
                               </SelectField>
-                              <SelectField defaultValue={alert.event_id ?? ""} id={`alert-event-${alert.id}`} label="Event" name="event_id">
+                              <SelectField disabled={!Array.isArray(eventsRes.data) || !!eventsRes.errors.length || (alert.event_id != null && !eventsById.has(alert.event_id))} defaultValue={alert.event_id ?? ""} id={`alert-event-${alert.id}`} label="Event" name="event_id">
                                 <option value="">Unlinked</option>
                                 {events.map((event) => (
                                   <option key={event.id} value={event.id}>
