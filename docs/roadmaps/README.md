@@ -8,7 +8,7 @@
 | [Completion tracker](completion-tracker.md) | Stable task IDs, milestone order, acceptance evidence, and deferrals |
 | [Feature register](feature-register.md) | Implemented, partial, experimental, and unavailable capability status |
 | [Review decisions](review-decisions.md) | Recorded user approvals and delegated judgments |
-| [Review and implementation workflows](../workstreams/README.md) | Independent ChatGPT Pro reviews, local edit ownership and integration |
+| [Research, review and implementation workflows](../workstreams/README.md) | Knull’s release-completion assignments, whole-project code audits, local edit ownership and integration |
 
 Plans are not implementation evidence. Use [Current State](../current-state.md)
 for dated validation and the [limitation ledger](../limitations.md) for current

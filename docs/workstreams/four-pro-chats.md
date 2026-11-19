@@ -4,6 +4,8 @@ Knull coordinates four ordinary ChatGPT Pro chats. The shared input is **one exa
 
 ## Start the round
 
+This packet serves a whole-project code audit. For the remaining issuer evidence, first valuation save and connected research workflow, use the [release-completion round](README.md#release-completion-round).
+
 1. Resolve the repository's current `main` to a full commit SHA on GitHub. Use the same immutable tree link in all four chats. Record any unpublished local change as outside this round. If reviewing an unmerged feature, use its published head SHA and identify it as such.
 2. Give each chat its row below, this packet, the root and nearest `AGENTS.md`, `docs/HANDOFF.md`, and the relevant rows of `docs/code-map.md`. Ask it to open a specific owning file and quote a symbol with its commit permalink before starting. A link alone does not prove the chat can read it.
 3. If a chat cannot read the tree, give it just its allowlisted source files, associated tests and relevant public docs from that SHA. Include a manifest with the SHA and paths. Exclude user records, backups, configuration values, uploads, private notes, account details and local logs. A missing file or unavailable provider receipt is an explicit evidence gap.

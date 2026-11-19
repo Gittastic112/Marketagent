@@ -4,7 +4,7 @@
 |---|---|
 | Use the app | [Today, source review and valuation](user-guide.md) or [inspect a price move and pin a thesis note](user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
 | Find what shipped, what was tested and what comes next | [Current state](current-state.md#dated-validation), [handoff](HANDOFF.md) and [open gates](roadmaps/completion-tracker.md#milestone-board) |
-| Work on the code, alone or in parallel | [Code map](code-map.md) and [review and implementation workflows](workstreams/README.md) |
+| Assign public-source research or work on the code | [Knull review rounds and local implementation](workstreams/README.md) and [code map](code-map.md) |
 
 ## Understand the product
 
@@ -44,7 +44,7 @@ The [product roadmap](roadmaps/product-roadmap.md) owns delivery order. The [wor
 
 The [completion tracker](roadmaps/completion-tracker.md) owns milestone acceptance. The [limitation ledger](limitations.md) names missing company disclosures, provider prerequisites and remaining review boundaries. [Operations](operations.md#essential-retention-policy) owns the single verified recovery set.
 
-For an independent four-chat review or an explicitly assigned local implementation batch, use [workstream coordination](workstreams/README.md). Agents start with the root [AGENTS.md](../AGENTS.md), the [handoff](HANDOFF.md) and the nearest directory instructions. [Task-specific workflows](skills/README.md) cover development and verification.
+The [release-completion round](workstreams/README.md#release-completion-round) gives Pro chats the issuer research, workflow design and independent checks. Local implementers start with the root [AGENTS.md](../AGENTS.md), the [handoff](HANDOFF.md) and the nearest directory instructions. [Task-specific workflows](skills/README.md) cover development and verification.
 
 Put dated proof and superseded documents in the [archive](archive/README.md).
 Keep current docs concise, replace stale status, and retain important evidence.
