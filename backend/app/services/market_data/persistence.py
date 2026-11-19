@@ -102,7 +102,13 @@ def persist_quote(
             MarketPrice.company_id == company.id,
             MarketPrice.as_of_date == as_of_date,
             MarketPrice.provider_name == quote.provider_name,
-        )
+            MarketPrice.provider_symbol == quote.provider_symbol,
+            MarketPrice.currency == quote.currency.upper(),
+            MarketPrice.market == quote.market.upper(),
+            MarketPrice.exchange == (quote.exchange.upper() if quote.exchange else None),
+            MarketPrice.price_type.in_(("unknown", "real_time", "delayed", "end_of_day_quote", "manual_quote")),
+            MarketPrice.adjustment_state == quote.adjustment_state,
+        ).order_by(MarketPrice.id.desc()).limit(1)
     )
     market_price_created = market_price is None
     if market_price is None:
@@ -119,14 +125,14 @@ def persist_quote(
     market_price.exchange = quote.exchange.upper() if quote.exchange else None
     market_price.source_timestamp = quote.source_timestamp
     market_price.observed_at = quote.observed_at
-    market_price.price_type = quote.price_type
+    market_price.price_type = f"{quote.price_type}_quote" if quote.price_type in {"end_of_day", "manual"} else quote.price_type
     market_price.delay_minutes = quote.delay_minutes
     market_price.adjustment_state = quote.adjustment_state
     market_price.warnings_json = list(quote.warnings)
 
     market_data = company.market_data
     if market_data is None:
-        market_data = CompanyMarketData(company_id=company.id)
+        market_data = CompanyMarketData(company=company)
         db.add(market_data)
     market_data.current_price = quote.current_price
     market_data.change_percent = quote.change_percent
@@ -167,7 +173,13 @@ def persist_history_point(
             MarketPrice.company_id == company.id,
             MarketPrice.as_of_date == point.date,
             MarketPrice.provider_name == point.provider_name,
-        )
+            MarketPrice.provider_symbol == point.provider_symbol,
+            MarketPrice.currency == point.currency.upper(),
+            MarketPrice.market == point.market.upper(),
+            MarketPrice.exchange == (point.exchange.upper() if point.exchange else None),
+            MarketPrice.price_type == "end_of_day",
+            MarketPrice.adjustment_state == point.adjustment_state,
+        ).order_by(MarketPrice.id.desc()).limit(1)
     )
     created = market_price is None
     if market_price is None:

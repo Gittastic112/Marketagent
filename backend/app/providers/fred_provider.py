@@ -103,7 +103,7 @@ class FredProvider(BaseMacroProvider):
                 "realtime_start": "1776-07-04", "realtime_end": as_of.isoformat(),
                 "observation_start": observation_start.isoformat(),
                 "observation_end": observation_end.isoformat(), "output_type": 1,
-                "order_by": "observation_date", "sort_order": "asc", "limit": 1000,
+                "units": "lin", "order_by": "observation_date", "sort_order": "asc", "limit": 1000,
                 "offset": offset,
             }
             data = self._request("series/observations", params)
@@ -152,8 +152,34 @@ class FredProvider(BaseMacroProvider):
             if previous is None or ((row["realtime_start"] > previous["realtime_start"])
                                     if mode == "as_of" else (row["realtime_start"] < previous["realtime_start"])):
                 selected[row["date"]] = row
-        complete = offset >= (count or 0)
+        pages_complete = offset >= (count or 0)
+        warnings = [] if pages_complete else ["VINTAGE_PAGE_BUDGET_EXHAUSTED"]
+        vintages = sorted({row["realtime_start"] for row in selected.values()}) if mode == "initial_release" else [as_of.isoformat()]
+        metadata = {}
+        bases = {}
+        for day in vintages[:10]:
+            request = {"series_id": series_id, "realtime_start": day, "realtime_end": day}
+            try:
+                response = self._request("series", {**request, "file_type": "json", "api_key": self.api_key})
+            except RuntimeError:
+                response = None
+            metadata[day] = {"request": request, "response": response}
+            series = response.get("seriess") if isinstance(response, dict) else None
+            if isinstance(series, list) and len(series) == 1 and isinstance(series[0], dict):
+                entry = series[0]
+                if (entry.get("id") == series_id and entry.get("realtime_start") == day
+                        and entry.get("realtime_end") == day and all(isinstance(entry.get(k), str) and entry[k].strip()
+                            for k in ("units", "frequency", "seasonal_adjustment"))):
+                    bases[day] = {k: entry[k] for k in ("units", "frequency", "seasonal_adjustment")}
+        for observation in selected.values():
+            day = observation["realtime_start"] if mode == "initial_release" else as_of.isoformat()
+            observation["basis_vintage"] = day
+            observation["series_basis"] = bases.get(day)
+        if any(day not in bases for day in vintages):
+            warnings.append("VINTAGE_SERIES_BASIS_UNAVAILABLE")
+        complete = pages_complete and len(bases) == len(vintages)
         return {"series_id": series_id, "as_of": as_of.isoformat(), "mode": mode,
             "observations": [selected[key] for key in sorted(selected)], "revisions": revisions,
             "raw_pages": raw_pages, "complete": complete, "fetched_count": offset,
-            "expected_count": count, "warnings": [] if complete else ["VINTAGE_PAGE_BUDGET_EXHAUSTED"]}
+            "metadata_responses": metadata, "series_basis": bases, "transformation": "lin",
+            "expected_count": count, "warnings": warnings}

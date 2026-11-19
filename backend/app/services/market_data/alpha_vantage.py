@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import re
 from datetime import date, datetime, timezone
 from decimal import Decimal, InvalidOperation
 
@@ -72,10 +73,22 @@ class AlphaVantageProvider(MarketDataProvider):
             raise MarketDataProviderError(code=code, status_code=status, provider=self.provider_name,
                 message=f"Alpha Vantage could not provide {capability} within its processing limits.") from None
 
+    def _symbol(self, request: MarketDataRequest) -> str:
+        # Only plain US equity symbols have an unambiguous mapping in this adapter.
+        if request.market == "US" and request.exchange in {None, "NASDAQ", "XNAS", "NASDAQGS", "NASDAQGM", "NASDAQCM", "NYSE", "XNYS", "AMEX", "XASE", "ARCA", "ARCX", "BATS", "NYSEARCA"} and re.fullmatch(r"[A-Z][A-Z0-9-]{0,14}", request.ticker):
+            return request.ticker
+        raise MarketDataProviderError(code="PROVIDER_UNSUPPORTED_IDENTITY", provider=self.provider_name,
+            message="The Alpha Vantage listing has no supported vendor-symbol mapping.", status_code=422, retryable=False)
+
+    def _verify_symbol(self, raw, expected: str) -> None:
+        if not isinstance(raw, str) or raw.strip().upper() != expected:
+            raise MarketDataProviderError(code="PROVIDER_IDENTITY_MISMATCH", provider=self.provider_name,
+                message="The Alpha Vantage response did not verify the requested symbol.", retryable=False)
+
     async def get_quote(self, request: MarketDataRequest) -> MarketQuoteResult:
         self._require_key()
 
-        ticker = request.ticker
+        ticker = self._symbol(request)
         params = {
             "function": "GLOBAL_QUOTE",
             "symbol": ticker,
@@ -92,6 +105,7 @@ class AlphaVantageProvider(MarketDataProvider):
                 retryable=True,
             )
 
+        self._verify_symbol(quote.get("01. symbol"), ticker)
         try:
             current_price = Decimal(quote["05. price"])
             if current_price <= 0:
@@ -108,12 +122,12 @@ class AlphaVantageProvider(MarketDataProvider):
             ) from None
 
         currency, warnings = self._currency(request)
-        warnings.append("Alpha Vantage did not supply a quote timestamp or delay classification.")
+        warnings.append("Alpha Vantage verified the symbol but did not supply the listing venue, quote timestamp or delay classification.")
         return MarketQuoteResult(
             provider_name=self.provider_name,
             provider_symbol=ticker,
             market=request.market,
-            exchange=request.exchange,
+            exchange=None,
             ticker=request.ticker,
             current_price=current_price,
             change_percent=change_percent,
@@ -134,7 +148,7 @@ class AlphaVantageProvider(MarketDataProvider):
         observed_at = datetime.now(timezone.utc)
         window = history_window(request, days, now=observed_at)
 
-        ticker = request.ticker
+        ticker = self._symbol(request)
         # TIME_SERIES_DAILY requires outputsize=full for >100 days
         outputsize = "full" if days > 100 else "compact"
         params = {
@@ -156,8 +170,10 @@ class AlphaVantageProvider(MarketDataProvider):
             )
 
         currency, warnings = self._currency(request)
+        metadata = data.get("Meta Data")
+        self._verify_symbol(metadata.get("2. Symbol") if isinstance(metadata, dict) else None, ticker)
         results: list[MarketHistoryResult] = []
-        warnings.append(window.warning)
+        warnings.extend(["The response verified the vendor symbol but did not supply its listing venue.", window.warning])
         for date_str, daily_data in sorted(time_series.items()):
             try:
                 day = date.fromisoformat(date_str)
@@ -168,7 +184,7 @@ class AlphaVantageProvider(MarketDataProvider):
                         provider_name=self.provider_name,
                         provider_symbol=ticker,
                         market=request.market,
-                        exchange=request.exchange,
+                        exchange=None,
                         ticker=request.ticker,
                         date=day,
                         close_price=Decimal(daily_data["4. close"]),

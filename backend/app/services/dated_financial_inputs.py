@@ -2,6 +2,7 @@
 from collections import defaultdict
 from datetime import UTC, date, datetime, time
 from types import SimpleNamespace
+import re
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -19,8 +20,13 @@ def _source_publication(record):
         return record.published_at
     # A companyfacts snapshot contains different filings. Its retrieval or
     # document timestamp cannot stand in for a particular fact's availability.
-    if (locator.get("type") != "xbrl_fact" or record.source_provider != "SEC EDGAR"
-            or not record.extraction_method.startswith("sec_xbrl_")
+    legacy = record.source_provider == "SEC EDGAR" and record.extraction_method.startswith("sec_xbrl_")
+    adapter = (record.source_kind == "source_adapter" and record.adapter == "edgartools"
+        and record.extraction_method == "edgartools_companyfacts_v1" and record.document_url
+        and record.document_url == locator.get("source_url")
+        and re.fullmatch(r"https://data\.sec\.gov/api/xbrl/companyfacts/CIK[0-9]{10}\.json", record.document_url)
+        and locator.get("accession") and locator.get("adapter_candidate_hash"))
+    if (locator.get("type") != "xbrl_fact" or not (legacy or adapter)
             or not record.payload_sha256 or locator.get("payload_sha256") != record.payload_sha256):
         return None
     filed = locator.get("filed")
@@ -39,7 +45,9 @@ def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date
         Revision.effective_at, Revision.observed_at, Revision.revision_number, Revision.claim_type,
         Candidate.id.label("candidate_id"), Candidate.fiscal_year, Candidate.period_type,
         Candidate.source_locator_json, Candidate.source_text, Candidate.extraction_method,
-        RawDocument.id.label("document_id"), RawDocument.document_type,
+        RawDocument.id.label("document_id"), RawDocument.document_type, RawDocument.url.label("document_url"),
+        RawDocument.raw_payload_json["source_kind"].as_string().label("source_kind"),
+        RawDocument.raw_payload_json["adapter"].as_string().label("adapter"),
         RawDocument.raw_payload_json["provider"].as_string().label("source_provider"),
         RawDocument.raw_payload_json["payload_sha256"].as_string().label("payload_sha256"),
         RawDocument.published_at, RawDocument.ingested_at)
@@ -72,7 +80,8 @@ def dated_financial_inputs(db: Session, company_id: int, *, valuation_date: date
                 document_id=r.document_id, href=f"/documents/{r.document_id}/sections?candidate_id={r.candidate_id}",
                 value=r.value, unit=r.unit, claim_type=r.claim_type, published_at=r.published_at,
                 recorded_at=r.observed_at, retrieved_at=r.ingested_at, availability=availability,
-                period=basis, locator=r.source_locator_json or {}, passage=(r.source_text or "")[:2000]))
+                period=basis, locator={**(r.source_locator_json or {}), **({"source_provider": "SEC EDGAR", "parser": "edgartools"}
+                    if r.adapter == "edgartools" and r.extraction_method == "edgartools_companyfacts_v1" else {})}, passage=(r.source_text or "")[:2000]))
             if knowledge == "latest_recorded" or availability == "available_by_date":
                 eligible.append(r)
         chosen = None

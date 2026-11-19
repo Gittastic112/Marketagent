@@ -333,6 +333,9 @@ def extract_xbrl_candidates(
             if warning not in (record.extraction_warnings or ""):
                 record.extraction_warnings = " ".join(filter(None, [record.extraction_warnings, warning]))
     def identity(metric, year, value, unit, locator):
+        origin = locator.get("value_override")
+        if isinstance(origin, dict) and origin.get("original_recorded"):
+            value, unit = origin["original_value"], origin["original_unit"]
         return (metric, year, value, unit, *(locator.get(key) for key in
             ("concept", "start", "end", "filed", "accession")))
 

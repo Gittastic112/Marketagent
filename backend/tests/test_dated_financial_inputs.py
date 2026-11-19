@@ -113,3 +113,22 @@ def test_unverified_sec_locator_does_not_create_a_publication_date(client, db):
     row = client.get(f"/companies/{company.id}/dated-inputs?valuation_date=2026-11-12").json()["data"]["rows"][0]
     assert row["status"] == "unavailable_by_date"
     assert row["sources"][0]["published_at"] is None
+
+def test_edgartools_adapter_filing_date_requires_matching_archived_source(client, db):
+    company, source = setup(db)
+    url = "https://data.sec.gov/api/xbrl/companyfacts/CIK0000000001.json"
+    revision = fact(db, company, source, 100, None, "adapter", type="xbrl_fact", filed="2026-02-01",
+        accession="0000000001-26-000001", payload_sha256="a" * 64, source_url=url, adapter_candidate_hash="b" * 64)
+    document = db.get(RawDocument, revision.raw_document_id)
+    document.document_type, document.url = "xbrl_facts", url
+    document.raw_payload_json = {"source_kind": "source_adapter", "adapter": "edgartools", "payload_sha256": "a" * 64}
+    db.get(FinancialExtractionCandidate, revision.financial_candidate_id).extraction_method = "edgartools_companyfacts_v1"
+    db.commit()
+    def lookup(day):
+        return client.get(f"/companies/{company.id}/dated-inputs?valuation_date={day}").json()["data"]["rows"][0]
+    assert lookup("2026-01-31")["status"] == "unavailable_by_date"
+    selected = lookup("2026-02-01")
+    assert selected["original_value"] == 100 and selected["sources"][0]["locator"]["parser"] == "edgartools"
+    document.raw_payload_json = {**document.raw_payload_json, "payload_sha256": "c" * 64}
+    db.commit()
+    assert lookup("2026-02-01")["status"] == "unavailable_by_date"
