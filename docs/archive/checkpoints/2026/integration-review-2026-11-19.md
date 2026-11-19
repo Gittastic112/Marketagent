@@ -36,7 +36,7 @@ The four reviews examined the application released in [PR 22](https://github.com
 | Frontend | 425 passed, zero skipped. TypeScript and the generated adapter interface check passed. |
 | Recovery | 38 backup workflow and recovery metadata tests passed against disposable resources. |
 | Packaging | The standalone frontend was built from its checked-in Dockerfile. The registry refused a fresh pull of the pinned backend base. The local backend package therefore reused the installed immutable runtime and its identical dependency locks with the reviewed application source. |
-| Browser | Signed-in Firefox on local disposable PostgreSQL covered alert evidence retention, keyboard focus, corrected price pins and fractional thesis drift. |
+| Browser | Signed-in Firefox on disposable PostgreSQL covered alert evidence retention, focus in both directions, corrected price pins and fractional thesis drift. The mobile detail-page audit also identified an undersized link to edit a selected thesis. That action now uses the existing button-sized link style. |
 
 ## Reproduction and interpretation
 
