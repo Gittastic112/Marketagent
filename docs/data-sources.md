@@ -300,13 +300,13 @@ RSS ingestion exists in `backend/app/services/rss_ingestion.py`.
   price writes. Same-date quote/history rows are flushed before duplicate checks.
   The response identifies the explicitly selected adapter, not a fallback wrapper.
 - Normalized quote/history results carry provider, provider symbol, market, exchange, ticker, currency, source/observed time, price type, delay, adjustment state, and warnings. Stored `market_prices` and `company_market_data` rows expose this provenance; manual rows are labeled `manual` and legacy rows are labeled `legacy_unknown`.
+- Company Price history reads existing end-of-day observations. Each series retains listing, currency, provider, adjustment and claim type. It joins dated company evidence and the caller’s thesis pins. [Chart and source rules](reference/workflows.md#company-price-history-and-thesis-pins)
 - `/market-prices` renders source/timing labels and warning details so manual, legacy, unofficial, and configured-provider rows are distinguishable without inspecting the API.
 - Alpha Vantage, FMP, Massive, official NSE MCP and explicit `yfinance_personal` adapters are implemented through the existing factory. yfinance remains unofficial, personal-use oriented and explicitly selected. FMP/Massive currently support scoped US listings; NSE history preserves EQ-series gaps and unadjusted basis. See [adapter contracts and verification](adapters/README.md).
 - The personal provider is pinned to yfinance 1.7.0 after live checks found the
   old 0.2.37 dependency failed for both US and NSE symbols. Latest quotes still
   have unknown source time/delay, not verified real-time status. Daily history
-  requests and filters dates strictly before the current UTC date, conservatively
-  excluding an unfinished current-day bar even after that market has closed.
+  excludes the current market-local date, including after that market closes. US requests use America/New_York and Indian requests use Asia/Kolkata. [History-window implementation](../backend/app/services/market_data/sessions.py)
   Refresh is available on demand and through the opt-in weekday valuation-source
   worker described above. It is not a streaming or intraday polling service.
 - Explicit market-context routes avoid ambiguous symbols. Legacy ticker-only routes reject cross-market or cross-exchange ambiguity.

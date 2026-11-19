@@ -15,7 +15,9 @@ together. For a first installation, use the normal app definition and follow
 | [docker-compose.e2e.yml](../docker-compose.e2e.yml) | Browser, integration, and release verification | Standalone disposable PostgreSQL/backend/frontend project |
 | [docker-compose.recovery.yml](../docker-compose.recovery.yml) | Backup and restore rehearsal | Standalone disposable PostgreSQL/backend project |
 
-Only the dev file is an overlay. Do not merge the four isolated test definitions
+The installed chart release uses four normal containers: frontend, backend, PostgreSQL and the optional Daily Brief scheduler. Separate Compose definitions on disk do not start extra copies of the app. For an existing installation, reuse its [selected project and override](../docs/operations.md#select-the-installed-local-stack). The [storage policy](../docs/operations.md#essential-retention-policy) identifies the one verified recovery set and when temporary build resources can be retired.
+
+Of the six checked-in files, only the dev file is an overlay. Do not merge the four isolated test definitions
 with the normal app. The normal definition also has optional automation workers
 and an optional admin profile for pgAdmin; neither is required to browse the app.
 

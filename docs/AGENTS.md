@@ -13,7 +13,7 @@ archives preserve history, not instructions.
   status. Do not use old checkpoint numbering as a queue.
 - roadmaps/completion-tracker.md owns percentage requests and cumulative acceptance
   gates. "Finish 10%" means M01; "next 10%" means the earliest unfinished milestone.
-- The [workstream design](workstreams/plan.md) retains technical assignments for
+- The [coordination guide](workstreams/README.md) routes read-only Pro reviews and local implementation. The [workstream design](workstreams/plan.md) retains technical assignments for
   an explicitly launched batch. [Ownership](workstreams/ownership.tsv) owns edit
   allocations; the completion tracker owns current acceptance status.
 - limitations.md is the single limitation ledger.
@@ -22,7 +22,7 @@ archives preserve history, not instructions.
 
 During the parallel batch, agents write their own allocated evidence directories
 and propose central-doc changes there. The coordinator reconciles current docs
-after integration; five agents must not append to the handoff or ledger at once.
+after integration. Keep shared status in one place.
 
 Replace current status rather than appending milestones. Archive detailed proof
 under archive/checkpoints/YYYY, old handoffs under archive/handoffs, and uncertain

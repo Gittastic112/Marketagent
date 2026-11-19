@@ -117,6 +117,16 @@ Every external action should create a processing run. Imported text and HTML are
 untrusted. Exact locators are stored where available; unsupported historical
 records must retain explicit fallback states.
 
+## Company price history and thesis pins
+
+The [timeline service](../../backend/app/services/price_timeline.py) reads positive stored end-of-day prices for the selected company. A series groups one provider, source symbol, market, exchange, currency, adjustment basis and claim type. The default prefers factual data, then the series covering the most dates, then the most recent observation. Explicitly labeled Mock Data stays in its own series.
+
+The service returns up to 365 distinct stored dates, with an optional inclusive end date. On comparable observations it computes `100 × (current close / previous close − 1)`. It marks an absolute change of at least 5%. Conflicting same-day closes break the comparison chain. Gaps over seven calendar days and unknown adjustment bases withhold a percentage. An unadjusted series can move mechanically after a split or distribution.
+
+The service links company documents by publication date and linked events by event date. It retains the source date when material between two stored closes appears at the later point. The inspector separately shows material from the preceding comparable close date. A date-only SEC filing keeps its filing date. A publication can occur after trading. Up to 2,000 documents and 2,000 linked events are inspected for the window, with a limit indicator if exceeded. None of these matches establishes causation.
+
+Saving a pin requires a thesis owned by the signed-in user for that company, the observed price ID and fingerprint, and a request UUID. A matching retry returns the saved pin. A changed price, conflicting close or reuse of the key for different content produces a conflict. The thesis holds the original observation and the note text. A chart point displays pins matching its current fingerprint. A corrected quote can therefore still be compared with the observation retained on the thesis. [Request contracts](../../backend/app/schemas/price_timeline.py) · [Behavior tests](../../backend/tests/test_company_price_timeline.py) · [Browser workflow](../../frontend/e2e/price-timeline.spec.ts)
+
 ## Financials to valuation
 
 The read-only financial review planner joins company-scoped periods, scalar

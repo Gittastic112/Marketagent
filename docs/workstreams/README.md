@@ -1,19 +1,15 @@
-# Workstream coordination
+# Coordinate a project review
 
-The [workstream scope index](plan.md) maps responsibilities and integration rules.
-The original October design is archived with its dated observations. The
-[completion tracker](../roadmaps/completion-tracker.md) owns acceptance status.
+## Four independent ChatGPT Pro reviews
 
-- [ownership.tsv](ownership.tsv) is the exclusive allowlist for an explicitly
-  assigned batch. A file reservation is exact; a tree reservation ends in /.
-  Unlisted paths are frozen during that batch.
-- W1 covers briefing, W2 financial sources, W3 portfolio history, W4 sensitivities,
-  and W5 recovery. Allocation never grants unrelated feature scope.
-- [Historical evidence](evidence/README.md) indexes dated review and execution receipts. Some files
-  are published; local snapshots and patches are not application code.
-- The coordinator reconciles shared documents after integration. Agents propose
-  cross-boundary changes in their allocated receipt instead of duplicating work.
+For a code review, start with [the four-chat assignments and copyable Knull prompt](four-pro-chats.md). Pin one published commit and ask each chat to open an owning file at that revision. The four assignments cover data and adapters, valuation and portfolio math, research workflows and UI, and release safety and privacy.
 
-Use the [runbook](../execution-runbook.md#parallel-workstream-checks) for path
-guards. A passing ownership check does not prove behavior, test isolation, or
-that a supplied changed-file list is complete.
+Each chat returns findings with a commit permalink, observed or code-traced behavior, the consequence and a proposed check. One local integrator deduplicates findings, verifies them against the current checkout and implements accepted changes. Share public source and tests only. Keep private research, credentials, account data and backups local.
+
+The four-chat packet is optional and can be deleted after the round. Remove its link from this page at the same time. The product roadmap, application and local workstream rules are independent of that packet.
+
+## Parallel local implementation
+
+For a batch explicitly assigned to local workers, use the [workstream scope index](plan.md), an exact edit allocation and one integration owner. Reserve shared contracts, migrations and central documents for that owner. Use isolated tests for writers and one normal installation for the verified result. The [runbook](../execution-runbook.md#parallel-workstream-checks) covers path checks and environment isolation.
+
+The historical [five-workstream allocation](ownership.tsv) assigns briefing, financial sources, portfolio history, sensitivities and recovery. Its file and directory reservations apply to that assigned batch. The [evidence index](evidence/README.md) preserves earlier receipts. The [milestone board](../roadmaps/completion-tracker.md#milestone-board) owns product acceptance.

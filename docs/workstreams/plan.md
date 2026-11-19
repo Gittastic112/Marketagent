@@ -1,6 +1,6 @@
 # Workstream scope index
 
-Use this index only for an explicitly assigned parallel batch. Current product
+For independent read-only Pro reviews, use the [coordination guide](README.md). This index applies to an explicitly assigned local coding batch. Current product
 priorities live in the [roadmap](../roadmaps/product-roadmap.md); acceptance lives
 in the [completion tracker](../roadmaps/completion-tracker.md).
 

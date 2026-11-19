@@ -1,8 +1,8 @@
 # Research adapters and Research Lab
 
-Implementation batch: November 17, 2026. Baseline: `371b58c02cfd2b80429f28dbc13629165b5e392d`.
+The three adapter router groups expose 22 operations for market data, source intake and Research Lab. The local application runs the analysis and Camelot profiles. A capability can be implemented while a specific account lacks the entitlement or an installed worker lacks the assets to execute it. [API inventory](#api-inventory) · [Release evidence](../current-state.md#dated-validation)
 
-This guide covers the implemented source adapters, optional dependencies, consuming APIs, interface changes, verification, and remaining roadmap work. The [combined worklist](../roadmaps/ui-adapter-worklist.md) records integration with the Geist UI, local release gates and the remaining scope of each research package.
+An adapter can retrieve or parse evidence. A review decision determines whether a financial candidate enters the company's reviewed history. Research Lab uses supplied returns for its calculations. The [16-package worklist](../roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) identifies the remaining integration work.
 
 ## What is implemented
 
@@ -224,7 +224,18 @@ Detailed evidence is retained per workstream:
 2. [Market, identity and calendar adapters](../workstreams/evidence/adapters-20261117/W3/README.md).
 3. [Integrated verification](verification.md).
 
-Actual PyPortfolioOpt, bt, QuantStats, calendar, EdgarTools and Camelot libraries were exercised on controlled fixtures. Real NSE protocol/tool/sample retrieval succeeded through the permitted research connection, and FinanceDatabase's fixed-commit snapshot was downloaded and parsed. The application's production proxy-free NSE transport did not complete a live call in this environment. Paid FMP/Massive/EarningsCall access, live OpenFIGI, Docling/Marker inference, normal installed-app use and Docker/PostgreSQL release gates are separate checks.
+The packaged tests exercised PyPortfolioOpt, bt, QuantStats, exchange calendars, EdgarTools and Camelot on controlled inputs. The November 18 installed checks then verified six specific cases:
+
+| Adapter | What was observed |
+|---|---|
+| FinanceDatabase | A pinned snapshot yielded separate reference listings for Infosys. The result is a candidate peer set. |
+| SEC annual facts | An original annual filing and amendment retained accession and cutoff, and repeating intake deduplicated the same facts. |
+| NSE MCP | The installed workflow retained an Infosys dividend observation with its source locator and hash. |
+| ALFRED | Stored GDP observations on opposite sides of a revision matched their respective as-of responses. |
+| OpenFIGI | An Infosys mapping request returned distinct listing candidates and retained the ambiguity. |
+| Camelot | Six selected cells came from the original Apple report. Currency and statement completeness remain separate review questions. |
+
+The remaining provider proofs require US corporate-action entitlement, a transcript entitlement plus a real correction, or a compatible OCR worker, approved local models and a genuine scan. [Original-source receipt](../../data/reviews/ui-adapter-release-20261118.json) · [Exact prerequisites](../limitations.md#installed-adapters-and-remaining-source-prerequisites)
 
 The Next.js dependency was patched from 16.4.1 to 16.4.5 for the two upstream root-parameter cache advisories. This is a source dependency repair, not a claim of an observed leak in this app.
 
@@ -242,6 +253,6 @@ This batch implements the concrete adapters above and the consuming lab. It does
 | Agent evaluation | New provider fixtures are present; a Promptfoo model/prompt evaluation pipeline is not added because these adapters make no LLM calls |
 | Security identity | Candidate mapping and ambiguity are implemented; accepted bitemporal issuer/security/listing migrations remain separate |
 | Portfolio inputs | Direct conversion of owned portfolio histories into lab datasets, total-return reconstruction and changing-universe simulations |
-| Deployment | Install selected profiles and provision models/credentials in the user's actual runtime, then execute its existing release gates |
+| Optional deployment | Analysis and Camelot are installed. Additional paid sources need the named entitlements. OCR needs a separately compatible environment, approved model files and a genuine scanned page. |
 
 OpenBB, Riskfolio, skfolio, vectorbt and backtesting.py are alternatives for later specific needs, not additional copies of the selected provider/optimization/simulation stack. Ghostfolio, Wealthfolio and OpenStock informed workflow choices; their whole applications were not embedded. Dependencies and references are listed in [third-party notices](../../THIRD_PARTY_NOTICES.md).

@@ -19,7 +19,7 @@ registered in [app/api/routes.py](app/api/routes.py).
 
 The [API map](../docs/reference/api-map.md) lists every HTTP router module.
 The [code map](../docs/code-map.md) links domain owners and tests.
-[Backend rules](AGENTS.md) explain import, ownership, and valuation invariants.
+[Backend rules](AGENTS.md) explain import, ownership, and valuation invariants. For the company chart, the [timeline service](app/services/price_timeline.py) calculates comparable changes and resolves dated sources and private pins. For external market or document intake, use the [adapter guide](../docs/adapters/README.md).
 
 Use the [runbook](../docs/execution-runbook.md#focused-and-full-source-verification)
 for source-mounted tests. Production containers do not mount edited source;

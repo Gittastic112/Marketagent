@@ -158,6 +158,7 @@ Security requirements:
   company, content hash, offsets, quote, occurrence index, and duplicate state.
   Search parameters and locator provenance are generated or verified server-side;
   creator identity comes only from the authenticated backend identity.
+- Price history reads shared company prices and documents. It includes private pins only through the caller's thesis. A pin write checks both company and owner, verifies the viewed close and retains its original price snapshot. Saving a note makes no external provider or AI request. [Ownership and correction tests](../backend/tests/test_company_price_timeline.py)
 - Unified stored-research search must preserve each model's access boundary.
   Shared documents, events, and narratives may be searched as shared records;
   alerts, theses, decisions, valuations, research sessions/messages, and AI

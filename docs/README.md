@@ -1,7 +1,10 @@
 # Documentation
 
-Start with the product and current evidence. Use the detailed references only for
-the task at hand. Each subject below has one current owner.
+| If you want to… | Start here |
+|---|---|
+| Use the app | [Today, source review and valuation](user-guide.md) or [inspect a price move and pin a thesis note](user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
+| Find what shipped, what was tested and what comes next | [Current state](current-state.md#dated-validation), [handoff](HANDOFF.md) and [open gates](roadmaps/completion-tracker.md#milestone-board) |
+| Work on the code, alone or in parallel | [Code map](code-map.md) and [review and implementation workflows](workstreams/README.md) |
 
 ## Understand the product
 
@@ -37,34 +40,15 @@ the task at hand. Each subject below has one current owner.
 
 ## Maintain the project
 
-The [UI and adapter worklist](roadmaps/ui-adapter-worklist.md) covers this integration and its release gates. The [roadmap](roadmaps/product-roadmap.md) owns priorities. The
-[research workspace plan](roadmaps/research-workspace-plan.md) specifies the target
-navigation, screen layouts, connected workflows, backend changes, delivery packages
-and acceptance tests for the November 13 simplification work. [Operations retention
-policy](operations.md#essential-retention-policy) owns essential-only storage.
-The [completion tracker](roadmaps/completion-tracker.md) owns acceptance gates, not an
-estimate of engineering effort. [Review decisions](roadmaps/review-decisions.md)
-retain the basis of delegated choices.
+The [product roadmap](roadmaps/product-roadmap.md) owns delivery order. The [workspace plan](roadmaps/research-workspace-plan.md) owns screen and workflow specifications. The [UI and adapter worklist](roadmaps/ui-adapter-worklist.md) maps the 16 integration packages to their next evidence or implementation requirement. [Review decisions](roadmaps/review-decisions.md) records delegated choices.
 
-The November 15 four-part review is integrated into the
-[limitation ledger](limitations.md#returned-code-review),
-[repair sequence](roadmaps/product-roadmap.md#review-repair-sequence) and
-[policy defaults](roadmaps/review-decisions.md#returned-review-design-decisions).
-The [sanitized intake receipt](../data/reviews/code-review-intake-20261115.json)
-retains finding IDs, code references and verification scope. Original reports stay
-local; the temporary dispatch brief is retired. This intake does not close repairs.
-The [ten-set repair receipt](../data/reviews/review-repairs-ten-sets-20261115.json)
-records local implementation, checks, cleanup and the pending release boundary.
+The [completion tracker](roadmaps/completion-tracker.md) owns milestone acceptance. The [limitation ledger](limitations.md) names missing company disclosures, provider prerequisites and remaining review boundaries. [Operations](operations.md#essential-retention-policy) owns the single verified recovery set.
 
-Agents start with [AGENTS.md](../AGENTS.md), [the handoff](HANDOFF.md), the nearest
-nested instructions, and the relevant code-map row. Optional
-[workflow references](skills/README.md) support specific tasks.
-[Workstream coordination](workstreams/README.md) applies only to an explicitly
-assigned parallel batch; the historical plan does not launch agents.
+For an independent four-chat review or an explicitly assigned local implementation batch, use [workstream coordination](workstreams/README.md). Agents start with the root [AGENTS.md](../AGENTS.md), the [handoff](HANDOFF.md) and the nearest directory instructions. [Task-specific workflows](skills/README.md) cover development and verification.
 
 Put dated proof and superseded documents in the [archive](archive/README.md).
 Keep current docs concise, replace stale status, and retain important evidence.
-Local reports and copied helper packages are not publication inputs. Run
+Keep private reports, uploads and local configuration outside publication. Run
 `python3 -m unittest scripts.test_check_docs` and `python3 scripts/check_docs.py`
 after edits. The checker covers current links, anchors, directory guides, route
 coverage, command inventories, migration-head consistency, and onboarding size limits.

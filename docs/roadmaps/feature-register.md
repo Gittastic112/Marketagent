@@ -1,6 +1,6 @@
 # Feature Register
 
-**Documentation reconciliation:** 2026-11-17. Runtime validation dates remain in
+**Reviewed November 18, 2026.** Runtime validation dates remain in
 [Current State](../current-state.md). The latest research scope is four selected
 companies, with Sample research and a separately sourced Apple Estimate.
 
@@ -30,7 +30,8 @@ Status meanings:
 | Financial normalization/reconciliation | Built, coverage limited | Compatible explicit inputs and current promoted provenance are required. Historical normalized values are not automatically repaired or evidence of current database contents. |
 | Exact PDF/text evidence | Built | Historical records can have coarse fallback |
 | Events, scoring, and alerts | Built | Extraction remains primarily rule-based |
-| Thesis notes and evidence ledger | Built | Contradiction workflow partial |
+| Thesis notes and evidence ledger | Built | Private notes can attach to an observed company close and reopen from the thesis with the saved price basis. The contradiction workflow remains partial. |
+| Company price history and key moments | Built, coverage limited | Stored comparable daily closes, markers for moves of at least 5%, company documents and linked events with their dates. Gaps and conflicting closes can withhold a change. [Walkthrough](../user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
 | Daily brief | Built with disclosed coverage | Deterministic assembly with stored-input windows, caps, exclusions, source metadata, and separate private review state. Historical unknown coverage remains unknown; linkage is not source verification. |
 | Private Daily Brief source inbox | Built, review-required | Text/PDF intake, explicitly consented AI scanning, exact passages, search, pagination, reversible archiving, and bounded private brief snapshots. No automatic facts or model edits. |
 | Company and portfolio research cards | Built with source limits | Dated filing-backed business excerpts and direct research navigation. Missing descriptions stay unavailable; Comps opens the reviewed-peer workspace. |
@@ -41,7 +42,7 @@ Status meanings:
 | Source adapter intake | Built, review-required | EdgarTools and selected PDF tables, ALFRED snapshots, FMP/EarningsCall transcripts and supplied India disclosure metadata retain original evidence and Processing Runs. Optional OCR model inference remains unverified. |
 | Identity and calendar inspection | Built with bounded coverage | OpenFIGI candidates retain ambiguity; versioned calendars and source-labeled overrides do not auto-merge identities or certify unsupported historical dates. |
 | Research Lab | Experimental | Constrained PyPortfolioOpt allocations, compounded native/bt simulations, QuantStats exports and local reference peers use explicit research inputs and owner-scoped receipts. No trading, automatic ledger edits, or historical-universe certification. |
-| Research navigation and artifact display | Built, source-verified | Company/evidence command palette, exact-file price/FX review and Markdown memo/citation exports preserve their existing auth, review and saved-artifact boundaries. Installed browser verification remains separate. |
+| Research navigation and artifact display | Built | Company/evidence search, exact-file price/FX review and Markdown memo/citation exports retain authentication and the saved artifact identity. [Installed and hosted checks](../current-state.md#dated-validation) |
 | Portfolio valuation and exposure | Built | Current value, cash, exposures, and concentration are source-aware |
 | Portfolio performance and attribution | Built; research/demo scope | Recorded activity/FX replay, snapshots, TWR/MWR, attribution, and price risk. Legacy or corrected history stays provisional. Genuine activity and multi-currency certification are outside v1. |
 | FCFF DCF and scenarios | Built | Reviewed drafts, explicit units, atomic versions, deterministic calculations, and trust-gated results. Historical approved scenarios were removed; saved assumptions do not certify company facts. |

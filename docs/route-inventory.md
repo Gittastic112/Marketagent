@@ -1,6 +1,6 @@
 # Frontend Route Inventory
 
-Source inventory reviewed: 2026-11-17. 52 App Router pages.
+Source inventory checked November 18, 2026. 52 App Router pages.
 
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's
@@ -32,7 +32,7 @@ page source and the count. Auth/API routes are outside this page list.
 | `/companies/[id]/evidence` | [Page source](../frontend/app/companies/[id]/evidence/page.tsx) |
 | `/companies/[id]/filings` | [Page source](../frontend/app/companies/[id]/filings/page.tsx) |
 | `/companies/[id]/fundamentals` | [Page source](../frontend/app/companies/[id]/fundamentals/page.tsx) |
-| `/companies/[id]` | [Page source](../frontend/app/companies/[id]/page.tsx) |
+| `/companies/[id]` | [Company overview and Price history](../frontend/app/companies/[id]/page.tsx). `#price-history` opens the section. A thesis link can select its `price_date` and `price_series`. |
 | `/companies/[id]/setup` | [Page source](../frontend/app/companies/[id]/setup/page.tsx) |
 | `/companies/[id]/thesis` | [Page source](../frontend/app/companies/[id]/thesis/page.tsx) |
 | `/companies/[id]/valuation/[model_id]` | [Page source](../frontend/app/companies/[id]/valuation/[model_id]/page.tsx) |
@@ -71,7 +71,7 @@ page source and the count. Auth/API routes are outside this page list.
 | `/settings` | [Page source](../frontend/app/settings/page.tsx) |
 | `/social` | [Page source](../frontend/app/social/page.tsx) |
 | `/sources` | [Page source](../frontend/app/sources/page.tsx) |
-| `/thesis-notes/[id]` | [Page source](../frontend/app/thesis-notes/[id]/page.tsx) |
+| `/thesis-notes/[id]` | [Thesis detail](../frontend/app/thesis-notes/[id]/page.tsx). `#price-pins` opens the saved closing-price observations and their return links. |
 | `/thesis-notes` | [Page source](../frontend/app/thesis-notes/page.tsx) |
 | `/valuation` | [Page source](../frontend/app/valuation/page.tsx) |
 | `/valuation/quick` | [Page source](../frontend/app/valuation/quick/page.tsx) |

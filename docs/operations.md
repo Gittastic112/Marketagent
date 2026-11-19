@@ -35,10 +35,7 @@ the ordered absolute paths with the running database's Compose configuration lab
 before a dump or restore. Missing/mismatched configuration fails closed.
 For this installation the list must include the base file followed by the runtime
 override above. Verify images, volumes and writers without printing resolved secrets.
-Source tests do not establish a completed normal-installation recovery drill.
-Their ordinary operator environment behavior remains; agent verification uses
-/dev/null plus settings held only in memory. The full backup helper creates a
-disposable proof database, so it remains outside the current no-new-datasets scope.
+The backup helper restores the new dump into a temporary verification database and inventories its contents before marking it complete. The recorded November 18 check verified the single pre-change set against the normal database and original asset. A populated legacy-version upgrade and off-device recovery still need independent proof. Use the helper only for a [change that needs a recovery point](#when-to-make-a-backup). [Recorded verification](current-state.md#dated-validation)
 
 Ordinary updates should reuse this selected Compose project. Apply the
 [change-triggered backup policy](#when-to-make-a-backup), reusing a compatible
@@ -257,28 +254,9 @@ its mounts, role and content classification before removal. Existing authority t
 remove disposable material does not authorise destroying unknown unique records.
 No automatic pruning is configured by these instructions.
 
-The November 12 [authorized storage cleanup](../data/reviews/docker-storage-cleanup-20261112.json)
-removed 151 stopped containers, 256 obsolete image objects, 21 unused volumes,
-three unused networks and the unused build cache. Four running containers, four
-images and the active database/admin volumes remain. All 110 database table
-fingerprints match the pre-cleanup snapshot. Source files and old database copies
-found inside removed containers are retained outside Docker. Fourteen inactive
-data/settings volumes have compressed archives with every file byte and ownership
-mode checked before their removal. Exact targets, archive locations and hashes
-are recorded in the receipt. No running container was restarted. The optional
-admin image is fetched by its recorded registry digest when next enabled.
+On the November 18 installed chart release there were four normal containers: frontend, backend, PostgreSQL and the Daily Brief scheduler. The source-refresh worker and optional admin service were off. Docker can show multiple tags for shared layers. The installed data, recovery set and essential tooling have different storage roles. Inspect the current context before removing anything.
 
-November 13 after the [P1 installation](../data/reviews/research-workspace-p1-20261113.json): four running containers, four images
-(2.64 GB), two volumes (210.7 MB), and zero build cache. The tools image accounts
-for the 717 MB Docker labels reclaimable; it is actively needed for repository and
-recovery checks on this host. The whole local output directory occupies about
-2.9 GB, including source/recovery/evidence material, so it is not a disposable cache.
-The latest dated-input review directory is about 31 MB. The top-level backups
-directory is about 3.1 MB; that is not the total of recovery copies stored elsewhere.
-P1 replaced only the frontend, reused recovery material, and created no backup or
-dataset. Its temporary preview, dependency/old frontend images, build context and
-2.169 GB of reported build cache were removed. The output/backups sizes above are
-the earlier planning measurement, not a new claim about their exact current sizes.
+The [November 12 cleanup receipt](../data/reviews/docker-storage-cleanup-20261112.json) and [November 18 release record](https://github.com/Gittastic112/Marketagent/pull/21) preserve the earlier measured totals. Use the inspection commands above for a current measurement.
 
 ### Essential retention policy
 
@@ -324,12 +302,7 @@ as disposable merely to feel safer deleting it; that does not reclaim space.
 | Meaningful research/data changes accumulated since the last verified recovery point | Refresh the current set at the end of that meaningful write session, then retire the superseded set under this policy |
 | Unchanged data or repeated testing of the same source revision | No duplicate backup or copied evidence bundle |
 
-A dump checksum or successful archive listing alone is not a full restore proof.
-Use the supported verification level and label exactly what ran. The existing
-restriction on new local disposable datasets and the deferred populated restore
-rehearsal remain in the [operator handoff](limitations.md#ordered-operator-handoff).
-If a required verification cannot run within scope, report that exact dependency;
-do not restore over the normal database or call an unverified dump fully verified.
+The format-3 helper verifies a dump by restoring it in isolation. Inspecting a checksum alone establishes file integrity. A historical-schema upgrade, off-device key recovery and a current-format restore each need their own evidence. Record which was exercised. Keep new test records out of the normal installation. [Deferred rehearsals](limitations.md#ordered-operator-handoff)
 
 #### Cleanup procedure and receipt
 

@@ -1,15 +1,8 @@
 # Research workspace implementation plan
 
-Design baseline and first implementation: November 13, 2026. This is the detailed
-design and delivery specification for simplifying the existing local app. After
-the user authorised implementation, P0 was verified and P1 was installed with
-[recorded evidence](../../data/reviews/research-workspace-p1-20261113.json).
-November 14 adds [ten bounded P2-P5 slices](../../data/reviews/research-workspace-ten-sets-20261114.json).
-Remaining package acceptance and P6/P7 work are open. This does not establish complete
-financial inputs, personal acceptance or research-use days. Essential-only storage applies.
-November 15: the [returned-review repair sequence](product-roadmap.md#review-repair-sequence)
-takes priority over new P2-P7 features. This plan remains the target specification;
-its earlier verification does not close the newly identified preservation and correctness gaps.
+Design began November 13, 2026. P0, P1 and the first explicit draft/source actions were verified, followed by [ten bounded P2 through P5 improvements](../../data/reviews/research-workspace-ten-sets-20261114.json). The [returned-review repairs](../limitations.md#returned-code-review) subsequently shipped. The installed Today layout and company price chart below reflect the user's later design choices.
+
+The next implementation slice is a dated-source draft proposal and a preview before the first model save. Wider period identity, reliability and actual-use acceptance remain open. [Product priorities](product-roadmap.md#immediate-delivery-order)
 
 ## Read this plan
 
@@ -133,7 +126,7 @@ company identity, selected basis and a clear return path.
 | Quick valuation | Optional valuation shortcut with the same required-input and provenance gates |
 | FCFE/DDM, bank, distressed, options | Show only for an applicable model and supported input set; preserve experimental labels |
 | Social route and unavailable providers | Preserve compatibility entry points with truthful unavailable states; do not promote them as daily features |
-| Price history | Reach from company quote or Portfolio; keep provider, currency and date visible |
+| Price history | Company overview shows the chosen stored series, dated evidence and private thesis pins. Portfolio and Market Prices retain their own price/FX and position workflows. |
 | Authentication and private-source detail | Keep existing identity, ownership and consent boundaries |
 
 Use label and placement changes first. Avoid route renames in the first slice.
@@ -150,36 +143,9 @@ subordinate to readable evidence, useful actions and truthful states.
 
 ### Today
 
-~~~text
-Today                         Research scope / date window     Search
-Source status: last success, relevant failure or incomplete coverage
+The installed landing page opens with the portfolio selector and four cards for snapshot value, alerts, companies and thesis notes. The Daily Intelligence Brief and active alerts appear next. The six-item research queue, recent theses, company links and expandable source activity follow. This order reflects the November 15 design choice. [Installed page](../../frontend/app/page.tsx) · [User guide](../user-guide.md#start-on-today)
 
-Needs review                                  Continue research
-Company | reason | affected work | action      Most recent unfinished work
-Blocking issues first, then changed evidence   Resume / inspect
-
-What changed
-Grouped source changes with publication date, retrieval date and exact links
-Each item: what changed / why it might matter / current review state
-
-Portfolio context, when selected
-Exposure linked to these companies; snapshot basis and example label
-
-Saved briefs / completed reviews / coverage details
-~~~
-
-The primary action is "Review next item" when actionable work exists; otherwise
-"Continue research" or "Open companies". It must lead to a concrete record.
-Show a bounded initial list with total counts and "View all". Group related events
-by company/source identity; do not silently merge differing claims or review states.
-Ordering starts with explicit blockers, failed refreshes affecting current work,
-new material sources, then ordinary unread material. Existing scores can explain
-ordering but must not be relabeled as objective investment importance.
-
-Coverage is one compact line with expandable window, caps, exclusions and failures.
-No new events means "No new stored events in this window", not "Nothing happened".
-Unknown coverage remains unknown. A sample portfolio must not dominate the page
-when the user is doing company research. Portfolio context is optional and scoped.
+Preserve the snapshot date, missing prices or FX and any sample label. A missing portfolio still needs a route into company research. Keep each queue action linked to its exact record. Broader source coverage, retaining navigation context and measured latency belong to [WS07](../limitations.md#workspace-follow-up).
 
 ### Companies
 
@@ -200,6 +166,7 @@ Company / security / currency       Stored quote + quote date     Company menu
 Overview | Financials | Thesis | Valuation | Sources
 
 Research status and the next unresolved action
+Price history with dated filings, events and private thesis notes
 
 Business in brief                   Current valuation
 Reviewed summary or bounded         Saved estimate / basis / status
@@ -214,6 +181,8 @@ What would change the view           Resume exact review step
 
 Recent sources and decisions         Links to full notes and history
 ~~~
+
+The chart on the installed overview shows one stored closing-price series at a time. A point opens dated sources and the thesis annotation form. A saved pin retains its original observation. [Chart and keyboard workflow](../user-guide.md#inspect-a-price-move-and-pin-a-thesis-note)
 
 The first desktop viewport should identify the business, research status and next
 action. Do not put a full filing section, complete research memo or hash table in
@@ -617,9 +586,7 @@ Statuses below describe this programme, not earlier app implementation.
 The November 14 receipt records ten further bounded P2-P5 slices. Package completion
 is not inferred from those slices; the [limitation ledger](../limitations.md#workspace-follow-up)
 owns remaining scope, and P6/P7 remain open.
-The [returned-review ledger](../limitations.md#returned-code-review) qualifies these
-delivered slices. Repair R0-R8 before expanding them; do not treat the table below
-as the next execution queue or evidence that every interaction is correct.
+The [returned-review ledger](../limitations.md#returned-code-review) records the installed corrections and their residual limits. Use the [roadmap](product-roadmap.md#immediate-delivery-order) for the current delivery order.
 
 | November 14 set | Delivered boundary |
 |---|---|
@@ -823,20 +790,10 @@ a question for the user. Identify the exact missing source or decision first.
 
 ## Next implementation session
 
-1. Read the [review intake](../../data/reviews/code-review-intake-20261115.json),
-   handoff and [repair sequence](product-roadmap.md#review-repair-sequence).
-   Recheck current code and the dirty checkout; preserve earlier edits and original reports.
-2. Reuse the existing recovery basis. No new dump is needed for inspection or UI-only work.
-3. Read the [ten-set repair receipt](../../data/reviews/review-repairs-ten-sets-20261115.json)
-   and finish its release boundary. Next source work is R2's A1-F6/A1-F7, then R3.
-4. Complete the subsequent financial, portfolio and workflow repairs against their
-   own gates. Use exact IDs and distinguish source, helper, HTTP, PostgreSQL and browser proof.
-5. Resume dated-source proposals, initial-model preview and wider period identity
-   after those gates. Keep explicit commands and supported annual guards; never
-   equate a research-date label with historical market-data reconstruction.
-6. Install only verified compatible changes into the existing project after operational
-   prerequisites pass. Update the single ledger and handoff, retain essential proof,
-   and remove only the disposable material created by the scoped work.
+1. Open the [current M05 ledger](../limitations.md#selected-company-review-follow-up). Choose one unresolved company field with an original filing and a defensible period and accounting basis. Preserve the record if only a subtotal is available.
+2. For a P2/P3 change, trace one selected source revision through dated evidence, the draft, first calculation preview and version save. Include stale and mismatched evidence plus an interrupted-save retry. Existing saved-model previews provide the comparison case.
+3. Follow the [runbook](../execution-runbook.md) for the affected layers. Persistent changes require the [recovery policy](../operations.md#when-to-make-a-backup). Verify in the installed project after the relevant tests pass.
+4. Reconcile the evidence in the limitation ledger and current state. Continue with portfolio reconciliation and the connected research workflow in [delivery order](product-roadmap.md#immediate-delivery-order).
 
 ### Optional review suggestions
 
@@ -851,5 +808,4 @@ new completion claims. They do not precede preservation and correctness repairs.
 | R6 UI repair | Distinguish deterministic invalid input from an uncertain write result; preserve edits and show an appropriate retry/recovery action |
 
 The narrow missing-share and blanket-backup documentation inconsistencies were
-corrected during intake. Software findings remain open. Tests and Mock Data flows
-do not supply complete financial inputs, genuine portfolio proof or actual use days.
+corrected during intake. Shipped software repairs and their residual limits are recorded in the [review ledger](../limitations.md#returned-code-review). Financial evidence and actual use have separate acceptance gates.

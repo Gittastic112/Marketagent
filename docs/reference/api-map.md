@@ -13,6 +13,18 @@ Use the owning router's schema and service imports for request/response contract
 and implementation. The [code map](../code-map.md#route-a-domain-change) connects
 common changes to calculation, persistence, frontend, and test owners.
 
+### Company price history contracts
+
+| Authenticated route | Behavior |
+|---|---|
+| `GET /api/companies/{company_id}/price-timeline` | Reads one stored series. Optional `series` selects its 64-character key and `through` sets an inclusive end date. Returns series choices, points, dated sources and the caller's matching pins. |
+| `POST /api/companies/{company_id}/price-timeline/pins` | Accepts `thesis_id`, `price_id`, `fingerprint`, `request_id` and 1 to 2,000 characters of text. The thesis must belong to the caller and company. Conflicting requests or corrected prices return 409. |
+| `GET /api/thesis-notes/{thesis_id}/price-pins` | Returns that thesis owner's pins, newest ID first, including the price snapshot saved with each note. An inaccessible thesis returns 404. |
+
+[Typed payloads](../../backend/app/schemas/price_timeline.py) · [Selection and retry rules](workflows.md#company-price-history-and-thesis-pins)
+
+## Router inventory
+
 | Domain | HTTP owner |
 |---|---|
 | Accounting | [accounting.py](../../backend/app/api/routers/accounting.py) |
@@ -26,7 +38,7 @@ common changes to calculation, persistence, frontend, and test owners.
 | Benchmarks | [benchmarks.py](../../backend/app/api/routers/benchmarks.py) |
 | Brief sources | [brief_sources.py](../../backend/app/api/routers/brief_sources.py) |
 | Companies | [companies.py](../../backend/app/api/routers/companies.py) |
-| Company research | [company_research.py](../../backend/app/api/routers/company_research.py) |
+| Company research, price history and thesis pins | [company_research.py](../../backend/app/api/routers/company_research.py) |
 | Company setup | [company_setup.py](../../backend/app/api/routers/company_setup.py) |
 | Country market | [country_market.py](../../backend/app/api/routers/country_market.py) |
 | Daily brief | [daily_brief.py](../../backend/app/api/routers/daily_brief.py) |
