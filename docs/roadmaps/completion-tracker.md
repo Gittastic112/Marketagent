@@ -1,6 +1,6 @@
 # Completion tracker: local research/demo release v1
 
-**4 of 10 milestones accepted. M05 is next.** The 40 accepted points measure completion of the agreed gates. The November 18 application release added price history and thesis pins. Its tests supply technical workflow evidence. Financial coverage and actual-use acceptance are still open. [Current state](../current-state.md#dated-validation)
+**4 of 10 milestones accepted. M05 is next.** The November 19 release is installed. The [Knull-led round](../workstreams/README.md#release-completion-round) prepares evidence for local review and acceptance tests for the remaining workflows. M05 still requires reconciled inputs and eligible industry mappings. M10 requires five actual research-use days and final user acceptance. [Current state](../current-state.md#dated-validation)
 
 The current scope covers four selected technology companies, hypothetical holdings and labeled Sample research. The sourced Apple valuation is a separate Estimate. Historical records below describe the earlier 12-company scope and the eleven scenarios removed November 5. [Scope and prerequisites](../limitations.md#confirmed-scope-and-input-checklist)
 

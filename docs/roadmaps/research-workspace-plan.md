@@ -606,7 +606,7 @@ existing saved-model edits; initial model creation still uses its existing revie
 Research dates are labels until historical source/market selection is implemented.
 Normal data preservation, image identity and cleanup evidence belong in the receipt.
 A package becomes Verified only after evidence exists; Installed is recorded separately.
-Work is sequential by default. This plan does not dispatch agents.
+Implementation follows the delivery sequence below. The [Knull-led release-completion round](../workstreams/README.md#release-completion-round) can investigate issuer evidence and design the first-save and chart workflows in parallel.
 
 | Package | Deliverable and bounded scope | Dependency | Acceptance mapping |
 |---|---|---|---|

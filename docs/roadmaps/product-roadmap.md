@@ -34,6 +34,8 @@ does not dispatch agents or replace current status.
 | M07 and M08 | Follow a dated filing or marked close to a thesis decision and a reviewed valuation change when warranted. | The two stored USD sample dates reconcile. Record the exact source, private note and model version used for the connected workflow. Genuine multi-currency and benchmark evidence are separate requirements. |
 | M09 and M10 | Exercise the changed workflows on desktop and mobile, verify recovery within scope and record five actual business days of research use. | Keep technical results, user-reported use and final acceptance separately recorded. |
 
+The [Knull-led release-completion round](../workstreams/README.md#release-completion-round) prepares source rows, workflow designs and independent checks for these milestones. Local Codex verifies the evidence and implements approved changes in dependency order.
+
 The [adapter worklist](ui-adapter-worklist.md#implementation-backlog-from-the-zip) names the remaining work in each of the 16 packages. For example, allocation and simulation already accept supplied returns. Connecting an owned portfolio requires aligned histories, cash flows, distributions and FX.
 
 ### Review repair sequence

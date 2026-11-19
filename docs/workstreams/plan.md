@@ -1,8 +1,6 @@
 # Workstream scope index
 
-For independent read-only Pro reviews, use the [coordination guide](README.md). This index applies to an explicitly assigned local coding batch. Current product
-priorities live in the [roadmap](../roadmaps/product-roadmap.md); acceptance lives
-in the [completion tracker](../roadmaps/completion-tracker.md).
+For Knull-led public research and read-only code reviews, use the [coordination guide](README.md). This index assigns edit ownership when a local coding batch starts. The [roadmap](../roadmaps/product-roadmap.md) sets product priorities. The [completion tracker](../roadmaps/completion-tracker.md) records acceptance.
 
 The [October 5 design](../archive/plans/workstreams-2026-10-05.md) retains the
 original technical analysis and sequencing. Its defect descriptions are dated

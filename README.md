@@ -62,7 +62,7 @@ local services. [Architecture](docs/architecture.md) ·
 | [damodaran_knowledge_base_v1/](damodaran_knowledge_base_v1/INDEX.md) | Valuation doctrine and the immutable source corpus |
 | [docs/](docs/README.md) | Product, architecture, setup, operations, and development references |
 
-For day-to-day use, start with the [research guide](docs/user-guide.md). For project status and the next work, start with the [handoff](docs/HANDOFF.md). For an independent code review, see [review coordination](docs/workstreams/README.md).
+For day-to-day use, start with the [research guide](docs/user-guide.md). The [handoff](docs/HANDOFF.md) lists what remains. The [Knull coordination guide](docs/workstreams/README.md) provides assignments for the remaining financial research and workflows, and a separate whole-project code audit.
 
 Use the [code map](docs/code-map.md) to locate a feature's owning files, or the
 [route inventory](docs/route-inventory.md) to find a screen. The
