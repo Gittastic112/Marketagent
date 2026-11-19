@@ -333,10 +333,17 @@ def create_portfolio_transaction(
     validate_portfolio_transaction_refs(db, payload)
     transaction = PortfolioTransaction(**payload.model_dump())
     db.execute(select(Portfolio.id).where(Portfolio.id == payload.portfolio_id).with_for_update()).one()
+    later = db.scalar(select(PortfolioTransaction.id).where(
+        PortfolioTransaction.portfolio_id == payload.portfolio_id,
+        PortfolioTransaction.transaction_date > transaction.transaction_date).limit(1))
     db.add(transaction)
     try:
-        apply_transaction_to_holding(db, transaction)
-        apply_transaction_to_cash(db, transaction)
+        if later is not None:
+            db.flush()
+            correct_transaction(db, transaction, None, inserting=True)
+        else:
+            apply_transaction_to_holding(db, transaction)
+            apply_transaction_to_cash(db, transaction)
         commit_or_conflict(db)
     except HTTPException:
         db.rollback()

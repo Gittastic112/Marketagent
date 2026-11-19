@@ -41,6 +41,9 @@ def financial_history_signature(db: Session, company_id: int) -> str:
                 NormalizedFinancialMetric.value,
                 NormalizedFinancialMetric.unit,
                 NormalizedFinancialMetric.warnings,
+                NormalizedFinancialMetric.id,
+                NormalizedFinancialMetric.snapshot_id,
+                NormalizedFinancialMetric.provenance_notes,
             )
             .join(
                 NormalizedFinancialSnapshot,
@@ -220,6 +223,14 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
     if "operating_leases" not in actuals and "lease_liabilities" in metrics:
         actuals["operating_leases"] = metrics["lease_liabilities"]
 
+    def ratio_provenance(**operands):
+        warnings = list(dict.fromkeys(str(p["warnings"]) for p in operands.values() if p.get("warnings")))
+        return {**financial_freshness, "calculation_basis": operands,
+            "is_stale": financial_freshness["is_stale"] or any(p.get("is_stale") for p in operands.values()),
+            "freshness_unknown": financial_freshness["freshness_unknown"] or any(p.get("freshness_unknown") for p in operands.values()),
+            "requires_review": financial_freshness["requires_review"] or any(p.get("requires_review") for p in operands.values()),
+            "warnings": " ".join(warnings) or None}
+
     revenue_tuple = metrics.get("revenue")
     ebit_tuple = metrics.get("ebit")
     if revenue_tuple and ebit_tuple and revenue_tuple[0] not in (None, 0) and ebit_tuple[0] is not None:
@@ -230,11 +241,7 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
                 "calculation",
                 f"Calculated from Normalized Financials ({period_str})" if is_normalized else f"Calculated from Legacy Metrics ({period_str})",
                 "high" if is_normalized else "medium",
-                calculation_basis={
-                    "revenue": revenue_tuple[1],
-                    "ebit": ebit_tuple[1],
-                },
-                **financial_freshness,
+                **ratio_provenance(revenue=revenue_tuple[1], ebit=ebit_tuple[1]),
             )
         )
 
@@ -247,11 +254,7 @@ def _extract_latest_actuals(db: Session, company: Company) -> Dict[str, tuple[fl
                 "calculation",
                 f"Calculated from Normalized Financials ({period_str})",
                 "high",
-                calculation_basis={
-                    "revenue": revenue_tuple[1],
-                    "invested_capital": invested_capital_tuple[1],
-                },
-                **financial_freshness,
+                **ratio_provenance(revenue=revenue_tuple[1], invested_capital=invested_capital_tuple[1]),
             ),
         )
 

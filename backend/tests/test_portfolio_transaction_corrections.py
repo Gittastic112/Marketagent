@@ -69,3 +69,17 @@ def test_unreplayable_correction_is_atomic(client, db_session, change):
     assert response.status_code == 409, response.text
     assert balances(db_session, portfolio) == before
     assert db_session.get(PortfolioTransaction, buy.id).quantity == 10
+
+def test_backdated_insert_replays_subsequent_actions_and_rolls_back_invalid_activity(client, db_session):
+    portfolio, buy, _, _ = book(db_session)
+    payload = dict(portfolio_id=portfolio.id, company_id=buy.company_id, ticker=buy.ticker,
+        currency="USD", transaction_type="buy", transaction_date="2026-01-02", quantity=2, price=100, fees=0)
+    inserted = client.post("/portfolio-transactions", json=payload)
+    assert inserted.status_code == 201, inserted.text
+    after = balances(db_session, portfolio)
+    assert after[0] == 24 and after[3] == 1100
+    rejected = client.post("/portfolio-transactions", json=payload | {"quantity": 1000})
+    assert rejected.status_code == 409
+    assert balances(db_session, portfolio) == after
+    assert client.delete(f"/portfolio-transactions/{inserted.json()['data']['id']}").status_code == 204
+    assert balances(db_session, portfolio)[0] == 20

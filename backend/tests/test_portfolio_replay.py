@@ -176,7 +176,7 @@ def test_purchase_date_fx_and_partial_sale_cost_reconcile_independently(db):
     assert report["unexplained_change"] == pytest.approx(0, abs=1e-6)
 
 
-def test_explicit_corporate_actions_preserve_cost_and_do_not_double_adjust_price(db):
+def test_explicit_corporate_actions_preserve_cost_and_do_not_double_adjust_price(db, monkeypatch):
     portfolio = Portfolio(name="Mock Data corporate actions", base_currency="USD")
     company = Company(ticker="ACTION", name="Mock Data actions", currency="USD")
     db.add_all([portfolio, company])
@@ -197,6 +197,16 @@ def test_explicit_corporate_actions_preserve_cost_and_do_not_double_adjust_price
     risk = calculate_portfolio_risk_return(db, portfolio.id, date(2026, 1, 8), min_observations=2)
     assert risk["portfolio_volatility_annualized"] is None
     assert any("corporate action" in message for message in risk["holdings"][0]["warnings"])
+    from app.services import portfolio_risk_return
+    class FrozenDate(date):
+        @classmethod
+        def today(cls):
+            return cls(2026, 1, 8)
+    monkeypatch.setattr(portfolio_risk_return, "date", FrozenDate)
+    current = calculate_portfolio_risk_return(db, portfolio.id, min_observations=2)
+    assert current["portfolio_volatility_annualized"] is None
+    assert [w for w in current["holdings"][0]["warnings"] if "corporate action" in w] == [
+        w for w in risk["holdings"][0]["warnings"] if "corporate action" in w]
     price.adjustment_state = "adjusted"
     db.commit()
     adjusted = calculate_portfolio_valuation(db, portfolio.id, date(2026, 1, 8))
@@ -297,3 +307,29 @@ def test_corrected_activity_marks_saved_returns_provisional_without_rewriting_sn
     assert corrected.calculation_status == "partial"
     assert any("changed activity" in warning for warning in corrected.warnings)
     assert first.payload_json == before
+
+def test_pre_split_quote_cannot_value_the_post_split_position(db):
+    portfolio = Portfolio(name="Mock Data split", base_currency="USD")
+    company = Company(ticker="SPLIT", name="Mock Data split", currency="USD")
+    db.add_all([portfolio, company]); db.flush()
+    record_activity(db, portfolio, None, date(2026, 1, 1), "deposit", 1000)
+    record_activity(db, portfolio, company, date(2026, 1, 2), "buy", 10, 100)
+    record_activity(db, portfolio, company, date(2026, 1, 3), "split", 2)
+    def close(day, amount):
+        db.add(MarketPrice(company_id=company.id, ticker=company.ticker, currency="USD", price=amount,
+            adjustment_state="unadjusted", price_type="end_of_day", as_of_date=day))
+        db.commit()
+    close(date(2026, 1, 2), 100)
+    for cutoff in [date(2026, 1, 3), None]:
+        report = calculate_portfolio_valuation(db, portfolio.id, cutoff)
+        assert report["holdings"][0]["quantity"] == 20 and report["holdings"][0]["market_value"] is None
+        assert report["total_portfolio_value"] is None and "PRICE_PREDATES_SHARE_ACTION" in report["replay_basis"]["blockers"]
+    from app.services.portfolio_performance import calculate_time_weighted_return
+    start, end = date(2026, 1, 2), date(2026, 1, 3)
+    record_daily_snapshot(db, portfolio.id, start)
+    record_daily_snapshot(db, portfolio.id, end)
+    assert calculate_time_weighted_return(db, portfolio.id, start, end).return_decimal is None
+    close(end, 50)
+    assert calculate_portfolio_valuation(db, portfolio.id, end)["total_portfolio_value"] == 1000
+    record_daily_snapshot(db, portfolio.id, end)
+    assert calculate_time_weighted_return(db, portfolio.id, start, end).return_decimal == 0

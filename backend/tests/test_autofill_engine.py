@@ -293,6 +293,19 @@ def test_autofill_uses_normalized_capital_and_revenue_history(db_session: Sessio
     assert "revenue_growth_years_json" in result["source_metadata"]["review_fields"]
     assert growth_source["projection_basis"]["terminal_growth"]["value"] == assumptions["terminal_growth_rate"]
 
+    from app.services.assumption_financial_inputs import _extract_latest_actuals, financial_history_signature
+    before = financial_history_signature(db_session, company.id)
+    revenue = db_session.get(NormalizedFinancialMetric, ratio_source["calculation_basis"]["revenue"]["source_record_id"])
+    revenue.warnings = "Mock Data reporting basis needs review."
+    db_session.commit()
+    ratios = _extract_latest_actuals(db_session, company)
+    assert ratios["operating_margin"][0] == pytest.approx(0.2)
+    for key in ("operating_margin", "sales_to_capital"):
+        basis = ratios[key][1]
+        assert basis["requires_review"] and basis["warnings"] == revenue.warnings
+        assert basis["calculation_basis"]["revenue"]["source_record_id"] == revenue.id
+    assert financial_history_signature(db_session, company.id) != before
+
 
 @pytest.mark.parametrize("reported_lease", [50.0, 0.0, None])
 def test_reported_leases_require_valuation_treatment_review(db_session, reported_lease):

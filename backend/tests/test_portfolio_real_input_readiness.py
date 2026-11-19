@@ -126,6 +126,7 @@ def _real_input_portfolio(db) -> tuple[Portfolio, list[MarketPrice]]:
         price = MarketPrice(
             company_id=benchmark_company.id,
             ticker=benchmark_company.ticker,
+            provider_symbol=benchmark_company.ticker,
             price=value,
             currency="USD",
             as_of_date=observation_date,
