@@ -2,9 +2,9 @@
 
 ## Latest source boundary
 
-The November 18 application release is installed locally and merged into `main`. Company pages show stored closing prices, source documents around a move and private notes pinned to a thesis. The previous release installed the Geist interface, Research Lab and the adapter workflow repairs. [Price history release](https://github.com/Gittastic112/Marketagent/pull/22) · [Adapter release](https://github.com/Gittastic112/Marketagent/pull/20) · [Verification and preservation](current-state.md#dated-validation)
+The November 19 release is on `main`. It addresses all 19 findings from the four reviews, plus the mobile target size for editing a company thesis. The [integration record](archive/checkpoints/2026/integration-review-2026-11-19.md) maps the fixes to their evidence. [Merged application PR](https://github.com/Gittastic112/Marketagent/pull/24) · [Verified application commit](https://github.com/Gittastic112/Marketagent/commit/e57d50f0bba1c5f03a5e97dc8a759dd2b11e7f78)
 
-[PR 24](https://github.com/Gittastic112/Marketagent/pull/24) contains the November 19 integration review. It covers 19 findings across legacy upgrades, source evidence, portfolio math and research workflows. The [ticket and test record](archive/checkpoints/2026/integration-review-2026-11-19.md) identifies the exact proof and remaining release decisions.
+The last recorded check of the normal local installation found the November 18 images and database revision `w5w5w5w5w5w5`. The November 19 images passed signed-in checks on a disposable database at the same revision. Use the installation’s private settings for promotion and record a new normal-runtime check afterward. [Installed-stack procedure](operations.md#select-the-installed-local-stack) · [Price history release](https://github.com/Gittastic112/Marketagent/pull/22)
 
 ## Next work
 
