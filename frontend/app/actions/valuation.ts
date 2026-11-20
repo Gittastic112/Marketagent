@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import type { AutofillAssumptionDraft } from "@/lib/api/valuation-drafts";
 import { serverDeleteApi, serverPatchApi, serverPostApi } from "@/lib/server-api";
-import { unavailableDiscountComponent, unresolvedReviewFields } from "@/lib/autofill-review";
+import { unresolvedReviewFields } from "@/lib/autofill-review";
 import { buildValuationModelPayload, buildDcfAssumptionSetPayload, getRequiredFormId } from "@/lib/form-payloads";
 import { logAction, actionFormString, createRecord, formActionError } from "./shared";
 import type { FormActionState } from "./shared";
@@ -124,36 +124,18 @@ export async function createValuationModelWithAssumptions(formData: FormData, co
   return model.id;
 }
 
+
 export async function promoteValuationSetupDraft(formData: FormData, draftId: number, companyId: string) {
-  logAction(`promoting valuation setup draft ${draftId} for company ${companyId}`);
-  const payload = buildDcfAssumptionSetPayload(formData);
-  const editedFields = new Set(
-    formData.getAll("edited_field").filter((value): value is string => typeof value === "string"),
-  );
-  const assumptionsPatch = Object.fromEntries(
-    Object.entries(payload).filter(([key]) => editedFields.has(key)),
-  );
-  const reviewedFields = formData
-    .getAll("reviewed_field")
-    .filter((value): value is string => typeof value === "string");
-  for (const field of reviewedFields) {
-    if (unavailableDiscountComponent(field, payload[field as keyof typeof payload], payload,
-      actionFormString(formData, "model_type") || "fcff_dcf")) {
-      assumptionsPatch[field] = null;
-    }
-  }
-  const savedDraft = await serverPatchApi<{ updated_at: string; }>(`/valuation-drafts/${draftId}`, {
-    assumptions_patch: assumptionsPatch,
-    reviewed_fields: reviewedFields,
-    expected_updated_at: actionFormString(formData, "draft_updated_at") || null,
-  });
-  const modelResponse = await serverPostApi<{ id: number; }>(`/valuation-drafts/${draftId}/promote`, {
-    name: actionFormString(formData, "name"),
-    description: actionFormString(formData, "description") || null,
+  // The initial preview already persisted draft edits. An identical retry only confirms its frozen command.
+  const command = {
+    name: actionFormString(formData, "name"), description: actionFormString(formData, "description") || null,
     model_type: actionFormString(formData, "model_type") || "fcff_dcf",
-    expected_updated_at: savedDraft.updated_at,
-  });
-  const model = ((modelResponse as { data?: { id: number; }; }).data || modelResponse) as { id: number; };
+    expected_updated_at: actionFormString(formData, "draft_updated_at"),
+    valuation_date: actionFormString(formData, "valuation_date"),
+    preview_hash: actionFormString(formData, "preview_hash"), submission_id: actionFormString(formData, "submission_id"),
+    reason: actionFormString(formData, "reason"),
+  };
+  const result = await serverPostApi<{model_id:number}>(`/valuation-drafts/${draftId}/confirm`, command);
   revalidatePath(`/companies/${companyId}/valuation`);
-  return model.id;
+  return result.model_id;
 }

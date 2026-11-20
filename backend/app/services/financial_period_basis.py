@@ -20,7 +20,7 @@ def financial_period_basis(candidate, *, effective_at=None):
     instant = _date(locator.get("instant"))
     # Missing start alone never proves an instant: legacy extraction often omitted it.
     scope = "instant" if instant else candidate.period_type
-    basis = locator.get("accounting_basis") or locator.get("taxonomy")
+    basis = locator.get("accounting_basis") or locator.get("taxonomy") or locator.get("namespace")
     basis = basis if isinstance(basis, str) and basis.strip() else None
     return {
         "version": "financial-period-v1", "fiscal_year": candidate.fiscal_year,

@@ -62,7 +62,10 @@ RETIRED_ACTIVE_PATHS = (
 
 def active_markdown_files(root: Path = ROOT) -> list[Path]:
     root = root.resolve()
-    files = [*root.glob("*.md"), *(root / ".github").glob("*.md")]
+    # Private coordinator returns beside README follow the root .gitignore.
+    # They can contain unpublished references outside the maintained docs.
+    files = [path for path in root.glob("*.md") if not path.name.endswith("-Codex-Handoff.md")]
+    files.extend((root / ".github").glob("*.md"))
     files.extend(root / directory / "README.md" for directory in (
         "backend", "backend/scripts", "frontend", "frontend/styles", "scripts", "data", "docker",
     ))

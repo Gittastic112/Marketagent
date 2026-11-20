@@ -33,7 +33,7 @@ export function ValuationVersionHistory({ companyId, modelId, versions, selected
             return <tr key={version.id}><th scope="row"><Link href={`/companies/${companyId}/valuation/${modelId}${i ? `?version=${version.id}` : ""}`}>
               #{version.id}{i === 0 ? " · latest" : ""}{version.id === selectedId ? " · selected" : ""}</Link></th>
               <td>{new Date(version.created_at).toLocaleString()}</td><td>{receipt?.valuation_date ?? "Not recorded"}</td>
-              <td>{receipt?.reason ?? "No version reason recorded"}</td></tr>; })}
+              <td>{receipt?.reason ?? "No version reason recorded"}{receipt?.sources?.map(b=>b.source && <div key={b.ref.target_field}><Link href={b.source.href}>{b.ref.target_field.replaceAll("_"," ")} · revision {b.source.revision_number}</Link> · {b.conversion}</div>)}</td></tr>; })}
         </tbody></table>
       </div>
     </details>

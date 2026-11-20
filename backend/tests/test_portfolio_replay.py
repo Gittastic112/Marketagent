@@ -294,6 +294,7 @@ def test_bounded_replay_and_hash_are_read_only_and_changes_are_visible(db, monke
 def test_corrected_activity_marks_saved_returns_provisional_without_rewriting_snapshots(db):
     from copy import deepcopy
     from app.services.portfolio_performance import calculate_time_weighted_return
+    from app.services.portfolio_period_attribution import calculate_period_attribution
     portfolio, _, records = seed_book(db)
     first = record_daily_snapshot(db, portfolio.id, date(2026, 1, 3))
     second = record_daily_snapshot(db, portfolio.id, date(2026, 1, 6))
@@ -301,6 +302,13 @@ def test_corrected_activity_marks_saved_returns_provisional_without_rewriting_sn
     report = calculate_time_weighted_return(db, portfolio.id, first.snapshot_date, second.snapshot_date)
     assert report.calculation_status == "complete"
     assert report.return_decimal == pytest.approx(217 / 208 - 1)
+    attribution = calculate_period_attribution(db, portfolio.id, first.snapshot_date, second.snapshot_date)
+    assert attribution["calculation_status"] == "complete"
+    assert {key: attribution[key] for key in (
+        "price_movement", "fx_impact", "position_change", "external_cash_flow",
+        "internal_cash_change", "total_change", "unexplained_change"
+    )} == {"price_movement": 0, "fx_impact": 0, "position_change": -110, "external_cash_flow": 0,
+           "internal_cash_change": 119, "total_change": 9, "unexplained_change": 0}
     records[0].quantity += 1
     db.commit()
     corrected = calculate_time_weighted_return(db, portfolio.id, first.snapshot_date, second.snapshot_date)

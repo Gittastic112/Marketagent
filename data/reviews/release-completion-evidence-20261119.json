@@ -1,0 +1,67 @@
+{
+  "review_date": "2026-11-19",
+  "reviewed_code_commit": "ef2e2d668dce84d55714a43f63b22cdecb40267a",
+  "valuation_date": "2026-11-12",
+  "publication_follow_up": {
+    "reviewed_on": "2026-11-20",
+    "company": "META",
+    "valuation_date": "2026-11-12",
+    "scope": "Series A mandatory convertible preferred depositary share. Nasdaq identifies the trading unit as one twentieth of a preferred share. A dated original closing quotation remains unavailable in the accessible exchange history. Financing terms and these unit rights alone do not value the claim.",
+    "status": "partial",
+    "original_sources": [
+      "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+      "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450074/d166273d8k.htm",
+      "https://www.nasdaq.com/market-activity/stocks/metam/historical"
+    ],
+    "benchmark_evidence": "A general annual data update cannot date every stored workbook version. Match the reviewed source file and original release record before using the workbook in a historical valuation.",
+    "benchmark_source": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/data.html"
+  },
+  "cutoff_exclusive": "2026-11-13T00:00:00-05:00",
+  "timezone": "America/New_York",
+  "previous_decision": "valuation-inputs-asof-20261112.json",
+  "review_scope": "Local recheck of the one proposed complete input, three financing calculations and the separate industry revenue comparisons below. Original annual facts and the previously reviewed dated estimate are retained. This review creates no live revisions or saved models.",
+  "input": {
+    "ticker": "GOOGL",
+    "field": "minority_interests",
+    "basis": "Latest disclosed consolidated subsidiary noncontrolling interests at carrying value",
+    "source_classification": "Fact",
+    "valuation_classification": "Estimate",
+    "unit": "USD million",
+    "sign": "Positive deduction from enterprise value in the equity bridge",
+    "date_basis": "Observation is the reported balance-sheet date. Filed is the EDGAR filing date.",
+    "disclosures": [
+      {"observation": "2023-12-31", "filed": "2024-01-31", "accession": "0001652044-24-000022", "total": 3400, "redeemable_included": 1100, "locator": "10-K Note 5, Consolidated Variable Interest Entities, total NCI paragraph", "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204424000022/goog-20231231.htm"},
+      {"observation": "2024-12-31", "filed": "2025-02-05", "accession": "0001652044-25-000014", "total": 4200, "redeemable_included": 1100, "locator": "10-K Note 5, Consolidated VIEs, total NCI paragraph", "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000014/goog-20241231.htm"},
+      {"observation": "2025-12-31", "filed": "2026-02-05", "accession": "0001652044-26-000018", "total": 3400, "redeemable_included": 841, "locator": "10-K Note 5, Consolidated VIEs, total NCI paragraph", "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"},
+      {"observation": "2026-09-30", "filed": "2026-10-29", "accession": "0001652044-26-000084", "total": 6900, "redeemable_included": 825, "locator": "10-Q, Noncontrolling Interests paragraph following Accrued Expenses and Other Current Liabilities", "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000084/goog-20260930.htm"}
+    ],
+    "dated_estimate_usd": 6900000000,
+    "existing_calculation_key": "goog_nci_book_proxy",
+    "decision": "Accepted on the previously reviewed book-value basis. Use each disclosed total once, at the issuer's precision. The November valuation carries forward the September observation. Market valuation and subsequent subsidiary ownership changes remain unverified."
+  },
+  "component_checks": [
+    {"ticker": "AAPL", "field": "debt", "observation": "2024-09-28", "class": "Calculation", "unit": "USD million", "expression": "9967 + 10912 + 85750", "value": 106629, "locator": "FY2024 10-K, consolidated balance sheets, commercial paper and current and noncurrent term debt", "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm", "scope": "Historical borrowings only. Leases and the complete November financing bridge require separate evidence."},
+    {"ticker": "NVDA", "field": "debt", "observation": "2025-01-26", "class": "Calculation", "unit": "USD million", "expression": "982 + 1136 + 1376 + 1064 + 824 + 1482 + 367", "value": 7231, "locator": "FY2025 10-K, fair value of financial instruments, Level 2 notes payable, January 26 column", "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000023/nvda-20250126.htm", "scope": "Reported fair value of seven notes only. Deferred consideration and other financing require separate evidence."},
+    {"ticker": "META", "field": "preferred_stock", "observation": "2026-11-02", "class": "Calculation", "unit": "USD", "expression": "(250000000 + 37500000) / 20 * 1000", "value": 14375000000, "locator": "October 29 8-K Item 1.01 and November 6 prospectus, Recent Developments, additional depositary shares issued November 2", "urls": ["https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm", "https://www.sec.gov/Archives/edgar/data/1326801/000119312526450754/d44678d424b5.htm"], "scope": "Base liquidation preference of issued securities only. Valuation use remains held pending a reconciled November 12 quote and outstanding quantity."}
+  ],
+  "industry_revenue_comparisons": {
+    "classification": "Calculation",
+    "unit": "USD million",
+    "formula": "Each reported business revenue divided by the indicated denominator, multiplied by 100. Percentages are rounded to six decimal places.",
+    "eligibility": "Original revenue disclosures were public before the cutoff. An economic industry mapping, dataset version and its publication eligibility require separate review. The mix save date and dataset observation date alone do not establish the publication date. These comparisons are outside the sixteen slots.",
+    "observations": [
+      {"ticker": "AAPL", "fiscal_year": 2025, "filed": "2025-10-31", "labels": ["Products", "Services"], "amounts": [307003, 109158], "denominator": 416161, "percent": [73.770248, 26.229752], "locator": "Consolidated Statements of Operations, net sales", "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm"},
+      {"ticker": "AAPL", "fiscal_year": 2026, "filed": "2026-11-03", "labels": ["Products", "Services"], "amounts": [355533, 123301], "denominator": 478834, "percent": [74.249740, 25.750260], "locator": "Consolidated Statements of Operations, net sales. This newer observation was available at the valuation date.", "url": "https://www.sec.gov/Archives/edgar/data/320193/000032019326000026/aapl-20260926.htm"},
+      {"ticker": "NVDA", "fiscal_year": 2026, "filed": "2026-02-25", "labels": ["Compute & Networking", "Graphics"], "amounts": [193479, 22459], "denominator": 215938, "percent": [89.599329, 10.400671], "locator": "Revenue by Reportable Segments, FY2026", "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"},
+      {"ticker": "GOOGL", "fiscal_year": 2025, "filed": "2026-02-05", "labels": ["Google Services", "Google Cloud", "Other Bets"], "amounts": [342721, 58705, 1537], "denominator": 402963, "percent": [85.050240, 14.568335, 0.381425], "locator": "Segment revenues. The USD 127 million hedging loss reconciles the denominator to consolidated revenues of 402836.", "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"},
+      {"ticker": "META", "fiscal_year": 2025, "filed": "2026-01-29", "labels": ["Family of Apps", "Reality Labs"], "amounts": [198759, 2207], "denominator": 200966, "percent": [98.901804, 1.098196], "locator": "Revenue by segment, FY2025. Business revenue does not assign an industry benchmark.", "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm"}
+    ]
+  },
+  "returned_16_slot_dispositions": {
+    "source": "Scope judgments from the independent round. Local numeric verification is limited to the disclosures and component checks above.",
+    "AAPL": {"debt": "partial", "change_in_nwc": "partial", "employee_options_value": "partial"},
+    "NVDA": {"debt": "partial", "change_in_nwc": "partial", "employee_options_value": "partial"},
+    "META": {"debt": "partial", "change_in_nwc": "partial", "minority_interests": "held", "preferred_stock": "partial", "employee_options_value": "partial"},
+    "GOOGL": {"debt": "partial", "depreciation": "partial", "change_in_nwc": "partial", "minority_interests": "accepted_book_estimate", "employee_options_value": "partial"}
+  }
+}

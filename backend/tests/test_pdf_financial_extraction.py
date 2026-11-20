@@ -210,6 +210,18 @@ def test_pdf_upload_without_publication_date_keeps_it_unknown(client, db) -> Non
     assert document.published_at is None
     assert document.ingested_at is not None
     assert document.raw_payload_json["publication_date_basis"] == "unknown"
+    assert document.raw_payload_json["publication_precision"] == "unknown"
+
+
+def test_pdf_upload_preserves_a_date_only_publication(client, db) -> None:
+    company = _company(db)
+    response = client.post(f"/api/companies/{company.id}/filings/pdf",
+        data={"document_type": "annual_report", "published_at": "2026-11-13"},
+        files={"file": ("financial_statement_table.pdf", FIXTURE.read_bytes(), "application/pdf")})
+    assert response.status_code == 201
+    document = db.get(RawDocument, response_data(response)["raw_document_id"])
+    assert document.raw_payload_json["publication_precision"] == "date"
+    assert document.published_at.date().isoformat() == "2026-11-13"
 
 
 def test_pdf_upload_persists_asset_candidates_and_processing_run(client, db) -> None:
@@ -240,6 +252,7 @@ def test_pdf_upload_persists_asset_candidates_and_processing_run(client, db) -> 
     document = db.get(RawDocument, result["raw_document_id"])
     assert document is not None
     assert document.raw_payload_json["source_kind"] == "pdf_filing_upload"
+    assert document.raw_payload_json["publication_precision"] == "timestamp"
     assert document.url == "https://exchange.example/filings/fy2026.pdf"
     assert document.raw_payload_json["extraction_scope"] == "full_document"
     assert document.raw_payload_json["scanned_pages"] == [1]

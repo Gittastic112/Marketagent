@@ -1,5 +1,8 @@
 "use client";
 
+import {useState} from "react";
+import {FirstModelReview} from "./first-model-review";
+
 import { AlertTriangle, Archive, CheckCircle2, Database, RotateCcw, ShieldCheck } from "lucide-react";
 import { ValuationSourceRefreshPanel } from "./source-refresh-panel";
 import type { Company } from "@/lib/api";
@@ -7,7 +10,8 @@ import { DISCOUNT_COMPONENT_FIELDS, provenanceLabel, reviewFieldValueIsValid, un
 import type { useAutofillDraft } from "./use-autofill-draft";
 import { FIELD_GROUPS, TEXT_FIELDS, RENDERED_FIELDS, provenanceEntry, sourceBadgeClass } from "./autofill-draft-fields";
 
-export function AutofillDraftReviewView({ company, draft, action, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft }: ReturnType<typeof useAutofillDraft>) {
+export function AutofillDraftReviewView({ company, draft, draftId, initialResearchDate, acceptSaved, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft }: ReturnType<typeof useAutofillDraft>) {
+  const [epoch,setEpoch] = useState(0);
   function renderProvenance(key: string) {
     const rawEntry = provenance[key];
     const entry = provenanceEntry(rawEntry);
@@ -101,12 +105,12 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
   }
 
   return (
-    <form action={action} style={{ display: "grid", gap: "20px" }}>
+    <form onSubmit={e=>e.preventDefault()} onChange={()=>setEpoch(e=>e+1)} style={{ display: "grid", gap: "20px" }}>
       <section className="panel" aria-label="Valuation review steps">
         <h2>Review this model in order</h2>
         <ol><li><a href={`/companies/${company.id}/fundamentals#dated-inputs`}>Choose a research date and inspect financial evidence</a></li>
-          <li>Review the facts and assumptions below. A date selected in Financials does not refresh this draft.</li>
-          <li>Save an incomplete draft, or create a model after all required reviews pass.</li></ol>
+          <li>Review the facts and assumptions below. Apply the exact source revisions you want to use in the preview below.</li>
+          <li>Preview the calculation, record your reason and confirm the first version.</li></ol>
         {unresolvedFields.length > 0 && <div role="status"><strong>Needs attention for this model</strong>
           <ul>{unresolvedFields.map(field => <li key={field}><a href={`#${field === "revenue_growth_years_json" ? "revenue-growth" : field}`}>{field.replaceAll("_", " ")}</a>
             {requiredMissingFields.includes(field) ? " · required value missing" : " · review or correct value"}</li>)}</ul>
@@ -377,12 +381,12 @@ export function AutofillDraftReviewView({ company, draft, action, values, modelT
             <button type="button" className="secondary-button" onClick={refreshSources} disabled={saveState === "saving"}>
               Refresh Stored Inputs
             </button>
-            <button type="submit" className="primary-button" disabled={!promotionReady}>
-              Confirm and Create Model
-            </button>
           </div>
         </section>
       </fieldset>
+      <FirstModelReview companyId={company.id} draftId={draftId} modelType={modelType} formEpoch={epoch}
+        busy={pipelineBusy || saveState === "saving"} setBusy={setPipelineBusy} persist={persistDraft}
+        accept={acceptSaved} initialDay={initialResearchDate} proposal={sourceMetadata.dated_source_proposal} />
     </form>
   );
 }

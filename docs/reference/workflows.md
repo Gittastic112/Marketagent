@@ -119,6 +119,8 @@ records must retain explicit fallback states.
 
 ## Company price history and thesis pins
 
+A pin can lead to a dated decision on a specific private thesis assumption. The analyst chooses the original, optional financial revision, optional valuation version and rationale. Preview checks ownership and the actual evidence. Confirming records a single history entry for that submission. Subsequent price corrections preserve the observation originally pinned. [Step-by-step chart workflow](../user-guide.md#record-a-decision-on-a-stock-chart)
+
 The [timeline service](../../backend/app/services/price_timeline.py) reads positive stored end-of-day prices for the selected company. A series groups one provider, source symbol, market, exchange, currency, adjustment basis and claim type. The default prefers factual data, then the series covering the most dates, then the most recent observation. Explicitly labeled Mock Data stays in its own series.
 
 The service returns up to 365 distinct stored dates, with an optional inclusive end date. On comparable observations it computes `100 × (current close / previous close − 1)`. It marks an absolute change of at least 5%. Conflicting same-day closes break the comparison chain. Gaps over seven calendar days and unknown adjustment bases withhold a percentage. An unadjusted series can move mechanically after a split or distribution.

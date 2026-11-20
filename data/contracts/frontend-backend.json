@@ -6821,6 +6821,27 @@
                 "title": "Period",
                 "type": "object"
               },
+              "publication_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Publication Date"
+              },
+              "publication_precision": {
+                "enum": [
+                  "date",
+                  "timestamp",
+                  "unknown"
+                ],
+                "title": "Publication Precision",
+                "type": "string"
+              },
               "published_at": {
                 "anyOf": [
                   {
@@ -6877,6 +6898,8 @@
               "unit",
               "claim_type",
               "published_at",
+              "publication_date",
+              "publication_precision",
               "recorded_at",
               "retrieved_at",
               "availability",
@@ -7071,6 +7094,27 @@
             "title": "Period",
             "type": "object"
           },
+          "publication_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Publication Date"
+          },
+          "publication_precision": {
+            "enum": [
+              "date",
+              "timestamp",
+              "unknown"
+            ],
+            "title": "Publication Precision",
+            "type": "string"
+          },
           "published_at": {
             "anyOf": [
               {
@@ -7127,6 +7171,8 @@
           "unit",
           "claim_type",
           "published_at",
+          "publication_date",
+          "publication_precision",
           "recorded_at",
           "retrieved_at",
           "availability",
@@ -7323,6 +7369,27 @@
                 "title": "Period",
                 "type": "object"
               },
+              "publication_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Publication Date"
+              },
+              "publication_precision": {
+                "enum": [
+                  "date",
+                  "timestamp",
+                  "unknown"
+                ],
+                "title": "Publication Precision",
+                "type": "string"
+              },
               "published_at": {
                 "anyOf": [
                   {
@@ -7379,6 +7446,8 @@
               "unit",
               "claim_type",
               "published_at",
+              "publication_date",
+              "publication_precision",
               "recorded_at",
               "retrieved_at",
               "availability",
@@ -8661,6 +8730,558 @@
           "created_at"
         ],
         "title": "SourceFactRevisionRead",
+        "type": "object"
+      }
+    },
+    "first-valuation": {
+      "DraftBinding": {
+        "$defs": {
+          "DatedInputSource": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "available_by_date",
+                  "published_later",
+                  "publication_unknown"
+                ],
+                "title": "Availability",
+                "type": "string"
+              },
+              "candidate_id": {
+                "title": "Candidate Id",
+                "type": "integer"
+              },
+              "claim_type": {
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "document_id": {
+                "title": "Document Id",
+                "type": "integer"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "locator": {
+                "additionalProperties": true,
+                "title": "Locator",
+                "type": "object"
+              },
+              "passage": {
+                "title": "Passage",
+                "type": "string"
+              },
+              "period": {
+                "additionalProperties": true,
+                "title": "Period",
+                "type": "object"
+              },
+              "publication_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Publication Date"
+              },
+              "publication_precision": {
+                "enum": [
+                  "date",
+                  "timestamp",
+                  "unknown"
+                ],
+                "title": "Publication Precision",
+                "type": "string"
+              },
+              "published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Published At"
+              },
+              "recorded_at": {
+                "format": "date-time",
+                "title": "Recorded At",
+                "type": "string"
+              },
+              "retrieved_at": {
+                "format": "date-time",
+                "title": "Retrieved At",
+                "type": "string"
+              },
+              "revision_id": {
+                "title": "Revision Id",
+                "type": "integer"
+              },
+              "revision_number": {
+                "title": "Revision Number",
+                "type": "integer"
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Unit"
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              }
+            },
+            "required": [
+              "revision_id",
+              "revision_number",
+              "candidate_id",
+              "document_id",
+              "href",
+              "value",
+              "unit",
+              "claim_type",
+              "published_at",
+              "publication_date",
+              "publication_precision",
+              "recorded_at",
+              "retrieved_at",
+              "availability",
+              "period",
+              "locator",
+              "passage"
+            ],
+            "title": "DatedInputSource",
+            "type": "object"
+          },
+          "DraftSourceRef": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "exclusiveMinimum": 0,
+                "title": "Id",
+                "type": "integer"
+              },
+              "kind": {
+                "const": "source_fact_revision",
+                "title": "Kind",
+                "type": "string"
+              },
+              "target_field": {
+                "enum": [
+                  "starting_revenue",
+                  "net_income",
+                  "cash",
+                  "debt",
+                  "minority_interests",
+                  "preferred_stock",
+                  "employee_options_value",
+                  "change_in_nwc",
+                  "depreciation",
+                  "capex",
+                  "diluted_shares"
+                ],
+                "title": "Target Field",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "target_field"
+            ],
+            "title": "DraftSourceRef",
+            "type": "object"
+          }
+        },
+        "additionalProperties": true,
+        "properties": {
+          "conversion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Conversion"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Reason"
+          },
+          "ref": {
+            "$ref": "#/$defs/DraftSourceRef"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "$ref": "#/$defs/DatedInputSource"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null
+          },
+          "status": {
+            "enum": [
+              "eligible",
+              "held"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ref",
+          "status"
+        ],
+        "title": "BoundFinancialSource",
+        "type": "object"
+      },
+      "FirstPreview": {
+        "$defs": {
+          "BoundFinancialSource": {
+            "additionalProperties": true,
+            "properties": {
+              "conversion": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Conversion"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reason"
+              },
+              "ref": {
+                "$ref": "#/$defs/DraftSourceRef"
+              },
+              "source": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/DatedInputSource"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "status": {
+                "enum": [
+                  "eligible",
+                  "held"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ref",
+              "status"
+            ],
+            "title": "BoundFinancialSource",
+            "type": "object"
+          },
+          "DatedInputSource": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "available_by_date",
+                  "published_later",
+                  "publication_unknown"
+                ],
+                "title": "Availability",
+                "type": "string"
+              },
+              "candidate_id": {
+                "title": "Candidate Id",
+                "type": "integer"
+              },
+              "claim_type": {
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "document_id": {
+                "title": "Document Id",
+                "type": "integer"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "locator": {
+                "additionalProperties": true,
+                "title": "Locator",
+                "type": "object"
+              },
+              "passage": {
+                "title": "Passage",
+                "type": "string"
+              },
+              "period": {
+                "additionalProperties": true,
+                "title": "Period",
+                "type": "object"
+              },
+              "publication_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Publication Date"
+              },
+              "publication_precision": {
+                "enum": [
+                  "date",
+                  "timestamp",
+                  "unknown"
+                ],
+                "title": "Publication Precision",
+                "type": "string"
+              },
+              "published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Published At"
+              },
+              "recorded_at": {
+                "format": "date-time",
+                "title": "Recorded At",
+                "type": "string"
+              },
+              "retrieved_at": {
+                "format": "date-time",
+                "title": "Retrieved At",
+                "type": "string"
+              },
+              "revision_id": {
+                "title": "Revision Id",
+                "type": "integer"
+              },
+              "revision_number": {
+                "title": "Revision Number",
+                "type": "integer"
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Unit"
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              }
+            },
+            "required": [
+              "revision_id",
+              "revision_number",
+              "candidate_id",
+              "document_id",
+              "href",
+              "value",
+              "unit",
+              "claim_type",
+              "published_at",
+              "publication_date",
+              "publication_precision",
+              "recorded_at",
+              "retrieved_at",
+              "availability",
+              "period",
+              "locator",
+              "passage"
+            ],
+            "title": "DatedInputSource",
+            "type": "object"
+          },
+          "DraftSourceRef": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "exclusiveMinimum": 0,
+                "title": "Id",
+                "type": "integer"
+              },
+              "kind": {
+                "const": "source_fact_revision",
+                "title": "Kind",
+                "type": "string"
+              },
+              "target_field": {
+                "enum": [
+                  "starting_revenue",
+                  "net_income",
+                  "cash",
+                  "debt",
+                  "minority_interests",
+                  "preferred_stock",
+                  "employee_options_value",
+                  "change_in_nwc",
+                  "depreciation",
+                  "capex",
+                  "diluted_shares"
+                ],
+                "title": "Target Field",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "target_field"
+            ],
+            "title": "DraftSourceRef",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "assumptions": {
+            "additionalProperties": true,
+            "title": "Assumptions",
+            "type": "object"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blockers",
+            "type": "array"
+          },
+          "currency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Currency"
+          },
+          "diagnostics": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Diagnostics",
+            "type": "array"
+          },
+          "draft_id": {
+            "title": "Draft Id",
+            "type": "integer"
+          },
+          "preview_hash": {
+            "title": "Preview Hash",
+            "type": "string"
+          },
+          "proposed_output": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "anyOf": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Proposed Output"
+          },
+          "ready": {
+            "title": "Ready",
+            "type": "boolean"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/$defs/BoundFinancialSource"
+            },
+            "title": "Sources",
+            "type": "array"
+          },
+          "valuation_date": {
+            "format": "date",
+            "title": "Valuation Date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "draft_id",
+          "valuation_date",
+          "preview_hash",
+          "ready",
+          "blockers",
+          "assumptions",
+          "sources",
+          "diagnostics",
+          "proposed_output",
+          "currency"
+        ],
+        "title": "FirstModelPreviewRead",
         "type": "object"
       }
     },
@@ -11065,10 +11686,250 @@
         "type": "object"
       },
       "ValuationVersionReceipt": {
+        "$defs": {
+          "BoundFinancialSource": {
+            "additionalProperties": true,
+            "properties": {
+              "conversion": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Conversion"
+              },
+              "reason": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reason"
+              },
+              "ref": {
+                "$ref": "#/$defs/DraftSourceRef"
+              },
+              "source": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/DatedInputSource"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null
+              },
+              "status": {
+                "enum": [
+                  "eligible",
+                  "held"
+                ],
+                "title": "Status",
+                "type": "string"
+              }
+            },
+            "required": [
+              "ref",
+              "status"
+            ],
+            "title": "BoundFinancialSource",
+            "type": "object"
+          },
+          "DatedInputSource": {
+            "properties": {
+              "availability": {
+                "enum": [
+                  "available_by_date",
+                  "published_later",
+                  "publication_unknown"
+                ],
+                "title": "Availability",
+                "type": "string"
+              },
+              "candidate_id": {
+                "title": "Candidate Id",
+                "type": "integer"
+              },
+              "claim_type": {
+                "title": "Claim Type",
+                "type": "string"
+              },
+              "document_id": {
+                "title": "Document Id",
+                "type": "integer"
+              },
+              "href": {
+                "title": "Href",
+                "type": "string"
+              },
+              "locator": {
+                "additionalProperties": true,
+                "title": "Locator",
+                "type": "object"
+              },
+              "passage": {
+                "title": "Passage",
+                "type": "string"
+              },
+              "period": {
+                "additionalProperties": true,
+                "title": "Period",
+                "type": "object"
+              },
+              "publication_date": {
+                "anyOf": [
+                  {
+                    "format": "date",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Publication Date"
+              },
+              "publication_precision": {
+                "enum": [
+                  "date",
+                  "timestamp",
+                  "unknown"
+                ],
+                "title": "Publication Precision",
+                "type": "string"
+              },
+              "published_at": {
+                "anyOf": [
+                  {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Published At"
+              },
+              "recorded_at": {
+                "format": "date-time",
+                "title": "Recorded At",
+                "type": "string"
+              },
+              "retrieved_at": {
+                "format": "date-time",
+                "title": "Retrieved At",
+                "type": "string"
+              },
+              "revision_id": {
+                "title": "Revision Id",
+                "type": "integer"
+              },
+              "revision_number": {
+                "title": "Revision Number",
+                "type": "integer"
+              },
+              "unit": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "title": "Unit"
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              }
+            },
+            "required": [
+              "revision_id",
+              "revision_number",
+              "candidate_id",
+              "document_id",
+              "href",
+              "value",
+              "unit",
+              "claim_type",
+              "published_at",
+              "publication_date",
+              "publication_precision",
+              "recorded_at",
+              "retrieved_at",
+              "availability",
+              "period",
+              "locator",
+              "passage"
+            ],
+            "title": "DatedInputSource",
+            "type": "object"
+          },
+          "DraftSourceRef": {
+            "additionalProperties": false,
+            "properties": {
+              "id": {
+                "exclusiveMinimum": 0,
+                "title": "Id",
+                "type": "integer"
+              },
+              "kind": {
+                "const": "source_fact_revision",
+                "title": "Kind",
+                "type": "string"
+              },
+              "target_field": {
+                "enum": [
+                  "starting_revenue",
+                  "net_income",
+                  "cash",
+                  "debt",
+                  "minority_interests",
+                  "preferred_stock",
+                  "employee_options_value",
+                  "change_in_nwc",
+                  "depreciation",
+                  "capex",
+                  "diluted_shares"
+                ],
+                "title": "Target Field",
+                "type": "string"
+              }
+            },
+            "required": [
+              "kind",
+              "id",
+              "target_field"
+            ],
+            "title": "DraftSourceRef",
+            "type": "object"
+          }
+        },
         "properties": {
           "assumption_set_id": {
             "title": "Assumption Set Id",
             "type": "integer"
+          },
+          "draft_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Draft Id"
           },
           "preview_hash": {
             "anyOf": [
@@ -11107,6 +11968,21 @@
             "format": "date-time",
             "title": "Saved At",
             "type": "string"
+          },
+          "sources": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/$defs/BoundFinancialSource"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Sources"
           },
           "valuation_date": {
             "anyOf": [

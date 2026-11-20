@@ -15,6 +15,8 @@ class DatedInputSource(BaseModel):
     unit: str | None
     claim_type: str
     published_at: datetime | None
+    publication_date: date | None
+    publication_precision: Literal["date", "timestamp", "unknown"]
     recorded_at: datetime
     retrieved_at: datetime
     availability: Literal["available_by_date", "published_later", "publication_unknown"]

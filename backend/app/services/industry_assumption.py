@@ -39,6 +39,8 @@ class IndustryAssumptionService:
             "dataset_file_id": dataset_file_id,
             "source_file": dataset.uploaded_filename if dataset else None,
             "source_sha256": dataset.source_sha256 if dataset else None,
+            "publication_date": dataset.publication_date.isoformat() if dataset and dataset.publication_date else None,
+            "publication_source": dataset.publication_source if dataset else None,
             "source_as_of": dataset.source_as_of if dataset else None,
             "canonical_source_path": dataset.canonical_source_path if dataset else None,
             "claim_type": "Estimate",

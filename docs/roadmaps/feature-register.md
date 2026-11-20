@@ -1,6 +1,6 @@
 # Feature Register
 
-**Reviewed November 18, 2026.** Runtime validation dates remain in
+**Reviewed November 20, 2026.** Runtime validation dates remain in
 [Current State](../current-state.md). The latest research scope is four selected
 companies, with Sample research and a separately sourced Apple Estimate.
 
@@ -8,6 +8,8 @@ First release: local research/demo using existing data, explicitly chosen Octobe
 17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
 excludes genuine portfolio validation and defers Mac/off-device setup. This changes
 acceptance scope, not capability status or the truth labels of stored records.
+
+The [first-valuation and chart workflows](../user-guide.md#review-a-filing-and-valuation) preserve dated sources, the evaluated inputs and private decisions. [Verification by environment](../current-state.md#dated-validation)
 
 Status meanings:
 

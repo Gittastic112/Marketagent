@@ -50,6 +50,9 @@ test-results/
 /repo_map.txt
 /Data for Model/
 
+# Local review handoffs can contain private conversation links.
+/*-Codex-Handoff.md
+
 # Local source-review renders and copied tool packages are not publication inputs.
 # Keep originals and review receipts; ignoring a path does not delete its files.
 /Marketagent-code-review-6505082/

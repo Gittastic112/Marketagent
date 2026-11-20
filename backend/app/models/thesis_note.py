@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Any
 
-from sqlalchemy import DateTime, Float, ForeignKey, JSON, String, Text, UniqueConstraint, func
+from sqlalchemy import DateTime, Float, ForeignKey, Index, JSON, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
@@ -98,6 +98,10 @@ class EventThesisImpact(Base):
 
 class ThesisChange(Base):
     __tablename__ = "thesis_changes"
+    __table_args__ = (Index("uq_thesis_change_request", "thesis_note_id", "request_id", unique=True),)
+
+    request_id: Mapped[str | None] = mapped_column(String(36))
+    price_review: Mapped[dict | None] = mapped_column(JSON)
 
     id: Mapped[int] = mapped_column(primary_key=True)
     thesis_note_id: Mapped[int] = mapped_column(ForeignKey("thesis_notes.id"))

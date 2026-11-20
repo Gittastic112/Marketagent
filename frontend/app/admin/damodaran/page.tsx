@@ -1,5 +1,6 @@
 "use client";
 
+import {putApi} from "@/lib/api/transport";
 import { useState, useEffect } from "react";
 import { PageHeader, Panel, ErrorState, LoadingState } from "@/components/page";
 import { fetchApiResponse, postApi, postFormApi, type ApiErrorDetail } from "@/lib/api";
@@ -14,6 +15,8 @@ type DamodaranFile = {
   source_sha256: string | null;
   source_byte_size: number | null;
   source_as_of: string | null;
+  publication_date: string | null;
+  publication_source: string | null;
   date_confidence: string;
   canonical_source_path: string | null;
   import_kind: string;
@@ -22,6 +25,21 @@ type DamodaranFile = {
   row_count: number | null;
   notes: string | null;
 };
+
+function PublicationRecord({file,onSaved}:{file:DamodaranFile;onSaved:()=>void}) {
+  const [busy,setBusy]=useState(false), [message,setMessage]=useState("");
+  if (file.publication_date && file.publication_source) return <p>Published {file.publication_date} · <a href={file.publication_source} target="_blank" rel="noreferrer">Original release</a></p>;
+  if (!file.source_sha256) return <small>Publication unverified</small>;
+  return <details><summary>Record original publication</summary><form onSubmit={async e=>{
+    e.preventDefault();const fields=new FormData(e.currentTarget);setBusy(true);setMessage("");
+    try {await putApi(`/api/admin/damodaran/datasets/${file.id}/publication`,{source_sha256:file.source_sha256,
+      publication_date:fields.get("day"),publication_source:fields.get("source")});onSaved();}
+    catch(error){setMessage(error instanceof Error?error.message:"Unable to record this publication.");}
+    finally{setBusy(false);}
+  }}><fieldset disabled={busy}><label>Original release date<input required name="day" type="date" /></label>
+    <label>Original release URL<input required name="source" type="url" /></label>
+    <button type="submit">Save publication evidence</button></fieldset><p role="status">{message}</p></form></details>;
+}
 
 export default function AdminDamodaranPage() {
   const [files, setFiles] = useState<DamodaranFile[]>([]);
@@ -187,6 +205,7 @@ export default function AdminDamodaranPage() {
                     <td className="px-4 py-3 text-muted-foreground">
                       <strong>{f.is_active ? "Active" : "Inactive"} | {f.import_kind.replaceAll("_", " ")}</strong>
                       <div className="text-muted-foreground">Source {f.source_as_of || "unknown"} | {f.date_confidence}</div>
+                      <PublicationRecord file={f} onSaved={fetchFiles} />
                       <div className="text-muted-foreground">{f.row_count === null ? "No typed rows" : `${f.row_count.toLocaleString()} typed rows`}</div>
                     </td>
                     <td className="px-4 py-3">

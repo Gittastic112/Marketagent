@@ -2,7 +2,7 @@
 
 Design began November 13, 2026. P0, P1 and the first explicit draft/source actions were verified, followed by [ten bounded P2 through P5 improvements](../../data/reviews/research-workspace-ten-sets-20261114.json). The [returned-review repairs](../limitations.md#returned-code-review) subsequently shipped. The installed Today layout and company price chart below reflect the user's later design choices.
 
-The next implementation slice is a dated-source draft proposal and a preview before the first model save. Wider period identity, reliability and actual-use acceptance remain open. [Product priorities](product-roadmap.md#immediate-delivery-order)
+Dated source proposals, first-model confirmation and decisions on pinned prices are implemented. Wider period identity, issuer completeness and actual-use acceptance remain open. [Product priorities](product-roadmap.md#immediate-delivery-order)
 
 ## Read this plan
 
@@ -601,12 +601,7 @@ The [returned-review ledger](../limitations.md#returned-code-review) records the
 | 9 / P5.1 | Review queue scoped to the selected portfolio's current declared holdings, retaining missing price/FX and example context |
 | 10 / P5.2 | Source library filtering/pagination, Advanced landing and Settings/source entry points; existing feature links retained |
 
-The selected financial date does not feed a draft automatically. Preview/save covers
-existing saved-model edits; initial model creation still uses its existing review gate.
-Research dates are labels until historical source/market selection is implemented.
-Normal data preservation, image identity and cleanup evidence belong in the receipt.
-A package becomes Verified only after evidence exists; Installed is recorded separately.
-Implementation follows the delivery sequence below. The [Knull-led release-completion round](../workstreams/README.md#release-completion-round) can investigate issuer evidence and design the first-save and chart workflows in parallel.
+The analyst selects the dated financial revisions used in a first-model proposal. Preview resolves those sources again and validates the calculation. Confirmation records the accepted calculation, original revisions and reason. A pinned price can support an independent thesis decision. [User workflows](../user-guide.md#review-a-filing-and-valuation) · [Dated release evidence](../current-state.md#dated-validation)
 
 | Package | Deliverable and bounded scope | Dependency | Acceptance mapping |
 |---|---|---|---|
@@ -791,7 +786,7 @@ a question for the user. Identify the exact missing source or decision first.
 ## Next implementation session
 
 1. Open the [current M05 ledger](../limitations.md#selected-company-review-follow-up). Choose one unresolved company field with an original filing and a defensible period and accounting basis. Preserve the record if only a subtotal is available.
-2. For a P2/P3 change, trace one selected source revision through dated evidence, the draft, first calculation preview and version save. Include stale and mismatched evidence plus an interrupted-save retry. Existing saved-model previews provide the comparison case.
+2. For a new financial field, verify its complete economic definition and matching currency and period. Extend the source map and its regression tests for accepted and held revisions together.
 3. Follow the [runbook](../execution-runbook.md) for the affected layers. Persistent changes require the [recovery policy](../operations.md#when-to-make-a-backup). Verify in the installed project after the relevant tests pass.
 4. Reconcile the evidence in the limitation ledger and current state. Continue with portfolio reconciliation and the connected research workflow in [delivery order](product-roadmap.md#immediate-delivery-order).
 

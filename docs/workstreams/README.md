@@ -2,9 +2,9 @@
 
 ## Release completion round
 
-For the remaining local research/demo milestones, use the [nine assignments and copyable Knull prompt](release-completion-chats.md). Knull coordinates seven starting chats and two independent follow-ups. The four issuer chats cover all 16 open company/input combinations. The three workflow chats cover the first valuation save, research decisions on the price chart and example portfolio calculations.
+All nine reviews in the November 19 round returned against commit `ef2e2d6`. Four chats investigated the sixteen financial inputs open at dispatch. Three examined valuation, chart and portfolio workflows. Two checked the proposed evidence and acceptance tests. The [original assignments and coordinator prompt](release-completion-chats.md) remain available for reference.
 
-Knull returns a single private handoff with per-period source evidence, a 16-slot scoreboard and proposed local checks. Local Codex verifies and implements supported changes. The user owns actual-use records and final acceptance. The packet also identifies three optional provider or OCR reviews and their prerequisites.
+The reviewed source now includes dated first-model confirmation and chart-to-thesis decisions. Future chats can investigate one unresolved issuer input or a named provider prerequisite from the ledger. The detailed handoff stays private. The [financial ledger](../limitations.md#selected-company-review-follow-up) records the local financial decisions and the [handoff](../HANDOFF.md#next-work) tracks implementation. The user owns actual-use records and final acceptance. The packet also identifies three optional provider or OCR reviews and their prerequisites.
 
 ## Four independent ChatGPT Pro reviews
 

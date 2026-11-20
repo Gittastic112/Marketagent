@@ -35,6 +35,8 @@ retain exact M05 decision IDs, promotions, rejected mappings and preservation pr
 The [dated-input receipt](../../data/reviews/valuation-inputs-asof-20261112.json)
 uses the user's November 12, 2026 valuation date. Its subtotals and claim proxies do
 not replace saved models or resolve missing disclosures and conflicting Meta quotes.
+The November 19 recheck accepts Alphabet’s minority-interest input on the previously chosen carrying-value basis. The three annual amounts and the September observation for the November valuation retain their individual filing references. [Public-source recheck](../../data/reviews/release-completion-evidence-20261119.json)
+
 The [current ledger](../limitations.md#selected-company-review-follow-up) owns remaining gaps.
 
 | Subject | Retained readable record |

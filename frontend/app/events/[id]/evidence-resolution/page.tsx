@@ -1,3 +1,4 @@
+import {ChartReturnLinks,type ChartReturnQuery} from "@/components/chart-return-links";
 import Link from "next/link";
 import { Search } from "lucide-react";
 
@@ -16,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 type EvidenceResolutionPageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ q?: string; saved?: string }>;
+  searchParams: Promise<{ q?: string; saved?: string } & ChartReturnQuery>;
 };
 
 export default async function EvidenceResolutionPage({
@@ -70,6 +71,7 @@ export default async function EvidenceResolutionPage({
         title={event.title}
         status={`${references.length} reference${references.length === 1 ? "" : "s"}`}
       />
+      <ChartReturnLinks companyId={event.company_id} query={requested} />
       <DataStateNotices
         metas={[eventResponse.meta, referencesResponse.meta, searchResponse?.meta]}
         partialMessage="Some event evidence metadata is unavailable."
@@ -79,7 +81,7 @@ export default async function EvidenceResolutionPage({
         <p>Inspect the original evidence, revisit your thesis, then decide which assumptions need review. These links do not approve evidence or change a saved valuation.</p>
         <nav className="button-row" aria-label="Next research steps" style={{flexWrap: "wrap"}}>
           <Link href={`/companies/${event.company_id}`}>Company and portfolio context</Link>
-          <Link href={`/companies/${event.company_id}/thesis`}>Review company thesis</Link>
+          <Link href={typeof requested.note_id === "string" && /^[1-9]\d*$/.test(requested.note_id) ? `/thesis-notes/${requested.note_id}` : `/companies/${event.company_id}/thesis`}>Review company thesis</Link>
           <Link href={`/companies/${event.company_id}/valuation`}>Inspect saved valuations</Link>
           <Link href={`/companies/${event.company_id}/valuation/draft`}>Review valuation input sources</Link>
           <Link href={`/companies/${event.company_id}/decisions`}>Record next review action</Link>

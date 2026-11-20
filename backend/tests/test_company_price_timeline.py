@@ -53,6 +53,30 @@ def test_timeline_compares_like_closes_and_distinguishes_context(db, client):
     assert client.get(f"/companies/{issuer.id}/price-timeline", params={"series": alternate["key"]}).json()["data"]["points"][0]["price"] == 300
 
 
+def test_publication_after_close_and_date_only_upload_keep_their_precision(db, client):
+    issuer = company(db, "TIMES")
+    db.add(source := Source(name="Mock Data filings", source_type="filing"))
+    db.flush()
+    for title, iso, precision in [
+            ("After close", "2026-01-06T22:00:00+00:00", "timestamp"),
+            ("Date only", "2026-01-07T00:00:00+00:00", "date"),
+            ("Legacy date picker", "2026-01-07T00:00:00+00:00", None)]:
+        metadata = {"source_kind": "pdf_filing_upload"}
+        if precision:
+            metadata["publication_precision"] = precision
+        db.add(RawDocument(company_id=issuer.id, source_id=source.id, title=title,
+            document_type="annual_report", content_hash=title, raw_payload_json=metadata,
+            published_at=datetime.fromisoformat(iso)))
+    close(db, issuer, "2026-01-06", "100", source_timestamp=datetime.fromisoformat("2026-01-06T21:00:00+00:00"))
+    close(db, issuer, "2026-01-07", "90")
+    db.commit()
+    first, second = client.get(f"/companies/{issuer.id}/price-timeline").json()["data"]["points"]
+    after, = first["sources"]
+    assert after["published"] == "2026-01-06T22:00:00+00:00" and after["context_date"] == "2026-01-06"
+    assert {s["title"] for s in second["sources"]} == {"Date only", "Legacy date picker"}
+    assert {s["published"] for s in second["sources"]} == {"2026-01-07"}
+
+
 def test_pin_is_owned_retry_safe_and_retains_original_observation(db, client):
     issuer, other = company(db, "AAA"), company(db, "BBB")
     db.add(User(id="other-user", email="other@example.invalid", name="Other"))
@@ -82,6 +106,10 @@ def test_pin_is_owned_retry_safe_and_retains_original_observation(db, client):
     assert len(client.get(base).json()["data"]["points"][0]["pins"]) == 1
     price.price = Decimal("98")
     db.commit()
+    retry = client.post(base + "/pins", json=payload)
+    assert retry.status_code == 200
+    assert retry.json()["data"]["id"] == pin["id"]
+    assert retry.json()["data"]["anchor"] == pin["anchor"]
     assert client.post(base + "/pins", json=payload | {"request_id": str(uuid4())}).status_code == 409
     assert client.get(base).json()["data"]["points"][0]["pins"] == []
     saved_pins = client.get(f"/thesis-notes/{mine.id}/price-pins").json()["data"]

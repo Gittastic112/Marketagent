@@ -16,6 +16,9 @@ from app.services.reverse_dcf_service import solve_saved_reverse_dcf
 from app.services.industry_mapping import IndustryMappingService
 from app.services.industry_assumption import IndustryAssumptionService
 from app.services.valuation_context import build_company_valuation_context
+from fastapi import Response
+from app.schemas.first_valuation import DraftSourceProposal, FirstModelConfirm, FirstModelPreview, FirstModelPreviewRead, FirstModelSaved
+from app.services.first_valuation import attach_sources, confirm_first_model, preview_first_model
 from app.services.valuation_setup_draft import ValuationSetupDraftService
 from app.services.assumption_versions import AssumptionVersionConflict, create_assumption_version, preview_assumption_version, version_receipts
 from app.schemas.valuation_preview import ValuationPreviewRead, ValuationVersionReceiptRead
@@ -389,7 +392,7 @@ def solve_reverse_dcf(request: schemas.ReverseDcfRequest, db: Session = Depends(
         confidence="unknown", warnings=["Comparison price and share overrides are User Assumptions, not live market facts. The calculation is non-writing and does not verify its economic plausibility."]))
 
 @router.get("/industries/suggest", response_model=ApiResponse[list[dict[str, Any]]])
-def suggest_industries(companyId: int, country: str = "India", db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+def suggest_industries(companyId: int, country: str | None = None, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
     candidates = IndustryMappingService.suggest_damodaran_industries(db, companyId, country)
     return ApiResponse(data=candidates)
 
@@ -590,17 +593,41 @@ def archive_valuation_draft(
 )
 def promote_valuation_draft(
     draft_id: int,
-    payload: schemas.ValuationSetupDraftPromote,
+    payload: FirstModelConfirm | schemas.ValuationSetupDraftPromote,
+    response: Response,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
     draft = ValuationSetupDraftService.get_owned(db, draft_id, current_user["id"])
-    model = ValuationSetupDraftService.promote(
-        db,
-        draft,
-        payload.name,
-        payload.description,
-        payload.model_type,
-        payload.expected_updated_at,
-    )
-    return ApiResponse(data=model)
+    if not isinstance(payload, FirstModelConfirm):
+        ValuationSetupDraftService.require_first_preview(
+            db, draft, payload.model_type, payload.expected_updated_at
+        )
+    result = confirm_first_model(db, draft, payload)
+    if result["replayed"]:
+        response.status_code = 200
+    return ApiResponse(data=db.get(ValuationModel, result["model_id"]))
+
+
+@router.put("/valuation-drafts/{draft_id}/source-proposal", response_model=ApiResponse[schemas.ValuationSetupDraftRead])
+def choose_draft_sources(draft_id: int, payload: DraftSourceProposal, db: Session = Depends(get_db),
+                         current_user: dict = Depends(get_current_user)):
+    draft = ValuationSetupDraftService.get_owned(db, draft_id, current_user["id"])
+    return ApiResponse(data=attach_sources(db, draft, payload))
+
+
+@router.post("/valuation-drafts/{draft_id}/preview", response_model=ApiResponse[FirstModelPreviewRead])
+def preview_first_valuation(draft_id: int, payload: FirstModelPreview, db: Session = Depends(get_db),
+                            current_user: dict = Depends(get_current_user)):
+    draft = ValuationSetupDraftService.get_owned(db, draft_id, current_user["id"])
+    return ApiResponse(data=preview_first_model(db, draft, payload))
+
+
+@router.post("/valuation-drafts/{draft_id}/confirm", response_model=ApiResponse[FirstModelSaved], status_code=201)
+def confirm_first_valuation(draft_id: int, payload: FirstModelConfirm, response: Response, db: Session = Depends(get_db),
+                            current_user: dict = Depends(get_current_user)):
+    draft = ValuationSetupDraftService.get_owned(db, draft_id, current_user["id"])
+    result = confirm_first_model(db, draft, payload)
+    if result["replayed"]:
+        response.status_code = 200
+    return ApiResponse(data=result)

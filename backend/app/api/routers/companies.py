@@ -362,7 +362,7 @@ def remove_exposure_tag(company_id: int, tag_id: int, db: Session = Depends(get_
     "/companies/{company_id}/industry-mapping-candidates",
     response_model=ApiResponse[list[dict[str, Any]]],
 )
-def get_industry_mapping_candidates(company_id: int, country: str = "India", db: Session = Depends(get_db)):
+def get_industry_mapping_candidates(company_id: int, country: str | None = None, db: Session = Depends(get_db)):
     from app.services.industry_mapping import IndustryMappingService
     candidates = IndustryMappingService.suggest_damodaran_industries(db, company_id, country)
     return ApiResponse(data=candidates)

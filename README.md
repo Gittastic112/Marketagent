@@ -14,9 +14,9 @@ trading. [Current status and dated validation](docs/current-state.md) ·
 | Workflow | What the application supports |
 |---|---|
 | Review the day | Inspect source-linked events, portfolio exposure, and a deterministic Daily Brief with visible coverage limits |
-| Investigate a stock move | Open a company’s closing-price chart, inspect filings around a marked date and pin a private note to the original close on your thesis. [Walkthrough](docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
+| Investigate a stock move | Inspect filings around a marked close, pin the observed price and record a decision on a specific thesis assumption. [Chart walkthrough](docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
 | Review a company | Read source documents, review extracted financial candidates and follow the evidence used in a thesis or model |
-| Build a valuation | Review inputs, save versioned DCF models, and inspect scenarios, sensitivities, reverse DCF, and reviewed peer comparisons |
+| Build a valuation | Apply a dated financial revision, inspect the first calculation and save its sources and reason. Review later changes in version history. [Valuation walkthrough](docs/user-guide.md#review-a-filing-and-valuation) |
 | Track a portfolio | Record activity and inspect dated snapshots, returns, attribution, and risk with missing-input warnings |
 | Run a research experiment | Use supplied returns for allocation, simulations and reports, or inspect candidate peers in Research Lab. [Adapter guide](docs/adapters/README.md) |
 | Inspect data quality | See provider configuration, processing failures, freshness, and review state in Data Health |

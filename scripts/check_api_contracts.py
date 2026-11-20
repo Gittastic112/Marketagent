@@ -8,7 +8,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from app.schemas import ai_consent, brief, companies, evidence, financials, ingestion, market, operations, research, dated_inputs, review_queue, valuation_preview, valuation
+from app.schemas import ai_consent, brief, companies, evidence, financials, ingestion, market, operations, research, dated_inputs, first_valuation, review_queue, valuation_preview, valuation
 from app.schemas.common import ApiErrorDetail, ApiMeta, ApiResponse
 
 CONTRACTS = {
@@ -26,6 +26,7 @@ CONTRACTS = {
                   "PdfFinancialExtractionResult": financials.PdfFinancialExtractionResultRead},
     "dated-inputs": {"DatedInputs": dated_inputs.DatedInputsRead, "DatedInputRow": dated_inputs.DatedInputRow, "DatedInputSource": dated_inputs.DatedInputSource},
     "review-queue": {"ReviewQueue": review_queue.ReviewQueueRead},
+    "first-valuation": {"DraftBinding": first_valuation.BoundFinancialSource, "FirstPreview": first_valuation.FirstModelPreviewRead},
     "valuation-preview": {"ValuationPreview": valuation_preview.ValuationPreviewRead,
                           "ValuationVersionReceipt": valuation_preview.ValuationVersionReceiptRead},
     "market": {"MarketPrice": market.MarketPriceRead, "CompanyMarketData": market.CompanyMarketDataRead},

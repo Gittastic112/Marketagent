@@ -8,6 +8,7 @@ from app.services.valuation_source_inputs import sec_draft_inputs, source_input_
 from app.services.assumption_provenance import (INPUT_CONTRACT, PLACEHOLDER_SOURCE_TYPES, DERIVED_NORMALIZED_METRICS, _freshness_metadata, _provenance, _source_metadata, _input_readiness)
 from app.services.assumption_financial_inputs import (financial_history_signature, _extract_latest_actuals, _extract_revenue_history)
 from app.services.valuation_input_units import INPUT_UNIT_POLICY
+from app.services.valuation_context import build_company_valuation_context
 
 class AssumptionAutofillEngine:
     INPUT_CONTRACT = INPUT_CONTRACT
@@ -59,7 +60,7 @@ class AssumptionAutofillEngine:
 
         # 1. Fetch Damodaran Priors
         priors = {}
-        country = company.country or "India"
+        country = build_company_valuation_context(company)["country"]
         industry_mix = IndustryMappingService.industry_mix_context(db, company.id)
         if industry_mix:
             try:
@@ -156,6 +157,7 @@ class AssumptionAutofillEngine:
                     industry_mix_allocations=industry_mix["allocations"],
                     aggregation_methods=priors.get("aggregationMethods", {}),
                     aggregation_version=priors.get("aggregationVersion"),
+                    benchmark_module=module,
                     source_summary=priors.get("sourceSummary", []),
                     requires_review=True,
                 )

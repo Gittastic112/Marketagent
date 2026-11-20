@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from app.models import Company, Event, MarketPrice, RawDocument, Source, ThesisNote
 from app.models.thesis_note import ThesisPricePin
+from app.schemas.publication import document_publication
 from app.schemas.price_timeline import DatedSource, PriceAnchor, PricePinCreate, PricePinRead, PricePoint, PriceSeries, PriceTimeline
 
 
@@ -64,7 +65,8 @@ def _dated_context(db, company_id, market, points):
     low = datetime.combine(min(points) - timedelta(days=1), time.min, timezone.utc)
     high = datetime.combine(max(points) + timedelta(days=2), time.min, timezone.utc)
     columns = (RawDocument.id, RawDocument.title, RawDocument.document_type,
-               RawDocument.published_at, Source.name)
+               RawDocument.published_at, Source.name, RawDocument.raw_payload_json["source_kind"].as_string(),
+               RawDocument.raw_payload_json["publication_precision"].as_string())
     docs = (select(*columns).join(Source, Source.id == RawDocument.source_id)
             .where(RawDocument.company_id == company_id, RawDocument.published_at >= low,
                    RawDocument.published_at < high).order_by(RawDocument.published_at.desc(), RawDocument.id))
@@ -79,16 +81,17 @@ def _dated_context(db, company_id, market, points):
         rows = db.execute(query.limit(CONTEXT_LIMIT + 1)).all()
         limited |= len(rows) > CONTEXT_LIMIT
         for row in rows[:CONTEXT_LIMIT]:
-            document_id, title, kind, published, source = row[:5]
+            document_id, title, kind, published, source, source_kind, precision = row[:7]
             published = _utc(published)
-            date_only = kind == "sec_filing_metadata"
-            publication_day = published.date() if date_only else published.astimezone(zone).date()
+            publication = document_publication(published, kind, source_kind, precision)
+            date_only = not isinstance(publication, datetime)
+            publication_day = publication if date_only else publication.astimezone(zone).date()
             event_id = None
             summary = None
             day = publication_day
             label = title
             if is_event:
-                event_id, label, event_time, summary = row[5:]
+                event_id, label, event_time, summary = row[7:]
                 # A filing's date-only midnight is an archival convention.
                 stamp = _utc(event_time)
                 day = publication_day if date_only and stamp == published else stamp.astimezone(zone).date()

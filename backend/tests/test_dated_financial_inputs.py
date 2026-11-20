@@ -1,5 +1,7 @@
 from datetime import UTC, date, datetime
 
+import pytest
+
 from app.models import Company, FinancialExtractionCandidate, RawDocument, Source
 from app.services.financial_period_basis import financial_period_basis
 from app.services.source_fact_history import record_financial_fact_revision
@@ -39,7 +41,7 @@ def test_period_basis_preserves_unknowns_and_source_fields():
 def test_dated_read_uses_publication_not_retrieval_and_keeps_unknowns(client, db):
     company, source = setup(db)
     original = fact(db, company, source, 100, datetime(2026, 2, 1, tzinfo=UTC), "original")
-    fact(db, company, source, 110, datetime(2026, 11, 13, tzinfo=UTC), "later")
+    fact(db, company, source, 110, datetime(2026, 11, 13, 5, tzinfo=UTC), "later")
     fact(db, company, source, 120, None, "unknown")
     db.commit()
     response = client.get(f"/companies/{company.id}/dated-inputs?valuation_date=2026-11-12")
@@ -66,7 +68,7 @@ def test_same_date_conflicts_are_visible_and_never_silently_selected(client, db)
 
 def test_later_knowledge_is_explicit_and_date_validation_is_strict(client, db):
     company, source = setup(db)
-    fact(db, company, source, 110, datetime(2026, 11, 13, tzinfo=UTC), "later")
+    fact(db, company, source, 110, datetime(2026, 11, 13, 5, tzinfo=UTC), "later")
     db.commit()
     route = f"/companies/{company.id}/dated-inputs?valuation_date=2026-11-12"
     assert client.get(route).json()["data"]["rows"][0]["status"] == "unavailable_by_date"
@@ -99,7 +101,9 @@ def test_sec_fact_filing_dates_are_independent_of_snapshot_publication(client, d
     sources = {s["revision_id"]: s for s in row["sources"]}
     assert [sources[r.id]["availability"] for r in revisions] == [
         "available_by_date", "available_by_date", "published_later", "publication_unknown"]
-    assert sources[revisions[1].id]["published_at"].startswith("2026-11-12")
+    assert sources[revisions[1].id]["publication_date"] == "2026-11-12"
+    assert sources[revisions[1].id]["publication_precision"] == "date"
+    assert sources[revisions[1].id]["published_at"] is None
     assert sources[revisions[1].id]["locator"]["accession"] == "mock-cutoff"
     db.expire_all()
     assert [(r.id, r.observed_at, r.value) for r in revisions] == before
@@ -132,3 +136,43 @@ def test_edgartools_adapter_filing_date_requires_matching_archived_source(client
     document.raw_payload_json = {**document.raw_payload_json, "payload_sha256": "c" * 64}
     db.commit()
     assert lookup("2026-02-01")["status"] == "unavailable_by_date"
+
+
+@pytest.mark.parametrize(("research_day", "instant", "calendar_day", "eligible"), [
+    ("2026-11-12", "2026-11-13T00:00:00Z", "2026-11-12", True),
+    ("2026-11-12", "2026-11-13T04:59:59.999999Z", "2026-11-12", True),
+    ("2026-11-12", "2026-11-13T05:00:00Z", "2026-11-13", False),
+    ("2026-07-01", "2026-07-02T03:59:59Z", "2026-07-01", True),
+    ("2026-07-01", "2026-07-02T04:00:00Z", "2026-07-02", False),
+])
+def test_true_publication_uses_new_york_calendar_day(client, db, research_day, instant, calendar_day, eligible):
+    company, source = setup(db)
+    fact(db, company, source, 100, datetime.fromisoformat(instant), "instant")
+    db.commit()
+    report = client.get(f"/companies/{company.id}/dated-inputs?valuation_date={research_day}").json()["data"]
+    row = report["rows"][0]
+    observation, = row["sources"]
+    assert row["status"] == ("available" if eligible else "unavailable_by_date")
+    assert observation["availability"] == ("available_by_date" if eligible else "published_later")
+    assert observation["publication_date"] == calendar_day
+    assert observation["publication_precision"] == "timestamp"
+    assert datetime.fromisoformat(observation["published_at"]) == datetime.fromisoformat(instant)
+
+
+def test_sec_calendar_filing_cannot_outrank_an_intraday_revision_without_a_time(client, db):
+    company, source = setup(db)
+    filing = fact(db, company, source, 100, datetime(2026, 11, 12, tzinfo=UTC), "sec")
+    doc = db.get(RawDocument, filing.raw_document_id)
+    doc.document_type = "sec_filing_metadata"
+    doc.raw_payload_json = {"source_kind": "sec_edgar", "filing_date": "2026-11-12"}
+    timed = fact(db, company, source, 110, datetime(2026, 11, 13, 2, tzinfo=UTC), "evening")
+    db.commit()
+    route = f"/companies/{company.id}/dated-inputs?valuation_date="
+    prior = client.get(route + "2026-11-11").json()["data"]["rows"][0]
+    assert prior["status"] == "unavailable_by_date"
+    row = client.get(route + "2026-11-12").json()["data"]["rows"][0]
+    assert row["status"] == "conflict" and row["selected_revision_id"] is None
+    observations = {s["revision_id"]: s for s in row["sources"]}
+    assert observations[filing.id]["publication_date"] == "2026-11-12"
+    assert observations[filing.id]["published_at"] is None
+    assert observations[timed.id]["publication_precision"] == "timestamp"

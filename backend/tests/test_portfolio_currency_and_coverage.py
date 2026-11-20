@@ -58,6 +58,7 @@ def test_benchmark_withholds_comparison_when_any_required_observation_is_old(db,
         db.query(MarketPrice).filter(MarketPrice.as_of_date > start.snapshot_date).delete()
     else:
         if source == "fx":
+            db.query(PortfolioBenchmarkConfig).filter_by(portfolio_id=portfolio.id).one().currency = "EUR"
             for price in db.query(MarketPrice):
                 price.currency = "EUR"
         else:
@@ -69,6 +70,12 @@ def test_benchmark_withholds_comparison_when_any_required_observation_is_old(db,
     assert result["calculation_status"] == "not_available"
     assert result["opportunity_cost"] is None and result["return_spread"] is None
     assert any("five calendar days" in warning for warning in result["warnings"])
+    if source == "fx":
+        first, last = result["price_evidence"]
+        assert (first["price_age_days"], first["fx_age_days"], first["is_stale"]) == (0, 2, False)
+        assert (last["price_age_days"], last["fx_age_days"], last["is_stale"]) == (0, 12, True)
+        assert result["actual_ending_value"] == 220
+        assert result["benchmark_return"] is None and result["portfolio_return"] is None
 
 
 def test_unknown_holding_weight_is_not_zero_concentration(db, monkeypatch):

@@ -82,6 +82,16 @@ class DocumentationCheckTests(unittest.TestCase):
             self.assertEqual(count, 6)
             self.assertEqual(len(errors), 6)
 
+    def test_private_root_handoffs_stay_out_of_the_documentation_check(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "Review-Codex-Handoff.md").write_text("[private](missing.md)", encoding="utf-8")
+            (root / "README.md").write_text("[maintained](missing.md)", encoding="utf-8")
+            errors, checked = validate(root)
+            self.assertEqual(checked, 1)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("README.md", errors[0])
+
     def test_local_helper_copies_do_not_enter_application_docs(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

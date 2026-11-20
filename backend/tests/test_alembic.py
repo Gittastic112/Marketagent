@@ -108,5 +108,6 @@ def test_alembic_migrations_contain_core_tables_and_company_fields() -> None:
     scripts = ScriptDirectory(str(versions_dir.parent))
     assert scripts.get_heads() == [EXPECTED_MIGRATION_HEAD]
     chain = list(scripts.walk_revisions())
-    assert chain[0].revision == "w5w5w5w5w5w5"
-    assert chain[0].down_revision == "v4v4v4v4v4v4"
+    assert chain[0].revision == "x6x6x6x6x6x6"
+    assert chain[0].down_revision == "w5w5w5w5w5w5"
+    assert chain[1].down_revision == "v4v4v4v4v4v4"

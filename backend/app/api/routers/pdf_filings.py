@@ -1,4 +1,3 @@
-from datetime import datetime
 from urllib.parse import quote
 
 from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Response, UploadFile, status
@@ -9,6 +8,7 @@ from app.api.dependencies import get_current_user
 from app.api.schemas import ApiResponse, DocumentAssetRead, PdfFinancialExtractionResultRead
 from app.db.session import get_db
 from app.models import Company, DocumentAsset, RawDocument
+from app.schemas.publication import PublicationValue
 from app.services.pdf_financial_extraction import (
     MAX_PDF_BYTES,
     PDF_EXTRACTION_METHOD,
@@ -70,7 +70,7 @@ def upload_pdf_filing(
     file: UploadFile = File(...),
     document_type: str = Form(...),
     title: str | None = Form(None),
-    published_at: datetime | None = Form(None),
+    published_at: PublicationValue | None = Form(None),
     source_url: str | None = Form(None),
     page_ranges: str | None = Form(None),
     db: Session = Depends(get_db),

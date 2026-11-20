@@ -16,20 +16,26 @@ const priceLabel = (price: number, currency: string) => `${currency} ${formatNum
 const seriesLabel = (series: PriceSeries) =>
   [series.claim_type === "Mock Data" && "Mock Data", formatDataLabel(series.provider), series.symbol, series.exchange, series.currency, formatDataLabel(series.adjustment)].filter(Boolean).join(" · ");
 
-function SourceList({ records }: { records: PricePoint["sources"] }) {
+function SourceList({ records, query }: { records: PricePoint["sources"]; query: string }) {
   return <ul className="price-detail-list">{records.map(source => <li key={`${source.document_id}-${source.event_id ?? "doc"}`}>
-    <Link href={source.event_id ? `/events/${source.event_id}/evidence-resolution` : `/documents/${source.document_id}/sections`}>{source.title}</Link>
+    <Link href={source.event_id ? `/events/${source.event_id}/evidence-resolution?${query}` : `/documents/${source.document_id}/sections?${query}`}>{source.title}</Link>
     <small>{source.sample ? "Mock Data · " : ""}{source.event_id ? `Event on ${source.context_date}` : "Stored source"} · {source.source} · Published {source.published}</small>
     {source.summary && <p>{source.summary}</p>}
-    {source.event_id && <Link href={`/documents/${source.document_id}/sections`}>Open source document</Link>}
+    {source.event_id && <Link href={`/documents/${source.document_id}/sections?${query}`}>Open source document</Link>}
   </li>)}</ul>;
 }
 
-function PointInspector({ point, series, notes, companyId, pins, precedingSources, onSave }: {
+function PointInspector({ point, series, notes, companyId, pins, precedingSources, initialThesis, onSave }: {
   point: PricePoint; series: PriceSeries; notes: ThesisChoice[] | null; companyId: number;
-  pins: PricePin[]; precedingSources: PricePoint["sources"]; onSave: (pin: PricePin) => void;
+  pins: PricePin[]; initialThesis?: number; precedingSources: PricePoint["sources"]; onSave: (pin: PricePin) => void;
 }) {
-  const [thesisId, setThesisId] = useState(notes?.length === 1 ? String(notes[0].id) : "");
+  const [thesisId, setThesisId] = useState(notes?.some(n=>n.id===initialThesis) ? String(initialThesis) : notes?.length === 1 ? String(notes[0].id) : "");
+  const context = new URLSearchParams({price_series:series.key, price_date:point.date});
+  if (thesisId) {
+    context.set("note_id",thesisId);
+    const pin=pins.find(p=>String(p.thesis_note_id)===thesisId);
+    if (pin) context.set("pin",String(pin.id));
+  }
   const [body, setBody] = useState("");
   const [busy, setBusy] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -63,10 +69,10 @@ function PointInspector({ point, series, notes, companyId, pins, precedingSource
       <h3>What happened around this close?</h3>
       {point.sources.length || precedingSources.length ? <>
         <p className="muted">Publication can follow the close. Timing alone cannot establish the cause.</p>
-        {point.sources.length > 0 && <SourceList records={point.sources} />}
+        {point.sources.length > 0 && <SourceList query={context.toString()} records={point.sources} />}
         {precedingSources.length > 0 && point.previous_date && <section aria-label="Preceding close coverage">
           <h4>On the preceding close date · {longDate(point.previous_date)}</h4>
-          <SourceList records={precedingSources} />
+          <SourceList query={context.toString()} records={precedingSources} />
         </section>}
       </> : <p className="muted">No matching dated source is shown. The cause of this move is unverified.</p>}
     </section>
@@ -90,8 +96,8 @@ function PointInspector({ point, series, notes, companyId, pins, precedingSource
   </>;
 }
 
-export function CompanyPriceChart({ data, companyId, notes, requestedDate }: {
-  data: PriceTimeline; companyId: number; notes: ThesisChoice[] | null; requestedDate?: string;
+export function CompanyPriceChart({ data, companyId, notes, requestedDate, requestedThesis }: {
+  data: PriceTimeline; companyId: number; notes: ThesisChoice[] | null; requestedDate?: string; requestedThesis?: number;
 }) {
   const latest = data.points.at(-1);
   const [range, setRange] = useState(0);
@@ -177,7 +183,7 @@ export function CompanyPriceChart({ data, companyId, notes, requestedDate }: {
     <dialog className="price-point-dialog" ref={dialog} aria-labelledby="price-point-title">
       <div className="price-dialog-heading"><h2 id="price-point-title">{longDate(point.date)}</h2>
         <button className="secondary-button" type="button" onClick={() => dialog.current?.close()}>Close</button></div>
-      <PointInspector key={point.date} point={point} series={series} notes={notes} companyId={companyId}
+      <PointInspector key={point.date} point={point} series={series} notes={notes} companyId={companyId} initialThesis={requestedThesis}
         precedingSources={data.points.find(p => p.date === point.previous_date)?.sources.filter(s => s.context_date === point.previous_date) ?? []}
         pins={pinsFor(point)} onSave={pin => setSaved(old => old.some(p => p.id === pin.id) ? old : [...old, pin])} />
     </dialog>

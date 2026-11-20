@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
-import { createValuationSetupDraft, promoteValuationSetupDraft } from "@/app/actions";
+import { createValuationSetupDraft } from "@/app/actions";
 import { RetainedActionForm } from "@/components/retained-action-form";
 import { AutofillDraftReview } from "@/components/valuation/autofill-draft-review";
 import {
@@ -16,10 +16,11 @@ export default async function DraftValuationPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ model_type?: string }>;
+  searchParams: Promise<{ model_type?: string; valuation_date?: string; draft?: string }>;
 }) {
   const { id } = await params;
-  const requestedModelType = (await searchParams).model_type;
+  const query = await searchParams;
+  const requestedModelType = query.model_type;
   const modelType = ["fcff_dcf", "financial_services", "distressed"].includes(requestedModelType || "") ? requestedModelType! : "fcff_dcf";
   const companyId = Number(id);
   if (!/^[1-9]\d*$/.test(id) || !Number.isSafeInteger(companyId)) notFound();
@@ -28,7 +29,7 @@ export default async function DraftValuationPage({
   let persistedDraft: ValuationSetupDraft | null;
   try {
     persistedDraft = await serverFetchApi<ValuationSetupDraft | null>(
-      `/companies/${companyId}/valuation-drafts/current`,
+      query.draft && /^[1-9]\d*$/.test(query.draft) ? `/valuation-drafts/${query.draft}` : `/companies/${companyId}/valuation-drafts/current`,
     );
   } catch {
     return (
@@ -47,6 +48,9 @@ export default async function DraftValuationPage({
     );
   }
 
+  if (persistedDraft && persistedDraft.company_id !== companyId) notFound();
+  if (persistedDraft?.promoted_model_id) return <section className="panel panel-content"><h1>First model saved</h1>
+    <Link href={`/companies/${companyId}/valuation/${persistedDraft.promoted_model_id}`}>Open the saved valuation</Link></section>;
   if (!persistedDraft) return (
     <div className="page-container">
       <header className="page-header"><h1>Start a valuation: {company.name}</h1></header>
@@ -61,15 +65,6 @@ export default async function DraftValuationPage({
     </div>
   );
   const draftId = persistedDraft.id;
-  async function createModelAction(formData: FormData) {
-    "use server";
-    const modelId = await promoteValuationSetupDraft(
-      formData,
-      draftId,
-      companyId.toString(),
-    );
-    redirect(`/companies/${companyId}/valuation/${modelId}`);
-  }
 
   const draft: AutofillAssumptionDraft = {
     assumptions: persistedDraft.assumptions_json,
@@ -98,7 +93,7 @@ export default async function DraftValuationPage({
         initialEditedFields={persistedDraft.edited_fields_json}
         initialUpdatedAt={persistedDraft.updated_at}
         initialModelType={modelType}
-        action={createModelAction}
+        initialResearchDate={query.valuation_date && /^\d{4}-\d\d-\d\d$/.test(query.valuation_date) ? query.valuation_date : undefined}
       />
     </div>
   );

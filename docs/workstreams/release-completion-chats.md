@@ -1,5 +1,7 @@
 # Knull’s release-completion round
 
+**Round returned November 19, 2026.** The following is the original dispatch brief. Follow the [local implementation handoff](../HANDOFF.md#next-work) for current work and the [financial ledger](../limitations.md#selected-company-review-follow-up) for decisions.
+
 Use **nine ChatGPT Pro chats plus Knull as coordinator**. Seven can start together. Four investigate all **16 open company/input combinations**. Three trace the first valuation save, the chart-to-thesis workflow, and portfolio calculations. Two independent reviewers then check the evidence and the proposed acceptance tests. The number of financial values that can be resolved depends on what the originals disclose. [Current priorities](../HANDOFF.md) · [Milestone board](../roadmaps/completion-tracker.md#milestone-board)
 
 | Who | Can deliver |

@@ -164,9 +164,9 @@ export type CompanyIndustryMixInput = {
   allocations: Array<Pick<IndustryAllocation, "segment_name" | "industry_name" | "weight_percent">>;
 };
 
-export async function fetchIndustryMappingCandidates(companyId: number, country: string = "India"): Promise<IndustryMappingCandidate[]> {
-  const query = new URLSearchParams({ country });
-  return api.get<IndustryMappingCandidate[]>(`/companies/${companyId}/industry-mapping-candidates?${query.toString()}`).then(res => res.data as unknown as IndustryMappingCandidate[]);
+export async function fetchIndustryMappingCandidates(companyId: number, country?: string): Promise<IndustryMappingCandidate[]> {
+  const query = country ? `?${new URLSearchParams({ country })}` : "";
+  return api.get<IndustryMappingCandidate[]>(`/companies/${companyId}/industry-mapping-candidates${query}`).then(res => res.data as unknown as IndustryMappingCandidate[]);
 }
 
 export async function fetchAllIndustryCandidates(country: string = "India"): Promise<string[]> {

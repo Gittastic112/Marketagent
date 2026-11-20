@@ -30,11 +30,11 @@ does not dispatch agents or replace current status.
 | Order | Deliverable | Evidence required |
 |---|---|---|
 | M05 | Complete the remaining annual inputs for the four scoped companies. Start with the missing component of each issuer's debt, working capital or equity claim. | Match each original disclosure to its period, currency, accounting and share scope. [Selected-company ledger](../limitations.md#selected-company-review-follow-up) |
-| M06 | Carry dated reviewed evidence into a draft and preview the first model before saving. Extend period support only when exact period identity is available. | An explicitly selected source revision survives review, calculation and save. Stale or conflicting inputs remain held. [Workspace plan](research-workspace-plan.md#delivery-sequence) |
-| M07 and M08 | Follow a dated filing or marked close to a thesis decision and a reviewed valuation change when warranted. | The two stored USD sample dates reconcile. Record the exact source, private note and model version used for the connected workflow. Genuine multi-currency and benchmark evidence are separate requirements. |
+| M06 | Validate first-model proposals against complete issuer evidence. Annual revenue and net-income revisions can supply the draft. | First preview and confirmation preserve source identity, period and currency. Extend mapping only for a complete economic quantity. [Workspace plan](research-workspace-plan.md#delivery-sequence) |
+| M07 and M08 | Exercise a pinned price, an original filing and the selected assumption in actual research. A proposed change can refer to a saved valuation version. | The USD example reconciles on its two stored dates. Actual portfolio coverage depends on dated prices, currency conversions and benchmark inputs. |
 | M09 and M10 | Exercise the changed workflows on desktop and mobile, verify recovery within scope and record five actual business days of research use. | Keep technical results, user-reported use and final acceptance separately recorded. |
 
-The [Knull-led release-completion round](../workstreams/README.md#release-completion-round) prepares source rows, workflow designs and independent checks for these milestones. Local Codex verifies the evidence and implements approved changes in dependency order.
+The [Knull-led round](../workstreams/README.md#release-completion-round) returned its nine reviews. The [local handoff](../HANDOFF.md#next-work) tracks which source checks and workflow changes have passed and what remains.
 
 The [adapter worklist](ui-adapter-worklist.md#implementation-backlog-from-the-zip) names the remaining work in each of the 16 packages. For example, allocation and simulation already accept supplied returns. Connecting an owned portfolio requires aligned histories, cash flows, distributions and FX.
 

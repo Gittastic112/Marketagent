@@ -98,7 +98,7 @@ export async function createManualCompanyFilingLink(formData: FormData) {
     document_type: actionFormString(formData, "document_type"),
     title: actionFormString(formData, "title"),
     url: actionFormString(formData, "url") || null,
-    published_at: publishedAt ? `${publishedAt}T00:00:00Z` : null,
+    published_at: publishedAt || null,
     raw_text: actionFormString(formData, "raw_text") || null,
   });
   revalidatePath(`/companies/${id}`);

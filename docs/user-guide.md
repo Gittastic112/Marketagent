@@ -24,7 +24,12 @@ If the app finds no dated source, the reason remains unverified. A missing or co
 
 1. Open the company’s **Financials** tab and select **Financial review plan**. Choose the relevant model track. An optional latest year selects a three-year checklist.
 2. Open the linked filing, page or candidate. Check period, currency, scale and accounting scope. Keep unresolved components open. Promotion is an explicit review action. [Selected-company financial gaps](limitations.md#selected-company-review-follow-up)
-3. Review a draft in the valuation workspace. Inspect missing inputs and any assumption or estimate before accepting it. A new model uses its creation review gate. For an existing model, preview the proposed change, review the calculation and save a version. Version history retains the saved basis. Selecting a historical date in Financials alone does not change the model.
+3. Open a valuation draft, set **Research date** and expand its source selection. Inspect a revision, choose the intended field and select **Apply source selection**. Review any hold, including a partial debt balance. The draft keeps your selection when you reopen it. The date applies to the selected financial revisions and benchmark eligibility. Review the origin and date of each remaining draft input separately.
+4. Enter a reason and select **Preview first valuation**. Inspect the calculation and its warnings. **Confirm and Create Model** saves that version and its source references. If the response is interrupted, retry the same confirmation. Open version history for the original basis. Later changes use the saved model’s own preview.
+
+## Record a decision on a stock chart
+
+On the thesis that holds your pin, choose **Review this observation**. Select the assumption, the original you inspected and an optional valuation version. Choose to retain the assumption, propose a change or request more evidence. Enter your reason, preview and save it to thesis history. A date-only filing leaves its order relative to the close unknown. To revise a valuation, open the linked version and review the model change separately.
 
 ## Use the brief and private research
 

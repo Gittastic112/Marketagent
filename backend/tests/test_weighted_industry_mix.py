@@ -114,6 +114,35 @@ def test_weighted_industry_mix_persists_and_drives_blended_autofill(client, db) 
     assert draft["source_metadata"]["industry_mix_signature"]
 
 
+def test_missing_domicile_uses_the_us_market_for_save_read_and_autofill(client, db):
+    company = _company_and_benchmarks(db)
+    company.market, company.country, company.currency = "US", None, "USD"
+    company.industry = "Transportation"
+    dataset = DamodaranDatasetFile(uploaded_filename="Mock US.xls", dataset_code="us_mix_test",
+        country="United States", source_file_type="xls")
+    db.add(dataset)
+    db.flush()
+    db.add(DamodaranMarginBenchmark(dataset_file_id=dataset.id, industry_name="Transportation",
+        country="United States", ebit_margin=0.31))
+    db.commit()
+    endpoint = f"/companies/{company.id}/industry-allocations"
+    # An exact US taxonomy is loaded. The India-only second industry is ineligible here.
+    assert client.put(endpoint, json=_payload()).status_code == 422
+    payload = _payload(100, 0)
+    payload["allocations"].pop()
+    saved = client.put(endpoint, json=payload)
+    assert saved.status_code == 200
+    for response in (saved, client.get(endpoint)):
+        coverage = response_data(response)["allocations"][0]["benchmark_availability"]
+        assert coverage["margins"] is True and coverage["capex"] is False
+    suggestions = response_data(client.get(f"/companies/{company.id}/industry-mapping-candidates"))
+    assert suggestions[0]["benchmarkAvailability"]["capex"] is False
+    draft = response_data(client.post(f"/companies/{company.id}/valuation-models/autofill",
+        json={"base_assumptions": {}}))
+    assert draft["assumptions"]["target_operating_margin"] == pytest.approx(0.31)
+    assert draft["provenance"]["target_operating_margin"]["country"] == "United States"
+
+
 def test_weighted_industry_mix_can_link_company_owned_source_document(client, db) -> None:
     company = _company_and_benchmarks(db)
     source = Source(name="Annual reports", source_type="regulatory_filing")

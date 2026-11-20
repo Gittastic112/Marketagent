@@ -2,7 +2,7 @@ import hashlib
 import math
 import re
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import date, datetime
 from io import BytesIO
 from pathlib import PurePath
 from typing import Any
@@ -14,6 +14,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.api.schemas import PdfFinancialExtractionResultRead
+from app.schemas.publication import publication_storage
 from app.models import (
     Company,
     CompanySetupWorkflow,
@@ -368,7 +369,7 @@ def ingest_pdf_financials(
     parsed: ParsedPdf,
     document_type: str,
     title: str | None,
-    published_at: datetime | None,
+    published_at: date | datetime | None,
     source_url: str | None = None,
 ) -> PdfFinancialExtractionResultRead:
     if document_type not in ALLOWED_DOCUMENT_TYPES:
@@ -378,16 +379,18 @@ def ingest_pdf_financials(
     if db.scalar(select(RawDocument.id).where(RawDocument.content_hash == content_hash)) is not None:
         raise HTTPException(status_code=409, detail="This PDF has already been uploaded for the company.")
 
+    timestamp, precision = publication_storage(published_at)
     raw_document = RawDocument(
         company_id=company.id,
         source_id=source.id,
         document_type=document_type,
         title=(title or upload.filename).strip()[:500] or upload.filename,
         url=source_url,
-        published_at=published_at,
+        published_at=timestamp,
         raw_text=parsed.raw_text,
         raw_payload_json={
             "source_kind": "pdf_filing_upload",
+            "publication_precision": precision,
             "original_filename": upload.filename,
             "mime_type": upload.mime_type,
             "file_size_bytes": len(upload.content),

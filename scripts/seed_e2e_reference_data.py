@@ -14,6 +14,7 @@ from app.models import (
     DamodaranMarginBenchmark,
     DcfAssumptionSet,
     DcfOutput,
+    FinancialExtractionCandidate,
     FxRateObservation,
     MarketPrice,
     Portfolio,
@@ -27,6 +28,7 @@ from app.models import (
     ValuationModel,
 )
 from app.services.portfolio_analytics import record_daily_snapshot
+from app.services.source_fact_history import record_financial_fact_revision
 from app.models.market_price import CompanyMarketData
 from app.models.financial import FinancialMetric, FinancialStatementPeriod
 
@@ -434,6 +436,33 @@ def _ensure_chart_fixture(db) -> None:
                        content_hash=sha256(b"e2e-chart-source").hexdigest()))
 
 
+def _ensure_dated_revenue_fixture(db) -> None:
+    company = _company(db, ticker="E2EFIRST", market="US", exchange="NASDAQ", currency="USD", country="United States")
+    payload = "Mock Data consolidated revenue was USD 100 million in the year ended September 30, 2026."
+    digest = sha256(payload.encode()).hexdigest()
+    if db.query(RawDocument.id).filter_by(company_id=company.id, content_hash=digest).first():
+        return
+    source = Source(name="Mock Data opening valuation filing", source_type="filing")
+    db.add(source)
+    db.flush()
+    doc = RawDocument(company_id=company.id, source_id=source.id, document_type="annual_report",
+                      title=source.name, content_hash=digest, raw_text=payload,
+                      published_at=datetime(2026, 11, 1, 15, tzinfo=UTC))
+    db.add(doc)
+    db.flush()
+    candidate = FinancialExtractionCandidate(
+        company_id=company.id, raw_document_id=doc.id, metric_code="revenue", reported_label="Revenue",
+        value=100, unit="USD million", fiscal_year=2026, period_type="annual", review_status="promoted",
+        extraction_method="mock", source_text=payload, source_locator_json={
+            "start": "2025-10-01", "end": "2026-09-30", "claim_type": "Mock Data",
+            "accounting_basis": "us-gaap", "consolidation_scope": "consolidated",
+        },
+    )
+    db.add(candidate)
+    db.flush()
+    record_financial_fact_revision(db, candidate, effective_at=date(2026, 9, 30))
+
+
 def main() -> None:
     with SessionLocal() as db:
         _ensure_margin_fixture(db)
@@ -443,6 +472,7 @@ def main() -> None:
         _ensure_ai_review_fixture(db)
         _ensure_company_currency_fixture(db)
         _ensure_chart_fixture(db)
+        _ensure_dated_revenue_fixture(db)
         db.commit()
 
 

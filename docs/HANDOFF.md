@@ -2,7 +2,7 @@
 
 ## Latest source boundary
 
-The November 19 release is on `main`. It addresses all 19 findings from the four reviews, plus the mobile target size for editing a company thesis. The [integration record](archive/checkpoints/2026/integration-review-2026-11-19.md) maps the fixes to their evidence. [Merged application PR](https://github.com/Gittastic112/Marketagent/pull/24) · [Verified application commit](https://github.com/Gittastic112/Marketagent/commit/e57d50f0bba1c5f03a5e97dc8a759dd2b11e7f78)
+PR 24 is the last verified installed application. The nine release reviews used public commit `ef2e2d668dce84d55714a43f63b22cdecb40267a`. The new release adds a dated first valuation and a decision on a pinned price. [Release evidence](current-state.md#dated-validation) · [Earlier integration record](archive/checkpoints/2026/integration-review-2026-11-19.md)
 
 The November 19 release is installed locally. The signed-in Today page and its Evidence Trail passed a read-only check after the update. The original database and asset storage were preserved. [Installed verification](current-state.md#dated-validation) · [Installed-stack procedure](operations.md#select-the-installed-local-stack)
 
@@ -10,11 +10,11 @@ The November 19 release is installed locally. The signed-in Today page and its E
 
 | Order | Action | Finish condition |
 |---|---|---|
-| 1. Company evidence (M05) | Work through the remaining annual fields for Apple, NVIDIA, Meta and Alphabet, using original filings and the chosen November 12, 2026 valuation date. The eleven previously held candidates already have dispositions. | Record an exact disclosure, period, units and review decision, or document the specific unresolved component. The [company-by-company ledger](limitations.md#selected-company-review-follow-up) identifies each gap. |
-| 2. Valuation workflow (M06) | Carry selected dated evidence into an explicit draft proposal and add a preview before the first model save. Existing saved-model edits already have a preview and version history. | Reproduce the proposed assumptions from their source revisions, confirm the reviewed calculation and verify a retry-safe save. [Workspace specifications](roadmaps/research-workspace-plan.md#delivery-sequence) |
-| 3. Portfolio and research | The USD sample portfolio reconciles on its two stored dates. Connect a dated filing or marked move to a thesis decision and a reviewed valuation change when warranted. | Preserve the source, price observation and model version. A real multi-currency account and a configured benchmark still require their own evidence. [Product roadmap](roadmaps/product-roadmap.md#immediate-delivery-order) |
+| 1. Company evidence (M05) | Review the fifteen incomplete company/input combinations and establish publication eligibility for benchmark datasets and industry weights. The November 12 Alphabet minority-interest estimate has passed original-source review. | Track the precise missing disclosures and compare claims on the same date, currency and accounting basis. [Company ledger](limitations.md#selected-company-review-follow-up) |
+| 2. Valuation workflow (M06) | Use the draft’s research date to inspect and apply an original revenue or net-income revision. Review the first calculation and confirm the saved version. | Validate the selected issuer on its financial basis as original evidence becomes available. The [valuation guide](user-guide.md#review-a-filing-and-valuation) describes the controls. |
+| 3. Portfolio and research | Review a marked close, select a thesis assumption and record the reason to retain it, propose a change or seek more evidence. | Keep the price as pinned, original source and any chosen model version together. Record real use and any failures. [Product roadmap](roadmaps/product-roadmap.md#immediate-delivery-order) |
 
-For these priorities, the [Knull-led release-completion round](workstreams/README.md#release-completion-round) assigns one chat per issuer, three workflow reviews and two independent checks. Knull returns one source-backed handoff for local verification and implementation.
+All nine [release-completion reviews](workstreams/README.md#release-completion-round) returned. A complete first-model submission has a durable receipt. Retrying it returns the same version. Debt subtotals remain held. The [dated release evidence](current-state.md#dated-validation) distinguishes the technical checks from completed issuer research.
 
 Use the [adapter worklist](roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) when a task needs a feed or a library. Six bounded original-source or pinned-reference examples have evidence. US corporate actions, transcript corrections and scanned-page OCR have [specific prerequisites](limitations.md#installed-adapters-and-remaining-source-prerequisites).
 

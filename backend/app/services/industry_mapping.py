@@ -24,6 +24,7 @@ from app.models.damodaran_fundamentals import (
 from app.models.real_options import IndustryVolatilityBenchmark
 from app.models.raw_document import RawDocument
 from app.services.damodaran_dataset_versions import active_dataset_ids
+from app.services.valuation_context import build_company_valuation_context
 
 
 def _profile_tokens(value: str) -> set[str]:
@@ -84,8 +85,11 @@ class IndustryMappingService:
         )
 
     @staticmethod
-    def suggest_damodaran_industries(db: Session, company_id: int, country: str = "India") -> list[dict[str, Any]]:
+    def suggest_damodaran_industries(db: Session, company_id: int, country: str | None = None) -> list[dict[str, Any]]:
         company = db.get(Company, company_id)
+        if company is None:
+            return []
+        country = country or build_company_valuation_context(company)["country"]
 
         all_industries = IndustryMappingService.get_available_industries(
             db, country, fallback_to_loaded=False,
@@ -162,7 +166,7 @@ class IndustryMappingService:
     @staticmethod
     def serialize_industry_mix(db: Session, mix: CompanyIndustryMix) -> dict[str, Any]:
         company = db.get(Company, mix.company_id)
-        country = (company.country if company else None) or "India"
+        country = build_company_valuation_context(company)["country"]
         allocations = list(mix.allocations)
         primary = max(allocations, key=lambda allocation: allocation.weight_percent).industry_name
         serialized_allocations = [
@@ -277,7 +281,7 @@ class IndustryMappingService:
         if any(not label for label in segment_labels) or len(segment_labels) != len(set(segment_labels)):
             raise ValueError("Segment labels must be non-empty and unique")
 
-        country = company.country or ("India" if (company.market or "").upper() == "IN" else "United States")
+        country = build_company_valuation_context(company)["country"]
         available = IndustryMappingService.get_available_industries(
             db,
             country,

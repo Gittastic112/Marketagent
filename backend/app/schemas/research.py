@@ -103,12 +103,14 @@ class ThesisAssumptionRead(ThesisAssumptionCreate):
 
 
 class ThesisChangeCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
     thesis_note_id: int
     change_summary: str
     drift_score: float = 0.0
 
 
 class ThesisChangeRead(ThesisChangeCreate):
+    price_review: dict | None = None
     model_config = ConfigDict(from_attributes=True)
 
     id: int

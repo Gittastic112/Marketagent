@@ -1,4 +1,4 @@
-from datetime import UTC, datetime
+from datetime import date, datetime
 import ipaddress
 import json
 from urllib.parse import urlsplit
@@ -7,6 +7,7 @@ from typing import Protocol
 from pydantic import BaseModel, Field, field_validator
 
 from app.models import Company
+from app.schemas.publication import PublicationValue, publication_storage
 from app.services.sec_ingestion import SecFilingMetadata
 
 
@@ -14,7 +15,7 @@ class ManualFilingCreate(BaseModel):
     document_type: str = Field(max_length=80)
     title: str = Field(min_length=1, max_length=500)
     url: str | None = Field(default=None, max_length=1000)
-    published_at: datetime | None = None
+    published_at: PublicationValue | None = None
     raw_text: str | None = Field(default=None, max_length=1_000_000)
     raw_payload_json: dict | None = None
 
@@ -27,10 +28,8 @@ class ManualFilingCreate(BaseModel):
 
     @field_validator("published_at")
     @classmethod
-    def utc_date(cls, value: datetime | None) -> datetime | None:
-        if value is None:
-            return None
-        return (value.replace(tzinfo=UTC) if value.tzinfo is None else value.astimezone(UTC))
+    def utc_date(cls, value: datetime | date | None) -> datetime | date | None:
+        return publication_storage(value)[0] if isinstance(value, datetime) else value
 
     @field_validator("raw_payload_json")
     @classmethod

@@ -1,3 +1,4 @@
+import {PricePinDecision} from "@/components/price-pin-decision";
 import { RetainedActionForm } from "@/components/retained-action-form";
 import Link from "next/link";
 import { createThesisAssumption, createThesisChange, deleteThesisAssumption, updateThesisAssumption } from "@/app/actions";
@@ -106,6 +107,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
               </Link>
               <small>{pin.anchor.claim_type === "Mock Data" ? "Mock Data · " : ""}Close when pinned · {formatDataLabel(pin.anchor.provider)} · {formatDataLabel(pin.anchor.adjustment)}</small>
               <p className="price-note-text">{pin.text}</p>
+              <PricePinDecision pin={pin} />
             </li>)}</ul> : <p>Open a date on the <Link href={`/companies/${note.company_id}#price-history`}>company price chart</Link> to pin a note to this thesis.</p>}
         </Panel></section>
 
@@ -221,7 +223,7 @@ export default async function ThesisNoteDetailPage({ params }: ThesisNoteDetailP
                 <tbody>
                   {note.changes.map((c) => (
                     <tr key={c.id}>
-                      <td>{c.change_summary}</td>
+                      <td>{c.change_summary}{c.price_review && <p>{c.price_review.anchor?.date} · {c.price_review.anchor?.currency} {c.price_review.anchor?.price} · {c.price_review.original ? <Link href={`/documents/${c.price_review.original.id}/sections`}>{c.price_review.original.title}</Link> : "No matched original reviewed"}{c.price_review.valuation_version && <> · <Link href={`/companies/${note.company_id}/valuation/${c.price_review.valuation_version.model_id}?version=${c.price_review.valuation_version.id}`}>Open linked valuation version</Link></>}</p>}</td>
                       <td>{c.drift_score.toFixed(2)}</td>
                       <td>{new Date(c.created_at).toLocaleDateString()}</td>
                     </tr>

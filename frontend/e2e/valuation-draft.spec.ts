@@ -91,6 +91,8 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(page.getByRole("main").getByText("Ready to create")).toBeVisible();
 
   await page.locator("#model-name:visible").fill(`E2E Reviewed DCF ${unique}`);
+  await page.getByLabel("Reason for this first version").fill("Reviewed Mock Data opening assumptions");
+  await page.getByRole("button", { name: "Preview first valuation" }).click();
   await page.getByRole("button", { name: "Confirm and Create Model" }).click();
   await expect(page).toHaveURL(new RegExp(`/companies/${company.id}/valuation/\\d+$`));
   await expect(page.getByRole("main").getByText(`E2E Reviewed DCF ${unique}`, { exact: false })).toBeVisible();
@@ -176,4 +178,49 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
     `/companies/${company.id}/valuation-models`,
   );
   expect(models.some((model) => model.name === `E2E Updated DCF ${unique}`)).toBeTruthy();
+});
+
+test("bind a dated original and recover a first-model receipt after a lost response", async ({page}) => {
+  await signIn(page);
+  const companies = await backendData<{id:number; ticker:string}[]>(page, "/companies");
+  const company = companies.find(item => item.ticker === "E2EFIRST")!;
+  const draft = await backendData<{id:number; source_metadata_json:{review_fields:string[]}}>(page,
+    `/companies/${company.id}/valuation-drafts`, {method:"POST", data:{}});
+  const path = `/valuation-drafts/${draft.id}`;
+  const values = Object.fromEntries(Object.entries(ASSUMPTIONS).map(([field,value])=>[field,Number(value)]));
+  const inputs = {...values, starting_revenue:null, cash_flow_currency:"USD", discount_rate_currency:"USD",
+    projection_years_count:10, revenue_growth_years_json:Object.fromEntries(Array.from({length:10},(_,i)=>[i+1,0])),
+    starting_invested_capital:50000000, current_operating_margin:0.2, target_operating_margin:0.2,
+    tax_rate:0.25, wacc_start:0.1, wacc_terminal:0.1, terminal_growth_rate:0, terminal_roic:0.1,
+    cash:5000000, debt:20000000, diluted_shares:10000000, cross_holdings:0, operating_leases:0};
+  await backendData(page, path, {method:"PATCH",data:{assumptions_patch:inputs,reviewed_fields:draft.source_metadata_json.review_fields}});
+  await page.goto(`/companies/${company.id}/valuation/draft?draft=${draft.id}`);
+  const review = page.getByRole("region", {name:"First valuation preview"});
+  await review.getByLabel("Research date").fill("2026-11-12");
+  await review.getByText("Choose dated financial evidence").click();
+  await review.getByRole("button", {name:"Inspect dated sources"}).click();
+  await review.getByRole("combobox", {name:/Revenue/i}).selectOption({index:1});
+  await review.getByRole("button", {name:"Apply source selection"}).click();
+  await expect(review.getByRole("link", {name:/Inspect original revision/})).toBeVisible();
+  await page.reload();
+  await expect(review.getByLabel("Research date")).toHaveValue("2026-11-12");
+  await review.getByLabel("Reason for this first version").fill("Mock Data dated revenue reviewed against the original filing");
+  await review.getByRole("button", {name:"Preview first valuation"}).click();
+  const confirm = review.getByRole("button", {name:"Confirm and Create Model"});
+  await expect(confirm).toBeEnabled();
+  const attempts:string[] = [];
+  await page.route(`**/api/backend${path}/confirm`, async route=>{
+    attempts.push(route.request().postData()!);
+    if (attempts.length === 1) {
+      const saved = await route.fetch();
+      expect(saved.status()).toBe(201);
+      await route.abort("failed");
+    } else { await route.continue(); }
+  });
+  await confirm.click();
+  await expect(confirm).toBeEnabled();
+  await confirm.click();
+  await expect(page).toHaveURL(new RegExp(`/companies/${company.id}/valuation/\\d+$`));
+  expect(attempts).toHaveLength(2);
+  expect(attempts[1]).toBe(attempts[0]);
 });

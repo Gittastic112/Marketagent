@@ -520,3 +520,61 @@ def test_concurrent_backdated_purchases_replay_each_accepted_entry(pg_engine):
         assert db.scalars(select(PortfolioHolding.quantity)).one() == 26
         assert db.scalars(select(PortfolioCashBalance.amount)).one() == 3700
         assert db.scalar(select(func.count()).select_from(PortfolioTransaction)) == 5
+
+
+@pytest.mark.parametrize("race", ["two_confirmations", "new_revision"])
+def test_first_model_confirmation_serializes_with_retries_and_publication(pg_engine, race):
+    from fastapi import HTTPException
+    from fastapi.testclient import TestClient
+    from sqlalchemy.orm import Session
+    from app.db.session import get_db
+    from app.main import app
+    from app.models import Source, User
+    from app.models.dcf import DcfAssumptionSet, DcfDecisionLog, ValuationModel, ValuationSetupDraft
+    from app.schemas.first_valuation import FirstModelConfirm
+    from app.services.first_valuation import confirm_first_model
+    from conftest import TEST_USER_ID
+    from test_first_valuation import prepared, fact
+    with Session(pg_engine) as db:
+        db.add(User(id=TEST_USER_ID,name="Mock reviewer",email="first-save-pg@example.invalid"))
+        db.commit()
+        app.dependency_overrides[get_db] = lambda: db
+        try:
+            with TestClient(app) as client:
+                root, cmd, issuer, source, selection = prepared(client, db)
+                preview = client.post(root+"/preview",json=cmd).json()["data"]
+                assert preview["ready"], preview["blockers"]
+                company_id, source_id, draft_id = issuer.id, source.id, int(root.split("/")[-1])
+        finally:
+            app.dependency_overrides.pop(get_db,None)
+    frozen=FirstModelConfirm(**cmd, preview_hash=preview["preview_hash"],submission_id=uuid4(),reason="Mock Data concurrency")
+    barrier=Barrier(2)
+    def confirm():
+        with Session(pg_engine) as db:
+            draft=db.get(ValuationSetupDraft,draft_id)
+            barrier.wait(timeout=10)
+            try:
+                return confirm_first_model(db,draft,frozen)
+            except HTTPException as error:
+                assert error.status_code==409
+                return None
+    def publish():
+        with Session(pg_engine) as db:
+            barrier.wait(timeout=10)
+            issuer=db.scalar(select(Company).where(Company.id==company_id).with_for_update())
+            fact(db,issuer,db.get(Source,source_id),101,datetime(2026,11,2,tzinfo=UTC),"racing-r2",
+                 accounting_basis="us-gaap",consolidation_scope="consolidated")
+            db.commit()
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        a=pool.submit(confirm)
+        b=pool.submit(confirm if race=="two_confirmations" else publish)
+        first, second=a.result(timeout=30), b.result(timeout=30)
+    with Session(pg_engine) as db:
+        if race=="two_confirmations":
+            assert first and second and first["model_id"]==second["model_id"]
+            assert first["replayed"]!=second["replayed"]
+        expected=int(first is not None)
+        assert db.query(ValuationModel).count()==db.query(DcfAssumptionSet).count()==db.query(DcfDecisionLog).count()==expected
+        if first:
+            assert db.get(DcfAssumptionSet,first["assumption_set_id"]).starting_revenue==100_000_000
+            assert confirm_first_model(db,db.get(ValuationSetupDraft,draft_id),frozen)["replayed"]

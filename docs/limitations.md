@@ -45,18 +45,18 @@ M01-M04 retain 40 accepted milestone points. No cleanup or general assurance clo
 
 ## Selected-company review follow-up
 
-The [five-input review](../data/reviews/financial-five-input-review-20261112.json) adds 47 original-source facts/calculations.
-Twelve annual values resolve four of twenty slots. Prior records/models are preserved; no selected candidate is pending.
+The [November 12 review](../data/reviews/financial-five-input-review-20261112.json) recorded 47 original-source facts or calculations. Twelve annual values resolved four of twenty company/input combinations. On November 19 the local review accepted a fifth combination on the previously chosen book-value basis. Across the sixteen returned for review, one estimate is supported, fourteen inputs have partial evidence, and Meta’s minority claim is held. [Checked disclosures and dispositions](../data/reviews/release-completion-evidence-20261119.json)
 
 | Company and years | Resolved historical inputs | Remaining annual inputs | Source checklist per year |
 |---|---|---|---|
 | Apple, FY2024-2026 | Noncontrolling and parent preferred claims: source-derived zero | Debt, operating working-capital change, employee-award value | 10/13 |
 | NVIDIA, FY2024-2026 | Combined equipment/intangible capex; noncontrolling claim: source-derived zero | Debt, operating working-capital change, employee-award value | 10/13 |
 | Meta, FY2023-2025 | Additional scoped evidence | Debt, working-capital change, noncontrolling claim, preferred claim, employee-award value | 8/13 |
-| Alphabet, FY2023-2025 | Additional scoped evidence | Debt, full D&A, working-capital change, noncontrolling claim, employee-award value | 8/13 |
+| Alphabet, FY2023-2025 | Noncontrolling interests on the reviewed book-value basis (Estimate) | Debt, full D&A, working-capital change, employee-award value | 8/13 |
 
-The user selected **November 12, 2026**. The [dated-input receipt](../data/reviews/valuation-inputs-asof-20261112.json)
-retains the exact filings, quotes, FX, calculations and unresolved differences. No financial policy answer is pending.
+The valuation date is **November 12, 2026**. The dated review records the filings, quotes, exchange rates, calculations and outstanding differences. No financial policy decision is pending. [Dated-input receipt](../data/reviews/valuation-inputs-asof-20261112.json)
+
+Alphabet reported approximately USD 3.4bn, 4.2bn and 3.4bn at the three year ends. The November 12 estimate uses the September 30 balance of USD 6.9bn and includes the USD 825m redeemable portion once. These are accounting observations and a reviewed valuation estimate. The stored financial checklist counts above still describe the earlier application review. [Annual and interim filing locators](../data/reviews/release-completion-evidence-20261119.json)
 
 | Remaining boundary | Why the dated research does not complete the input |
 |---|---|
@@ -65,8 +65,6 @@ retains the exact filings, quotes, FX, calculations and unresolved differences. 
 | Employee claims | Reported unvested quantities times dated prices are gross exposure estimates. Later changes, vesting, performance, tax and other rights remain unverified; do not double count awards in diluted shares |
 | Minority/preferred claims | Wholly-owned scope and Apple's charter support selected zeros. Meta's consolidation policy does not establish zero NCI; historical preferred balances and its conflicting dated quotes remain held. Alphabet NCI/book and quoted preferred values are proxies; preserve depositary/underlying share scope and avoid conversion double counting |
 | Alphabet D&A and weights | Nine-month D&A does not establish missing full-year intangible amortization. Finance-lease amortization is already in PP&E depreciation; the prior USD 1 million lease component difference stays visible. Business revenue alone does not approve benchmark weights |
-
-Remaining gaps require original disclosures or quote reconciliation. The [operator handoff](#ordered-operator-handoff) records actual-use status separately.
 
 ## What is not product-ready
 
@@ -94,7 +92,7 @@ P1 closes WS01/WS02; [P2.1/P2.2](../data/reviews/research-workspace-p2-20261113.
 
 | ID | Observed gap | Resolution boundary |
 |---|---|---|
-| WS03 | Dated financial rows expose original values, source timing and conflicts, but do not select or rebase draft/model inputs. Saved-model preview dates label research, not historical market/source reconstruction. Initial model creation still uses the existing direct gated path | P2/P3: carry explicit source revisions/date/knowledge into a draft proposal and initial-model preview, then preserve that evidence in an atomic save receipt. Never promote partial subtotals as complete facts |
+| WS03 | First-model proposals accept eligible consolidated annual revenue and net income in model currency. A revision with incomplete scope, conflicting evidence or unknown publication stays held. The saved-model date does not recreate a full historical market dataset. | Extend automatic mapping only with original evidence for the complete input and matching period. [User workflow](user-guide.md#review-a-filing-and-valuation) |
 | WS05 | New annual promotions snapshot exact available period/basis fields in candidate metadata. Quarterly/YTD, transition durations outside 300-400 days, missing years and conflicting stored identities remain held; legacy unknown basis remains unknown | P2.3: design full period identity before expanding ingestion, with an additive migration only if needed. Existing annual end confirmations remain separate User Assumptions with retained source notes/history; no historical rows were rewritten |
 | WS07 | Today and holdings queues cover selected existing workflows, not every missing input or stale model. Old failed runs can remain after a later success; source links do not preserve every originating filter/date or provide a complete resumable task | Thesis impacts now support preserving no-change/blocker decisions. P4-P6 still need broader source-attempt reconciliation, context-preserving returns and measured query latency. Current owner scope, counts, limits and holdings basis remain enforced |
 | WS08 | Existing backup pruning is count-based, defaults off and cannot protect semantic recovery roles or active pre-change pins | Apply the [essential retention policy](operations.md#essential-retention-policy) through reviewed targets; automation remains off until role-safe behavior is implemented and tested |

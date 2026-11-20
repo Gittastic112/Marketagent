@@ -35,7 +35,7 @@ the ordered absolute paths with the running database's Compose configuration lab
 before a dump or restore. Missing/mismatched configuration fails closed.
 For this installation the list must include the base file followed by the runtime
 override above. Verify images, volumes and writers without printing resolved secrets.
-The backup helper restores the new dump into a temporary verification database and inventories its contents before marking it complete. The recorded November 18 check verified the single pre-change set against the normal database and original asset. A populated legacy-version upgrade and off-device recovery still need independent proof. Use the helper only for a [change that needs a recovery point](#when-to-make-a-backup). [Recorded verification](current-state.md#dated-validation)
+The backup helper restores the new dump into a temporary verification database and inventories its contents before marking it complete. On November 20, an isolated restore of the retained set matched its full content inventory. The upgrade preserved all 109 original business-table fingerprints and the PDF. Recheck the current live inventory before installation. Market observations and processing records can change between the backup and the release. A populated legacy-version upgrade and off-device recovery still need independent proof. Use the helper only for a [change that needs a recovery point](#when-to-make-a-backup). [Recorded verification](current-state.md#dated-validation)
 
 Ordinary updates should reuse this selected Compose project. Apply the
 [change-triggered backup policy](#when-to-make-a-backup), reusing a compatible
