@@ -98,8 +98,8 @@ test("valuation draft save, reset, refresh, archive, and promotion", async ({ pa
   await expect(page.getByRole("main").getByText(`E2E Reviewed DCF ${unique}`, { exact: false })).toBeVisible();
 
   await expect(page.getByRole("main").getByText("User Assumption", { exact: true })).toBeVisible();
-  await page.getByLabel("Model name").fill(`E2E Updated DCF ${unique}`);
-  await page.getByLabel("Description").fill("Metadata update from the complete valuation workflow");
+  await page.getByRole("main").getByRole("textbox", { name: "Model name", exact: true }).fill(`E2E Updated DCF ${unique}`);
+  await page.getByRole("main").getByRole("textbox", { name: "Description", exact: true }).fill("Metadata update from the complete valuation workflow");
   await page.getByRole("button", { name: "Save model details" }).click();
   await expect(page.getByRole("main").getByText(`E2E Updated DCF ${unique}`, { exact: false })).toBeVisible();
 
