@@ -153,4 +153,4 @@ def version_receipts(db, model):
         .order_by(DcfDecisionLog.created_at.desc(), DcfDecisionLog.id.desc()).limit(100)).all()
     return [dict(assumption_set_id=r.assumption_set_id, saved_at=r.created_at,
         **{key: json.loads(r.user_note or "{}").get(key) for key in (
-            "previous_assumption_set_id", "valuation_date", "reason", "preview_hash")}) for r in receipts]
+            "previous_assumption_set_id", "valuation_date", "reason", "preview_hash", "draft_id", "sources")}) for r in receipts]

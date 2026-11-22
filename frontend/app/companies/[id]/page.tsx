@@ -253,7 +253,7 @@ export default async function CompanyDetailPage({ params, searchParams }: Compan
             {hasUsableData(priceTimeline) && Array.isArray(priceTimeline.data.points) && Array.isArray(priceTimeline.data.choices) ? <>
               <DataStateNotices metas={[priceTimeline.meta]} />
               <CompanyPriceChart key={`${company.id}-${priceTimeline.data.series?.key}-${priceDate ?? ""}`}
-                data={priceTimeline.data} companyId={company.id} requestedDate={priceDate}
+                data={priceTimeline.data} companyId={company.id} requestedDate={priceDate} requestedThesis={thesisId}
                 notes={thesisNotesAvailable ? detail.thesisNotes.map(({ id, title }) => ({ id, title })) : null} />
             </> : <><ErrorState message="Price history could not be loaded." errors={priceTimeline.errors} />
               <Link href={`/companies/${company.id}#price-history`}>Reload latest history</Link></>}

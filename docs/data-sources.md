@@ -240,16 +240,7 @@ dataset version; old unlinked rows are preserved but ignored. Legitimate zeros
 and nulls remain unchanged. The API returns a stable not-found error instead of
 generic fallback values.
 
-Use scoped ingestion to avoid refreshing unrelated legacy sources:
-
-```bash
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only roe
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only capex roe
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only margin working_capital dividend fcfe
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only volatility
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only pe pbv ps vebitda
-docker compose exec backend python /workspace/scripts/ingest_damodaran.py --only country_stats
-```
+The India importer accepts named contracts for ROE (`roe`), reinvestment (`capex`), margins and working capital (`margin`, `working_capital`), payout (`dividend`, `fcfe`), volatility (`volatility`), multiples (`pe`, `pbv`, `ps`, `vebitda`) and country statistics (`country_stats`). Select the intended contract when updating an installed database. [Scoped intake command](operations.md#scoped-indian-benchmark-intake)
 
 The command reports active version ID, full SHA-256, source date, row count,
 and the current coverage/provenance summary. Generic admin uploads are

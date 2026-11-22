@@ -21,6 +21,7 @@ import {
 
 interface IndustryMappingCardProps {
   company: Company;
+  benchmarkCountry: string;
   onConfirmed: (company: Company) => void;
   onAutofillDrafted?: (draft: AutofillAssumptionDraft) => void;
 }
@@ -45,7 +46,7 @@ function newRow(values: Partial<Omit<EditorRow, "key">> = {}): EditorRow {
   };
 }
 
-export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }: IndustryMappingCardProps) {
+export function IndustryMappingCard({ company, benchmarkCountry, onConfirmed, onAutofillDrafted }: IndustryMappingCardProps) {
   const [candidates, setCandidates] = useState<IndustryMappingCandidate[]>([]);
   const [allIndustries, setAllIndustries] = useState<string[]>([]);
   const [mix, setMix] = useState<CompanyIndustryMix | null>(null);
@@ -95,10 +96,9 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
       setNotes("");
       setEditing(false);
       try {
-        const country = company.country || "India";
         const [suggestions, industries, storedMix, documents] = await Promise.all([
-          fetchIndustryMappingCandidates(company.id, country),
-          fetchAllIndustryCandidates(country),
+          fetchIndustryMappingCandidates(company.id, benchmarkCountry),
+          fetchAllIndustryCandidates(benchmarkCountry),
           fetchIndustryMix(company.id),
           fetchRawDocumentSummaries(),
         ]);
@@ -127,7 +127,7 @@ export function IndustryMappingCard({ company, onConfirmed, onAutofillDrafted }:
     return () => {
       cancelled = true;
     };
-  }, [company.country, company.damodaran_industry, company.id]);
+  }, [benchmarkCountry, company.damodaran_industry, company.id]);
 
   function updateRow(key: number, patch: Partial<EditorRow>) {
     setRows((current) => current.map((row) => row.key === key ? { ...row, ...patch } : row));

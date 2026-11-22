@@ -1,3 +1,4 @@
+import {ChartReturnLinks,type ChartReturnQuery} from "@/components/chart-return-links";
 import { RetainedActionForm } from "@/components/retained-action-form";
 import { triggerParseFilingSections } from "@/app/actions";
 import { EmptyState, ErrorState, PageHeader, Panel } from "@/components/page";
@@ -25,7 +26,7 @@ interface PageProps {
   searchParams: Promise<{
     candidate_id?: string | string[];
     evidence_reference?: string | string[];
-  }>;
+  } & ChartReturnQuery>;
 }
 
 function evidenceFailure(result: ApiResponse<unknown>, label: string) {
@@ -114,6 +115,7 @@ export default async function DocumentSectionsPage({ params, searchParams }: Pag
 
     return (
       <>
+        <ChartReturnLinks companyId={documentRes.data.company_id} query={query} />
         <div style={{ marginBottom: "1rem" }}>
           <Link href="/documents" style={{ color: "var(--brand-primary)", textDecoration: "none" }}>
             &larr; Back to Documents

@@ -47,6 +47,7 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
     serverFetchApi<ValuationModelSummary[]>(`/companies/${companyId}/valuation-model-summaries`),
   ]);
   const context = contextResult.status === "fulfilled" ? contextResult.value : null;
+  const benchmarkCountry = context?.country || company.country;
   const modelsAvailable = modelsResult.status === "fulfilled" && Array.isArray(modelsResult.value);
   const models = modelsAvailable ? modelsResult.value : [];
   const deleteModelAction = deleteValuationModelWithState.bind(null, companyId.toString());
@@ -135,7 +136,9 @@ export default async function ValuationPage(props: { params: Promise<{ id: strin
       )}
       <Panel title="Industry and benchmark settings" collapsible>
         <p>Optional comparison inputs. Industry benchmarks are priors, not company facts.</p>
-        <IndustryMappingSection company={company} />
+        {benchmarkCountry
+          ? <IndustryMappingSection company={company} benchmarkCountry={benchmarkCountry} />
+          : <ErrorState message="The benchmark country is unavailable. Reload the market context to review industry settings." />}
       </Panel>
       <p><Link prefetch={false} href={`/companies/${companyId}/valuation/peers`}>Manage sourced peer sets</Link></p>
     </>

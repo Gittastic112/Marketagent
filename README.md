@@ -1,84 +1,28 @@
 # Market Intelligence Engine
 
-A local workspace for equity research, valuation, and portfolio tracking.
-Follow a claim from its source document to reviewed financial inputs, a valuation
-assumption, and the holdings it affects.
+Marketagent is a local equity research workspace. Follow a filing to a reviewed financial input, a valuation assumption and the holdings it affects. The personal research release covers four selected companies. A new installation starts with its own database.
 
-The product is an implemented research/demo application. Source coverage and
-review quality vary by workflow. It is not ready for public hosting or automated
-trading. [Current status and dated validation](docs/current-state.md) ·
-[Known limitations](docs/limitations.md)
-
-## What you can do
-
-| Workflow | What the application supports |
+| What you came to do | Start here |
 |---|---|
-| Review the day | Inspect source-linked events, portfolio exposure, and a deterministic Daily Brief with visible coverage limits |
-| Investigate a stock move | Open a company’s closing-price chart, inspect filings around a marked date and pin a private note to the original close on your thesis. [Walkthrough](docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note) |
-| Review a company | Read source documents, review extracted financial candidates and follow the evidence used in a thesis or model |
-| Build a valuation | Review inputs, save versioned DCF models, and inspect scenarios, sensitivities, reverse DCF, and reviewed peer comparisons |
-| Track a portfolio | Record activity and inspect dated snapshots, returns, attribution, and risk with missing-input warnings |
-| Run a research experiment | Use supplied returns for allocation, simulations and reports, or inspect candidate peers in Research Lab. [Adapter guide](docs/adapters/README.md) |
-| Inspect data quality | See provider configuration, processing failures, freshness, and review state in Data Health |
+| Use the installed app | [Open Today](http://127.0.0.1:3000) · [Research guide](docs/user-guide.md) |
+| Set up a new installation | [Local configuration and sign-in](docs/local-development.md#first-time-configuration) |
+| Maintain an existing installation | [Select the installed stack](docs/operations.md#select-the-installed-local-stack) |
+| Continue development or review | [Agent instructions](AGENTS.md) · [Current handoff](docs/HANDOFF.md) |
+| Check the release or find a guide | [Dated verification](docs/current-state.md#dated-validation) · [Documentation index](docs/README.md) |
 
-Calculations run in the backend. Optional AI can propose interpretations through
-explicit consent and review gates. Facts, source summaries, calculations, user
-assumptions, estimates, AI interpretations, and **Mock Data** remain distinct.
+## Research workflows
 
-## Run locally
+- Start on Today with the portfolio snapshot, Daily Brief and active alerts. Inspect a source's publication date, coverage and review state before using it.
+- Select a marked stock move to see the close, the previous comparable close and nearby filings. You can pin an observation to a private thesis and record a decision about an assumption. [Chart walkthrough](docs/user-guide.md#inspect-a-price-move-and-pin-a-thesis-note)
+- Apply a dated financial revision to a valuation draft. Review the remaining inputs, preview the calculation, then confirm the version with its sources and your reason. [Valuation walkthrough](docs/user-guide.md#review-a-filing-and-valuation)
+- Review holdings, activity, dated returns, attribution and risk. Research Lab can run allocations, simulations and reports on supplied returns. Sample holdings are hypothetical. [Portfolio guide](docs/user-guide.md#review-portfolio-and-macro-results) · [Research Lab](docs/adapters/README.md)
 
-Prerequisite: Docker with Compose. Follow the
-[setup guide](docs/local-development.md) to configure private local credentials,
-a session secret, and any providers you intend to use. There is no default login.
-For a **new installation**, from the repository root:
+Coverage varies by company and provider. Estimates, user assumptions, AI interpretations and Mock Data carry explicit labels. Financial review and private AI consent are separate actions. [Capabilities](docs/roadmaps/feature-register.md) · [Known limits](docs/limitations.md)
 
-~~~bash
-cp -n .env.example .env
-# Fill in the required settings privately before starting.
-docker compose up --build -d
-docker compose ps
-curl --fail http://localhost:8000/api/readiness
-~~~
+## Development
 
-Open [localhost:3000](http://localhost:3000). A fresh installation does not include
-the developer's research database. Provider features require their own
-configuration and source review. Existing installations should use their verified
-[runtime configuration](docs/operations.md#select-the-installed-local-stack).
+The Next.js frontend calls a FastAPI backend. Calculations run in the backend and PostgreSQL stores research and review history. Docker Compose runs the local services. [Architecture](docs/architecture.md) · [Compose file guide](docker/README.md)
 
-## How it is built
+Find a feature's implementation and tests in the [code map](docs/code-map.md#route-a-domain-change). For a contribution, use the [contributor guide](.github/CONTRIBUTING.md) and [test environments](docs/execution-runbook.md#choose-the-right-environment). Remote checks are recorded in [GitHub Actions](https://github.com/Gittastic112/Marketagent/actions/workflows/ci.yml).
 
-Next.js 16 and React render the research workspace. FastAPI owns APIs and
-deterministic calculations. PostgreSQL 16 stores research and review history;
-SQLAlchemy and Alembic manage persistence and migrations. Docker Compose runs the
-local services. [Architecture](docs/architecture.md) ·
-[Compose file guide](docker/README.md)
-
-| Directory | Purpose |
-|---|---|
-| [backend/](backend/README.md) | API, calculations, ingestion, persistence, migrations, and tests |
-| [frontend/](frontend/README.md) | Pages, components, authenticated API clients, and browser tests |
-| [scripts/](scripts/README.md) | Verification, data tooling, backup, and recovery commands |
-| [data/](data/README.md) | Versioned runtime references, contract fixtures, and review receipts |
-| [damodaran_knowledge_base_v1/](damodaran_knowledge_base_v1/INDEX.md) | Valuation doctrine and the immutable source corpus |
-| [docs/](docs/README.md) | Product, architecture, setup, operations, and development references |
-
-For day-to-day use, start with the [research guide](docs/user-guide.md). The [handoff](docs/HANDOFF.md) lists what remains. The [Knull coordination guide](docs/workstreams/README.md) provides assignments for the remaining financial research and workflows, and a separate whole-project code audit.
-
-Use the [code map](docs/code-map.md) to locate a feature's owning files, or the
-[route inventory](docs/route-inventory.md) to find a screen. The
-[API map](docs/reference/api-map.md) lists every backend router.
-
-## Development and verification
-
-Read [contribution guidance](.github/CONTRIBUTING.md) and the
-[execution runbook](docs/execution-runbook.md). The
-[CI workflow](.github/workflows/ci.yml) checks repository integrity, locked
-dependencies, containers, backend/frontend behavior, browser workflows, and recovery.
-[Latest check results](https://github.com/Gittastic112/Marketagent/actions/workflows/ci.yml)
-are available on GitHub. Passing tests does not establish financial accuracy or
-live-provider coverage.
-
-Local credentials, databases, backups, and generated reports belong outside Git.
-The repository currently has no project license; included third-party material
-retains its own source and rights. See the [security policy](.github/SECURITY.md)
-and [data boundary](data/README.md) before sharing or redistributing material.
+Keep credentials, private research databases and backups local. The repository has no project license. Third-party sources retain their own rights. [Security policy](.github/SECURITY.md) · [Data guide](data/README.md) · [Third-party notices](THIRD_PARTY_NOTICES.md)

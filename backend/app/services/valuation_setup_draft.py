@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 from math import isfinite
 from typing import Any
+import json
 
 from fastapi import HTTPException
 from pydantic import ValidationError
@@ -8,7 +9,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.company import Company
-from app.models.dcf import DcfAssumptionSet, ValuationModel, ValuationSetupDraft
+from app.models.dcf import DcfAssumptionSet, DcfDecisionLog, ValuationModel, ValuationSetupDraft
 from app.schemas.valuation_inputs import DcfAssumptionSetWrite
 from app.services.assumption_autofill_engine import AssumptionAutofillEngine
 from app.services.dcf import calculate_dcf, require_finite_dcf_result
@@ -351,15 +352,13 @@ class ValuationSetupDraftService:
         return draft
 
     @classmethod
-    def promote(
+    def require_first_preview(
         cls,
         db: Session,
         draft: ValuationSetupDraft,
-        name: str,
-        description: str | None,
         model_type: str,
         expected_updated_at: datetime | None = None,
-    ) -> ValuationModel:
+    ) -> None:
         db.refresh(draft, with_for_update=True)
         cls._assert_version(draft, expected_updated_at)
         if draft.status == "promoted":
@@ -381,65 +380,57 @@ class ValuationSetupDraftService:
                 status_code=409,
                 detail=f"Draft review is incomplete: {', '.join(unresolved)}",
             )
+        raise HTTPException(409, "Preview the draft and confirm the reviewed first version before creating a model.")
+
+    @classmethod
+    def calculation_inputs(cls, assumptions, model_type):
+        payload = {key: value for key, value in cls._normalize_assumptions(assumptions).items()
+                   if key in cls.ASSUMPTION_FIELDS}
+        excluded = []
+        if model_type == "financial_services":
+            excluded = ["starting_revenue", "starting_invested_capital", "sales_to_capital_ratio"]
+            for field in excluded:
+                payload.pop(field, None)
         try:
-            model = ValuationModel(
-                user_id=draft.user_id,
-                company_id=draft.company_id,
-                name=name,
-                description=description,
-                model_type=model_type,
-            )
+            validated = DcfAssumptionSetWrite.model_validate(payload)
+        except ValidationError as exc:
+            problems = "; ".join(f"{'.'.join(map(str, error['loc']))}: {error['msg']}"
+                                 for error in exc.errors()[:6])
+            raise HTTPException(422, f"Invalid DCF assumptions: {problems}") from exc
+        return validated.model_dump(exclude={"valuation_model_id"}), excluded
+
+    @staticmethod
+    def store_first_model(db, draft, company, name, description, model_type, inputs, excluded, receipt=None):
+        try:
+            model = ValuationModel(user_id=draft.user_id, company_id=draft.company_id, name=name,
+                                   description=description, model_type=model_type)
             db.add(model)
             db.flush()
-            payload = {
-                key: value
-                for key, value in cls._normalize_assumptions(draft.assumptions_json).items()
-                if key in cls.ASSUMPTION_FIELDS
-            }
-            excluded_fields = []
-            if model_type == "financial_services":
-                # These operating inputs are not consumed by the equity engine.
-                # Keep their original values in the draft, not in the bank model.
-                excluded_fields = ["starting_revenue", "starting_invested_capital", "sales_to_capital_ratio"]
-                for field in excluded_fields:
-                    payload.pop(field, None)
-            try:
-                validated = DcfAssumptionSetWrite.model_validate(payload)
-            except ValidationError as exc:
-                problems = "; ".join(
-                    f"{'.'.join(str(part) for part in error['loc'])}: {error['msg']}"
-                    for error in exc.errors()[:6]
-                )
-                raise HTTPException(
-                    status_code=422,
-                    detail=f"Invalid DCF assumptions: {problems}",
-                ) from exc
-            payload = validated.model_dump(exclude={"valuation_model_id"})
-            assumption_set = DcfAssumptionSet(valuation_model_id=model.id, **payload)
-            db.add(assumption_set)
+            assumptions = DcfAssumptionSet(valuation_model_id=model.id, **inputs)
+            db.add(assumptions)
             db.flush()
-            output, projection_years, sensitivity_tables = calculate_dcf(
-                assumption_set,
-                model_type=model_type,
-                **company_calculation_context(company),
-            )
+            output, projections, sensitivities = calculate_dcf(assumptions, model_type=model_type,
+                **company_calculation_context(company))
             try:
-                require_finite_dcf_result(output, projection_years, model_type)
-                if any(w.get("module") == "model_selection" and w.get("severity") == "blocking" for w in output.warnings_json or []):
+                require_finite_dcf_result(output, projections, model_type)
+                if any(w.get("module") == "model_selection" and w.get("severity") == "blocking"
+                       for w in output.warnings_json or []):
                     raise ValueError("The company's classification requires an equity-based model.")
             except (ValueError, ArithmeticError) as exc:
-                raise HTTPException(status_code=422, detail=str(exc)) from exc
-            db.add(output)
-            db.add_all(projection_years)
-            db.add_all(sensitivity_tables)
+                raise HTTPException(422, str(exc)) from exc
+            db.add_all([output, *projections, *sensitivities])
             draft.status = "promoted"
             draft.promoted_model_id = model.id
-            if excluded_fields:
-                draft.source_metadata_json = {**(draft.source_metadata_json or {}),
-                    "promotion_excluded_fields": excluded_fields}
+            if excluded:
+                draft.source_metadata_json = {**(draft.source_metadata_json or {}), "promotion_excluded_fields": excluded}
+            if receipt:
+                decision_type, snapshot = receipt
+                db.add(DcfDecisionLog(valuation_model_id=model.id, assumption_set_id=assumptions.id,
+                                      decision_type=decision_type, user_note=json.dumps(snapshot, allow_nan=False)))
+            assumption_id = assumptions.id
             db.commit()
             db.refresh(model)
-            return model
+            return model, assumption_id
         except Exception:
             db.rollback()
             raise

@@ -1,4 +1,7 @@
 from datetime import date
+from fastapi import Response
+from app.schemas.price_decision import PriceDecision, PriceDecisionConfirm, PriceDecisionPreview, PriceDecisionSaved
+from app.services.price_decision import decision_choices, preview_decision, save_decision
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
@@ -35,3 +38,21 @@ def add_price_pin(company_id: int, payload: PricePinCreate, db: Session = Depend
 @router.get("/thesis-notes/{thesis_id}/price-pins", response_model=ApiResponse[list[PricePinRead]])
 def list_price_pins(thesis_id: int, db: Session = Depends(get_db), user: dict = Depends(get_current_user)):
     return ApiResponse(data=thesis_pins(db, thesis_id, user["id"]))
+
+
+@router.get("/thesis-notes/{note_id}/price-pins/{pin_id}/decision-options", response_model=ApiResponse[dict])
+def price_decision_options(note_id: int, pin_id: int, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=decision_choices(db, note_id, pin_id, current_user["id"]))
+
+
+@router.post("/thesis-notes/{note_id}/price-pins/{pin_id}/decision-preview", response_model=ApiResponse[PriceDecisionPreview])
+def preview_pin_decision(note_id: int, pin_id: int, payload: PriceDecision, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    return ApiResponse(data=preview_decision(db, note_id, pin_id, current_user["id"], payload))
+
+
+@router.post("/thesis-notes/{note_id}/price-pins/{pin_id}/decisions", response_model=ApiResponse[PriceDecisionSaved], status_code=201)
+def record_pin_decision(note_id: int, pin_id: int, payload: PriceDecisionConfirm, response: Response, db: Session = Depends(get_db), current_user: dict = Depends(get_current_user)):
+    result = save_decision(db, note_id, pin_id, current_user["id"], payload)
+    if result["replayed"]:
+        response.status_code = 200
+    return ApiResponse(data=result)

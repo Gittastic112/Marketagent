@@ -156,29 +156,16 @@ test("valuation rename validates first and reports conflicts without invalidatin
   assert.deepEqual(h.pages, []);
 });
 
-test("draft promotion saves only edited fields and carries the newly saved version", async () => {
-  const h = actionHarness(call => call.method === "PATCH" ? { updated_at: "v2" } : { id: 19 });
-  const id = await h.actions.promoteValuationSetupDraft(form({ scenario: "base", name: "Reviewed draft", cash: "0", debt: "500", edited_field: ["cash"], reviewed_field: ["cash", "debt"], draft_updated_at: "v1" }), 7, "2");
-  assert.equal(id, 19);
-  assert.deepEqual(h.calls, [
-    { method: "PATCH", path: "/valuation-drafts/7", payload: { assumptions_patch: { cash: 0 }, reviewed_fields: ["cash", "debt"], expected_updated_at: "v1" } },
-    { method: "POST", path: "/valuation-drafts/7/promote", payload: { name: "Reviewed draft", description: null, model_type: "fcff_dcf", expected_updated_at: "v2" } },
-  ]);
-  assert.deepEqual(h.pages, ["/companies/2/valuation"]);
-  const conflict = actionHarness(() => { throw new ApiError("Draft changed", 409); });
-  await assert.rejects(conflict.actions.promoteValuationSetupDraft(form({ scenario: "base", draft_updated_at: "v1" }), 7, "2"), /Draft changed/);
-  assert.equal(conflict.calls.length, 1);
-  assert.deepEqual(conflict.pages, []);
-});
-
-test("direct draft creation materializes reviewed missing funding keys without a prior draft save", async () => {
-  const h = actionHarness(call => call.method === "PATCH" ? {updated_at: "v2"} : {id: 19});
-  await h.actions.promoteValuationSetupDraft(form({name: "Mock Data direct-rate model", scenario: "Mock Data",
-    wacc_start: "0.14", wacc_terminal: "0.14", reviewed_field: ["beta", "cost_of_equity"],
-    draft_updated_at: "v1"}), 7, "2");
-  assert.deepEqual(h.calls[0], {method: "PATCH", path: "/valuation-drafts/7", payload: {
-    assumptions_patch: {beta: null, cost_of_equity: null},
-    reviewed_fields: ["beta", "cost_of_equity"], expected_updated_at: "v1"}});
-  assert.equal(h.calls[1].path, "/valuation-drafts/7/promote");
-  assert.equal((h.calls[1].payload as any).expected_updated_at, "v2");
+test("first-model confirmation retries the frozen request without editing the draft", async () => {
+  const h = actionHarness(() => ({model_id:19}));
+  const fields = {name:"Reviewed draft", draft_updated_at:"v2", valuation_date:"2026-11-12",
+    preview_hash:"a".repeat(64), submission_id:"70000000-0000-4000-8000-000000000000",reason:"Reviewed original"};
+  const expected = {method:"POST",path:"/valuation-drafts/7/confirm",payload:{name:fields.name,description:null,
+    model_type:"fcff_dcf",expected_updated_at:"v2",valuation_date:fields.valuation_date,preview_hash:fields.preview_hash,
+    submission_id:fields.submission_id,reason:fields.reason}};
+  assert.equal(await h.actions.promoteValuationSetupDraft(form(fields),7,"2"),19);
+  assert.equal(await h.actions.promoteValuationSetupDraft(form(fields),7,"2"),19);
+  assert.deepEqual(h.calls,[expected,expected]);
+  const conflict = actionHarness(() => { throw new ApiError("Draft changed",409); });
+  await assert.rejects(conflict.actions.promoteValuationSetupDraft(form(fields),7,"2"),/Draft changed/);
 });

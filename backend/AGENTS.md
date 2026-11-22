@@ -61,7 +61,7 @@ FinancialMetricRead is the legacy chart response contract.
 
 ## Valuation invariants
 
-Read the [valuation application map](../docs/valuation-agent/README.md) and
+Read the [valuation and assumption reference](../docs/reference/valuation.md) and
 task-specific [valuation workflow](../docs/skills/valuation/valuation-workflow.md)
 before altering finance behavior. The separate knowledge base owns doctrine.
 

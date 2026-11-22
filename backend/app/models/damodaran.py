@@ -1,4 +1,4 @@
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
+from sqlalchemy import Boolean, Column, Date, DateTime, Integer, String, Text
 from sqlalchemy.sql import func
 from app.db.base import Base
 
@@ -14,6 +14,8 @@ class DamodaranDatasetFile(Base):
     source_file_type = Column(String(50), nullable=False)
     source_sha256 = Column(String(64), nullable=True, index=True)
     source_byte_size = Column(Integer, nullable=True)
+    publication_date = Column(Date, nullable=True)
+    publication_source = Column(String(1000), nullable=True)
     source_as_of = Column(String(100), nullable=True)
     date_confidence = Column(String(20), nullable=False, default="unknown", server_default="unknown")
     canonical_source_path = Column(String(500), nullable=True)

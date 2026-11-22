@@ -144,12 +144,12 @@ export {
 } from "./actions/brief";
 export {
   createValuationSetupDraft,
+  promoteValuationSetupDraft,
   createValuationModel,
   createDcfAssumptionSet,
   createDcfAssumptionSetWithState,
   deleteValuationModel,
   deleteValuationModelWithState,
   updateValuationModelWithState,
-  createValuationModelWithAssumptions,
-  promoteValuationSetupDraft
+  createValuationModelWithAssumptions
 } from "./actions/valuation";

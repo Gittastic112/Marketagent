@@ -36,15 +36,14 @@ Audit, clean, archive, and relink project documentation without losing useful co
 
 ## Workflow
 
-1. Inventory docs with `rg --files docs -g '*.md'`, including archive indexes;
-   also inspect root/nested instructions, frontend guidance and knowledge-base docs.
+1. Inventory current docs with `rg --files -g '*.md' docs`. For historical indexes, use `rg --files --no-ignore -g 'README.md' docs/archive`. Check the root and relevant nested instructions.
 2. Classify each doc: current, reference, roadmap, archive, needs-review, duplicate.
 3. Preserve important context.
 4. Move dated evidence into `docs/archive/checkpoints/YYYY/`, superseded plans
    into `docs/archive/plans/`, and uncertain material into `docs/archive/needs-review/`.
 5. Keep the roadmap and feature register as product planning owners. An explicitly
    requested batch plan owns assignments/acceptance, not a competing product status.
-6. Update `docs/README.md` and any direct references.
+6. Link each current guide from the documentation index or a section it reaches. Update incoming links, including archive indexes. Preserve paths used by original receipt bodies when a move would break their evidence links.
 7. Run `python3 -m unittest scripts.test_check_docs` and `python3 scripts/check_docs.py`. Check published-status claims against the actual application commit and CI run. Keep isolated test results, original-source coverage and user-reported use separate.
 8. Scan active docs for old paths and stale claims.
 9. Record validation scope precisely: compile, unit, container, browser, and

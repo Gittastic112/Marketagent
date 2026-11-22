@@ -4,6 +4,7 @@ export type DatedInputSource = {
   revision_id: number; revision_number: number; candidate_id: number; document_id: number;
   href: string; value: number; unit: string | null; claim_type: string;
   published_at: string | null; recorded_at: string; retrieved_at: string;
+  publication_date: string | null; publication_precision: "date" | "timestamp" | "unknown";
   availability: "available_by_date" | "published_later" | "publication_unknown";
   period: Record<string, unknown>; locator: Record<string, unknown>; passage: string;
 };

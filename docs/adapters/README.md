@@ -222,7 +222,7 @@ Detailed evidence is retained per workstream:
 
 1. [Source adapters](../workstreams/evidence/adapters-20261117/W2/implementation.md).
 2. [Market, identity and calendar adapters](../workstreams/evidence/adapters-20261117/W3/README.md).
-3. [Integrated verification](verification.md).
+3. [November 17 adapter verification](verification.md).
 
 The packaged tests exercised PyPortfolioOpt, bt, QuantStats, exchange calendars, EdgarTools and Camelot on controlled inputs. The November 18 installed checks then verified six specific cases:
 

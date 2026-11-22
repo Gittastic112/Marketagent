@@ -1,6 +1,6 @@
 # Completion tracker: local research/demo release v1
 
-**4 of 10 milestones accepted. M05 is next.** The November 19 release is installed. The [Knull-led round](../workstreams/README.md#release-completion-round) prepares evidence for local review and acceptance tests for the remaining workflows. M05 still requires reconciled inputs and eligible industry mappings. M10 requires five actual research-use days and final user acceptance. [Current state](../current-state.md#dated-validation)
+**4 of 10 milestones accepted. M05 is next.** The November 20 release was installed and verified on November 21. The [nine returned reviews](../workstreams/README.md#release-completion-round) informed the first-valuation and chart decision implementation. M05 still requires reconciled inputs and eligible industry mappings. M10 requires five actual research-use days and final user acceptance. [Current state](../current-state.md#dated-validation)
 
 The current scope covers four selected technology companies, hypothetical holdings and labeled Sample research. The sourced Apple valuation is a separate Estimate. Historical records below describe the earlier 12-company scope and the eleven scenarios removed November 5. [Scope and prerequisites](../limitations.md#confirmed-scope-and-input-checklist)
 
@@ -100,7 +100,7 @@ It is not a second progress counter or an instruction to dispatch agents.
 | M03 | 30% | Reliable recovery and local security | M02 | Accepted November 2 for research/demo scope | [Rotation and scoped acceptance](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [recovery](../archive/checkpoints/2026/m03-recovery-2026-10-11.md), [security](../archive/checkpoints/2026/m03-security-2026-10-11.md) |
 | M04 | 40% | Dependable identities, prices and ingestion | M03 | Accepted November 2; prerequisite closed | [Acceptance basis](../archive/checkpoints/2026/local-credential-rotation-2026-11-02.md), [identity and ingestion](../archive/checkpoints/2026/m04-ingestion-2026-10-11.md), [consuming pages](../archive/checkpoints/2026/m04-m09-coverage-2026-10-12.md) |
 | M05 | 50% | Reviewed financial coverage for the scoped universe | M04 | First open gate. Four companies have three reviewed annual periods each. Source gaps and eligible industry allocation remain. | [Missing fields by company](../limitations.md#selected-company-review-follow-up), [decisions](review-decisions.md) |
-| M06 | 60% | Consistent valuation and sensitivity | M05 | Saved-model previews and version history are available. The issuer basis and first-model preview remain open. | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
+| M06 | 60% | Consistent valuation and sensitivity | M05 | First and subsequent versions support preview and confirmation. Complete issuer-specific evidence remains open. | [Applied scenarios](../../data/reviews/historical-scenario-application-20261103.json), [saved sensitivity](../archive/checkpoints/2026/m06-sensitivity-2026-10-11.md) |
 | M07 | 70% | Truthful example portfolio history and performance | M06 | Revised demo checks verified; M06 prerequisite open | [Recorded replay](../archive/checkpoints/2026/m07-portfolio-replay-2026-10-11.md), [existing-example verification](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M08 | 80% | Connected daily research and review | M07 | Checks verified; M07 prerequisite open | [Private brief context](../archive/checkpoints/2026/m08-private-brief-context-2026-10-11.md), [delegated interpretation review](../archive/checkpoints/2026/us-financial-and-ai-review-2026-10-18.md) |
 | M09 | 90% | Complete browser workflows and measured responsiveness | M08 | Existing-data audit repairs observed defects; M08 prerequisite open | [November verification](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md), [prior remote matrix](../archive/checkpoints/2026/m05-m06-ui-and-financing-2026-10-24.md) |
@@ -117,8 +117,8 @@ off-device work and out-of-scope genuine activity in the [single ledger](../limi
 M04's verified checks are accepted after the M03 prerequisite closes. PR4's five
 post-merge checks supersede the older 6e2a6f8b matrix as remote evidence. The [November completion pass](../archive/checkpoints/2026/independent-completion-2026-11-04.md) records new briefing/consent/runner source and its separately dated validation. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) retains earlier existing-data browser proof. Reviewed-input completeness and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
-The [ordered operator handoff](../limitations.md#ordered-operator-handoff)
-maps every open M03-M09 check to the exact operator input and agent-owned work.
+The [acceptance prerequisites](../limitations.md#acceptance-prerequisites)
+identify which checks need company evidence, user decisions or a separate recovery exercise.
 October 13 follow-up prepares a read-only financial/AI review packet and disables
 the legacy self-scoring extraction command; neither preparation confers approval
 or changes the acceptance total.

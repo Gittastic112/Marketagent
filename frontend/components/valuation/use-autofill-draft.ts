@@ -19,7 +19,7 @@ export type AutofillDraftReviewProps = {
   initialEditedFields: string[];
   initialUpdatedAt: string;
   initialModelType?: string;
-  action: (formData: FormData) => void | Promise<void>;
+  initialResearchDate?: string;
 };
 
 export function useAutofillDraft({
@@ -30,7 +30,7 @@ export function useAutofillDraft({
   initialEditedFields,
   initialUpdatedAt,
   initialModelType = "fcff_dcf",
-  action,
+  initialResearchDate,
 }: AutofillDraftReviewProps) {
   const requests = useMemo(createRequestGate, []);
   useEffect(() => () => requests.invalidate(), [requests]);
@@ -180,6 +180,12 @@ export function useAutofillDraft({
     return saved;
   }
 
+  function acceptSaved(d: ValuationSetupDraft) {
+    setUpdatedAt(d.updated_at);
+    setSourceMetadata(d.source_metadata_json);
+    setProvenance(d.provenance_json);
+  }
+
   async function saveDraft() {
     const isCurrent = requests.begin();
     setSaveState("saving");
@@ -263,5 +269,5 @@ export function useAutofillDraft({
       setArchiveConfirmationOpen(false);
     }
   }
-  return { company, draft, action, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft };
+  return { company, draft, draftId, initialResearchDate, acceptSaved, values, modelType, changeModelType, requiredFields, requiredMissingFields, fieldApplies, reviewedFields, editedFields, sourceMetadata, provenance, warnings, saveState, saveMessage, pipelineBusy, setPipelineBusy, archiveConfirmationOpen, setArchiveConfirmationOpen, defaultsAccepted, updatedAt, growthText, setGrowthText, reviewFields, unresolvedFields, invalidDefaultFields, promotionReady, updateValue, acceptCurrentDefaults, toggleReviewed, persistDraft, saveDraft, loadRefreshedDraft, refreshSources, resetField, archiveDraft };
 }

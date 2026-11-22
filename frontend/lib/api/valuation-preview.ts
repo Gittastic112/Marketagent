@@ -9,6 +9,7 @@ export type ValuationPreview = {
   diagnostics: DiagnosticWarning[]; currency: string | null; limitations: string[];
 };
 export type ValuationVersionReceipt = {
+  draft_id?: number | null; sources?: import("./first-valuation.ts").DraftBinding[] | null;
   assumption_set_id: number; previous_assumption_set_id: number | null; valuation_date: string | null;
   reason: string | null; saved_at: string; preview_hash: string | null;
 };

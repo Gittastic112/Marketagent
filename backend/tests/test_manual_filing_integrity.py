@@ -43,6 +43,25 @@ def test_manual_retry_preserves_document_and_review(client, db, filing_company):
     assert workflow.filing_status == "needs_review"
 
 
+def test_calendar_date_and_exact_midnight_are_distinct_and_old_form_retries_survive(client, db, filing_company):
+    route = f"/api/companies/{filing_company.id}/filings/manual-link"
+    base = {"document_type": "annual_report", "title": "Mock Data filing precision"}
+    def submit(published):
+        return response_data(client.post(route, json={**base, "published_at": published}))["id"]
+    midnight = submit("2026-11-13T00:00:00Z")
+    day = submit("2026-11-13")
+    assert midnight != day
+    assert db.get(RawDocument, day).raw_payload_json["publication_precision"] == "date"
+    assert db.get(RawDocument, midnight).raw_payload_json["publication_precision"] == "timestamp"
+    base["title"] = "Mock Data prior form"
+    previous = db.get(RawDocument, submit("2026-11-13T00:00:00Z"))
+    previous.raw_payload_json = {key: value for key, value in previous.raw_payload_json.items()
+                                 if key != "publication_precision"}
+    db.commit()
+    assert submit("2026-11-13") == previous.id
+    assert "publication_precision" not in previous.raw_payload_json
+
+
 @pytest.mark.parametrize("changes", [
     {"title": " "}, {"title": "x" * 501}, {"raw_text": "x" * 1_000_001},
     {"url": "javascript:alert(1)"}, {"url": "file:///etc/passwd"},

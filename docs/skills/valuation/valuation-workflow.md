@@ -16,7 +16,7 @@ Build valuation features that keep deterministic formulas, source-labeled assump
 
 ## Prerequisites
 
-- Read `docs/valuation-agent/README.md`.
+- Read the [valuation and assumption reference](../../reference/valuation.md).
 - Inspect relevant valuation service, model, schema, router, frontend page, and tests.
 
 ## Inputs
@@ -120,6 +120,5 @@ Build valuation features that keep deterministic formulas, source-labeled assump
 
 ## References
 
-- `docs/valuation-agent/README.md`
-- `docs/assumption-methodology.md`
+- [Assumption methods and source basis](../../reference/valuation.md#assumption-methods)
 - `damodaran_knowledge_base_v1/AGENTS.md`

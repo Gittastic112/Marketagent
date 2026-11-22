@@ -1,3 +1,5 @@
+from datetime import date
+from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 from fastapi import APIRouter, UploadFile, File, Form, Depends, HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import select
@@ -99,6 +101,8 @@ def list_damodaran_files(db: Session = Depends(get_db)):
             "source_sha256": f.source_sha256,
             "source_byte_size": f.source_byte_size,
             "source_as_of": f.source_as_of,
+            "publication_date": f.publication_date,
+            "publication_source": f.publication_source,
             "date_confidence": f.date_confidence,
             "canonical_source_path": f.canonical_source_path,
             "import_kind": f.import_kind,
@@ -139,3 +143,30 @@ def compare_benchmarks(file_id_a: int, file_id_b: int, db: Session = Depends(get
             "default_spread": {"diff": -0.001, "version_a": 0.015, "version_b": 0.014}
         }
     })
+
+
+class PublicationEvidence(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    source_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    publication_date: date
+    publication_source: HttpUrl = Field(max_length=1000)
+
+
+@router.put("/datasets/{dataset_id}/publication", response_model=ApiResponse[dict])
+def record_dataset_publication(dataset_id: int, payload: PublicationEvidence, db: Session = Depends(get_db)):
+    dataset = db.scalar(select(DamodaranDatasetFile).where(DamodaranDatasetFile.id == dataset_id).with_for_update())
+    if not dataset:
+        raise HTTPException(404, "Dataset not found")
+    if dataset.source_sha256 != payload.source_sha256:
+        raise HTTPException(409, "The source workbook does not match the reviewed checksum.")
+    if payload.publication_source.username or payload.publication_source.password:
+        raise HTTPException(422, "Use an original source URL without credentials.")
+    source = str(payload.publication_source)
+    if dataset.publication_date or dataset.publication_source:
+        if (dataset.publication_date, dataset.publication_source) != (payload.publication_date, source):
+            raise HTTPException(409, "This workbook already has a different release record. Review the discrepancy.")
+    else:
+        dataset.publication_date, dataset.publication_source = payload.publication_date, source
+        db.commit()
+    return ApiResponse(data={"dataset_id":dataset.id,"source_sha256":dataset.source_sha256,
+        "publication_date":dataset.publication_date, "publication_source":dataset.publication_source})

@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 from app.models import Company, RawDocument, Source
 from app.models.company_setup import CompanySetupWorkflow
 from app.providers.filings import ALLOWED_MANUAL_FILING_TYPES, ManualFilingCreate
+from app.schemas.publication import publication_storage
 
 
 def create_manual_filing(db: Session, company: Company, payload: ManualFilingCreate) -> RawDocument:
@@ -23,6 +24,13 @@ def create_manual_filing(db: Session, company: Company, payload: ManualFilingCre
         raise HTTPException(status_code=404, detail="Company not found")
     content_hash = _manual_filing_hash(company, payload)
     existing = db.scalar(select(RawDocument).where(RawDocument.content_hash == content_hash))
+    timestamp, precision = publication_storage(payload.published_at)
+    if existing is None and precision == "date":
+        # Older forms sent midnight even when the user only entered a date.
+        legacy = payload.model_copy(update={"published_at": timestamp})
+        existing = db.scalar(select(RawDocument).where(
+            RawDocument.content_hash == _manual_filing_hash(company, legacy),
+            RawDocument.raw_payload_json["publication_precision"].as_string().is_(None)))
     if existing is not None:
         db.commit()
         return existing
@@ -33,11 +41,12 @@ def create_manual_filing(db: Session, company: Company, payload: ManualFilingCre
         document_type=payload.document_type,
         title=payload.title,
         url=payload.url,
-        published_at=payload.published_at,
+        published_at=timestamp,
         raw_text=payload.raw_text,
         raw_payload_json={
             **(payload.raw_payload_json or {}),
             "source_kind": "manual_filing",
+            "publication_precision": precision,
             "filing_system": "MANUAL_UPLOAD",
             "market": company.market,
             "primary_exchange": company.primary_exchange,

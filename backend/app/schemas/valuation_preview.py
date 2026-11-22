@@ -2,6 +2,7 @@ from datetime import date, datetime
 from typing import Any
 
 from pydantic import BaseModel
+from app.schemas.first_valuation import BoundFinancialSource
 from app.schemas.valuation_outputs import DiagnosticWarning
 
 
@@ -28,6 +29,8 @@ class ValuationPreviewRead(BaseModel):
 
 
 class ValuationVersionReceiptRead(BaseModel):
+    draft_id: int | None = None
+    sources: list[BoundFinancialSource] | None = None
     assumption_set_id: int
     previous_assumption_set_id: int | None
     valuation_date: date | None

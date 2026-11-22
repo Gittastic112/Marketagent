@@ -1,4 +1,5 @@
 from datetime import date
+from uuid import uuid4
 
 import pytest
 
@@ -16,6 +17,15 @@ from app.models import (
     ValuationSetupDraft,
 )
 from helpers import response_data
+
+
+def promote_reviewed(client, draft, command):
+    root = f"/valuation-drafts/{draft['id']}"
+    basis = response_data(client.get(root))
+    request = {"expected_updated_at": basis["updated_at"], "valuation_date": "2026-11-12", **command}
+    preview = response_data(client.post(root+"/preview", json=request))
+    return client.post(root+"/promote", json={**request, "submission_id":str(uuid4()),
+        "reason":"Reviewed Mock Data assumptions", "preview_hash":preview["preview_hash"]})
 
 
 @pytest.mark.parametrize("patch", [{}, {"cash": 25}])
@@ -70,7 +80,7 @@ def test_direct_discount_rates_allow_reviewed_missing_components_but_not_missing
     saved = response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
         "assumptions_patch": patch, "reviewed_fields": fields}))
     assert saved["source_metadata_json"]["promotion_ready"] is True
-    model = response_data(client.post(f"/valuation-drafts/{draft['id']}/promote", json=command))
+    model = response_data(promote_reviewed(client, draft, command))
     assumptions = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))[0]
     assert assumptions["wacc_start"] == .14
     assert assumptions["beta"] is None
@@ -138,7 +148,7 @@ def test_missing_comparison_price_requires_explicit_review_but_allows_valuation(
     assert db.query(ValuationModel).filter_by(company_id=company.id).count() == 0
     response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
         "assumptions_patch": {}, "reviewed_fields": reviewed}))
-    model = response_data(client.post(f"/valuation-drafts/{draft['id']}/promote", json=command))
+    model = response_data(promote_reviewed(client, draft, command))
     saved = response_data(client.get(f"/valuation-models/{model['id']}/assumptions"))[0]
     assert saved["current_market_price"] is None
     assert saved["outputs"]["intrinsic_value_per_share"] > 0
@@ -165,7 +175,7 @@ def test_bank_draft_requires_equity_basis_without_invented_operating_inputs(clie
                   sales_to_capital_ratio=unused_value)
     response_data(client.patch(f"/valuation-drafts/{draft['id']}", json={
         "assumptions_patch": {**equity_inputs, **unused}, "reviewed_fields": list(equity_inputs)}))
-    response = client.post(f"/valuation-drafts/{draft['id']}/promote", json={
+    response = promote_reviewed(client, draft, {
         "name": "Mock Data equity-input bank model", "model_type": "financial_services"})
     if missing:
         assert response.status_code == 409
@@ -317,6 +327,8 @@ def _valid_review_value(field: str):
         return 0.2
     if field == "equity_to_capital":
         return 0.8
+    if field == "terminal_growth_rate":
+        return 0.02
     if field in {
         "current_operating_margin",
         "target_operating_margin",
@@ -327,7 +339,6 @@ def _valid_review_value(field: str):
         "pre_tax_cost_of_debt",
         "wacc_start",
         "wacc_terminal",
-        "terminal_growth_rate",
         "terminal_roic",
     }:
         return 0.1
@@ -570,9 +581,8 @@ def test_reviewed_draft_promotes_atomically_to_valuation_model(client, db) -> No
     )
     assert saved["status"] == "ready_to_value"
 
-    promoted_response = client.post(
-        f"/valuation-drafts/{draft['id']}/promote",
-        json={"name": "Reviewed DCF", "description": "Promoted from durable draft", "model_type": "fcff_dcf"},
+    promoted_response = promote_reviewed(client, draft,
+        {"name": "Reviewed DCF", "description": "Promoted from durable draft", "model_type": "fcff_dcf"},
     )
 
     assert promoted_response.status_code == 201
@@ -617,9 +627,8 @@ def test_failed_promotion_rolls_back_model_and_assumption_set(client, db, monkey
     )
 
     try:
-        client.post(
-            f"/valuation-drafts/{draft['id']}/promote",
-            json={"name": "Failed DCF", "model_type": "fcff_dcf"},
+        promote_reviewed(client, draft,
+            {"name": "Failed DCF", "model_type": "fcff_dcf"},
         )
     except RuntimeError as error:
         assert str(error) == "calculation failed"

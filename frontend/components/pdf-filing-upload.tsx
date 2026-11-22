@@ -34,9 +34,7 @@ export function PdfFilingUpload({ companyId }: { companyId: number }) {
       return;
     }
     const publishedAt = formData.get("published_at");
-    if (typeof publishedAt === "string" && publishedAt) {
-      formData.set("published_at", `${publishedAt}T00:00:00Z`);
-    } else {
+    if (!publishedAt) {
       formData.delete("published_at");
     }
 

@@ -19,7 +19,7 @@ Create, update, archive, and validate project skills without turning them into b
 ## Prerequisites
 
 - Read `docs/skills/README.md`.
-- Read `docs/skills/skill-system-audit.md`.
+- Consult the [October 5 audit](../../archive/assessments/project-workflows-2026-10-05.md) when a change depends on an earlier workflow or package decision.
 - Inspect current docs/code before adding a skill.
 
 ## Inputs
@@ -32,7 +32,7 @@ Create, update, archive, and validate project skills without turning them into b
 
 - Concise skill file under `docs/skills/<category>/`.
 - Updated `docs/skills/README.md`.
-- Updated `docs/skills/skill-system-audit.md` when adding, merging, or archiving skills.
+- An updated entry in the [workflow index](../README.md) when adding, merging or retiring a workflow.
 - Passing skill validation.
 
 ## Workflow
@@ -42,7 +42,7 @@ Create, update, archive, and validate project skills without turning them into b
 3. Keep hard rules in `AGENTS.md`; keep reusable workflow in `docs/skills`.
 4. Use the standard sections from `docs/skills/README.md`.
 5. Keep detailed domain facts in canonical docs and link them.
-6. Update the skill index and audit.
+6. Update the workflow index and link any dated evidence from the archive.
 7. Run `python3 scripts/validate_project_skills.py`.
 8. Run docs link and stale-reference checks.
 9. Distinguish implicit project workflows in `docs/skills/` from repository
@@ -54,19 +54,16 @@ Create, update, archive, and validate project skills without turning them into b
 11. Keep explicit packages as thin, resolvable entrypoints when a canonical project
     workflow exists. Do not duplicate the checklist. An implicit-invocation policy
     is not proof of installation or an additional approval requirement.
-12. For a parallel batch, the coordinator owns shared skill/routing updates. Record
-    changes and retained families in the audit; agents submit proposals in their
-    own evidence. Keep installed/global skill maintenance outside repository scope
-    unless requested.
+12. For a parallel batch, the coordinator updates the shared workflow index.
+    Workers record their proposals in their allocated evidence directories.
 
 ## Acceptance criteria
 
 - Skill has all required sections.
 - Skill is concise and references canonical docs.
 - Skill does not claim unverified capabilities.
-- Skill index and audit are current.
+- The workflow index routes each task to its maintained guide.
 - Explicit skill metadata and implicit project-skill documentation agree about invocation and scope.
-- The audit states which skill families changed and why unrelated skills did not.
 - Validation script passes.
 
 ## Common mistakes
@@ -91,5 +88,5 @@ Create, update, archive, and validate project skills without turning them into b
 ## References
 
 - `docs/skills/README.md`
-- `docs/skills/skill-system-audit.md`
+- [Previous workflow audit](../../archive/assessments/project-workflows-2026-10-05.md)
 - `skills/security-review/SKILL.md`

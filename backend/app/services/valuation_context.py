@@ -18,7 +18,8 @@ def saved_model_selection_warnings(assumptions) -> list[dict]:
 
 
 def build_company_valuation_context(company: Company) -> dict:
-    market = (company.market or "US").upper()
+    market = (company.market or "US").strip().upper()
+    market = {"INDIA": "IN", "USA": "US", "UNITED STATES": "US"}.get(market, market)
     if market == "IN":
         country = company.country or "India"
         currency = company.currency or "INR"

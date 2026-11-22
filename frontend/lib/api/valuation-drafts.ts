@@ -15,6 +15,8 @@ export type AssumptionProvenance = {
 };
 
 export type AutofillSourceMetadata = {
+  dated_source_proposal?: { valuation_date: string; selections: import("./first-valuation.ts").DraftSource[];
+    bindings: import("./first-valuation.ts").DraftBinding[] };
   promotion_ready: boolean;
   requires_review: boolean;
   placeholder_fields: string[];

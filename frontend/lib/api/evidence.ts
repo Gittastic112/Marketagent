@@ -300,6 +300,7 @@ export type ThesisAssumption = {
 export type ThesisChange = {
   id: number;
   thesis_note_id: number;
+  price_review?: import("./price-decisions.ts").DecisionContext | null;
   change_summary: string;
   drift_score: number;
   created_at: string;

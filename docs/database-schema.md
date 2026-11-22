@@ -1,8 +1,8 @@
 # Database Schema Map
 
-**Source reviewed November 18, 2026.** [Installed readiness and preservation](current-state.md#dated-validation)
+Source reviewed November 20, 2026. [Installed readiness and preservation](current-state.md#dated-validation)
 
-**Current source head:** `w5w5w5w5w5w5`. The [price-pin migration](../backend/alembic/versions/w5w5w5w5w5w5_thesis_price_pins.py) follows `v4v4v4v4v4v4` and adds an initially empty table and indexes.
+**Current source head:** `x6x6x6x6x6x6`. The [release-evidence migration](../backend/alembic/versions/x6x6x6x6x6x6_dated_release_evidence.py) follows `w5w5w5w5w5w5`. It adds optional workbook publication evidence and thesis decision receipts. A unique index on thesis and request ID protects retries. Existing rows keep their prior values.
 
 This document maps ownership and relationships. SQLAlchemy models and Alembic
 migrations are the field-level source of truth. Do not duplicate every column

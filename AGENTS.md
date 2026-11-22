@@ -24,9 +24,11 @@ Quick checks: `python3 scripts/check_docs.py`; `npm --prefix frontend test`;
 
 ## Start with the smallest relevant context
 
-1. Read [the handoff](docs/HANDOFF.md) and the nearest nested AGENTS.md.
-2. Search [the code map](docs/code-map.md) for the affected domain, then read its
-   matching row and owning files. Do not load the whole map for a narrow change.
+1. Read [the handoff](docs/HANDOFF.md#next-work) and the nearest rules for
+   [backend](backend/AGENTS.md), [frontend](frontend/AGENTS.md), [documentation](docs/AGENTS.md)
+   or the [source corpus](damodaran_knowledge_base_v1/AGENTS.md).
+2. Use the [code map](docs/code-map.md) to jump to the affected domain.
+   Open the owning files and tests in that row.
 3. Read only the relevant current reference from [the docs index](docs/README.md).
 4. For major architectural work, also read [current state](docs/current-state.md),
    [architecture](docs/architecture.md), and [the roadmap](docs/roadmaps/product-roadmap.md).

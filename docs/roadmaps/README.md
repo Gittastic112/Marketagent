@@ -1,5 +1,7 @@
 # Planning and decisions
 
+For the next task, open the [handoff](../HANDOFF.md#next-work). Use this index to find the document that owns a planning decision.
+
 | Document | Owns |
 |---|---|
 | [Research workspace plan](research-workspace-plan.md) | Screen layouts, connected workflows, delivery packages and acceptance tests |
@@ -8,7 +10,7 @@
 | [Completion tracker](completion-tracker.md) | Stable task IDs, milestone order, acceptance evidence, and deferrals |
 | [Feature register](feature-register.md) | Implemented, partial, experimental, and unavailable capability status |
 | [Review decisions](review-decisions.md) | Recorded user approvals and delegated judgments |
-| [Research, review and implementation workflows](../workstreams/README.md) | Knull’s release-completion assignments, whole-project code audits, local edit ownership and integration |
+| [Coordination guide](../workstreams/README.md) | Knull review packets, completed rounds, local edit assignments and integration |
 
 Plans are not implementation evidence. Use [Current State](../current-state.md)
 for dated validation and the [limitation ledger](../limitations.md) for current

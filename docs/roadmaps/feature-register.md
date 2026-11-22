@@ -1,6 +1,6 @@
 # Feature Register
 
-**Reviewed November 18, 2026.** Runtime validation dates remain in
+**Reviewed November 20, 2026.** Runtime validation dates remain in
 [Current State](../current-state.md). The latest research scope is four selected
 companies, with Sample research and a separately sourced Apple Estimate.
 
@@ -8,6 +8,8 @@ First release: local research/demo using existing data, explicitly chosen Octobe
 17. The [scope revision](completion-tracker.md#scope-revision-approved-october-17-2026)
 excludes genuine portfolio validation and defers Mac/off-device setup. This changes
 acceptance scope, not capability status or the truth labels of stored records.
+
+The [first-valuation and chart workflows](../user-guide.md#review-a-filing-and-valuation) preserve dated sources, the evaluated inputs and private decisions. [Verification by environment](../current-state.md#dated-validation)
 
 Status meanings:
 
@@ -67,19 +69,11 @@ Status meanings:
 | Market regime | Built | Bounded manual inputs and one stored FRED NFCI calculation. Options, liquidity, volume, and breadth remain manual without compliant automated adapters. |
 | Broker sync | Not built | Security design required first |
 | Public deployment | Not built | Security and operations gates unmet |
-| Documentation architecture | Built with maintenance gates | One owner per concern, descriptive paths, directory maps, categorized history, and automated links/anchors/route/schema/context checks. |
+| Documentation architecture | Built with maintenance checks | Current guides are reachable from the docs index. Links, anchors, route and command inventories, the schema head and onboarding length are checked. |
 
 ## Next Status Changes Expected
 
-1. Complete the remaining sourced accounting and valuation-input reviews in the
-   [tracker](completion-tracker.md), retaining explicit unavailable inputs.
-2. Freeze and verify the research/demo release, then record actual use and final
-   acceptance. Preparation does not supply those observations.
-3. Keep real-portfolio validation, deferred host/off-device protection, unsupported
-   provider modules and public hosting under their separately stated boundaries.
-4. Preserve the new briefing coverage and scoped-consent regressions under roadmap
-   priorities 3 and 6. Broader source coverage and interpretation quality remain
-   distinct from these completed engineering changes.
+The [handoff](../HANDOFF.md#next-work) gives the next actionable task. The [milestone board](completion-tracker.md#milestone-board) records accepted scope and outstanding evidence. The installed first-model and chart workflows have technical verification. Issuer input completeness, five business days of actual use and final acceptance remain open.
 
 Update this file when code changes a status. Put implementation proof in tests
 and a dated archived checkpoint, not in additional columns here.
