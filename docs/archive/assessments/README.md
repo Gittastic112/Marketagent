@@ -5,7 +5,9 @@ security readiness, rationale, and execution history. They were archived because
 they mixed current truth with chronological updates or duplicated code-level
 detail that drifted.
 
-Use the active documents at `../../` for present behavior.
+Use the [documentation index](../../README.md) for present behavior.
+
+The [October 5 project workflow audit](project-workflows-2026-10-05.md) records the catalog and checks at that time. The [workflow index](../../skills/README.md) owns current routing.
 
 The [November 17 open-source research report](github-reuse-research-2026-11-17.md) preserves the supplied comparison of external projects. The [adapter worklist](../../roadmaps/ui-adapter-worklist.md#implementation-backlog-from-the-zip) identifies the parts actually implemented and the evidence still required.
 

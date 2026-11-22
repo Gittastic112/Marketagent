@@ -785,10 +785,7 @@ a question for the user. Identify the exact missing source or decision first.
 
 ## Next implementation session
 
-1. Open the [current M05 ledger](../limitations.md#selected-company-review-follow-up). Choose one unresolved company field with an original filing and a defensible period and accounting basis. Preserve the record if only a subtotal is available.
-2. For a new financial field, verify its complete economic definition and matching currency and period. Extend the source map and its regression tests for accepted and held revisions together.
-3. Follow the [runbook](../execution-runbook.md) for the affected layers. Persistent changes require the [recovery policy](../operations.md#when-to-make-a-backup). Verify in the installed project after the relevant tests pass.
-4. Reconcile the evidence in the limitation ledger and current state. Continue with portfolio reconciliation and the connected research workflow in [delivery order](product-roadmap.md#immediate-delivery-order).
+Start with the [current handoff](../HANDOFF.md#next-work). When extending the financial source map, cover both an accepted revision and one that must be held. Verify its economic definition, currency, period and publication date before applying it to a draft. Use the [execution runbook](../execution-runbook.md) for the affected layers.
 
 ### Optional review suggestions
 

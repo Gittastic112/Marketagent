@@ -1,23 +1,23 @@
 # Coordinate research, review and implementation
 
+| Assignment | Start here | What to return |
+|---|---|---|
+| Investigate an unresolved financial input or provider prerequisite | [Company evidence ledger](../limitations.md#selected-company-review-follow-up) · [Adapter prerequisites](../limitations.md#installed-adapters-and-remaining-source-prerequisites) | Original source, publication date, period, scope and calculation. State exactly what remains missing. |
+| Review the code in independent Pro chats | [Four independent reviews](#four-independent-chatgpt-pro-reviews) | A finding tied to a published commit, its consequence and a check that would confirm it. |
+| Implement an assigned batch locally | [Parallel local implementation](#parallel-local-implementation) | Changes within the agreed files, focused tests and evidence for one integrator. |
+
+Use the [handoff](../HANDOFF.md#next-work) to select an open task. Keep portfolio records, private theses, user data, credentials and backups local. Pin the published commit when sharing source with review chats. The handoff identifies any newer local release.
+
 ## Release completion round
 
-All nine reviews in the November 19 round returned against commit `ef2e2d6`. Four chats investigated the sixteen financial inputs open at dispatch. Three examined valuation, chart and portfolio workflows. Two checked the proposed evidence and acceptance tests. The [original assignments and coordinator prompt](release-completion-chats.md) remain available for reference.
-
-The reviewed source now includes dated first-model confirmation and chart-to-thesis decisions. Future chats can investigate one unresolved issuer input or a named provider prerequisite from the ledger. The detailed handoff stays private. The [financial ledger](../limitations.md#selected-company-review-follow-up) records the local financial decisions and the [handoff](../HANDOFF.md#next-work) tracks implementation. The user owns actual-use records and final acceptance. The packet also identifies three optional provider or OCR reviews and their prerequisites.
+All nine November 19 reviews returned against `ef2e2d6`. Four chats examined the sixteen issuer inputs open at dispatch, three reviewed valuation, chart and portfolio workflows, and two checked evidence and acceptance tests. The [original assignments and Knull prompt](release-completion-chats.md) retain that round's scope and the three optional provider and OCR assignments. The [installed checks](../current-state.md#dated-validation) record the local result. Actual-use records and final acceptance belong to the user.
 
 ## Four independent ChatGPT Pro reviews
 
-For a whole-project code audit, use the [four-chat assignments and Knull prompt](four-pro-chats.md). Pin one published commit and ask each chat to open an owning file at that revision. The four assignments cover data and adapters, valuation and portfolio math, research workflows and UI, and release safety and privacy.
-
-Each chat returns findings with a commit permalink, observed or code-traced behavior, the consequence and a proposed check. One local integrator deduplicates findings, verifies them against the current checkout and implements accepted changes. Share public source and tests only. Keep private research, credentials, account data and backups local.
-
-The [November 19 integration record](../archive/checkpoints/2026/integration-review-2026-11-19.md) records the 19 findings from the first audit, their regression coverage and the remaining judgment calls.
+The [four assignments and Knull prompt](four-pro-chats.md) cover data and adapters, valuation and portfolio math, research workflows and UI, and release safety and privacy. Each chat first opens an owning file at the pinned revision. It returns a commit permalink, the observed or code-traced behavior, its consequence and a proposed test. A local integrator checks each finding against the working copy, combines duplicates and implements accepted changes. [November 19 integration results](../archive/checkpoints/2026/integration-review-2026-11-19.md)
 
 ## Parallel local implementation
 
-For a batch explicitly assigned to local workers, use the [workstream scope index](plan.md), an exact edit allocation and one integration owner. Reserve shared contracts, migrations and central documents for that owner. Use isolated tests for writers and one normal installation for the verified result. The [runbook](../execution-runbook.md#parallel-workstream-checks) covers path checks and environment isolation.
+Choose one integration owner and allocate files before starting local workers. Reserve shared contracts, migrations and central guides for the integrator. Run writing tests against isolated data. The [workstream plan](plan.md) and its [five-worker allocation](ownership.tsv) describe one earlier assignment. Confirm the paths for each new batch. [Test and ownership checks](../execution-runbook.md#parallel-workstream-checks) · [Evidence index](evidence/README.md)
 
-The historical [five-workstream allocation](ownership.tsv) assigns briefing, financial sources, portfolio history, sensitivities and recovery. Its file and directory reservations apply to that assigned batch. The [evidence index](evidence/README.md) preserves earlier receipts. The [milestone board](../roadmaps/completion-tracker.md#milestone-board) owns product acceptance.
-
-Either Pro packet can be retired after its round. Keep the section heading on this page and replace its packet link with the dated outcome. Other project guides link to this index so the packet can be deleted independently.
+Each Pro packet can be removed after its round by replacing its link here with the outcome. Keep these section headings so other guides continue to reach the right workflow.

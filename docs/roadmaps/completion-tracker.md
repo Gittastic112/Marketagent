@@ -1,6 +1,6 @@
 # Completion tracker: local research/demo release v1
 
-**4 of 10 milestones accepted. M05 is next.** The November 19 release is installed. The [nine returned reviews](../workstreams/README.md#release-completion-round) informed the first-valuation and chart decision implementation. M05 still requires reconciled inputs and eligible industry mappings. M10 requires five actual research-use days and final user acceptance. [Current state](../current-state.md#dated-validation)
+**4 of 10 milestones accepted. M05 is next.** The November 20 release was installed and verified on November 21. The [nine returned reviews](../workstreams/README.md#release-completion-round) informed the first-valuation and chart decision implementation. M05 still requires reconciled inputs and eligible industry mappings. M10 requires five actual research-use days and final user acceptance. [Current state](../current-state.md#dated-validation)
 
 The current scope covers four selected technology companies, hypothetical holdings and labeled Sample research. The sourced Apple valuation is a separate Estimate. Historical records below describe the earlier 12-company scope and the eleven scenarios removed November 5. [Scope and prerequisites](../limitations.md#confirmed-scope-and-input-checklist)
 
@@ -117,8 +117,8 @@ off-device work and out-of-scope genuine activity in the [single ledger](../limi
 M04's verified checks are accepted after the M03 prerequisite closes. PR4's five
 post-merge checks supersede the older 6e2a6f8b matrix as remote evidence. The [November completion pass](../archive/checkpoints/2026/independent-completion-2026-11-04.md) records new briefing/consent/runner source and its separately dated validation. The [November audit](../archive/checkpoints/2026/valuation-review-and-browser-audit-2026-11-02.md) retains earlier existing-data browser proof. Reviewed-input completeness and actual-use acceptance remain open. Cumulative acceptance is 40 points; the next milestone is M05.
 
-The [ordered operator handoff](../limitations.md#ordered-operator-handoff)
-maps every open M03-M09 check to the exact operator input and agent-owned work.
+The [acceptance prerequisites](../limitations.md#acceptance-prerequisites)
+identify which checks need company evidence, user decisions or a separate recovery exercise.
 October 13 follow-up prepares a read-only financial/AI review packet and disables
 the legacy self-scoring extraction command; neither preparation confers approval
 or changes the acceptance total.

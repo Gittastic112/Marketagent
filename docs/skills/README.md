@@ -1,24 +1,6 @@
-# Project workflow routing
+# Project workflows
 
-Read the root/nested agent rules, handoff and code map once. Then choose the
-smallest relevant workflow below. Do not load this entire library for every task.
-Hard rules live in AGENTS.md; commands live in the execution runbook; status and
-limitations have their own canonical owners in the [documentation map](../README.md).
-
-## What is implicit, explicit and actually available
-
-- `docs/skills` contains project workflow references. Agents select them by task
-  relevance or a direct request. They are not automatically installed Codex skills.
-- The repository package [security-review](../../skills/security-review/SKILL.md)
-  supplies skill metadata and a thin entrypoint to the canonical security workflow.
-  Its policy allows implicit invocation when the package is installed and the task
-  matches. A user can also invoke it explicitly in a session that exposes it.
-- Repository presence, metadata and installation are different facts. Check the
-  session's available-skills list. Do not claim installation, global availability
-  or a permissions change from reading these files. No global skill was installed
-  or changed by this documentation batch.
-
-## Choose by the work, not by keywords
+Choose the guide that matches the change. The [agent rules](../../AGENTS.md) govern the repository, the [code map](../code-map.md) identifies files and tests, and the [runbook](../execution-runbook.md) owns commands.
 
 | Task | Primary workflow | Add only when needed |
 |---|---|---|
@@ -35,23 +17,8 @@ limitations have their own canonical owners in the [documentation map](../README
 | Restructure docs, handoffs or plans | [Documentation](documentation/documentation-workflow.md) | Skill maintenance only if workflow guidance changes |
 | Maintain this library/package | [Skill maintenance](documentation/skill-maintenance.md) | Documentation for links and ownership |
 
-A narrow task does not need architecture history, every financial manual and the
-operations workflow just to find one command. Load more context when the actual
-code reveals another boundary.
+## Maintaining a workflow
 
-## Maintenance contract
+Use the sections required by the [workflow validator](../../scripts/validate_project_skills.py) and link to the owner of each command or product rule. The [maintenance guide](documentation/skill-maintenance.md) covers adding or retiring a workflow. The [October 5 audit](../archive/assessments/project-workflows-2026-10-05.md) preserves earlier decisions.
 
-Keep these standard sections so the existing validator can inspect every workflow:
-Purpose; When to use; When NOT to use; Prerequisites; Inputs; Outputs; Workflow;
-Acceptance criteria; Common mistakes; Do not do; Related skills; References.
-Empty filler is not useful: one clear sentence is enough where appropriate.
-
-Link deep domain guidance and commands instead of copying them. Update a workflow
-when its reusable behavior changes; do not edit every file just to refresh dates.
-Preserve source/review/privacy invariants and exact evidence distinctions in their
-owning workflow. Archive superseded material, retain useful source references,
-and run documentation, skill and ownership checks from the runbook.
-
-[The audit](skill-system-audit.md) records reviewed families, changes, retained
-references and validation limits. Parallel agents propose library changes in their
-own evidence directories; only the coordinator updates shared workflow files.
+These guides are repository documents. The [security review package](../../skills/security-review/SKILL.md) is also available for installation. Check the session’s available skills before relying on an installed package.

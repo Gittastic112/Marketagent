@@ -1,39 +1,19 @@
-# Documentation Rules
+# Documentation rules
 
-Read the [root rules](../AGENTS.md). Current docs describe present behavior;
-archives preserve history, not instructions.
+Follow the [repository rules](../AGENTS.md). The [documentation index](README.md) routes readers to the current guide for their task.
 
-- HANDOFF.md owns the latest boundary, immediate next work, and validation links.
-- current-state.md owns product status and dated verification evidence.
-- code-map.md owns code entry points and change routing.
-- architecture.md owns runtime flows and dependency boundaries.
-- execution-runbook.md owns development and validation commands.
-- operations.md owns runtime, provider, credential, backup and recovery commands.
-- roadmaps/product-roadmap.md owns priorities; feature-register.md owns capability
-  status. Do not use old checkpoint numbering as a queue.
-- roadmaps/completion-tracker.md owns percentage requests and cumulative acceptance
-  gates. "Finish 10%" means M01; "next 10%" means the earliest unfinished milestone.
-- The [coordination guide](workstreams/README.md) routes read-only Pro reviews and local implementation. The [workstream design](workstreams/plan.md) retains technical assignments for
-  an explicitly launched batch. [Ownership](workstreams/ownership.tsv) owns edit
-  allocations; the completion tracker owns current acceptance status.
-- limitations.md is the single limitation ledger.
-- docs/skills contains task-specific workflow references. Do not duplicate their
-  complete instructions into AGENTS.md or the handoff.
+- Put the next action and release boundary in the [handoff](HANDOFF.md), dated observations in [current state](current-state.md), missing evidence in [limitations](limitations.md) and acceptance decisions in the [milestone board](roadmaps/completion-tracker.md#milestone-board). Link to the owner when another guide needs the same facts.
+- Use the [code map](code-map.md#route-a-domain-change) for implementation paths. The [runbook](execution-runbook.md) owns validation commands. [Operations](operations.md) owns runtime and recovery commands.
+- A new current guide needs a clickable path from the documentation index, either directly or through its section guide. Relink incoming references when a file moves. Keep widely used section anchors working.
+- Put superseded handoffs, plans and assessments in the matching [archive](archive/README.md) and link them from its index. Retain the original scope and date. Preserve the paths and contents of dated workstream receipts and private user documents.
+- During an assigned parallel batch, workers record evidence inside their allocation. The coordinator updates shared guides after integration. [Coordination and ownership](workstreams/README.md#parallel-local-implementation)
+- Keep the handoff under 120 lines and current state under 180. Distinguish code inspection, isolated tests, builds, installed observations and actual research use. Replace stale status and link older evidence by date.
 
-During the parallel batch, agents write their own allocated evidence directories
-and propose central-doc changes there. The coordinator reconciles current docs
-after integration. Keep shared status in one place.
+Run both checks from the repository root after a documentation change.
 
-Replace current status rather than appending milestones. Archive detailed proof
-under archive/checkpoints/YYYY, old handoffs under archive/handoffs, and uncertain
-old material under archive/needs-review. Preserve user documents.
+~~~bash
+python3 -m unittest scripts.test_check_docs
+python3 scripts/check_docs.py
+~~~
 
-Keep the handoff under 120 lines and current state under 180. Do not repeat test
-counts throughout all docs. Distinguish source tests, production builds, isolated
-browser fixtures, genuine-input proof, and previously recorded runtime evidence.
-
-Use relative Markdown links to real paths. Do not invent planned folder trees.
-Run python3 -m unittest scripts.test_check_docs and python3 scripts/check_docs.py.
-Nested instructions, all frontend pages, backend HTTP modules, and maintained
-command inventories are checked. Historical workstream receipt bodies keep their
-original paths and content; their index stays current. Update only affected docs.
+The checker verifies clickable navigation, paths, anchors, frontend pages, backend routers, command inventories and the documented migration head. [Verification environments](execution-runbook.md#choose-the-right-environment)

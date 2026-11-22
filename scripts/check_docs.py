@@ -60,6 +60,14 @@ RETIRED_ACTIVE_PATHS = (
 )
 
 
+def _is_current_guide(path: Path, docs: Path) -> bool:
+    return (
+        path.is_relative_to(docs)
+        and "archive" not in path.relative_to(docs).parts
+        and not path.is_relative_to(docs / "workstreams" / "evidence")
+    )
+
+
 def active_markdown_files(root: Path = ROOT) -> list[Path]:
     root = root.resolve()
     # Private coordinator returns beside README follow the root .gitignore.
@@ -72,10 +80,7 @@ def active_markdown_files(root: Path = ROOT) -> list[Path]:
     files.extend(
         path
         for path in (root / "docs").rglob("*.md")
-        if path.name == "README.md" or (
-            "archive" not in path.relative_to(root / "docs").parts
-            and path.relative_to(root / "docs").parts[:2] != ("workstreams", "evidence")
-        )
+        if path.name == "README.md" or _is_current_guide(path, root / "docs")
     )
     files.extend(
         path
@@ -214,7 +219,11 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
     errors: list[str] = []
     checked_links = 0
     anchor_cache: dict[Path, set[str]] = {}
-    for path in active_markdown_files(root):
+    paths = active_markdown_files(root)
+    guides: dict[Path, set[Path]] = {
+        path: set() for path in paths if _is_current_guide(path, root / "docs")
+    }
+    for path in paths:
         text = path.read_text(encoding="utf-8")
         searchable = FENCE_PATTERN.sub("", text)
         relative = path.relative_to(root)
@@ -233,6 +242,10 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
                 target = path
             else:
                 checked_links += 1
+                if path in guides:
+                    guide = target if target in guides else target / "README.md"
+                    if guide in guides:
+                        guides[path].add(guide)
             if not target.exists():
                 errors.append(f"{relative}: broken link {match.group(1)}")
                 continue
@@ -258,6 +271,16 @@ def validate(root: Path = ROOT) -> tuple[list[str], int]:
             checked_links += 1
             if not target.exists():
                 errors.append(f"{relative}: broken inline Markdown path {destination}")
+    index = root / "docs" / "README.md"
+    if index in guides:
+        reached = {index}
+        pending = [index]
+        while pending:
+            unvisited = guides[pending.pop()] - reached
+            reached.update(unvisited)
+            pending.extend(unvisited)
+        errors.extend(f"{path.relative_to(root)}: unreachable from docs/README.md"
+                      for path in sorted(guides.keys() - reached))
     errors.extend(_route_inventory_errors(root))
     errors.extend(_schema_head_errors(root))
     errors.extend(_command_inventory_errors(root))

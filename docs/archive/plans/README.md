@@ -10,5 +10,6 @@ them for historical implementation context, then verify against current code.
 - Providers: the dated provider execution plan
 - Valuation: automation and valuation-agent master/source-batch plans
 - Platform: the archived India/US transition plan under `superpowers/`
+- [Entity and portfolio scoring proposal](entity-and-portfolio-scoring.md) preserves the proposed score categories, portfolio weights and feedback mechanism.
 
 - [October 5 workstream design](workstreams-2026-10-05.md): original technical analysis and assignments; the current scope index stays under workstreams.

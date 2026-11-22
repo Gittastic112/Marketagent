@@ -71,6 +71,27 @@ class DocumentationCheckTests(unittest.TestCase):
             (evidence / "README.md").write_text("[index](missing.md)\n", encoding="utf-8")
             self.assertEqual(validate(root)[0], ["docs/workstreams/evidence/README.md: broken link missing.md"])
 
+    def test_current_guides_must_be_reachable_from_the_docs_index(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            guides = root / "docs" / "reference"
+            archive = root / "docs" / "archive"
+            guides.mkdir(parents=True)
+            archive.mkdir()
+            index = root / "docs" / "README.md"
+            index.write_text("[History](archive/)\n", encoding="utf-8")
+            (archive / "README.md").write_text("[Reference](../reference/)\n", encoding="utf-8")
+            (guides / "README.md").write_text("[Valuation](valuation.md)\n", encoding="utf-8")
+            (guides / "valuation.md").write_text("[Reference](README.md)\n", encoding="utf-8")
+
+            errors, _ = validate(root)
+            self.assertEqual(errors, [
+                "docs/reference/README.md: unreachable from docs/README.md",
+                "docs/reference/valuation.md: unreachable from docs/README.md",
+            ])
+            index.write_text("[Reference](reference/)\n[History](archive/)\n", encoding="utf-8")
+            self.assertEqual(validate(root)[0], [])
+
     def test_directory_guides_and_github_policies_are_checked(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

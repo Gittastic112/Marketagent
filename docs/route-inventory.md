@@ -1,6 +1,6 @@
 # Frontend Route Inventory
 
-Source inventory checked November 18, 2026. 52 App Router pages.
+52 App Router pages. The [documentation checker](../scripts/check_docs.py) compares this inventory with the page files in the current checkout.
 
 This indexes page entry points, not API handlers or browser-state certification.
 Dynamic segments are placeholders, not portable database IDs. A source file's

@@ -1,32 +1,6 @@
-# Scoring Framework
+# Proposed entity scores and portfolio alert priority
 
-## Purpose
-The scoring framework ranks information by usefulness. It prevents the system from becoming a noise generator.
-The core philosophy is: **Scoring should be explainable. The score is not useful unless users can inspect why it exists.**
-
-## 1. Current Scoring Implementation (Event Level)
-The current MVP has deterministic, rule-based scoring focused on individual **events** (like a filing or news article).
-
-### 1.1 Credibility score
-Uses the source's recorded reliability score as a credibility heuristic. It does
-not independently verify a claim or turn source reputation into a probability.
-
-### 1.2 Novelty score
-Checks existing event counts for the same document, company and event type.
-It is not a semantic recycled-language detector.
-
-### 1.3 Impact score
-Measures potential thesis-changing impact based on active thesis notes or high-importance event types.
-
-### 1.4 Priority score
-A bounded, rounded combination of credibility, novelty, impact and information
-speed. Defaults in [scoring.py](../backend/app/services/scoring.py) are
-0.35 × credibility + 0.25 × novelty + 0.35 × impact + 0.05 × speed bonus.
-Speed bonuses are slow=60, medium=75 and fast=80. The first stored ScoringConfig
-row by ID overrides these weights. These are deterministic heuristics, not
-calibrated probabilities or proof that a claim is true.
-
----
+This proposal preserves the earlier design for company and narrative scores, portfolio ranking and feedback. The [current event scoring reference](../../reference/scoring.md) describes the implemented calculation.
 
 ## 2. Planned Score Expansion (Entity Level)
 

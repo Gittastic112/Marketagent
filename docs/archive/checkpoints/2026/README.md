@@ -1,6 +1,8 @@
 # 2026 Checkpoints
 
+- [November 18 and 19 installed chart, integration and local source checks](chart-and-integration-checks-2026-11-19.md)
 - [November 19 integration review and portfolio reconciliation](integration-review-2026-11-19.md)
+- [November 17 packaged adapter verification and subsequent release evidence](../../../adapters/verification.md)
 
 - [November 15 financial integrity release and installed Today layout](review-financial-integrity-release-2026-11-15.md)
 - [November 12 selected-company source review and installed workflow checks](handoff-review-2026-11-12.md)
@@ -10,7 +12,7 @@
 - [Analyst workflows and approved backup cleanup, November 9](analyst-workflows-2026-11-09.md)
 - [Financial planning, macro integrity and claim-review development, November 7](product-development-2026-11-07.md)
 
-Selected checkpoints, not an exhaustive file inventory. Use `rg --files docs/archive/checkpoints/2026` from the repository root for all records.
+For other dated records, search filenames with `rg --files --no-ignore docs/archive/checkpoints/2026` from the repository root.
 
 - [Independent briefing, AI permissions and release-tooling completion, November 4](independent-completion-2026-11-04.md)
 - [Supplied delivery report reconciliation and documentation integration, November 4](delivery-report-reconciliation-2026-11-04.md)

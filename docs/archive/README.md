@@ -14,9 +14,9 @@ instructions and may contain obsolete paths, counts, priorities, or design ideas
 | [`instructions/`](instructions/) | Prior repository/nested operating instructions |
 | [`needs-review/`](needs-review/) | Historical documents never promoted to current truth |
 
-Use `rg --files docs/archive | sort` to inventory everything. Internal links in
-archived bodies are not maintained after moves; archive README navigation is checked. Search by basename if a historical
-link no longer resolves.
+Routine searches skip archived material. To find a past handoff, for example, run `rg --files --no-ignore docs/archive/handoffs` from the root. The archive indexes have checked links. Older receipt bodies can contain paths from their original checkout.
+
+Older financial audits cite the former valuation-agent directory and the standalone assumption-methodology guide. Their current reference is [Valuation and assumption methods](../reference/valuation.md).
 
 Do not move a document back into the active set without reconciling it against
 current code, tests, and the current documentation architecture.

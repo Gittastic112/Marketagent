@@ -8,7 +8,7 @@ or a product capability certification.
 
 | Package | Actual state | Decision |
 |---|---|---|
-| [security-review](../../skills/security-review/SKILL.md) | One repository package; metadata retains allow_implicit_invocation: true. Installation is not established by this repository | Replace duplicated checklist with a narrow entrypoint to the canonical project security workflow. Keep explicit/implicit scope aligned |
+| [security-review](../../../skills/security-review/SKILL.md) | One repository package; metadata retains allow_implicit_invocation: true. Installation is not established by this repository | Replace duplicated checklist with a narrow entrypoint to the canonical project security workflow. Keep explicit/implicit scope aligned |
 
 No global skill files or installation settings were changed. The session's
 installed skill-authoring guide was inaccessible even after an escalated read
@@ -38,7 +38,7 @@ project-workflow validator.
 
 - Root/nested AGENTS files enforce repository rules; workflows do not repeat a
   second universal reading stack. Commands, limits and status retain canonical owners.
-- [workstream design](../workstreams/plan.md) retains batch scopes, while the roadmap owns product
+- [workstream design](../../workstreams/plan.md) retains batch scopes, while the roadmap owns product
   priorities. The manifest and shell guard make file allocation checkable.
 - Shared workflow edits happen through the coordinator after integration. Agents
   keep proposed changes in their own evidence instead of racing to append here.
@@ -49,7 +49,7 @@ project-workflow validator.
 
 ## Verification
 
-The [audit receipt](../archive/checkpoints/2026/documentation-and-parallel-plan-2026-10-05.md)
+The [audit receipt](../checkpoints/2026/documentation-and-parallel-plan-2026-10-05.md)
 records shell checks and the blocked Git/Python/Node runtimes. Do not carry forward
 September test counts as new evidence. The standard Python documentation and skill
 validators still need a working runtime; no validator was weakened to hide that.
